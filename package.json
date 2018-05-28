@@ -3,9 +3,6 @@
   "version": "2.0.0",
   "description": "mobile instant page",
   "main": "dist/mip.js",
-  "directories": {
-    "example": "examples"
-  },
   "scripts": {
     "dev": "node examples/server.js",
     "build": "node build/build.js",
