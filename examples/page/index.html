@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+    <meta charset="utf-8">
+    <title>MIP Index Page</title>
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <style mip-custom>
+        p {
+            font-size: 1.5em;
+            margin: 0 30px;
+        }
+        .main-image {
+            text-align: center;
+        }
+        .link {
+            text-align: center;
+            margin-top: 20px;
+            display: block;
+        }
+    </style>
+    <link rel="stylesheet" href="../../dist/mip.css">
+</head>
+<body>
+    <div class="main-image">
+        <mip-img src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg" width="300" height="300"></mip-img>
+    </div>
+    <br><br>
+    <p>
+    Progressive Web Apps are user experiences that have the reach of the web, and are:
+Reliable - Load instantly and never show the downasaur, even in uncertain network conditions.
+Fast - Respond quickly to user interactions with silky smooth animations and no janky scrolling.
+    </p>
+
+    <a class="link" href="./tree.html" mip-link>Go to Tree</a>
+    <a class="link" href="./data.html" mip-link>Go to Data</a>
+    <a class="link" href="./not-mip.html">Go to Not MIP</a>
+    <a class="link" href="/not/exists" mip-link>Go to Not Exists</a>
+
+    <br><br>
+    <p>
+    Progressive Web Apps are user experiences that have the reach of the web, and are:
+Reliable - Load instantly and never show the downasaur, even in uncertain network conditions.
+Fast - Respond quickly to user interactions with silky smooth animations and no janky scrolling.
+    </p>
+    <p>
+    Progressive Web Apps are user experiences that have the reach of the web, and are:
+Reliable - Load instantly and never show the downasaur, even in uncertain network conditions.
+Fast - Respond quickly to user interactions with silky smooth animations and no janky scrolling.
+    </p>
+    <p>
+    Progressive Web Apps are user experiences that have the reach of the web, and are:
+Reliable - Load instantly and never show the downasaur, even in uncertain network conditions.
+Fast - Respond quickly to user interactions with silky smooth animations and no janky scrolling.
+    </p>
+    <p>
+    Progressive Web Apps are user experiences that have the reach of the web, and are:
+Reliable - Load instantly and never show the downasaur, even in uncertain network conditions.
+Fast - Respond quickly to user interactions with silky smooth animations and no janky scrolling.
+    </p>
+
+    <mip-shell>
+        <script type="application/json">
+            {
+                "header": {
+                    "title": "Mip Index",
+                    "logo": "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg",
+                    "buttonGroup": [
+                        {
+                            "type": "button",
+                            "name": "subscribe",
+                            "text": "关注",
+                            "link": "/examples/page/tree.html"
+                        },
+                        {
+                            "type": "button",
+                            "name": "chat",
+                            "text": "发消息",
+                            "outline": true
+                        },
+                        {
+                            "type": "icon",
+                            "name": "search",
+                            "text": "search",
+                            "link": "/examples/page/tree.html"
+                        },
+                        {
+                            "type": "dropdown",
+                            "items": [
+                                {
+                                    "name": "subscribe",
+                                    "text": "关注",
+                                    "link": "/examples/page/tree.html"
+                                },
+                                {
+                                    "name": "chat",
+                                    "text": "发消息"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "view": {
+                    "isIndex": true,
+                    "transition": {
+                        "mode": "slide"
+                    }
+                },
+                "footer": {}
+            }
+        </script>
+    </mip-shell>
+    <mip-data>
+        <script type="application/json">
+                {
+                    "#group": {
+                        "info": {
+                            "name": "sfe"
+                        }
+                    }
+                }
+            </script>
+    </mip-data>
+    <span m-text="group.info.name"></span>
+
+    <script src="../../dist/mip.js"></script>
+</body>

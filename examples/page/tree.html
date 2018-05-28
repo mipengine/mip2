@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" mip>
+<!--htmlcs-disable-->
+<head>
+    <title>MIP Tree Page</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="../../dist/mip.css">
+    <style mip-custom>
+    .link {
+        text-align: center;
+        margin-top: 20px;
+        display: block;
+    }
+    </style>
+</head>
+
+<body>
+    <mip-shell>
+        <script type="application/json">
+            {
+                "header": {
+                    "title": "Mip Tree",
+                    "buttonGroup": [
+                        {
+                            "type": "icon",
+                            "name": "search",
+                            "text": "search"
+                        },
+                        {
+                            "type": "icon",
+                            "name": "home",
+                            "text": "home"
+                        }
+                    ]
+                },
+                "view": {
+                    "transition": {
+                        "mode": "slide"
+                    }
+                },
+                "footer": {}
+            }
+        </script>
+    </mip-shell>
+
+    <p>This is Page#2, using different component (mip-tree)</p>
+    <mip-tree>
+        <script type="application/json">
+            {"model":{"name":"My Tree","children":[{"name":"hello"},{"name":"wat"},{"name":"child folder","children":[{"name":"child folder","children":[{"name":"hello"},{"name":"wat"}]},{"name":"hello"},{"name":"wat"},{"name":"child folder","children":[{"name":"hello"},{"name":"wat"}]}]}]}}
+        </script>
+    </mip-tree>
+
+    <a class="link" href="./index.html" mip-link>Back to Index</a>
+
+    <br><br>
+    <span>Read from global store(group.info.name) from index.html</span>
+    <span m-text="group.info.name"></span>
+
+
+    <script src="../../dist/mip.js"></script>
+    <script src="./components/mip-tree.js"></script>
+</body>
+
+</html>

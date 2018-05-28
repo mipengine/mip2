@@ -1,0 +1,29 @@
+mip-fixed {
+    position: fixed !important;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+mip-fixed[type="top"] {
+    top: 0;
+}
+mip-fixed[type="bottom"] {
+    bottom: 0;
+}
+mip-fixed[type="left"] {
+    left: 0;
+}
+mip-fixed[type="right"] {
+    right: 0;
+}
+mip-fixed[type="top"],
+mip-fixed[type="bottom"] {
+    width: 100%;
+    overflow: hidden;
+    left: 0;
+    right: 0;
+}
+
+mip-fixed[type="left"],
+mip-fixed[type="right"] {
+    overflow: hidden;
+}

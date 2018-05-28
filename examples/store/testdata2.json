@@ -1,0 +1,16 @@
+{
+    "contacts": [
+        {
+            "username": "ckkk1",
+            "gender": "m"
+        },
+        {
+            "username": "ckkk2",
+            "gender": "f"
+        },
+        {
+            "username": "ckkk3",
+            "gender": "f"
+        }
+    ]
+}

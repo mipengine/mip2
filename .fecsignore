@@ -1,0 +1,9 @@
+src/page
+src/vue
+src/vuex
+src/router
+deps
+build
+dist
+examples
+node_modules

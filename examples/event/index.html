@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>MIP Bind</title>
+    <link rel="canonical">
+    <style mip-custom>
+
+
+    </style>
+</head>
+
+<body>
+
+    <p>event</p>
+    <mip-data>
+        {
+            "success": false
+        }
+    </mip-data>
+
+    <mip-a on="customevent:MIP.setData({success:'customevent'})"></mip-a>
+
+
+
+    <div >div item</div>
+
+
+    <script src="../../dist/mip.js"></script>
+    <script src="./mip-a.js"></script>
+    <script src="./mip-b.js"></script>
+
+    <script>
+    let a = document.querySelector('mip-a');
+    // a.addEventListener('customevent', function (event) {
+    //     console.log('get customevent');
+    // });
+    // </script>
+
+</body>
+
+</html>
+

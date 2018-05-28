@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--htmlcs-disable-->
+<head>
+    <meta charset="utf-8">
+    <title>MIP asyncData example</title>
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <style mip-custom>
+        .top {
+            margin-top: 1000px;
+        }
+        .bottom {
+            margin-top: 1000px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top"></div>
+    <mip-list></mip-list>
+    <div class="bottom"></div>
+
+    <script src="../../dist/mip.js"></script>
+    <script>
+        mip.registerVueCustomElement('mip-list', {
+            template: `
+                <div class="mip-list">
+                    <div class="mip-list-item" v-for="item in list">
+                        <p> {{ item.name }} </p>
+                        <p> {{ item.sex }} </p>
+                    </div>
+                </div>
+            `,
+            data() {
+                return {
+                    list: [
+                        {
+                            name: 'David',
+                            sex: 'F'
+                        },
+                        {
+                            name: 'Trump',
+                            sex: '?'
+                        }
+                    ]
+                };
+            },
+            beforeCreate() {
+                console.log('beforeCreated');
+            },
+            created() {
+                console.log('created');
+            },
+            beforeMount() {
+                console.log('beforeMount');
+            },
+            mounted() {
+                console.log('mounted')
+            },
+            beforeUpdate(oldVal, newVal) {
+                console.log('beforeUpdate');
+            },
+            updated(oldVal, newVal) {
+                console.log('updated');
+            },
+            connectedCallback(element) {
+                console.log('connectedCallback')
+            },
+            disconnectedCallback(element) {
+                console.log('disconnectedCallback');
+            },
+            firstInviewCallback(element) {
+                console.log('firstInviewCallback');
+            },
+            asyncData() {
+                let me = this;
+                fetch('./data.json').then(res => {
+                    res.json().then(data => {
+                        console.log('------------asyncData', data);
+                        me.list = me.list.concat(data);
+                    });
+                });
+            },
+
+            syncData() {
+                console.log('------------ in syncData');
+            },
+            prerenderAllowed() {
+                return false;
+            }
+        });
+
+    </script>
+</body>
+
+</html>

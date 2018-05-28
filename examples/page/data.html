@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+    <meta charset="utf-8">
+    <title>MIP Data Page</title>
+    <meta name="keywords" content="vue,mip,store">
+    <meta name="description" content="mip-store">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <link rel="stylesheet" href="../../dist/mip.css">
+    <style mip-custom>
+    .link {
+        text-align: center;
+        margin-top: 20px;
+        display: block;
+    }
+    p, .button {
+        width: 150px;
+        display: inline-block;
+        margin: 20px 0 0 20px;
+    }
+    </style>
+</head>
+
+<body>
+    <mip-data>
+        <script type="application/json">
+            {
+                "num": 1,
+                "title": "Apple/苹果 iPhone X",
+                "basePrice": "9688.00",
+                "price": "9688.00",
+                "#comments": 5855,
+                "integral": 968,
+                "network": {
+                    "nocontract": 1
+                },
+                "color": {
+                    "silver": 0,
+                    "grey": 1
+                },
+                "#size": {
+                    "small": 0,
+                    "big": 1
+                },
+                "staging": {
+                    "three": 0,
+                    "six": 0,
+                    "twelve": 0
+                },
+                "#sp": {
+                    "three": "¥3303.60",
+                    "six": "¥1687.32",
+                    "twelve": "¥867.88"
+                },
+                "img": {
+                    "first": 0,
+                    "second": 0,
+                    "third": 0,
+                    "four": 0,
+                    "five": 0
+                },
+                "time": 1,
+                "src": "https://img.alicdn.com/bao/uploaded/i4/1917047079/TB2ZpydmPihSKJjy0FeXXbJtpXa_!!1917047079.png_430x430q90.jpg"
+            }
+        </script>
+    </mip-data>
+    <mip-data src="./data/testData.json"></mip-data>
+    <mip-data>
+        <script type="application/json">
+            {
+                "userInfo": {
+                    "name": "sfe",
+                    "age": 5,
+                    "members": []
+                }
+            }
+        </script>
+    </mip-data>
+
+    <!-- <mip-complevel1 m-bind:userinfo="userInfo"></mip-complevel1> -->
+
+    <span>group.info.name will show below which is a global state shared from index.html:</span>
+    <span m-text="group.info.name"></span>
+    <div on="tap:MIP.setData({group:{info:{name:'sfe2018'}}})" class="button">click change global group.info.name</div>
+
+    <br><br>
+    <h1 m-text="title"></h1>
+
+    <p m-text="size.small"></p>
+    <div on="tap:MIP.setData({size:{small:2}})" class="button">click change size.small</div>
+
+    <p m-text="num"></p>
+    <div on="tap:MIP.setData({num:2})" class="button">click change num</div>
+
+    <p m-text="sp.three"></p>
+    <div on="tap:MIP.setData({sp:{three:'¥0'}})" class="button">click change sp.three</div>
+
+    <p m-text="comments"></p>
+    <div on="tap:MIP.setData({comments:'ckkk'})" class="button">click change comments</div>
+
+    <p m-text="img.first"></p>
+    <div on="tap:MIP.setData({img:{first:1}})" class="button">click change img.first</div>
+
+    <mip-data>
+        <script type="application/json">
+          {
+              "price": 20
+          }
+          </script>
+    </mip-data>
+    <div>
+        DOM.value*m.price =
+        <span m-text="price"></span>
+    </div>
+    <mip-form url="https://www.mipengine.org/">
+        <input type='text' on="change:MIP.setData({price:DOM.value*m.price})">
+    </mip-form>
+
+    <br><br>
+    <a href="./index.html" class="link" mip-link>Back to Index</a>
+
+    <mip-shell>
+        <script type="application/json">
+            {
+                "header": {
+                    "title": "Mip Data",
+                    "logo": "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg",
+                    "buttonGroup": [
+                        {
+                            "type": "button",
+                            "name": "subscribe",
+                            "text": "关注",
+                            "link": "/examples/page/tree.html"
+                        },
+                        {
+                            "type": "button",
+                            "name": "chat",
+                            "text": "发消息",
+                            "outline": true
+                        }
+                    ]
+                },
+                "view": {
+                    "transition": {
+                        "mode": "slide",
+                        "alwaysBackPages": ["/examples/page/index.html"]
+                    }
+                },
+                "footer": {}
+            }
+        </script>
+    </mip-shell>
+
+    <script type="application/mip-script">
+        MIP.watch('num', function () {
+            console.log('num changed callback')
+            MIP.setData({
+                title: 'ckkkk changing num'
+            });
+        });
+        MIP.watch('sp.three', function () {
+            console.log('sp.three')
+            MIP.setData({
+                title: 'ckkkk changing sp.three'
+            });
+        });
+        MIP.watch('comments', function () {
+            console.log('comments')
+            MIP.setData({
+                title: 'ckkkk changing comments'
+            });
+        });
+        MIP.watch(['basePrice', 'img.first'], function () {
+            console.log('multi')
+            MIP.setData({
+                title: 'ckkkk changing multi'
+            });
+        });
+    </script>
+    <script src="../../dist/mip.js"></script>
+    <script src="./components/mip-complevel2.js"></script>
+    <script src="./components/mip-complevel1.js"></script>
+    <script src="https://c.mipcdn.com/static/v1/mip-form/mip-form.js"></script>
+</body>

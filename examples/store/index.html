@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!--htmlcs-disable-->
+<html mip>
+<head>
+    <meta charset="utf-8">
+    <title>Store 示例</title>
+    <meta name="keywords" content="vue,mip,store">
+    <meta name="description" content="mip-store">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <link rel="stylesheet" href="../../dist/mip.css">
+    <style mip-custom>
+        .wrapper, h2 {
+            margin: 8px 0;
+            padding: 0 10px;
+        }
+        .wrapper > h2 {
+            padding: 0;
+        }
+        .list {
+            display: flex;
+            list-style-type: none;
+        }
+        .list li {
+            border-radius: 4px;
+            border: 1px solid #666;
+            flex: 1 1 33.3%;
+            padding: 5px;
+            margin: 10px 4px;
+        }
+        .list li:nth-child(1) {
+            margin-left: 0;
+        }
+        .list li:nth-child(3) {
+            margin-right: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <mip-store>
+        <script type="application/json">
+            {
+                "model": {
+                    "users": [
+                        "sfe",
+                        "sz",
+                        "sh"
+                    ],
+                    "group": {
+                        "info": {
+                            "name": "sfe",
+                            "start": 2014
+                        },
+                        "future": "far"
+                    },
+                    "contacts": []
+                }
+            }
+        </script>
+    </mip-store>
+    <mip-store src="./testdata.json"></mip-store>
+    <mip-hello></mip-hello>
+    <mip-contacts></mip-contacts>
+    <mip-init></mip-init>
+
+    <script>
+        window.addEventListener('global-store-registered', function () {
+            console.log('mip-store registered');
+        });
+    </script>
+    <script src="./storeData.js"></script>
+    <script src="../../dist/mip.js"></script>
+    <!-- <script src="./components/mip-store.js"></script> -->
+    <script src="./components/mip-hello.js"></script>
+    <script src="./components/mip-contacts.js"></script>
+    <script src="./components/mip-init.js"></script>
+</body>
