@@ -72,66 +72,23 @@ export default class HTML5History {
     transitionTo(location, onComplete, onAbort, fromMissHook) {
         const route = this.router.match(location, this.current);
 
-        this.confirmTransition(route, () => {
-            this.updateRoute(route);
-            onComplete && onComplete(route);
-            this.ensureURL();
+        this.updateRoute(route);
+        onComplete && onComplete(route);
+        this.ensureURL();
 
-            // fire ready cbs once
-            if (!this.ready) {
-                this.ready = true;
-                this.readyCbs.forEach(cb => {
-                    cb(route);
-                });
-            }
-
-        }, err => {
-            if (onAbort) {
-                onAbort(err);
-            }
-
-            if (err && !this.ready) {
-                this.ready = true;
-                this.readyErrorCbs.forEach(cb => {
-                    cb(err);
-                });
-            }
-        });
-    }
-
-    confirmTransition(route, onComplete, onAbort) {
-        const current = this.current;
-        const abort = err => {
-            if (isError(err)) {
-                if (this.errorCbs.length) {
-                    this.errorCbs.forEach(cb => {
-                        cb(err);
-                    });
-                }
-                else {
-                    warn(false, 'uncaught error during route navigation:');
-                    console.error(err);
-                }
-            }
-
-            onAbort && onAbort(err);
-        };
-        if (
-            isSameRoute(route, current) &&
-            // in the case the route map has been dynamically appended to
-            route.matched.length === current.matched.length
-        ) {
-            this.ensureURL();
-            return abort();
+        // fire ready cbs once
+        if (!this.ready) {
+            this.ready = true;
+            this.readyCbs.forEach(cb => {
+                cb(route);
+            });
         }
-
-        onComplete && onComplete();
     }
 
     updateRoute(route) {
         const prev = this.current;
         this.current = route;
-        this.cb && this.cb(route);
+        this.cb && this.cb(prev, route);
     }
 }
 

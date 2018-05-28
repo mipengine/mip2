@@ -144,8 +144,6 @@ class Page {
                 });
             }
         }, false);
-
-        window.addEventListener('appheader:click-search', () => {console.log('receive...')})
     }
 
     /**** Root Page methods ****/
@@ -242,10 +240,12 @@ class Page {
     /**
      * render with current route
      *
-     * @param {Route} route route
+     * @param {Route} from route
+     * @param {Route} to route
      */
-    render(route) {
-        let targetPageId = route.fullPath;
+    render(from, to) {
+        console.log(from, to);
+        let targetPageId = to.fullPath;
         let targetPage = this.getPageById(targetPageId);
 
         if (!targetPage) {
