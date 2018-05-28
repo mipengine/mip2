@@ -32,7 +32,7 @@ class Bind {
             me._bindTarget(true, action, from);
             me._eventEmit();
         };
-        MIP.$recomplie = function () {
+        MIP.$recompile = function () {
             me._observer.start(me._win.m);
             me._compile.start(me._win.m);
         };
