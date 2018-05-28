@@ -6,20 +6,15 @@
 import resources from './resources';
 import layout from './layout';
 import performance from './performance';
-
-/**
- * Storage of custom elements.
- * @inner
- * @type {Object}
- */
-let customElements = {};
+import customElementsStore from './custom-element-store';
 
 
 class BaseElement extends HTMLElement {
     constructor() {
         super();
 
-        let CustomElement = customElements[this.tagName.toLowerCase()];
+        // get mip2 clazz from custom elements store
+        let CustomElement = customElementsStore.get(this.tagName.toLowerCase(), 'mip2');
 
         /**
          * Viewport state
@@ -144,11 +139,12 @@ class BaseElement extends HTMLElement {
  * @param {string} css The csstext of the MIPElement.
  */
 function registerElement(name, elementClass, css) {
-    if (customElements[name]) {
+    if (customElementsStore.get(name)) {
         return;
     }
 
-    customElements[name] = elementClass;
+    // store the name-clazz pair
+    customElementsStore.set(name, elementClass, 'mip2');
 
     // loadCss(css, name);
     window.customElements.define(name, class extends BaseElement {

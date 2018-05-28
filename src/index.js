@@ -3,41 +3,50 @@
  * @author sfe
  */
 
-import Vue from 'vue';
-import customElement from './vue-custom-element/index';
-// import customElementBuildInComponents from './components';
-import util from './util';
-import sandbox from './sandbox';
-import layout from './layout';
-import viewer from './viewer';
-import viewport from './viewport';
-import page from './page/index';
-import builtinComponents from './components';
-import registerElement from './register-element';
-
-import sleepWakeModule from './sleepWakeModule';
-import performance from './performance';
-
-import './log/monitor';
+'use strict';
 
 import 'script-loader!deps/zepto';
 import 'script-loader!deps/fetch.js';
 import 'script-loader!fetch-jsonp';
 import 'script-loader!document-register-element/build/document-register-element';
 
-// mip1 的兼容代码
+import Vue from 'vue';
+import vueCustomElement from './vue-custom-element/index';
+import util from './util';
+import sandbox from './sandbox';
+import layout from './layout';
+import viewer from './viewer';
+import viewport from './viewport';
+import Resources from './resources';
+import page from './page/index';
+import builtinComponents from './components';
+import registerElement from './register-element';
+import sleepWakeModule from './sleepWakeModule';
+import performance from './performance';
 import mip1PolyfillInstall from './mip1-polyfill';
 
+import './log/monitor';
 import './polyfills';
 
 let mip = {
     version: '2',
-    Vue,
-    // 暴露注册 Vue 组件的方法
+
+    /**
+     * register vue as custom element v1
+     *
+     * @param {string} tag custom elment name, mip-*
+     * @param {*} component vue component
+     */
     registerVueCustomElement(tag, component) {
         Vue.customElement(tag, component);
     },
-    // 暴露注册 mip 组件的方法
+
+    /**
+     * register custom element v1
+     *
+     * @param {string} tag custom element name, mip-*
+     * @param {HTMLElement} component component clazz
+     */
     registerCustomElement(tag, component) {
         registerElement(tag, component);
     },
@@ -46,7 +55,8 @@ let mip = {
     viewport,
     hash: util.hash,
     sandbox,
-    css: {}
+    css: {},
+    prerenderElement: Resources.prerenderElement
 };
 
 if (window.MIP) {
@@ -58,6 +68,7 @@ window.MIP = window.mip = mip;
 // 当前是否是独立站
 mip.standalone = typeof window.top.mip !== 'undefined';
 mip.viewer.isIframed = !mip.standalone;
+// init viewport
 mip.viewport.init();
 
 // before document ready
@@ -71,9 +82,9 @@ mip.push = function (extensions) {
 
 // install mip1 polyfill
 mip1PolyfillInstall(mip);
-
-Vue.use(customElement);
-// Vue.use(customElementBuildInComponents);
+// add custom element to Vue
+Vue.use(vueCustomElement);
+// register buildin components
 builtinComponents.register();
 
 util.dom.waitDocumentReady(() => {
