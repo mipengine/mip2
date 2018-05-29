@@ -10,7 +10,7 @@ import viewer from '../../viewer';
 
 export default function createVueInstance(
     element,
-    {Vue, router},
+    {Vue},
     componentDefinition,
     props
 ) {
@@ -39,7 +39,6 @@ export default function createVueInstance(
 
     let rootElement = {
         propsData,
-        router,
         props: props.camelCase,
         computed: {
             reactiveProps() {

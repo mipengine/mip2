@@ -3,7 +3,19 @@
  * @author wangyisheng@baidu.com (wangyisheng)
  */
 
-import * as util from './util';
+import {getPath} from './util/url';
+import {installMipLink} from './util/link';
+import {isOnlyDifferentInHash, getFullPath} from './util/route';
+import {
+    getMIPShellConfig,
+    addMIPCustomScript,
+    createIFrame,
+    getIFrame,
+    frameMoveIn,
+    frameMoveOut,
+    removeIFrame
+} from './util/dom';
+
 import {customEmit} from '../vue-custom-element/utils/custom-event';
 import Router from './router';
 import AppShell from './appshell';
@@ -16,7 +28,7 @@ import {
 
 class Page {
     constructor() {
-        this.pageId = util.getPath(window.location.href);
+        this.pageId = getPath(window.location.href);
 
         if (window.parent && window.parent.MIP_ROOT_PAGE) {
             this.isRootPage = false;
@@ -82,13 +94,12 @@ class Page {
         }
 
         // proxy <a mip-link>
-        util.installMipLink(router, this);
+        installMipLink(router, this);
     }
 
     initAppShell() {
         // read <mip-shell> and save in `data`
-        this.data.appshell = util.getMIPShellConfig();
-
+        this.data.appshell = getMIPShellConfig();
         if (!this.data.appshell.header.title) {
             this.data.appshell.header.title = document.querySelector('title').innerHTML;
         }
@@ -142,11 +153,11 @@ class Page {
 
     start() {
         // Set global mark
-        mip.MIP_ROOT_PAGE = window.MIP_ROOT_PAGE;
+        window.MIP.MIP_ROOT_PAGE = window.MIP_ROOT_PAGE;
 
         this.initAppShell();
         this.initRouter();
-        util.addMIPCustomScript();
+        addMIPCustomScript();
         document.body.setAttribute('mip-ready', '');
 
         // listen message from iframes
@@ -171,7 +182,7 @@ class Page {
     emitEventInCurrentPage({name, data = {}}) {
         // notify current iframe
         if (this.currentChildPageId) {
-            let $iframe = util.getIFrame(this.currentChildPageId);
+            let $iframe = getIFrame(this.currentChildPageId);
             $iframe && $iframe.contentWindow.postMessage({
                 type: MESSAGE_APPSHELL_EVENT,
                 data: {name, data}
@@ -210,18 +221,18 @@ class Page {
         //     return;
         // }
         if (this.currentChildPageId) {
-            util.frameMoveOut(this.currentChildPageId, {
+            frameMoveOut(this.currentChildPageId, {
                 onComplete: () => {
                     // 没有引用 mip.js 的错误页
                     if (!this.getPageById(this.currentChildPageId)) {
-                        util.removeIFrame(this.currentChildPageId);
+                        removeIFrame(this.currentChildPageId);
                     }
                     this.currentChildPageId = targetPageId;
                 }
             });
         }
 
-        util.frameMoveIn(targetPageId, {
+        frameMoveIn(targetPageId, {
             onComplete: () => {
                 this.currentChildPageId = targetPageId;
             }
@@ -264,18 +275,18 @@ class Page {
          * if `to` route is different with `from` route only in hash,
          * do nothing and let browser jump to that anchor
          */
-        if (util.isOnlyDifferentInHash(from, to)) {
+        if (isOnlyDifferentInHash(from, to)) {
             return;
         }
 
         // otherwise, render target page
-        let targetPageId = util.getFullPath({path: to.path, query: to.query});
+        let targetPageId = getFullPath({path: to.path, query: to.query});
         let targetPage = this.getPageById(targetPageId);
 
         if (!targetPage) {
             this.appshell.showLoading();
             // create an iframe and hide loading when finished
-            let targetFrame = util.createIFrame(targetPageId, {
+            let targetFrame = createIFrame(targetPageId, {
                 base: this.data.appshell.view.base,
                 onLoad: () => {
                     this.appshell.hideLoading();
