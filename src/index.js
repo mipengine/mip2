@@ -64,9 +64,9 @@ if (window.MIP) {
     mip.extensions = exts;
 }
 
-window.MIP = window.mip = mip;
+window.MIP = mip;
 // 当前是否是独立站
-mip.standalone = typeof window.top.mip !== 'undefined';
+mip.standalone = typeof window.top.MIP !== 'undefined';
 mip.viewer.isIframed = !mip.standalone;
 // init viewport
 mip.viewport.init();
@@ -106,8 +106,18 @@ util.dom.waitDocumentReady(() => {
     // Register builtin extensions
     // components.register();
 
-    performance.start(window._mipStartTiming);
-    performance.on('update', timing => viewer.sendMessage('performance_update', timing));
+    performance.start(Date.now());
+
+    // send performance data until the data collection is completed
+    performance.on('update', timing => {
+        if (timing.MIPDomContentLoaded
+            && timing.MIPStart
+            && timing.MIPPageShow
+            && timing.MIPFirstScreen
+        ) {
+            viewer.sendMessage('performance_update', timing);
+        }
+    });
 
     // Show page
     viewer.show();

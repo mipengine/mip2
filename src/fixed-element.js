@@ -66,9 +66,9 @@ class FixedElement {
 
         this.setFixedElement(mipFixedElements);
         let fixedLen = this._fixedElements.length;
-        let hasParentPage = window.mip.viewer.isIframed;
+        let hasParentPage = window.MIP.viewer.isIframed;
         // let hasParentPage = window.parent !== window;
-        // var MIPVersion = hasParentPage ? window.parent.mip.version : window.mip.version;
+        // var MIPVersion = hasParentPage ? window.parent.MIP.version : window.MIP.version;
         // var isMIP2 = !isNaN(MIPVersion) && parseInt(MIPVersion, 10) >= 2;
         if ((platform.isIos()) && hasParentPage) {
             // let fixedLayer =

@@ -45,7 +45,6 @@ test-proj
 ```html
 <style scoped>
     .class-name {
-        // ...
         background: url(~@/static/mip.png);
     }
 <style>

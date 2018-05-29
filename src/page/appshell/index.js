@@ -17,11 +17,11 @@ export default class AppShell {
     _init() {
         this.$wrapper = document.createElement('div');
         this.$wrapper.classList.add('mip-appshell-header-wrapper');
-        if (!this.page.data.appshell.header.show) {
-            this.$wrapper.classList.add('with-iframe');
-        }
         if (this.data.header.show) {
             this.$wrapper.classList.add('show');
+        }
+        else {
+            this.$wrapper.classList.add('with-iframe');
         }
 
         this.header = new Header({
