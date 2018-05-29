@@ -142,7 +142,7 @@ class Page {
 
     start() {
         // Set global mark
-        mip.MIP_ROOT_PAGE = window.MIP_ROOT_PAGE;
+        window.MIP.MIP_ROOT_PAGE = window.MIP_ROOT_PAGE;
 
         this.initRouter();
         this.initAppShell();

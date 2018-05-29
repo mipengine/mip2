@@ -64,9 +64,9 @@ if (window.MIP) {
     mip.extensions = exts;
 }
 
-window.MIP = window.mip = mip;
+window.MIP = mip;
 // 当前是否是独立站
-mip.standalone = typeof window.top.mip !== 'undefined';
+mip.standalone = typeof window.top.MIP !== 'undefined';
 mip.viewer.isIframed = !mip.standalone;
 // init viewport
 mip.viewport.init();
