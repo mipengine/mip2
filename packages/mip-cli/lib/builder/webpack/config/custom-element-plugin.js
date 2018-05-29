@@ -12,7 +12,7 @@ const customElementHeader = `(function () {
 function customElementFooter(filename) {
     let basename = path.basename(filename, path.extname(filename));
     return `
-        mip.registerVueCustomElement(
+        MIP.registerVueCustomElement(
             '${basename}',
             __mip_component__.default ? __mip_component__.default : __mip_component__
         );
