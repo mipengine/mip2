@@ -1,4 +1,4 @@
-import {START, isSameRoute} from '../util/route';
+import {START, isSameRoute, isOnlyDifferentInHash} from '../util/route';
 import {
     pushState,
     replaceState,
@@ -69,19 +69,21 @@ export default class HTML5History {
         return getLocation(this.base);
     }
 
-    transitionTo(location, onComplete, onAbort, fromMissHook) {
+    transitionTo(location, onComplete) {
         const route = this.router.match(location, this.current);
 
-        this.updateRoute(route);
-        onComplete && onComplete(route);
-        this.ensureURL();
+        if (!isSameRoute(this.current, route)) {
+            this.updateRoute(route);
+            onComplete && onComplete(route);
+            this.ensureURL();
 
-        // fire ready cbs once
-        if (!this.ready) {
-            this.ready = true;
-            this.readyCbs.forEach(cb => {
-                cb(route);
-            });
+            // fire ready cbs once
+            if (!this.ready) {
+                this.ready = true;
+                this.readyCbs.forEach(cb => {
+                    cb(route);
+                });
+            }
         }
     }
 
