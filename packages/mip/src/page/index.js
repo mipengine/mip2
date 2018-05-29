@@ -3,7 +3,7 @@
  * @author wangyisheng@baidu.com (wangyisheng)
  */
 
-import {getPath} from './util/url';
+import {getLocation} from './util/path';
 import {installMipLink} from './util/link';
 import {isOnlyDifferentInHash, getFullPath} from './util/route';
 import {
@@ -28,8 +28,6 @@ import {
 
 class Page {
     constructor() {
-        this.pageId = getPath(window.location.href);
-
         if (window.parent && window.parent.MIP_ROOT_PAGE) {
             this.isRootPage = false;
         }
@@ -56,10 +54,17 @@ class Page {
 
     initRouter() {
         let router;
+        let base = this.data.appshell.view.base;
+
+        // generate pageId
+        this.pageId = getLocation(base, false);
+
+        console.log('pageId:', this.pageId);
+
         // outside iframe
         if (this.isRootPage) {
             router = new Router({
-                base: this.data.appshell.view.base,
+                base,
                 routes: [
                     {
                         path: this.pageId
@@ -98,16 +103,6 @@ class Page {
     }
 
     initAppShell() {
-        // read <mip-shell> and save in `data`
-        this.data.appshell = getMIPShellConfig();
-        if (!this.data.appshell.header.title) {
-            this.data.appshell.header.title = document.querySelector('title').innerHTML;
-        }
-        if (!this.data.appshell.view.base) {
-            // TODO: try to resolve base in <base> tag
-            // this.data.appshell.view.base = 
-        }
-
         /**
          * in root page, we need to:
          * 1. refresh appshell with current data in <mip-shell>
@@ -142,6 +137,24 @@ class Page {
         }
     }
 
+    readMIPShellConfig() {
+        // read <mip-shell> and save in `data`
+        let config = getMIPShellConfig();
+
+        // try to resolve base in <base> tag
+        if (!config.view.base) {
+            config.view.base = (document.getElementsByTagName('base')[0] || {}).href || '';
+        }
+        config.view.base = config.view.base.replace(/\/$/, '');
+
+        // get title from <title> tag
+        if (!config.header.title) {
+            config.header.title = (document.querySelector('title') || {}).innerHTML || '';
+        }
+
+        this.data.appshell = config;
+    }
+
     /**
      * notify root page with an eventdata
      *
@@ -155,8 +168,9 @@ class Page {
         // Set global mark
         window.MIP.MIP_ROOT_PAGE = window.MIP_ROOT_PAGE;
 
-        this.initAppShell();
+        this.readMIPShellConfig();
         this.initRouter();
+        this.initAppShell();
         addMIPCustomScript();
         document.body.setAttribute('mip-ready', '');
 
@@ -224,9 +238,9 @@ class Page {
             frameMoveOut(this.currentChildPageId, {
                 onComplete: () => {
                     // 没有引用 mip.js 的错误页
-                    if (!this.getPageById(this.currentChildPageId)) {
-                        removeIFrame(this.currentChildPageId);
-                    }
+                    // if (!this.getPageById(this.currentChildPageId)) {
+                    //     removeIFrame(this.currentChildPageId);
+                    // }
                     this.currentChildPageId = targetPageId;
                 }
             });
@@ -234,6 +248,10 @@ class Page {
 
         frameMoveIn(targetPageId, {
             onComplete: () => {
+                // 没有引用 mip.js 的错误页
+                // if (!this.getPageById(this.currentChildPageId)) {
+                //     removeIFrame(this.currentChildPageId);
+                // }
                 this.currentChildPageId = targetPageId;
             }
         });
@@ -290,7 +308,8 @@ class Page {
                 base: this.data.appshell.view.base,
                 onLoad: () => {
                     this.appshell.hideLoading();
-                }
+                },
+                onError: () => {}
             });
             this.applyTransition(targetPageId);
         }
