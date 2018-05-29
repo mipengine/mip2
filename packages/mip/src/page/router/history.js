@@ -4,7 +4,7 @@ import {
     replaceState,
     supportsPushState
 } from '../util/push-state';
-import {cleanPath} from '../util/path';
+import {cleanPath, getLocation} from '../util/path';
 
 export default class HTML5History {
     constructor(router, base) {
@@ -92,13 +92,4 @@ export default class HTML5History {
         this.current = route;
         this.cb && this.cb(prev, route);
     }
-}
-
-function getLocation(base) {
-    let path = window.location.pathname;
-    if (base && path.indexOf(base) === 0) {
-        path = path.slice(base.length);
-    }
-
-    return (path || '/') + window.location.search + window.location.hash;
 }

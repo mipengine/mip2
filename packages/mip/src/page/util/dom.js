@@ -3,9 +3,9 @@
  * @author wangyisheng@baidu.com (wangyisheng)
  */
 
-import {getPath} from './url';
 import css from '../../util/dom/css';
 import sandbox from '../../sandbox';
+import {cleanPath} from './path';
 import util from '../../util';
 
 import {
@@ -30,7 +30,7 @@ export function createIFrame(path, {base, onLoad, onError} = {}) {
         if (typeof onError === 'function') {
             container.onerror = onError;
         }
-        container.setAttribute('src', base + path);
+        container.setAttribute('src', cleanPath(base + path));
         container.setAttribute('class', MIP_IFRAME_CONTAINER);
         container.setAttribute('data-page-id', path);
         container.setAttribute('sandbox', 'allow-top-navigation allow-popups allow-scripts allow-forms allow-pointer-lock allow-popups-to-escape-sandbox allow-same-origin allow-modals')
