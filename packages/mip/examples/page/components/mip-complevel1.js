@@ -3,9 +3,9 @@
  * @author sfe
  */
 
-/* global mip */
+/* global MIP */
 
-mip.registerVueCustomElement('mip-complevel1', {
+MIP.registerVueCustomElement('mip-complevel1', {
     template: `
         <div class="mip-complevel1">
             <mip-complevel2 :userinfo="userinfo"></mip-complevel2>

@@ -229,6 +229,15 @@ class Page {
         // if (!this.allowTransition) {
         //     return;
         // }
+
+        // Disable scrolling of first page when iframe is covered
+        if (targetPageId === this.pageId) {
+            document.body.classList.remove('no-scroll');
+        }
+        else {
+            document.body.classList.add('no-scroll');
+        }
+
         if (this.currentChildPageId) {
             frameMoveOut(this.currentChildPageId, {
                 onComplete: () => {
@@ -289,14 +298,9 @@ class Page {
         let targetPage = this.getPageById(targetPageId);
 
         if (!targetPage) {
-            this.appshell.showLoading();
-            // create an iframe and hide loading when finished
+            // create an iframe
             let targetFrame = createIFrame(targetPageId, {
-                base: this.data.appshell.view.base,
-                onLoad: () => {
-                    this.appshell.hideLoading();
-                },
-                onError: () => {}
+                base: this.data.appshell.view.base
             });
             this.applyTransition(targetPageId);
         }
