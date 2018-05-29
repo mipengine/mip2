@@ -19,6 +19,7 @@ export const DEFAULT_SHELL_CONFIG = {
         show: false
     },
     view: {
+        base: '',
         isIndex: false,
         transition: {
             mode: 'slide',

@@ -6,6 +6,7 @@
 import {getPath} from './url';
 import css from '../../util/dom/css';
 import sandbox from '../../sandbox';
+import util from '../../util';
 
 import {
     MIP_CONTAINER_ID,
@@ -18,7 +19,7 @@ import {
 let {window: sandWin, document: sandDoc} = sandbox;
 let activeZIndex = 10000;
 
-export function createIFrame(path, {onLoad, onError} = {}) {
+export function createIFrame(path, {base, onLoad, onError} = {}) {
     let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${path}"]`);
 
     if (!container) {
@@ -29,7 +30,7 @@ export function createIFrame(path, {onLoad, onError} = {}) {
         if (typeof onError === 'function') {
             container.onerror = onError;
         }
-        container.setAttribute('src', path);
+        container.setAttribute('src', base + path);
         container.setAttribute('class', MIP_IFRAME_CONTAINER);
         container.setAttribute('data-page-id', path);
         container.setAttribute('sandbox', 'allow-top-navigation allow-popups allow-scripts allow-forms allow-pointer-lock allow-popups-to-escape-sandbox allow-same-origin allow-modals')
@@ -58,7 +59,7 @@ export function getMIPShellConfig() {
         rawJSON = $shell.children[0].innerHTML;
     }
     try {
-        return JSON.parse(rawJSON);
+        return util.fn.extend(true, DEFAULT_SHELL_CONFIG, JSON.parse(rawJSON));
     }
     catch (e) {}
 

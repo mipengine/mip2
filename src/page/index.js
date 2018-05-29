@@ -34,6 +34,12 @@ class Page {
         this.children = [];
         this.currentChildPageId = null;
         this.messageHandlers = [];
+
+        /**
+         * transition will be executed only when `Back` button clicked,
+         * due to a bug when going back with gesture in mobile Safari.
+         */
+        this.allowTransition = false;
     }
 
     initRouter() {
@@ -41,6 +47,7 @@ class Page {
         // outside iframe
         if (this.isRootPage) {
             router = new Router({
+                base: this.data.appshell.view.base,
                 routes: [
                     {
                         path: this.pageId
@@ -81,8 +88,13 @@ class Page {
     initAppShell() {
         // read <mip-shell> and save in `data`
         this.data.appshell = util.getMIPShellConfig();
+
         if (!this.data.appshell.header.title) {
             this.data.appshell.header.title = document.querySelector('title').innerHTML;
+        }
+        if (!this.data.appshell.view.base) {
+            // TODO: try to resolve base in <base> tag
+            // this.data.appshell.view.base = 
         }
 
         /**
@@ -132,8 +144,8 @@ class Page {
         // Set global mark
         mip.MIP_ROOT_PAGE = window.MIP_ROOT_PAGE;
 
-        this.initRouter();
         this.initAppShell();
+        this.initRouter();
         util.addMIPCustomScript();
         document.body.setAttribute('mip-ready', '');
 
@@ -194,6 +206,9 @@ class Page {
      * @param {string} targetPageId targetPageId
      */
     applyTransition(targetPageId) {
+        // if (!this.allowTransition) {
+        //     return;
+        // }
         if (this.currentChildPageId) {
             util.frameMoveOut(this.currentChildPageId, {
                 onComplete: () => {
@@ -261,6 +276,7 @@ class Page {
             this.appshell.showLoading();
             // create an iframe and hide loading when finished
             let targetFrame = util.createIFrame(targetPageId, {
+                base: this.data.appshell.view.base,
                 onLoad: () => {
                     this.appshell.hideLoading();
                     this.applyTransition(targetPageId);
