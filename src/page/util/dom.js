@@ -135,6 +135,7 @@ export function whenTransitionEnds(el, type, cb) {
 
 export function frameMoveIn(pageId, {onComplete} = {}) {
     let iframe = getIFrame(pageId);
+    let $loading = getLoading();
 
     if (iframe) {
         let width = window.innerWidth;
@@ -196,6 +197,10 @@ export function getIFrame(iframe) {
     }
 
     return iframe;
+}
+
+function getLoading() {
+    return document.querySelector('#mip-shell-loading');
 }
 
 export const inBrowser = typeof window !== 'undefined';

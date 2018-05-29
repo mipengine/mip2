@@ -20,6 +20,7 @@ export default class Loading {
 
     init() {
         this.$el = document.createElement('div');
+        this.$el.id = 'mip-appshell-loading';
         this.$el.classList.add('mip-appshell-loading');
         this.$el.innerHTML = this.render(this.data);
         this.$wrapper.appendChild(this.$el);
@@ -51,10 +52,23 @@ export default class Loading {
     }
 
     show() {
-        this.$el.classList.add('show');
+        this.addClass('show');
     }
 
     hide() {
-        this.$el.classList.remove('show');
+        this.removeClass();
+    }
+
+    addClass(className) {
+        this.$el.classList.add(className);
+    }
+
+    removeClass(className) {
+        if (className) {
+            this.$el.classList.remove(className);
+        }
+        else {
+            this.$el.classList = [];
+        }
     }
 }

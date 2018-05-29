@@ -275,9 +275,9 @@ class Page {
             let targetFrame = createIFrame(targetPageId, {
                 onLoad: () => {
                     this.appshell.hideLoading();
-                    this.applyTransition(targetPageId);
                 }
             });
+            this.applyTransition(targetPageId);
         }
         else {
             this.refreshAppShell(targetPage.data.appshell, targetPageId);
