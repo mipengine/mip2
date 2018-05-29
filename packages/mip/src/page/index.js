@@ -23,7 +23,7 @@ import '../styles/mip.less';
 
 import {
     MESSAGE_APPSHELL_REFRESH, MESSAGE_APPSHELL_EVENT,
-    MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE, MESSAGE_ROUTER_FORCE
+    MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE
 } from './const';
 
 class Page {
@@ -59,8 +59,6 @@ class Page {
         // generate pageId
         this.pageId = getLocation(base, false);
 
-        console.log('pageId:', this.pageId);
-
         // outside iframe
         if (this.isRootPage) {
             router = new Router({
@@ -83,9 +81,6 @@ class Page {
                 }
                 else if (type === MESSAGE_ROUTER_REPLACE) {
                     router.replace(data.location);
-                }
-                else if (type === MESSAGE_ROUTER_FORCE) {
-                    window.location.href = data.location;
                 }
             });
         }
@@ -237,10 +232,6 @@ class Page {
         if (this.currentChildPageId) {
             frameMoveOut(this.currentChildPageId, {
                 onComplete: () => {
-                    // 没有引用 mip.js 的错误页
-                    // if (!this.getPageById(this.currentChildPageId)) {
-                    //     removeIFrame(this.currentChildPageId);
-                    // }
                     this.currentChildPageId = targetPageId;
                 }
             });
@@ -248,10 +239,6 @@ class Page {
 
         frameMoveIn(targetPageId, {
             onComplete: () => {
-                // 没有引用 mip.js 的错误页
-                // if (!this.getPageById(this.currentChildPageId)) {
-                //     removeIFrame(this.currentChildPageId);
-                // }
                 this.currentChildPageId = targetPageId;
             }
         });

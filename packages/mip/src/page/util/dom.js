@@ -30,6 +30,7 @@ export function createIFrame(path, {base, onLoad, onError} = {}) {
         if (typeof onError === 'function') {
             container.onerror = onError;
         }
+        // TODO: use XHR to load iframe so that we can get httpRequest.status 404
         container.setAttribute('src', cleanPath(base + path));
         container.setAttribute('class', MIP_IFRAME_CONTAINER);
         container.setAttribute('data-page-id', path);

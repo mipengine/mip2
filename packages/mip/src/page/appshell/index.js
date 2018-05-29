@@ -74,7 +74,6 @@ export default class AppShell {
     }
 
     handleClickHeaderButton(buttonName) {
-        // TODO: should emit relative CustomEvent so that other CustomElement can receive
         if (buttonName === 'back') {
             window.MIP_ROUTER.go(-1);
         }
