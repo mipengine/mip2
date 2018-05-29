@@ -10,3 +10,4 @@ export * from './link';
 export * from './url';
 export * from './route';
 export * from './push-state';
+export * from './path';

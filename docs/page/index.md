@@ -56,6 +56,8 @@
         <a href="https://www.another-site.com/">
         ```
 
+    3. 默认情况下点击链接后会向 History 中 `push` 一条记录。如果想覆盖当前记录，可以在 `<a>` 元素上增加 `replace` 属性。
+
 4. 页面内元素的样式中 `z-index` 不能超过 10000，否则会引起页面切换时的样式遮盖问题。
 
 ### MIP Shell
@@ -272,18 +274,18 @@
 
 #### 默认配置
 
-如果开发者没有在页面中编写 `<mip-shell>`，那么一套默认配置会被应用。默认配置如下：
+如果开发者没有在页面中编写 `<mip-shell>`，那么一套默认配置会被应用。默认配置如下，效果是隐藏掉头部：
 
 ```json
 {
-    header: {
-        show: false,
-        title: '',
-        logo: '',
-        buttonGroup: []
+    "header": {
+        "show": false,
+        "title": "",
+        "logo": "",
+        "buttonGroup": []
     },
-    view: {
-        isIndex: false
+    "view": {
+        "isIndex": false
     }
 };
 ```

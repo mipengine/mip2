@@ -17,6 +17,7 @@ import {
 class Page {
     constructor() {
         this.pageId = util.getPath(window.location.href);
+
         if (window.parent && window.parent.MIP_ROOT_PAGE) {
             this.isRootPage = false;
         }
@@ -42,7 +43,7 @@ class Page {
             router = new Router({
                 routes: [
                     {
-                        path: window.location.pathname
+                        path: this.pageId
                     }
                 ]
             });
@@ -68,7 +69,7 @@ class Page {
         else {
             router = window.parent.MIP_ROUTER;
             router.addRoute({
-                path: window.location.pathname
+                path: this.pageId
             });
             router.rootPage.addChild(this);
         }
@@ -144,8 +145,6 @@ class Page {
                 });
             }
         }, false);
-
-        window.addEventListener('appheader:click-search', () => {console.log('receive...')})
     }
 
     /**** Root Page methods ****/
@@ -242,10 +241,20 @@ class Page {
     /**
      * render with current route
      *
-     * @param {Route} route route
+     * @param {Route} from route
+     * @param {Route} to route
      */
-    render(route) {
-        let targetPageId = route.fullPath;
+    render(from, to) {
+        /**
+         * if `to` route is different with `from` route only in hash,
+         * do nothing and let browser jump to that anchor
+         */
+        if (util.isOnlyDifferentInHash(from, to)) {
+            return;
+        }
+
+        // otherwise, render target page
+        let targetPageId = util.getFullPath({path: to.path, query: to.query});
         let targetPage = this.getPageById(targetPageId);
 
         if (!targetPage) {
@@ -263,7 +272,6 @@ class Page {
             this.applyTransition(targetPageId);
             MIP.$recompile();
         }
-
     }
 }
 

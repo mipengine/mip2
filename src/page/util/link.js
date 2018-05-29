@@ -53,10 +53,12 @@ export function installMipLink(router, {isRootPage, notifyRootPage}) {
             }
         }
         else {
-            notifyRootPage({
-                type: MESSAGE_ROUTER_FORCE,
-                data: {location: to}
-            })
+            if (!isRootPage) {
+                notifyRootPage({
+                    type: MESSAGE_ROUTER_FORCE,
+                    data: {location: to}
+                });
+            }
         }
     });
 }
