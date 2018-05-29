@@ -115,7 +115,7 @@ function domLoaded() {
 }
 
 /**
- * First-element loaded.
+ * First screen element loaded.
  *
  * @param {HTMLElement} element htmlElement
  */
@@ -135,7 +135,9 @@ function start(startTiming) {
     }
     isStart = true;
     recordTiming('MIPStart', startTiming);
-    viewer.on('show', showTiming => recordTiming('MIPPageShow', showTiming));
+    viewer.on('show', showTiming => {
+        recordTiming('MIPPageShow', showTiming);
+    });
 
     if (document.readyState === 'complete') {
         domLoaded();
@@ -146,10 +148,10 @@ function start(startTiming) {
 }
 
 export default {
-    start: start,
-    addFsElement: addFsElement,
-    fsElementLoaded: fsElementLoaded,
-    getTiming: getTiming,
+    start,
+    addFsElement,
+    fsElementLoaded,
+    getTiming,
     on() {
         performanceEvent.on.apply(performanceEvent, arguments);
     }

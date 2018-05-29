@@ -202,14 +202,18 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(255,255,255,0.8);
-    z-index: 9997;
+    background: #fff;
+    z-index: 20000;
     display: none;
     justify-content: center;
     align-items: center;
 
     &.show {
         display: flex;
+    }
+
+    &.header-loaded {
+        top: 44px
     }
 }
 

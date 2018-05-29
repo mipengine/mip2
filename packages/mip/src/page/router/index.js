@@ -3,11 +3,11 @@ import {createMatcher, normalizeLocation} from './matcher';
 import {cleanPath} from '../util/path';
 
 export default class Router {
-    constructor(options) {
+    constructor(options = {}) {
         this.options = options;
         this.matcher = createMatcher(options.routes || [], this);
         this.mode = 'history';
-        this.history = new HTML5History(this, '');
+        this.history = new HTML5History(this, options.base || '');
     }
 
     init() {

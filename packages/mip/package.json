@@ -10,8 +10,7 @@
     "dev:rollup": "rollup -w -c build/rollup.config.js --environment TARGET:web-full-dev",
     "build:rollup": "rollup -c build/rollup.config.js --environment TARGET:web-full-prod",
     "build:router:rollup": "rollup -c build/rollup.config.js --environment TARGET:router",
-    "build:store:rollup": "rollup -c build/rollup.config.js --environment TARGET:store",
-    "release": "baidubce bos --put-object dist/mip.js bos://assets/mip/projects/mip.js"
+    "build:store:rollup": "rollup -c build/rollup.config.js --environment TARGET:store"
   },
   "repository": {
     "type": "git",

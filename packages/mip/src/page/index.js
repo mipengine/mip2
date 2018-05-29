@@ -46,6 +46,12 @@ class Page {
         this.children = [];
         this.currentChildPageId = null;
         this.messageHandlers = [];
+
+        /**
+         * transition will be executed only when `Back` button clicked,
+         * due to a bug when going back with gesture in mobile Safari.
+         */
+        this.allowTransition = false;
     }
 
     initRouter() {
@@ -53,6 +59,7 @@ class Page {
         // outside iframe
         if (this.isRootPage) {
             router = new Router({
+                base: this.data.appshell.view.base,
                 routes: [
                     {
                         path: this.pageId
@@ -95,6 +102,10 @@ class Page {
         this.data.appshell = getMIPShellConfig();
         if (!this.data.appshell.header.title) {
             this.data.appshell.header.title = document.querySelector('title').innerHTML;
+        }
+        if (!this.data.appshell.view.base) {
+            // TODO: try to resolve base in <base> tag
+            // this.data.appshell.view.base = 
         }
 
         /**
@@ -144,8 +155,8 @@ class Page {
         // Set global mark
         window.MIP.MIP_ROOT_PAGE = window.MIP_ROOT_PAGE;
 
-        this.initRouter();
         this.initAppShell();
+        this.initRouter();
         addMIPCustomScript();
         document.body.setAttribute('mip-ready', '');
 
@@ -206,6 +217,9 @@ class Page {
      * @param {string} targetPageId targetPageId
      */
     applyTransition(targetPageId) {
+        // if (!this.allowTransition) {
+        //     return;
+        // }
         if (this.currentChildPageId) {
             frameMoveOut(this.currentChildPageId, {
                 onComplete: () => {
@@ -273,11 +287,12 @@ class Page {
             this.appshell.showLoading();
             // create an iframe and hide loading when finished
             let targetFrame = createIFrame(targetPageId, {
+                base: this.data.appshell.view.base,
                 onLoad: () => {
                     this.appshell.hideLoading();
-                    this.applyTransition(targetPageId);
                 }
             });
+            this.applyTransition(targetPageId);
         }
         else {
             this.refreshAppShell(targetPage.data.appshell, targetPageId);
