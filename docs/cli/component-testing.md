@@ -13,14 +13,14 @@ $ mip2 dev
 该命令会自动将当前目录下的 `components/` 下的 mip 组件进行编译并且进行改动监听，同时启动 node 服务器，默认端口为 `8111`，这样就可以通过以下方式去使用编译好的组件啦：
 
 ```html
-<script src="http://127.0.0.1:8111/组件名.js"></script>
+<script src="http://127.0.0.1:8111/组件名/组件名.js"></script>
 ```
 
 您可以在自己的项目里通过引入 script 标签的方式去查看组件的实际使用效果。
 
 同时，mip-cli 的 `dev` 命令也提供了一个静态服务器，允许开发者在 `test/` 目录和 `components/组件名/test/` 目录下写 `.html` 文件去进行组件调试。
 
-比如文件路径为 `test/mip-example.html` 的页面，可以通过 `http://127.0.0.1:8111/test/mip-example.html` 进行访问，而 `components/mip-example/test/test-property.html` 则通过 `http://127.0.0.1:8111/components/mip-example/test/test-property.html` 进行访问。
+比如文件路径为 `test/mip-example.html` 的页面，可以通过 `http://127.0.0.1:8111/example/mip-example.html` 进行访问，而 `components/mip-example/example/test-property.html` 则通过 `http://127.0.0.1:8111/components/mip-example/example/test-property.html` 进行访问。
 
 在这种调试模式下，mip-cli 会自动注入 `livereload` 的脚本，让页面在开发时能够自动刷新网页。
 
@@ -45,7 +45,7 @@ module.exports = {
     dev: {
         port: 8222, // 默认端口从 8111 变更为 8222
         livereload: true, // 启动自动刷新
-        auto: '/test/index.html' // 默认打开 http://127.0.0.1:8222/test/index.html
+        auto: '/example/index.html' // 默认打开 http://127.0.0.1:8222/test/index.html
     }
 }
 ```
@@ -61,13 +61,13 @@ module.exports = {
 假设通过 mip-cli init 出来的项目结构如下：
 
 ```
-test-proj
+test-proj/
 ... components/
 ....... mip-example/
-........... test/
+........... example/
 ............... index.html
 ........... mip-example.vue
-... test/
+... example/
 ....... index.html
 ... mip.config.js
 ```
@@ -80,7 +80,7 @@ module.exports = {
         port: 8222,
         dir: './components',
         livereload: true,
-        autoopen: '/test/index.html'
+        autoopen: '/example/index.html'
     }
 };
 ```
