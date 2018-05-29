@@ -1,9 +1,14 @@
-src/page
-src/vue
-src/vuex
-src/router
-deps
-build
-dist
-examples
+# mip
+packages/mip/src/page
+packages/mip/src/vue
+packages/mip/src/vuex
+packages/mip/src/router
+packages/mip/deps
+packages/mip/build
+packages/mip/dist
+packages/mip/examples
+
+# mip-cli
+packages/mip-cli/test
+
 node_modules
