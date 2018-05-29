@@ -1,0 +1,25 @@
+#!/usr/bin/env node
+
+const cli = require('../lib/cli');
+const validate = require('../lib/validate');
+
+const args = cli.setup({
+    usage: '<component-name>',
+    options: [
+        ['-c, --component', '校验 mip 组件'],
+        ['-p, --page', '校验 mip 页面']
+    ],
+    help: [
+        '',
+        '  Examples:',
+        cli.chalk.gray('    # 校验 mip 组件，输入组件目录'),
+        '    $ mip2 validate -c ./mip-demo',
+        cli.chalk.gray('    # 校验 mip 页面，输入页面路径'),
+        '    $ mip2 validate -p page.html'
+    ].join('\n')
+});
+
+validate({
+    filePath: args[0],
+    options: cli.program
+});

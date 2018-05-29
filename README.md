@@ -1,24 +1,3 @@
-MIP
+# MIP 2
 
-## 开发
-
-- Node.js v6+
-- Clone 代码之后运行
-
-```sh
-$ cnpm install # npm install
-```
-
-## 常用命令
-
-```sh
-# watch and auto re-build dist/mip.js
-$ npm run dev
-```
-监控代码改动并编译代码到 `dist/mip.js`，可通过 `open examples/simple/index.html` 预览效果
-
-```sh
-# build all dist files, including npm packages
-$ npm run build
-```
-编译代码到 dist 目录
+这个项目包含 mip 核心代码和 mip-cli 的代码，位于 packages 目录下
