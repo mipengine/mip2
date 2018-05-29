@@ -14,6 +14,8 @@ const WebpackConfig = require('../build/webpack.config.dev');
 const app = express();
 const path = require('path');
 
+process.env.NODE_ENV = 'development';
+
 app.use(webpackDevMiddleware(webpack(WebpackConfig), {
     publicPath: '/dist/',
     stats: {

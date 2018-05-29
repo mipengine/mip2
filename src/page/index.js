@@ -270,6 +270,7 @@ class Page {
         else {
             this.refreshAppShell(targetPage.data.appshell, targetPageId);
             this.applyTransition(targetPageId);
+            MIP.$recompile();
         }
     }
 }

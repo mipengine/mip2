@@ -7,14 +7,7 @@ import cssLoader from '../util/dom/css-loader';
 import layout from '../layout';
 import performance from '../performance';
 import resources from '../resources';
-
-/**
- * Storage of custom elements.
- * @inner
- * @type {Object}
- */
-let customElements = {};
-
+import customElementsStore from '../custom-element-store';
 
 /**
  * Save the base element prototype to avoid duplicate initialization.
@@ -40,11 +33,10 @@ function createBaseElementProto() {
      * Created callback of MIPElement. It will initialize the element.
      */
     proto.createdCallback = function () {
-        let CustomEle = customElements[this.name];
+        // get mip1 clazz from custom elements store
+        let CustomElement = customElementsStore.get(this.tagName.toLowerCase(), 'mip1');
+
         this.classList.add('mip-element');
-if (/mip-data/i.test(this.name)) {
-    console.log('createdCallback')
-}
 
         /**
          * Viewport state
@@ -72,7 +64,7 @@ if (/mip-data/i.test(this.name)) {
          * @type {Object}
          * @public
          */
-        let customElement = this.customElement = new CustomEle(this);
+        let customElement = this.customElement = new CustomElement(this);
 
         customElement.createdCallback();
 
@@ -222,11 +214,13 @@ function loadCss(css, name) {
  * @param {string} css The csstext of the MIPElement.
  */
 function registerElement(name, elementClass, css) {
-    if (customElements[name]) {
+    if (customElementsStore.get(name)) {
         return;
     }
 
-    customElements[name] = elementClass;
+    // store the name-clazz pair
+    customElementsStore.set(name, elementClass, 'mip1');
+
     loadCss(css, name);
     document.registerElement(name, {
         prototype: createMipElementProto(name)
