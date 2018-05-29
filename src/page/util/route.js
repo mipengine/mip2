@@ -73,6 +73,21 @@ export function isSameRoute (a, b) {
     return false;
 }
 
+export function isOnlyDifferentInHash (a, b) {
+    if (b === START) {
+        return a === b;
+    }
+    else if (!b) {
+        return false;
+    }
+    else if (a.path && b.path) {
+        return a.path.replace(trailingSlashRE, '') === b.path.replace(trailingSlashRE, '')
+            && a.hash !== b.hash
+            && isObjectEqual(a.query, b.query);
+    }
+    return false;
+}
+
 function isObjectEqual (a = {}, b = {}) {
     // handle null value #1566
     if (!a || !b) {

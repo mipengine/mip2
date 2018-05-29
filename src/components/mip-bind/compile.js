@@ -17,9 +17,10 @@ class Compile {
 
     start(data) {
         this.data = data;
-        this._fragment = this._cloneNode();
-        this._compileElement(this._fragment);
-        this._el.appendChild(this._fragment);
+        this._compileElement(this._el);
+        // this._fragment = this._cloneNode();
+        // this._compileElement(this._fragment);
+        // this._el.appendChild(this._fragment);
     }
 
     _cloneNode() {

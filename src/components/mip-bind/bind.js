@@ -32,7 +32,7 @@ class Bind {
             me._bindTarget(true, action, from);
             me._eventEmit();
         };
-        MIP.$recomplie = function () {
+        MIP.$recompile = function () {
             me._observer.start(me._win.m);
             me._compile.start(me._win.m);
         };
@@ -149,7 +149,7 @@ class Bind {
         if (win.g && win.g.hasOwnProperty(key)) {
             this._assign(win.g, {[key]: val});
         }
-        else if (!win.mip.MIP_ROOT_PAGE && win.parent.g && win.parent.g.hasOwnProperty(key)) {
+        else if (!win.MIP.MIP_ROOT_PAGE && win.parent.g && win.parent.g.hasOwnProperty(key)) {
             this._assign(win.parent.g, {[key]: val});
         }
         else {
@@ -159,7 +159,7 @@ class Bind {
 
     _setGlobalState(data) {
         let win = this._win;
-        if (win.mip.MIP_ROOT_PAGE) {
+        if (win.MIP.MIP_ROOT_PAGE) {
             win.g = win.g || {};
             Object.assign(win.g, data);
         }
@@ -172,7 +172,7 @@ class Bind {
     _setPageState(data) {
         let win = this._win;
         Object.assign(win.m, data);
-        win.m.__proto__ = win.mip.MIP_ROOT_PAGE ? win.g : win.parent.g; // eslint-disable-line no-proto
+        win.m.__proto__ = win.MIP.MIP_ROOT_PAGE ? win.g : win.parent.g; // eslint-disable-line no-proto
     }
 
     _normalize(data) {

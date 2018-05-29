@@ -9,7 +9,7 @@ import {camelize} from './utils/helpers';
 import CustomElement from '../custom-element';
 import registerElement from '../register-element';
 
-function install(Vue, router) {
+function install(Vue) {
 
     Vue.config.ignoredElements = [/^mip-/i];
 
@@ -40,8 +40,7 @@ function install(Vue, router) {
             _build() {
                 let vueInstance = this.vueInstance = createVueInstance(
                     this.element, {
-                        Vue,
-                        router
+                        Vue
                     },
                     componentDefinition,
                     props

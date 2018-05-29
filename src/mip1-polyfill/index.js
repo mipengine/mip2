@@ -69,9 +69,8 @@ export default function install(mip) {
             else {
                 registerElement(name, customClass, css);
             }
-        },
+        }
 
-        prerenderElement: Resources.prerenderElement
     });
 }
 

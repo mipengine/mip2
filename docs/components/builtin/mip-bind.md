@@ -346,3 +346,10 @@ on="事件:MIP.setData({}) 事件:MIP.setData({}) 事件:MIP.setData({})"
 提供 `MIP.watch(value, cb)` 方法。其中 `value` 为数据源中的属性名，多层数据可以以 `.` 连接，允许是单个字符串或字符串数组。`cb` 接收两个参数，分别是 `newVal`，`oldVal`。
 
 当指定的 `value` 数据源发生变化，会自动执行相应的 `cb`。
+
+`watch` 的时机为需要等待 `mip-data` 加载的数据完成。我们计划开放书写自定义 js 的方法来让开发者自由调用 `watch` 观察数据而无需关心 `watch` 的调用时机。[TODO]
+如果页面中没有使用 `<mip-data></mip-data>` 来设置初始数据，而却需要在自定义 js 里 watch 数据，开发者仍然需要在 html 中加入以下：
+
+```html
+<mip-data><script type="application/json">{}</script></mip-data>
+```
