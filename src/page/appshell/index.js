@@ -1,7 +1,7 @@
 import Header from './header.js';
 import Loading from './loading.js';
 import {DEFAULT_SHELL_CONFIG} from '../const';
-import {getIFrame} from '../util';
+import {getIFrame} from '../util/dom';
 
 export default class AppShell {
     constructor(options, page) {

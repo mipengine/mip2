@@ -58,7 +58,7 @@ export function getMIPShellConfig() {
         rawJSON = $shell.children[0].innerHTML;
     }
     try {
-        return JSON.parse(rawJSON);
+        return Object.assign({}, DEFAULT_SHELL_CONFIG, JSON.parse(rawJSON));
     }
     catch (e) {}
 
