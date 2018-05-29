@@ -42,9 +42,10 @@ function createBaseElementProto() {
     proto.createdCallback = function () {
         let CustomEle = customElements[this.name];
         this.classList.add('mip-element');
-if (/mip-data/i.test(this.name)) {
-    console.log('createdCallback')
-}
+
+        if (/mip-data/i.test(this.name)) {
+            console.log('createdCallback');
+        }
 
         /**
          * Viewport state

@@ -66,11 +66,9 @@ class BaseElement extends HTMLElement {
     }
 
     disconnectedCallback() {
-
         this.customElement.disconnectedCallback();
-
         this._resources.remove(this);
-        performance.fsElementLoaded(this);
+        // performance.fsElementLoaded(this);
     }
 
     attributeChangedCallback() {
