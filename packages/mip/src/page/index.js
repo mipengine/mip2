@@ -105,7 +105,7 @@ class Page {
         }
         if (!this.data.appshell.view.base) {
             // TODO: try to resolve base in <base> tag
-            // this.data.appshell.view.base = 
+            // this.data.appshell.view.base =
         }
 
         /**
@@ -284,12 +284,12 @@ class Page {
         let targetPage = this.getPageById(targetPageId);
 
         if (!targetPage) {
-            this.appshell.showLoading();
+            // this.appshell.showLoading();
             // create an iframe and hide loading when finished
             let targetFrame = createIFrame(targetPageId, {
                 base: this.data.appshell.view.base,
                 onLoad: () => {
-                    this.appshell.hideLoading();
+                    // this.appshell.hideLoading();
                 }
             });
             this.applyTransition(targetPageId);
