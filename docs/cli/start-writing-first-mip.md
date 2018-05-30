@@ -85,7 +85,7 @@ $ mip2 dev
 ── mip-hello-world
     ├── mip-hello-world.md
     ├── mip-hello-world.vue
-    └── test
+    └── example
         └── mip-hello-world.html
 ```
 
