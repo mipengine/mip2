@@ -12,6 +12,7 @@ import util from './util';
 
 /**
  * The fixed element processor.
+ * https://bugs.webkit.org/show_bug.cgi?id=154399
  *
  * @class
  */
@@ -269,7 +270,9 @@ class FixedElement {
                         let elements = document.querySelectorAll(fixedSelector);
                         for (let j = 0; j < elements.length; j++) {
                             // remove ?
-                            elements[j].parentElement.removeChild(elements[j]);
+                            if (process.env.NODE_ENV === 'production') {
+                                elements[j].parentElement.removeChild(elements[j]);
+                            }
                         }
                     }
                     catch (e) {

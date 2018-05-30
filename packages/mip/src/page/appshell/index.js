@@ -65,8 +65,9 @@ export default class AppShell {
     }
 
     handleClickHeaderButton(buttonName) {
-        // TODO: should emit relative CustomEvent so that other CustomElement can receive
         if (buttonName === 'back') {
+            // **Important** only allow transition happens when Back btn clicked
+            this.page.allowTransition = true;
             window.MIP_ROUTER.go(-1);
         }
         else if (buttonName === 'dropdown') {

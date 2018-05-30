@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-cn" mip>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>iOS iframe 宽度问题</title>
+
+    <!-- https://stackoverflow.com/questions/23083462/how-to-get-an-iframe-to-be-responsive-in-ios-safari?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa -->
+    <style>
+        iframe {
+            display: block;
+            width: 100px;
+            min-width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <iframe width="100%" scrolling="no" src="./index.html"></iframe>
+    <iframe width="100%" scrolling="no" src="./doc/00-mip-101.html"></iframe>
+</body>
+</html>

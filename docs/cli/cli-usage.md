@@ -40,16 +40,16 @@ myproject
     │   └── mip-example
     │       ├── mip-example.md          // 组件功能、属性说明
     │       ├── mip-example.vue         // 组件本身
-    │       └── test
+    │       └── example
     │           └── mip-example.html    // 单个组件测试、预览
     ├── mip.config.js                   // 调试服务器配置
     ├── package.json
     ├── static                          // 静态资源，如图片、字体
-    └── test
+    └── example
         └── index.html                  // 页面测试预览
 ```
 
-我们可以在项目的 `components` 目录中开发站点所需的自定义组件，然后依据 `test/index.html` 页面模板，引用官方或自定义组件来实现 MIP 页面。
+我们可以在项目的 `components` 目录中开发站点所需的自定义组件，然后依据 `example/index.html` 页面模板，引用官方或自定义组件来实现 MIP 页面。
 
 通常情况下，官方提供的[通用组件库](https://github.com/mipengine/mip2-extensions)已经能满足站点的基本需求。如果站点有使用复杂组件的场景，我们可以[编写自定义组件](./start-writing-first-mip.md)，并通过第三方组件仓库（TODO）进行提交，通过审核上线后，即能使用。
 
@@ -63,7 +63,7 @@ myproject
 $ mip2 dev
 ```
 
-默认会在 `8111` 端口启动服务器，并自动调起浏览器打开 `test/index.html` ，实现预览和调试。在修改组件和页面的代码时，无需手动重启和刷新，服务器内部已经帮我们实现了这一功能。
+默认会在 `8111` 端口启动服务器，并自动调起浏览器打开 `example/index.html` ，实现预览和调试。在修改组件和页面的代码时，无需手动重启和刷新，服务器内部已经帮我们实现了这一功能。
 
 了解详细用法：[调试组件](./component-testing.md)
 

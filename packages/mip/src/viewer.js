@@ -13,6 +13,7 @@ import viewport from './viewport';
 import EventAction from './util/event-action';
 import EventEmitter from './util/event-emitter';
 import fn from './util/fn';
+import Page from './page';
 
 /**
  * Save window.
@@ -63,6 +64,10 @@ let viewer = {
                 title: encodeURIComponent(document.title)
             });
         }
+
+        this.page = new Page();
+
+        this.page.start();
     },
 
     /**
