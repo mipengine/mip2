@@ -3,126 +3,127 @@
  * @author sfe
  */
 
-'use strict';
+'use strict'
 
-import 'script-loader!deps/zepto';
-import 'script-loader!deps/fetch.js';
-import 'script-loader!fetch-jsonp';
-import 'script-loader!document-register-element/build/document-register-element';
+/* eslint-disable */
+import 'script-loader!deps/fetch.js'
+import 'script-loader!fetch-jsonp'
+import 'script-loader!document-register-element/build/document-register-element'
+/* eslint-disable */
 
-import Vue from 'vue';
-import vueCustomElement from './vue-custom-element/index';
-import util from './util';
-import sandbox from './sandbox';
-import layout from './layout';
-import viewer from './viewer';
-import viewport from './viewport';
-import Resources from './resources';
-import builtinComponents from './components';
-import registerElement from './register-element';
-import sleepWakeModule from './sleepWakeModule';
-import performance from './performance';
-import mip1PolyfillInstall from './mip1-polyfill';
+import Vue from 'vue'
+import vueCustomElement from './vue-custom-element/index'
+import util from './util'
+import sandbox from './sandbox'
+import layout from './layout'
+import viewer from './viewer'
+import viewport from './viewport'
+import Resources from './resources'
+import builtinComponents from './components'
+import registerElement from './register-element'
+import sleepWakeModule from './sleepWakeModule'
+import performance from './performance'
+import mip1PolyfillInstall from './mip1-polyfill'
 
-import './log/monitor';
-import './polyfills';
+import './log/monitor'
+import './polyfills'
 
 let mip = {
-    version: '2',
+  version: '2',
 
-    /**
-     * register vue as custom element v1
-     *
-     * @param {string} tag custom elment name, mip-*
-     * @param {*} component vue component
-     */
-    registerVueCustomElement(tag, component) {
-        Vue.customElement(tag, component);
-    },
+  /**
+   * register vue as custom element v1
+   *
+   * @param {string} tag custom elment name, mip-*
+   * @param {*} component vue component
+   */
+  registerVueCustomElement (tag, component) {
+    Vue.customElement(tag, component)
+  },
 
-    /**
-     * register custom element v1
-     *
-     * @param {string} tag custom element name, mip-*
-     * @param {HTMLElement} component component clazz
-     */
-    registerCustomElement(tag, component) {
-        registerElement(tag, component);
-    },
-    util,
-    viewer,
-    viewport,
-    hash: util.hash,
-    sandbox,
-    css: {},
-    prerenderElement: Resources.prerenderElement
-};
-
-if (window.MIP) {
-    let exts = window.MIP;
-    mip.extensions = exts;
+  /**
+   * register custom element v1
+   *
+   * @param {string} tag custom element name, mip-*
+   * @param {HTMLElement} component component clazz
+   */
+  registerCustomElement (tag, component) {
+    registerElement(tag, component)
+  },
+  util,
+  viewer,
+  viewport,
+  hash: util.hash,
+  sandbox,
+  css: {},
+  prerenderElement: Resources.prerenderElement
 }
 
-window.MIP = mip;
+if (window.MIP) {
+  let exts = window.MIP
+  mip.extensions = exts
+}
+
+window.MIP = mip
 // 当前是否是独立站
-mip.standalone = typeof window.top.MIP !== 'undefined';
+mip.standalone = typeof window.top.MIP !== 'undefined'
 // init viewport
-mip.viewport.init();
+mip.viewport.init()
 
 // before document ready
 mip.push = function (extensions) {
-    if (!mip.extensions) {
-        mip.extensions = [];
-    }
+  if (!mip.extensions) {
+    mip.extensions = []
+  }
 
-    mip.extensions.push(extensions);
-};
+  mip.extensions.push(extensions)
+}
 
 // install mip1 polyfill
-mip1PolyfillInstall(mip);
+mip1PolyfillInstall(mip)
 // add custom element to Vue
-Vue.use(vueCustomElement);
+Vue.use(vueCustomElement)
 // register buildin components
-builtinComponents.register();
+builtinComponents.register()
 
 util.dom.waitDocumentReady(() => {
-    // Initialize sleepWakeModule
-    sleepWakeModule.init();
+  // Initialize sleepWakeModule
+  sleepWakeModule.init()
 
-    // Initialize viewer
-    viewer.init();
+  // Initialize viewer
+  viewer.init()
 
-    // Find the default-hidden elements.
-    let hiddenElements = Array.prototype.slice.call(document.getElementsByClassName('mip-hidden'));
+  // Find the default-hidden elements.
+  let hiddenElements = Array.prototype.slice.call(document.getElementsByClassName('mip-hidden'))
 
-    // Regular for checking mip elements.
-    let mipTagReg = /mip-/i;
+  // Regular for checking mip elements.
+  let mipTagReg = /mip-/i
 
-    // Apply layout for default-hidden elements.
-    hiddenElements.forEach(element => element.tagName.search(mipTagReg) > -1 && layout.applyLayout(element));
+  // Apply layout for default-hidden elements.
+  hiddenElements.forEach(element => element.tagName.search(mipTagReg) > -1 && layout.applyLayout(element))
 
-    // Register builtin extensions
-    // components.register();
+  // Register builtin extensions
+  // components.register();
 
-    performance.start(Date.now());
+  performance.start(Date.now())
 
-    // send performance data until the data collection is completed
-    performance.on('update', timing => {
-        if (timing.MIPDomContentLoaded
-            && timing.MIPStart
-            && timing.MIPPageShow
-            && timing.MIPFirstScreen
-        ) {
-            viewer.sendMessage('performance_update', timing);
-        }
-    });
+  // send performance data until the data collection is completed
+  performance.on('update', timing => {
+    if (timing.MIPDomContentLoaded
+      && timing.MIPStart
+      && timing.MIPPageShow
+      && timing.MIPFirstScreen
+    ) {
+      viewer.sendMessage('performance_update', timing)
+    }
+  })
 
-    // Show page
-    viewer.show();
+  // Show page
+  viewer.show()
 
-    // clear cookie
-    let storage = util.customStorage(2);
-    storage.delExceedCookie();
-});
+  // clear cookie
+  let storage = util.customStorage(2)
+  storage.delExceedCookie()
+})
 
-export default mip;
+export default mip
