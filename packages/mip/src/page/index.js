@@ -4,7 +4,6 @@
  */
 
 import {getLocation} from './util/path';
-import {installMipLink} from './util/link';
 import {isOnlyDifferentInHash, getFullPath} from './util/route';
 import {
     getMIPShellConfig,
@@ -94,8 +93,7 @@ class Page {
             router.rootPage.addChild(this);
         }
 
-        // proxy <a mip-link>
-        installMipLink(router, this);
+        this.router = router;
     }
 
     initAppShell() {
@@ -133,6 +131,10 @@ class Page {
         }
     }
 
+    /**
+     * read <mip-shell> if provided
+     *
+     */
     readMIPShellConfig() {
         // read <mip-shell> and save in `data`
         let config = getMIPShellConfig();
