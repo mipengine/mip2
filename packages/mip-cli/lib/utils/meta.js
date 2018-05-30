@@ -19,9 +19,6 @@ module.exports = dir => {
         opts = req;
     }
 
-    // 使用输入的项目名称 替换默认值
-    // setDefault(opts, 'name', name);
-
     const author = getGitUser();
     if (author) {
         setDefault(opts, 'author', author);
