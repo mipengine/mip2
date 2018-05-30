@@ -226,10 +226,6 @@ class Page {
      * @param {string} targetPageId targetPageId
      */
     applyTransition(targetPageId) {
-        // if (!this.allowTransition) {
-        //     return;
-        // }
-
         // Disable scrolling of first page when iframe is covered
         if (targetPageId === this.pageId) {
             document.body.classList.remove('no-scroll');
@@ -240,15 +236,19 @@ class Page {
 
         if (this.currentChildPageId) {
             frameMoveOut(this.currentChildPageId, {
+                transition: this.allowTransition,
                 onComplete: () => {
-                    this.currentChildPageId = targetPageId;
+                    this.allowTransition = false;
+                    
                 }
             });
         }
 
         frameMoveIn(targetPageId, {
+            transition: this.allowTransition,
             onComplete: () => {
-                this.currentChildPageId = targetPageId;
+                this.allowTransition = false;
+                // this.currentChildPageId = targetPageId;
             }
         });
     }
@@ -309,7 +309,9 @@ class Page {
             this.applyTransition(targetPageId);
             MIP.$recompile();
         }
+
+        this.currentChildPageId = targetPageId;
     }
 }
 
-export default new Page();
+export default Page;
