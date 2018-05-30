@@ -159,13 +159,21 @@ function findIndexes(content, match) {
 }
 
 function resolveModule(moduleName, rest) {
-    let dir = path.resolve(__dirname, '../../node_modules', moduleName);
+    let possiblePaths = [
+        path.resolve(__dirname, '../../../../node_modules'),
+        path.resolve(__dirname, '../../node_modules')
+    ]
+    .map(p => path.resolve(p, moduleName));
 
     if (rest) {
-        return path.resolve(dir, rest);
+        possiblePaths = possiblePaths.map(p => path.resolve(p, rest));
     }
 
-    return dir;
+    for (let i = 0; i < possiblePaths.length; i++) {
+        if (fs.existsSync(possiblePaths[i])) {
+            return possiblePaths[i];
+        }
+    }
 }
 
 module.exports = {
