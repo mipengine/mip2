@@ -1,6 +1,6 @@
 {
   "name": "mip2",
-  "version": "0.0.10",
+  "version": "0.0.16",
   "description": "CLI for mip 2.0",
   "preferGlobal": true,
   "bin": {
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mip-project/mip-cli.git"
+    "url": "git+https://github.com/mipengine/mip2.git"
   },
   "keywords": [
     "mip",
@@ -25,9 +25,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mip-project/mip-cli/issues"
+    "url": "https://github.com/mipengine/mip2/issues"
   },
-  "homepage": "https://github.com/mip-project/mip-cli#readme",
+  "homepage": "https://github.com/mipengine/mip2/blob/master/packages/mip-cli/README.md",
   "dependencies": {
     "async": "^2.6.0",
     "autoprefixer": "^8.5.0",
