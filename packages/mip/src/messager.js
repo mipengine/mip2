@@ -5,8 +5,8 @@
  */
 
 // import Emitter from 'micro-event';
-import Emitter from '../util/event-emitter';
-import fn from '../util/fn';
+import Emitter from './util/event-emitter';
+import fn from './util/fn';
 
 const messageTypes = {
     twoWay: 'two-way'
