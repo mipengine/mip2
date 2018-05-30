@@ -253,10 +253,6 @@ class Page {
                 transition: this.allowTransition,
                 onComplete: () => {
                     this.allowTransition = false;
-<<<<<<< HEAD
-
-=======
->>>>>>> a45579828c439b85f24c96c7e19ce3dbe65153e2
                 }
             });
         }
