@@ -10,10 +10,11 @@ import {
     getMIPShellConfig,
     addMIPCustomScript,
     createIFrame,
+    removeIFrame,
     getIFrame,
     frameMoveIn,
     frameMoveOut,
-    removeIFrame
+    createLoading
 } from './util/dom';
 
 import {customEmit} from '../vue-custom-element/utils/custom-event';
@@ -172,9 +173,13 @@ class Page {
         this.initRouter();
         this.initAppShell();
         addMIPCustomScript();
-        document.body.setAttribute('mip-ready', '');
 
-        // listen message from iframes
+        // Create loading div
+        if (this.isRootPage) {
+            createLoading();
+        }
+
+        // Listen message from iframes
         window.addEventListener('message', (e) => {
             if (e.source.origin === window.location.origin) {
                 this.messageHandlers.forEach(handler => {
@@ -182,6 +187,9 @@ class Page {
                 });
             }
         }, false);
+
+        // Job complete!
+        document.body.setAttribute('mip-ready', '');
     }
 
     /**** Root Page methods ****/

@@ -52,6 +52,13 @@ export function removeIFrame(pageId) {
     }
 }
 
+export function createLoading() {
+    let loading = document.createElement('div');
+    loading.id = 'mip-page-loading';
+    loading.setAttribute('class', 'mip-page-loading');
+    document.body.appendChild(loading);
+}
+
 export function getMIPShellConfig() {
     let rawJSON;
     let $shell = document.body.querySelector('mip-shell');
@@ -136,7 +143,7 @@ export function whenTransitionEnds(el, type, cb) {
 
 export function frameMoveIn(pageId, {onComplete} = {}) {
     let iframe = getIFrame(pageId);
-    let $loading = getLoading();
+    let loading = getLoading();
 
     if (iframe) {
         let width = window.innerWidth;
@@ -201,7 +208,7 @@ export function getIFrame(iframe) {
 }
 
 function getLoading() {
-    return document.querySelector('#mip-shell-loading');
+    return document.querySelector('#mip-page-loading');
 }
 
 export const inBrowser = typeof window !== 'undefined';

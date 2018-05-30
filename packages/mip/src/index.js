@@ -67,7 +67,6 @@ if (window.MIP) {
 window.MIP = mip;
 // 当前是否是独立站
 mip.standalone = typeof window.top.MIP !== 'undefined';
-mip.viewer.isIframed = !mip.standalone;
 // init viewport
 mip.viewport.init();
 
