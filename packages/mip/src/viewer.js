@@ -57,16 +57,16 @@ let viewer = {
         if (this.isIframed) {
             this.patchForIframe();
             this._viewportScroll();
-            // Tell parent page the current page is loaded.
-            this.sendMessage('mippageload', {
-                time: Date.now(),
-                title: encodeURIComponent(document.title)
-            });
         }
 
         this.page = new Page();
 
         this.page.start();
+
+        this.sendMessage('mippageload', {
+            time: Date.now(),
+            title: encodeURIComponent(document.title)
+        });
 
         // proxy <a mip-link>
         this._proxyLink(this.page);
@@ -124,6 +124,7 @@ let viewer = {
      * 1. `loadiframe` when clicking a `<a mip-link>` element
      * 2. `mipscroll` when scrolling inside an iframe, try to let parent page hide its header.
      * 3. `mippageload` when current page loaded
+     * 4. `performance_update`
      *
      * @param {string} eventName
      * @param {Object} data Message body
@@ -259,9 +260,13 @@ let viewer = {
     _proxyLink(page = {}) {
         let self = this;
         let {router, isRootPage, notifyRootPage} = page;
-        let schemaRegexp = /^http/;
+        // let schemaRegexp = /^http/;
         let telRegexp = /^tel:/;
 
+        /**
+         * if an <a> tag has `mip-link` or `data-type='mip'` let router handle it,
+         * otherwise let TOP jump
+         */
         event.delegate(document, 'a', 'click', function (e) {
             let $a = this;
             let to = $a.getAttribute('href');
@@ -269,11 +274,15 @@ let viewer = {
             if (!to) {
                 return;
             }
-            // For mail、phone、market、app ...
-            // Safari failed when iframed. So add the `target="_top"` to fix it. except uc and tel.
+            /**
+             * MIP1:
+             * For mail、phone、market、app ...
+             * Safari failed when iframed. So add the `target="_top"` to fix it. except uc and tel.
+             */
             if (platform.isUc() && telRegexp.test(to)) {
                 return;
             }
+            // TODO: mip forbid relative link, which means `href` must start with `http`
             // if (!schemaRegexp.test(to)) {
             //     this.setAttribute('target', '_top');
             //     return;
@@ -287,10 +296,11 @@ let viewer = {
                 self.sendMessage(message.messageKey, message.messageData);
 
                 const location = router.resolve(to, router.currentRoute, false).location;
-        
+
                 // show transition
                 router.rootPage.allowTransition = true;
 
+                // handle <a mip-link replace>
                 if ($a.hasAttribute('replace')) {
                     if (isRootPage) {
                         router.replace(location);
@@ -302,16 +312,14 @@ let viewer = {
                         });
                     }
                 }
+                else if (isRootPage) {
+                    router.push(location);
+                }
                 else {
-                    if (isRootPage) {
-                        router.push(location);
-                    }
-                    else {
-                        notifyRootPage({
-                            type: MESSAGE_ROUTER_PUSH,
-                            data: {location}
-                        });
-                    }
+                    notifyRootPage({
+                        type: MESSAGE_ROUTER_PUSH,
+                        data: {location}
+                    });
                 }
             }
             else {

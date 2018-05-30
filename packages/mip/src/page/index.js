@@ -99,10 +99,14 @@ class Page {
     initAppShell() {
         /**
          * in root page, we need to:
-         * 1. refresh appshell with current data in <mip-shell>
-         * 2. listen to a refresh event emited by current child iframe
+         * 1. create a loading
+         * 2. refresh appshell with current data in <mip-shell>
+         * 3. listen to a refresh event emited by current child iframe
          */
         if (this.isRootPage) {
+            // Create loading div
+            createLoading();
+
             this.messageHandlers.push((type, {appshellData, pageId}) => {
                 if (type === MESSAGE_APPSHELL_REFRESH) {
                     this.refreshAppShell(appshellData, pageId);
@@ -249,7 +253,10 @@ class Page {
                 transition: this.allowTransition,
                 onComplete: () => {
                     this.allowTransition = false;
+<<<<<<< HEAD
 
+=======
+>>>>>>> a45579828c439b85f24c96c7e19ce3dbe65153e2
                 }
             });
         }
@@ -258,7 +265,6 @@ class Page {
             transition: this.allowTransition,
             onComplete: () => {
                 this.allowTransition = false;
-                // this.currentChildPageId = targetPageId;
             }
         });
     }

@@ -170,19 +170,15 @@ export function frameMoveIn(pageId, {transition, onComplete} = {}) {
         });
 
         if (transition) {
-            iframe.classList.add('slide-enter');
-            iframe.classList.add('slide-enter-active');
-            loading.classList.add('slide-enter');
-            loading.classList.add('slide-enter-active');
+            iframe.classList.add('slide-enter', 'slide-enter-active');
+            loading.classList.add('slide-enter', 'slide-enter-active');
 
             // trigger layout
             iframe.offsetWidth;
 
             whenTransitionEnds(iframe, 'transition', () => {
-                iframe.classList.remove('slide-enter-to');
-                iframe.classList.remove('slide-enter-active');
-                loading.classList.remove('slide-enter-to');
-                loading.classList.remove('slide-enter-active');
+                iframe.classList.remove('slide-enter-to', 'slide-enter-active');
+                loading.classList.remove('slide-enter-to', 'slide-enter-active');
                 onComplete && onComplete();
             });
 
@@ -204,8 +200,7 @@ export function frameMoveOut(pageId, {transition, onComplete} = {}) {
 
     if (iframe) {
         if (transition) {
-            iframe.classList.add('slide-leave');
-            iframe.classList.add('slide-leave-active');
+            iframe.classList.add('slide-leave', 'slide-leave-active');
 
             // trigger layout
             iframe.offsetWidth;
@@ -215,8 +210,7 @@ export function frameMoveOut(pageId, {transition, onComplete} = {}) {
                     display: 'none',
                     'z-index': 10000
                 });
-                iframe.classList.remove('slide-leave-to');
-                iframe.classList.remove('slide-leave-active');
+                iframe.classList.remove('slide-leave-to', 'slide-leave-active');
                 onComplete && onComplete();
             });
 
