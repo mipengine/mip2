@@ -34,4 +34,3 @@ export const MESSAGE_APPSHELL_REFRESH = 'appshell-refresh';
 export const MESSAGE_APPSHELL_EVENT = 'appshell-event';
 export const MESSAGE_ROUTER_PUSH = 'router-push';
 export const MESSAGE_ROUTER_REPLACE = 'router-replace';
-export const MESSAGE_ROUTER_FORCE = 'router-force';

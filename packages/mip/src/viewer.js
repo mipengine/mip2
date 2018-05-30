@@ -13,6 +13,8 @@ import viewport from './viewport';
 import EventAction from './util/event-action';
 import EventEmitter from './util/event-emitter';
 import fn from './util/fn';
+import Page from './page';
+import {MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE} from './page/const';
 
 /**
  * Save window.
@@ -54,19 +56,25 @@ let viewer = {
 
         if (this.isIframed) {
             this.patchForIframe();
-            // proxy links
-            // this._proxyLink();
             this._viewportScroll();
-            // Tell parent page the current page is loaded.
-            this.sendMessage('mippageload', {
-                time: Date.now(),
-                title: encodeURIComponent(document.title)
-            });
         }
+
+        this.page = new Page();
+
+        this.page.start();
+
+        this.sendMessage('mippageload', {
+            time: Date.now(),
+            title: encodeURIComponent(document.title)
+        });
+
+        // proxy <a mip-link>
+        this._proxyLink(this.page);
     },
 
     /**
-     * The iframed state.
+     * whether in an <iframe> ?
+     * **Important** if you want to know whether in BaiduResult page, DO NOT use this flag
      *
      * @type {Boolean}
      * @public
@@ -111,14 +119,19 @@ let viewer = {
     },
 
     /**
-     * Send message to parent page.
+     * Send message to BaiduResult page,
+     * including following types:
+     * 1. `loadiframe` when clicking a `<a mip-link>` element
+     * 2. `mipscroll` when scrolling inside an iframe, try to let parent page hide its header.
+     * 3. `mippageload` when current page loaded
+     * 4. `performance_update`
      *
      * @param {string} eventName
      * @param {Object} data Message body
      */
     sendMessage(eventName, data) {
-        if (this.isIframed) {
-            window.parent.postMessage({
+        if (!win.MIP.standalone) {
+            window.top.postMessage({
                 event: eventName,
                 data: data
             }, '*');
@@ -240,38 +253,78 @@ let viewer = {
     },
 
     /**
-     * Agent all the links in iframe.
+     * Proxy all the links in page.
      *
      * @private
      */
-    _proxyLink() {
+    _proxyLink(page = {}) {
         let self = this;
-        let regexp = /^http/;
+        let {router, isRootPage, notifyRootPage} = page;
+        // let schemaRegexp = /^http/;
         let telRegexp = /^tel:/;
-        event.delegate(document, 'a', 'click', e => {
-            if (!this.href) {
+
+        /**
+         * if an <a> tag has `mip-link` or `data-type='mip'` let router handle it,
+         * otherwise let TOP jump
+         */
+        event.delegate(document, 'a', 'click', function (e) {
+            let $a = this;
+            let to = $a.getAttribute('href');
+
+            if (!to) {
                 return;
             }
-            // For mail、phone、market、app ...
-            // Safari failed when iframed. So add the `target="_top"` to fix it. except uc and tel.
-            /* istanbul ignore next */
-            if (platform.isUc() && telRegexp.test(this.href)) {
+            /**
+             * MIP1:
+             * For mail、phone、market、app ...
+             * Safari failed when iframed. So add the `target="_top"` to fix it. except uc and tel.
+             */
+            if (platform.isUc() && telRegexp.test(to)) {
                 return;
             }
-            if (!regexp.test(this.href)) {
-                this.setAttribute('target', '_top');
-                return;
-            }
+            // TODO: mip forbid relative link, which means `href` must start with `http`
+            // if (!schemaRegexp.test(to)) {
+            //     this.setAttribute('target', '_top');
+            //     return;
+            // }
+
             e.preventDefault();
-            if (this.hasAttribute('mip-link') || this.getAttribute('data-type') === 'mip') {
-                let message = self._getMessageData.call(this);
+
+            if ($a.hasAttribute('mip-link') || $a.getAttribute('data-type') === 'mip') {
+                // send statics message to BaiduResult page
+                let message = self._getMessageData.call($a);
                 self.sendMessage(message.messageKey, message.messageData);
+
+                let location = router.resolve(to, router.currentRoute, false).location;
+
+                // show transition
+                router.rootPage.allowTransition = true;
+
+                // handle <a mip-link replace>
+                if ($a.hasAttribute('replace')) {
+                    if (isRootPage) {
+                        router.replace(location);
+                    }
+                    else {
+                        notifyRootPage({
+                            type: MESSAGE_ROUTER_REPLACE,
+                            data: {location}
+                        });
+                    }
+                }
+                else if (isRootPage) {
+                    router.push(location);
+                }
+                else {
+                    notifyRootPage({
+                        type: MESSAGE_ROUTER_PUSH,
+                        data: {location}
+                    });
+                }
             }
             else {
-                // other jump through '_top'
-                top.location.href = this.href;
+                top.location.href = to;
             }
-
         }, false);
     },
 

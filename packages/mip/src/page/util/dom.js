@@ -21,17 +21,30 @@ let activeZIndex = 10000;
 
 export function createIFrame(path, {base, onLoad, onError} = {}) {
     let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${path}"]`);
+    let loading = getLoading();
 
     if (!container) {
+        css(loading, {display: 'block'});
         container = document.createElement('iframe');
-        if (typeof onLoad === 'function') {
-            container.onload = onLoad;
-        }
-        if (typeof onError === 'function') {
-            container.onerror = onError;
-        }
+        container.onload = () => {
+            setTimeout(() => css(loading, {display: 'none'}), 320);
+            typeof onLoad === 'function' && onLoad();
+        };
+        container.onerror = () => {
+            setTimeout(() => css(loading, {display: 'none'}), 320);
+            typeof onError === 'function' && onError();
+        };
+        // TODO: use XHR to load iframe so that we can get httpRequest.status 404
         container.setAttribute('src', cleanPath(base + path));
         container.setAttribute('class', MIP_IFRAME_CONTAINER);
+
+        /**
+         * Fix an iOS iframe width bug, see examples/mip1/test.html
+         * https://stackoverflow.com/questions/23083462/how-to-get-an-iframe-to-be-responsive-in-ios-safari
+         */
+        container.setAttribute('width', '100%');
+        container.setAttribute('scrolling', 'no');
+
         container.setAttribute('data-page-id', path);
         container.setAttribute('sandbox', 'allow-top-navigation allow-popups allow-scripts allow-forms allow-pointer-lock allow-popups-to-escape-sandbox allow-same-origin allow-modals')
         document.body.appendChild(container);
@@ -50,6 +63,18 @@ export function removeIFrame(pageId) {
     if (container) {
         container.parentNode.removeChild(container);
     }
+}
+
+export function createLoading(showHeader) {
+    let loading = document.createElement('div');
+    loading.id = 'mip-page-loading';
+    if (showHeader) {
+        loading.setAttribute('class', 'mip-page-loading with-header');
+    }
+    else {
+        loading.setAttribute('class', 'mip-page-loading');
+    }
+    document.body.appendChild(loading);
 }
 
 export function getMIPShellConfig() {
@@ -134,61 +159,73 @@ export function whenTransitionEnds(el, type, cb) {
     el.addEventListener(event, onEnd);
 }
 
-export function frameMoveIn(pageId, {onComplete} = {}) {
+export function frameMoveIn(pageId, {transition, onComplete} = {}) {
     let iframe = getIFrame(pageId);
-    let $loading = getLoading();
+    let loading = getLoading();
 
     if (iframe) {
-        let width = window.innerWidth;
-
         css(iframe, {
             'z-index': activeZIndex++,
             display: 'block'
         });
-        iframe.classList.add('slide-enter');
-        iframe.classList.add('slide-enter-active');
 
-        // trigger layout
-        iframe.offsetWidth;
+        if (transition) {
+            iframe.classList.add('slide-enter', 'slide-enter-active');
+            loading.classList.add('slide-enter', 'slide-enter-active');
 
-        whenTransitionEnds(iframe, 'transition', () => {
-            iframe.classList.remove('slide-enter-to');
-            iframe.classList.remove('slide-enter-active');
+            // trigger layout
+            iframe.offsetWidth;
+
+            whenTransitionEnds(iframe, 'transition', () => {
+                iframe.classList.remove('slide-enter-to', 'slide-enter-active');
+                loading.classList.remove('slide-enter-to', 'slide-enter-active');
+                onComplete && onComplete();
+            });
+
+            nextFrame(() => {
+                iframe.classList.add('slide-enter-to');
+                iframe.classList.remove('slide-enter');
+                loading.classList.add('slide-enter-to');
+                loading.classList.remove('slide-enter');
+            });
+        }
+        else {
             onComplete && onComplete();
-        });
-
-        nextFrame(() => {
-            iframe.classList.add('slide-enter-to');
-            iframe.classList.remove('slide-enter');
-        });
+        }
     }
 }
 
-export function frameMoveOut(pageId, {onComplete} = {}) {
+export function frameMoveOut(pageId, {transition, onComplete} = {}) {
     let iframe = getIFrame(pageId);
+
     if (iframe) {
-        let width = window.innerWidth;
+        if (transition) {
+            iframe.classList.add('slide-leave', 'slide-leave-active');
 
-        iframe.classList.add('slide-leave');
-        iframe.classList.add('slide-leave-active');
+            // trigger layout
+            iframe.offsetWidth;
 
-        // trigger layout
-        iframe.offsetWidth;
+            whenTransitionEnds(iframe, 'transition', () => {
+                css(iframe, {
+                    display: 'none',
+                    'z-index': 10000
+                });
+                iframe.classList.remove('slide-leave-to', 'slide-leave-active');
+                onComplete && onComplete();
+            });
 
-        whenTransitionEnds(iframe, 'transition', () => {
+            nextFrame(() => {
+                iframe.classList.add('slide-leave-to');
+                iframe.classList.remove('slide-leave');
+            });
+        }
+        else {
             css(iframe, {
                 display: 'none',
                 'z-index': 10000
-            })
-            iframe.classList.remove('slide-leave-to');
-            iframe.classList.remove('slide-leave-active');
+            });
             onComplete && onComplete();
-        });
-
-        nextFrame(() => {
-            iframe.classList.add('slide-leave-to');
-            iframe.classList.remove('slide-leave');
-        });
+        }
     }
 }
 
@@ -200,8 +237,8 @@ export function getIFrame(iframe) {
     return iframe;
 }
 
-function getLoading() {
-    return document.querySelector('#mip-shell-loading');
+export function getLoading() {
+    return document.querySelector('#mip-page-loading');
 }
 
 export const inBrowser = typeof window !== 'undefined';

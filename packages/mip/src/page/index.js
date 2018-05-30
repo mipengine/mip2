@@ -4,16 +4,16 @@
  */
 
 import {getLocation} from './util/path';
-import {installMipLink} from './util/link';
 import {isOnlyDifferentInHash, getFullPath} from './util/route';
 import {
     getMIPShellConfig,
     addMIPCustomScript,
     createIFrame,
+    removeIFrame,
     getIFrame,
     frameMoveIn,
     frameMoveOut,
-    removeIFrame
+    createLoading
 } from './util/dom';
 
 import {customEmit} from '../vue-custom-element/utils/custom-event';
@@ -23,7 +23,7 @@ import '../styles/mip.less';
 
 import {
     MESSAGE_APPSHELL_REFRESH, MESSAGE_APPSHELL_EVENT,
-    MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE, MESSAGE_ROUTER_FORCE
+    MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE
 } from './const';
 
 class Page {
@@ -59,8 +59,6 @@ class Page {
         // generate pageId
         this.pageId = getLocation(base, false);
 
-        console.log('pageId:', this.pageId);
-
         // outside iframe
         if (this.isRootPage) {
             router = new Router({
@@ -84,9 +82,6 @@ class Page {
                 else if (type === MESSAGE_ROUTER_REPLACE) {
                     router.replace(data.location);
                 }
-                else if (type === MESSAGE_ROUTER_FORCE) {
-                    window.location.href = data.location;
-                }
             });
         }
         // inside iframe
@@ -98,17 +93,20 @@ class Page {
             router.rootPage.addChild(this);
         }
 
-        // proxy <a mip-link>
-        installMipLink(router, this);
+        this.router = router;
     }
 
     initAppShell() {
         /**
          * in root page, we need to:
-         * 1. refresh appshell with current data in <mip-shell>
-         * 2. listen to a refresh event emited by current child iframe
+         * 1. create a loading
+         * 2. refresh appshell with current data in <mip-shell>
+         * 3. listen to a refresh event emited by current child iframe
          */
         if (this.isRootPage) {
+            // Create loading div
+            createLoading();
+
             this.messageHandlers.push((type, {appshellData, pageId}) => {
                 if (type === MESSAGE_APPSHELL_REFRESH) {
                     this.refreshAppShell(appshellData, pageId);
@@ -137,6 +135,10 @@ class Page {
         }
     }
 
+    /**
+     * read <mip-shell> if provided
+     *
+     */
     readMIPShellConfig() {
         // read <mip-shell> and save in `data`
         let config = getMIPShellConfig();
@@ -172,16 +174,23 @@ class Page {
         this.initRouter();
         this.initAppShell();
         addMIPCustomScript();
-        document.body.setAttribute('mip-ready', '');
 
-        // listen message from iframes
+        // Create loading div
+        if (this.isRootPage) {
+            createLoading(this.data.appshell.header.show);
+        }
+
+        // Listen message from iframes
         window.addEventListener('message', (e) => {
-            if (e.source.origin === window.location.origin) {
+            if (e.source.location.origin === window.location.origin) {
                 this.messageHandlers.forEach(handler => {
                     handler.call(this, e.data.type, e.data.data || {});
                 });
             }
         }, false);
+
+        // Job complete!
+        document.body.setAttribute('mip-ready', '');
     }
 
     /**** Root Page methods ****/
@@ -231,10 +240,6 @@ class Page {
      * @param {string} targetPageId targetPageId
      */
     applyTransition(targetPageId) {
-        // if (!this.allowTransition) {
-        //     return;
-        // }
-
         // Disable scrolling of first page when iframe is covered
         if (targetPageId === this.pageId) {
             document.body.classList.remove('no-scroll');
@@ -245,23 +250,17 @@ class Page {
 
         if (this.currentChildPageId) {
             frameMoveOut(this.currentChildPageId, {
+                transition: this.allowTransition,
                 onComplete: () => {
-                    // 没有引用 mip.js 的错误页
-                    // if (!this.getPageById(this.currentChildPageId)) {
-                    //     removeIFrame(this.currentChildPageId);
-                    // }
-                    this.currentChildPageId = targetPageId;
+                    this.allowTransition = false;
                 }
             });
         }
 
         frameMoveIn(targetPageId, {
+            transition: this.allowTransition,
             onComplete: () => {
-                // 没有引用 mip.js 的错误页
-                // if (!this.getPageById(this.currentChildPageId)) {
-                //     removeIFrame(this.currentChildPageId);
-                // }
-                this.currentChildPageId = targetPageId;
+                this.allowTransition = false;
             }
         });
     }
@@ -322,7 +321,9 @@ class Page {
             this.applyTransition(targetPageId);
             MIP.$recompile();
         }
+
+        this.currentChildPageId = targetPageId;
     }
 }
 
-export default new Page();
+export default Page;

@@ -1,6 +1,6 @@
 import Header from './header.js';
 import {DEFAULT_SHELL_CONFIG} from '../const';
-import {getIFrame} from '../util/dom';
+import {getIFrame, getLoading} from '../util/dom';
 
 export default class AppShell {
     constructor(options, page) {
@@ -45,13 +45,16 @@ export default class AppShell {
 
         // toggle iframe
         let targetIFrame = getIFrame(targetPageId);
+        let loading = getLoading();
         if (header.show) {
             this.$wrapper.classList.add('show');
             targetIFrame && targetIFrame.classList.add('with-header');
+            loading && loading.classList.add('with-header');
         }
         else {
-            targetIFrame && targetIFrame.classList.remove('with-header');
             this.$wrapper.classList.remove('show');
+            targetIFrame && targetIFrame.classList.remove('with-header');
+            loading && loading.classList.remove('with-header');
         }
 
         // redraw entire header
@@ -65,8 +68,9 @@ export default class AppShell {
     }
 
     handleClickHeaderButton(buttonName) {
-        // TODO: should emit relative CustomEvent so that other CustomElement can receive
         if (buttonName === 'back') {
+            // **Important** only allow transition happens when Back btn clicked
+            this.page.allowTransition = true;
             window.MIP_ROUTER.go(-1);
         }
         else if (buttonName === 'dropdown') {

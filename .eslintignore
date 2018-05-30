@@ -1,8 +1,5 @@
 # mip
-packages/mip/src/page
 packages/mip/src/vue
-packages/mip/src/vuex
-packages/mip/src/router
 packages/mip/deps
 packages/mip/build
 packages/mip/dist

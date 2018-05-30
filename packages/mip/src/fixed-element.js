@@ -12,6 +12,7 @@ import util from './util';
 
 /**
  * The fixed element processor.
+ * https://bugs.webkit.org/show_bug.cgi?id=154399
  *
  * @class
  */
@@ -67,9 +68,6 @@ class FixedElement {
         this.setFixedElement(mipFixedElements);
         let fixedLen = this._fixedElements.length;
         let hasParentPage = window.MIP.viewer.isIframed;
-        // let hasParentPage = window.parent !== window;
-        // var MIPVersion = hasParentPage ? window.parent.MIP.version : window.MIP.version;
-        // var isMIP2 = !isNaN(MIPVersion) && parseInt(MIPVersion, 10) >= 2;
         if ((platform.isIos()) && hasParentPage) {
             // let fixedLayer =
             this.getFixedLayer();
@@ -268,8 +266,13 @@ class FixedElement {
                         let fixedSelector = cssRule.selectorText;
                         let elements = document.querySelectorAll(fixedSelector);
                         for (let j = 0; j < elements.length; j++) {
-                            // remove ?
-                            elements[j].parentElement.removeChild(elements[j]);
+                            /**
+                             * in `development` mode, CSS isn't extracted
+                             * and will be inserted in runtime, which will be removed by this func.
+                             */
+                            if (process.env.NODE_ENV === 'production') {
+                                elements[j].parentElement.removeChild(elements[j]);
+                            }
                         }
                     }
                     catch (e) {
