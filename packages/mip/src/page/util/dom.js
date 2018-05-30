@@ -152,10 +152,6 @@ export function whenTransitionEnds(el, type, cb) {
 
 export function frameMoveIn(pageId, {transition, onComplete} = {}) {
     let iframe = getIFrame(pageId);
-<<<<<<< HEAD
-    let loading = getLoading();
-=======
->>>>>>> 08c809cc5786526068d32d4b70f0577f8753819f
 
     if (iframe) {
         css(iframe, {
