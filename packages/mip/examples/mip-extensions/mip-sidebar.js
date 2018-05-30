@@ -5,15 +5,15 @@
  * @version 1.0
  * @copyright 2016 Baidu.com, Inc. All Rights Reserved
  */
-/* global mip */
+/* global MIP */
 (function () {
-    var util = mip.util;
+    var util = MIP.util;
 
     let template = `
         div
     `;
 
-    mip.registerVueCustomElement('mip-sidebar', {
+    MIP.registerVueCustomElement('mip-sidebar', {
         props: {
             id: String,
             layout: String,

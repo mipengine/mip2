@@ -3,13 +3,13 @@
  * @author mj(zoumiaojiang@gmail.com)
  */
 
-/* global mip */
+/* global MIP */
 
 function mockMustacheRender(template, data) {
     return template.replace(/\{\{(\w+)\}\}/g, item => data[item.replace(/[\{\}]/ig, '')]);
 }
 
-mip.registerVueCustomElement('mip-list', {
+MIP.registerVueCustomElement('mip-list', {
     template: `
         <div class="mip-list-wrap">
             <div
@@ -42,7 +42,7 @@ mip.registerVueCustomElement('mip-list', {
             this.items.forEach((item, index) => {
                 // This place, you can use real mustache lib
                 let content = mockMustacheRender(templateStr, item);
-                mip.Vue.set(me.tdContents, index, content);
+                MIP.Vue.set(me.tdContents, index, content);
             });
         }
     }
