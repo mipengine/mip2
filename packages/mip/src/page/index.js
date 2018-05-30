@@ -175,6 +175,11 @@ class Page {
         this.initAppShell();
         addMIPCustomScript();
 
+        // Create loading div
+        if (this.isRootPage) {
+            createLoading(this.data.appshell.header.show);
+        }
+
         // Listen message from iframes
         window.addEventListener('message', (e) => {
             if (e.source.location.origin === window.location.origin) {
