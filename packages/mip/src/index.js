@@ -18,7 +18,6 @@ import layout from './layout';
 import viewer from './viewer';
 import viewport from './viewport';
 import Resources from './resources';
-import page from './page/index';
 import builtinComponents from './components';
 import registerElement from './register-element';
 import sleepWakeModule from './sleepWakeModule';
@@ -120,8 +119,6 @@ util.dom.waitDocumentReady(() => {
 
     // Show page
     viewer.show();
-
-    page.start();
 
     // clear cookie
     let storage = util.customStorage(2);

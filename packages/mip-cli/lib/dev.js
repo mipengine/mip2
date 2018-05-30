@@ -23,7 +23,7 @@ module.exports = function ({
         cli.info('=============================');
         cli.info(`服务启动成功，正在监听 http://127.0.0.1:${server.port}`);
         cli.info(`/example 目录下的 html 可以通过 http://127.0.0.1:${server.port}/example/页面名.html 进行预览。`);
-        cli.info(`/components/组件名/test 目录下的 html 可以通过 http://127.0.0.1:${server.port}/components/组件名/example/页面名.html 进行预览。`);
+        cli.info(`/components/组件名/example 目录下的 html 可以通过 http://127.0.0.1:${server.port}/components/组件名/example/页面名.html 进行预览。`);
         cli.info(`组件可以通过引入 http://127.0.0.1:${server.port}/组件名/组件名.js 进行调试。`);
         cli.info('=============================');
         cli.info(' ');

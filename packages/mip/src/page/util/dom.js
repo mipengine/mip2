@@ -30,8 +30,17 @@ export function createIFrame(path, {base, onLoad, onError} = {}) {
         if (typeof onError === 'function') {
             container.onerror = onError;
         }
+        // TODO: use XHR to load iframe so that we can get httpRequest.status 404
         container.setAttribute('src', cleanPath(base + path));
         container.setAttribute('class', MIP_IFRAME_CONTAINER);
+
+        /**
+         * Fix an iOS iframe width bug, see examples/mip1/test.html
+         * https://stackoverflow.com/questions/23083462/how-to-get-an-iframe-to-be-responsive-in-ios-safari
+         */
+        container.setAttribute('width', '100%');
+        container.setAttribute('scrolling', 'no');
+
         container.setAttribute('data-page-id', path);
         container.setAttribute('sandbox', 'allow-top-navigation allow-popups allow-scripts allow-forms allow-pointer-lock allow-popups-to-escape-sandbox allow-same-origin allow-modals')
         document.body.appendChild(container);
@@ -141,61 +150,75 @@ export function whenTransitionEnds(el, type, cb) {
     el.addEventListener(event, onEnd);
 }
 
-export function frameMoveIn(pageId, {onComplete} = {}) {
+export function frameMoveIn(pageId, {transition, onComplete} = {}) {
     let iframe = getIFrame(pageId);
+<<<<<<< HEAD
     let loading = getLoading();
+=======
+>>>>>>> 08c809cc5786526068d32d4b70f0577f8753819f
 
     if (iframe) {
-        let width = window.innerWidth;
-
         css(iframe, {
             'z-index': activeZIndex++,
             display: 'block'
         });
-        iframe.classList.add('slide-enter');
-        iframe.classList.add('slide-enter-active');
 
-        // trigger layout
-        iframe.offsetWidth;
+        if (transition) {
+            iframe.classList.add('slide-enter');
+            iframe.classList.add('slide-enter-active');
 
-        whenTransitionEnds(iframe, 'transition', () => {
-            iframe.classList.remove('slide-enter-to');
-            iframe.classList.remove('slide-enter-active');
+            // trigger layout
+            iframe.offsetWidth;
+
+            whenTransitionEnds(iframe, 'transition', () => {
+                iframe.classList.remove('slide-enter-to');
+                iframe.classList.remove('slide-enter-active');
+                onComplete && onComplete();
+            });
+
+            nextFrame(() => {
+                iframe.classList.add('slide-enter-to');
+                iframe.classList.remove('slide-enter');
+            });
+        }
+        else {
             onComplete && onComplete();
-        });
-
-        nextFrame(() => {
-            iframe.classList.add('slide-enter-to');
-            iframe.classList.remove('slide-enter');
-        });
+        }
     }
 }
 
-export function frameMoveOut(pageId, {onComplete} = {}) {
+export function frameMoveOut(pageId, {transition, onComplete} = {}) {
     let iframe = getIFrame(pageId);
     if (iframe) {
-        let width = window.innerWidth;
+        if (transition) {
+            iframe.classList.add('slide-leave');
+            iframe.classList.add('slide-leave-active');
 
-        iframe.classList.add('slide-leave');
-        iframe.classList.add('slide-leave-active');
+            // trigger layout
+            iframe.offsetWidth;
 
-        // trigger layout
-        iframe.offsetWidth;
+            whenTransitionEnds(iframe, 'transition', () => {
+                css(iframe, {
+                    display: 'none',
+                    'z-index': 10000
+                });
+                iframe.classList.remove('slide-leave-to');
+                iframe.classList.remove('slide-leave-active');
+                onComplete && onComplete();
+            });
 
-        whenTransitionEnds(iframe, 'transition', () => {
+            nextFrame(() => {
+                iframe.classList.add('slide-leave-to');
+                iframe.classList.remove('slide-leave');
+            });
+        }
+        else {
             css(iframe, {
                 display: 'none',
                 'z-index': 10000
-            })
-            iframe.classList.remove('slide-leave-to');
-            iframe.classList.remove('slide-leave-active');
+            });
             onComplete && onComplete();
-        });
-
-        nextFrame(() => {
-            iframe.classList.add('slide-leave-to');
-            iframe.classList.remove('slide-leave');
-        });
+        }
     }
 }
 
