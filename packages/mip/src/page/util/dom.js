@@ -21,15 +21,19 @@ let activeZIndex = 10000;
 
 export function createIFrame(path, {base, onLoad, onError} = {}) {
     let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${path}"]`);
+    let loading = getLoading();
 
     if (!container) {
+        css(loading, {display: 'block'});
         container = document.createElement('iframe');
-        if (typeof onLoad === 'function') {
-            container.onload = onLoad;
-        }
-        if (typeof onError === 'function') {
-            container.onerror = onError;
-        }
+        container.onload = () => {
+            setTimeout(() => css(loading, {display: 'none'}), 320);
+            typeof onLoad === 'function' && onLoad();
+        };
+        container.onerror = () => {
+            setTimeout(() => css(loading, {display: 'none'}), 320);
+            typeof onError === 'function' && onError();
+        };
         // TODO: use XHR to load iframe so that we can get httpRequest.status 404
         container.setAttribute('src', cleanPath(base + path));
         container.setAttribute('class', MIP_IFRAME_CONTAINER);
@@ -152,6 +156,7 @@ export function whenTransitionEnds(el, type, cb) {
 
 export function frameMoveIn(pageId, {transition, onComplete} = {}) {
     let iframe = getIFrame(pageId);
+    let loading = getLoading();
 
     if (iframe) {
         css(iframe, {
@@ -162,6 +167,8 @@ export function frameMoveIn(pageId, {transition, onComplete} = {}) {
         if (transition) {
             iframe.classList.add('slide-enter');
             iframe.classList.add('slide-enter-active');
+            loading.classList.add('slide-enter');
+            loading.classList.add('slide-enter-active');
 
             // trigger layout
             iframe.offsetWidth;
@@ -169,12 +176,16 @@ export function frameMoveIn(pageId, {transition, onComplete} = {}) {
             whenTransitionEnds(iframe, 'transition', () => {
                 iframe.classList.remove('slide-enter-to');
                 iframe.classList.remove('slide-enter-active');
+                loading.classList.remove('slide-enter-to');
+                loading.classList.remove('slide-enter-active');
                 onComplete && onComplete();
             });
 
             nextFrame(() => {
                 iframe.classList.add('slide-enter-to');
                 iframe.classList.remove('slide-enter');
+                loading.classList.add('slide-enter-to');
+                loading.classList.remove('slide-enter');
             });
         }
         else {
@@ -185,6 +196,7 @@ export function frameMoveIn(pageId, {transition, onComplete} = {}) {
 
 export function frameMoveOut(pageId, {transition, onComplete} = {}) {
     let iframe = getIFrame(pageId);
+
     if (iframe) {
         if (transition) {
             iframe.classList.add('slide-leave');

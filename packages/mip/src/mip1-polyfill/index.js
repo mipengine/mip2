@@ -23,7 +23,8 @@ import eventAction from '../util/event-action';
 window.require.config({
     paths: {
         'searchbox/openjs/aio': '//m.baidu.com/static/searchbox/openjs/aio.js?v=201606',
-        'jquery': '//mipcache.bdstatic.com/static/v1/deps/jquery'
+        'jquery': '//c.mipcdn.com/static/deps/jquery',
+        'zepto': '//c.mipcdn.com/static/deps/zepto'
     }
 });
 
