@@ -1,7 +1,6 @@
 /**
  * @file   提供 iframe-shell/messenger 模块。
  * @author oott123
- * @author wangyisheng
  */
 
 // import Emitter from 'micro-event';

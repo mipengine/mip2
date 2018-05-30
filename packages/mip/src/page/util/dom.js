@@ -65,10 +65,15 @@ export function removeIFrame(pageId) {
     }
 }
 
-export function createLoading() {
+export function createLoading(showHeader) {
     let loading = document.createElement('div');
     loading.id = 'mip-page-loading';
-    loading.setAttribute('class', 'mip-page-loading');
+    if (showHeader) {
+        loading.setAttribute('class', 'mip-page-loading with-header');
+    }
+    else {
+        loading.setAttribute('class', 'mip-page-loading');
+    }
     document.body.appendChild(loading);
 }
 
@@ -238,7 +243,7 @@ export function getIFrame(iframe) {
     return iframe;
 }
 
-function getLoading() {
+export function getLoading() {
     return document.querySelector('#mip-page-loading');
 }
 

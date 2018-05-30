@@ -173,7 +173,7 @@ class Page {
 
         // Create loading div
         if (this.isRootPage) {
-            createLoading();
+            createLoading(this.data.appshell.header.show);
         }
 
         // Listen message from iframes
@@ -249,7 +249,7 @@ class Page {
                 transition: this.allowTransition,
                 onComplete: () => {
                     this.allowTransition = false;
-                    
+
                 }
             });
         }
