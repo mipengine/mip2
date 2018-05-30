@@ -115,7 +115,7 @@
         </script>
     </mip-data>
 
-    <!-- <mip-complevel1 m-bind:userinfo="userInfo"></mip-complevel1> -->
+    <mip-complevel1 m-bind:userinfo="userInfo"></mip-complevel1>
 
     <span>group.info.name will show below which is a global state shared from index.html:</span>
     <span m-text="group.info.name"></span>
@@ -214,6 +214,9 @@
             MIP.setData({
                 title: 'ckkkk changing multi'
             });
+        });
+        MIP.watch(['userInfo', 'userInfo.name'], function (newVal, oldVal) {
+            console.log('userInfo', newVal, oldVal);
         });
     </script>
     <script src="../../dist/mip.js"></script>

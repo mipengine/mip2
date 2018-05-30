@@ -198,6 +198,8 @@ class Bind {
         for (let k of Object.keys(newData)) {
             if (isObj(newData[k]) && oldData[k]) {
                 this._assign(oldData[k], newData[k]);
+                let obj = JSON.parse(JSON.stringify({[k]: oldData[k]}));
+                Object.assign(oldData, obj);
             }
             else {
                 oldData[k] = newData[k];
