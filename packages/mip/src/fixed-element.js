@@ -269,7 +269,10 @@ class FixedElement {
                         let fixedSelector = cssRule.selectorText;
                         let elements = document.querySelectorAll(fixedSelector);
                         for (let j = 0; j < elements.length; j++) {
-                            // remove ?
+                            /**
+                             * in `development` mode, CSS isn't extracted
+                             * and will be inserted in runtime, which will be removed by this func.
+                             */
                             if (process.env.NODE_ENV === 'production') {
                                 elements[j].parentElement.removeChild(elements[j]);
                             }

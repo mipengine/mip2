@@ -1,26 +1,26 @@
 /**
  * @file   提供 iframe-shell/messenger 模块。
  * @author oott123
+ * @author wangyisheng
  */
 
-// define(['./utils/event', './utils/promise', './utils/extend'], function (wrapEvent, Promise, extend) {
+// import Emitter from 'micro-event';
+import Emitter from './util/event-emitter';
+import fn from './util/fn';
 
-// TODO HERE
-var wrapEvent;
-var Promise;
-var extend;
-
-var messageTypes = {
+const messageTypes = {
     twoWay: 'two-way'
 };
-var messageSentinels = {
+const messageSentinels = {
     request: 'PM_REQUEST',
     response: 'PM_RESPONSE'
 };
+
 function getSessionId() {
     return ((new Date()).getTime() * 1000 + Math.ceil(Math.random() * 1000)).toString(36);
 }
-var messengerInstances = {};
+
+let messengerInstances = {};
 
 /**
  * iframe - window 单双向通信组件
@@ -34,8 +34,9 @@ var messengerInstances = {};
  * @param {number} config.timeout       双向通信回复超时(ms)
  * @param {string} config.name          若对端为 iframe，则填写 iframe.name；若对端为 parent，则填写 window.name(即父窗口的 iframe.name)
  */
-var Messenger = function (config) {
-    wrapEvent(this);
+let Messenger = function (config) {
+    Emitter.mixin(this);
+
     this.targetWindow = config.targetWindow || top;
     this.targetOrigin = config.targetOrigin || '*';
     this.sourceOrigins = config.sourceOrigins || ['*'];
@@ -65,17 +66,19 @@ var Messenger = function (config) {
             this.name
         );
     }
+
     messengerInstances[this.name] = this;
     Messenger.bindHandler();
     return this;
 };
-var messageReciver = function (event) {
+
+let messageReciver = function (event) {
     // 寻找对应的 messenger 实例
-    var messenger = messengerInstances[event.data.name];
+    let messenger = messengerInstances[event.data.name];
     if (!messenger) {
         // console.warn('A window with no messengers is sending message', event);
         // 兼容老 mip，没有给名字
-        for (var x in messengerInstances) {
+        for (let x in messengerInstances) {
             messengerInstances[x].processMessageEvent(event);
         }
     }
@@ -83,10 +86,12 @@ var messageReciver = function (event) {
         messenger.processMessageEvent(event);
     }
 };
+
 Messenger.bindHandler = function () {
     window.removeEventListener('message', messageReciver);
     window.addEventListener('message', messageReciver);
 };
+
 Messenger.prototype = {
 
     /**
@@ -96,12 +101,12 @@ Messenger.prototype = {
      * @param  {MessageEvent} event 收到的 message event
      */
     processMessageEvent: function (event) {
-        var origin = event.origin || event.originalEvent.origin;
-        var messenger = this;
+        let origin = event.origin || event.originalEvent.origin;
+        let messenger = this;
         // 检查 origin 是否安全
-        var isSafe = false;
-        for (var i = 0; i < messenger.sourceOrigins.length; i++) {
-            var safeOrigin = messenger.sourceOrigins[i];
+        let isSafe = false;
+        for (let i = 0; i < messenger.sourceOrigins.length; i++) {
+            let safeOrigin = messenger.sourceOrigins[i];
             if (safeOrigin === '*') {
                 isSafe = true;
                 break;
@@ -116,7 +121,7 @@ Messenger.prototype = {
             return;
         }
         // 检查单双向
-        var eventData = event.data;
+        let eventData = event.data;
         if (!eventData) {
             console.warn('Event data %O is invalid, missing data.', event);
             return;
@@ -130,7 +135,7 @@ Messenger.prototype = {
             // 检查请求 or 回复
             if (eventData.sentinel === messageSentinels.request) {
                 // 检查是否有对应的 handler
-                var response = {};
+                let response = {};
                 if (messenger.handlers[eventData.event]) {
                     try {
                         response = messenger.handlers[eventData.event].call(messenger, eventData);
@@ -144,9 +149,9 @@ Messenger.prototype = {
                 else {
                     console.warn('Event ' + eventData.event + ' has no handler.');
                 }
-                var send = function (response) {
+                let send = response => {
                     response = response || {};
-                    extend(response, {
+                    fn.extend(response, {
                         type: messageTypes.twoWay,
                         sentinel: messageSentinels.response,
                         sessionId: eventData.sessionId,
@@ -156,14 +161,8 @@ Messenger.prototype = {
                 };
                 // 检查 promise
                 if (response && (typeof response.then) === 'function') {
-                    response.then(function (response) {
-                        send(response);
-                    })
-                    .catch(function (err) {
-                        send({
-                            error: err
-                        });
-                    });
+                    response.then(response => send(response))
+                        .catch(err => send({error: err}));
                 }
                 else {
                     send(response);
@@ -171,8 +170,8 @@ Messenger.prototype = {
             }
             else if (eventData.sentinel === messageSentinels.response) {
                 // 回复
-                console.log('response!', eventData);
-                var d = messenger.defers[eventData.sessionId];
+                // console.log('response!', eventData);
+                let d = messenger.defers[eventData.sessionId];
                 delete messenger.defers[eventData.sessionId];
                 if (!d) {
                     console.warn('Event session is not found for two-way communication', eventData.sessionId);
@@ -211,15 +210,15 @@ Messenger.prototype = {
      * @return {Promise}              若为双向消息，则返回后 resolve；否则直接 resolve
      */
     sendMessage: function (eventName, data, waitResponse) {
-        var messenger = this;
-        return new Promise(function (resolve, reject) {
-            var requestData = {
+        let messenger = this;
+        return new Promise((resolve, reject) => {
+            let requestData = {
                 name: messenger.name,
                 event: eventName
             };
-            var sessionId = getSessionId();
+            let sessionId = getSessionId();
             if (waitResponse) {
-                extend(requestData, {
+                fn.extend(requestData, {
                     type: messageTypes.twoWay,
                     sentinel: messageSentinels.request,
                     sessionId: sessionId
@@ -227,7 +226,7 @@ Messenger.prototype = {
                 messenger.defers[sessionId] = {
                     resolve: resolve.bind(this),
                     reject: reject.bind(this),
-                    timer: setTimeout(function () {
+                    timer: setTimeout(() => {
                         delete messenger.defers[sessionId];
                         reject(new Error('timeout'));
                     }, messenger.timeout)
@@ -236,7 +235,7 @@ Messenger.prototype = {
             else {
                 setTimeout(resolve, 0);
             }
-            extend(requestData, data);
+            fn.extend(requestData, data);
             // 对于单向通信：requestData = {event, ...}
             // 对于双向通信：requestData = {event, type, sentinel, sessionId, ...}
             messenger.getWindow().postMessage(requestData, messenger.targetOrigin);
@@ -283,6 +282,8 @@ Messenger.prototype = {
         return this.targetWindow;
     }
 };
+
 Messenger.prototype.constructor = Messenger;
-return Messenger;
-// });
+
+// return Messenger;
+export default Messenger;
