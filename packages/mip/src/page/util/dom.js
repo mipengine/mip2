@@ -27,11 +27,11 @@ export function createIFrame(path, {base, onLoad, onError} = {}) {
         css(loading, {display: 'block'});
         container = document.createElement('iframe');
         container.onload = () => {
-            css(loading, {display: 'none'});
+            setTimeout(() => css(loading, {display: 'none'}), 320);
             typeof onLoad === 'function' && onLoad();
         };
         container.onerror = () => {
-            css(loading, {display: 'none'});
+            setTimeout(() => css(loading, {display: 'none'}), 320);
             typeof onError === 'function' && onError();
         };
         // TODO: use XHR to load iframe so that we can get httpRequest.status 404
@@ -196,14 +196,11 @@ export function frameMoveIn(pageId, {transition, onComplete} = {}) {
 
 export function frameMoveOut(pageId, {transition, onComplete} = {}) {
     let iframe = getIFrame(pageId);
-    let loading = getLoading();
 
     if (iframe) {
         if (transition) {
             iframe.classList.add('slide-leave');
             iframe.classList.add('slide-leave-active');
-            loading.classList.add('slide-leave');
-            loading.classList.add('slide-leave-active');
 
             // trigger layout
             iframe.offsetWidth;
@@ -215,16 +212,12 @@ export function frameMoveOut(pageId, {transition, onComplete} = {}) {
                 });
                 iframe.classList.remove('slide-leave-to');
                 iframe.classList.remove('slide-leave-active');
-                loading.classList.remove('slide-leave-to');
-                loading.classList.remove('slide-leave-active');
                 onComplete && onComplete();
             });
 
             nextFrame(() => {
                 iframe.classList.add('slide-leave-to');
                 iframe.classList.remove('slide-leave');
-                loading.classList.add('slide-leave-to');
-                loading.classList.remove('slide-leave');
             });
         }
         else {
