@@ -40,6 +40,7 @@ export default class Header {
                 </div>
                 <div class="mip-appshell-header-button-group">
                     <div class="button more material-icons">more_horiz</div>
+                    <div class="split"></div>
                     <div class="button close material-icons">close</div>
                 </div>
             `;
