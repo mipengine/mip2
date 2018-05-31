@@ -1,6 +1,20 @@
 {
   "name": "mip",
   "version": "2.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mipengine/mip2.git"
+  },
+  "keywords": [
+    "mip",
+    "mip2"
+  ],
+  "author": "sfe-sy@baidu.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mipengine/mip2/issues"
+  },
+  "homepage": "https://github.com/mipengine/mip2#readme",
   "devDependencies": {
     "babel-eslint": "^8.2.3",
     "eslint": "^4.19.1",
