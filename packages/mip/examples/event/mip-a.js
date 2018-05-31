@@ -3,11 +3,11 @@
  * @author huanghuiquan (huanghuiquan@baidu.com)
  */
 
- /* global mip */
+ /* global MIP */
 
 
 
-mip.registerVueCustomElement('mip-a', {
+MIP.registerVueCustomElement('mip-a', {
     template: `
         <div >
             haha a

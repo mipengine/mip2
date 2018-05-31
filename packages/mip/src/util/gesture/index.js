@@ -3,11 +3,10 @@
  * @author sekiyika(pengxing@baidu.com)
  */
 
-import EventEmitter from '../event-emitter';
-import Recognizer from './gesture-recognizer';
-import dataProcessor from './data-processor';
-import fn from '../fn';
-
+import EventEmitter from '../event-emitter'
+import Recognizer from './gesture-recognizer'
+import dataProcessor from './data-processor'
+import fn from '../fn'
 
 /**
  * Gesture
@@ -15,139 +14,134 @@ import fn from '../fn';
  * @class
  */
 class Gesture extends EventEmitter {
+  /**
+   * Gesture
+   *
+   * @constructor
+   * @param {HTMLElement} element Element that need gestures
+   * @param {Object} opt Options
+   */
+  constructor (element, opt) {
+    super()
 
     /**
-     * Gesture
+     * The events' context.
      *
-     * @constructor
-     * @param {HTMLElement} element Element that need gestures
-     * @param {Object} opt Options
+     * @private
+     * @type {?Object}
      */
-    constructor(element, opt) {
-        super();
+    this.__eventContext = this._element = element
 
-        /**
-         * The events' context.
-         *
-         * @private
-         * @type {?Object}
-         */
-        this.__eventContext = this._element = element;
-
-        opt && (this._opt = fn.extend({}, this._opt, opt));
-
-        /**
-         * Touch handler.
-         *
-         * @private
-         * @type {Function}
-         */
-        this._boundTouchEvent = touchHandler.bind(this);
-
-        listenersHelp(element, 'touchstart touchmove touchend touchcancel', this._boundTouchEvent);
-
-        /**
-         * For storing the recoginzers.
-         *
-         * @private
-         * @type {Object}
-         */
-        this._recognizers = {};
-
-         /**
-         * Default options.
-         *
-         * @private
-         * @type {Object}
-         */
-        this._opt = {
-            preventDefault: false,
-            stopPropagation: false,
-            preventX: true,
-            preventY: false
-        };
-    }
-
+    opt && (this._opt = fn.extend({}, this._opt, opt))
 
     /**
-     * Cleanup the events.
-     */
-    cleanup() {
-        let element = this._element;
-        listenersHelp(element, 'touchstart touchmove touchend touchcancel', this._boundTouchEvent, false);
-        this.off();
-    }
-
-    /**
-     * Instantiate a recoginzer and add the recoginzer to the _recognizer and handle the conflicting list when
-     * event is created.
+     * Touch handler.
      *
-     * @param {string} name name
+     * @private
+     * @type {Function}
      */
-    _createEventCallback(name) {
-        if (this._hasRegister(name)) {
-            return;
-        }
-        let RecognizerClass = Recognizer.getByEventname(name);
-        if (!RecognizerClass) {
-            return;
-        }
-        name = RecognizerClass.recName;
-        let recognizer = this._recognizers[name] = new RecognizerClass(this);
-        let conflictList = Recognizer.getConflictList(recognizer.recName);
-        for (let i = 0; i < conflictList.length; i++) {
-            name = conflictList[i];
-            let conflictRecognizer = this._recognizers[name];
-            if (conflictRecognizer) {
-                conflictRecognizer.conflictList[recognizer.recName] = recognizer;
-                recognizer.conflictList[conflictRecognizer.recName] = conflictRecognizer;
-            }
-        }
-    }
+    this._boundTouchEvent = touchHandler.bind(this)
+
+    listenersHelp(element, 'touchstart touchmove touchend touchcancel', this._boundTouchEvent)
 
     /**
-     * When event is removed, cleanup the recognizer.
+     * For storing the recoginzers.
      *
-     * @param {string} name name
+     * @private
+     * @type {Object}
      */
-    _removeEventCallback(name) {
-        let recognizer;
-        if (name === undefined) {
-            this._recognizers = {};
-        }
-        else if (recognizer = this._recognizers[name]) {
-            for (let i in recognizer.conflictList) {
-                delete recognizer.conflictList[i][name];
-            }
-            delete this._recognizers[name];
-        }
-    }
+    this._recognizers = {}
 
     /**
-     * Determine whether a recognizer has been registered.
+     * Default options.
      *
-     * @param {string} name name
-     * @return {boolean}
+     * @private
+     * @type {Object}
      */
-    _hasRegister(name) {
-        return !!this._recognizers[Recognizer.getByEventname(name)];
+    this._opt = {
+      preventDefault: false,
+      stopPropagation: false,
+      preventX: true,
+      preventY: false
     }
+  }
 
-    /**
-     * Recognize the gesture data.
-     *
-     * @param {Object} data data
-     */
-    _recognize(data) {
-        let recognizers = this._recognizers;
-        for (let i in recognizers) {
-            let recognizer = recognizers[i];
-            recognizer.recognize(data);
-        }
+  /**
+   * Cleanup the events.
+   */
+  cleanup () {
+    let element = this._element
+    listenersHelp(element, 'touchstart touchmove touchend touchcancel', this._boundTouchEvent, false)
+    this.off()
+  }
+
+  /**
+   * Instantiate a recoginzer and add the recoginzer to the _recognizer and handle the conflicting list when
+   * event is created.
+   *
+   * @param {string} name name
+   */
+  _createEventCallback (name) {
+    if (this._hasRegister(name)) {
+      return
     }
+    let RecognizerClass = Recognizer.getByEventname(name)
+    if (!RecognizerClass) {
+      return
+    }
+    name = RecognizerClass.recName
+    let recognizer = this._recognizers[name] = new RecognizerClass(this)
+    let conflictList = Recognizer.getConflictList(recognizer.recName)
+    for (let i = 0; i < conflictList.length; i++) {
+      name = conflictList[i]
+      let conflictRecognizer = this._recognizers[name]
+      if (conflictRecognizer) {
+        conflictRecognizer.conflictList[recognizer.recName] = recognizer
+        recognizer.conflictList[conflictRecognizer.recName] = conflictRecognizer
+      }
+    }
+  }
 
+  /**
+   * When event is removed, cleanup the recognizer.
+   *
+   * @param {string} name name
+   */
+  _removeEventCallback (name) {
+    let recognizer
+    if (name === undefined) {
+      this._recognizers = {}
+    } else if (recognizer = this._recognizers[name]) {
+      for (let i in recognizer.conflictList) {
+        delete recognizer.conflictList[i][name]
+      }
+      delete this._recognizers[name]
+    }
+  }
+
+  /**
+   * Determine whether a recognizer has been registered.
+   *
+   * @param {string} name name
+   * @return {boolean}
+   */
+  _hasRegister (name) {
+    return !!this._recognizers[Recognizer.getByEventname(name)]
+  }
+
+  /**
+   * Recognize the gesture data.
+   *
+   * @param {Object} data data
+   */
+  _recognize (data) {
+    let recognizers = this._recognizers
+    for (let i in recognizers) {
+      let recognizer = recognizers[i]
+      recognizer.recognize(data)
+    }
+  }
 }
-
 
 /**
  * Handle touch event.
@@ -155,13 +149,13 @@ class Gesture extends EventEmitter {
  * @inner
  * @param {Event} event event
  */
-function touchHandler(event) {
-    let opt = this._opt;
-    opt.preventDefault && event.preventDefault();
-    opt.stopPropagation && event.stopPropagation();
-    let data = dataProcessor.process(event, opt.preventX, opt.preventY);
-    this._recognize(data);
-    this.trigger(event.type, event, data);
+function touchHandler (event) {
+  let opt = this._opt
+  opt.preventDefault && event.preventDefault()
+  opt.stopPropagation && event.stopPropagation()
+  let data = dataProcessor.process(event, opt.preventX, opt.preventY)
+  this._recognize(data)
+  this.trigger(event.type, event, data)
 }
 
 /**
@@ -173,16 +167,15 @@ function touchHandler(event) {
  * @param {Function} handler Event handler
  * @param {?boolean} method Add or remove.
  */
-function listenersHelp(element, events, handler, method) {
-    let list = events.split(' ');
-    for (let i = 0; i < list.length; i++) {
-        if (method === false) {
-            element.removeEventListener(list[i], handler);
-        }
-        else {
-            element.addEventListener(list[i], handler, false);
-        }
+function listenersHelp (element, events, handler, method) {
+  let list = events.split(' ')
+  for (let item of list) {
+    if (method === false) {
+      element.removeEventListener(item, handler)
+    } else {
+      element.addEventListener(item, handler, false)
     }
+  }
 }
 
-export default Gesture;
+export default Gesture

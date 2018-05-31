@@ -182,7 +182,7 @@ class Page {
 
         // Listen message from iframes
         window.addEventListener('message', (e) => {
-            if (e.source.origin === window.location.origin) {
+            if (e.source.location.origin === window.location.origin) {
                 this.messageHandlers.forEach(handler => {
                     handler.call(this, e.data.type, e.data.data || {});
                 });

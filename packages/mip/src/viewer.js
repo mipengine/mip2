@@ -289,13 +289,13 @@ let viewer = {
             // }
 
             e.preventDefault();
-            
+
             if ($a.hasAttribute('mip-link') || $a.getAttribute('data-type') === 'mip') {
                 // send statics message to BaiduResult page
                 let message = self._getMessageData.call($a);
                 self.sendMessage(message.messageKey, message.messageData);
 
-                const location = router.resolve(to, router.currentRoute, false).location;
+                let location = router.resolve(to, router.currentRoute, false).location;
 
                 // show transition
                 router.rootPage.allowTransition = true;

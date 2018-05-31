@@ -16,7 +16,6 @@ import registerElement from './element'
 import customElement from './customElement'
 import performance from '../performance'
 import fixedElement from '../fixed-element'
-import Resources from '../resources'
 import naboo from './naboo'
 import cssLoader from '../util/dom/css-loader'
 import eventAction from '../util/event-action'
@@ -39,7 +38,6 @@ window.define('performance', () => performance)
 window.define('utils/customStorage', () => util.customStorage)
 window.define('fetch-jsonp', () => window.fetchJsonp)
 window.define('fixed-element', () => fixedElement)
-window.define('zepto', () => window.$)
 window.define('hash', () => hash)
 window.define('dom/event', () => util.event)
 window.define('mip', () => window.MIP)
@@ -54,21 +52,21 @@ window.define('utils/fn', () => util.fn)
 window.define('utils/platform', () => util.platform)
 window.define('utils/gesture', () => util.Gesture)
 
-export default function install(mip) {
+export default function install (mip) {
   Object.assign(mip, {
     /**
      * register mip1 element
      *
      * @deprecated
      * @param {string} name element tag name
-     * @param {string} customClass class
+     * @param {string} clazz class
      * @param {string} css css
      */
-    registerMipElement(name, customClass, css) {
-      if (templates.isTemplateClass(customClass)) {
-        templates.register(name, customClass)
+    registerMipElement (name, clazz, css) {
+      if (templates.isTemplateClass(clazz)) {
+        templates.register(name, clazz)
       } else {
-        registerElement(name, customClass, css)
+        registerElement(name, clazz, css)
       }
     }
   })
