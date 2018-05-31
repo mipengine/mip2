@@ -155,7 +155,7 @@ Resources.prototype = {
       // Compute the viewport state of current element.
       // If current element`s prerenderAllowed returns `true` always set the state to be `true`.
       let inViewport = resources[i].prerenderAllowed() ||
-                rect.overlapping(rect.getElementRect(resources[i]), viewportRect)
+        rect.overlapping(rect.getElementRect(resources[i]), viewportRect)
       this.setInViewport(resources[i], inViewport)
     }
   },

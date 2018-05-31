@@ -511,8 +511,8 @@ function getErrorMess (code, name) {
       mess = 'storage space need less than 4k'
       break
     case eCode.lsExceed:
-      mess = 'Uncaught DOMException: Failed to execute setItem on Storage: Setting the value of '
-        + name + ' exceeded the quota at ' + window.location.href
+      mess = 'Uncaught DOMException: Failed to execute setItem on Storage: Setting the value of ' +
+        name + ' exceeded the quota at ' + window.location.href
   }
   return mess
 }

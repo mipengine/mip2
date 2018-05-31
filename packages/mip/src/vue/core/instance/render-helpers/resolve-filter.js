@@ -3,13 +3,11 @@
  * @author sfe-sy(sfe-sy@baidu.com)
  */
 
-/* eslint-disable fecs-valid-jsdoc */
-
-import {identity, resolveAsset} from 'core/util/index';
+import {identity, resolveAsset} from 'core/util/index'
 
 /**
  * Runtime helper for resolving filters
  */
-export function resolveFilter(id) {
-    return resolveAsset(this.$options, 'filters', id, true) || identity;
+export function resolveFilter (id) {
+  return resolveAsset(this.$options, 'filters', id, true) || identity
 }

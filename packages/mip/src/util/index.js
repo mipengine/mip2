@@ -27,9 +27,9 @@ import json5 from 'json5'
  * @return {string} Cache url.
  */
 function makeCacheUrl (url, type) {
-  if (!fn.isCacheUrl(location.href)
-    || (url && url.length < 8)
-    || !(url.indexOf('http') === 0 || url.indexOf('//') === 0)
+  if (!fn.isCacheUrl(location.href) ||
+    (url && url.length < 8) ||
+    !(url.indexOf('http') === 0 || url.indexOf('//') === 0)
   ) {
     return url
   }
@@ -60,19 +60,19 @@ function parseCacheUrl (url) {
   if (!url) {
     return url
   }
-  if (!(url.indexOf('http') === 0
-    || url.indexOf('/') === 0)
+  if (!(url.indexOf('http') === 0 ||
+    url.indexOf('/') === 0)
   ) {
     return url
   }
-  let reg = new RegExp('^(http[s]:)?(\/\/([^\/]+))?\/[ic](\/s)?\/(.*)$', 'g')
+  let reg = new RegExp('^(http[s]:)?(//([^/]+))?/[ic](/s)?/(.*)$', 'g')
   let result = reg.exec(url)
   if (!result) {
     return url
   }
   let uri = result[4] ? 'https:' : 'http:'
   uri += result[5] ? ('//' + result[5]) : ''
-  let urlRegExp = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/
+  let urlRegExp = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?/
   if (!urlRegExp.test(uri)) {
     return url
   }

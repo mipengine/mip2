@@ -337,7 +337,8 @@ class Recognizer {
    * @return {number}
    */
   hold () {
-    return this._state = STATE_HOLD
+    this._state = STATE_HOLD
+    return this._state
   }
 
   /**

@@ -168,9 +168,9 @@ function del (obj, key) {
  * @return {boolean} if window has Touch event(is mobile) or not (is PC)
  */
 function hasTouch () {
-  return ('ontouchstart' in window
-        || (window.navigator.maxTouchPoints !== undefined && window.navigator.maxTouchPoints > 0)
-        || window.DocumentTouch !== undefined)
+  return ('ontouchstart' in window ||
+    (window.navigator.maxTouchPoints !== undefined && window.navigator.maxTouchPoints > 0) ||
+    window.DocumentTouch !== undefined)
 }
 
 /**
@@ -180,8 +180,8 @@ function hasTouch () {
  * @return {boolean} isCacheUrl.
  */
 function isCacheUrl (pageUrl) {
-  return /mipcache.bdstatic.com/.test(pageUrl)
-        || /^(\/\/|http:\/\/|https:\/\/)[A-Za-z0-9]{1,}-.*.mipcdn.com\/c\//.test(pageUrl)
+  return /mipcache.bdstatic.com/.test(pageUrl) ||
+    /^(\/\/|http:\/\/|https:\/\/)[A-Za-z0-9]{1,}-.*.mipcdn.com\/c\//.test(pageUrl)
 }
 
 export default {

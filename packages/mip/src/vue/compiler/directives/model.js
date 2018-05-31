@@ -3,51 +3,49 @@
  * @author sfe-sy(sfe-sy@baidu.com)
  */
 
-/* eslint-disable fecs-valid-jsdoc */
-
 /**
  * Cross-platform code generation for component v-model
  */
-export function genComponentModel(
-    el,
-    value,
-    modifiers
+export function genComponentModel (
+  el,
+  value,
+  modifiers
 ) {
-    const {number, trim} = modifiers || {};
+  const {number, trim} = modifiers || {}
 
-    const baseValueExpression = '$$v';
-    let valueExpression = baseValueExpression;
-    if (trim) {
-        valueExpression = `(typeof ${baseValueExpression} === 'string'`
-            + `? ${baseValueExpression}.trim()`
-            + `: ${baseValueExpression})`;
-    }
+  const baseValueExpression = '$$v'
+  let valueExpression = baseValueExpression
+  if (trim) {
+    valueExpression = `(typeof ${baseValueExpression} === 'string'` +
+            `? ${baseValueExpression}.trim()` +
+            `: ${baseValueExpression})`
+  }
 
-    if (number) {
-        valueExpression = `_n(${valueExpression})`;
-    }
+  if (number) {
+    valueExpression = `_n(${valueExpression})`
+  }
 
-    const assignment = genAssignmentCode(value, valueExpression);
+  const assignment = genAssignmentCode(value, valueExpression)
 
-    el.model = {
-        value: `(${value})`,
-        expression: `"${value}"`,
-        callback: `function (${baseValueExpression}) {${assignment}}`
-    };
+  el.model = {
+    value: `(${value})`,
+    expression: `"${value}"`,
+    callback: `function (${baseValueExpression}) {${assignment}}`
+  }
 }
 
 /**
  * Cross-platform codegen helper for generating v-model value assignment code.
  */
-export function genAssignmentCode(
-    value,
-    assignment
+export function genAssignmentCode (
+  value,
+  assignment
 ) {
-    const res = parseModel(value);
-    if (res.key === null) {
-        return `${value}=${assignment}`;
-    }
-    return `$set(${res.exp}, ${res.key}, ${assignment})`;
+  const res = parseModel(value)
+  if (res.key === null) {
+    return `${value}=${assignment}`
+  }
+  return `$set(${res.exp}, ${res.key}, ${assignment})`
 }
 
 /**
@@ -65,97 +63,93 @@ export function genAssignmentCode(
  *
  */
 
-let len;
-let str;
-let chr;
-let index;
-let expressionPos;
-let expressionEndPos;
+let len
+let str
+let chr
+let index
+let expressionPos
+let expressionEndPos
 
-export function parseModel(val) {
-    len = val.length;
+export function parseModel (val) {
+  len = val.length
 
-    if (val.indexOf('[') < 0 || val.lastIndexOf(']') < len - 1) {
-        index = val.lastIndexOf('.');
-        if (index > -1) {
-            return {
-                exp: val.slice(0, index),
-                key: '"' + val.slice(index + 1) + '"'
-            };
-        }
-        return {
-            exp: val,
-            key: null
-        };
+  if (val.indexOf('[') < 0 || val.lastIndexOf(']') < len - 1) {
+    index = val.lastIndexOf('.')
+    if (index > -1) {
+      return {
+        exp: val.slice(0, index),
+        key: '"' + val.slice(index + 1) + '"'
+      }
     }
-
-    str = val;
-    index = expressionPos = expressionEndPos = 0;
-
-    while (!eof()) {
-        chr = next();
-
-        /* istanbul ignore if */
-        if (isStringStart(chr)) {
-            parseString(chr);
-        }
-        else if (chr === 0x5B) {
-            parseBracket(chr);
-        }
-
-    }
-
     return {
-        exp: val.slice(0, expressionPos),
-        key: val.slice(expressionPos + 1, expressionEndPos)
-    };
-}
-
-function next() {
-    return str.charCodeAt(++index);
-}
-
-function eof() {
-    return index >= len;
-}
-
-function isStringStart(chr) {
-    return chr === 0x22 || chr === 0x27;
-}
-
-function parseBracket(chr) {
-    let inBracket = 1;
-    expressionPos = index;
-    while (!eof()) {
-        chr = next();
-        if (isStringStart(chr)) {
-            parseString(chr);
-            continue;
-        }
-
-        if (chr === 0x5B) {
-            inBracket++;
-        }
-
-        if (chr === 0x5D) {
-            inBracket--;
-        }
-
-        if (inBracket === 0) {
-            expressionEndPos = index;
-            break;
-        }
-
+      exp: val,
+      key: null
     }
+  }
+
+  str = val
+  index = expressionPos = expressionEndPos = 0
+
+  while (!eof()) {
+    chr = next()
+
+    /* istanbul ignore if */
+    if (isStringStart(chr)) {
+      parseString(chr)
+    } else if (chr === 0x5B) {
+      parseBracket(chr)
+    }
+  }
+
+  return {
+    exp: val.slice(0, expressionPos),
+    key: val.slice(expressionPos + 1, expressionEndPos)
+  }
 }
 
-function parseString(chr) {
-    const stringQuote = chr;
-    while (!eof()) {
-        chr = next();
-        if (chr === stringQuote) {
-            break;
-        }
+function next () {
+  return str.charCodeAt(++index)
+}
 
+function eof () {
+  return index >= len
+}
+
+function isStringStart (chr) {
+  return chr === 0x22 || chr === 0x27
+}
+
+function parseBracket (chr) {
+  let inBracket = 1
+  expressionPos = index
+  while (!eof()) {
+    chr = next()
+    if (isStringStart(chr)) {
+      parseString(chr)
+      continue
     }
+
+    if (chr === 0x5B) {
+      inBracket++
+    }
+
+    if (chr === 0x5D) {
+      inBracket--
+    }
+
+    if (inBracket === 0) {
+      expressionEndPos = index
+      break
+    }
+  }
+}
+
+function parseString (chr) {
+  const stringQuote = chr
+  while (!eof()) {
+    chr = next()
+    if (chr === stringQuote) {
+      break
+    }
+  }
 }

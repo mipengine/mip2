@@ -3,8 +3,6 @@
  * @author sekiyika(pengxing@baidu.com)
  */
 
-'use strict'
-
 /**
  * element store
  *
@@ -18,12 +16,12 @@ const store = {
 export default {
 
   /**
-     * get custom element class by name
-     *
-     * @param {string} name customElment name
-     * @param {string=} type customElement type, mip1 or mip2
-     * @return {MIPElement}
-     */
+   * get custom element class by name
+   *
+   * @param {string} name customElment name
+   * @param {string=} type customElement type, mip1 or mip2
+   * @return {MIPElement}
+   */
   get (name, type) {
     switch (type) {
       case 'mip1':
@@ -36,12 +34,12 @@ export default {
   },
 
   /**
-     * store custom element name and clazz pair
-     *
-     * @param {string} name custom element name
-     * @param {MIPElement} clazz custom element class
-     * @param {string} type mip1 or mip2
-     */
+   * store custom element name and clazz pair
+   *
+   * @param {string} name custom element name
+   * @param {MIPElement} clazz custom element class
+   * @param {string} type mip1 or mip2
+   */
   set (name, clazz, type) {
     if (type !== 'mip2' && type !== 'mip1') {
       throw new Error(`type: ${type} must be mip1 or mip2`)

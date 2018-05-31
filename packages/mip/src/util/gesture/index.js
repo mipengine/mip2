@@ -8,6 +8,8 @@ import Recognizer from './gesture-recognizer'
 import dataProcessor from './data-processor'
 import fn from '../fn'
 
+/* eslint-disable no-cond-assign */
+
 /**
  * Gesture
  *

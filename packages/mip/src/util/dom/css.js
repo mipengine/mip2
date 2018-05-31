@@ -34,9 +34,9 @@ function prefixProperty (property) {
 
   if (!(property in supportElement.style)) {
     for (let i = 0; i < PREFIX_TYPE.length; i++) {
-      let prefixedProp = PREFIX_TYPE[i]
-        + property.charAt(0).toUpperCase()
-        + property.slice(1)
+      let prefixedProp = PREFIX_TYPE[i] +
+        property.charAt(0).toUpperCase() +
+        property.slice(1)
       if (prefixedProp in supportElement.style) {
         prop = prefixedProp
         break

@@ -4,26 +4,25 @@
  */
 
 export default class VNode {
+  // rendered in this component's scope
 
-    // rendered in this component's scope
+  // component instance
+  // component placeholder node
 
-    // component instance
-    // component placeholder node
+  // strictly internal
+  // contains raw HTML? (server only)
+  // hoisted static node
+  // necessary for enter transition check
+  // empty comment placeholder?
+  // is a cloned node?
+  // is a v-once node?
+  // async component factory function
 
-    // strictly internal
-    // contains raw HTML? (server only)
-    // hoisted static node
-    // necessary for enter transition check
-    // empty comment placeholder?
-    // is a cloned node?
-    // is a v-once node?
-    // async component factory function
+  // real context vm for functional nodes
+  // for SSR caching
+  // functioanl scope id support
 
-    // real context vm for functional nodes
-    // for SSR caching
-    // functioanl scope id support
-
-    /* eslint-disable */
+  /* eslint-disable */
     constructor(
         tag,
         data,
@@ -84,14 +83,14 @@ export function createTextVNode(val) {
 // on their elm reference.
 export function cloneVNode(vnode, deep) {
     const cloned = new VNode(
-        vnode.tag,
-        vnode.data,
-        vnode.children,
-        vnode.text,
-        vnode.elm,
-        vnode.context,
-        vnode.componentOptions,
-        vnode.asyncFactory
+      vnode.tag,
+      vnode.data,
+      vnode.children,
+      vnode.text,
+      vnode.elm,
+      vnode.context,
+      vnode.componentOptions,
+      vnode.asyncFactory
     );
     cloned.ns = vnode.ns;
     cloned.isStatic = vnode.isStatic;

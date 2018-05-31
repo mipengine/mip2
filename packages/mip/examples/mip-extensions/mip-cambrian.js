@@ -6,11 +6,11 @@
 /* global MIP */
 
 MIP.registerVueCustomElement('mip-cambrian', {
-    template: `
-        <div>
-            <slot></slot>
-        </div>
-    `,
-    props: {
-    }
-});
+  template: `
+    <div>
+      <slot></slot>
+    </div>
+  `,
+  props: {
+  }
+})
