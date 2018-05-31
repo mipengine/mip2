@@ -1,0 +1,238 @@
+{
+    "/.*/": {
+        "attrs": {
+            "style": {
+                "disallow": true
+            },
+            "/^on.+/": {
+                "disallow": true
+            }
+        }
+    },
+    "mip-input": {
+        "mandatory_ancestor": "mip-form",
+        "attrs": {
+            "name": {
+                "mandatory": true
+            }
+        }
+    },
+    "img": {
+        "disallow": true
+    },
+    "video": {
+        "disallow": true
+    },
+    "audio": {
+        "disallow": true
+    },
+    "frame": {
+        "disallow": true
+    },
+    "frameset": {
+        "disallow": true
+    },
+    "object": {
+        "disallow": true
+    },
+    "param": {
+        "disallow": true
+    },
+    "applet": {
+        "disallow": true
+    },
+    "embed": {
+        "disallow": true
+    },
+    "form": {
+        "disallow": true
+    },
+    "iframe": {
+        "disallow": true
+    },
+    "input": {
+        "mandatory_ancestor": "mip-form"
+    },
+    "textarea": {
+        "mandatory_ancestor": "mip-form"
+    },
+    "select": {
+        "mandatory_ancestor": "mip-form"
+    },
+    "option": {
+        "mandatory_ancestor": "mip-form"
+    },
+    "a": {
+        "attrs": {
+            "href": {
+                "mandatory": true,
+                "value": "/^((?!javascript:).*)$/"
+            }
+        }
+    },
+    "mip-img": {
+        "attrs_or": [{
+            "src": "/^\\S+$/"
+        }, {
+            "srcset": "/^\\S+$/"
+        }],
+        "attrs": {
+            "src": {
+                "value": "/^\\S+$/"
+            },
+            "srcset": {
+                "value": "/^\\S+$/"
+            }
+        }
+    },
+    "mip-pix": {
+        "attrs": {
+            "src": {
+                "mandatory": true,
+                "value": "/^((https:)?\/\/)|(http:\/\/*\\?)/"
+            }
+        }
+    },
+    "mip-video": {
+        "attrs": {
+            "src": {
+                "mandatory": true,
+                "nomatch_descendant": "source"
+            }
+        }
+    },
+    "source": {
+        "mandatory_ancestor": "/picture|mip-video|mip-audio/",
+        "attrs": {
+            "src": {
+                "mandatory": true,
+                "value": "/^(?!\/[^\/])/"
+            }
+        }
+    },
+    "mip-carousel": {
+        "attrs": {
+            "width": {
+                "mandatory": true,
+                "value": "/^\\d{1,4}$/"
+            },
+            "height": {
+                "mandatory": true,
+                "value": "/^\\d{1,4}$/"
+            }
+        }
+    },
+    "mip-iframe": {
+        "attrs": {
+            "width": {
+                "mandatory": true,
+                "value": "/^\\d{1,4}$/"
+            },
+            "height": {
+                "mandatory": true,
+                "value": "/^\\d{1,4}$/"
+            }
+        }
+    },
+    "mip-appdl": {
+        "attrs": {
+            "tpl": {
+                "mandatory": true,
+                "value": "/^(noneImg)|(imageText)$/"
+            },
+            "src": {
+                "mandatory": true,
+                "value": "/^http(s)?:\/\//",
+                "match": {
+                    "tpl": "imageText"
+                }
+            },
+            "texttip": {
+                "mandatory": true,
+                "value": "/^\\S+$/"
+            }
+        }
+    },
+    "mip-audio": {
+        "attrs": {
+            "src": {
+                "mandatory": true,
+                "value": "/^(?!\/[^\/])/"
+            }
+        }
+    },
+    "mip-stats-bidu": {
+        "attrs": {
+            "token": {
+                "mandatory": true,
+                "value": "/^\\S+$/"
+            }
+        }
+    },
+    "mip-form": {
+        "attrs": {
+            "method": {
+                "value": "/^((post)|(get))$/i"
+            },
+            "url": {
+                "mandatory": true,
+                "value": "/^(http(s)?:)?\/\//"
+            }
+        }
+    },
+    "mip-link": {
+        "attrs": {
+            "href": {
+                "mandatory": true,
+                "value": "/^((?!javascript:).*)$/"
+            }
+        }
+    },
+    "mip-ad": {
+        "attrs": {
+            "type": {
+                "mandatory": true
+            }
+        }
+    },
+    "mip-embed": {
+        "attrs": {
+            "type": {
+                "mandatory": true
+            }
+        }
+    },
+    "base": {
+        "duplicate": true,
+        "mandatory_parent": "head",        
+        "attrs_or": [{
+            "target": "/^((_top)|(_self)|(_blank))$/i"
+        }, {
+            "href": "/^\/$/"
+        }],
+        "attrs": {
+            "target": {
+                "value": "/^((_top)|(_self)|(_blank))$/i"
+            },
+            "href": {
+                "value": "/^\/$/"
+            }
+        }
+    },
+    "mip-vd-baidu": {
+        "attrs": {
+            "src": {
+                "mandatory": true,
+                "value": "/^(http(s)?:)?\/\//"
+            },
+            "title": {
+                "mandatory": true,
+                "value": "/^\\S+$/"
+            },
+            "poster": {
+                "mandatory": true,
+                "value": "/^\\S+$/"
+            }
+        }
+    }
+}

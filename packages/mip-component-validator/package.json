@@ -1,0 +1,23 @@
+{
+  "name": "mip-component-validator",
+  "version": "1.0.3",
+  "description": "MIP component validate",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mip-project/mip-component-validator.git"
+  },
+  "author": "sfe-sy@baidu.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mip-project/mip-component-validator/issues"
+  },
+  "homepage": "https://github.com/mip-project/mip-component-validator#readme",
+  "dependencies": {
+    "mip-validator": "^1.5.15",
+    "vue-template-compiler": "^2.5.16"
+  }
+}
