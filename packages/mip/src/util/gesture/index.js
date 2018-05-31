@@ -70,8 +70,7 @@ class Gesture extends EventEmitter {
    * Cleanup the events.
    */
   cleanup () {
-    let element = this._element
-    listenersHelp(element, 'touchstart touchmove touchend touchcancel', this._boundTouchEvent, false)
+    listenersHelp(this._element, 'touchstart touchmove touchend touchcancel', this._boundTouchEvent, false)
     this.off()
   }
 
@@ -92,8 +91,7 @@ class Gesture extends EventEmitter {
     name = RecognizerClass.recName
     let recognizer = this._recognizers[name] = new RecognizerClass(this)
     let conflictList = Recognizer.getConflictList(recognizer.recName)
-    for (let i = 0; i < conflictList.length; i++) {
-      name = conflictList[i]
+    for (name of conflictList) {
       let conflictRecognizer = this._recognizers[name]
       if (conflictRecognizer) {
         conflictRecognizer.conflictList[recognizer.recName] = recognizer
