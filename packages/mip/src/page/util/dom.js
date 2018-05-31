@@ -5,7 +5,6 @@
 
 import css from '../../util/dom/css';
 import sandbox from '../../sandbox';
-import {cleanPath} from './path';
 import util from '../../util';
 
 import {
@@ -19,7 +18,7 @@ import {
 let {window: sandWin, document: sandDoc} = sandbox;
 let activeZIndex = 10000;
 
-export function createIFrame(path, {base, onLoad, onError} = {}) {
+export function createIFrame(path, {onLoad, onError} = {}) {
     let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${path}"]`);
     let loading = getLoading();
 
@@ -35,7 +34,7 @@ export function createIFrame(path, {base, onLoad, onError} = {}) {
             typeof onError === 'function' && onError();
         };
         // TODO: use XHR to load iframe so that we can get httpRequest.status 404
-        container.setAttribute('src', cleanPath(base + path));
+        container.setAttribute('src', path);
         container.setAttribute('class', MIP_IFRAME_CONTAINER);
 
         /**
