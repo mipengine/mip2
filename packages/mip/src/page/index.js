@@ -94,7 +94,7 @@ class Page {
          */
         if (this.isRootPage) {
             // Create loading div
-            createLoading();
+            createLoading(this.data.appshell.header.show);
 
             this.messageHandlers.push((type, {appshellData, pageId}) => {
                 if (type === MESSAGE_APPSHELL_REFRESH) {
@@ -163,11 +163,6 @@ class Page {
         this.initRouter();
         this.initAppShell();
         addMIPCustomScript();
-
-        // Create loading div
-        if (this.isRootPage) {
-            createLoading(this.data.appshell.header.show);
-        }
 
         // Listen message from iframes
         window.addEventListener('message', (e) => {

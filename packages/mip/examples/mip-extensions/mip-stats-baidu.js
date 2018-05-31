@@ -3,9 +3,9 @@
  * @author sfe
  */
 
-/* global mip */
+/* global MIP */
 
-mip.registerVueCustomElement('mip-stats-baidu', {
+MIP.registerVueCustomElement('mip-stats-baidu', {
     template: `
         <div>
             <slot></slot>

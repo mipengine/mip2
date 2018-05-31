@@ -8,8 +8,6 @@ import sandbox from '../../sandbox';
 import util from '../../util';
 
 import {
-    MIP_CONTAINER_ID,
-    MIP_VIEW_ID,
     MIP_CONTENT_IGNORE_TAG_LIST,
     DEFAULT_SHELL_CONFIG,
     MIP_IFRAME_CONTAINER
@@ -20,9 +18,9 @@ let activeZIndex = 10000;
 
 export function createIFrame(path, {onLoad, onError} = {}) {
     let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${path}"]`);
-    let loading = getLoading();
 
     if (!container) {
+        let loading = getLoading();
         css(loading, {display: 'block'});
         container = document.createElement('iframe');
         container.onload = () => {
@@ -64,16 +62,35 @@ export function removeIFrame(pageId) {
     }
 }
 
-export function createLoading(showHeader) {
+export function getIFrame(iframe) {
+    if (typeof iframe === 'string') {
+        return document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${iframe}"]`);
+    }
+
+    return iframe;
+}
+
+export function createLoading(showHeader = false) {
     let loading = document.createElement('div');
     loading.id = 'mip-page-loading';
-    if (showHeader) {
-        loading.setAttribute('class', 'mip-page-loading with-header');
-    }
-    else {
-        loading.setAttribute('class', 'mip-page-loading');
-    }
+    loading.setAttribute('class', 'mip-page-loading');
+    toggleLoadingHeader(showHeader, loading);
     document.body.appendChild(loading);
+}
+
+function getLoading() {
+    return document.querySelector('#mip-page-loading');
+}
+
+export function toggleLoadingHeader(toggle, loading = getLoading()) {
+    // with header
+    if (toggle) {
+        loading.classList.add('with-header');
+    }
+    // without header
+    else {
+        loading.classList.remove('with-header');
+    }
 }
 
 export function getMIPShellConfig() {
@@ -226,18 +243,6 @@ export function frameMoveOut(pageId, {transition, onComplete} = {}) {
             onComplete && onComplete();
         }
     }
-}
-
-export function getIFrame(iframe) {
-    if (typeof iframe === 'string') {
-        return document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${iframe}"]`);
-    }
-
-    return iframe;
-}
-
-export function getLoading() {
-    return document.querySelector('#mip-page-loading');
 }
 
 export const inBrowser = typeof window !== 'undefined';

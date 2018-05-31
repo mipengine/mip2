@@ -5,7 +5,7 @@
 
 /* global MIP */
 
-MIP.mip.registerVueCustomElement('mip-list', {
+MIP.registerVueCustomElement('mip-list', {
     template: `
         <div class="mip-list">
             <div class="mip-list-item" v-for="item in list">

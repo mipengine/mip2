@@ -9,19 +9,6 @@
     "uploadjs": "baidubce bos --put-object dist/mip.js bos://assets/mip/projects/mip.js",
     "uploadcss": "baidubce bos --put-object dist/mip.css bos://assets/mip/projects/mip.css"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mip-project/mip.git"
-  },
-  "keywords": [
-    "mip"
-  ],
-  "author": "sfe-sy@baidu.com",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/mip-project/mip/issues"
-  },
-  "homepage": "https://github.com/mip-project/mip#readme",
   "devDependencies": {
     "autoprefixer": "^8.4.1",
     "babel-core": "^6.26.3",

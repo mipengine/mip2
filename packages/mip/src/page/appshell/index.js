@@ -1,6 +1,6 @@
 import Header from './header.js';
 import {DEFAULT_SHELL_CONFIG} from '../const';
-import {getIFrame, getLoading} from '../util/dom';
+import {getIFrame, toggleLoadingHeader} from '../util/dom';
 
 export default class AppShell {
     constructor(options, page) {
@@ -45,16 +45,14 @@ export default class AppShell {
 
         // toggle iframe
         let targetIFrame = getIFrame(targetPageId);
-        let loading = getLoading();
+        toggleLoadingHeader(header.show);
         if (header.show) {
             this.$wrapper.classList.add('show');
             targetIFrame && targetIFrame.classList.add('with-header');
-            loading && loading.classList.add('with-header');
         }
         else {
             this.$wrapper.classList.remove('show');
             targetIFrame && targetIFrame.classList.remove('with-header');
-            loading && loading.classList.remove('with-header');
         }
 
         // redraw entire header

@@ -3,9 +3,9 @@
  * @author sfe
  */
 
-/* global mip */
+/* global MIP */
 
-mip.registerVueCustomElement('mip-ad', {
+MIP.registerVueCustomElement('mip-ad', {
     template: `
         <div>
             <slot></slot>
