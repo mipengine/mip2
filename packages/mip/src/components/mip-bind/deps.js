@@ -4,27 +4,27 @@
  */
 
 // Record watcher id, avoid add repeatly
-let uid = 0;
+let uid = 0
 
 class Deps {
-    constructor() {
-        this.subs = [];
-        this.id = uid++;
-    }
+  constructor () {
+    this.subs = []
+    this.id = uid++
+  }
 
-    addWatcher() {
-        Deps.target.addWatcher(this);
-    }
+  addWatcher () {
+    Deps.target.addWatcher(this)
+  }
 
-    notify() {
-        this.subs.forEach(function (sub) {
-            sub.update();
-        });
-    }
+  notify () {
+    this.subs.forEach(function (sub) {
+      sub.update()
+    })
+  }
 
-    update(watcher) {
-        watcher && watcher.update && watcher.update();
-    }
+  update (watcher) {
+    watcher && watcher.update && watcher.update()
+  }
 }
 
-export default Deps;
+export default Deps

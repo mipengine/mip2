@@ -1,3 +1,4 @@
+/*eslint-disable */
 (window.MIP = window.MIP || []).push({
     name: "mip-sidebar",
     func: function() {

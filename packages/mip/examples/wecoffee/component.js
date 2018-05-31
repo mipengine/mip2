@@ -7950,7 +7950,6 @@ define('ralltiir-iframe/utils/performance', ['require'], function (require) {
                 }
             }, delay);
         };
-        /* eslint-enable */
     })();
 
     return Spark;

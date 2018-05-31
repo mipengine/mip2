@@ -6,20 +6,20 @@
 /* global MIP */
 
 MIP.registerVueCustomElement('mip-complevel2', {
-    template: `
-        <p>{{userinfo.name}}</p>
-    `,
-    props: {
-        userinfo: {
-            default() {
-                return {};
-            },
-            type: Object
-        }
-    },
-    updated() {
-        // console.log(this.userinfo)
-    },
-    methods: {
+  template: `
+    <p>{{userinfo.name}}</p>
+  `,
+  props: {
+    userinfo: {
+      default () {
+        return {}
+      },
+      type: Object
     }
-});
+  },
+  updated () {
+    // console.log(this.userinfo)
+  },
+  methods: {
+  }
+})
