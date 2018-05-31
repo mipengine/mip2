@@ -6,7 +6,7 @@
 
 (function () {
 
-    var util = mip.util;
+    var util = MIP.util;
     var viewer = util.viewer;
 
     var platform = util.platform;
@@ -183,7 +183,7 @@
 
     }
 
-    mip.registerVueCustomElement('mip-app-banner', {
+    MIP.registerVueCustomElement('mip-app-banner', {
         props: {
             id: String,
             layout: String

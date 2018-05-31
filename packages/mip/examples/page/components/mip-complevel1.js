@@ -10,6 +10,7 @@ MIP.registerVueCustomElement('mip-complevel1', {
         <div class="mip-complevel1">
             <mip-complevel2 :userinfo="userinfo"></mip-complevel2>
             <p @click="changeData">click me to change name:{{userinfo.name}}</p>
+            <p @click="changeData2">click me to change name:{{userinfo.name}}</p>
         </div>
     `,
     props: {
@@ -24,7 +25,18 @@ MIP.registerVueCustomElement('mip-complevel1', {
     },
     methods: {
         changeData() {
-            this.$emit('test-event', {name:'sfe-1'});
+            MIP.setData({
+                userInfo: {
+                    name: 'ckkk'
+                }
+            });
+        },
+        changeData2() {
+            MIP.setData({
+                userInfo: {
+                    name: 'ckkk2'
+                }
+            });
         }
     }
 });

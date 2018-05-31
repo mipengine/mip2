@@ -21,15 +21,19 @@ let activeZIndex = 10000;
 
 export function createIFrame(path, {base, onLoad, onError} = {}) {
     let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${path}"]`);
+    let loading = getLoading();
 
     if (!container) {
+        css(loading, {display: 'block'});
         container = document.createElement('iframe');
-        if (typeof onLoad === 'function') {
-            container.onload = onLoad;
-        }
-        if (typeof onError === 'function') {
-            container.onerror = onError;
-        }
+        container.onload = () => {
+            setTimeout(() => css(loading, {display: 'none'}), 320);
+            typeof onLoad === 'function' && onLoad();
+        };
+        container.onerror = () => {
+            setTimeout(() => css(loading, {display: 'none'}), 320);
+            typeof onError === 'function' && onError();
+        };
         // TODO: use XHR to load iframe so that we can get httpRequest.status 404
         container.setAttribute('src', cleanPath(base + path));
         container.setAttribute('class', MIP_IFRAME_CONTAINER);
@@ -59,6 +63,18 @@ export function removeIFrame(pageId) {
     if (container) {
         container.parentNode.removeChild(container);
     }
+}
+
+export function createLoading(showHeader) {
+    let loading = document.createElement('div');
+    loading.id = 'mip-page-loading';
+    if (showHeader) {
+        loading.setAttribute('class', 'mip-page-loading with-header');
+    }
+    else {
+        loading.setAttribute('class', 'mip-page-loading');
+    }
+    document.body.appendChild(loading);
 }
 
 export function getMIPShellConfig() {
@@ -145,6 +161,7 @@ export function whenTransitionEnds(el, type, cb) {
 
 export function frameMoveIn(pageId, {transition, onComplete} = {}) {
     let iframe = getIFrame(pageId);
+    let loading = getLoading();
 
     if (iframe) {
         css(iframe, {
@@ -153,21 +170,23 @@ export function frameMoveIn(pageId, {transition, onComplete} = {}) {
         });
 
         if (transition) {
-            iframe.classList.add('slide-enter');
-            iframe.classList.add('slide-enter-active');
+            iframe.classList.add('slide-enter', 'slide-enter-active');
+            loading.classList.add('slide-enter', 'slide-enter-active');
 
             // trigger layout
             iframe.offsetWidth;
 
             whenTransitionEnds(iframe, 'transition', () => {
-                iframe.classList.remove('slide-enter-to');
-                iframe.classList.remove('slide-enter-active');
+                iframe.classList.remove('slide-enter-to', 'slide-enter-active');
+                loading.classList.remove('slide-enter-to', 'slide-enter-active');
                 onComplete && onComplete();
             });
 
             nextFrame(() => {
                 iframe.classList.add('slide-enter-to');
                 iframe.classList.remove('slide-enter');
+                loading.classList.add('slide-enter-to');
+                loading.classList.remove('slide-enter');
             });
         }
         else {
@@ -178,10 +197,10 @@ export function frameMoveIn(pageId, {transition, onComplete} = {}) {
 
 export function frameMoveOut(pageId, {transition, onComplete} = {}) {
     let iframe = getIFrame(pageId);
+
     if (iframe) {
         if (transition) {
-            iframe.classList.add('slide-leave');
-            iframe.classList.add('slide-leave-active');
+            iframe.classList.add('slide-leave', 'slide-leave-active');
 
             // trigger layout
             iframe.offsetWidth;
@@ -191,8 +210,7 @@ export function frameMoveOut(pageId, {transition, onComplete} = {}) {
                     display: 'none',
                     'z-index': 10000
                 });
-                iframe.classList.remove('slide-leave-to');
-                iframe.classList.remove('slide-leave-active');
+                iframe.classList.remove('slide-leave-to', 'slide-leave-active');
                 onComplete && onComplete();
             });
 
@@ -219,8 +237,8 @@ export function getIFrame(iframe) {
     return iframe;
 }
 
-function getLoading() {
-    return document.querySelector('#mip-shell-loading');
+export function getLoading() {
+    return document.querySelector('#mip-page-loading');
 }
 
 export const inBrowser = typeof window !== 'undefined';

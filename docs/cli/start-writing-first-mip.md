@@ -25,7 +25,7 @@ $ mip2 init
 
 ### 3. 编辑页面模板
 
-进入项目目录，使用编辑器打开 `test/index.html`，生成的模板已经为我们写好了 MIP 页面所需的最基本元素，如 `mip.js` 运行时，默认样式 `mip.css` 等。下面我们在页面中写入简单的内容，并使用内置 `mip-img` 组件。注意，如果使用其他非内置组件，需要在页面底部使用 `script` 标签引入相应的脚本文件。
+进入项目目录，使用编辑器打开 `example/index.html`，生成的模板已经为我们写好了 MIP 页面所需的最基本元素，如 `mip.js` 运行时，默认样式 `mip.css` 等。下面我们在页面中写入简单的内容，并使用内置 `mip-img` 组件。注意，如果使用其他非内置组件，需要在页面底部使用 `script` 标签引入相应的脚本文件。
 
 ```html
 <!DOCTYPE html>
@@ -66,7 +66,7 @@ $ mip2 init
 $ mip2 dev
 ```
 
-服务启动后，打开浏览器访问 `http://127.0.0.1:8111/test`，就能看到上面我们编写的页面的效果了。
+服务启动后，打开浏览器访问 `http://127.0.0.1:8111/example`，就能看到上面我们编写的页面的效果了。
 
 
 ## 编写 MIP 组件
@@ -85,7 +85,7 @@ $ mip2 dev
 ── mip-hello-world
     ├── mip-hello-world.md
     ├── mip-hello-world.vue
-    └── test
+    └── example
         └── mip-hello-world.html
 ```
 
@@ -119,7 +119,7 @@ $ mip2 dev
 
 ### 3. 引用组件脚本
 
-编辑器打开 `test/index.html`, 修改 `body` 部分的代码，引用组件脚本
+编辑器打开 `example/index.html`, 修改 `body` 部分的代码，引用组件脚本
 
 ```html
 ...
@@ -129,7 +129,7 @@ $ mip2 dev
         <mip-hello-world></mip-hello-world>
     </div>
     <script src="http://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script>
-    <script src="http://127.0.0.1:8111/mip-hello-world.js"></script>
+    <script src="/mip-hello-world/mip-hello-world.js"></script>
 </body>
 
 ...
@@ -143,6 +143,6 @@ $ mip2 dev
 $ mip2 dev
 ```
 
-服务启动后，打开浏览器访问 `http://127.0.0.1:8111/test`，可以看到，刚才编写的组件已经运行在页面中。开发工作完成后，可以根据组件类型，选择将组件提交至第三方组件仓库(TODO)或[官方组件仓库](./contribute-to-official-repo.md)。
+服务启动后，打开浏览器访问 `http://127.0.0.1:8111/example`，可以看到，刚才编写的组件已经运行在页面中。开发工作完成后，可以根据组件类型，选择将组件提交至第三方组件仓库(TODO)或[官方组件仓库](./contribute-to-official-repo.md)。
 
 

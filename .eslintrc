@@ -1,0 +1,11 @@
+{
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "sourceType": "module",
+    "allowImportExportEverywhere": false
+  },
+  "extends": ["standard"],
+  "rules": {
+    "operator-linebreak": ["error", "before"]
+  }
+}
