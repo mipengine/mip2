@@ -79,7 +79,17 @@ $ mip2 dev
 
 ### 2. 新建一个自定义组件
 
-在 `myProject/components/` 目录下，仿照 `mip-example` 的结构，我们创建一个 `mip-hello-world` 组件，结构如下：
+在项目根目录运行 `mip2 add` 命令，即可快速添加一个新组件
+
+```bash
+# 快速添加名为 mip-hello-world 的组件
+$ mip2 add mip-hello-world
+
+# 使用 -f 或 --force 参数强制覆盖同名组件
+$ mip2 add mip-hello-world -f
+```
+
+可以在 `components` 目录下看到，新增组件结构如下：
 
 ```
 ── mip-hello-world
