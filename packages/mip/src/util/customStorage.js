@@ -180,13 +180,11 @@ class LocalStorage {
       }
     } else {
       let size = value.length / 1024.0 / 1024.0
-      /* eslint-disable */
       for (let k in lsCache) {
-          if (lsCache[k]) {
-              size += lsCache[k].length / 1024.0 / 1024.0;
-          }
+        if (lsCache[k]) {
+          size += lsCache[k].length / 1024.0 / 1024.0
+        }
       }
-      /* eslint-enable */
       if (size > 5.0) {
         callback && callback(eCode.lsExceed, mess)
         throw mess
