@@ -55,6 +55,18 @@ myproject
 
 同时，我们也欢迎开发者向官方通用组件库[贡献优秀的组件](./contribute-to-official-repo.md)。
 
+### 新增一个组件
+
+在项目根目录运行 `mip2 add` 命令，即可快速添加一个新组件
+
+```bash
+# 快速添加名为 mip-new 的组件
+$ mip2 add mip-new
+
+# 使用 -f 或 --force 参数强制覆盖同名组件
+$ mip2 add mip-new -f
+```
+
 ### 启动调试服务器
 
 命令行工具内置了简单的调试服务器，方便开发者调试组件和页面。在项目根目录运行
