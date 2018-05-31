@@ -160,8 +160,8 @@ function findIndexes(content, match) {
 
 function resolveModule(moduleName, rest) {
     let possiblePaths = [
-        path.resolve(__dirname, '../../../../node_modules'),
-        path.resolve(__dirname, '../../node_modules')
+        path.resolve(__dirname, '../../node_modules'),
+        path.resolve(__dirname, '../../../../node_modules')
     ]
     .map(p => path.resolve(p, moduleName));
 
