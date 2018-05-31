@@ -3,24 +3,22 @@
  * @author sfe-sy (sfe-sy@baidu.com)
  */
 
-/* eslint-disable */
+/* global CustomEvent */
 
-export default function customEvent(eventName, detail) {
-    const params = {bubbles: false, cancelable: false, detail};
-    let event;
-    if (typeof window.CustomEvent === 'function') {
-        event = new CustomEvent(eventName, params);
-    }
-    else {
-        event = document.createEvent('CustomEvent');
-        event.initCustomEvent(eventName, params.bubbles, params.cancelable, params.detail);
-    }
+export default function customEvent (eventName, detail) {
+  const params = {bubbles: false, cancelable: false, detail}
+  let event
+  if (typeof window.CustomEvent === 'function') {
+    event = new CustomEvent(eventName, params)
+  } else {
+    event = document.createEvent('CustomEvent')
+    event.initCustomEvent(eventName, params.bubbles, params.cancelable, params.detail)
+  }
 
-    return event;
+  return event
 }
 
-
-export function customEmit(element, eventName, ...args) {
-    const event = customEvent(eventName, [...args]);
-    element.dispatchEvent(event);
+export function customEmit (element, eventName, ...args) {
+  const event = customEvent(eventName, [...args])
+  element.dispatchEvent(event)
 }

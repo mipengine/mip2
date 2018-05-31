@@ -175,13 +175,13 @@ Naboo.tool = (() => {
   let off = eventPrefix === undefined && testEl.style.transitionProperty === undefined
 
   /**
-     * 设置dom对象的css
-     *
-     * 实现方法同zepto的css
-     *
-     * @param {Object} dom 要设置css的dom节点
-     * @param {Object} obj 存放css信息的对象
-     */
+   * 设置dom对象的css
+   *
+   * 实现方法同zepto的css
+   *
+   * @param {Object} dom 要设置css的dom节点
+   * @param {Object} obj 存放css信息的对象
+   */
   function setCss (dom, obj) {
     let css = ''
 
@@ -197,13 +197,13 @@ Naboo.tool = (() => {
   }
 
   /**
-     * 给一个属性自动添加单位
-     *
-     * @param  {string} prop 属性名
-     * @param  {string|number} val 属性值
-     *
-     * @return {string}     带单位的属性值
-     */
+   * 给一个属性自动添加单位
+   *
+   * @param  {string} prop 属性名
+   * @param  {string|number} val 属性值
+   *
+   * @return {string}     带单位的属性值
+   */
   function handleUnit (prop, val) {
     if (val !== +val) {
       return val
@@ -220,11 +220,11 @@ Naboo.tool = (() => {
   }
 
   /**
-     * 获取正确的css属性名
-     *
-     * @param {string} prop 属性名
-     * @return {string | undefined} 自动添加前缀后的属性名或者undefined
-     */
+   * 获取正确的css属性名
+   *
+   * @param {string} prop 属性名
+   * @return {string | undefined} 自动添加前缀后的属性名或者undefined
+   */
   function getPropName (prop) {
     let res
     if (testEl.style[prop] !== undefined) {
