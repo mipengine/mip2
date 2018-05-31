@@ -45,7 +45,7 @@ module.exports = {
     dev: {
         port: 8222, // 默认端口从 8111 变更为 8222
         livereload: true, // 启动自动刷新
-        auto: '/example/index.html' // 默认打开 http://127.0.0.1:8222/test/index.html
+        autoopen: '/example/index.html' // 默认打开 http://127.0.0.1:8222/test/index.html
     }
 }
 ```
@@ -104,7 +104,7 @@ module.exports = {
         <!-- 引入 mip 脚本 -->
         <script src="http://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script>
         <!-- 引入 mip-example 脚本 -->
-        <script src="http://127.0.0.1:8222/mip-example.js"></script>
+        <script src="http://127.0.0.1:8222/mip-example/mip-example.js"></script>
     </body>
 </html>
 ```
@@ -140,7 +140,7 @@ module.exports = {
 mip2 dev
 ```
 
-此时会自动打开 `http://127.0.0.1:8222/test/index.html`，页面显示如下：
+此时会自动打开 `http://127.0.0.1:8222/example/index.html`，页面显示如下：
 
 ![mip-example.jpg](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/docs/mip-example-a6d1f6f5.jpg)
 

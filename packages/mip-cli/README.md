@@ -19,6 +19,18 @@ $ npm install -g mip2
 $ mip2 init
 ```
 
+新增一个组件
+
+在项目根目录运行 `mip2 add` 命令，即可快速添加一个新组件
+
+```bash
+# 快速添加名为 mip-new 的组件
+$ mip2 add mip-new
+
+# 使用 -f 或 --force 参数强制覆盖同名组件
+$ mip2 add mip-new -f
+```
+
 启动调试服务器，在项目根目录运行
 
 ``` bash

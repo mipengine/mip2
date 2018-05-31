@@ -1,0 +1,36 @@
+#!/usr/bin/env node
+
+const cli = require('../lib/cli');
+const add = require('../lib/add');
+const fs = require('fs');
+const path = require('path');
+
+const args = cli.setup({
+    usage: '<component-name>',
+    options: [
+        ['-f, --force', '是否覆盖']
+    ],
+    help: [
+        '',
+        '  Examples:',
+        cli.chalk.gray('    # 新增 mip 组件'),
+        '    $ mip2 add mip-demo',
+        cli.chalk.gray('    # 新增 mip 组件，强制覆盖同名组件'),
+        '    $ mip2 add mip-demo -f'
+    ].join('\n')
+});
+
+if (!args[0].match(/^mip-[\w\-]+$/)) {
+    cli.warn('组件名称不规范！请输入形如 mip-xxx 的名称');
+    return;
+}
+
+if (!fs.existsSync(path.resolve('components'))) {
+    cli.warn('请在项目根目录执行 mip2 add 命令');
+    return;
+}
+
+add({
+    compName: args[0],
+    options: cli.program
+});

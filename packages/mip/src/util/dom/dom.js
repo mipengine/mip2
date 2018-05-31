@@ -9,7 +9,7 @@
  * @inner
  * @type {Object}
  */
-let docElem = document.documentElement;
+let docElem = document.documentElement
 
 /**
  * Get the supported matches method.
@@ -21,7 +21,7 @@ let nativeMatches = docElem.matches
     || docElem.mozMatchesSelector
     || docElem.oMatchesSelector
     || docElem.msMatchesSelector
-    || docElem.matchesSelector;
+    || docElem.matchesSelector
 
 /**
  * Support for matches. Check whether a element matches a selector.
@@ -30,11 +30,11 @@ let nativeMatches = docElem.matches
  * @param {string} selector element selector
  * @return {boolean}
  */
-function matches(element, selector) {
-    if (!element || element.nodeType !== 1) {
-        return false;
-    }
-    return nativeMatches.call(element, selector);
+function matches (element, selector) {
+  if (!element || element.nodeType !== 1) {
+    return false
+  }
+  return nativeMatches.call(element, selector)
 }
 
 /**
@@ -45,16 +45,16 @@ function matches(element, selector) {
  * @return {?HTMLElement}
  */
 let closest = docElem.closest
-    ? (element, selector) => element.closest(selector)
-    : (element, selector) => {
-        while (element) {
-            if (matches(element, selector)) {
-                return element;
-            }
-            element = element.parentNode;
-        }
-        return null;
-    };
+  ? (element, selector) => element.closest(selector)
+  : (element, selector) => {
+    while (element) {
+      if (matches(element, selector)) {
+        return element
+      }
+      element = element.parentNode
+    }
+    return null
+  }
 
 /**
  * Support for contains.
@@ -64,21 +64,21 @@ let closest = docElem.closest
  * @return {boolean}
  */
 let contains = docElem.contains
-    ? function (element, child) {
-        return element && element.contains(child);
+  ? function (element, child) {
+    return element && element.contains(child)
+  }
+  : function (element, child) {
+    if (element === document) {
+      element = document.documentElement || document.body.parentElement
     }
-    : function (element, child) {
-        if (element === document) {
-            element = document.documentElement || document.body.parentElement;
-        }
-        while (child) {
-            if (element === child) {
-                return true;
-            }
-            child = child.parentElement;
-        }
-        return false;
-    };
+    while (child) {
+      if (element === child) {
+        return true
+      }
+      child = child.parentElement
+    }
+    return false
+  }
 
 /**
  * Find the nearest element that matches the selector from current element to target element.
@@ -88,9 +88,9 @@ let contains = docElem.contains
  * @param {HTMLElement} target target element
  * @return {?HTMLElement}
  */
-function closestTo(element, selector, target) {
-    let closestElement = closest(element, selector);
-    return contains(target, closestElement) ? closestElement : null;
+function closestTo (element, selector, target) {
+  let closestElement = closest(element, selector)
+  return contains(target, closestElement) ? closestElement : null
 }
 
 /**
@@ -98,7 +98,7 @@ function closestTo(element, selector, target) {
  * @inner
  * @type {HTMLElement}
  */
-let createTmpElement = document.createElement('div');
+let createTmpElement = document.createElement('div')
 
 /**
  * Create a element by string
@@ -106,14 +106,14 @@ let createTmpElement = document.createElement('div');
  * @param {string} str Html string
  * @return {HTMLElement}
  */
-function create(str) {
-    createTmpElement.innerHTML = str;
-    if (!createTmpElement.children.length) {
-        return null;
-    }
-    let children = Array.prototype.slice.call(createTmpElement.children);
-    createTmpElement.innerHTML = '';
-    return children.length > 1 ? children : children[0];
+function create (str) {
+  createTmpElement.innerHTML = str
+  if (!createTmpElement.children.length) {
+    return null
+  }
+  let children = Array.prototype.slice.call(createTmpElement.children)
+  createTmpElement.innerHTML = ''
+  return children.length > 1 ? children : children[0]
 }
 
 /**
@@ -145,17 +145,17 @@ function create(str) {
  *
  * @param {Function} cb callback
  */
-function waitDocumentReady(cb) {
+function waitDocumentReady (cb) {
+  if (document.body) {
+    cb()
+    return
+  }
+  let interval = window.setInterval(() => {
     if (document.body) {
-        cb();
-        return;
+      window.clearInterval(interval)
+      cb()
     }
-    let interval = window.setInterval(() => {
-        if (document.body) {
-            window.clearInterval(interval);
-            cb();
-        }
-    }, 5);
+  }, 5)
 }
 
 /**
@@ -164,30 +164,30 @@ function waitDocumentReady(cb) {
  * @param  {HTMLElement} parent the node will be inserted
  * @param {Array} children node list which will insert into parent
  */
-function insert(parent, children) {
-    if (!parent || !children) {
-        return;
+function insert (parent, children) {
+  if (!parent || !children) {
+    return
+  }
+  let nodes = Array.prototype.slice.call(children)
+  if (nodes.length === 0) {
+    nodes.push(children)
+  }
+  for (let i = 0; i < nodes.length; i++) {
+    if (this.contains(nodes[i], parent)) {
+      continue
     }
-    let nodes = Array.prototype.slice.call(children);
-    if (nodes.length === 0) {
-        nodes.push(children);
+    if (nodes[i] !== parent && parent.appendChild) {
+      parent.appendChild(nodes[i])
     }
-    for (let i = 0; i < nodes.length; i++) {
-        if (this.contains(nodes[i], parent)) {
-            continue;
-        }
-        if (nodes[i] !== parent && parent.appendChild) {
-            parent.appendChild(nodes[i]);
-        }
-    }
+  }
 }
 
 export default {
-    closest,
-    closestTo,
-    matches,
-    contains,
-    create,
-    insert,
-    waitDocumentReady
-};
+  closest,
+  closestTo,
+  matches,
+  contains,
+  create,
+  insert,
+  waitDocumentReady
+}

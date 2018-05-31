@@ -3,9 +3,9 @@
  * @author sfe
  */
 
-/* global mip */
+/* global MIP */
 
-mip.registerVueCustomElement('mip-tree', {
+MIP.registerVueCustomElement('mip-tree', {
     template: `
         <li>
             <div :class="{ bold: isFolder }" @click="toggle" @dblclick="changeType">
@@ -50,7 +50,7 @@ mip.registerVueCustomElement('mip-tree', {
         },
         changeType() {
             if (!this.isFolder) {
-                mip.Vue.set(this.model, 'children', []);
+                MIP.Vue.set(this.model, 'children', []);
                 this.addChild();
                 this.open = true;
             }

@@ -3,9 +3,9 @@
  * @author sfe
  */
 
-/* global mip */
+/* global MIP */
 
-mip.registerVueCustomElement('mip-cambrian', {
+MIP.registerVueCustomElement('mip-cambrian', {
     template: `
         <div>
             <slot></slot>
