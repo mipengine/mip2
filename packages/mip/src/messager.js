@@ -33,65 +33,48 @@ let messengerInstances = {};
  * @param {number} config.timeout       双向通信回复超时(ms)
  * @param {string} config.name          若对端为 iframe，则填写 iframe.name；若对端为 parent，则填写 window.name(即父窗口的 iframe.name)
  */
-let Messenger = function (config) {
-    Emitter.mixin(this);
+class Messenger {
+    constructor(config) {
+        Emitter.mixin(this);
 
-    this.targetWindow = config.targetWindow || top;
-    this.targetOrigin = config.targetOrigin || '*';
-    this.sourceOrigins = config.sourceOrigins || ['*'];
-    this.timeout = config.timeout || 500;
-    this.name = config.name || window.name;
+        this.targetWindow = config.targetWindow || top;
+        this.targetOrigin = config.targetOrigin || '*';
+        this.sourceOrigins = config.sourceOrigins || ['*'];
+        this.timeout = config.timeout || 500;
+        this.name = config.name || window.name;
 
-    /**
-     * 存放回调处理函数 sessionId -> Object
-     *
-     * @private
-     * @type    {Object}
-     * @example {resolve: function, reject: function, timer: timerId}
-     */
-    this.defers = {};
+        /**
+         * 存放回调处理函数 sessionId -> Object
+         *
+         * @private
+         * @type    {Object}
+         * @example {resolve: function, reject: function, timer: timerId}
+         */
+        this.defers = {};
 
-    /**
-     * 存放双向通信处理函数 eventName -> function
-     *
-     * @private
-     * @type {Object}
-     */
-    this.handlers = {};
+        /**
+         * 存放双向通信处理函数 eventName -> function
+         *
+         * @private
+         * @type {Object}
+         */
+        this.handlers = {};
 
-    if (messengerInstances[this.name]) {
-        console.warn(
-            'The old messenger created for target %O will be replaced by the new one.',
-            this.name
-        );
-    }
-
-    messengerInstances[this.name] = this;
-    Messenger.bindHandler();
-    return this;
-};
-
-let messageReciver = function (event) {
-    // 寻找对应的 messenger 实例
-    let messenger = messengerInstances[event.data.name];
-    if (!messenger) {
-        // console.warn('A window with no messengers is sending message', event);
-        // 兼容老 mip，没有给名字
-        for (let x in messengerInstances) {
-            messengerInstances[x].processMessageEvent(event);
+        if (messengerInstances[this.name]) {
+            console.warn(
+                'The old messenger created for target %O will be replaced by the new one.',
+                this.name
+            );
         }
-    }
-    else {
-        messenger.processMessageEvent(event);
-    }
-};
 
-Messenger.bindHandler = function () {
-    window.removeEventListener('message', messageReciver);
-    window.addEventListener('message', messageReciver);
-};
+        messengerInstances[this.name] = this;
+        Messenger.bindHandler();
+    }
 
-Messenger.prototype = {
+    static bindHandler() {
+        window.removeEventListener('message', messageReciver);
+        window.addEventListener('message', messageReciver);
+    }
 
     /**
      * 处理消息事件
@@ -99,7 +82,7 @@ Messenger.prototype = {
      * @protected
      * @param  {MessageEvent} event 收到的 message event
      */
-    processMessageEvent: function (event) {
+    processMessageEvent(event) {
         let origin = event.origin || event.originalEvent.origin;
         let messenger = this;
         // 检查 origin 是否安全
@@ -197,7 +180,7 @@ Messenger.prototype = {
             messenger.trigger(eventData.event, [eventData]);
             messenger.trigger('recivemessage', [eventData]);
         }
-    },
+    }
 
     /**
      * 给绑定的窗口发送消息
@@ -208,7 +191,7 @@ Messenger.prototype = {
      * @param  {boolean} waitResponse 是否为双向消息（等待回复）
      * @return {Promise}              若为双向消息，则返回后 resolve；否则直接 resolve
      */
-    sendMessage: function (eventName, data, waitResponse) {
+    sendMessage(eventName, data, waitResponse) {
         let messenger = this;
         return new Promise((resolve, reject) => {
             let requestData = {
@@ -239,7 +222,7 @@ Messenger.prototype = {
             // 对于双向通信：requestData = {event, type, sentinel, sessionId, ...}
             messenger.getWindow().postMessage(requestData, messenger.targetOrigin);
         });
-    },
+    }
 
     /**
      * 设置双向消息处理函数
@@ -248,12 +231,12 @@ Messenger.prototype = {
      * @param {string}   eventName 消息名字
      * @param {Function} fn        处理函数（return object or promise which solves with object）
      */
-    setHandler: function (eventName, fn) {
+    setHandler(eventName, fn) {
         if ((typeof fn) !== 'function') {
             throw new Error('Invalid handler for event ' + eventName);
         }
         this.handlers[eventName] = fn;
-    },
+    }
 
     /**
      * 移除双向消息处理函数
@@ -261,28 +244,25 @@ Messenger.prototype = {
      * @public
      * @param  {string}   eventName 消息名字
      */
-    removeHandler: function (eventName) {
+    removeHandler(eventName) {
         this.handlers[eventName] = undefined;
-    },
+    }
 
     /**
      * 销毁消息处理器
      *
      * @public
      */
-    destory: function () {
+    destory() {
         delete messengerInstances[this.name];
-    },
+    }
 
-    getWindow: function () {
+    getWindow() {
         if (this.targetWindow instanceof HTMLIFrameElement) {
             return this.targetWindow.contentWindow;
         }
         return this.targetWindow;
     }
-};
+}
 
-Messenger.prototype.constructor = Messenger;
-
-// return Messenger;
 export default Messenger;
