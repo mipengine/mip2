@@ -1,61 +1,82 @@
-import {stringifyQuery} from './query';
+import {resolveQuery, stringifyQuery} from './query';
+import {parsePath, resolvePath} from './path';
 
 const trailingSlashRE = /\/?$/;
+const locationRE = /^(http(?:s?):\/\/[^\/]+)(.*)/;
 
-export function createRoute (record, location, redirectedFrom, router) {
-    let query = location.query || {};
-    try {
-        query = clone(query);
+/**
+ * create route with raw url
+ *
+ * @param {string|Object} rawUrl rawUrl or location object
+ * @param {Route} current currentRoute
+ * 
+ */
+export function normalizeLocation(rawUrl, current) {
+    let next = rawUrl;
+
+    // split origin out
+    if (typeof rawUrl === 'string') {
+        let matched = rawUrl.match(locationRE);
+        if (matched) {
+            next = {
+                origin: matched[1],
+                path: matched[2]
+            };
+        }
+        else {
+            next = {
+                path: rawUrl
+            }
+        }
     }
-    catch (e) {}
 
-    const route = {
-        meta: (record && record.meta) || {},
-        path: location.path || '/',
-        hash: location.hash || '',
+    const origin = next.origin || current.origin;
+    const basePath = (current && current.path) || '/';
+    const parsedPath = parsePath(next.path || '');
+    
+    const path = parsedPath.path
+        ? resolvePath(parsedPath.path, basePath)
+        : basePath;
+
+    const query = resolveQuery(parsedPath.query);
+
+    let hash = next.hash || parsedPath.hash;
+    if (hash && hash.charAt(0) !== '#') {
+        hash = `#${hash}`;
+    }
+
+    return {
+        origin,
+        path,
         query,
-        params: location.params || {},
-        fullPath: getFullPath(location),
-        matched: record ? formatMatch(record) : []
+        hash,
+        fullPath: getFullPath({origin, path, query, hash})
     };
-    if (redirectedFrom) {
-        route.redirectedFrom = getFullPath(redirectedFrom);
-    }
+}
+
+/**
+ * create route with location object
+ *
+ * @param {Object} location object
+ * @return {Object} route object
+ */
+export function createRoute (location) {
+    const route = {
+        origin: location.origin || window.location.origin,
+        path: location.path || location.pathname,
+        query: location.query || resolveQuery(location.search),
+        hash: location.hash
+    };
+    let fullPath = getFullPath(route);
+    route.fullPath = fullPath;
     return Object.freeze(route);
 }
 
-function clone (value) {
-    if (Array.isArray(value)) {
-        return value.map(clone);
-    }
-    else if (value && typeof value === 'object') {
-        const res = {};
-        for (const key in value) {
-            res[key] = clone(value[key]);
-        }
-        return res;
-    }
-    else {
-        return value;
-    }
-}
-
 // the starting route that represents the initial state
-export const START = createRoute(null, {
-    path: '/'
-});
+export const START = createRoute(window.location);
 
-function formatMatch (record) {
-    const res = [];
-    while (record) {
-        res.unshift(record);
-        record = record.parent;
-    }
-    return res;
-}
-
-export function getFullPath ({ path, query = {}, hash = '' }) {
-    return (path || '/') + stringifyQuery(query) + hash;
+export function getFullPath ({href, origin = window.location.origin, path = '/', query = {}, hash = ''}) {
+    return href ? href : origin + path + stringifyQuery(query) + hash;
 }
 
 export function isSameRoute (a, b) {
@@ -63,6 +84,9 @@ export function isSameRoute (a, b) {
         return a === b;
     }
     else if (!b) {
+        return false;
+    }
+    else if (a.origin !== b.origin) {
         return false;
     }
     else if (a.path && b.path) {
@@ -78,6 +102,9 @@ export function isOnlyDifferentInHash (a, b) {
         return a === b;
     }
     else if (!b) {
+        return false;
+    }
+    else if (a.origin !== b.origin) {
         return false;
     }
     else if (a.path && b.path) {
@@ -107,23 +134,4 @@ function isObjectEqual (a = {}, b = {}) {
         }
         return String(aVal) === String(bVal);
     });
-}
-
-export function isIncludedRoute (current, target) {
-    return (
-        current.path.replace(trailingSlashRE, '/').indexOf(
-            target.path.replace(trailingSlashRE, '/')
-        ) === 0
-        && (!target.hash || current.hash === target.hash)
-        && queryIncludes(current.query, target.query)
-    );
-}
-
-function queryIncludes (current, target) {
-    for (const key in target) {
-        if (!(key in current)) {
-            return false;
-        }
-    }
-    return true;
 }

@@ -1,5 +1,5 @@
 import event from '../../util/dom/event';
-import {isSameRoute, createRoute} from '../util/route';
+import {isSameRoute, normalizeLocation} from '../util/route';
 import {nextFrame, whenTransitionEnds, clickedInEls} from '../util/dom';
 
 export default class Header {
@@ -129,10 +129,8 @@ export default class Header {
         }
         let router = window.MIP_ROUTER;
         let currentRoute = router.history.current;
-        let location = router.resolve(to, currentRoute, false).location;
-        let compareTarget = location.path
-            ? createRoute(null, location, null, router)
-            : route;
+        let compareTarget = normalizeLocation(to, currentRoute);
+        console.log(to, compareTarget)
         return isSameRoute(currentRoute, compareTarget);
     }
 

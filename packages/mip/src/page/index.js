@@ -54,21 +54,13 @@ class Page {
 
     initRouter() {
         let router;
-        let base = this.data.appshell.view.base;
 
         // generate pageId
-        this.pageId = getLocation(base, false);
+        this.pageId = window.location.href;
 
         // outside iframe
         if (this.isRootPage) {
-            router = new Router({
-                base,
-                routes: [
-                    {
-                        path: this.pageId
-                    }
-                ]
-            });
+            router = new Router();
             router.rootPage = this;
             router.init();
             router.listen(this.render.bind(this));
@@ -87,9 +79,6 @@ class Page {
         // inside iframe
         else {
             router = window.parent.MIP_ROUTER;
-            router.addRoute({
-                path: this.pageId
-            });
             router.rootPage.addChild(this);
         }
 
@@ -306,9 +295,7 @@ class Page {
 
         if (!targetPage) {
             // create an iframe
-            let targetFrame = createIFrame(targetPageId, {
-                base: this.data.appshell.view.base
-            });
+            let targetFrame = createIFrame(targetPageId);
             this.applyTransition(targetPageId);
         }
         else {

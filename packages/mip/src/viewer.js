@@ -260,7 +260,7 @@ let viewer = {
     _proxyLink(page = {}) {
         let self = this;
         let {router, isRootPage, notifyRootPage} = page;
-        // let schemaRegexp = /^http/;
+        let httpRegexp = /^http/;
         let telRegexp = /^tel:/;
 
         /**
@@ -269,24 +269,23 @@ let viewer = {
          */
         event.delegate(document, 'a', 'click', function (e) {
             let $a = this;
-            let to = $a.getAttribute('href');
+            // browser will resolve fullpath, eg. http://localhost:8080/examples/page/tree.html
+            let to = $a.href;
 
             if (!to) {
                 return;
             }
             /**
-             * MIP1:
              * For mail、phone、market、app ...
              * Safari failed when iframed. So add the `target="_top"` to fix it. except uc and tel.
              */
             if (platform.isUc() && telRegexp.test(to)) {
                 return;
             }
-            // TODO: mip forbid relative link, which means `href` must start with `http`
-            // if (!schemaRegexp.test(to)) {
-            //     this.setAttribute('target', '_top');
-            //     return;
-            // }
+            if (!httpRegexp.test(to)) {
+                this.setAttribute('target', '_top');
+                return;
+            }
 
             e.preventDefault();
 
@@ -295,30 +294,28 @@ let viewer = {
                 let message = self._getMessageData.call($a);
                 self.sendMessage(message.messageKey, message.messageData);
 
-                let location = router.resolve(to, router.currentRoute, false).location;
-
                 // show transition
                 router.rootPage.allowTransition = true;
 
                 // handle <a mip-link replace>
                 if ($a.hasAttribute('replace')) {
                     if (isRootPage) {
-                        router.replace(location);
+                        router.replace(to);
                     }
                     else {
                         notifyRootPage({
                             type: MESSAGE_ROUTER_REPLACE,
-                            data: {location}
+                            data: {location: to}
                         });
                     }
                 }
                 else if (isRootPage) {
-                    router.push(location);
+                    router.push(to);
                 }
                 else {
                     notifyRootPage({
                         type: MESSAGE_ROUTER_PUSH,
-                        data: {location}
+                        data: {location: to}
                     });
                 }
             }

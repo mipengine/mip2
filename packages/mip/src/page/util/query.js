@@ -11,18 +11,13 @@ const encode = str => encodeURIComponent(str)
 
 const decode = decodeURIComponent;
 
-export function resolveQuery(query, extraQuery = {}, _parseQuery) {
-    const parse = _parseQuery || parseQuery;
+export function resolveQuery(query) {
     let parsedQuery;
     try {
-        parsedQuery = parse(query || '');
+        parsedQuery = parseQuery(query || '');
     }
     catch (e) {
-        process.env.NODE_ENV !== 'production' && warn(false, e.message);
         parsedQuery = {};
-    }
-    for (const key in extraQuery) {
-        parsedQuery[key] = extraQuery[key];
     }
     return parsedQuery;
 }
