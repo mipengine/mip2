@@ -46,20 +46,20 @@ class Messenger {
     this.name = config.name || window.name
 
     /**
-         * 存放回调处理函数 sessionId -> Object
-         *
-         * @private
-         * @type    {Object}
-         * @example {resolve: function, reject: function, timer: timerId}
-         */
+     * 存放回调处理函数 sessionId -> Object
+     *
+     * @private
+     * @type    {Object}
+     * @example {resolve: function, reject: function, timer: timerId}
+     */
     this.defers = {}
 
     /**
-         * 存放双向通信处理函数 eventName -> function
-         *
-         * @private
-         * @type {Object}
-         */
+     * 存放双向通信处理函数 eventName -> function
+     *
+     * @private
+     * @type {Object}
+     */
     this.handlers = {}
 
     if (messengerInstances[this.name]) {
@@ -79,11 +79,11 @@ class Messenger {
   }
 
   /**
-     * 处理消息事件
-     *
-     * @protected
-     * @param  {MessageEvent} event 收到的 message event
-     */
+   * 处理消息事件
+   *
+   * @protected
+   * @param  {MessageEvent} event 收到的 message event
+   */
   processMessageEvent (event) {
     let origin = event.origin || event.originalEvent.origin
     let messenger = this
@@ -178,14 +178,14 @@ class Messenger {
   }
 
   /**
-     * 给绑定的窗口发送消息
-     *
-     * @public
-     * @param  {string}  eventName    消息名
-     * @param  {Object}  data         消息数据；必须为 object
-     * @param  {boolean} waitResponse 是否为双向消息（等待回复）
-     * @return {Promise}              若为双向消息，则返回后 resolve；否则直接 resolve
-     */
+   * 给绑定的窗口发送消息
+   *
+   * @public
+   * @param  {string}  eventName    消息名
+   * @param  {Object}  data         消息数据；必须为 object
+   * @param  {boolean} waitResponse 是否为双向消息（等待回复）
+   * @return {Promise}              若为双向消息，则返回后 resolve；否则直接 resolve
+   */
   sendMessage (eventName, data, waitResponse) {
     let messenger = this
     return new Promise((resolve, reject) => {
@@ -219,12 +219,12 @@ class Messenger {
   }
 
   /**
-     * 设置双向消息处理函数
-     *
-     * @public
-     * @param {string}   eventName 消息名字
-     * @param {Function} fn        处理函数（return object or promise which solves with object）
-     */
+   * 设置双向消息处理函数
+   *
+   * @public
+   * @param {string}   eventName 消息名字
+   * @param {Function} fn        处理函数（return object or promise which solves with object）
+   */
   setHandler (eventName, fn) {
     if ((typeof fn) !== 'function') {
       throw new Error('Invalid handler for event ' + eventName)
@@ -233,20 +233,20 @@ class Messenger {
   }
 
   /**
-     * 移除双向消息处理函数
-     *
-     * @public
-     * @param  {string}   eventName 消息名字
-     */
+   * 移除双向消息处理函数
+   *
+   * @public
+   * @param  {string}   eventName 消息名字
+   */
   removeHandler (eventName) {
     this.handlers[eventName] = undefined
   }
 
   /**
-     * 销毁消息处理器
-     *
-     * @public
-     */
+   * 销毁消息处理器
+   *
+   * @public
+   */
   destory () {
     delete messengerInstances[this.name]
   }
