@@ -36,7 +36,7 @@ module.exports = function generate(dir, compName, done) {
     function ask(templatePrompts) {
         return (files, metalsmith, done) => {
             // 替换 components 目录组件名称
-            metalsmith.metadata().compName = compName || 'example';
+            metalsmith.metadata().compName = compName || 'mip-example';
 
             // 只渲染组件部分时(mip2 add)，不需要走 ask 流程，且使用 component name 作为 dest 路径
             if (compName) {
