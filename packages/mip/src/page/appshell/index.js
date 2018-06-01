@@ -5,7 +5,7 @@ import {getIFrame, toggleLoadingHeader} from '../util/dom';
 export default class AppShell {
     constructor(options, page) {
         this.page = page;
-        this.data = options.data;
+        this.data = options.data || {};
         this.$wrapper = null;
         this.header = null;
 
@@ -15,7 +15,7 @@ export default class AppShell {
     _init() {
         this.$wrapper = document.createElement('div');
         this.$wrapper.classList.add('mip-appshell-header-wrapper');
-        if (this.data.header.show) {
+        if (this.data.header && this.data.header.show) {
             this.$wrapper.classList.add('show');
         }
         else {
@@ -26,7 +26,7 @@ export default class AppShell {
             wrapper: this.$wrapper,
             data: {
                 ...this.data.header,
-                showBackIcon: !this.data.view.isIndex
+                showBackIcon: !(this.data.view && this.data.view.isIndex)
             },
             clickButtonCallback: this.handleClickHeaderButton.bind(this)
         });
