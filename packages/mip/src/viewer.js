@@ -15,6 +15,7 @@ import EventEmitter from './util/event-emitter'
 import fn from './util/fn'
 import Page from './page'
 import {MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE} from './page/const'
+import Messager from './messager';
 
 /**
  * Save window.
@@ -23,6 +24,14 @@ import {MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE} from './page/const'
  * @type {Object}
  */
 const win = window
+
+/**
+ * Send Message
+ *
+ * @inner
+ * @type {Object}
+ */
+const messager = new Messager();
 
 /**
  * The mip viewer.Complement native viewer, and solve the page-level problems.
@@ -130,10 +139,11 @@ let viewer = {
    */
   sendMessage (eventName, data) {
     if (!win.MIP.standalone) {
-      window.top.postMessage({
-        event: eventName,
-        data: data
-      }, '*')
+      // window.top.postMessage({
+      //   event: eventName,
+      //   data: data
+      // }, '*')
+      messager.sendMessage(eventName, data);
     }
   },
 
@@ -322,6 +332,7 @@ let viewer = {
    * @return {Object} messageData
    */
   _getMessageData () {
+    // TODO 'pushState'
     let messageKey = 'loadiframe'
     let messageData = {}
 
