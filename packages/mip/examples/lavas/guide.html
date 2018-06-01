@@ -197,39 +197,38 @@
     <body>
         <mip-shell>
         <script type="application/json">
-            {
-                "header": {
-                    "show": true,
-                    "buttonGroup": [
-                        {
-                            "type": "icon",
-                            "name": "search",
-                            "text": "search"
+        {
+            "routes": [
+                {
+                    "pattern": "/index.html",
+                    "meta": {
+                        "header": {},
+                        "view": {
+                            "isIndex": true,
+                            "transition": {
+                                "mode": "slide"
+                            }
                         },
-                        {
-                            "type": "dropdown",
-                            "items": [
-                                {
-                                    "name": "index",
-                                    "text": "首页",
-                                    "link": "./index.html"
-                                },
-                                {
-                                    "name": "guide",
-                                    "text": "LAVAS 教程",
-                                    "link": "./guide.html"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                "view": {
-                    "transition": {
-                        "mode": "slide"
+                        "footer": {}
                     }
                 },
-                "footer": {}
-            }
+                {
+                    "pattern": "*",
+                    "meta": {
+                        "header": {
+                            "title": "Test Title",
+                            "show": true
+                        },
+                        "view": {
+                            "transition": {
+                                "mode": "slide"
+                            }
+                        },
+                        "footer": {}
+                    }
+                }
+            ]
+        }
         </script>
     </mip-shell>
 

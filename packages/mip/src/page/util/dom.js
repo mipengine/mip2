@@ -5,11 +5,9 @@
 
 import css from '../../util/dom/css';
 import sandbox from '../../sandbox';
-import util from '../../util';
 
 import {
     MIP_CONTENT_IGNORE_TAG_LIST,
-    DEFAULT_SHELL_CONFIG,
     MIP_IFRAME_CONTAINER
 } from '../const';
 
@@ -100,11 +98,11 @@ export function getMIPShellConfig() {
         rawJSON = $shell.children[0].innerHTML;
     }
     try {
-        return util.fn.extend(true, DEFAULT_SHELL_CONFIG, JSON.parse(rawJSON));
+        return JSON.parse(rawJSON);
     }
     catch (e) {}
 
-    return DEFAULT_SHELL_CONFIG;
+    return {};
 }
 
 export function addMIPCustomScript(win = window) {
