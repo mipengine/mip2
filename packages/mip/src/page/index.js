@@ -70,10 +70,10 @@ class Page {
 
             this.messageHandlers.push((type, data) => {
                 if (type === MESSAGE_ROUTER_PUSH) {
-                    router.push(data.location);
+                    router.push(data.route);
                 }
                 else if (type === MESSAGE_ROUTER_REPLACE) {
-                    router.replace(data.location);
+                    router.replace(data.route);
                 }
             });
         }
@@ -219,9 +219,11 @@ class Page {
      * refresh appshell with data from <mip-shell>
      *
      * @param {string} targetPageId targetPageId
+     * @param {Object} extraData extraData
      */
-    refreshAppShell(targetPageId) {
-        this.appshell.refresh(this.findMetaByPageId(targetPageId), targetPageId);
+    refreshAppShell(targetPageId, extraData) {
+        let meta = this.findMetaByPageId(targetPageId);
+        this.appshell.refresh(util.fn.extend(true, {}, meta, extraData), targetPageId);
     }
 
     /**
@@ -308,7 +310,7 @@ class Page {
             this.applyTransition(targetPageId);
             MIP.$recompile();
         }
-        this.refreshAppShell(targetPageId);
+        this.refreshAppShell(targetPageId, to.meta);
 
         this.currentChildPageId = targetPageId;
     }

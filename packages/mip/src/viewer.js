@@ -296,28 +296,41 @@ let viewer = {
 
       if ($a.hasAttribute('mip-link') || $a.getAttribute('data-type') === 'mip') {
         // send statics message to BaiduResult page
-        let message = self._getMessageData.call($a)
-        self.sendMessage(message.messageKey, message.messageData)
+        let loadIframeMessage = {
+          url: to,
+          ...self._getMipLinkData.call($a)
+        }
+        self.sendMessage('loadiframe', loadIframeMessage)
 
         // show transition
         router.rootPage.allowTransition = true
 
+        // create target route with meta
+        let targetRoute = {
+          path: to,
+          meta: {
+            header: {
+              title: loadIframeMessage.title
+            }
+          }
+        }
+
         // handle <a mip-link replace>
         if ($a.hasAttribute('replace')) {
           if (isRootPage) {
-            router.replace(to)
+            router.replace(targetRoute)
           } else {
             notifyRootPage({
               type: MESSAGE_ROUTER_REPLACE,
-              data: {location: to}
+              data: {route: targetRoute}
             })
           }
         } else if (isRootPage) {
-          router.push(to)
+          router.push(targetRoute)
         } else {
           notifyRootPage({
             type: MESSAGE_ROUTER_PUSH,
-            data: {location: to}
+            data: {route: targetRoute}
           })
         }
       } else {
@@ -331,23 +344,19 @@ let viewer = {
    *
    * @return {Object} messageData
    */
-  _getMessageData () {
+  _getMipLinkData () {
     // TODO 'pushState'
     let messageKey = 'loadiframe'
     let messageData = {}
 
-    messageData.url = this.href
-    if (this.hasAttribute('mip-link')) {
-      let parent = this.parentNode
-      messageData.title = parent.getAttribute('title') || parent.innerText.trim().split('\n')[0]
-      messageData.click = parent.getAttribute('data-click')
-    } else {
-      messageData.title = this.getAttribute('data-title') || this.innerText.trim().split('\n')[0]
-      messageData.click = this.getAttribute('data-click')
-    }
+    // compatible with MIP1
+    let parentNode = this.parentNode
+
     return {
-      messageKey,
-      messageData
+      click: this.getAttribute('data-click') || parentNode.getAttribute('data-click'),
+      title: this.getAttribute('data-title')
+        || parentNode.getAttribute('title')
+        || this.innerText.trim().split('\n')[0]
     }
   }
 }

@@ -29,18 +29,15 @@ export function normalizeLocation(rawUrl, current) {
 
     // split origin out
     if (typeof rawUrl === 'string') {
-        let matched = rawUrl.match(locationRE);
-        if (matched) {
-            next = {
-                origin: matched[1],
-                path: matched[2]
-            };
+        next = {
+            path: rawUrl
         }
-        else {
-            next = {
-                path: rawUrl
-            }
-        }
+    }
+
+    let matched = next.path.match(locationRE);
+    if (matched) {
+        next.origin = matched[1];
+        next.path = matched[2];
     }
 
     const origin = next.origin || current.origin;
@@ -63,6 +60,7 @@ export function normalizeLocation(rawUrl, current) {
         path,
         query,
         hash,
+        meta: next.meta || {},
         fullPath: getFullPath({origin, path, query, hash})
     };
 }
@@ -78,7 +76,8 @@ export function createRoute (location) {
         origin: location.origin || window.location.origin,
         path: location.path || location.pathname,
         query: location.query || resolveQuery(location.search),
-        hash: location.hash
+        hash: location.hash,
+        meta: location.meta || {}
     };
     let fullPath = getFullPath(route);
     route.fullPath = fullPath;

@@ -14,7 +14,7 @@ import event from './dom/event'
 import rect from './dom/rect'
 import css from './dom/css'
 import platform from './platform'
-import Naboo from './naboo'
+import naboo from './naboo'
 import EventEmitter from './event-emitter'
 import Gesture from './gesture'
 import customStorage from './customStorage'
@@ -113,5 +113,5 @@ export default {
   EventEmitter,
   Gesture,
   customStorage,
-  Naboo
+  naboo
 }
