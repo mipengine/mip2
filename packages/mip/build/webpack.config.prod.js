@@ -15,14 +15,16 @@ const resolve = p => path.resolve(__dirname, '../', p)
 module.exports = merge.smart(baseConfig, {
   mode: 'production',
   entry: resolve('src/index.js'),
-
+  output: {
+    publicPath: '//c.mipcdn.com/static/v2/'
+  },
   module: {
     rules: []
   },
 
   plugins: [
     new MiniCssExtractPlugin({filename: 'mip.css'}),
-    new UglifyJsPlugin(),
-    new BundleAnalyzerPlugin()
+    new UglifyJsPlugin()
+    // new BundleAnalyzerPlugin()
   ]
 })
