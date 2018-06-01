@@ -3,9 +3,9 @@
  * @author sekiyika(pengxing@baidu.com)
  */
 
-/* eslint-disable */
+/* eslint-disable import/no-webpack-loader-syntax */
 import 'script-loader!esljs'
-/* eslint-enable */
+/* eslint-enable import/no-webpack-loader-syntax */
 
 import util from '../util'
 import hash from '../util/hash'
