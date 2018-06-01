@@ -1,24 +1,24 @@
 #!/usr/bin/env node
 
-const cli = require('../lib/cli');
-const semver = require('semver');
-const requiredNodeVersion = require('../package').engines.node;
-const version = require('../package').version;
+const cli = require('../lib/cli')
+const semver = require('semver')
+const requiredNodeVersion = require('../package').engines.node
+const version = require('../package').version
 
 if (!semver.satisfies(process.version, requiredNodeVersion)) {
-    console.log(cli.chalk.red(
-        `You are using Node ${process.version}, but this version of mip-cli ` +
+  console.log(cli.chalk.red(
+    `You are using Node ${process.version}, but this version of mip-cli ` +
         `requires Node ${requiredNodeVersion}.\nPlease upgrade your Node version.`
-    ));
-    process.exit(1);
+  ))
+  process.exit(1)
 }
 
 cli.program
-    .usage('<command> [options]')
-    .version(version)
-    .command('init', cli.chalk.green('初始化 MIP 2.0 项目'))
-    .command('add', cli.chalk.green('新增一个组件'))
-    .command('validate', cli.chalk.green('验证 MIP 2.0 网页或组件'))
-    .command('dev', cli.chalk.green('启动调试服务器'))
-    .command('build', cli.chalk.green('组件打包'))
-    .parse(process.argv);
+  .usage('<command> [options]')
+  .version(version)
+  .command('init', cli.chalk.green('初始化 MIP 2.0 项目'))
+  .command('add', cli.chalk.green('新增一个组件'))
+  .command('validate', cli.chalk.green('验证 MIP 2.0 网页或组件'))
+  .command('dev', cli.chalk.green('启动调试服务器'))
+  .command('build', cli.chalk.green('组件打包'))
+  .parse(process.argv)
