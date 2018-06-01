@@ -8,9 +8,10 @@
 
 import util from '../util'
 import CustomElement from '../custom-element'
-import naboo from '../mip1-polyfill/naboo'
 import viewport from '../viewport'
 import viewer from '../viewer'
+
+const naboo = util.Naboo
 
 let errHandle
 let Gesture = util.Gesture
