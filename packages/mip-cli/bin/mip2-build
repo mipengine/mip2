@@ -1,22 +1,21 @@
 #!/usr/bin/env node
 
-const cli = require('../lib/cli');
-const build = require('../lib/build');
-const path = require('path');
+const cli = require('../lib/cli')
+const build = require('../lib/build')
 
-const args = cli.setup({
-    noArgs: true,
-    options: [
-        ['-a, --asset <value>', '静态资源 publicPath'],
-        ['-d, --dir <value>', '组件文件夹路径'],
-        ['-o, --output <value>', '编译代码输出路径'],
-        ['-c, --clean', '构建前先清空输出目录']
-    ],
-    help: [
-        '编译',
-        '    $ mip build',
-    ]
+cli.setup({
+  noArgs: true,
+  options: [
+    ['-a, --asset <value>', '静态资源 publicPath'],
+    ['-d, --dir <value>', '组件文件夹路径'],
+    ['-o, --output <value>', '编译代码输出路径'],
+    ['-c, --clean', '构建前先清空输出目录']
+  ],
+  help: [
+    '编译',
+    '    $ mip build'
+  ]
     .join('\n')
-});
+})
 
-build(cli.program);
+build(cli.program)

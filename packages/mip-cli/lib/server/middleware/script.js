@@ -3,18 +3,18 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-const Builder = require('../../builder');
+const Builder = require('../../builder')
 
 module.exports = function (config) {
-    let builder = new Builder({
-        dir: config.dir,
-        dev: true,
-        asset: config.asset
-    });
+  let builder = new Builder({
+    dir: config.dir,
+    dev: true,
+    asset: config.asset
+  })
 
-    return [
-        async function (ctx, next) {
-            await builder.dev(ctx, next);
-        }
-    ];
-};
+  return [
+    async function (ctx, next) {
+      await builder.dev(ctx, next)
+    }
+  ]
+}

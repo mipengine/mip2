@@ -3,29 +3,29 @@
  * @author tracy(qiushidev@gmail.com)
  */
 
-const path = require('path');
-const exists = require('fs').existsSync;
-const getGitUser = require('./git');
+const path = require('path')
+const exists = require('fs').existsSync
+const getGitUser = require('./git')
 
 module.exports = dir => {
-    const metajs = path.join(dir, 'meta.js');
-    let opts = {};
+  const metajs = path.join(dir, 'meta.js')
+  let opts = {}
 
-    if (exists(metajs)) {
-        const req = require(path.resolve(metajs));
-        if (req !== Object(req)) {
-            throw new Error('meta.js needs to expose an object');
-        }
-        opts = req;
+  if (exists(metajs)) {
+    const req = require(path.resolve(metajs))
+    if (req !== Object(req)) {
+      throw new Error('meta.js needs to expose an object')
     }
+    opts = req
+  }
 
-    const author = getGitUser();
-    if (author) {
-        setDefault(opts, 'author', author);
-    }
+  const author = getGitUser()
+  if (author) {
+    setDefault(opts, 'author', author)
+  }
 
-    return opts;
-};
+  return opts
+}
 
 /**
  * Set the default value for a prompt question
@@ -34,15 +34,14 @@ module.exports = dir => {
  * @param {string} key 键名
  * @param {string} val 键值
  */
-function setDefault(opts, key, val) {
-    const prompts = opts.prompts || (opts.prompts = {});
-    if (!prompts[key] || typeof prompts[key] !== 'object') {
-        prompts[key] = {
-            'type': 'string',
-            'default': val
-        };
+function setDefault (opts, key, val) {
+  const prompts = opts.prompts || (opts.prompts = {})
+  if (!prompts[key] || typeof prompts[key] !== 'object') {
+    prompts[key] = {
+      'type': 'string',
+      'default': val
     }
-    else {
-        prompts[key].default = val;
-    }
+  } else {
+    prompts[key].default = val
+  }
 }

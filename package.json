@@ -16,9 +16,8 @@
   },
   "homepage": "https://github.com/mipengine/mip2#readme",
   "devDependencies": {
-    "babel-eslint": "^8.2.3",
-    "eslint": "^4.19.1",
-    "eslint-config-standard": "^11.0.0",
+    "eslint": "^5.0.0-alpha",
+    "eslint-config-standard": "^12.0.0-alpha",
     "eslint-plugin-import": "^2.12.0",
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-promise": "^3.8.0",
