@@ -11,7 +11,7 @@ import CustomElement from '../custom-element'
 import viewport from '../viewport'
 import viewer from '../viewer'
 
-const naboo = util.Naboo
+const naboo = util.naboo
 
 let errHandle
 let Gesture = util.Gesture
