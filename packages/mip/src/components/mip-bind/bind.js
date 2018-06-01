@@ -18,7 +18,6 @@ class Bind {
     let me = this
     this._id = id
     this._win = window
-    this._watchers = []
     this._watcherIds = []
     // require mip data extension runtime
     this._compile = new Compile()
@@ -133,13 +132,7 @@ class Bind {
     }
 
     this._watcherIds.push(watcherId)
-    this._watchers.push(new Watcher(
-      null,
-      this._win.m,
-      '',
-      target,
-      cb
-    ))
+    new Watcher(null, this._win.m, '', target, cb) // eslint-disable-line no-new
   }
 
   _dispatch (key, val) {
