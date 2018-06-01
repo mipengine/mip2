@@ -51,7 +51,7 @@ function messageReceiver(event) {
  * @param {string} config.name          若对端为 iframe，则填写 iframe.name；若对端为 parent，则填写 window.name(即父窗口的 iframe.name)
  */
 class Messenger {
-  constructor (config) {
+  constructor (config = {}) {
     Emitter.mixin(this)
 
     this.targetWindow = config.targetWindow || top
@@ -187,8 +187,7 @@ class Messenger {
         console.warn('Event data %O is invalid, missing event name.', eventData)
         return
       }
-      messenger.trigger(eventData.event, [eventData])
-      messenger.trigger('recivemessage', [eventData])
+      messenger.trigger(eventData.event, [eventData.data])
     }
   }
 
@@ -206,7 +205,8 @@ class Messenger {
     return new Promise((resolve, reject) => {
       let requestData = {
         name: messenger.name,
-        event: eventName
+        event: eventName,
+        data
       }
       let sessionId = getSessionId()
       if (waitResponse) {
@@ -226,7 +226,6 @@ class Messenger {
       } else {
         setTimeout(resolve, 0)
       }
-      fn.extend(requestData, data)
       // 对于单向通信：requestData = {event, ...}
       // 对于双向通信：requestData = {event, type, sentinel, sessionId, ...}
       messenger.getWindow().postMessage(requestData, messenger.targetOrigin)

@@ -66,15 +66,10 @@ window.MIP = mip
 
 // 当前是否是独立站，这种判断方法还不太准确，判断不出
 try {
-  /* eslint-disable no-unused-expressions */
-  window.top.MIP
-  /* eslint-enable no-unused-expressions */
-  mip.standalone = true
+  mip.standalone = typeof window.top.MIP !== 'undefined'
 } catch (e) {
   mip.standalone = false
 }
-// 下面这种判断方法是错的，访问 window.top.MIP 如果是跨域的会直接报错，并不会返回一个 undefined 值
-// mip.standalone = typeof window.top.MIP !== 'undefined'
 
 // init viewport
 mip.viewport.init()

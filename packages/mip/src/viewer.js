@@ -26,14 +26,6 @@ import Messager from './messager';
 const win = window
 
 /**
- * Send Message
- *
- * @inner
- * @type {Object}
- */
-const messager = new Messager();
-
-/**
  * The mip viewer.Complement native viewer, and solve the page-level problems.
  */
 let viewer = {
@@ -42,6 +34,14 @@ let viewer = {
      * The initialise method of viewer
      */
   init () {
+    /**
+     * Send Message
+     *
+     * @inner
+     * @type {Object}
+     */
+    this.messager = new Messager();
+
     /**
      * The gesture of document.Used by the event-action of Viewer.
      *
@@ -129,7 +129,7 @@ let viewer = {
   /**
    * Send message to BaiduResult page,
    * including following types:
-   * 1. `loadiframe` when clicking a `<a mip-link>` element
+   * 1. `pushState` when clicking a `<a mip-link>` element (called 'loadiframe')
    * 2. `mipscroll` when scrolling inside an iframe, try to let parent page hide its header.
    * 3. `mippageload` when current page loaded
    * 4. `performance_update`
@@ -137,13 +137,13 @@ let viewer = {
    * @param {string} eventName
    * @param {Object} data Message body
    */
-  sendMessage (eventName, data) {
+  sendMessage (eventName, data = {}) {
     if (!win.MIP.standalone) {
       // window.top.postMessage({
       //   event: eventName,
       //   data: data
       // }, '*')
-      messager.sendMessage(eventName, data);
+      this.messager.sendMessage(eventName, {data});
     }
   },
 
@@ -296,11 +296,11 @@ let viewer = {
 
       if ($a.hasAttribute('mip-link') || $a.getAttribute('data-type') === 'mip') {
         // send statics message to BaiduResult page
-        let loadIframeMessage = {
+        let pushMessage = {
           url: to,
-          ...self._getMipLinkData.call($a)
+          state: self._getMipLinkData.call($a)
         }
-        self.sendMessage('loadiframe', loadIframeMessage)
+        self.sendMessage('pushState', pushMessage)
 
         // show transition
         router.rootPage.allowTransition = true
@@ -310,7 +310,7 @@ let viewer = {
           path: to,
           meta: {
             header: {
-              title: loadIframeMessage.title
+              title: pushMessage.state.title
             }
           }
         }
@@ -345,10 +345,6 @@ let viewer = {
    * @return {Object} messageData
    */
   _getMipLinkData () {
-    // TODO 'pushState'
-    let messageKey = 'loadiframe'
-    let messageData = {}
-
     // compatible with MIP1
     let parentNode = this.parentNode
 
