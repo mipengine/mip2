@@ -364,16 +364,38 @@ display: none;
 
     <mip-shell>
         <script type="application/json">
-            {
-                "header": {},
-                "view": {
-                    "isIndex": true,
-                    "transition": {
-                        "mode": "slide"
+        {
+            "routes": [
+                {
+                    "pattern": "/index.html",
+                    "meta": {
+                        "header": {},
+                        "view": {
+                            "isIndex": true,
+                            "transition": {
+                                "mode": "slide"
+                            }
+                        },
+                        "footer": {}
                     }
                 },
-                "footer": {}
-            }
+                {
+                    "pattern": "*",
+                    "meta": {
+                        "header": {
+                            "title": "Test Title",
+                            "show": true
+                        },
+                        "view": {
+                            "transition": {
+                                "mode": "slide"
+                            }
+                        },
+                        "footer": {}
+                    }
+                }
+            ]
+        }
         </script>
     </mip-shell>
     <script src="../../dist/mip.js"></script>

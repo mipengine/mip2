@@ -4,7 +4,7 @@
  */
 
 import {getLocation} from './util/path';
-import {isOnlyDifferentInHash, getFullPath} from './util/route';
+import {isOnlyDifferentInHash, getFullPath, convertPatternToRegexp} from './util/route';
 import {
     getMIPShellConfig,
     addMIPCustomScript,
@@ -15,8 +15,10 @@ import {
     frameMoveOut,
     createLoading
 } from './util/dom';
+import {DEFAULT_SHELL_CONFIG} from './const';
 
 import {customEmit} from '../vue-custom-element/utils/custom-event';
+import util from '../util';
 import Router from './router';
 import AppShell from './appshell';
 import '../styles/mip.less';
@@ -35,9 +37,8 @@ class Page {
             window.MIP_ROOT_PAGE = true;
             this.isRootPage = true;
         }
-        this.data = {
-            appshell: {}
-        };
+        this.appshellRoutes = [];
+        this.appshellCache = {};
 
         // root page
         this.appshell = null;
@@ -88,20 +89,28 @@ class Page {
     initAppShell() {
         /**
          * in root page, we need to:
-         * 1. create a loading
+         * 1. read global config from <mip-shell>
          * 2. refresh appshell with current data in <mip-shell>
          * 3. listen to a refresh event emited by current child iframe
          */
         if (this.isRootPage) {
-            // Create loading div
-            createLoading(this.data.appshell.header.show);
+            this.readMIPShellConfig();
 
-            this.messageHandlers.push((type, {appshellData, pageId}) => {
-                if (type === MESSAGE_APPSHELL_REFRESH) {
-                    this.refreshAppShell(appshellData, pageId);
-                }
-            });
-            this.refreshAppShell(this.data.appshell);
+            let rootPageMeta = this.findMetaByPageId(this.pageId);
+
+            this.appshell = new AppShell({
+                data: rootPageMeta
+            }, this);
+
+            // Create loading div
+            createLoading(rootPageMeta.header.show);
+
+            // this.messageHandlers.push((type, {appshellData, pageId}) => {
+            //     if (type === MESSAGE_APPSHELL_REFRESH) {
+            //         this.refreshAppShell(appshellData, pageId);
+            //     }
+            // });
+            // this.refreshAppShell(this.pageId);
         }
         /**
          * in child page:
@@ -109,41 +118,19 @@ class Page {
          * 2. listen to appshell events such as `click-button` emited by root page
          */
         else {
-            this.notifyRootPage({
-                type: MESSAGE_APPSHELL_REFRESH,
-                data: {
-                    appshellData: this.data.appshell,
-                    pageId: this.pageId
-                }
-            });
+            // this.notifyRootPage({
+            //     type: MESSAGE_APPSHELL_REFRESH,
+            //     data: {
+            //         appshellData: this.data.appshell,
+            //         pageId: this.pageId
+            //     }
+            // });
             this.messageHandlers.push((type, event) => {
                 if (type === MESSAGE_APPSHELL_EVENT) {
                     this.emitEventInCurrentPage(event);
                 }
             });
         }
-    }
-
-    /**
-     * read <mip-shell> if provided
-     *
-     */
-    readMIPShellConfig() {
-        // read <mip-shell> and save in `data`
-        let config = getMIPShellConfig();
-
-        // try to resolve base in <base> tag
-        if (!config.view.base) {
-            config.view.base = (document.getElementsByTagName('base')[0] || {}).href || '';
-        }
-        config.view.base = config.view.base.replace(/\/$/, '');
-
-        // get title from <title> tag
-        if (!config.header.title) {
-            config.header.title = (document.querySelector('title') || {}).innerHTML || '';
-        }
-
-        this.data.appshell = config;
     }
 
     /**
@@ -159,7 +146,6 @@ class Page {
         // Set global mark
         window.MIP.MIP_ROOT_PAGE = window.MIP_ROOT_PAGE;
 
-        this.readMIPShellConfig();
         this.initRouter();
         this.initAppShell();
         addMIPCustomScript();
@@ -202,20 +188,48 @@ class Page {
     }
 
     /**
-     * refresh appshell with data from <mip-shell>
+     * read <mip-shell> if provided
      *
-     * @param {Object} appshellData data
-     * @param {string} targetPageId targetPageId
      */
-    refreshAppShell(appshellData, targetPageId) {
-        if (!this.appshell) {
-            this.appshell = new AppShell({
-                data: appshellData
-            }, this);
+    readMIPShellConfig() {
+        // read <mip-shell> and save in `data`
+        this.appshellRoutes = getMIPShellConfig().routes || [];
+
+        this.appshellRoutes.forEach(route => {
+            route.meta = util.fn.extend(true, {}, DEFAULT_SHELL_CONFIG, route.meta || {});
+            route.regexp = convertPatternToRegexp(route.pattern || '*');
+
+             // get title from <title> tag
+            if (!route.meta.header.title) {
+                route.meta.header.title = (document.querySelector('title') || {}).innerHTML || '';
+            }
+        });
+    }
+
+    findMetaByPageId(pageId) {
+        if (this.appshellCache[pageId]) {
+            return this.appshellCache[pageId];
         }
         else {
-            this.appshell.refresh(appshellData, targetPageId);
+            let route;
+            for (let i = 0; i < this.appshellRoutes.length; i++) {
+                route = this.appshellRoutes[i];
+                if (route.regexp.test(pageId)) {
+                    this.appshellCache[pageId] = route.meta;
+                    return route.meta;
+                }
+            }
         }
+        return {};
+    }
+
+    /**
+     * refresh appshell with data from <mip-shell>
+     *
+     * @param {string} targetPageId targetPageId
+     */
+    refreshAppShell(targetPageId) {
+        this.appshell.refresh(this.findMetaByPageId(targetPageId), targetPageId);
     }
 
     /**
@@ -290,7 +304,7 @@ class Page {
         }
 
         // otherwise, render target page
-        let targetPageId = getFullPath({path: to.path, query: to.query});
+        let targetPageId = getFullPath(to);
         let targetPage = this.getPageById(targetPageId);
 
         if (!targetPage) {
@@ -299,10 +313,10 @@ class Page {
             this.applyTransition(targetPageId);
         }
         else {
-            this.refreshAppShell(targetPage.data.appshell, targetPageId);
             this.applyTransition(targetPageId);
             MIP.$recompile();
         }
+        this.refreshAppShell(targetPageId);
 
         this.currentChildPageId = targetPageId;
     }
