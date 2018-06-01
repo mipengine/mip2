@@ -3,124 +3,82 @@
  * @author zhulei05(zhulei05@baidu.com)
  */
 
-/**
- * Naboo类，抽象出来的一个动画控制和执行的对象
- *
- * @constructor
- */
-function Naboo () {
-  this.steps = []
-  this._index = -1
-  this._handlers = {}
-  this.canceled = false
-}
+'use strict'
 
-/**
- * 开始执行动画的指令函数
- *
- * @param {Function=} fn - 动画完成后的回调函数
- * @return {Object} 当前naboo实例
- */
-Naboo.prototype.start = function (fn) {
-  if (fn) {
-    this.on('end', fn)
+import EventEmitter from './event-emitter'
+
+class Naboo extends EventEmitter {
+  /**
+   * Naboo类，抽象出来的一个动画控制和执行的对象
+   *
+   * @constructor
+   */
+  constructor () {
+    super()
+
+    this.steps = []
+    this._index = -1
+    this.canceled = false
   }
 
-  this.trigger('start')
-  this.next(this)
-  return this
-}
+  /**
+   * 开始执行动画的指令函数
+   *
+   * @param {Function=} fn - 动画完成后的回调函数
+   * @return {Object} 当前naboo实例
+   */
+  start (fn) {
+    if (fn) {
+      this.on('end', fn)
+    }
 
-/**
- * 让动画进入下一步的指令函数，一般在Naboo插件中调用
- */
-Naboo.prototype.next = function () {
-  if (this.canceled) {
-    return
+    this.trigger('start')
+    this.next()
+    return this
   }
 
-  this._index++
-  if (this._index >= this.steps.length) {
-    this.trigger('end')
-  } else {
-    let currentStep = this.steps[this._index]
-    currentStep.call(this)
-  }
-}
+  /**
+   * 让动画进入下一步的指令函数，一般在Naboo插件中调用
+   */
+  next () {
+    if (this.canceled) {
+      return
+    }
 
-/**
- * 取消动画的指令，调用该函数后，当前未执行完的动画仍会继续执行完成，后续的动画不会执行
- */
-Naboo.prototype.cancel = function () {
-  this.canceled = true
-}
-
-/**
- * 事件绑定
- *
- * @param {string} name - 事件名
- * @param {Function} fn - 响应函数
- */
-Naboo.prototype.on = function (name, fn) {
-  this._handlers[name] || (this._handlers[name] = [])
-  this._handlers[name].push(fn)
-}
-
-/**
- * 解除事件绑定
- *
- * @param {string=} name - 事件名
- * @param {Function=} fn - 响应函数
-*/
-Naboo.prototype.off = function (name, fn) {
-  if (!name) {
-    this._handlers = {}
-  } else {
-    let handlers = this._handlers[name]
-    if (!fn) {
-      this._handlers[name] = []
-    } else if (Object.prototype.toString.call(handlers) === '[object Array]') {
-      let i = 0
-      for (let len = handlers.length; i < len; i++) {
-        if (handlers[i] === fn) {
-          break
-        }
-      }
-      this._handlers[name].splice(i, 1)
+    this._index++
+    if (this._index >= this.steps.length) {
+      this.trigger('end')
+    } else {
+      let currentStep = this.steps[this._index]
+      currentStep.call(this)
     }
   }
-}
 
-/**
- * 触发事件
- *
- * @param {string} name - 事件名
- * @param {*=} data - 触发事件时需要传递的数据
- */
-Naboo.prototype.trigger = function (name, data) {
-  let handlers = this._handlers[name]
-  if (handlers) {
-    handlers.forEach((fn, i) => fn(data))
+  /**
+   * 取消动画的指令，调用该函数后，当前未执行完的动画仍会继续执行完成，后续的动画不会执行
+   */
+  cancel () {
+    this.canceled = true
   }
-}
 
-/**
- * 插件注册函数
- *
- * @param {string} name - 插件名
- * @param {Function} fn - 插件函数，用于定义插件的执行逻辑
- */
-Naboo.register = function (name, fn) {
-  Naboo[name] = function () {
-    let ret = new Naboo()
-    ret[name].apply(ret, arguments)
-    return ret
-  }
-  Naboo.prototype[name] = function () {
-    let args = Array.prototype.slice.call(arguments, 0)
-    args.unshift(this.next.bind(this))
-    this.steps.push(() => fn.apply(this, args))
-    return this
+  /**
+   * 插件注册函数
+   *
+   * @param {string} name - 插件名
+   * @param {Function} fn - 插件函数，用于定义插件的执行逻辑
+   */
+  static register (name, fn) {
+    Naboo[name] = function () {
+      let ret = new Naboo()
+      ret[name].apply(ret, arguments)
+      return ret
+    }
+    Naboo.prototype[name] = function () {
+      let args = Array.prototype.slice.call(arguments, 0)
+      args.unshift(this.next.bind(this))
+      this.steps.push(() => fn.apply(this, args))
+      return this
+    }
   }
 }
 

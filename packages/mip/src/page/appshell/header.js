@@ -38,12 +38,21 @@ export default class Header {
                     ${logo ? `<img class="mip-appshell-header-logo" src="${logo}">` : ''}
                     <span class="mip-appshell-header-title">${title}</span>
                 </div>
-                <div class="mip-appshell-header-button-group">
-                    <div class="button more material-icons">more_horiz</div>
-                    <div class="split"></div>
-                    <div class="button close material-icons">close</div>
-                </div>
             `;
+            if (window.MIP.standalone) {
+                headerHTML += `
+                    <div class="mip-appshell-header-button-group-standalone more material-icons">more_horiz</div>
+                `;
+            }
+            else {
+                headerHTML += `
+                    <div class="mip-appshell-header-button-group">
+                        <div class="button more material-icons">more_horiz</div>
+                        <div class="split"></div>
+                        <div class="button close material-icons">close</div>
+                    </div>
+                `;
+            }
         }
         else {
             headerHTML += `
