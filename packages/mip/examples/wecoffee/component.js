@@ -1,5 +1,5 @@
+/* eslint-disable */
 // 替代 mip server 的编译
-
 (window.MIP = window.MIP || []).push({
     name: 'mip-iframe-shell',
     func: function () {
@@ -7950,7 +7950,6 @@ define('ralltiir-iframe/utils/performance', ['require'], function (require) {
                 }
             }, delay);
         };
-        /* eslint-enable */
     })();
 
     return Spark;

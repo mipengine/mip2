@@ -1,4 +1,4 @@
-/* Zepto v1.2.0 - zepto event ajax ie form fx fx_methods - zeptojs.com/license */
+/* eslint-disable *//* Zepto v1.2.0 - zepto event ajax ie form fx fx_methods - zeptojs.com/license */
 (function(global, factory) {
   if (typeof define === 'function' && define.amd)
     define(function() { return factory(global) })

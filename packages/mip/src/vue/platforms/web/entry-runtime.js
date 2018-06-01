@@ -1,3 +1,3 @@
-import Vue from './runtime/index';
+import Vue from './runtime/index'
 
-export default Vue;
+export default Vue

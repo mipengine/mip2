@@ -18,8 +18,8 @@ function delegate (element, selector, event, handler, capture) {
   return () => {
     element.removeEventListener(event, eventHandler)
     /* eslint-disable */
-        eventHandler = element = handler = null;
-        /* eslint-enable */
+    eventHandler = element = handler = null;
+    /* eslint-enable */
   }
 }
 

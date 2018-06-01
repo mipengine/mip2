@@ -16,12 +16,12 @@ let docElem = document.documentElement
  * @inner
  * @type {Function}
  */
-let nativeMatches = docElem.matches
-    || docElem.webkitMatchesSelector
-    || docElem.mozMatchesSelector
-    || docElem.oMatchesSelector
-    || docElem.msMatchesSelector
-    || docElem.matchesSelector
+let nativeMatches = docElem.matches ||
+    docElem.webkitMatchesSelector ||
+    docElem.mozMatchesSelector ||
+    docElem.oMatchesSelector ||
+    docElem.msMatchesSelector ||
+    docElem.matchesSelector
 
 /**
  * Support for matches. Check whether a element matches a selector.

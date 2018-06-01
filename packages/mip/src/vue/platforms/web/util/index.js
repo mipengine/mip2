@@ -3,11 +3,11 @@
  * @author sfe-sy(sfe-sy@baidu.com)
  */
 
-import {warn} from 'core/util/index';
+import {warn} from 'core/util/index'
 
-export * from './attrs';
-export * from './class';
-export * from './element';
+export * from './attrs'
+export * from './class'
+export * from './element'
 
 /**
  * Query an element selector if it's not an element already.
@@ -15,17 +15,17 @@ export * from './element';
  * @param {Object} el element
  * @return {any} any result
  */
-export function query(el) {
-    if (typeof el === 'string') {
-        const selected = document.querySelector(el);
-        if (!selected) {
-            process.env.NODE_ENV !== 'production' && warn(
-                'Cannot find element: ' + el
-            );
-            return document.createElement('div');
-        }
-
-        return selected;
+export function query (el) {
+  if (typeof el === 'string') {
+    const selected = document.querySelector(el)
+    if (!selected) {
+      process.env.NODE_ENV !== 'production' && warn(
+        'Cannot find element: ' + el
+      )
+      return document.createElement('div')
     }
-    return el;
+
+    return selected
+  }
+  return el
 }

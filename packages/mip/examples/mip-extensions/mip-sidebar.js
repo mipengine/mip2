@@ -7,20 +7,16 @@
  */
 /* global MIP */
 (function () {
-    var util = MIP.util;
+  let template = `
+      <div></DIV>
+  `
 
-    let template = `
-        div
-    `;
-
-    MIP.registerVueCustomElement('mip-sidebar', {
-        props: {
-            id: String,
-            layout: String,
-            side: String
-        },
-        template: template
-
-    });
-})();
-
+  MIP.registerVueCustomElement('mip-sidebar', {
+    props: {
+      id: String,
+      layout: String,
+      side: String
+    },
+    template: template
+  })
+})()

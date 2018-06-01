@@ -14,6 +14,9 @@ export default class Header {
     init() {
         this.$el = document.createElement('div');
         this.$el.classList.add('mip-appshell-header');
+        if (this.data.xiongzhang) {
+            this.$el.classList.add('xiongzhang-header');
+        }
         this.$el.innerHTML = this.render(this.data);
         this.$wrapper.prepend(this.$el);
 
@@ -21,16 +24,36 @@ export default class Header {
     }
 
     render(data) {
-        let {showBackIcon, title, logo, buttonGroup} = data;
-        return `
+        let {xiongzhang, showBackIcon, title, logo, buttonGroup} = data;
+        let headerHTML = `
             ${showBackIcon ? `<span class="material-icons" mip-header-btn
                 data-button-name="back">
                 keyboard_arrow_left
             </span>` : ''}
-            ${logo ? `<img class="mip-appshell-header-logo" src="${logo}">` : ''}
-            <span class="mip-appshell-header-title">${title}</span>
-            ${buttonGroup && buttonGroup.length ? this.renderButtonGroup(buttonGroup) : ''}
         `;
+
+        if (xiongzhang) {
+            headerHTML += `
+                <div class="mip-appshell-header-logo-title">
+                    ${logo ? `<img class="mip-appshell-header-logo" src="${logo}">` : ''}
+                    <span class="mip-appshell-header-title">${title}</span>
+                </div>
+                <div class="mip-appshell-header-button-group">
+                    <div class="button more material-icons">more_horiz</div>
+                    <div class="split"></div>
+                    <div class="button close material-icons">close</div>
+                </div>
+            `;
+        }
+        else {
+            headerHTML += `
+                ${logo ? `<img class="mip-appshell-header-logo" src="${logo}">` : ''}
+                <span class="mip-appshell-header-title">${title}</span>
+                ${buttonGroup && buttonGroup.length ? 'this.renderButtonGroup(buttonGroup)' : ''}
+            `;
+        }
+
+        return headerHTML;
     }
 
     renderButtonGroup(buttonGroup) {

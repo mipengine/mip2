@@ -6,12 +6,12 @@
 /* global MIP */
 
 MIP.registerVueCustomElement('mip-ad', {
-    template: `
-        <div>
-            <slot></slot>
-        </div>
-    `,
-    props: {
-        name: String
-    }
-});
+  template: `
+    <div>
+      <slot></slot>
+    </div>
+  `,
+  props: {
+    name: String
+  }
+})

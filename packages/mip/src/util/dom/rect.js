@@ -83,8 +83,8 @@ export default {
    * The scrollingElement
    * @type {HTMLElement}
    */
-  scrollingElement: document.scrollingElement || (platform.isWebkit()
-        && docBody) || docElem,
+  scrollingElement: document.scrollingElement || (platform.isWebkit() &&
+        docBody) || docElem,
 
   /**
    * Get an element's rect.
@@ -121,8 +121,8 @@ export default {
    */
   getScrollLeft () {
     return round(
-      (getterElement && -getterElement.getBoundingClientRect().left)
-        || this.scrollingElement.scrollLeft || pageXOffset || 0)
+      (getterElement && -getterElement.getBoundingClientRect().left) ||
+        this.scrollingElement.scrollLeft || pageXOffset || 0)
   },
 
   /**
@@ -132,8 +132,8 @@ export default {
    */
   getScrollTop () {
     return round(
-      (getterElement && -getterElement.getBoundingClientRect().top)
-        || this.scrollingElement.scrollTop || pageYOffset || 0)
+      (getterElement && -getterElement.getBoundingClientRect().top) ||
+        this.scrollingElement.scrollTop || pageYOffset || 0)
   },
 
   /**
@@ -179,7 +179,7 @@ export default {
    * @return {boolean}
    */
   overlapping (rect1, rect2) {
-    return rect1.top <= rect2.bottom && rect2.top <= rect1.bottom
-      && rect1.left <= rect2.right && rect2.left <= rect1.right
+    return rect1.top <= rect2.bottom && rect2.top <= rect1.bottom &&
+      rect1.left <= rect2.right && rect2.left <= rect1.right
   }
 }

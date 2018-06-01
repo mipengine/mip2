@@ -3,8 +3,11 @@
  * @author sekiyika(pengxing@baidu.com)
  */
 
-(function(self) {
-  'use strict';
+/* global Blob FileReader FormData XMLHttpRequest self */
+/* eslint-disable no-new */
+
+(function (self) {
+  'use strict'
 
   // QQ browser fetch api has some problems, use the fetch package to polyfill
   if (self.fetch && !/qqbrowser\/([0-9.]+)/i.test(navigator.userAgent)) {
@@ -14,11 +17,11 @@
   var support = {
     searchParams: 'URLSearchParams' in self,
     iterable: 'Symbol' in self && 'iterator' in Symbol,
-    blob: 'FileReader' in self && 'Blob' in self && (function() {
+    blob: 'FileReader' in self && 'Blob' in self && (function () {
       try {
         new Blob()
         return true
-      } catch(e) {
+      } catch (e) {
         return false
       }
     })(),
@@ -39,26 +42,26 @@
       '[object Float64Array]'
     ]
 
-    var isDataView = function(obj) {
+    var isDataView = function (obj) {
       return obj && DataView.prototype.isPrototypeOf(obj)
     }
 
-    var isArrayBufferView = ArrayBuffer.isView || function(obj) {
+    var isArrayBufferView = ArrayBuffer.isView || function (obj) {
       return obj && viewClasses.indexOf(Object.prototype.toString.call(obj)) > -1
     }
   }
 
-  function normalizeName(name) {
+  function normalizeName (name) {
     if (typeof name !== 'string') {
       name = String(name)
     }
-    if (/[^a-z0-9\-#$%&'*+.\^_`|~]/i.test(name)) {
+    if (/[^a-z0-9\-#$%&'*+.^_`|~]/i.test(name)) {
       throw new TypeError('Invalid character in header field name')
     }
     return name.toLowerCase()
   }
 
-  function normalizeValue(value) {
+  function normalizeValue (value) {
     if (typeof value !== 'string') {
       value = String(value)
     }
@@ -66,16 +69,16 @@
   }
 
   // Build a destructive iterator for the value list
-  function iteratorFor(items) {
+  function iteratorFor (items) {
     var iterator = {
-      next: function() {
+      next: function () {
         var value = items.shift()
         return {done: value === undefined, value: value}
       }
     }
 
     if (support.iterable) {
-      iterator[Symbol.iterator] = function() {
+      iterator[Symbol.iterator] = function () {
         return iterator
       }
     }
@@ -83,49 +86,49 @@
     return iterator
   }
 
-  function Headers(headers) {
+  function Headers (headers) {
     this.map = {}
 
     if (headers instanceof Headers) {
-      headers.forEach(function(value, name) {
+      headers.forEach(function (value, name) {
         this.append(name, value)
       }, this)
     } else if (Array.isArray(headers)) {
-      headers.forEach(function(header) {
+      headers.forEach(function (header) {
         this.append(header[0], header[1])
       }, this)
     } else if (headers) {
-      Object.getOwnPropertyNames(headers).forEach(function(name) {
+      Object.getOwnPropertyNames(headers).forEach(function (name) {
         this.append(name, headers[name])
       }, this)
     }
   }
 
-  Headers.prototype.append = function(name, value) {
+  Headers.prototype.append = function (name, value) {
     name = normalizeName(name)
     value = normalizeValue(value)
     var oldValue = this.map[name]
-    this.map[name] = oldValue ? oldValue+','+value : value
+    this.map[name] = oldValue ? oldValue + ',' + value : value
   }
 
-  Headers.prototype['delete'] = function(name) {
+  Headers.prototype['delete'] = function (name) {
     delete this.map[normalizeName(name)]
   }
 
-  Headers.prototype.get = function(name) {
+  Headers.prototype.get = function (name) {
     name = normalizeName(name)
     return this.has(name) ? this.map[name] : null
   }
 
-  Headers.prototype.has = function(name) {
+  Headers.prototype.has = function (name) {
     return this.map.hasOwnProperty(normalizeName(name))
   }
 
-  Headers.prototype.set = function(name, value) {
+  Headers.prototype.set = function (name, value) {
     this.map[normalizeName(name)] = normalizeValue(value)
   }
 
-  Headers.prototype.forEach = function(callback, thisArg) {
+  Headers.prototype.forEach = function (callback, thisArg) {
     for (var name in this.map) {
       if (this.map.hasOwnProperty(name)) {
         callback.call(thisArg, this.map[name], name, this)
@@ -133,21 +136,21 @@
     }
   }
 
-  Headers.prototype.keys = function() {
+  Headers.prototype.keys = function () {
     var items = []
-    this.forEach(function(value, name) { items.push(name) })
+    this.forEach(function (value, name) { items.push(name) })
     return iteratorFor(items)
   }
 
-  Headers.prototype.values = function() {
+  Headers.prototype.values = function () {
     var items = []
-    this.forEach(function(value) { items.push(value) })
+    this.forEach(function (value) { items.push(value) })
     return iteratorFor(items)
   }
 
-  Headers.prototype.entries = function() {
+  Headers.prototype.entries = function () {
     var items = []
-    this.forEach(function(value, name) { items.push([name, value]) })
+    this.forEach(function (value, name) { items.push([name, value]) })
     return iteratorFor(items)
   }
 
@@ -155,39 +158,39 @@
     Headers.prototype[Symbol.iterator] = Headers.prototype.entries
   }
 
-  function consumed(body) {
+  function consumed (body) {
     if (body.bodyUsed) {
       return Promise.reject(new TypeError('Already read'))
     }
     body.bodyUsed = true
   }
 
-  function fileReaderReady(reader) {
-    return new Promise(function(resolve, reject) {
-      reader.onload = function() {
+  function fileReaderReady (reader) {
+    return new Promise(function (resolve, reject) {
+      reader.onload = function () {
         resolve(reader.result)
       }
-      reader.onerror = function() {
+      reader.onerror = function () {
         reject(reader.error)
       }
     })
   }
 
-  function readBlobAsArrayBuffer(blob) {
+  function readBlobAsArrayBuffer (blob) {
     var reader = new FileReader()
     var promise = fileReaderReady(reader)
     reader.readAsArrayBuffer(blob)
     return promise
   }
 
-  function readBlobAsText(blob) {
+  function readBlobAsText (blob) {
     var reader = new FileReader()
     var promise = fileReaderReady(reader)
     reader.readAsText(blob)
     return promise
   }
 
-  function readArrayBufferAsText(buf) {
+  function readArrayBufferAsText (buf) {
     var view = new Uint8Array(buf)
     var chars = new Array(view.length)
 
@@ -197,7 +200,7 @@
     return chars.join('')
   }
 
-  function bufferClone(buf) {
+  function bufferClone (buf) {
     if (buf.slice) {
       return buf.slice(0)
     } else {
@@ -207,10 +210,10 @@
     }
   }
 
-  function Body() {
+  function Body () {
     this.bodyUsed = false
 
-    this._initBody = function(body) {
+    this._initBody = function (body) {
       this._bodyInit = body
       if (!body) {
         this._bodyText = ''
@@ -244,7 +247,7 @@
     }
 
     if (support.blob) {
-      this.blob = function() {
+      this.blob = function () {
         var rejected = consumed(this)
         if (rejected) {
           return rejected
@@ -261,7 +264,7 @@
         }
       }
 
-      this.arrayBuffer = function() {
+      this.arrayBuffer = function () {
         if (this._bodyArrayBuffer) {
           return consumed(this) || Promise.resolve(this._bodyArrayBuffer)
         } else {
@@ -270,7 +273,7 @@
       }
     }
 
-    this.text = function() {
+    this.text = function () {
       var rejected = consumed(this)
       if (rejected) {
         return rejected
@@ -288,12 +291,12 @@
     }
 
     if (support.formData) {
-      this.formData = function() {
+      this.formData = function () {
         return this.text().then(decode)
       }
     }
 
-    this.json = function() {
+    this.json = function () {
       return this.text().then(JSON.parse)
     }
 
@@ -303,12 +306,12 @@
   // HTTP methods whose capitalization should be normalized
   var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
 
-  function normalizeMethod(method) {
+  function normalizeMethod (method) {
     var upcased = method.toUpperCase()
     return (methods.indexOf(upcased) > -1) ? upcased : method
   }
 
-  function Request(input, options) {
+  function Request (input, options) {
     options = options || {}
     var body = options.body
 
@@ -345,13 +348,13 @@
     this._initBody(body)
   }
 
-  Request.prototype.clone = function() {
+  Request.prototype.clone = function () {
     return new Request(this, { body: this._bodyInit })
   }
 
-  function decode(body) {
+  function decode (body) {
     var form = new FormData()
-    body.trim().split('&').forEach(function(bytes) {
+    body.trim().split('&').forEach(function (bytes) {
       if (bytes) {
         var split = bytes.split('=')
         var name = split.shift().replace(/\+/g, ' ')
@@ -362,12 +365,12 @@
     return form
   }
 
-  function parseHeaders(rawHeaders) {
+  function parseHeaders (rawHeaders) {
     var headers = new Headers()
     // Replace instances of \r\n and \n followed by at least one space or horizontal tab with a space
     // https://tools.ietf.org/html/rfc7230#section-3.2
     var preProcessedHeaders = rawHeaders.replace(/\r?\n[\t ]+/g, ' ')
-    preProcessedHeaders.split(/\r?\n/).forEach(function(line) {
+    preProcessedHeaders.split(/\r?\n/).forEach(function (line) {
       var parts = line.split(':')
       var key = parts.shift().trim()
       if (key) {
@@ -380,7 +383,7 @@
 
   Body.call(Request.prototype)
 
-  function Response(bodyInit, options) {
+  function Response (bodyInit, options) {
     if (!options) {
       options = {}
     }
@@ -396,7 +399,7 @@
 
   Body.call(Response.prototype)
 
-  Response.prototype.clone = function() {
+  Response.prototype.clone = function () {
     return new Response(this._bodyInit, {
       status: this.status,
       statusText: this.statusText,
@@ -405,7 +408,7 @@
     })
   }
 
-  Response.error = function() {
+  Response.error = function () {
     var response = new Response(null, {status: 0, statusText: ''})
     response.type = 'error'
     return response
@@ -413,7 +416,7 @@
 
   var redirectStatuses = [301, 302, 303, 307, 308]
 
-  Response.redirect = function(url, status) {
+  Response.redirect = function (url, status) {
     if (redirectStatuses.indexOf(status) === -1) {
       throw new RangeError('Invalid status code')
     }
@@ -425,12 +428,12 @@
   self.Request = Request
   self.Response = Response
 
-  self.fetch = function(input, init) {
-    return new Promise(function(resolve, reject) {
+  self.fetch = function (input, init) {
+    return new Promise(function (resolve, reject) {
       var request = new Request(input, init)
       var xhr = new XMLHttpRequest()
 
-      xhr.onload = function() {
+      xhr.onload = function () {
         var options = {
           status: xhr.status,
           statusText: xhr.statusText,
@@ -441,11 +444,11 @@
         resolve(new Response(body, options))
       }
 
-      xhr.onerror = function() {
+      xhr.onerror = function () {
         reject(new TypeError('Network request failed'))
       }
 
-      xhr.ontimeout = function() {
+      xhr.ontimeout = function () {
         reject(new TypeError('Network request failed'))
       }
 
@@ -461,7 +464,7 @@
         xhr.responseType = 'blob'
       }
 
-      request.headers.forEach(function(value, name) {
+      request.headers.forEach(function (value, name) {
         xhr.setRequestHeader(name, value)
       })
 
@@ -469,4 +472,4 @@
     })
   }
   self.fetch.polyfill = true
-})(typeof self !== 'undefined' ? self : window);
+})(typeof self !== 'undefined' ? self : window)

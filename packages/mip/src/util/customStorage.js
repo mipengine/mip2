@@ -180,13 +180,11 @@ class LocalStorage {
       }
     } else {
       let size = value.length / 1024.0 / 1024.0
-      /* eslint-disable */
       for (let k in lsCache) {
-          if (lsCache[k]) {
-              size += lsCache[k].length / 1024.0 / 1024.0;
-          }
+        if (lsCache[k]) {
+          size += lsCache[k].length / 1024.0 / 1024.0
+        }
       }
-      /* eslint-enable */
       if (size > 5.0) {
         callback && callback(eCode.lsExceed, mess)
         throw mess
@@ -511,8 +509,8 @@ function getErrorMess (code, name) {
       mess = 'storage space need less than 4k'
       break
     case eCode.lsExceed:
-      mess = 'Uncaught DOMException: Failed to execute setItem on Storage: Setting the value of '
-        + name + ' exceeded the quota at ' + window.location.href
+      mess = 'Uncaught DOMException: Failed to execute setItem on Storage: Setting the value of ' +
+        name + ' exceeded the quota at ' + window.location.href
   }
   return mess
 }

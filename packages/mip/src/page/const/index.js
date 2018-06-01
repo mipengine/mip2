@@ -13,6 +13,7 @@ export const DEFAULT_SHELL_CONFIG = {
     header: {
         title: '',
         logo: '',
+        xiongzhang: false,
         buttonGroup: [],
         show: false
     },

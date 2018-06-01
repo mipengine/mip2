@@ -3,13 +3,11 @@
  * @author sfe
  */
 
-'use strict'
-
 /* eslint-disable */
 import 'script-loader!deps/fetch.js'
 import 'script-loader!fetch-jsonp'
 import 'script-loader!document-register-element/build/document-register-element'
-/* eslint-disable */
+/* eslint-enable */
 
 import Vue from 'vue'
 import vueCustomElement from './vue-custom-element/index'
@@ -50,6 +48,7 @@ let mip = {
   registerCustomElement (tag, component) {
     registerElement(tag, component)
   },
+  Vue,
   util,
   viewer,
   viewport,
@@ -83,8 +82,6 @@ mip.push = function (extensions) {
 mip1PolyfillInstall(mip)
 // add custom element to Vue
 Vue.use(vueCustomElement)
-// register buildin components
-builtinComponents.register()
 
 util.dom.waitDocumentReady(() => {
   // Initialize sleepWakeModule
@@ -102,17 +99,17 @@ util.dom.waitDocumentReady(() => {
   // Apply layout for default-hidden elements.
   hiddenElements.forEach(element => element.tagName.search(mipTagReg) > -1 && layout.applyLayout(element))
 
-  // Register builtin extensions
-  // components.register();
+  // register buildin components
+  builtinComponents.register()
 
   performance.start(Date.now())
 
   // send performance data until the data collection is completed
   performance.on('update', timing => {
-    if (timing.MIPDomContentLoaded
-      && timing.MIPStart
-      && timing.MIPPageShow
-      && timing.MIPFirstScreen
+    if (timing.MIPDomContentLoaded &&
+      timing.MIPStart &&
+      timing.MIPPageShow &&
+      timing.MIPFirstScreen
     ) {
       viewer.sendMessage('performance_update', timing)
     }

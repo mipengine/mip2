@@ -66,7 +66,7 @@ class Layout {
    * @return {Layout|undefined} Returns undefined in case of failure to parse
    *   the layout string.
    */
-  parseLayout(s) {
+  parseLayout (s) {
     for (let i in LAYOUT) {
       if (LAYOUT[i] === s) {
         return s
@@ -81,7 +81,7 @@ class Layout {
    * @param {Layout} layout layout name
    * @return {string}
    */
-  getLayoutClass(layout) {
+  getLayoutClass (layout) {
     return 'mip-layout-' + layout
   }
 
@@ -91,7 +91,7 @@ class Layout {
    * @param {Layout} layout layout name
    * @return {boolean}
    */
-  isLayoutSizeDefined(layout) {
+  isLayoutSizeDefined (layout) {
     return (
       layout === LAYOUT.FIXED ||
       layout === LAYOUT.FIXED_HEIGHT ||
@@ -108,7 +108,7 @@ class Layout {
    * @param {string|undefined} s length string
    * @return {!LengthDef|undefined}
    */
-  parseLength(s) {
+  parseLength (s) {
     if (typeof s === 'number') {
       return s + 'px'
     }
@@ -130,7 +130,7 @@ class Layout {
    * @param {string} length length string
    * @return {number}
    */
-  getLengthNumeral(length) {
+  getLengthNumeral (length) {
     return parseFloat(length)
   }
 
@@ -141,7 +141,7 @@ class Layout {
    * @param {string} tagName The element tag name.
    * @return {DimensionsDef}
    */
-  hasNaturalDimensions(tagName) {
+  hasNaturalDimensions (tagName) {
     tagName = tagName.toLowerCase()
     return NATURAL_DIMENSIONS[tagName] !== undefined
   }
@@ -155,11 +155,11 @@ class Layout {
    * @param {!Element} element html element
    * @return {DimensionsDef}
    */
-  getNaturalDimensions(element) {
+  getNaturalDimensions (element) {
     let tagName = element.tagName.toLowerCase()
     if (!NATURAL_DIMENSIONS[tagName]) {
       let doc = element.ownerDocument
-      let naturalTagName = tagName.replace(/^mip\-/, '')
+      let naturalTagName = tagName.replace(/^mip-/, '')
       let temp = doc.createElement(naturalTagName)
       // For audio, should no-op elsewhere.
       temp.controls = true
@@ -183,7 +183,7 @@ class Layout {
    * @param {string} tagName The element tag name.
    * @return {boolean}
    */
-  isLoadingAllowed(tagName) {
+  isLoadingAllowed (tagName) {
     return LOADING_ELEMENTS[tagName.toLowerCase()] || false
   }
 
@@ -193,7 +193,7 @@ class Layout {
    * @param {MIPElement} element html element
    * @return {string}
    */
-  applyLayout(element) {
+  applyLayout (element) {
     if (element._layoutInited) {
       return
     }

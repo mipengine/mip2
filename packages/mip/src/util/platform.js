@@ -70,20 +70,20 @@ class Platform {
     } else if (/qqbrowser\/([0-9.]+)/i.test(this._ua())) {
       this.isQQ = true
     } else if (
-      !/android/i.test(this._ua())
-            && /\bversion\/([0-9.]+(?: beta)?)(?: mobile(?:\/[a-z0-9]+)?)? safari\//i.test(this._ua())
+      !/android/i.test(this._ua()) &&
+            /\bversion\/([0-9.]+(?: beta)?)(?: mobile(?:\/[a-z0-9]+)?)? safari\//i.test(this._ua())
     ) {
       this.isSafari = true
     } else if (
-      /(?:Chrome|CrMo|CriOS)\/([0-9]{1,2}\.[0-9]\.[0-9]{3,4}\.[0-9]+)/i.test(this._ua())
-            && !/samsung/i.test(this._ua())
+      /(?:Chrome|CrMo|CriOS)\/([0-9]{1,2}\.[0-9]\.[0-9]{3,4}\.[0-9]+)/i.test(this._ua()) &&
+            !/samsung/i.test(this._ua())
     ) {
       this.isChrome = true
     } else if (/(firefox|FxiOS+)\/([0-9.ab]+)/i.test(this._ua())) {
       this.isFireFox = true
     } else if (
-      /android/i.test(this._ua())
-            && /Android[\s\_\-\/i686]?[\s\_\-\/](\d+[\.\-\_]\d+[\.\-\_]?\d*)/i.test(this._ua())
+      /android/i.test(this._ua()) &&
+            /Android[\s_\-/i686]?[\s_\-/](\d+[.\-_]\d+[.\-_]?\d*)/i.test(this._ua())
     ) {
       this.isAdr = true
     }
@@ -97,7 +97,7 @@ class Platform {
       this.isTrident = true
     } else if (/\brv:([\d\w.]+).*\bgecko\/(\d+)/i.test(this._ua())) {
       this.isGecko = true
-    } else if (/\bapplewebkit[\/]?([0-9.+]+)/i.test(this._ua())) {
+    } else if (/\bapplewebkit[/]?([0-9.+]+)/i.test(this._ua())) {
       this.isWebkit = true
     }
   }
@@ -111,7 +111,7 @@ class Platform {
     let osVersion
     let result
     if (this.isAndroid()) {
-      result = /Android ([\.\_\d]+)/.exec(this._ua()) || /Android\/([\d.]+)/.exec(this._ua())
+      result = /Android ([._\d]+)/.exec(this._ua()) || /Android\/([\d.]+)/.exec(this._ua())
       if (result && result.length > 1) {
         osVersion = result[1]
       }
