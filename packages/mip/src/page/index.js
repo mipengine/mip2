@@ -104,13 +104,6 @@ class Page {
 
             // Create loading div
             createLoading(rootPageMeta.header.show);
-
-            // this.messageHandlers.push((type, {appshellData, pageId}) => {
-            //     if (type === MESSAGE_APPSHELL_REFRESH) {
-            //         this.refreshAppShell(appshellData, pageId);
-            //     }
-            // });
-            // this.refreshAppShell(this.pageId);
         }
         /**
          * in child page:
@@ -118,13 +111,6 @@ class Page {
          * 2. listen to appshell events such as `click-button` emited by root page
          */
         else {
-            // this.notifyRootPage({
-            //     type: MESSAGE_APPSHELL_REFRESH,
-            //     data: {
-            //         appshellData: this.data.appshell,
-            //         pageId: this.pageId
-            //     }
-            // });
             this.messageHandlers.push((type, event) => {
                 if (type === MESSAGE_APPSHELL_EVENT) {
                     this.emitEventInCurrentPage(event);
@@ -206,6 +192,12 @@ class Page {
         });
     }
 
+    /**
+     * find route.meta by pageId
+     *
+     * @param {string} pageId pageId
+     * @return {Object} meta object
+     */
     findMetaByPageId(pageId) {
         if (this.appshellCache[pageId]) {
             return this.appshellCache[pageId];
@@ -220,7 +212,7 @@ class Page {
                 }
             }
         }
-        return {};
+        return Object.assign({}, DEFAULT_SHELL_CONFIG);
     }
 
     /**
