@@ -17,11 +17,26 @@ const messageSentinels = {
   response: 'PM_RESPONSE'
 }
 
+let messengerInstances = {}
+
 function getSessionId () {
   return ((new Date()).getTime() * 1000 + Math.ceil(Math.random() * 1000)).toString(36)
 }
 
-let messengerInstances = {}
+function messageReceiver(event) {
+    // 寻找对应的 messenger 实例
+    let messenger = messengerInstances[event.data.name];
+    if (!messenger) {
+        // console.warn('A window with no messengers is sending message', event);
+        // 兼容老 mip，没有给名字
+        for (let x in messengerInstances) {
+            messengerInstances[x].processMessageEvent(event);
+        }
+    }
+    else {
+        messenger.processMessageEvent(event);
+    }
+}
 
 /**
  * iframe - window 单双向通信组件
@@ -36,7 +51,7 @@ let messengerInstances = {}
  * @param {string} config.name          若对端为 iframe，则填写 iframe.name；若对端为 parent，则填写 window.name(即父窗口的 iframe.name)
  */
 class Messenger {
-  constructor (config) {
+  constructor (config = {}) {
     Emitter.mixin(this)
 
     this.targetWindow = config.targetWindow || top
@@ -74,8 +89,8 @@ class Messenger {
   }
 
   static bindHandler () {
-    window.removeEventListener('message', messageReciver)
-    window.addEventListener('message', messageReciver)
+    window.removeEventListener('message', messageReceiver)
+    window.addEventListener('message', messageReceiver)
   }
 
   /**
@@ -172,8 +187,7 @@ class Messenger {
         console.warn('Event data %O is invalid, missing event name.', eventData)
         return
       }
-      messenger.trigger(eventData.event, [eventData])
-      messenger.trigger('recivemessage', [eventData])
+      messenger.trigger(eventData.event, [eventData.data])
     }
   }
 
@@ -191,7 +205,8 @@ class Messenger {
     return new Promise((resolve, reject) => {
       let requestData = {
         name: messenger.name,
-        event: eventName
+        event: eventName,
+        data
       }
       let sessionId = getSessionId()
       if (waitResponse) {
@@ -211,7 +226,6 @@ class Messenger {
       } else {
         setTimeout(resolve, 0)
       }
-      fn.extend(requestData, data)
       // 对于单向通信：requestData = {event, ...}
       // 对于双向通信：requestData = {event, type, sentinel, sessionId, ...}
       messenger.getWindow().postMessage(requestData, messenger.targetOrigin)

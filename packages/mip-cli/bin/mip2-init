@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 
-const cli = require('../lib/cli');
-const checkVersion = require('../lib/check-version');
-const init = require('../lib/init');
+const cli = require('../lib/cli')
+const checkVersion = require('../lib/check-version')
+const init = require('../lib/init')
 
-const args = cli.setup({
-    noArgs: true,
-    help: [
-        '',
-        '  初始化 MIP 项目',
-        '    $ mip2 init',
-    ].join('\n')
-});
+cli.setup({
+  noArgs: true,
+  help: [
+    '',
+    '  初始化 MIP 项目',
+    '    $ mip2 init'
+  ].join('\n')
+})
 
 checkVersion().then(() => {
-    init();
-});
+  init()
+})
