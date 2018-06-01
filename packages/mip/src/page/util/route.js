@@ -79,7 +79,7 @@ export function getFullPath ({href, origin = window.location.origin, path = '/',
     return href ? href : origin + path + stringifyQuery(query) + hash;
 }
 
-export function isSameRoute (a, b) {
+export function isSameRoute (a, b, ignoreHash) {
     if (b === START) {
         return a === b;
     }
@@ -91,7 +91,7 @@ export function isSameRoute (a, b) {
     }
     else if (a.path && b.path) {
         return a.path.replace(trailingSlashRE, '') === b.path.replace(trailingSlashRE, '')
-            && a.hash === b.hash
+            && (ignoreHash || (a.hash === b.hash))
             && isObjectEqual(a.query, b.query);
     }
     return false;

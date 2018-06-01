@@ -132,12 +132,6 @@ class Page {
         // read <mip-shell> and save in `data`
         let config = getMIPShellConfig();
 
-        // try to resolve base in <base> tag
-        if (!config.view.base) {
-            config.view.base = (document.getElementsByTagName('base')[0] || {}).href || '';
-        }
-        config.view.base = config.view.base.replace(/\/$/, '');
-
         // get title from <title> tag
         if (!config.header.title) {
             config.header.title = (document.querySelector('title') || {}).innerHTML || '';
@@ -290,7 +284,7 @@ class Page {
         }
 
         // otherwise, render target page
-        let targetPageId = getFullPath({path: to.path, query: to.query});
+        let targetPageId = getFullPath(to);
         let targetPage = this.getPageById(targetPageId);
 
         if (!targetPage) {

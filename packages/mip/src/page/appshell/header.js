@@ -108,8 +108,7 @@ export default class Header {
         let router = window.MIP_ROUTER;
         let currentRoute = router.history.current;
         let compareTarget = normalizeLocation(to, currentRoute);
-        console.log(to, compareTarget)
-        return isSameRoute(currentRoute, compareTarget);
+        return isSameRoute(currentRoute, compareTarget, true);
     }
 
     showDropdown() {
