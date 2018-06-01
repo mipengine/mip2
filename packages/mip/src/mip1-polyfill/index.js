@@ -16,7 +16,6 @@ import registerElement from './element'
 import customElement from './customElement'
 import performance from '../performance'
 import fixedElement from '../fixed-element'
-import naboo from './naboo'
 import cssLoader from '../util/dom/css-loader'
 import eventAction from '../util/event-action'
 
@@ -41,7 +40,7 @@ window.define('fixed-element', () => fixedElement)
 window.define('hash', () => hash)
 window.define('dom/event', () => util.event)
 window.define('mip', () => window.MIP)
-window.define('naboo', () => naboo)
+window.define('naboo', () => util.Naboo)
 window.define('dom/css-loader', () => cssLoader)
 window.define('dom/css', () => util.css)
 window.define('dom/dom', () => util.dom)

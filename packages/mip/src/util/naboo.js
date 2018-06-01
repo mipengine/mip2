@@ -5,7 +5,7 @@
 
 'use strict'
 
-import EventEmitter from '../util/event-emitter'
+import EventEmitter from './event-emitter'
 
 class Naboo extends EventEmitter {
   /**
@@ -33,7 +33,7 @@ class Naboo extends EventEmitter {
     }
 
     this.trigger('start')
-    this.next(this)
+    this.next()
     return this
   }
 
