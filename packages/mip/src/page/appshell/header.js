@@ -41,15 +41,16 @@ export default class Header {
             `;
             if (window.MIP.standalone) {
                 headerHTML += `
-                    <div class="mip-appshell-header-button-group-standalone more material-icons">more_horiz</div>
+                    <div class="mip-appshell-header-button-group-standalone more material-icons"
+                        data-button-name="more">more_horiz</div>
                 `;
             }
             else {
                 headerHTML += `
                     <div class="mip-appshell-header-button-group">
-                        <div class="button more material-icons">more_horiz</div>
+                        <div class="button more material-icons" data-button-name="more">more_horiz</div>
                         <div class="split"></div>
-                        <div class="button close material-icons">close</div>
+                        <div class="button close material-icons" data-button-name="close">close</div>
                     </div>
                 `;
             }

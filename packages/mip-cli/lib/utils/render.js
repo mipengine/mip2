@@ -3,17 +3,17 @@
  * @author tracy(qiushidev@gmail.com)
  */
 
-const etpl = require('etpl');
+const etpl = require('etpl')
 const engine = new etpl.Engine({
-    commandOpen: '{%',
-    commandClose: '%}',
-    variableOpen: '{{',
-    variableClose: '}}'
-});
+  commandOpen: '{%',
+  commandClose: '%}',
+  variableOpen: '{{',
+  variableClose: '}}'
+})
 
 module.exports = {
-    render(template, data) {
-        const renderer = engine.compile(template);
-        return renderer(data);
-    }
-};
+  render (template, data) {
+    const renderer = engine.compile(template)
+    return renderer(data)
+  }
+}

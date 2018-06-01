@@ -8,42 +8,42 @@ const {resolveModule} = require('../../../utils/helper');
 /* eslint-enable */
 
 const commonStyleLoaders = [
-    resolveModule('vue-style-loader'),
-    resolveModule('css-loader'),
-    {
-        loader: resolveModule('postcss-loader'),
-        options: {
-            ident: 'postcss',
-            plugins: [
-                require('autoprefixer')({
-                    browsers: [
-                        '> 1%',
-                        'last 2 versions',
-                        'ie 9-10'
-                    ]
-                })
-            ]
-        }
+  resolveModule('vue-style-loader'),
+  resolveModule('css-loader'),
+  {
+    loader: resolveModule('postcss-loader'),
+    options: {
+      ident: 'postcss',
+      plugins: [
+        require('autoprefixer')({
+          browsers: [
+            '> 1%',
+            'last 2 versions',
+            'ie 9-10'
+          ]
+        })
+      ]
     }
-];
+  }
+]
 
 module.exports = [
-    {
-        test: /\.styl(us)?$/,
-        use: [
-            ...commonStyleLoaders,
-            resolveModule('stylus-loader')
-        ]
-    },
-    {
-        test: /\.less$/,
-        use: [
-            ...commonStyleLoaders,
-            resolveModule('less-loader')
-        ]
-    },
-    {
-        test: /\.css$/,
-        use: commonStyleLoaders
-    }
-];
+  {
+    test: /\.styl(us)?$/,
+    use: [
+      ...commonStyleLoaders,
+      resolveModule('stylus-loader')
+    ]
+  },
+  {
+    test: /\.less$/,
+    use: [
+      ...commonStyleLoaders,
+      resolveModule('less-loader')
+    ]
+  },
+  {
+    test: /\.css$/,
+    use: commonStyleLoaders
+  }
+]

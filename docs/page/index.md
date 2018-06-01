@@ -58,6 +58,8 @@
 
     3. 默认情况下点击链接后会向 History 中 `push` 一条记录。如果想覆盖当前记录，可以在 `<a>` 元素上增加 `replace` 属性。
 
+    4. 通过 `data-title` 可以设置下一个页面的标题。
+
 4. 页面内元素的样式中 `z-index` 不能超过 10000，否则会引起页面切换时的样式遮盖问题。
 
 ### MIP Shell
@@ -100,7 +102,27 @@
 
 #### 配置项
 
-目前 `<mip-shell>` 支持的配置项包括：
+目前 `<mip-shell>` 支持包含一个**基于路由**的，**全局性**的配置对象。其中的 `routes` 存放了各个页面及其对应的配置对象，对应关系通过 `pattern` 描述。在各个页面切换时，会通过正则匹配页面 URL 和 `pattern`，应用对应的 App Shell 配置。
+```json
+{
+    "routes": [
+        {
+            "pattern": "/index.html",
+            "meta": {...}
+        },
+        {
+            "pattern": "*",
+            "meta": {...}
+        }
+    ]
+}
+```
+
+注意点：
+
+* `*` 可以匹配所有 URL，建议在此设置整个站点的默认配置数据，例如默认标题等等。
+
+每个 `meta` 对象包括：
 
 1. `view` 对象。用以配置整站的一些数据。__每个页面都应当包含相同的 `view` 配置__
 2. `header` 对象。用以配置头部标题栏的各项内容
@@ -226,47 +248,64 @@
 <mip-shell>
     <script type="application/json">
         {
-            "header": {
-                "title": "Mip Index",
-                "logo": "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg",
-                "buttonGroup": [
-                    {
-                        "type": "button",
-                        "name": "subscribe",
-                        "text": "关注",
-                        "link": "/anotherMIPPage.html"
-                    },
-                    {
-                        "type": "button",
-                        "name": "chat",
-                        "text": "发消息",
-                        "outline": true
-                    },
-                    {
-                        "type": "icon",
-                        "name": "search",
-                        "text": "search",
-                        "link": "/searchMIPPage.html"
-                    },
-                    {
-                        "type": "dropdown",
-                        "items": [
-                            {
-                                "name": "subscribe",
-                                "text": "关注",
-                                "link": "/anotherMIPPage.html"
-                            },
-                            {
-                                "name": "chat",
-                                "text": "发消息"
-                            }
-                        ]
+            "routes": [
+                {
+                    "pattern": "/index.html",
+                    "meta": {
+                       "header": {
+                            "show": true,
+                            "title": "Mip Index",
+                            "logo": "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg",
+                            "buttonGroup": [
+                                {
+                                    "type": "button",
+                                    "name": "subscribe",
+                                    "text": "关注",
+                                    "link": "/anotherMIPPage.html"
+                                },
+                                {
+                                    "type": "button",
+                                    "name": "chat",
+                                    "text": "发消息",
+                                    "outline": true
+                                },
+                                {
+                                    "type": "icon",
+                                    "name": "search",
+                                    "text": "search",
+                                    "link": "/searchMIPPage.html"
+                                },
+                                {
+                                    "type": "dropdown",
+                                    "items": [
+                                        {
+                                            "name": "subscribe",
+                                            "text": "关注",
+                                            "link": "/anotherMIPPage.html"
+                                        },
+                                        {
+                                            "name": "chat",
+                                            "text": "发消息"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "view": {
+                            "isIndex": true
+                        }
                     }
-                ]
-            },
-            "view": {
-                "isIndex": true
-            }
+                },
+                {
+                    "pattern": "*",
+                    "meta": {
+                        "header": {
+                            "show": true
+                            "title": "Default Title"
+                        }
+                    }
+                }
+            ]
         }
     </script>
 </mip-shell>
@@ -278,15 +317,22 @@
 
 ```json
 {
-    "header": {
-        "show": false,
-        "title": "",
-        "logo": "",
-        "buttonGroup": []
-    },
-    "view": {
-        "isIndex": false
-    }
+    "routes": [
+        {
+            "pattern": "*",
+            "meta": {
+                "header": {
+                    "show": false,
+                    "title": "",
+                    "logo": "",
+                    "buttonGroup": []
+                },
+                "view": {
+                    "isIndex": false
+                }
+            }
+        }
+    ]
 };
 ```
 
