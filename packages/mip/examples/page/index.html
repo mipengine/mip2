@@ -62,6 +62,25 @@
         <mip-img src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg" width="300" height="300"></mip-img>
     </div>
     <br><br>
+    <mip-data>
+        <script type="application/json">
+            {
+            "#group": {
+                "info": {
+                "name": "sfe"
+                }
+            }
+            }
+
+        </script>
+    </mip-data>
+    <p>
+    global data: group.info.name => 
+    <span m-text="group.info.name" style="color:red;"></span>
+    </p>
+
+    <br><br>
+
     <p>
     Progressive Web Apps are user experiences that have the reach of the web, and are:
 Reliable - Load instantly and never show the downasaur, even in uncertain network conditions.
@@ -161,18 +180,6 @@ Fast - Respond quickly to user interactions with silky smooth animations and no 
         }
         </script>
     </mip-shell>
-    <mip-data>
-        <script type="application/json">
-                {
-                    "#group": {
-                        "info": {
-                            "name": "sfe"
-                        }
-                    }
-                }
-            </script>
-    </mip-data>
-    <span m-text="group.info.name"></span>
 
     <script src="../../dist/mip.js"></script>
 </body>

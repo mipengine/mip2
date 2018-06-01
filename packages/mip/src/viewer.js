@@ -350,9 +350,9 @@ let viewer = {
 
     return {
       click: this.getAttribute('data-click') || parentNode.getAttribute('data-click'),
-      title: this.getAttribute('data-title')
-        || parentNode.getAttribute('title')
-        || this.innerText.trim().split('\n')[0]
+      title: this.getAttribute('data-title') ||
+        parentNode.getAttribute('title') ||
+        this.innerText.trim().split('\n')[0]
     }
   }
 }

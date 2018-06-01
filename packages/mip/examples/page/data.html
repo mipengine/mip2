@@ -115,14 +115,15 @@
         </script>
     </mip-data>
 
-    <mip-complevel1 m-bind:userinfo="userInfo"></mip-complevel1>
+    <!-- <mip-complevel1 m-bind:userinfo="userInfo"></mip-complevel1> -->
 
-    <span>group.info.name will show below which is a global state shared from index.html:</span>
-    <span m-text="group.info.name"></span>
+    <p>group.info.name (a global state shared from index.html):
+    <span m-text="group.info.name" style="color: red;"></span>
+    </p>
     <div on="tap:MIP.setData({group:{info:{name:'sfe2018'}}})" class="button">click change global group.info.name</div>
 
     <br><br>
-    <h1 m-text="title"></h1>
+    <h1 m-text="title" style="margin-left: 20px;"></h1>
 
     <p m-text="size.small"></p>
     <div on="tap:MIP.setData({size:{small:2}})" class="button">click change size.small</div>
@@ -146,12 +147,12 @@
           }
           </script>
     </mip-data>
-    <div>
+    <p>
         DOM.value*m.price =
         <span m-text="price"></span>
-    </div>
-    <mip-form url="https://www.mipengine.org/">
-        <input type='text' on="change:MIP.setData({price:DOM.value*m.price})">
+    </p>
+    <mip-form url="https://www.mipengine.org/" class="button">
+        <input type='text' on="change:MIP.setData({price:DOM.value*m.price})" style="width:150px;">
     </mip-form>
 
     <br><br>
