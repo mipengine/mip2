@@ -76,6 +76,10 @@ class Page {
                     router.replace(data.route);
                 }
             });
+
+            window.MIP.viewer.on('changeState', ({data: {state, url}}) => {
+                router.replace(url);
+            })
         }
         // inside iframe
         else {
@@ -136,7 +140,7 @@ class Page {
         this.initAppShell();
         addMIPCustomScript();
 
-        // Listen message from iframes
+        // Listen message from inner iframes
         window.addEventListener('message', (e) => {
             if (e.source.location.origin === window.location.origin) {
                 this.messageHandlers.forEach(handler => {

@@ -70,12 +70,17 @@ export default class AppShell {
             // **Important** only allow transition happens when Back btn clicked
             this.page.allowTransition = true;
             window.MIP_ROUTER.go(-1);
+            window.MIP.viewer.sendMessage('historyNavigate', {step: -1});
         }
         else if (buttonName === 'dropdown') {
             if (this.header) {
                 this.header.toggleDropdown();
             }
         }
+        else if (buttonName === 'close') {
+            window.MIP.viewer.sendMessage('close');
+        }
+
         this.page.emitEventInCurrentPage({
             name: `appheader:click-${buttonName}`
         });
