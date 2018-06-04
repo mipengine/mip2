@@ -195,7 +195,42 @@
         </style>
     </head>
     <body>
-        
+        <mip-shell>
+            <script type="application/json">
+            {
+                "routes": [
+                    {
+                        "pattern": "/index.html",
+                        "meta": {
+                            "header": {},
+                            "view": {
+                                "isIndex": true,
+                                "transition": {
+                                    "mode": "slide"
+                                }
+                            },
+                            "footer": {}
+                        }
+                    },
+                    {
+                        "pattern": "*",
+                        "meta": {
+                            "header": {
+                                "title": "Test Title",
+                                "show": true
+                            },
+                            "view": {
+                                "transition": {
+                                    "mode": "slide"
+                                }
+                            },
+                            "footer": {}
+                        }
+                    }
+                ]
+            }
+            </script>
+        </mip-shell>
 
         <div id="app" class="application theme--light">
             <div class="application--wrap">

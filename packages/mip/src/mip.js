@@ -1,13 +1,7 @@
 /**
- * @file mip entry
+ * @file mip exports
  * @author sfe
  */
-
-/* eslint-disable import/no-webpack-loader-syntax */
-import 'script-loader!deps/fetch.js'
-import 'script-loader!fetch-jsonp'
-import 'script-loader!document-register-element/build/document-register-element'
-/* eslint-enable import/no-webpack-loader-syntax */
 
 import Vue from 'vue'
 import vueCustomElement from './vue-custom-element/index'
@@ -21,10 +15,9 @@ import builtinComponents from './components'
 import registerElement from './register-element'
 import sleepWakeModule from './sleepWakeModule'
 import performance from './performance'
-import mip1PolyfillInstall from './mip1-polyfill'
 
-import './log/monitor'
-import './polyfills'
+// mip version
+export let version = 2
 
 /**
  * register vue as custom element v1
@@ -32,7 +25,7 @@ import './polyfills'
  * @param {string} tag custom elment name, mip-*
  * @param {*} component vue component
  */
-function registerVueCustomElement (tag, component) {
+export function registerVueCustomElement (tag, component) {
   Vue.customElement(tag, component)
 }
 
@@ -42,43 +35,49 @@ function registerVueCustomElement (tag, component) {
  * @param {string} tag custom element name, mip-*
  * @param {HTMLElement} component component clazz
  */
-function registerCustomElement (tag, component) {
+export function registerCustomElement(tag, component) {
   registerElement(tag, component)
 }
 
-let standalone
-// 当前是否是独立站，这种判断方法还不太准确，判断不出
-try {
-  standalone = typeof window.top.MIP !== 'undefined'
-} catch (e) {
-  standalone = false
-}
-
-let extensions = window.MIP || []
-
-function push (extension) {
-  extensions.push(extension)
-}
+export {util} from 'util'
 
 let mip = {
-  version: '2',
-  registerVueCustomElement,
-  registerCustomElement,
+
+  ,
   util,
   viewer,
   viewport,
   hash: util.hash,
   sandbox,
   css: {},
-  standalone,
-  push,
   prerenderElement: Resources.prerenderElement
+}
+
+if (window.MIP) {
+  let exts = window.MIP
+  mip.extensions = exts
 }
 
 window.MIP = mip
 
+// 当前是否是独立站，这种判断方法还不太准确，判断不出
+try {
+  mip.standalone = typeof window.top.MIP !== 'undefined'
+} catch (e) {
+  mip.standalone = false
+}
+
 // init viewport
-viewport.init()
+mip.viewport.init()
+
+// before document ready
+mip.push = function (extensions) {
+  if (!mip.extensions) {
+    mip.extensions = []
+  }
+
+  mip.extensions.push(extensions)
+}
 
 // install mip1 polyfill
 mip1PolyfillInstall(mip)
@@ -125,4 +124,3 @@ util.dom.waitDocumentReady(() => {
   storage.delExceedCookie()
 })
 
-export default mip
