@@ -15,15 +15,11 @@ export function createIFrame (path, {onLoad, onError} = {}) {
   let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${path}"]`)
 
   if (!container) {
-    // let loading = getLoading();
-    // css(loading, {display: 'block'});
     container = document.createElement('iframe')
     container.onload = () => {
-      // setTimeout(() => css(loading, {display: 'none'}), 320);
       typeof onLoad === 'function' && onLoad()
     }
     container.onerror = () => {
-      // setTimeout(() => css(loading, {display: 'none'}), 320);
       typeof onError === 'function' && onError()
     }
     // TODO: use XHR to load iframe so that we can get httpRequest.status 404
@@ -64,52 +60,58 @@ export function getIFrame (iframe) {
   return iframe
 }
 
+function hideAllIFrames() {
+  document.querySelectorAll(`.${MIP_IFRAME_CONTAINER}`).forEach(iframe => css(iframe, 'display', 'none'))
+}
+
 export function createLoading (pageMeta) {
   let loading = document.createElement('div')
   loading.id = 'mip-page-loading'
   loading.setAttribute('class', 'mip-page-loading')
   loading.innerHTML = `
-        <div class="mip-page-loading-header">
-            <span class="material-icons back-button">keyboard_arrow_left</span>
-            <div class="mip-appshell-header-logo-title">
-                <img class="mip-appshell-header-logo" src="${pageMeta.header.logo}">
-                <span class="mip-appshell-header-title"></span>
-            </div>
-        </div>
-    `
+    <div class="mip-page-loading-header">
+      <span class="material-icons back-button">keyboard_arrow_left</span>
+      <div class="mip-appshell-header-logo-title">
+        <img class="mip-appshell-header-logo" src="${pageMeta.header.logo}">
+        <span class="mip-appshell-header-title"></span>
+      </div>
+    </div>
+  `
   document.body.appendChild(loading)
 }
 
-export function getLoading (targetMeta) {
+export function getLoading (targetMeta, onlyHeader) {
   let loading = document.querySelector('#mip-page-loading')
   if (!targetMeta) {
     return loading
   }
 
-  if (!targetMeta.header.show) {
-    document.querySelector('#mip-page-loading .mip-page-loading-header')
-      .setAttribute('style', 'display: none')
+  if (onlyHeader) {
+    loading.classList.add('only-header')
   } else {
-    document.querySelector('#mip-page-loading .mip-page-loading-header')
-      .setAttribute('style', 'display: flex')
+    loading.classList.remove('only-header')
+  }
+
+  if (!targetMeta.header.show) {
+    css(loading.querySelector('.mip-page-loading-header'), 'display', 'none')
+  } else {
+    css(loading.querySelector('.mip-page-loading-header'), 'display', 'flex')
   }
 
   if (targetMeta.header.logo) {
-    document.querySelector('#mip-page-loading .mip-appshell-header-logo')
+    loading.querySelector('.mip-appshell-header-logo')
       .setAttribute('src', targetMeta.header.logo)
   }
 
   if (targetMeta.header.title) {
-    document.querySelector('#mip-page-loading .mip-appshell-header-title')
+    loading.querySelector('.mip-appshell-header-title')
       .innerHTML = targetMeta.header.title
   }
 
   if (targetMeta.view.isIndex) {
-    document.querySelector('#mip-page-loading .back-button')
-      .setAttribute('style', 'display: none')
+    css(loading.querySelector('.back-button'), 'display', 'none')
   } else {
-    document.querySelector('#mip-page-loading .back-button')
-      .setAttribute('style', 'display: block')
+    css(loading.querySelector('.back-button'), 'display', 'block')
   }
 
   return loading
@@ -196,11 +198,10 @@ export function whenTransitionEnds (el, type, cb) {
   el.addEventListener(event, onEnd)
 }
 
-export function frameMoveIn (pageId, {transition, targetMeta, onComplete} = {}) {
+export function frameMoveIn (pageId, {transition, targetMeta, newPage, onComplete} = {}) {
   let iframe = getIFrame(pageId)
 
   if (!iframe) {
-    onComplete && onComplete()
     return
   }
 
@@ -217,9 +218,8 @@ export function frameMoveIn (pageId, {transition, targetMeta, onComplete} = {}) 
     loading.offsetWidth
     /* eslint-enable no-unused-expressions */
 
-    whenTransitionEnds(loading, 'transition', () => {
-      loading.classList.remove('slide-enter-to', 'slide-enter-active')
-
+    let done = () => {
+      hideAllIFrames();
       css(loading, {
         display: 'none'
       })
@@ -229,6 +229,16 @@ export function frameMoveIn (pageId, {transition, targetMeta, onComplete} = {}) 
       })
 
       onComplete && onComplete()
+    }
+    whenTransitionEnds(loading, 'transition', () => {
+      loading.classList.remove('slide-enter-to', 'slide-enter-active')
+
+      if (newPage) {
+        setTimeout(done, 100)
+      }
+      else {
+        done()
+      }
     })
 
     nextFrame(() => {
@@ -236,45 +246,61 @@ export function frameMoveIn (pageId, {transition, targetMeta, onComplete} = {}) 
       loading.classList.remove('slide-enter')
     })
   } else {
+    hideAllIFrames();
     css(iframe, {
       'z-index': activeZIndex++,
       display: 'block'
     })
+    onComplete && onComplete()
   }
 }
 
-export function frameMoveOut (pageId, {transition, onComplete} = {}) {
+export function frameMoveOut (pageId, {transition, sourceMeta, onComplete} = {}) {
   let iframe = getIFrame(pageId)
 
-  if (iframe) {
-    if (transition) {
-      iframe.classList.add('slide-leave', 'slide-leave-active')
+  if (!iframe) {
+    return;
+  }
 
-      // trigger layout
-      /* eslint-disable no-unused-expressions */
-      iframe.offsetWidth
-      /* eslint-enable no-unused-expressions */
+  if (transition) {
+    let loading = getLoading(sourceMeta, true)
+    css(loading, {
+      display: 'block'
+    })
 
-      whenTransitionEnds(iframe, 'transition', () => {
-        css(iframe, {
-          display: 'none',
-          'z-index': 10000
-        })
-        iframe.classList.remove('slide-leave-to', 'slide-leave-active')
-        onComplete && onComplete()
-      })
+    iframe.classList.add('slide-leave', 'slide-leave-active')
+    loading.classList.add('slide-leave', 'slide-leave-active')
 
-      nextFrame(() => {
-        iframe.classList.add('slide-leave-to')
-        iframe.classList.remove('slide-leave')
-      })
-    } else {
+    // trigger layout
+    /* eslint-disable no-unused-expressions */
+    iframe.offsetWidth
+    /* eslint-enable no-unused-expressions */
+
+    whenTransitionEnds(iframe, 'transition', () => {
       css(iframe, {
         display: 'none',
         'z-index': 10000
       })
+      css(loading, {
+        display: 'none'
+      })
+      iframe.classList.remove('slide-leave-to', 'slide-leave-active')
+      loading.classList.remove('slide-leave-to', 'slide-leave-active')
       onComplete && onComplete()
-    }
+    })
+
+    nextFrame(() => {
+      iframe.classList.add('slide-leave-to')
+      iframe.classList.remove('slide-leave')
+      loading.classList.add('slide-leave-to')
+      loading.classList.remove('slide-leave')
+    })
+  } else {
+    css(iframe, {
+      display: 'none',
+      'z-index': 10000
+    })
+    onComplete && onComplete()
   }
 }
 

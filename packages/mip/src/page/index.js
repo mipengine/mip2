@@ -36,12 +36,15 @@ class Page {
     }
     this.appshellRoutes = []
     this.appshellCache = {}
+    this.pageId = null;
 
     // root page
     this.appshell = null
     this.children = []
     this.currentChildPageId = null
     this.messageHandlers = []
+    this.currentPageMeta = {}
+    this.initPageId = null;
 
     /**
      * transition will be executed only when `Back` button clicked,
@@ -58,6 +61,7 @@ class Page {
 
     if (this.isRootPage) {
       // outside iframe
+      this.currentChildPageId = this.initPageId = this.pageId;
       router = new Router()
       router.rootPage = this
       router.init()
@@ -93,14 +97,14 @@ class Page {
        */
       this.readMIPShellConfig()
 
-      let rootPageMeta = this.findMetaByPageId(this.pageId)
+      this.currentPageMeta = this.findMetaByPageId(this.pageId)
 
       this.appshell = new AppShell({
-        data: rootPageMeta
+        data: this.currentPageMeta
       }, this)
 
       // Create loading div
-      createLoading(rootPageMeta)
+      createLoading(this.currentPageMeta)
     } else {
       /**
        * in child page:
@@ -224,8 +228,10 @@ class Page {
    *
    * @param {string} targetPageId targetPageId
    * @param {Object} targetMeta metainfo of targetPage
+   * @param {Object} options
+   * @param {Object} options.newPage if just created a new page
    */
-  applyTransition (targetPageId, targetMeta) {
+  applyTransition (targetPageId, targetMeta, options = {}) {
     // Disable scrolling of first page when iframe is covered
     if (targetPageId === this.pageId) {
       document.body.classList.remove('no-scroll')
@@ -236,32 +242,32 @@ class Page {
     let localMeta = this.findMetaByPageId(targetPageId)
     let finalMeta = util.fn.extend(true, {}, localMeta, targetMeta)
 
-    if (!finalMeta.header.show) {
-      this.refreshAppShell(targetPageId, finalMeta)
-    }
-
-    if (this.currentChildPageId) {
+    // TODO BACK BUTTON
+    if (targetPageId === this.initPageId) {
+      // backward
       frameMoveOut(this.currentChildPageId, {
         transition: this.allowTransition,
+        sourceMeta: this.currentPageMeta,
         onComplete: () => {
           this.allowTransition = false
-          if (finalMeta.header.show) {
-            this.refreshAppShell(targetPageId, finalMeta)
-          }
+          this.currentPageMeta = finalMeta
+        }
+      })
+
+      this.refreshAppShell(targetPageId, finalMeta)
+    } else {
+      // forward
+      frameMoveIn(targetPageId, {
+        transition: this.allowTransition,
+        targetMeta: finalMeta,
+        newPage: options.newPage,
+        onComplete: () => {
+          this.allowTransition = false
+          this.currentPageMeta = finalMeta
+          this.refreshAppShell(targetPageId, finalMeta)
         }
       })
     }
-
-    frameMoveIn(targetPageId, {
-      transition: this.allowTransition,
-      targetMeta: finalMeta,
-      onComplete: () => {
-        this.allowTransition = false
-        if (finalMeta.header.show) {
-          this.refreshAppShell(targetPageId, finalMeta)
-        }
-      }
-    })
   }
 
   /**
@@ -311,7 +317,7 @@ class Page {
     if (!targetPage) {
       // create an iframe
       createIFrame(targetPageId)
-      this.applyTransition(targetPageId, to.meta)
+      this.applyTransition(targetPageId, to.meta, {newPage: true})
     } else {
       this.applyTransition(targetPageId, to.meta)
       window.MIP.$recompile()
