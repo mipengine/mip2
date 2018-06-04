@@ -25,6 +25,9 @@ export default function createVueInstance (
 
   // Auto event handling based on $emit
   function beforeCreate () { // eslint-disable-line no-inner-declarations
+    // 将 element 挂到 vue 下方便使用
+    this.$element = element
+
     this.$emit = function emit (...args) {
       customEmit(element, ...args)
       viewer.eventAction.execute(args[0], element, args[1])
