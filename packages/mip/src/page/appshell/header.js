@@ -26,7 +26,7 @@ export default class Header {
   render (data) {
     let {xiongzhang, showBackIcon, title, logo, buttonGroup} = data
     let headerHTML = `
-            ${showBackIcon ? `<span class="material-icons" mip-header-btn
+            ${showBackIcon ? `<span class="material-icons back-button" mip-header-btn
                 data-button-name="back">
                 keyboard_arrow_left
             </span>` : ''}
