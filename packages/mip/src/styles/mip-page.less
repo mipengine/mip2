@@ -36,7 +36,8 @@ body:first-of-type::after,
 }
 
 body:first-of-type[mip-ready]::before,
-body:first-of-type[mip-ready]::after {
+body:first-of-type[mip-ready]::after,
+.mip-page-loading.only-header::after {
     display: none;
 }
 
@@ -58,6 +59,11 @@ body.no-scroll {
     z-index: 10000;
     display: none;
     overflow-y: auto;
+
+    &.with-header {
+        top: @appshell-header-height;
+        height: calc(100% - 44px);
+    }
 }
 
 .mip-page-loading {
@@ -71,14 +77,14 @@ body.no-scroll {
     background: #fff;
     z-index: 20000;
     display: none;
+
+    &.only-header {
+        height: @appshell-header-height;
+    }
 }
 
 .mip-page-loading,
 .mip-page__iframe {
-    &.with-header {
-        top: @appshell-header-height;
-        height: calc(100% - 44px);
-    }
     &.slide-enter {
         transform: translate(100%, 0);
     }
@@ -105,7 +111,6 @@ body.no-scroll {
 }
 
 .mip-appshell-header-wrapper {
-    height: 0;
     width: 100%;
     height: @appshell-header-height;
 
@@ -160,19 +165,25 @@ body.no-scroll {
 .mip-appshell-header {
     display: none;
 
+    .back-button {
+        position: absolute;
+        top: 10px;
+        left: 6px;
+    }
+
     .mip-appshell-header-button-group {
         width: 87px;
         height: 32px;
         border: 1px solid #e6e6e6;
         border-radius: 16px;
         position: absolute;
-        top: 6px;
+        top: 5px;
         right: 3px;
         overflow: hidden;
 
         .button {
             float: left;
-            padding: 0 9px;
+            padding: 5px 9px 0;
         }
 
         .split {
@@ -180,6 +191,7 @@ body.no-scroll {
             width: 1px;
             height: 15px;
             background: #ccc;
+            margin-top: 9px;
         }
     }
 

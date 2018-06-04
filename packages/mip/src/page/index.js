@@ -39,12 +39,15 @@ class Page {
     this.pageId = undefined
     this.appshellRoutes = []
     this.appshellCache = {}
+    this.pageId = null;
 
     // root page
     this.appshell = null
     this.children = []
     this.currentChildPageId = null
     this.messageHandlers = []
+    this.currentPageMeta = {}
+    this.direction = null;
 
     /**
      * transition will be executed only when `Back` button clicked,
@@ -96,14 +99,14 @@ class Page {
        */
       this.readMIPShellConfig()
 
-      let rootPageMeta = this.findMetaByPageId(this.pageId)
+      this.currentPageMeta = this.findMetaByPageId(this.pageId)
 
       this.appshell = new AppShell({
-        data: rootPageMeta
+        data: this.currentPageMeta
       }, this)
 
       // Create loading div
-      createLoading(rootPageMeta)
+      createLoading(this.currentPageMeta)
     } else {
       /**
        * in child page:
@@ -259,8 +262,8 @@ class Page {
    *
    * @param {string} targetPageId targetPageId
    * @param {Object} targetMeta metainfo of targetPage
-   * @param {Object} options extra options
-   * @param {boolean} options.newPage whether create iframe
+   * @param {Object} options
+   * @param {Object} options.newPage if just created a new page
    */
   applyTransition (targetPageId, targetMeta, options = {}) {
     // Disable scrolling of first page when iframe is covered
@@ -273,33 +276,38 @@ class Page {
     let localMeta = this.findMetaByPageId(targetPageId)
     let finalMeta = util.fn.extend(true, {}, localMeta, targetMeta)
 
-    if (!finalMeta.header.show) {
-      this.refreshAppShell(targetPageId, finalMeta)
-    }
-
-    if (this.currentChildPageId) {
-      frameMoveOut(this.currentChildPageId, {
+    if (targetPageId === this.pageId || this.direction === 'back') {
+      // backward
+      let backwardOpitons = {
         transition: this.allowTransition,
+        sourceMeta: this.currentPageMeta,
         onComplete: () => {
           this.allowTransition = false
-          if (finalMeta.header.show) {
-            this.refreshAppShell(targetPageId, finalMeta)
-          }
+          this.currentPageMeta = finalMeta
+        }
+      }
+
+      if (this.direction === 'back') {
+        backwardOpitons.targetPageId = targetPageId
+      }
+
+      frameMoveOut(this.currentChildPageId, backwardOpitons)
+
+      this.direction = null;
+      this.refreshAppShell(targetPageId, finalMeta)
+    } else {
+      // forward
+      frameMoveIn(targetPageId, {
+        transition: this.allowTransition,
+        targetMeta: finalMeta,
+        newPage: options.newPage,
+        onComplete: () => {
+          this.allowTransition = false
+          this.currentPageMeta = finalMeta
+          this.refreshAppShell(targetPageId, finalMeta)
         }
       })
     }
-
-    frameMoveIn(targetPageId, {
-      transition: this.allowTransition,
-      targetMeta: finalMeta,
-      newPage: options.newPage,
-      onComplete: () => {
-        this.allowTransition = false
-        if (finalMeta.header.show) {
-          this.refreshAppShell(targetPageId, finalMeta)
-        }
-      }
-    })
   }
 
   /**
