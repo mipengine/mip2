@@ -9,6 +9,12 @@
     "mip",
     "mip2"
   ],
+  "scripts": {
+    "lint": "npm run lint:mip && npm run lint:cli && npm run lint:validator",
+    "lint:mip": "eslint packages/mip/src",
+    "lint:cli": "eslint packages/mip-cli/lib",
+    "lint:validator": "eslint packages/mip-component-validator/src"
+  },
   "author": "sfe-sy@baidu.com",
   "license": "MIT",
   "bugs": {
