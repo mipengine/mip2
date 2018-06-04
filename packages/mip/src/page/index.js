@@ -224,10 +224,8 @@ class Page {
    *
    * @param {string} targetPageId targetPageId
    * @param {Object} targetMeta metainfo of targetPage
-   * @param {Object} options extra options
-   * @param {boolean} options.newPage whether create iframe
    */
-  applyTransition (targetPageId, targetMeta, options = {}) {
+  applyTransition (targetPageId, targetMeta) {
     // Disable scrolling of first page when iframe is covered
     if (targetPageId === this.pageId) {
       document.body.classList.remove('no-scroll')
@@ -257,7 +255,6 @@ class Page {
     frameMoveIn(targetPageId, {
       transition: this.allowTransition,
       targetMeta: finalMeta,
-      newPage: options.newPage,
       onComplete: () => {
         this.allowTransition = false
         if (finalMeta.header.show) {
@@ -314,7 +311,7 @@ class Page {
     if (!targetPage) {
       // create an iframe
       createIFrame(targetPageId)
-      this.applyTransition(targetPageId, to.meta, {newPage: true})
+      this.applyTransition(targetPageId, to.meta)
     } else {
       this.applyTransition(targetPageId, to.meta)
       window.MIP.$recompile()

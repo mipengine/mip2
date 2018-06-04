@@ -196,7 +196,7 @@ export function whenTransitionEnds (el, type, cb) {
   el.addEventListener(event, onEnd)
 }
 
-export function frameMoveIn (pageId, {transition, targetMeta, onComplete, newPage} = {}) {
+export function frameMoveIn (pageId, {transition, targetMeta, onComplete} = {}) {
   let iframe = getIFrame(pageId)
 
   if (!iframe) {
@@ -205,50 +205,35 @@ export function frameMoveIn (pageId, {transition, targetMeta, onComplete, newPag
   }
 
   if (transition) {
-    let loading
-    let movingDom
+    let loading = getLoading(targetMeta);
+    css(loading, {
+      display: 'block'
+    })
 
-    if (newPage) {
-      movingDom = loading = getLoading(targetMeta)
+    loading.classList.add('slide-enter', 'slide-enter-active')
+
+    // trigger layout
+    /* eslint-disable no-unused-expressions */
+    loading.offsetWidth
+    /* eslint-enable no-unused-expressions */
+
+    whenTransitionEnds(loading, 'transition', () => {
+      loading.classList.remove('slide-enter-to', 'slide-enter-active')
+
       css(loading, {
-        display: 'block'
+        display: 'none'
       })
-    } else {
-      movingDom = iframe
       css(iframe, {
         'z-index': activeZIndex++,
         display: 'block'
       })
-    }
 
-    movingDom.classList.add('slide-enter', 'slide-enter-active')
-
-    // trigger layout
-    /* eslint-disable no-unused-expressions */
-    movingDom.offsetWidth
-    /* eslint-enable no-unused-expressions */
-
-    whenTransitionEnds(movingDom, 'transition', () => {
-      movingDom.classList.remove('slide-enter-to', 'slide-enter-active')
-
-      setTimeout(() => {
-        if (newPage) {
-          css(loading, {
-            display: 'none'
-          })
-          css(iframe, {
-            'z-index': activeZIndex++,
-            display: 'block'
-          })
-        }
-
-        onComplete && onComplete()
-      }, 320)
+      onComplete && onComplete()
     })
 
     nextFrame(() => {
-      movingDom.classList.add('slide-enter-to')
-      movingDom.classList.remove('slide-enter')
+      loading.classList.add('slide-enter-to')
+      loading.classList.remove('slide-enter')
     })
   } else {
     css(iframe, {

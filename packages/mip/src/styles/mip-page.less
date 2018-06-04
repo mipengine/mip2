@@ -160,19 +160,25 @@ body.no-scroll {
 .mip-appshell-header {
     display: none;
 
+    .back-button {
+        position: absolute;
+        top: 10px;
+        left: 6px;
+    }
+
     .mip-appshell-header-button-group {
         width: 87px;
         height: 32px;
         border: 1px solid #e6e6e6;
         border-radius: 16px;
         position: absolute;
-        top: 6px;
+        top: 5px;
         right: 3px;
         overflow: hidden;
 
         .button {
             float: left;
-            padding: 0 9px;
+            padding: 5px 9px 0;
         }
 
         .split {
@@ -180,6 +186,7 @@ body.no-scroll {
             width: 1px;
             height: 15px;
             background: #ccc;
+            margin-top: 9px;
         }
     }
 
