@@ -276,6 +276,10 @@ let viewer = {
       let $a = this
       // browser will resolve fullpath, eg. http://localhost:8080/examples/page/tree.html
       let to = $a.href
+      let hash = ''
+      if (to.lastIndexOf('#') > -1) {
+        hash = to.substring(to.lastIndexOf('#'))
+      }
 
       if (!to) {
         return
@@ -293,6 +297,13 @@ let viewer = {
       }
 
       e.preventDefault()
+
+      /**
+       * scroll to current hash with an ease transition
+       */
+      if (hash) {
+        page.scrollToHash.bind(page)(hash)
+      }
 
       if ($a.hasAttribute('mip-link') || $a.getAttribute('data-type') === 'mip') {
         // send statics message to BaiduResult page

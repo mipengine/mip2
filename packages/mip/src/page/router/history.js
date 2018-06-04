@@ -1,4 +1,4 @@
-import {START, normalizeLocation, isSameRoute} from '../util/route'
+import {START, normalizeLocation} from '../util/route'
 import {pushState, replaceState} from '../util/push-state'
 import {getLocation} from '../util/path'
 
@@ -51,11 +51,8 @@ export default class HTML5History {
 
   transitionTo (location, onComplete) {
     const route = normalizeLocation(location, this.current)
-
-    if (!isSameRoute(this.current, route)) {
-      this.updateRoute(route)
-      onComplete && onComplete(route)
-    }
+    this.updateRoute(route)
+    onComplete && onComplete(route)
   }
 
   updateRoute (route) {
