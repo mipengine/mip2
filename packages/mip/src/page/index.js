@@ -37,17 +37,16 @@ class Page {
       this.isRootPage = true
     }
     this.pageId = undefined
-    this.appshellRoutes = []
-    this.appshellCache = {}
-    this.pageId = null;
 
     // root page
     this.appshell = null
     this.children = []
-    this.currentChildPageId = null
+    this.currentPageId = null
     this.messageHandlers = []
     this.currentPageMeta = {}
-    this.direction = null;
+    this.direction = null
+    this.appshellRoutes = []
+    this.appshellCache = {}
 
     /**
      * transition will be executed only when `Back` button clicked,
@@ -61,6 +60,7 @@ class Page {
 
     // generate pageId
     this.pageId = window.location.href
+    this.currentPageId = this.pageId
 
     if (this.isRootPage) {
       // outside iframe
@@ -115,7 +115,7 @@ class Page {
        */
       this.messageHandlers.push((type, event) => {
         if (type === MESSAGE_APPSHELL_EVENT) {
-          this.emitEventInCurrentPage(event)
+          customEmit(window, event.name, event.data)
         }
       })
 
@@ -193,15 +193,15 @@ class Page {
    * @param {Object} event.data event data
    */
   emitEventInCurrentPage ({name, data = {}}) {
-    if (this.currentChildPageId) {
+    if (this.currentPageId !== this.pageId) {
       // notify current iframe
-      let $iframe = getIFrame(this.currentChildPageId)
+      let $iframe = getIFrame(this.currentPageId)
       $iframe && $iframe.contentWindow.postMessage({
         type: MESSAGE_APPSHELL_EVENT,
         data: {name, data}
       }, window.location.origin)
     } else {
-      // emit CustomEvent in current iframe
+      // emit CustomEvent in root page
       customEmit(window, name, data)
     }
   }
@@ -291,9 +291,9 @@ class Page {
         backwardOpitons.targetPageId = targetPageId
       }
 
-      frameMoveOut(this.currentChildPageId, backwardOpitons)
+      frameMoveOut(this.currentPageId, backwardOpitons)
 
-      this.direction = null;
+      this.direction = null
       this.refreshAppShell(targetPageId, finalMeta)
     } else {
       // forward
@@ -378,7 +378,7 @@ class Page {
       window.MIP.$recompile()
     }
 
-    this.currentChildPageId = targetPageId
+    this.currentPageId = targetPageId
   }
 }
 
