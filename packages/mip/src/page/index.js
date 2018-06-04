@@ -44,7 +44,7 @@ class Page {
     this.currentChildPageId = null
     this.messageHandlers = []
     this.currentPageMeta = {}
-    this.initPageId = null;
+    this.direction = null;
 
     /**
      * transition will be executed only when `Back` button clicked,
@@ -61,7 +61,6 @@ class Page {
 
     if (this.isRootPage) {
       // outside iframe
-      this.currentChildPageId = this.initPageId = this.pageId;
       router = new Router()
       router.rootPage = this
       router.init()
@@ -242,18 +241,24 @@ class Page {
     let localMeta = this.findMetaByPageId(targetPageId)
     let finalMeta = util.fn.extend(true, {}, localMeta, targetMeta)
 
-    // TODO BACK BUTTON
-    if (targetPageId === this.initPageId) {
+    if (targetPageId === this.pageId || this.direction === 'back') {
       // backward
-      frameMoveOut(this.currentChildPageId, {
+      let backwardOpitons = {
         transition: this.allowTransition,
         sourceMeta: this.currentPageMeta,
         onComplete: () => {
           this.allowTransition = false
           this.currentPageMeta = finalMeta
         }
-      })
+      }
 
+      if (this.direction === 'back') {
+        backwardOpitons.targetPageId = targetPageId
+      }
+
+      frameMoveOut(this.currentChildPageId, backwardOpitons)
+
+      this.direction = null;
       this.refreshAppShell(targetPageId, finalMeta)
     } else {
       // forward

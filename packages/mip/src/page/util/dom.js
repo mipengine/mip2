@@ -198,6 +198,16 @@ export function whenTransitionEnds (el, type, cb) {
   el.addEventListener(event, onEnd)
 }
 
+/**
+ * Forward iframe animation
+ *
+ * @param {string} pageId targetPageId
+ * @param {Object} options
+ * @param {boolean} options.transition allowTransition
+ * @param {Object} options.targetMeta pageMeta of target page
+ * @param {string} options.newPage whether iframe is just created
+ * @param {Function} options.onComplete callback on complete
+ */
 export function frameMoveIn (pageId, {transition, targetMeta, newPage, onComplete} = {}) {
   let iframe = getIFrame(pageId)
 
@@ -207,9 +217,7 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, onComplet
 
   if (transition) {
     let loading = getLoading(targetMeta);
-    css(loading, {
-      display: 'block'
-    })
+    css(loading, 'display', 'block')
 
     loading.classList.add('slide-enter', 'slide-enter-active')
 
@@ -220,9 +228,7 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, onComplet
 
     let done = () => {
       hideAllIFrames();
-      css(loading, {
-        display: 'none'
-      })
+      css(loading, 'display', 'none')
       css(iframe, {
         'z-index': activeZIndex++,
         display: 'block'
@@ -255,18 +261,35 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, onComplet
   }
 }
 
-export function frameMoveOut (pageId, {transition, sourceMeta, onComplete} = {}) {
+/**
+ * Backward iframe animation
+ *
+ * @param {string} pageId currentPageId
+ * @param {Object} options
+ * @param {boolean} options.transition allowTransition
+ * @param {Object} options.sourceMeta pageMeta of current page
+ * @param {string} options.targetPageId indicating target iframe id when switching between iframes. undefined when switching to init page.
+ * @param {Function} options.onComplete callback on complete
+ */
+export function frameMoveOut (pageId, {transition, sourceMeta, targetPageId, onComplete} = {}) {
   let iframe = getIFrame(pageId)
 
   if (!iframe) {
     return;
   }
 
+  if (targetPageId) {
+    let targetIFrame = getIFrame(targetPageId)
+    activeZIndex -= 2
+    css(targetIFrame, {
+      display: 'block',
+      'z-index': activeZIndex++
+    })
+  }
+
   if (transition) {
     let loading = getLoading(sourceMeta, true)
-    css(loading, {
-      display: 'block'
-    })
+    css(loading, 'display', 'block')
 
     iframe.classList.add('slide-leave', 'slide-leave-active')
     loading.classList.add('slide-leave', 'slide-leave-active')
@@ -281,9 +304,7 @@ export function frameMoveOut (pageId, {transition, sourceMeta, onComplete} = {})
         display: 'none',
         'z-index': 10000
       })
-      css(loading, {
-        display: 'none'
-      })
+      css(loading, 'display', 'none')
       iframe.classList.remove('slide-leave-to', 'slide-leave-active')
       loading.classList.remove('slide-leave-to', 'slide-leave-active')
       onComplete && onComplete()
