@@ -107,7 +107,7 @@ class Page {
             }, this);
 
             // Create loading div
-            createLoading(rootPageMeta.header.show);
+            createLoading(rootPageMeta);
         }
         /**
          * in child page:
@@ -226,16 +226,18 @@ class Page {
      * @param {Object} extraData extraData
      */
     refreshAppShell(targetPageId, extraData) {
-        let meta = this.findMetaByPageId(targetPageId);
-        this.appshell.refresh(util.fn.extend(true, {}, meta, extraData), targetPageId);
+        this.appshell.refresh(extraData, targetPageId);
     }
 
     /**
      * apply transition effect to relative two pages
      *
      * @param {string} targetPageId targetPageId
+     * @param {Object} targetMeta metainfo of targetPage
+     * @param {Object} options extra options
+     * @param {boolean} options.newPage whether create iframe
      */
-    applyTransition(targetPageId) {
+    applyTransition(targetPageId, targetMeta, options = {}) {
         // Disable scrolling of first page when iframe is covered
         if (targetPageId === this.pageId) {
             document.body.classList.remove('no-scroll');
@@ -244,19 +246,34 @@ class Page {
             document.body.classList.add('no-scroll');
         }
 
+        let localMeta = this.findMetaByPageId(targetPageId);
+        let finalMeta = util.fn.extend(true, {}, localMeta, targetMeta);
+
+        if (!finalMeta.header.show) {
+            this.refreshAppShell(targetPageId, finalMeta);
+        }
+
         if (this.currentChildPageId) {
             frameMoveOut(this.currentChildPageId, {
                 transition: this.allowTransition,
                 onComplete: () => {
                     this.allowTransition = false;
+                    if (finalMeta.header.show) {
+                        this.refreshAppShell(targetPageId, finalMeta);
+                    }
                 }
             });
         }
 
         frameMoveIn(targetPageId, {
             transition: this.allowTransition,
+            targetMeta: finalMeta,
+            newPage: options.newPage,
             onComplete: () => {
                 this.allowTransition = false;
+                if (finalMeta.header.show) {
+                    this.refreshAppShell(targetPageId, finalMeta);
+                }
             }
         });
     }
@@ -308,13 +325,12 @@ class Page {
         if (!targetPage) {
             // create an iframe
             let targetFrame = createIFrame(targetPageId);
-            this.applyTransition(targetPageId);
+            this.applyTransition(targetPageId, to.meta, {newPage: true});
         }
         else {
-            this.applyTransition(targetPageId);
+            this.applyTransition(targetPageId, to.meta);
             MIP.$recompile();
         }
-        this.refreshAppShell(targetPageId, to.meta);
 
         this.currentChildPageId = targetPageId;
     }

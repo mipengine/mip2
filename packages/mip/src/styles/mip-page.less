@@ -60,7 +60,49 @@ body.no-scroll {
     overflow-y: auto;
 }
 
-@appshell-header-dropdown-height: 30px;
+.mip-page-loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    z-index: 20000;
+    display: none;
+}
+
+.mip-page-loading,
+.mip-page__iframe {
+    &.with-header {
+        top: @appshell-header-height;
+        height: calc(100% - 44px);
+    }
+    &.slide-enter {
+        transform: translate(100%, 0);
+    }
+
+    &.slide-enter-active {
+        transition: all 0.35s ease;
+    }
+
+    &.slide-enter-to {
+        transform: translate(0, 0);
+    }
+
+    &.slide-leave {
+        transform: translate(0, 0);
+    }
+
+    &.slide-leave-active {
+        transition: all 0.35s ease;
+    }
+
+    &.slide-leave-to {
+        transform: translate(100%, 0);
+    }
+}
 
 .mip-appshell-header-wrapper {
     height: 0;
@@ -77,11 +119,12 @@ body.no-scroll {
     }
 }
 
-.mip-appshell-header {
+.mip-appshell-header,
+.mip-page-loading-header {
     position: fixed;
     right: 0;
     left: 0;
-    display: none;
+    display: flex;
     align-items: center;
     z-index: 20000;
     height: @appshell-header-height;
@@ -91,20 +134,66 @@ body.no-scroll {
     background: white;
     padding: 0 6px 0 6px;
 
-    &-logo {
+    .mip-appshell-header-logo-title {
+        margin: 0 auto;
+
+        .mip-appshell-header-logo,
+        .mip-appshell-header-title {
+            float: left;
+        }
+
+        .mip-appshell-header-logo {
+            height: 32px;
+            width: 32px;
+            margin: 4px 8px 0 0;
+        }
+
+        .mip-appshell-header-title {
+            flex: 1;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+    }
+}
+
+.mip-appshell-header {
+    display: none;
+
+    .mip-appshell-header-button-group {
+        width: 87px;
         height: 32px;
-        width: 32px;
-        margin: 0 8px 0 0;
-    }
-
-    &-title {
-        flex: 1;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        border: 1px solid #e6e6e6;
+        border-radius: 16px;
+        position: absolute;
+        top: 6px;
+        right: 3px;
         overflow: hidden;
+
+        .button {
+            float: left;
+            padding: 0 9px;
+        }
+
+        .split {
+            float: left;
+            width: 1px;
+            height: 15px;
+            background: #ccc;
+        }
     }
 
-    &-button-group {
+    .mip-appshell-header-button-group-standalone {
+        position: absolute;
+        right: 18px;
+        top: 9px;
+    }
+}
+
+/*
+@appshell-header-dropdown-height: 30px;
+
+&-button-group {
         display: flex;
         align-items: center;
         position: relative;
@@ -210,92 +299,4 @@ body.no-scroll {
             }
         }
     }
-
-    &.xiongzhang-header {
-        .mip-appshell-header-logo-title {
-            margin: 0 auto;
-
-            .mip-appshell-header-logo,
-            .mip-appshell-header-title {
-                float: left;
-            }
-
-            .mip-appshell-header-logo {
-                margin-top: 4px;
-            }
-        }
-
-        .mip-appshell-header-button-group {
-            width: 87px;
-            height: 32px;
-            border: 1px solid #e6e6e6;
-            border-radius: 16px;
-            position: absolute;
-            top: 6px;
-            right: 3px;
-            overflow: hidden;
-
-            .button {
-                float: left;
-                padding: 0 9px;
-            }
-
-            .split {
-                float: left;
-                width: 1px;
-                height: 15px;
-                background: #ccc;
-            }
-        }
-
-        .mip-appshell-header-button-group-standalone {
-            position: absolute;
-            right: 18px;
-            top: 9px;
-        }
-    }
-}
-
-.mip-page-loading {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-    background: #fff;
-    z-index: 20000;
-    display: none;
-}
-
-.mip-page-loading,
-.mip-page__iframe {
-    &.with-header {
-        top: @appshell-header-height;
-        height: calc(100% - 44px);
-    }
-    &.slide-enter {
-        transform: translate(100%, 0);
-    }
-
-    &.slide-enter-active {
-        transition: all 0.35s ease;
-    }
-
-    &.slide-enter-to {
-        transform: translate(0, 0);
-    }
-
-    &.slide-leave {
-        transform: translate(0, 0);
-    }
-
-    &.slide-leave-active {
-        transition: all 0.35s ease;
-    }
-
-    &.slide-leave-to {
-        transform: translate(100%, 0);
-    }
-}
+ */

@@ -18,15 +18,15 @@ export function createIFrame(path, {onLoad, onError} = {}) {
     let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${path}"]`);
 
     if (!container) {
-        let loading = getLoading();
-        css(loading, {display: 'block'});
+        // let loading = getLoading();
+        // css(loading, {display: 'block'});
         container = document.createElement('iframe');
         container.onload = () => {
-            setTimeout(() => css(loading, {display: 'none'}), 320);
+            // setTimeout(() => css(loading, {display: 'none'}), 320);
             typeof onLoad === 'function' && onLoad();
         };
         container.onerror = () => {
-            setTimeout(() => css(loading, {display: 'none'}), 320);
+            // setTimeout(() => css(loading, {display: 'none'}), 320);
             typeof onError === 'function' && onError();
         };
         // TODO: use XHR to load iframe so that we can get httpRequest.status 404
@@ -68,27 +68,57 @@ export function getIFrame(iframe) {
     return iframe;
 }
 
-export function createLoading(showHeader = false) {
+export function createLoading(pageMeta) {
     let loading = document.createElement('div');
     loading.id = 'mip-page-loading';
     loading.setAttribute('class', 'mip-page-loading');
-    toggleLoadingHeader(showHeader, loading);
+    loading.innerHTML = `
+        <div class="mip-page-loading-header">
+            <span class="material-icons back-button">keyboard_arrow_left</span>
+            <div class="mip-appshell-header-logo-title">
+                <img class="mip-appshell-header-logo" src="${pageMeta.header.logo}">
+                <span class="mip-appshell-header-title"></span>
+            </div>
+        </div>
+    `;
     document.body.appendChild(loading);
 }
 
-function getLoading() {
-    return document.querySelector('#mip-page-loading');
-}
+export function getLoading(targetMeta) {
+    let loading = document.querySelector('#mip-page-loading');
+    if (!targetMeta) {
+        return loading;
+    }
 
-export function toggleLoadingHeader(toggle, loading = getLoading()) {
-    // with header
-    if (toggle) {
-        loading.classList.add('with-header');
+    if (!targetMeta.header.show) {
+        document.querySelector('#mip-page-loading .mip-page-loading-header')
+            .setAttribute('style', 'display: none');
     }
-    // without header
     else {
-        loading.classList.remove('with-header');
+        document.querySelector('#mip-page-loading .mip-page-loading-header')
+            .setAttribute('style', 'display: flex');
     }
+
+    if (targetMeta.header.logo) {
+        document.querySelector('#mip-page-loading .mip-appshell-header-logo')
+            .setAttribute('src', targetMeta.header.logo);
+    }
+
+    if (targetMeta.header.title) {
+        document.querySelector('#mip-page-loading .mip-appshell-header-title')
+            .innerHTML = targetMeta.header.title;
+    }
+
+    if (targetMeta.view.isIndex) {
+        document.querySelector('#mip-page-loading .back-button')
+            .setAttribute('style', 'display: none');
+    }
+    else {
+        document.querySelector('#mip-page-loading .back-button')
+            .setAttribute('style', 'display: block');
+    }
+
+    return loading;
 }
 
 export function getMIPShellConfig() {
@@ -173,39 +203,65 @@ export function whenTransitionEnds(el, type, cb) {
     el.addEventListener(event, onEnd);
 }
 
-export function frameMoveIn(pageId, {transition, onComplete} = {}) {
+export function frameMoveIn(pageId, {transition, targetMeta, onComplete, newPage} = {}) {
     let iframe = getIFrame(pageId);
-    let loading = getLoading();
 
-    if (iframe) {
+    if (!iframe) {
+        onComplete && onComplete();
+        return;
+    }
+
+    if (transition) {
+        let loading;
+        let movingDom;
+
+        if (newPage) {
+            movingDom = loading = getLoading(targetMeta);
+            css(loading, {
+                display: 'block'
+            });
+        }
+        else {
+            movingDom = iframe;
+            css(iframe, {
+                'z-index': activeZIndex++,
+                display: 'block'
+            });
+        }
+
+        movingDom.classList.add('slide-enter', 'slide-enter-active');
+
+        // trigger layout
+        movingDom.offsetWidth;
+
+        whenTransitionEnds(movingDom, 'transition', () => {
+            movingDom.classList.remove('slide-enter-to', 'slide-enter-active');
+
+            setTimeout(() => {
+                if (newPage) {
+                    css(loading, {
+                        display: 'none'
+                    });
+                    css(iframe, {
+                        'z-index': activeZIndex++,
+                        display: 'block'
+                    });
+                }
+
+                onComplete && onComplete();
+            }, 320);
+        });
+
+        nextFrame(() => {
+            movingDom.classList.add('slide-enter-to');
+            movingDom.classList.remove('slide-enter');
+        });
+    }
+    else {
         css(iframe, {
             'z-index': activeZIndex++,
             display: 'block'
         });
-
-        if (transition) {
-            iframe.classList.add('slide-enter', 'slide-enter-active');
-            loading.classList.add('slide-enter', 'slide-enter-active');
-
-            // trigger layout
-            iframe.offsetWidth;
-
-            whenTransitionEnds(iframe, 'transition', () => {
-                iframe.classList.remove('slide-enter-to', 'slide-enter-active');
-                loading.classList.remove('slide-enter-to', 'slide-enter-active');
-                onComplete && onComplete();
-            });
-
-            nextFrame(() => {
-                iframe.classList.add('slide-enter-to');
-                iframe.classList.remove('slide-enter');
-                loading.classList.add('slide-enter-to');
-                loading.classList.remove('slide-enter');
-            });
-        }
-        else {
-            onComplete && onComplete();
-        }
     }
 }
 
