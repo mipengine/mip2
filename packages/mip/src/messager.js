@@ -3,7 +3,7 @@
  * @author oott123
  */
 
-/* global top messageReciver HTMLIFrameElement */
+/* global top HTMLIFrameElement */
 
 // import Emitter from 'micro-event';
 import Emitter from './util/event-emitter'
@@ -23,19 +23,18 @@ function getSessionId () {
   return ((new Date()).getTime() * 1000 + Math.ceil(Math.random() * 1000)).toString(36)
 }
 
-function messageReceiver(event) {
-    // 寻找对应的 messenger 实例
-    let messenger = messengerInstances[event.data.name];
-    if (!messenger) {
-        // console.warn('A window with no messengers is sending message', event);
-        // 兼容老 mip，没有给名字
-        for (let x in messengerInstances) {
-            messengerInstances[x].processMessageEvent(event);
-        }
+function messageReceiver (event) {
+  // 寻找对应的 messenger 实例
+  let messenger = messengerInstances[event.data.name]
+  if (!messenger) {
+    // console.warn('A window with no messengers is sending message', event);
+    // 兼容老 mip，没有给名字
+    for (let x in messengerInstances) {
+      messengerInstances[x].processMessageEvent(event)
     }
-    else {
-        messenger.processMessageEvent(event);
-    }
+  } else {
+    messenger.processMessageEvent(event)
+  }
 }
 
 /**

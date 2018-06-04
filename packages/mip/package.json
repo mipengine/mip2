@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "node examples/server.js",
     "build": "node build/build.js",
-    "lint": "eslint ./src",
     "uploadjs": "baidubce bos --put-object dist/mip.js bos://assets/mip/projects/mip.js",
     "uploadcss": "baidubce bos --put-object dist/mip.css bos://assets/mip/projects/mip.css"
   },

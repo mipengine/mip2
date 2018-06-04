@@ -3,6 +3,6 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-const WebpackBuilder = require('./webpack');
+const WebpackBuilder = require('./webpack')
 
-module.exports = WebpackBuilder;
+module.exports = WebpackBuilder
