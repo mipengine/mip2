@@ -53,11 +53,8 @@ export default class HTML5History {
 
     transitionTo(location, onComplete) {
         const route = normalizeLocation(location, this.current);
-
-        if (!isSameRoute(this.current, route)) {
-            this.updateRoute(route);
-            onComplete && onComplete(route);
-        }
+        this.updateRoute(route);
+        onComplete && onComplete(route);
     }
 
     updateRoute(route) {

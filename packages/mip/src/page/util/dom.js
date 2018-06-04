@@ -143,7 +143,7 @@ if (window.onanimationend === undefined
     animationEndEvent = 'webkitAnimationEnd';
 }
 
-const raf = inBrowser
+export const raf = inBrowser
     ? window.requestAnimationFrame
         ? window.requestAnimationFrame.bind(window)
         : setTimeout

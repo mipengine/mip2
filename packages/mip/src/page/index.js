@@ -4,7 +4,7 @@
  */
 
 import {getLocation} from './util/path';
-import {isOnlyDifferentInHash, getFullPath, convertPatternToRegexp} from './util/route';
+import {isSameRoute, getFullPath, convertPatternToRegexp} from './util/route';
 import {
     getMIPShellConfig,
     addMIPCustomScript,
@@ -15,6 +15,7 @@ import {
     frameMoveOut,
     createLoading
 } from './util/dom';
+import {scrollTop} from './util/ease-scroll';
 import {DEFAULT_SHELL_CONFIG} from './const';
 
 import {customEmit} from '../vue-custom-element/utils/custom-event';
@@ -28,6 +29,8 @@ import {
     MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE
 } from './const';
 
+const CUSTOM_EVENT_SCROLL_TO_HASH = 'scroll-to-hash';
+
 class Page {
     constructor() {
         if (window.parent && window.parent.MIP_ROOT_PAGE) {
@@ -37,13 +40,14 @@ class Page {
             window.MIP_ROOT_PAGE = true;
             this.isRootPage = true;
         }
+        this.pageId = undefined;
         this.appshellRoutes = [];
         this.appshellCache = {};
 
         // root page
-        this.appshell = null;
+        this.appshell = undefined;
         this.children = [];
-        this.currentChildPageId = null;
+        this.currentChildPageId = undefined;
         this.messageHandlers = [];
 
         /**
@@ -123,6 +127,15 @@ class Page {
         }
     }
 
+    initHashScroller() {
+        // scroll to current hash if exists
+        this.scrollToHash(window.location.hash);
+
+        window.addEventListener(CUSTOM_EVENT_SCROLL_TO_HASH, (e) => {
+            this.scrollToHash(e.detail && e.detail[0].hash);
+        });
+    }
+
     /**
      * notify root page with an eventdata
      *
@@ -132,7 +145,29 @@ class Page {
         parent.postMessage(data, window.location.origin);
     }
 
+    /**
+     * scroll to hash with ease transition
+     *
+     * @param {string} hash hash
+     */
+    scrollToHash(hash) {
+        if (hash) {
+            let $hash = document.querySelector(decodeURIComponent(hash));
+            if ($hash) {
+                // scroll to current hash
+                scrollTop($hash.offsetTop, {
+                    scroller: this.isRootPage ? window : window.document.body
+                });
+            }
+        }
+    }
+
     start() {
+        // Don't let browser restore scroll position.
+        if ('scrollRestoration' in window.history) {
+            window.history.scrollRestoration = 'manual';
+        }
+
         // Set global mark
         window.MIP.MIP_ROOT_PAGE = window.MIP_ROOT_PAGE;
 
@@ -151,6 +186,8 @@ class Page {
 
         // Job complete!
         document.body.setAttribute('mip-ready', '');
+
+        this.initHashScroller();
     }
 
     /**** Root Page methods ****/
@@ -273,6 +310,21 @@ class Page {
     }
 
     /**
+     * compare with two pageIds
+     *
+     * @param {string} pageId pageId
+     * @param {string} anotherPageId another pageId
+     * @return {boolean} result
+     */
+    isSamePage(pageId, anotherPageId) {
+        let hashReg = /#.*$/;
+        if (pageId && anotherPageId) {
+            return pageId.replace(hashReg, '') === anotherPageId.replace(hashReg, '');
+        }
+        return false;
+    }
+
+    /**
      * get page by pageId
      *
      * @param {string} pageId pageId
@@ -282,8 +334,8 @@ class Page {
         if (!pageId) {
             return this;
         }
-        return pageId === this.pageId ?
-            this : this.children.find(child => child.pageId === pageId);
+        return this.isSamePage(pageId, this.pageId) ?
+            this : this.children.find(child => this.isSamePage(child.pageId, pageId));
     }
 
     /**
@@ -294,10 +346,16 @@ class Page {
      */
     render(from, to) {
         /**
-         * if `to` route is different with `from` route only in hash,
-         * do nothing and let browser jump to that anchor
+         * if `to` route is the same with `from` route in path & query,
+         * scroll in current page
          */
-        if (isOnlyDifferentInHash(from, to)) {
+        if (isSameRoute(from, to, true)) {
+            this.emitEventInCurrentPage({
+                name: CUSTOM_EVENT_SCROLL_TO_HASH,
+                data: {
+                    hash: to.hash
+                }
+            });
             return;
         }
 
