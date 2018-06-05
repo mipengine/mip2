@@ -1,8 +1,14 @@
 import {raf} from './dom'
 
-export function scrollTop (height, { duration = 500, scroller = window } = {}) {
-  let top = height
+const HEADER_HEIGHT = 44
+
+export function scrollTop (height, { duration = 5000, scroller = window } = {}) {
+  let top = height - HEADER_HEIGHT
   let scrollTop = 0
+  /**
+   * retrieve current scroll top in iframe
+   * https://medium.com/@dvoytenko/amp-ios-scrolling-and-position-fixed-b854a5a0d451
+   */
   let $scrollPosition = document.querySelector('#mip-page-scroll-position')
   if ($scrollPosition) {
     scrollTop = -$scrollPosition.getBoundingClientRect().top
@@ -10,12 +16,14 @@ export function scrollTop (height, { duration = 500, scroller = window } = {}) {
     scrollTop = document.body.scrollTop || document.documentElement.scrollTop
   }
 
-  if (top === scrollTop) {
+  if (top - HEADER_HEIGHT === scrollTop) {
     return Promise.resolve()
   }
 
   let rest = top - scrollTop
   let sign = rest > 0
+
+  // scroll(top, scroller)
 
   return new Promise(resolve => {
     transition(
@@ -35,7 +43,6 @@ export function scrollTop (height, { duration = 500, scroller = window } = {}) {
         return true
       },
       () => {
-        // 防止滚动过程没滚到位
         scroll(top, scroller)
         resolve()
       }

@@ -39,12 +39,12 @@ class Page {
     this.pageId = undefined
 
     // root page
-    this.appshell = null
+    this.appshell = undefined
     this.children = []
-    this.currentPageId = null
+    this.currentPageId = undefined
     this.messageHandlers = []
     this.currentPageMeta = {}
-    this.direction = null
+    this.direction = undefined
     this.appshellRoutes = []
     this.appshellCache = {}
 
@@ -55,11 +55,22 @@ class Page {
     this.allowTransition = false
   }
 
+  /**
+   * clean pageId
+   *
+   * @param {string} pageId pageId
+   * @return {string} cleaned pageId
+   */
+  cleanPageId (pageId) {
+    let hashReg = /#.*$/
+    return pageId && pageId.replace(hashReg, '')
+  }
+
   initRouter () {
     let router
 
     // generate pageId
-    this.pageId = window.location.href
+    this.pageId = this.cleanPageId(window.location.href)
     this.currentPageId = this.pageId
 
     if (this.isRootPage) {
@@ -177,6 +188,9 @@ class Page {
 
     // scroll to current hash if exists
     this.scrollToHash(window.location.hash)
+    window.addEventListener('scroll-to-hash', (e) => {
+      this.scrollToHash(e.detail[0])
+    })
   }
 
   /**
@@ -274,7 +288,14 @@ class Page {
     }
 
     let localMeta = this.findMetaByPageId(targetPageId)
-    let finalMeta = util.fn.extend(true, {}, localMeta, targetMeta)
+    /**
+     * priority of header.title:
+     * 1. <a mip-link data-title>
+     * 2. <mip-shell> route.meta.header.title
+     * 3. <a mip-link></a> innerText
+     */
+    let innerTitle = {title: targetMeta.defaultTitle || undefined}
+    let finalMeta = util.fn.extend(true, innerTitle, localMeta, targetMeta)
 
     if (targetPageId === this.pageId || this.direction === 'back') {
       // backward
@@ -322,32 +343,14 @@ class Page {
   }
 
   /**
-   * compare with two pageIds
-   *
-   * @param {string} pageId pageId
-   * @param {string} anotherPageId another pageId
-   * @return {boolean} result
-   */
-  isSamePage (pageId, anotherPageId) {
-    let hashReg = /#.*$/
-    if (pageId && anotherPageId) {
-      return pageId.replace(hashReg, '') === anotherPageId.replace(hashReg, '')
-    }
-    return false
-  }
-
-  /**
    * get page by pageId
    *
    * @param {string} pageId pageId
    * @return {Page} page
    */
   getPageById (pageId) {
-    if (!pageId) {
-      return this
-    }
-    return this.isSamePage(pageId, this.pageId)
-      ? this : this.children.find(child => this.isSamePage(child.pageId, pageId))
+    return (!pageId || pageId === this.pageId)
+      ? this : this.children.find(child => child.pageId === pageId)
   }
 
   /**
@@ -362,16 +365,25 @@ class Page {
      * scroll in current page
      */
     if (isSameRoute(from, to, true)) {
+      this.emitEventInCurrentPage({
+        name: 'scroll-to-hash',
+        data: to.hash
+      })
       return
     }
 
     // otherwise, render target page
-    let targetPageId = getFullPath(to)
+    let targetFullPath = getFullPath(to)
+    let targetPageId = this.cleanPageId(targetFullPath)
     let targetPage = this.getPageById(targetPageId)
 
-    if (!targetPage) {
+    /**
+     * reload iframe when <a mip-link> clicked,
+     * forwarding or going back with browser history won't
+     */
+    if (!targetPage || (to.meta && to.meta.reload)) {
       // create an iframe
-      createIFrame(targetPageId)
+      createIFrame(targetFullPath, targetPageId)
       this.applyTransition(targetPageId, to.meta, {newPage: true})
     } else {
       this.applyTransition(targetPageId, to.meta)

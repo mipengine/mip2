@@ -145,7 +145,7 @@ body.no-scroll {
         align-items: center;
         position: absolute;
         height: 30px;
-        width: 40px;
+        width: 30px;
         & > svg {
             width: 20px;
             height: 20px;
@@ -154,6 +154,7 @@ body.no-scroll {
 
     .mip-appshell-header-logo-title {
         margin: 0 auto;
+        max-width: 50%;
 
         .mip-appshell-header-logo,
         .mip-appshell-header-title {
@@ -167,29 +168,16 @@ body.no-scroll {
         }
 
         .mip-appshell-header-title {
-            flex: 1;
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
+            max-width: 100%;
         }
     }
 }
 
 .mip-appshell-header {
     display: none;
-
-    .back-button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: absolute;
-        height: 30px;
-        width: 40px;
-        & > svg {
-            width: 20px;
-            height: 20px;
-        }
-    }
 
     .mip-appshell-header-button-group {
         width: 87px;
