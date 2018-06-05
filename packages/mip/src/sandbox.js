@@ -124,7 +124,14 @@ const DOCUMENT_ORIGINAL_KEYWORDS = [
   'querySelectorAll'
 ]
 
+// 修复:
+// 1. strict 模式在部分浏览器下使用 arguments caller 等关键字报错的问题
+// 2. name 和 length 属性在部分浏览器上 redefineProperty 报错的问题
+const SKIP_WORDS = ['arguments', 'caller', 'callee', 'length', 'name']
+
 function defs (obj, props, {original = window, writable = false} = {}) {
+  props = props.filter(name => SKIP_WORDS.indexOf(name) === -1)
+
   Object.defineProperties(
     obj,
     props.reduce((obj, key) => {
@@ -183,7 +190,7 @@ function def (obj, prop, options) {
  * @return {boolean}     是否为函数
  */
 function isFunc (fn) {
-  return Object.prototype.toString.call(fn) === '[object Function]'
+  return typeof fn === 'function'
 }
 
 let sandbox = {}
