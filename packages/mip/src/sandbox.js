@@ -134,8 +134,10 @@ function defs (obj, props, {original = window, writable = false} = {}) {
       }
 
       if (isFunc(original[key])) {
+        // 不然直接 MIP.sandbox.setTimeout(() => {}) 会报错
         let func = original[key].bind(original)
-
+        // 在上面的 .bind() 的情况下 MIP.sandbox.Promise.resolve 会拿不到
+        // 因此需要这么定义一下
         let ownPropertyNames = Object.getOwnPropertyNames(original[key])
         defs(func, ownPropertyNames, {original: original[key]})
 
@@ -148,6 +150,7 @@ function defs (obj, props, {original = window, writable = false} = {}) {
         }
 
         obj[key].set = function (val) {
+          // 只是防止用户篡改而不是不让用户写
           if (writable) {
             original[key] = val
           }
@@ -197,6 +200,10 @@ defs(sandboxDocument, DOCUMENT_ORIGINAL_KEYWORDS, {original: document, setter: t
 
 def(sandbox, 'document', function () {
   return sandboxDocument
+})
+
+def(sandbox, 'MIP', function () {
+  return window.MIP
 })
 
 def(sandbox, 'this', function () {
