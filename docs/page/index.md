@@ -1,6 +1,7 @@
 ## Page
 
 > wangyisheng (wangyisheng@outlook.com)
+> panyuqi (panyuqi@baidu.com)
 
 熟悉 MIP 的开发者可能了解，MIP 全称 Mobile Instant Pages，因此是以 __页面 (Page)__ 为单位来运行的。开发者通过改造/提交一个个页面，继而被百度收录并展示。
 
@@ -34,10 +35,10 @@
             MIP.watch('something', () => console.log('something changed.'));
         </script>
 
-        <script type="text/javascript" src="https://somecdn/mip.js">
+        <script type="text/javascript" src="https://somecdn/mip.js"></script>
 
-        <script type="text/javascript" src="https://somecdn/mip-component-a.js">
-        <script type="text/javascript" src="https://somecdn/mip-component-b.js">
+        <script type="text/javascript" src="https://somecdn/mip-component-a.js"></script>
+        <script type="text/javascript" src="https://somecdn/mip-component-b.js"></script>
     </body>
     ```
 
@@ -45,20 +46,24 @@
 
     1. 如果跳转到其他 __同域名的 MIP 页面__，使用 `mip-link` 属性或者 `data-type="mip"`：
         ```html
-        <a href="./anotherMIPPage.html" mip-link>xxx</a>
-        <a href="./anotherMIPPage.html" data-type="mip">xxx</a>
+        <a href="https://somesite.com/mip/anotherMIPPage.html" mip-link>xxx</a>
+        <a href="https://somesite.com/mip/anotherMIPPage.html" data-type="mip">xxx</a>
         ```
         1. `href` 指向当前域名的页面，暂时不允许跨域
         2. 不允许使用 `target` 属性
 
     2. 如果跳转到其他页面 ，不添加 `mip-link` 属性或者 `data-type="mip"`，进行普通跳转：
         ```html
-        <a href="https://www.another-site.com/">
+        <a href="https://www.another-site.com/">Jump Out</a>
         ```
 
-    3. 默认情况下点击链接后会向 History 中 `push` 一条记录。如果想覆盖当前记录，可以在 `<a>` 元素上增加 `replace` 属性。
+    3. `href` 属性值沿用[旧版 mip-link 规范](https://www.mipengine.org/examples/mip-extensions/mip-link.html)，取值范围：`https?://.*`, `mailto:.*`, `tel:.*`，__不允许使用相对路径或者绝对路径__。(如 `./relativePage.html`, `/absolutePage.html`)
 
-    4. 通过 `data-title` 可以设置下一个页面的标题。
+    4. 和默认浏览器行为相同， `<a>` 也可以用作页面内部的快速定位滚动，只需要将 `href` 中包含 `#` 即可，如 `http://somesite.com/mip/page.html#second`。特别地，`#second` 作为 `href` 取值范围的例外也被认为合法，可以用作当前页面的快速定位。
+
+    5. 默认情况下点击链接后会向 History 中 `push` 一条记录。如果想覆盖当前记录，可以在 `<a>` 元素上增加 `replace` 属性。
+
+    6. 通过 `data-title` 可以设置下一个页面的标题。(详情可见 MIP Shell 相关章节)
 
 4. 页面内元素的样式中 `z-index` 不能超过 10000，否则会引起页面切换时的样式遮盖问题。
 
@@ -96,13 +101,13 @@
 注意点：
 
 1. 一个页面 __至多只允许存在一个__ `<mip-shell>` 配置项。可以不写则使用默认配置项。
-2. `<mip-shell>` 的位置 __必须__ 位于 `<body>` 内部，并且 __必须__ 在 mip script，mip.js 和组件 js 文件(页面级别第二点)之前。
+2. `<mip-shell>` 的位置 __必须__ 位于 `<body>` 内部，并且 __必须__ 在 mip script，mip.js 和组件 js 文件之前。(见本文档前半部分 js 文件顺序章节)
 3. `<mip-shell>` 内部只允许存在一个 `<script>` 节点，并且 `type` 必须设置为 `application/json`。
 4. `<script>`内部是一个合法的 JSON 对象。
 
 #### 配置项
 
-目前 `<mip-shell>` 支持包含一个**基于路由**的，**全局性**的配置对象。其中的 `routes` 存放了各个页面及其对应的配置对象，对应关系通过 `pattern` 描述。在各个页面切换时，会通过正则匹配页面 URL 和 `pattern`，应用对应的 App Shell 配置。
+目前 `<mip-shell>` 支持包含一个 **基于路由** 的，**全局性** 的配置对象。其中的 `routes` 存放了各个页面及其对应的配置对象，对应关系通过 `pattern` 描述。在各个页面切换时，会通过正则匹配页面 URL 和 `pattern`，应用对应的 App Shell 配置。
 ```json
 {
     "routes": [
@@ -120,7 +125,8 @@
 
 注意点：
 
-* `*` 可以匹配所有 URL，建议在此设置整个站点的默认配置数据，例如默认标题等等。
+* `*` 可以匹配所有 URL，建议放在 `routes` 数组的最后一项，并且在此设置整个站点的默认配置数据，例如默认标题等等。
+* `pattern` 虽然是字符串类型，但其内容实质是一个正则表达式。因此也可以写成 `"/\w?detail$"` 用以匹配例如 `/detail`, `/productdetail` 这样的 URL。
 
 每个 `meta` 对象包括：
 
@@ -142,105 +148,52 @@
 
     配置头部中间的标题，这部分将显示在头部标题栏中，超长会自动截断。
 
-    ![MIP Shell header title](http://boscdn.bpc.baidu.com/assets/mip2/mip-title.png)
+    ![MIP Shell header title](http://boscdn.bpc.baidu.com/assets/mip2/mip-title-2.png)
 
 * header.logo
     __string__, 默认值：无
 
     配置头部左侧的 LOGO 的 URL，建议是一个正方形的图片，长宽不小于 64px。如果不配置则不显示 LOGO，__不会留白__。
 
-    ![MIP Shell header logo](http://boscdn.bpc.baidu.com/assets/mip2/mip-logo.png)
+    ![MIP Shell header logo](http://boscdn.bpc.baidu.com/assets/mip2/mip-logo-2.png)
+
+* header.xiongzhanghao
+    __boolean__, 默认值：`false`
+
+    配置站点为接入熊掌号极速服务的站点。使用熊掌号配置的站点，头部按钮不可配置，由熊掌号负责控制。因此会忽略 `header.buttonGroup` 配置项。
 
 * header.buttonGroup
     __Array__, 默认值：`[]`
 
-    配置头部右侧的按钮区域出什么样的按钮及其文字，点击行为等。这个配置项是一个由对象组成的数组。配置顺序从左到右。
+    配置头部右侧的按钮区域展开后展现的按钮及其文字，点击行为等。这个配置项是一个由对象组成的数组。__仅当 `header.xiongzhanghao` 为 `false` 或者不配置时生效。熊掌号的按钮不可配置__。
 
-    ![MIP Shell header button](http://boscdn.bpc.baidu.com/assets/mip2/mip-button.png)
+    右侧的关闭按钮在搜索结果页中会自动展现，单独打开时不展现，不需要额外配置。
 
-    MIP 内置的按钮分为三种，分别是 `icon`, `button`, `dropdown`，用 `type` 进行区分。__如果不填写 `type`，则这个配置对象会被跳过，不进行渲染__。这三种的配置方法不尽相同，下面详细介绍。`buttonGroup` 内部所有的配置项均 __没有__ 默认值。
+    ![MIP Shell header button](http://boscdn.bpc.baidu.com/assets/mip2/mip-button-2.png)
 
-    1. icon
+    <!--TODO 增加一张浮层的图片-->
 
-        `type` 为 `icon` 时需要额外提供 `name`，`text` 和 `link` 三个属性。
+    每一个配置对象由 3 个属性构成，分别是 `name`, `text` 和 `link`。这三个配置项均 __没有__ 默认值，如果缺少某个则被认为非法配置，__会被跳过而不进行渲染__。
 
-        * name: __string__。__必填__。标识按钮的名字。在点击按钮后，会向 __当前页面__ 触发名为 `appheader:click-[name]` 的事件供其他组件监听并处理。例如当 `name` 为 `search` 时，事件名称为 `appheader:click-search`。
+    * name: __string__。__必填__。标识按钮的名字。在点击按钮后，会向 __当前页面__ 触发名为 `appheader:click-[name]` 的事件供其他组件监听并处理。例如当 `name` 为 `search` 时，事件名称为 `appheader:click-search`。
 
-        * text: __string__。__必填__。标识选用哪种图标。内部使用 material icons，开发者可以在 [这里](https://material.io/tools/icons/?style=baseline) 找到所有可用的图标。
+    * text: __string__。__必填__。标识按钮的显示文字。
 
-        * link: __string__。__选填__。标识点击之后跳转页面的 URL。__只能跳往站内的 MIP 页面__。如果不填，则点击后不跳转。
+    * link: __string__。__选填__。标识点击之后跳转页面的 URL。__只能跳往站内的 MIP 页面__，和 mip-link 的规范相同，取值范围：`https?://.*`, `mailto:.*`, `tel:.*`。如果不填，则点击后不跳转。__跳转不影响事件的触发，两者同时进行。__
 
-        icon 正确配置示例：
+    正确配置示例：
 
-        ```json
-        {
-            "buttonGroup": [
-                {
-                    "type": "icon",
-                    "name": "search",
-                    "text": "search",
-                    "link": "/anotherMIPPage.html"
-                }
-            ]
-        }
-        ```
-
-    2. button
-
-        `type` 为 `button` 时需要额外提供 `name`, `text`, `link` 和 `outline` 四个属性。
-
-        `name`,`link` 两个属性和 `icon` 的情况类似，不再重复。
-
-        * text: __string__。__必填__。按钮中的文字内容。
-
-        * outline: __boolean__。__选填__。默认值：`false`。可以用来配置按钮的两种样式，预览效果如下：（“关注”按钮 `outline` 为 `false`，“发消息”按钮 `outline` 为 `true`）
-
-        ![MIP Shell header button outline](http://boscdn.bpc.baidu.com/assets/mip2/mip-button-outline.png)
-
-        button 正确配置示例：
-
-        ```json
-        {
-            "buttonGroup": [
-                {
-                    "type": "button",
-                    "name": "chat",
-                    "text": "发消息",
-                    "link": "/anotherMIPPage.html",
-                    "outline": true
-                }
-            ]
-        }
-        ```
-
-    3. dropdown
-
-        `type` 为 `dropdown` 时需要额外提供 `items` 属性。它又是一个数组，内部可以包裹的对象需要提供 `name`, `text`, `link` 三个属性，用以标明下拉菜单点开后包含哪些按钮。这三个属性和之前 `type` 等于 `button` 时完全相同，不再重复。效果预览如下：
-
-        ![MIP Shell header button dropdown](http://boscdn.bpc.baidu.com/assets/mip2/mip-button-dropdown.png)
-
-        dropdown 正确配置示例：
-
-        ```json
-        {
-            "buttonGroup": [
-                {
-                    "type": "dropdown",
-                    "items": [
-                        {
-                            "name": "subscribe",
-                            "text": "关注",
-                            "link": "/anotherMIPPage.html"
-                        },
-                        {
-                            "name": "chat",
-                            "text": "发消息"
-                        }
-                    ]
-                }
-            ]
-        }
-        ```
+    ```json
+    {
+        "buttonGroup": [
+            {
+                "name": "search",
+                "text": "search",
+                "link": "https://somesite.com/mip/anotherMIPPage.html"
+            }
+        ]
+    }
+    ```
 
 #### 完整示例
 
@@ -258,36 +211,13 @@
                             "logo": "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg",
                             "buttonGroup": [
                                 {
-                                    "type": "button",
                                     "name": "subscribe",
                                     "text": "关注",
-                                    "link": "/anotherMIPPage.html"
+                                    "link": "https://somesite.com/anotherMIPPage.html"
                                 },
                                 {
-                                    "type": "button",
                                     "name": "chat",
                                     "text": "发消息",
-                                    "outline": true
-                                },
-                                {
-                                    "type": "icon",
-                                    "name": "search",
-                                    "text": "search",
-                                    "link": "/searchMIPPage.html"
-                                },
-                                {
-                                    "type": "dropdown",
-                                    "items": [
-                                        {
-                                            "name": "subscribe",
-                                            "text": "关注",
-                                            "link": "/anotherMIPPage.html"
-                                        },
-                                        {
-                                            "name": "chat",
-                                            "text": "发消息"
-                                        }
-                                    ]
                                 }
                             ]
                         },
@@ -325,6 +255,7 @@
                     "show": false,
                     "title": "",
                     "logo": "",
+                    "xiongzhanghao": false,
                     "buttonGroup": []
                 },
                 "view": {
@@ -384,7 +315,3 @@ Page 在首个页面加载时，主要做了如下的工作：
 3. 执行 MIP 自定义脚本 (`MIP.watch`)
 
 4. 在 `<body>` 上设置 `mip-ready` 属性，以表示初始化完成
-
-
-
-
