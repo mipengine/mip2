@@ -7,7 +7,8 @@
     "mip2": "bin/mip2"
   },
   "scripts": {
-    "test": "NODE_ENV=test && nyc ava --verbose"
+    "test": "NODE_ENV=test && nyc ava --verbose",
+    "lint": "eslint lib"
   },
   "repository": {
     "type": "git",
@@ -47,6 +48,7 @@
     "file-loader": "^1.1.11",
     "fs-extra": "^6.0.0",
     "glob": "^7.1.2",
+    "globals": "^11.5.0",
     "imports-loader": "^0.8.0",
     "inquirer": "^5.2.0",
     "koa": "^2.5.1",

@@ -253,7 +253,7 @@ class MipImg extends CustomElement {
   }
 
   static get observedAttributes () {
-    return ['src']
+    return imgAttributes
   }
 
   firstInviewCallback () {

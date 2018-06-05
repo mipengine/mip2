@@ -15,9 +15,15 @@ MIP.registerVueCustomElement('mip-b', {
   methods: {
     onClick () {
       console.log('onClick')
-      MIP.viewer.eventAction.execute('eventName', null, {
+      MIP.viewer.eventAction.execute('custom_event', null, {
         form: 'b'
       })
     }
+  },
+  connectedCallback(el) {
+    MIP.viewer.eventAction.execute('custom_event', el, {
+      form: 'b'
+    })
+
   }
 })

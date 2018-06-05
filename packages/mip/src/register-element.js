@@ -11,8 +11,8 @@ import performance from './performance'
 import customElementsStore from './custom-element-store'
 
 class BaseElement extends HTMLElement {
-  constructor () {
-    super()
+  constructor (element) {
+    super(element)
 
     // get mip2 clazz from custom elements store
     let CustomElement = customElementsStore.get(this.tagName.toLowerCase(), 'mip2')

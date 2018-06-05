@@ -1,40 +1,39 @@
-import HTML5History from './history';
-import {normalizeLocation} from '../util/route';
+import HTML5History from './history'
 
 export default class Router {
-    constructor(options = {}) {
-        this.options = options;
-        this.history = new HTML5History(this);
-    }
+  constructor (options = {}) {
+    this.options = options
+    this.history = new HTML5History(this)
+  }
 
-    init() {
-        const history = this.history;
+  init () {
+    const history = this.history
 
-        let currentLocation = history.getCurrentLocation();
-        history.transitionTo(currentLocation);
-    }
+    let currentLocation = history.getCurrentLocation()
+    history.transitionTo(currentLocation)
+  }
 
-    listen(cb) {
-        this.history.listen(cb);
-    }
+  listen (cb) {
+    this.history.listen(cb)
+  }
 
-    push(location) {
-        this.history.push(location);
-    }
+  push (location) {
+    this.history.push(location)
+  }
 
-    replace(location) {
-        this.history.replace(location);
-    }
+  replace (location) {
+    this.history.replace(location)
+  }
 
-    go(n) {
-        this.history.go(n);
-    }
+  go (n) {
+    this.history.go(n)
+  }
 
-    back() {
-        this.go(-1);
-    }
+  back () {
+    this.go(-1)
+  }
 
-    forward() {
-        this.go(1);
-    }
+  forward () {
+    this.go(1)
+  }
 }

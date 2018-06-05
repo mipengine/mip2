@@ -3,259 +3,353 @@
  * @author wangyisheng@baidu.com (wangyisheng)
  */
 
-import css from '../../util/dom/css';
-import sandbox from '../../sandbox';
+import css from '../../util/dom/css'
+import sandbox from '../../sandbox'
 
-import {
-    MIP_CONTENT_IGNORE_TAG_LIST,
-    MIP_IFRAME_CONTAINER
-} from '../const';
+import {MIP_IFRAME_CONTAINER} from '../const'
 
-let {window: sandWin, document: sandDoc} = sandbox;
-let activeZIndex = 10000;
+let {window: sandWin, document: sandDoc} = sandbox
+let activeZIndex = 10000
 
-export function createIFrame(path, {onLoad, onError} = {}) {
-    let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${path}"]`);
+export function createIFrame (path, {onLoad, onError} = {}) {
+  let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${path}"]`)
 
-    if (!container) {
-        let loading = getLoading();
-        css(loading, {display: 'block'});
-        container = document.createElement('iframe');
-        container.onload = () => {
-            setTimeout(() => css(loading, {display: 'none'}), 320);
-            typeof onLoad === 'function' && onLoad();
-        };
-        container.onerror = () => {
-            setTimeout(() => css(loading, {display: 'none'}), 320);
-            typeof onError === 'function' && onError();
-        };
-        // TODO: use XHR to load iframe so that we can get httpRequest.status 404
-        container.setAttribute('src', path);
-        container.setAttribute('class', MIP_IFRAME_CONTAINER);
-
-        /**
-         * Fix an iOS iframe width bug, see examples/mip1/test.html
-         * https://stackoverflow.com/questions/23083462/how-to-get-an-iframe-to-be-responsive-in-ios-safari
-         */
-        container.setAttribute('width', '100%');
-        container.setAttribute('scrolling', 'no');
-
-        container.setAttribute('data-page-id', path);
-        container.setAttribute('sandbox', 'allow-top-navigation allow-popups allow-scripts allow-forms allow-pointer-lock allow-popups-to-escape-sandbox allow-same-origin allow-modals')
-        document.body.appendChild(container);
+  if (!container) {
+    container = document.createElement('iframe')
+    container.onload = () => {
+      typeof onLoad === 'function' && onLoad()
     }
-    else {
-        if (typeof onLoad === 'function') {
-            onLoad();
-        }
+    container.onerror = () => {
+      typeof onError === 'function' && onError()
     }
+    // TODO: use XHR to load iframe so that we can get httpRequest.status 404
+    container.setAttribute('src', path)
+    container.setAttribute('class', MIP_IFRAME_CONTAINER)
 
-    return container;
+    /**
+     * Fix an iOS iframe width bug, see examples/mip1/test.html
+     * https://stackoverflow.com/questions/23083462/how-to-get-an-iframe-to-be-responsive-in-ios-safari
+     */
+    container.setAttribute('width', '100%')
+    container.setAttribute('scrolling', 'no')
+
+    container.setAttribute('data-page-id', path)
+    container.setAttribute('sandbox', 'allow-top-navigation allow-popups allow-scripts allow-forms allow-pointer-lock allow-popups-to-escape-sandbox allow-same-origin allow-modals')
+    document.body.appendChild(container)
+  } else {
+    if (typeof onLoad === 'function') {
+      onLoad()
+    }
+  }
+
+  return container
 }
 
-export function removeIFrame(pageId) {
-    let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${pageId}"]`);
-    if (container) {
-        container.parentNode.removeChild(container);
-    }
+export function removeIFrame (pageId) {
+  let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${pageId}"]`)
+  if (container) {
+    container.parentNode.removeChild(container)
+  }
 }
 
-export function getIFrame(iframe) {
-    if (typeof iframe === 'string') {
-        return document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${iframe}"]`);
-    }
+export function getIFrame (iframe) {
+  if (typeof iframe === 'string') {
+    return document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${iframe}"]`)
+  }
 
-    return iframe;
+  return iframe
 }
 
-export function createLoading(showHeader = false) {
-    let loading = document.createElement('div');
-    loading.id = 'mip-page-loading';
-    loading.setAttribute('class', 'mip-page-loading');
-    toggleLoadingHeader(showHeader, loading);
-    document.body.appendChild(loading);
+function hideAllIFrames () {
+  document.querySelectorAll(`.${MIP_IFRAME_CONTAINER}`).forEach(iframe => css(iframe, 'display', 'none'))
 }
 
-function getLoading() {
-    return document.querySelector('#mip-page-loading');
+export function createLoading (pageMeta) {
+  let loading = document.createElement('div')
+  loading.id = 'mip-page-loading'
+  loading.setAttribute('class', 'mip-page-loading')
+  loading.innerHTML = `
+    <div class="mip-page-loading-header">
+      <span class="back-button">
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M769.405 977.483a68.544 68.544 0 0 1-98.121 0L254.693 553.679c-27.173-27.568-27.173-72.231 0-99.899L671.185 29.976c13.537-13.734 31.324-20.652 49.109-20.652s35.572 6.917 49.109 20.652c27.173 27.568 27.173 72.331 0 99.899L401.921 503.681l367.482 373.904c27.074 27.568 27.074 72.231 0 99.899z"/></svg>
+      </span>
+      <div class="mip-appshell-header-logo-title">
+        <img class="mip-appshell-header-logo" src="${pageMeta.header.logo}">
+        <span class="mip-appshell-header-title"></span>
+      </div>
+    </div>
+  `
+  document.body.appendChild(loading)
 }
 
-export function toggleLoadingHeader(toggle, loading = getLoading()) {
-    // with header
-    if (toggle) {
-        loading.classList.add('with-header');
-    }
-    // without header
-    else {
-        loading.classList.remove('with-header');
-    }
+export function getLoading (targetMeta, onlyHeader) {
+  let loading = document.querySelector('#mip-page-loading')
+  if (!targetMeta) {
+    return loading
+  }
+
+  if (onlyHeader) {
+    loading.classList.add('only-header')
+  } else {
+    loading.classList.remove('only-header')
+  }
+
+  if (!targetMeta.header.show) {
+    css(loading.querySelector('.mip-page-loading-header'), 'display', 'none')
+  } else {
+    css(loading.querySelector('.mip-page-loading-header'), 'display', 'flex')
+  }
+
+  let $logo = loading.querySelector('.mip-appshell-header-logo')
+  if (targetMeta.header.logo) {
+    $logo.setAttribute('src', targetMeta.header.logo)
+    css($logo, 'display', 'block')
+  } else {
+    css($logo, 'display', 'none')
+  }
+
+  if (targetMeta.header.title) {
+    loading.querySelector('.mip-appshell-header-title')
+      .innerHTML = targetMeta.header.title
+  }
+
+  if (targetMeta.view.isIndex) {
+    css(loading.querySelector('.back-button'), 'display', 'none')
+  } else {
+    css(loading.querySelector('.back-button'), 'display', 'flex')
+  }
+
+  return loading
 }
 
-export function getMIPShellConfig() {
-    let rawJSON;
-    let $shell = document.body.querySelector('mip-shell');
-    if ($shell) {
-        rawJSON = $shell.children[0].innerHTML;
-    }
-    try {
-        return JSON.parse(rawJSON);
-    }
-    catch (e) {}
+export function getMIPShellConfig () {
+  let rawJSON
+  let $shell = document.body.querySelector('mip-shell')
+  if ($shell) {
+    rawJSON = $shell.children[0].innerHTML
+  }
+  try {
+    return JSON.parse(rawJSON)
+  } catch (e) {}
 
-    return {};
+  return {}
 }
 
-export function addMIPCustomScript(win = window) {
-    let doc = win.document;
-    let script = doc.querySelector('script[type="application/mip-script"]');
-    if (!script) {
-        return;
-    }
+export function addMIPCustomScript (win = window) {
+  let doc = win.document
+  let script = doc.querySelector('script[type="application/mip-script"]')
+  if (!script) {
+    return
+  }
 
-    let customFunction = getSandboxFunction(script.innerHTML);
-    script.remove();
+  let customFunction = getSandboxFunction(script.innerHTML)
+  script.remove()
 
-    win.addEventListener('ready-to-watch', () => customFunction(sandWin, sandDoc));
+  win.addEventListener('ready-to-watch', () => customFunction(sandWin, sandDoc))
 }
 
-function getSandboxFunction(script) {
-    return new Function('window', 'document', `
+function getSandboxFunction (script) {
+  /* eslint-disable no-new-func */
+  return new Function('window', 'document', `
         let {alert, close, confirm, prompt, setTimeout, setInterval, self, top} = window;
 
         ${script}
-    `);
+    `)
+  /* eslint-enable no-new-func */
 }
 
-let transitionProp = 'transition';
-let transitionEndEvent = 'transitionend';
-let animationProp = 'animation';
-let animationEndEvent = 'animationend';
+export const inBrowser = typeof window !== 'undefined'
 
-if (window.ontransitionend === undefined
-    && window.onwebkittransitionend !== undefined) {
-    transitionProp = 'WebkitTransition';
-    transitionEndEvent = 'webkitTransitionEnd';
+let transitionEndEvent = 'transitionend'
+let animationEndEvent = 'animationend'
+
+if (window.ontransitionend === undefined &&
+    window.onwebkittransitionend !== undefined) {
+  transitionEndEvent = 'webkitTransitionEnd'
 }
 
-if (window.onanimationend === undefined
-    && window.onwebkitanimationend !== undefined) {
-    animationProp = 'WebkitAnimation';
-    animationEndEvent = 'webkitAnimationEnd';
+if (window.onanimationend === undefined &&
+    window.onwebkitanimationend !== undefined) {
+  animationEndEvent = 'webkitAnimationEnd'
 }
 
-const raf = inBrowser
-    ? window.requestAnimationFrame
-        ? window.requestAnimationFrame.bind(window)
-        : setTimeout
-    : fn => fn();
+export const raf = inBrowser
+  ? window.requestAnimationFrame
+    ? window.requestAnimationFrame.bind(window)
+    : setTimeout
+  : fn => fn()
 
-export function nextFrame(fn) {
-    raf(() => {
-        raf(fn);
-    });
+export function nextFrame (fn) {
+  raf(() => {
+    raf(fn)
+  })
 }
 
-export function whenTransitionEnds(el, type, cb) {
-    if (!type) {
-        return cb();
+export function whenTransitionEnds (el, type, cb) {
+  if (!type) {
+    return cb()
+  }
+
+  const event = type === 'transition' ? transitionEndEvent : animationEndEvent
+  const onEnd = e => {
+    if (e.target === el) {
+      end()
     }
-
-    const event = type === 'transition' ? transitionEndEvent : animationEndEvent;
-    const onEnd = e => {
-        if (e.target === el) {
-            end();
-        }
-    };
-    const end = () => {
-        el.removeEventListener(event, onEnd);
-        cb();
-    };
-    el.addEventListener(event, onEnd);
+  }
+  const end = () => {
+    el.removeEventListener(event, onEnd)
+    cb()
+  }
+  el.addEventListener(event, onEnd)
 }
 
-export function frameMoveIn(pageId, {transition, onComplete} = {}) {
-    let iframe = getIFrame(pageId);
-    let loading = getLoading();
+/**
+ * Forward iframe animation
+ *
+ * @param {string} pageId targetPageId
+ * @param {Object} options
+ * @param {boolean} options.transition allowTransition
+ * @param {Object} options.targetMeta pageMeta of target page
+ * @param {string} options.newPage whether iframe is just created
+ * @param {Function} options.onComplete callback on complete
+ */
+export function frameMoveIn (pageId, {transition, targetMeta, newPage, onComplete} = {}) {
+  let iframe = getIFrame(pageId)
 
-    if (iframe) {
-        css(iframe, {
-            'z-index': activeZIndex++,
-            display: 'block'
-        });
+  if (!iframe) {
+    return
+  }
 
-        if (transition) {
-            iframe.classList.add('slide-enter', 'slide-enter-active');
-            loading.classList.add('slide-enter', 'slide-enter-active');
+  if (transition) {
+    let loading = getLoading(targetMeta)
+    css(loading, 'display', 'block')
 
-            // trigger layout
-            iframe.offsetWidth;
+    loading.classList.add('slide-enter', 'slide-enter-active')
 
-            whenTransitionEnds(iframe, 'transition', () => {
-                iframe.classList.remove('slide-enter-to', 'slide-enter-active');
-                loading.classList.remove('slide-enter-to', 'slide-enter-active');
-                onComplete && onComplete();
-            });
+    // trigger layout
+    /* eslint-disable no-unused-expressions */
+    loading.offsetWidth
+    /* eslint-enable no-unused-expressions */
 
-            nextFrame(() => {
-                iframe.classList.add('slide-enter-to');
-                iframe.classList.remove('slide-enter');
-                loading.classList.add('slide-enter-to');
-                loading.classList.remove('slide-enter');
-            });
-        }
-        else {
-            onComplete && onComplete();
-        }
+    let done = () => {
+      hideAllIFrames()
+      css(loading, 'display', 'none')
+      css(iframe, {
+        'z-index': activeZIndex++,
+        display: 'block'
+      })
+
+      onComplete && onComplete()
     }
+    whenTransitionEnds(loading, 'transition', () => {
+      loading.classList.remove('slide-enter-to', 'slide-enter-active')
+
+      if (newPage) {
+        setTimeout(done, 100)
+      } else {
+        done()
+      }
+    })
+
+    nextFrame(() => {
+      loading.classList.add('slide-enter-to')
+      loading.classList.remove('slide-enter')
+    })
+  } else {
+    hideAllIFrames()
+    css(iframe, {
+      'z-index': activeZIndex++,
+      display: 'block'
+    })
+    onComplete && onComplete()
+  }
 }
 
-export function frameMoveOut(pageId, {transition, onComplete} = {}) {
-    let iframe = getIFrame(pageId);
+/**
+ * Backward iframe animation
+ *
+ * @param {string} pageId currentPageId
+ * @param {Object} options
+ * @param {boolean} options.transition allowTransition
+ * @param {Object} options.sourceMeta pageMeta of current page
+ * @param {string} options.targetPageId indicating target iframe id when switching between iframes. undefined when switching to init page.
+ * @param {Function} options.onComplete callback on complete
+ */
+export function frameMoveOut (pageId, {transition, sourceMeta, targetPageId, onComplete} = {}) {
+  let iframe = getIFrame(pageId)
 
-    if (iframe) {
-        if (transition) {
-            iframe.classList.add('slide-leave', 'slide-leave-active');
+  if (!iframe) {
+    return
+  }
 
-            // trigger layout
-            iframe.offsetWidth;
+  if (targetPageId) {
+    let targetIFrame = getIFrame(targetPageId)
+    activeZIndex -= 2
+    css(targetIFrame, {
+      display: 'block',
+      'z-index': activeZIndex++
+    })
+  }
 
-            whenTransitionEnds(iframe, 'transition', () => {
-                css(iframe, {
-                    display: 'none',
-                    'z-index': 10000
-                });
-                iframe.classList.remove('slide-leave-to', 'slide-leave-active');
-                onComplete && onComplete();
-            });
+  if (transition) {
+    let loading = getLoading(sourceMeta, true)
+    css(loading, 'display', 'block')
 
-            nextFrame(() => {
-                iframe.classList.add('slide-leave-to');
-                iframe.classList.remove('slide-leave');
-            });
-        }
-        else {
-            css(iframe, {
-                display: 'none',
-                'z-index': 10000
-            });
-            onComplete && onComplete();
-        }
-    }
+    iframe.classList.add('slide-leave', 'slide-leave-active')
+    loading.classList.add('slide-leave', 'slide-leave-active')
+
+    // trigger layout
+    /* eslint-disable no-unused-expressions */
+    iframe.offsetWidth
+    /* eslint-enable no-unused-expressions */
+
+    whenTransitionEnds(iframe, 'transition', () => {
+      css(iframe, {
+        display: 'none',
+        'z-index': 10000
+      })
+      css(loading, 'display', 'none')
+      iframe.classList.remove('slide-leave-to', 'slide-leave-active')
+      loading.classList.remove('slide-leave-to', 'slide-leave-active')
+      onComplete && onComplete()
+    })
+
+    nextFrame(() => {
+      iframe.classList.add('slide-leave-to')
+      iframe.classList.remove('slide-leave')
+      loading.classList.add('slide-leave-to')
+      loading.classList.remove('slide-leave')
+    })
+  } else {
+    css(iframe, {
+      display: 'none',
+      'z-index': 10000
+    })
+    onComplete && onComplete()
+  }
 }
-
-export const inBrowser = typeof window !== 'undefined';
 
 function clickedInEl (el, x, y) {
-    const b = el.getBoundingClientRect();
-    return x >= b.left && x <= b.right && y >= b.top && y <= b.bottom;
+  const b = el.getBoundingClientRect()
+  return x >= b.left && x <= b.right && y >= b.top && y <= b.bottom
 }
 
 export function clickedInEls (e, elements) {
-    const {clientX: x, clientY: y} = e;
-    for (const el of elements) {
-        if (clickedInEl(el, x, y)) {
-            return true;
-        }
+  const {clientX: x, clientY: y} = e
+  for (const el of elements) {
+    if (clickedInEl(el, x, y)) {
+      return true
     }
-    return false;
+  }
+  return false
+}
+
+/**
+ * create a <div> in iframe to retrieve current scroll top
+ * https://medium.com/@dvoytenko/amp-ios-scrolling-and-position-fixed-b854a5a0d451
+ */
+export function createScrollPosition () {
+  let $scrollPosition = document.createElement('div')
+  $scrollPosition.id = 'mip-page-scroll-position'
+  document.body.appendChild($scrollPosition)
 }
