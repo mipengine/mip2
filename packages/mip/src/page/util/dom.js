@@ -60,7 +60,7 @@ export function getIFrame (iframe) {
   return iframe
 }
 
-function hideAllIFrames() {
+function hideAllIFrames () {
   document.querySelectorAll(`.${MIP_IFRAME_CONTAINER}`).forEach(iframe => css(iframe, 'display', 'none'))
 }
 
@@ -70,7 +70,9 @@ export function createLoading (pageMeta) {
   loading.setAttribute('class', 'mip-page-loading')
   loading.innerHTML = `
     <div class="mip-page-loading-header">
-      <span class="material-icons back-button">keyboard_arrow_left</span>
+      <span class="back-button">
+        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M769.405 977.483a68.544 68.544 0 0 1-98.121 0L254.693 553.679c-27.173-27.568-27.173-72.231 0-99.899L671.185 29.976c13.537-13.734 31.324-20.652 49.109-20.652s35.572 6.917 49.109 20.652c27.173 27.568 27.173 72.331 0 99.899L401.921 503.681l367.482 373.904c27.074 27.568 27.074 72.231 0 99.899z"/></svg>
+      </span>
       <div class="mip-appshell-header-logo-title">
         <img class="mip-appshell-header-logo" src="${pageMeta.header.logo}">
         <span class="mip-appshell-header-title"></span>
@@ -98,9 +100,12 @@ export function getLoading (targetMeta, onlyHeader) {
     css(loading.querySelector('.mip-page-loading-header'), 'display', 'flex')
   }
 
+  let $logo = loading.querySelector('.mip-appshell-header-logo')
   if (targetMeta.header.logo) {
-    loading.querySelector('.mip-appshell-header-logo')
-      .setAttribute('src', targetMeta.header.logo)
+    $logo.setAttribute('src', targetMeta.header.logo)
+    css($logo, 'display', 'block')
+  } else {
+    css($logo, 'display', 'none')
   }
 
   if (targetMeta.header.title) {
@@ -111,7 +116,7 @@ export function getLoading (targetMeta, onlyHeader) {
   if (targetMeta.view.isIndex) {
     css(loading.querySelector('.back-button'), 'display', 'none')
   } else {
-    css(loading.querySelector('.back-button'), 'display', 'block')
+    css(loading.querySelector('.back-button'), 'display', 'flex')
   }
 
   return loading
@@ -168,7 +173,7 @@ if (window.onanimationend === undefined &&
   animationEndEvent = 'webkitAnimationEnd'
 }
 
-const raf = inBrowser
+export const raf = inBrowser
   ? window.requestAnimationFrame
     ? window.requestAnimationFrame.bind(window)
     : setTimeout
@@ -198,6 +203,16 @@ export function whenTransitionEnds (el, type, cb) {
   el.addEventListener(event, onEnd)
 }
 
+/**
+ * Forward iframe animation
+ *
+ * @param {string} pageId targetPageId
+ * @param {Object} options
+ * @param {boolean} options.transition allowTransition
+ * @param {Object} options.targetMeta pageMeta of target page
+ * @param {string} options.newPage whether iframe is just created
+ * @param {Function} options.onComplete callback on complete
+ */
 export function frameMoveIn (pageId, {transition, targetMeta, newPage, onComplete} = {}) {
   let iframe = getIFrame(pageId)
 
@@ -206,10 +221,8 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, onComplet
   }
 
   if (transition) {
-    let loading = getLoading(targetMeta);
-    css(loading, {
-      display: 'block'
-    })
+    let loading = getLoading(targetMeta)
+    css(loading, 'display', 'block')
 
     loading.classList.add('slide-enter', 'slide-enter-active')
 
@@ -219,10 +232,8 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, onComplet
     /* eslint-enable no-unused-expressions */
 
     let done = () => {
-      hideAllIFrames();
-      css(loading, {
-        display: 'none'
-      })
+      hideAllIFrames()
+      css(loading, 'display', 'none')
       css(iframe, {
         'z-index': activeZIndex++,
         display: 'block'
@@ -235,8 +246,7 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, onComplet
 
       if (newPage) {
         setTimeout(done, 100)
-      }
-      else {
+      } else {
         done()
       }
     })
@@ -246,7 +256,7 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, onComplet
       loading.classList.remove('slide-enter')
     })
   } else {
-    hideAllIFrames();
+    hideAllIFrames()
     css(iframe, {
       'z-index': activeZIndex++,
       display: 'block'
@@ -255,18 +265,35 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, onComplet
   }
 }
 
-export function frameMoveOut (pageId, {transition, sourceMeta, onComplete} = {}) {
+/**
+ * Backward iframe animation
+ *
+ * @param {string} pageId currentPageId
+ * @param {Object} options
+ * @param {boolean} options.transition allowTransition
+ * @param {Object} options.sourceMeta pageMeta of current page
+ * @param {string} options.targetPageId indicating target iframe id when switching between iframes. undefined when switching to init page.
+ * @param {Function} options.onComplete callback on complete
+ */
+export function frameMoveOut (pageId, {transition, sourceMeta, targetPageId, onComplete} = {}) {
   let iframe = getIFrame(pageId)
 
   if (!iframe) {
-    return;
+    return
+  }
+
+  if (targetPageId) {
+    let targetIFrame = getIFrame(targetPageId)
+    activeZIndex -= 2
+    css(targetIFrame, {
+      display: 'block',
+      'z-index': activeZIndex++
+    })
   }
 
   if (transition) {
     let loading = getLoading(sourceMeta, true)
-    css(loading, {
-      display: 'block'
-    })
+    css(loading, 'display', 'block')
 
     iframe.classList.add('slide-leave', 'slide-leave-active')
     loading.classList.add('slide-leave', 'slide-leave-active')
@@ -281,9 +308,7 @@ export function frameMoveOut (pageId, {transition, sourceMeta, onComplete} = {})
         display: 'none',
         'z-index': 10000
       })
-      css(loading, {
-        display: 'none'
-      })
+      css(loading, 'display', 'none')
       iframe.classList.remove('slide-leave-to', 'slide-leave-active')
       loading.classList.remove('slide-leave-to', 'slide-leave-active')
       onComplete && onComplete()
@@ -317,4 +342,14 @@ export function clickedInEls (e, elements) {
     }
   }
   return false
+}
+
+/**
+ * create a <div> in iframe to retrieve current scroll top
+ * https://medium.com/@dvoytenko/amp-ios-scrolling-and-position-fixed-b854a5a0d451
+ */
+export function createScrollPosition () {
+  let $scrollPosition = document.createElement('div')
+  $scrollPosition.id = 'mip-page-scroll-position'
+  document.body.appendChild($scrollPosition)
 }

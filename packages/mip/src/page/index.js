@@ -3,7 +3,7 @@
  * @author wangyisheng@baidu.com (wangyisheng)
  */
 
-import {isOnlyDifferentInHash, getFullPath, convertPatternToRegexp} from './util/route'
+import {isSameRoute, getFullPath, convertPatternToRegexp} from './util/route'
 import {
   getMIPShellConfig,
   addMIPCustomScript,
@@ -11,8 +11,10 @@ import {
   getIFrame,
   frameMoveIn,
   frameMoveOut,
-  createLoading
+  createLoading,
+  createScrollPosition
 } from './util/dom'
+import {scrollTop} from './util/ease-scroll'
 import {
   DEFAULT_SHELL_CONFIG,
   MESSAGE_APPSHELL_EVENT,
@@ -34,17 +36,17 @@ class Page {
       window.MIP_ROOT_PAGE = true
       this.isRootPage = true
     }
-    this.appshellRoutes = []
-    this.appshellCache = {}
-    this.pageId = null;
+    this.pageId = undefined
 
     // root page
     this.appshell = null
     this.children = []
-    this.currentChildPageId = null
+    this.currentPageId = null
     this.messageHandlers = []
     this.currentPageMeta = {}
-    this.initPageId = null;
+    this.direction = null
+    this.appshellRoutes = []
+    this.appshellCache = {}
 
     /**
      * transition will be executed only when `Back` button clicked,
@@ -58,10 +60,10 @@ class Page {
 
     // generate pageId
     this.pageId = window.location.href
+    this.currentPageId = this.pageId
 
     if (this.isRootPage) {
       // outside iframe
-      this.currentChildPageId = this.initPageId = this.pageId;
       router = new Router()
       router.rootPage = this
       router.init()
@@ -113,9 +115,29 @@ class Page {
        */
       this.messageHandlers.push((type, event) => {
         if (type === MESSAGE_APPSHELL_EVENT) {
-          this.emitEventInCurrentPage(event)
+          customEmit(window, event.name, event.data)
         }
       })
+
+      // create a position div
+      createScrollPosition()
+    }
+  }
+
+  /**
+   * scroll to hash with ease transition
+   *
+   * @param {string} hash hash
+   */
+  scrollToHash (hash) {
+    if (hash) {
+      let $hash = document.querySelector(decodeURIComponent(hash))
+      if ($hash) {
+        // scroll to current hash
+        scrollTop($hash.offsetTop, {
+          scroller: this.isRootPage ? window : window.document.body
+        })
+      }
     }
   }
 
@@ -129,6 +151,11 @@ class Page {
   }
 
   start () {
+    // Don't let browser restore scroll position.
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual'
+    }
+
     // Set global mark
     window.MIP.MIP_ROOT_PAGE = window.MIP_ROOT_PAGE
 
@@ -147,9 +174,16 @@ class Page {
 
     // Job complete!
     document.body.setAttribute('mip-ready', '')
+
+    // scroll to current hash if exists
+    this.scrollToHash(window.location.hash)
   }
 
-  /**** Root Page methods ****/
+  /**
+   *
+   * Root Page methods
+   *
+   */
 
   /**
    * emit a custom event in current page
@@ -159,15 +193,15 @@ class Page {
    * @param {Object} event.data event data
    */
   emitEventInCurrentPage ({name, data = {}}) {
-    if (this.currentChildPageId) {
+    if (this.currentPageId !== this.pageId) {
       // notify current iframe
-      let $iframe = getIFrame(this.currentChildPageId)
+      let $iframe = getIFrame(this.currentPageId)
       $iframe && $iframe.contentWindow.postMessage({
         type: MESSAGE_APPSHELL_EVENT,
         data: {name, data}
       }, window.location.origin)
     } else {
-      // emit CustomEvent in current iframe
+      // emit CustomEvent in root page
       customEmit(window, name, data)
     }
   }
@@ -242,18 +276,24 @@ class Page {
     let localMeta = this.findMetaByPageId(targetPageId)
     let finalMeta = util.fn.extend(true, {}, localMeta, targetMeta)
 
-    // TODO BACK BUTTON
-    if (targetPageId === this.initPageId) {
+    if (targetPageId === this.pageId || this.direction === 'back') {
       // backward
-      frameMoveOut(this.currentChildPageId, {
+      let backwardOpitons = {
         transition: this.allowTransition,
         sourceMeta: this.currentPageMeta,
         onComplete: () => {
           this.allowTransition = false
           this.currentPageMeta = finalMeta
         }
-      })
+      }
 
+      if (this.direction === 'back') {
+        backwardOpitons.targetPageId = targetPageId
+      }
+
+      frameMoveOut(this.currentPageId, backwardOpitons)
+
+      this.direction = null
       this.refreshAppShell(targetPageId, finalMeta)
     } else {
       // forward
@@ -282,6 +322,21 @@ class Page {
   }
 
   /**
+   * compare with two pageIds
+   *
+   * @param {string} pageId pageId
+   * @param {string} anotherPageId another pageId
+   * @return {boolean} result
+   */
+  isSamePage (pageId, anotherPageId) {
+    let hashReg = /#.*$/
+    if (pageId && anotherPageId) {
+      return pageId.replace(hashReg, '') === anotherPageId.replace(hashReg, '')
+    }
+    return false
+  }
+
+  /**
    * get page by pageId
    *
    * @param {string} pageId pageId
@@ -291,8 +346,8 @@ class Page {
     if (!pageId) {
       return this
     }
-    return pageId === this.pageId
-      ? this : this.children.find(child => child.pageId === pageId)
+    return this.isSamePage(pageId, this.pageId)
+      ? this : this.children.find(child => this.isSamePage(child.pageId, pageId))
   }
 
   /**
@@ -303,10 +358,10 @@ class Page {
    */
   render (from, to) {
     /**
-     * if `to` route is different with `from` route only in hash,
-     * do nothing and let browser jump to that anchor
+     * if `to` route is the same with `from` route in path & query,
+     * scroll in current page
      */
-    if (isOnlyDifferentInHash(from, to)) {
+    if (isSameRoute(from, to, true)) {
       return
     }
 
@@ -323,7 +378,7 @@ class Page {
       window.MIP.$recompile()
     }
 
-    this.currentChildPageId = targetPageId
+    this.currentPageId = targetPageId
   }
 }
 

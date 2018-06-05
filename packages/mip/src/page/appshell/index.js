@@ -63,8 +63,9 @@ export default class AppShell {
 
   handleClickHeaderButton (buttonName) {
     if (buttonName === 'back') {
-      // **Important** only allow transition happens when Back btn clicked
+      // **Important** only allow transition happens when Back btn & <a> clicked
       this.page.allowTransition = true
+      this.page.direction = 'back'
       window.MIP_ROUTER.go(-1)
       window.MIP.viewer.sendMessage('historyNavigate', {step: -1})
     } else if (buttonName === 'dropdown') {

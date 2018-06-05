@@ -139,6 +139,19 @@ body.no-scroll {
     background: white;
     padding: 0 6px 0 6px;
 
+    .back-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        height: 30px;
+        width: 40px;
+        & > svg {
+            width: 20px;
+            height: 20px;
+        }
+    }
+
     .mip-appshell-header-logo-title {
         margin: 0 auto;
 
@@ -166,9 +179,16 @@ body.no-scroll {
     display: none;
 
     .back-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         position: absolute;
-        top: 10px;
-        left: 6px;
+        height: 30px;
+        width: 40px;
+        & > svg {
+            width: 20px;
+            height: 20px;
+        }
     }
 
     .mip-appshell-header-button-group {
@@ -180,18 +200,26 @@ body.no-scroll {
         top: 5px;
         right: 3px;
         overflow: hidden;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
 
         .button {
-            float: left;
-            padding: 5px 9px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 30px;
+            width: 40px;
+            & > svg {
+                width: 28px;
+                height: 28px;
+            }
         }
 
         .split {
-            float: left;
             width: 1px;
             height: 15px;
             background: #ccc;
-            margin-top: 9px;
         }
     }
 
@@ -200,6 +228,15 @@ body.no-scroll {
         right: 18px;
         top: 9px;
     }
+}
+
+#mip-page-scroll-position {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    visibility: hidden;
 }
 
 /*

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-    <title>MIP Bind</title>
+    <title>MIP Event</title>
     <link rel="canonical">
     <style mip-custom>
 
@@ -14,31 +14,17 @@
 
 <body>
 
-    <p>event</p>
-    <mip-data>
-        {
-            "success": false
-        }
-    </mip-data>
+    <h1>event</h1>
 
-    <mip-a on="customevent:MIP.setData({success:'customevent'})"></mip-a>
+    <mip-a id="test"></mip-a>
 
-
-
-    <div >div item</div>
-
+    <div on="tap:test.custom_event1">不带参数</div>
+    <div on="tap:test.custom_event1(test_button)">带参数</div>
+    <div on="tap:test.custom_event1(test_button) tap:test.custom_event2(test_button1)">多个事件</div>
 
     <script src="../../dist/mip.js"></script>
     <script src="./mip-a.js"></script>
     <script src="./mip-b.js"></script>
-
-    <script>
-    let a = document.querySelector('mip-a');
-    // a.addEventListener('customevent', function (event) {
-    //     console.log('get customevent');
-    // });
-    // </script>
-
 </body>
 
 </html>

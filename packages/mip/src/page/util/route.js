@@ -85,7 +85,7 @@ export function createRoute (location) {
 }
 
 // the starting route that represents the initial state
-export const START = createRoute(window.location)
+export const START = createRoute({path: '/'})
 
 export function getFullPath ({href, origin = window.location.origin, path = '/', query = {}, hash = ''}) {
   return href || origin + path + stringifyQuery(query) + hash

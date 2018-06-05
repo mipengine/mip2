@@ -16,23 +16,18 @@ MIP.registerVueCustomElement('mip-a', {
     </div>
   `,
   created () {
-  // 绑定事件，其它元素可通过 on='xxx' 触发
-  // this.addEventAction('custom_event', function (event /* 对应的事件对象 */ , str /* 事件参数 */ ) {
-  //     console.log(str); // undefined or 'test_button' or 'test_button1'
-  // });
+    this.$element.customElement.addEventAction('custom_event2', function (event /* 对应的事件对象 */ , str /* 事件参数 */ ) {
+      console.log('custom_event2: ', str); // undefined or 'test_button' or 'test_button1'
+    });
   },
-  // createdVue() {
-  //     console.log('createdvue');
-  //     // this.addEventAction('customevent', function (event, str) {
-  //     //     console.log('get customevent');
-  //     // });
-  // },
+  connectedCallback(element) {
+    element.customElement.addEventAction('custom_event1', function (event /* 对应的事件对象 */ , str /* 事件参数 */ ) {
+      console.log('custom_event1: ', str); // undefined or 'test_button' or 'test_button1'
+    });
+  },
   methods: {
-    onClick () {
-      console.log('emit customevent')
-      this.$emit('customevent', {userInfo: 'huanghuiqun'})
-      // console.log('onClick');
-      // mip.viewer.eventAction.execute('eventName', null, {form: 'a'});
+    onClick (evt) {
+      console.log('tap')
     }
   }
 })
