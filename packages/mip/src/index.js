@@ -26,62 +26,59 @@ import mip1PolyfillInstall from './mip1-polyfill'
 import './log/monitor'
 import './polyfills'
 
+/**
+ * register vue as custom element v1
+ *
+ * @param {string} tag custom elment name, mip-*
+ * @param {*} component vue component
+ */
+function registerVueCustomElement (tag, component) {
+  Vue.customElement(tag, component)
+}
+
+/**
+ * register custom element v1
+ *
+ * @param {string} tag custom element name, mip-*
+ * @param {HTMLElement} component component clazz
+ */
+function registerCustomElement (tag, component) {
+  registerElement(tag, component)
+}
+
+let standalone
+// 当前是否是独立站，这种判断方法还不太准确，判断不出
+try {
+  standalone = typeof window.top.MIP !== 'undefined'
+} catch (e) {
+  standalone = false
+}
+
+let extensions = window.MIP || []
+
+function push (extension) {
+  extensions.push(extension)
+}
+
 let mip = {
   version: '2',
-
-  /**
-   * register vue as custom element v1
-   *
-   * @param {string} tag custom elment name, mip-*
-   * @param {*} component vue component
-   */
-  registerVueCustomElement (tag, component) {
-    Vue.customElement(tag, component)
-  },
-
-  /**
-   * register custom element v1
-   *
-   * @param {string} tag custom element name, mip-*
-   * @param {HTMLElement} component component clazz
-   */
-  registerCustomElement (tag, component) {
-    registerElement(tag, component)
-  },
+  registerVueCustomElement,
+  registerCustomElement,
   util,
   viewer,
   viewport,
   hash: util.hash,
   sandbox,
   css: {},
+  standalone,
+  push,
   prerenderElement: Resources.prerenderElement
-}
-
-if (window.MIP) {
-  let exts = window.MIP
-  mip.extensions = exts
 }
 
 window.MIP = mip
 
-// 当前是否是独立站，这种判断方法还不太准确，判断不出
-try {
-  mip.standalone = typeof window.top.MIP !== 'undefined'
-} catch (e) {
-  mip.standalone = false
-}
-
 // init viewport
-mip.viewport.init()
-
-// before document ready
-mip.push = function (extensions) {
-  if (!mip.extensions) {
-    mip.extensions = []
-  }
-
-  mip.extensions.push(extensions)
-}
+viewport.init()
 
 // install mip1 polyfill
 mip1PolyfillInstall(mip)

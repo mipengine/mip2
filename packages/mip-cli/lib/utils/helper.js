@@ -21,7 +21,9 @@ function resolvePath (possiblePaths) {
   return someAsync(possiblePaths.map(
     iPath => fs.exists(iPath).then(
       result => new Promise(
-        (resolve, reject) => (result ? resolve(iPath) : reject())
+        (resolve, reject) => (
+          result ? resolve(iPath) : reject(Error('not found.'))
+        )
       )
     )
   ))
@@ -64,7 +66,7 @@ function someAsync (promises) {
     let failCounter = 0
     let errCallback = err => {
       if (++failCounter === maxLength) {
-        reject()
+        reject(err)
       }
     }
 
@@ -92,70 +94,70 @@ function removeFromArray (arr, item) {
   return arr.filter(i => i !== item)
 }
 
-function findIndexByString (content, match, startIndex = 0) {
-  if (startIndex > content.length) {
-    return
-  }
+// function findIndexByString (content, match, startIndex = 0) {
+//   if (startIndex > content.length) {
+//     return
+//   }
 
-  let index = content.indexOf(match, startIndex)
+//   let index = content.indexOf(match, startIndex)
 
-  if (index === -1) {
-    return
-  }
+//   if (index === -1) {
+//     return
+//   }
 
-  return {
-    text: match,
-    index: index
-  }
-}
+//   return {
+//     text: match,
+//     index: index
+//   }
+// }
 
-function findIndexByRegExp (content, match, startIndex = 0) {
-  if (startIndex > content.length) {
-    return
-  }
+// function findIndexByRegExp (content, match, startIndex = 0) {
+//   if (startIndex > content.length) {
+//     return
+//   }
 
-  let regexp = removeRegExpGlabal(match)
-  let matched = content.slice(startIndex).match(regexp)
-  if (!matched) {
-    return
-  }
+//   let regexp = removeRegExpGlabal(match)
+//   let matched = content.slice(startIndex).match(regexp)
+//   if (!matched) {
+//     return
+//   }
 
-  return {
-    text: matched[0],
-    index: matched.index + startIndex
-  }
-}
+//   return {
+//     text: matched[0],
+//     index: matched.index + startIndex
+//   }
+// }
 
-function removeRegExpGlabal (regexp) {
-  if (!regexp.global) {
-    return regexp
-  }
+// function removeRegExpGlabal (regexp) {
+//   if (!regexp.global) {
+//     return regexp
+//   }
 
-  let attributes = ''
-  if (regexp.ignoreCase) {
-    attributes += 'i'
-  }
-  if (regexp.multiline) {
-    attributes += 'm'
-  }
+//   let attributes = ''
+//   if (regexp.ignoreCase) {
+//     attributes += 'i'
+//   }
+//   if (regexp.multiline) {
+//     attributes += 'm'
+//   }
 
-  return new RegExp(regexp, attributes)
-}
+//   return new RegExp(regexp, attributes)
+// }
 
-function findIndexes (content, match) {
-  let findIndex = typeof match === String ? findIndexByString : findIndexByRegExp
-  let arr = []
-  let startIndex = 0
-  while (startIndex < content.length) {
-    let result = findIndex(content, match, startIndex)
-    if (!result) {
-      return arr
-    }
-    startIndex = result.index + result.text.length
-    arr.push(result)
-  }
-  return arr
-}
+// function findIndexes (content, match) {
+//   let findIndex = typeof match === String ? findIndexByString : findIndexByRegExp
+//   let arr = []
+//   let startIndex = 0
+//   while (startIndex < content.length) {
+//     let result = findIndex(content, match, startIndex)
+//     if (!result) {
+//       return arr
+//     }
+//     startIndex = result.index + result.text.length
+//     arr.push(result)
+//   }
+//   return arr
+// }
 
 function resolveModule (moduleName, rest) {
   let possiblePaths = [
@@ -188,9 +190,9 @@ module.exports = {
   supplementarySet,
   isValidArray,
   removeFromArray,
-  findIndexByString,
-  findIndexByRegExp,
-  removeRegExpGlabal,
-  findIndexes,
+  // findIndexByString,
+  // findIndexByRegExp,
+  // removeRegExpGlabal,
+  // findIndexes,
   resolveModule
 }

@@ -15,7 +15,7 @@ import EventEmitter from './util/event-emitter'
 import fn from './util/fn'
 import Page from './page'
 import {MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE} from './page/const'
-import Messager from './messager';
+import Messager from './messager'
 
 /**
  * Save window.
@@ -40,7 +40,7 @@ let viewer = {
      * @inner
      * @type {Object}
      */
-    this.messager = new Messager();
+    this.messager = new Messager()
 
     /**
      * The gesture of document.Used by the event-action of Viewer.
@@ -143,7 +143,7 @@ let viewer = {
       //   event: eventName,
       //   data: data
       // }, '*')
-      this.messager.sendMessage(eventName, {data});
+      this.messager.sendMessage(eventName, {data})
     }
   },
 
@@ -276,6 +276,10 @@ let viewer = {
       let $a = this
       // browser will resolve fullpath, eg. http://localhost:8080/examples/page/tree.html
       let to = $a.href
+      let hash = ''
+      if (to.lastIndexOf('#') > -1) {
+        hash = to.substring(to.lastIndexOf('#'))
+      }
 
       if (!to) {
         return
@@ -293,6 +297,13 @@ let viewer = {
       }
 
       e.preventDefault()
+
+      /**
+       * scroll to current hash with an ease transition
+       */
+      if (hash) {
+        page.scrollToHash.bind(page)(hash)
+      }
 
       if ($a.hasAttribute('mip-link') || $a.getAttribute('data-type') === 'mip') {
         // send statics message to BaiduResult page

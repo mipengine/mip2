@@ -11,12 +11,13 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
     <style mip-custom>
-    .link {
+    .main-content .link {
         text-align: center;
         margin-top: 20px;
         display: block;
     }
-    p, .button {
+    .main-content p,
+    .main-content .button {
         width: 150px;
         display: inline-block;
         margin: 20px 0 0 20px;
@@ -117,46 +118,49 @@
 
     <!-- <mip-complevel1 m-bind:userinfo="userInfo"></mip-complevel1> -->
 
-    <p>group.info.name (a global state shared from index.html):
-    <span m-text="group.info.name" style="color: red;"></span>
-    </p>
-    <div on="tap:MIP.setData({group:{info:{name:'sfe2018'}}})" class="button">click change global group.info.name</div>
+    <div class="main-content">
+        <p>group.info.name (a global state shared from index.html):
+        <span m-text="group.info.name" style="color: red;"></span>
+        </p>
+        <div on="tap:MIP.setData({group:{info:{name:'sfe2018'}}})" class="button">click change global group.info.name</div>
 
-    <br><br>
-    <h1 m-text="title" style="margin-left: 20px;"></h1>
+        <br><br>
+        <h1 m-text="title" style="margin-left: 20px;"></h1>
 
-    <p m-text="size.small"></p>
-    <div on="tap:MIP.setData({size:{small:2}})" class="button">click change size.small</div>
+        <p m-text="size.small"></p>
+        <div on="tap:MIP.setData({size:{small:2}})" class="button">click change size.small</div>
 
-    <p m-text="num"></p>
-    <div on="tap:MIP.setData({num:2})" class="button">click change num</div>
+        <p m-text="num"></p>
+        <div on="tap:MIP.setData({num:2})" class="button">click change num</div>
 
-    <p m-text="sp.three"></p>
-    <div on="tap:MIP.setData({sp:{three:'¥0'}})" class="button">click change sp.three</div>
+        <p m-text="sp.three"></p>
+        <div on="tap:MIP.setData({sp:{three:'¥0'}})" class="button">click change sp.three</div>
 
-    <p m-text="comments"></p>
-    <div on="tap:MIP.setData({comments:'ckkk'})" class="button">click change comments</div>
+        <p m-text="comments"></p>
+        <div on="tap:MIP.setData({comments:'ckkk'})" class="button">click change comments</div>
 
-    <p m-text="img.first"></p>
-    <div on="tap:MIP.setData({img:{first:1}})" class="button">click change img.first</div>
+        <p m-text="img.first"></p>
+        <div on="tap:MIP.setData({img:{first:1}})" class="button">click change img.first</div>
 
-    <mip-data>
-        <script type="application/json">
-          {
-              "price": 20
-          }
-          </script>
-    </mip-data>
-    <p>
-        DOM.value*m.price =
-        <span m-text="price"></span>
-    </p>
-    <mip-form url="https://www.mipengine.org/" class="button">
-        <input type='text' on="change:MIP.setData({price:DOM.value*m.price})" style="width:150px;">
-    </mip-form>
+        <mip-data>
+            <script type="application/json">
+            {
+                "price": 20
+            }
+            </script>
+        </mip-data>
+        <p>
+            DOM.value*m.price =
+            <span m-text="price"></span>
+        </p>
+        <mip-form url="https://www.mipengine.org/" class="button">
+            <input type='text' on="change:MIP.setData({price:DOM.value*m.price})" style="width:150px;">
+        </mip-form>
 
-    <br><br>
-    <a href="./index.html" class="link" mip-link>Back to Index</a>
+        <br><br>
+        <a href="./index.html" class="link" mip-link>Back to Index</a>
+        <a class="link" href="./tree.html" mip-link>Go to Tree</a>
+    </div>
 
     <mip-shell>
         <script type="application/json">
@@ -166,6 +170,17 @@
                     "pattern": "/tree.html",
                     "meta": {
                         "header": {}
+                    }
+                },
+                {
+                    "pattern": "/data.html",
+                    "meta": {
+                        "header": {
+                            "show": true,
+                            "title": "蓝犀牛数据",
+                            "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
+                            "xiongzhang": true
+                        }
                     }
                 },
                 {
