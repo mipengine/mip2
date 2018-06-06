@@ -32,7 +32,7 @@ function safeThisExpression () {
 module.exports = function (code, options) {
   var ast = detect(
     code,
-    function (node) {
+    function (node, parent) {
       if (is(node, 'ThisExpression')) {
         this.skip()
         return safeThisExpression()
@@ -40,6 +40,9 @@ module.exports = function (code, options) {
 
       if (WINDOW_SAFE_KEYWORDS.indexOf(node.name) === -1) {
         this.skip()
+        if (is(parent, 'Property', {shorthand: true})) {
+          parent.shorthand = false
+        }
         return sandboxExpression(node.name)
       }
     },

@@ -8,10 +8,7 @@ var estraverse = require('estraverse')
 var is = require('./utils/is')
 
 module.exports = function (code, fn, type) {
-  var ast = esprima.parseModule(code, {
-    range: true,
-    loc: true
-  })
+  var ast = esprima.parseModule(code)
 
   mark(ast)
   scope(ast)
@@ -19,7 +16,7 @@ module.exports = function (code, fn, type) {
   estraverse[type || 'traverse'](ast, {
     enter: function (node, parent) {
       if (is(node, 'ThisExpression')) {
-        return fn.call(this, node, ast)
+        return fn.call(this, node, parent, ast)
       }
 
       if (!is(node, 'Identifier')) {
@@ -34,7 +31,7 @@ module.exports = function (code, fn, type) {
         return
       }
 
-      return fn.call(this, node, ast)
+      return fn.call(this, node, parent, ast)
     }
   })
 

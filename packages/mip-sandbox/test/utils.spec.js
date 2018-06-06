@@ -2,6 +2,7 @@
  * @file utils.spec.js
  * @author clark-t (clarktanglei@163.com)
  */
+/* globals describe, it */
 
 var chai = require('chai')
 var expect = chai.expect
