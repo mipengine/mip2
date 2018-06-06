@@ -343,16 +343,6 @@ export function clickedInEls (e, elements) {
   return false
 }
 
-/**
- * create a <div> in iframe to retrieve current scroll top
- * https://medium.com/@dvoytenko/amp-ios-scrolling-and-position-fixed-b854a5a0d451
- */
-export function createScrollPosition () {
-  let $scrollPosition = document.createElement('div')
-  $scrollPosition.id = 'mip-page-scroll-position'
-  document.body.appendChild($scrollPosition)
-}
-
 function renderMoreButton({name, text, link} = {}) {
   if (!name || !text) {
     return ''

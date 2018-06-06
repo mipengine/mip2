@@ -12,8 +12,6 @@ export function scrollTo (height, { duration = 500, scroller = window, scrollTop
   let rest = top - scrollTop
   let sign = rest > 0
 
-  // scroll(top, scroller)
-
   return new Promise(resolve => {
     transition(
       duration,

@@ -44,10 +44,6 @@ body[mip-ready]::after,
     display: none;
 }
 
-body.no-scroll {
-    overflow: hidden;
-}
-
 .mip-page__iframe {
     position: fixed;
     left: 0;
@@ -216,8 +212,19 @@ body.no-scroll {
 
     .mip-appshell-header-button-group-standalone {
         position: absolute;
-        right: 18px;
-        top: 9px;
+        right: 8px;
+
+        .button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 30px;
+            width: 40px;
+            & > svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
     }
 }
 

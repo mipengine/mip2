@@ -11,8 +11,7 @@ import {
   getIFrame,
   frameMoveIn,
   frameMoveOut,
-  createLoading,
-  createScrollPosition
+  createLoading
 } from './util/dom'
 import {scrollTo} from './util/ease-scroll'
 import {
@@ -131,9 +130,6 @@ class Page {
           customEmit(window, event.name, event.data)
         }
       })
-
-      // create a position div
-      createScrollPosition()
     }
   }
 
@@ -149,12 +145,12 @@ class Page {
       let scroller
       let scrollTop
       if ($hash) {
-        if (this.isRootPage) {
-          scroller = window
-          scrollTop = document.body.scrollTop || document.documentElement.scrollTop
-        } else {
+        if ($htmlWrapper) {
           scroller = $htmlWrapper
           scrollTop = scroller.scrollTop
+        } else {
+          scroller = window
+          scrollTop = document.body.scrollTop || document.documentElement.scrollTop
         }
         // scroll to current hash
         scrollTo($hash.offsetTop, {
@@ -294,12 +290,7 @@ class Page {
    * @param {Object} options.newPage if just created a new page
    */
   applyTransition (targetPageId, targetMeta, options = {}) {
-    // Disable scrolling of first page when iframe is covered
-    if (targetPageId === this.pageId) {
-      document.body.classList.remove('no-scroll')
-    } else {
-      document.body.classList.add('no-scroll')
-    }
+    let $els = this.getElementsInRootPage()
 
     let localMeta = this.findMetaByPageId(targetPageId)
     /**
@@ -330,6 +321,7 @@ class Page {
 
       this.direction = null
       this.refreshAppShell(targetPageId, finalMeta)
+      $els.forEach(el => el.classList.remove('hide'))
     } else {
       // forward
       frameMoveIn(targetPageId, {
@@ -340,6 +332,8 @@ class Page {
           this.allowTransition = false
           this.currentPageMeta = finalMeta
           this.refreshAppShell(targetPageId, finalMeta)
+          // Disable scrolling of first page when iframe is covered
+          $els.forEach(el => el.classList.add('hide'))
         }
       })
     }
@@ -365,6 +359,16 @@ class Page {
   getPageById (pageId) {
     return (!pageId || pageId === this.pageId)
       ? this : this.children.find(child => child.pageId === pageId)
+  }
+
+  getElementsInRootPage () {
+    let whitelist = [
+      '.mip-page-loading',
+      '.mip-page__iframe',
+      '.mip-appshell-header-wrapper'
+    ]
+    let notInWhitelistSelector = whitelist.map(selector => `:not(${selector})`).join('')
+    return document.body.querySelectorAll(`body > ${notInWhitelistSelector}`)
   }
 
   /**
@@ -400,6 +404,7 @@ class Page {
       if (this.pageId === targetPageId) {
         this.pageId = NON_EXISTS_PAGE_ID
         // TODO: delete DOM & trigger disconnectedCallback in root page
+        this.getElementsInRootPage().forEach(el => el.parentNode && el.parentNode.removeChild(el))
       }
       // create an iframe
       createIFrame(targetFullPath, targetPageId)

@@ -112,7 +112,10 @@ let viewer = {
       })
     }
 
-    // Create wrapper.
+    /**
+     * create a <html> wrapper in iframe
+     * https://hackernoon.com/amp-ios-scrolling-and-position-fixed-redo-the-wrapper-approach-8874f0ee7876
+     */
     const wrapper = document.createElement('html')
     // Setup classes and styles.
     wrapper.className = document.documentElement.className
