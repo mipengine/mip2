@@ -1,5 +1,5 @@
 /**
- * @file global-detect.spec.js
+ * @file unsafe-replace.spec.js
  * @author clark-t (clarktanglei@163.com)
  */
 

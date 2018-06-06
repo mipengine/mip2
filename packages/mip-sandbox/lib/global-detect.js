@@ -5,10 +5,9 @@
 
 var esprima = require('esprima')
 var estraverse = require('estraverse')
+var is = require('./utils/is')
 
-module.exports = globalDectect
-
-function globalDectect (code, fn, type) {
+module.exports = function (code, fn, type) {
   var ast = esprima.parseModule(code, {
     range: true,
     loc: true
@@ -41,8 +40,6 @@ function globalDectect (code, fn, type) {
 
   return ast
 }
-
-globalDectect.is = is
 
 function mark (ast) {
   // 作用域内变量定义 Identifier case
@@ -209,38 +206,6 @@ function scope (ast, parentAst) {
       }
     }
   })
-}
-
-/**
- * 判断节点是什么
- *
- * @param {Object} node 节点
- * @param {string|RegExp} name  节点类型
- * @param {Object=} props 节点具备的属性
- * @return {boolean} 判断结果
- */
-function is (node, name, props) {
-  if (typeof name === 'string') {
-    if (node.type !== name) {
-      return false
-    }
-  } else if (!name.test(node.type)) {
-    return false
-  }
-
-  if (props) {
-    return Object.keys(props).every(function (key) {
-      if (Array.isArray(props[key])) {
-        return props[key].every(function (val) {
-          return node[key] && node[key].length && node[key].indexOf(val) > -1
-        })
-      }
-
-      return props[key] === node[key]
-    })
-  }
-
-  return true
 }
 
 function hasBinding (name, context) {
