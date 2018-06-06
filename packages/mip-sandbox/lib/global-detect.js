@@ -83,29 +83,32 @@ function mark (ast) {
   //    function a() {} 中的 a
 
   estraverse.traverse(ast, {
-    enter: function (node) {
+    enter: function (node, parent) {
       // 标记变量声明
       if (is(node, /^Import\w*Specifier$/)) {
         node.local.isVar = true
         if (node.imported && is(node.imported, 'Identifier')) {
           node.imported.isIgnore = true
         }
+      } else if (is(node, 'VariableDeclaration')) {
+        if (node.kind === 'var') {
+          node.declarations.forEach(elem => {
+            elem.isLift = true
+          })
+        }
       } else if (is(node, 'VariableDeclarator')) {
         if (is(node.id, 'Identifier')) {
           node.id.isVar = true
         }
 
-        // 变量提升
-        if (node.kind === 'var') {
-          node.id.isLift = true
-        }
+        node.id.isLift = node.isLift
       } else if (is(node, 'ObjectPattern')) {
         node.properties.forEach(function (elem) {
           if (is(elem.value, 'Identifier')) {
-            elem.isVar = true
+            elem.value.isVar = true
           }
 
-          elem.isLift = node.isLift
+          elem.value.isLift = node.isLift
         })
       } else if (is(node, 'ArrayPattern')) {
         node.elements.forEach(function (elem) {
@@ -192,7 +195,7 @@ function scope (ast, parentAst) {
         return
       }
 
-      if (node.isLift) {
+      if (node.isLift && parentAst.length) {
         for (var i = parentAst.length - 1; i > -1; i--) {
           if (is(parentAst[i], 'Program') || is(parentAst[i], /Function/)) {
             parentAst[i].vars = parentAst[i].vars || []
