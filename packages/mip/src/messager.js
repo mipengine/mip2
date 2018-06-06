@@ -77,10 +77,10 @@ class Messenger {
     this.handlers = {}
 
     if (messengerInstances[this.name]) {
-      console.warn(
-        'The old messenger created for target %O will be replaced by the new one.',
-        this.name
-      )
+      // console.warn(
+      //   'The old messenger created for target %O will be replaced by the new one.',
+      //   this.name
+      // )
     }
 
     messengerInstances[this.name] = this
@@ -115,19 +115,19 @@ class Messenger {
       }
     }
     if (!isSafe) {
-      console.warn('Origin ' + origin + ' is not safe, ignore event', event)
+      // console.warn('Origin ' + origin + ' is not safe, ignore event', event)
       return
     }
     // 检查单双向
     let eventData = event.data
     if (!eventData) {
-      console.warn('Event data %O is invalid, missing data.', event)
+      // console.warn('Event data %O is invalid, missing data.', event)
       return
     }
     // console.log(eventData);
     if (eventData.type === messageTypes.twoWay) {
       if (!eventData.sentinel || !eventData.sessionId) {
-        console.warn('Event data %O is invalid, missing sentinel or/and sessionId.', eventData)
+        // console.warn('Event data %O is invalid, missing sentinel or/and sessionId.', eventData)
         return
       }
       // 检查请求 or 回复
@@ -143,7 +143,7 @@ class Messenger {
             }
           }
         } else {
-          console.warn('Event ' + eventData.event + ' has no handler.')
+          // console.warn('Event ' + eventData.event + ' has no handler.')
         }
         let send = response => {
           response = response || {}
@@ -168,7 +168,7 @@ class Messenger {
         let d = messenger.defers[eventData.sessionId]
         delete messenger.defers[eventData.sessionId]
         if (!d) {
-          console.warn('Event session is not found for two-way communication', eventData.sessionId)
+          // console.warn('Event session is not found for two-way communication', eventData.sessionId)
           return
         }
         clearTimeout(d.timer)
@@ -178,12 +178,12 @@ class Messenger {
           d.resolve(eventData)
         }
       } else {
-        console.warn('Event sentinel is invalid ', eventData.sentinel)
+        // console.warn('Event sentinel is invalid ', eventData.sentinel)
       }
     } else {
       // 单向
       if (!eventData || !eventData.event) {
-        console.warn('Event data %O is invalid, missing event name.', eventData)
+        // console.warn('Event data %O is invalid, missing event name.', eventData)
         return
       }
       messenger.trigger(eventData.event, [eventData.data])

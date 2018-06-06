@@ -27,6 +27,7 @@ export function createIFrame (fullpath, pageId, {onLoad, onError} = {}) {
     typeof onError === 'function' && onError()
   }
   // TODO: use XHR to load iframe so that we can get httpRequest.status 404
+  container.setAttribute('name', pageId)
   container.setAttribute('src', fullpath)
   container.setAttribute('class', MIP_IFRAME_CONTAINER)
 
@@ -326,21 +327,6 @@ export function frameMoveOut (pageId, {transition, sourceMeta, targetPageId, onC
     })
     onComplete && onComplete()
   }
-}
-
-function clickedInEl (el, x, y) {
-  const b = el.getBoundingClientRect()
-  return x >= b.left && x <= b.right && y >= b.top && y <= b.bottom
-}
-
-export function clickedInEls (e, elements) {
-  const {clientX: x, clientY: y} = e
-  for (const el of elements) {
-    if (clickedInEl(el, x, y)) {
-      return true
-    }
-  }
-  return false
 }
 
 function renderMoreButton ({name, text, link} = {}) {

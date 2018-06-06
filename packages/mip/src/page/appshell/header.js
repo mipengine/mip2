@@ -1,7 +1,5 @@
 import event from '../../util/dom/event'
-// import {isSameRoute, normalizeLocation} from '../util/route'
-// import {nextFrame, whenTransitionEnds, clickedInEls} from '../util/dom'
-import {clickedInEls, createMoreButtonWrapper} from '../util/dom'
+import {createMoreButtonWrapper} from '../util/dom'
 
 export default class Header {
   constructor (options = {}) {

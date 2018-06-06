@@ -31,9 +31,15 @@ import '../styles/mip.less'
 
 class Page {
   constructor () {
-    if (window.parent && window.parent.MIP_ROOT_PAGE) {
-      this.isRootPage = false
-    } else {
+    try {
+      if (window.parent && window.parent.MIP_ROOT_PAGE) {
+        this.isRootPage = false
+      } else {
+        window.MIP_ROOT_PAGE = true
+        this.isRootPage = true
+      }
+    } catch (e) {
+      // Cross domain error means root page
       window.MIP_ROOT_PAGE = true
       this.isRootPage = true
     }
@@ -365,7 +371,9 @@ class Page {
     let whitelist = [
       '.mip-page-loading',
       '.mip-page__iframe',
-      '.mip-appshell-header-wrapper'
+      '.mip-appshell-header-wrapper',
+      '.mip-shell-more-button-mask',
+      '.mip-shell-more-button-wrapper'
     ]
     let notInWhitelistSelector = whitelist.map(selector => `:not(${selector})`).join('')
     return document.body.querySelectorAll(`body > ${notInWhitelistSelector}`)
