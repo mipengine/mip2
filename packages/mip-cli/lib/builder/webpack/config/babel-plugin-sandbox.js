@@ -9,13 +9,12 @@ const SANDBOX_PREFIX = 'MIP.sandbox'
 const SANDBOX_WINDOW = `${SANDBOX_PREFIX}.window`
 const SANDBOX_DOCUMENT = `${SANDBOX_PREFIX}.document`
 
-
 const RESERVED_KEYWORDS = Array.from(new Set([
   Object.keys(globals.commonjs),
   Object.keys(globals.amd),
-  ['arguments', 'undefined', 'Infinity', 'NaN']
+  ['arguments', 'undefined', 'Infinity', 'NaN'],
+  ['MIP']
 ]))
-
 
 // 变量的定义有以下几种
 // 1. 全局变量 如 window.xxx -> xxx
