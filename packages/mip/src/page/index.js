@@ -11,11 +11,12 @@ import {
   getIFrame,
   frameMoveIn,
   frameMoveOut,
-  createLoading,
-  createScrollPosition
+  createLoading
 } from './util/dom'
-import {scrollTop} from './util/ease-scroll'
+import {scrollTo} from './util/ease-scroll'
 import {
+  NON_EXISTS_PAGE_ID,
+  SCROLL_TO_ANCHOR_CUSTOM_EVENT,
   DEFAULT_SHELL_CONFIG,
   MESSAGE_APPSHELL_EVENT,
   MESSAGE_ROUTER_PUSH,
@@ -30,21 +31,27 @@ import '../styles/mip.less'
 
 class Page {
   constructor () {
-    if (window.parent && window.parent.MIP_ROOT_PAGE) {
-      this.isRootPage = false
-    } else {
+    try {
+      if (window.parent && window.parent.MIP_ROOT_PAGE) {
+        this.isRootPage = false
+      } else {
+        window.MIP_ROOT_PAGE = true
+        this.isRootPage = true
+      }
+    } catch (e) {
+      // Cross domain error means root page
       window.MIP_ROOT_PAGE = true
       this.isRootPage = true
     }
     this.pageId = undefined
 
     // root page
-    this.appshell = null
+    this.appshell = undefined
     this.children = []
-    this.currentPageId = null
+    this.currentPageId = undefined
     this.messageHandlers = []
     this.currentPageMeta = {}
-    this.direction = null
+    this.direction = undefined
     this.appshellRoutes = []
     this.appshellCache = {}
 
@@ -55,11 +62,22 @@ class Page {
     this.allowTransition = false
   }
 
+  /**
+   * clean pageId
+   *
+   * @param {string} pageId pageId
+   * @return {string} cleaned pageId
+   */
+  cleanPageId (pageId) {
+    let hashReg = /#.*$/
+    return pageId && pageId.replace(hashReg, '')
+  }
+
   initRouter () {
     let router
 
     // generate pageId
-    this.pageId = window.location.href
+    this.pageId = this.cleanPageId(window.location.href)
     this.currentPageId = this.pageId
 
     if (this.isRootPage) {
@@ -118,9 +136,6 @@ class Page {
           customEmit(window, event.name, event.data)
         }
       })
-
-      // create a position div
-      createScrollPosition()
     }
   }
 
@@ -131,13 +146,26 @@ class Page {
    */
   scrollToHash (hash) {
     if (hash) {
-      let $hash = document.querySelector(decodeURIComponent(hash))
-      if ($hash) {
-        // scroll to current hash
-        scrollTop($hash.offsetTop, {
-          scroller: this.isRootPage ? window : window.document.body
-        })
-      }
+      let $htmlWrapper = document.querySelector('.mip-html-wrapper')
+      try {
+        let $hash = document.querySelector(decodeURIComponent(hash))
+        let scroller
+        let scrollTop
+        if ($hash) {
+          if ($htmlWrapper) {
+            scroller = $htmlWrapper
+            scrollTop = scroller.scrollTop
+          } else {
+            scroller = window
+            scrollTop = document.body.scrollTop || document.documentElement.scrollTop
+          }
+          // scroll to current hash
+          scrollTo($hash.offsetTop, {
+            scroller,
+            scrollTop
+          })
+        }
+      } catch (e) {}
     }
   }
 
@@ -177,6 +205,9 @@ class Page {
 
     // scroll to current hash if exists
     this.scrollToHash(window.location.hash)
+    window.addEventListener(SCROLL_TO_ANCHOR_CUSTOM_EVENT, (e) => {
+      this.scrollToHash(e.detail[0])
+    })
   }
 
   /**
@@ -244,6 +275,7 @@ class Page {
         }
       }
     }
+
     return Object.assign({}, DEFAULT_SHELL_CONFIG)
   }
 
@@ -266,15 +298,17 @@ class Page {
    * @param {Object} options.newPage if just created a new page
    */
   applyTransition (targetPageId, targetMeta, options = {}) {
-    // Disable scrolling of first page when iframe is covered
-    if (targetPageId === this.pageId) {
-      document.body.classList.remove('no-scroll')
-    } else {
-      document.body.classList.add('no-scroll')
-    }
+    let $els = this.getElementsInRootPage()
 
     let localMeta = this.findMetaByPageId(targetPageId)
-    let finalMeta = util.fn.extend(true, {}, localMeta, targetMeta)
+    /**
+     * priority of header.title:
+     * 1. <a mip-link data-title>
+     * 2. <mip-shell> route.meta.header.title
+     * 3. <a mip-link></a> innerText
+     */
+    let innerTitle = {title: targetMeta.defaultTitle || undefined}
+    let finalMeta = util.fn.extend(true, innerTitle, localMeta, targetMeta)
 
     if (targetPageId === this.pageId || this.direction === 'back') {
       // backward
@@ -295,6 +329,7 @@ class Page {
 
       this.direction = null
       this.refreshAppShell(targetPageId, finalMeta)
+      $els.forEach(el => el.classList.remove('hide'))
     } else {
       // forward
       frameMoveIn(targetPageId, {
@@ -305,6 +340,8 @@ class Page {
           this.allowTransition = false
           this.currentPageMeta = finalMeta
           this.refreshAppShell(targetPageId, finalMeta)
+          // Disable scrolling of first page when iframe is covered
+          $els.forEach(el => el.classList.add('hide'))
         }
       })
     }
@@ -322,32 +359,26 @@ class Page {
   }
 
   /**
-   * compare with two pageIds
-   *
-   * @param {string} pageId pageId
-   * @param {string} anotherPageId another pageId
-   * @return {boolean} result
-   */
-  isSamePage (pageId, anotherPageId) {
-    let hashReg = /#.*$/
-    if (pageId && anotherPageId) {
-      return pageId.replace(hashReg, '') === anotherPageId.replace(hashReg, '')
-    }
-    return false
-  }
-
-  /**
    * get page by pageId
    *
    * @param {string} pageId pageId
    * @return {Page} page
    */
   getPageById (pageId) {
-    if (!pageId) {
-      return this
-    }
-    return this.isSamePage(pageId, this.pageId)
-      ? this : this.children.find(child => this.isSamePage(child.pageId, pageId))
+    return (!pageId || pageId === this.pageId)
+      ? this : this.children.find(child => child.pageId === pageId)
+  }
+
+  getElementsInRootPage () {
+    let whitelist = [
+      '.mip-page-loading',
+      '.mip-page__iframe',
+      '.mip-appshell-header-wrapper',
+      '.mip-shell-more-button-mask',
+      '.mip-shell-more-button-wrapper'
+    ]
+    let notInWhitelistSelector = whitelist.map(selector => `:not(${selector})`).join('')
+    return document.body.querySelectorAll(`body > ${notInWhitelistSelector}`)
   }
 
   /**
@@ -362,16 +393,31 @@ class Page {
      * scroll in current page
      */
     if (isSameRoute(from, to, true)) {
+      this.emitEventInCurrentPage({
+        name: SCROLL_TO_ANCHOR_CUSTOM_EVENT,
+        data: to.hash
+      })
       return
     }
 
     // otherwise, render target page
-    let targetPageId = getFullPath(to)
+    let targetFullPath = getFullPath(to)
+    let targetPageId = this.cleanPageId(targetFullPath)
     let targetPage = this.getPageById(targetPageId)
 
-    if (!targetPage) {
+    /**
+     * reload iframe when <a mip-link> clicked even if it's already existed.
+     * NOTE: forwarding or going back with browser history won't do
+     */
+    if (!targetPage || (to.meta && to.meta.reload)) {
+      // when reloading root page...
+      if (this.pageId === targetPageId) {
+        this.pageId = NON_EXISTS_PAGE_ID
+        // TODO: delete DOM & trigger disconnectedCallback in root page
+        this.getElementsInRootPage().forEach(el => el.parentNode && el.parentNode.removeChild(el))
+      }
       // create an iframe
-      createIFrame(targetPageId)
+      createIFrame(targetFullPath, targetPageId)
       this.applyTransition(targetPageId, to.meta, {newPage: true})
     } else {
       this.applyTransition(targetPageId, to.meta)

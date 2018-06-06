@@ -56,6 +56,9 @@
 
     ```
 
+#### 设置共享数据
+详情请阅读 [MIP 2.0 的数据和应用](https://github.com/mipengine/mip2/blob/master/docs/components/data-and-method.md)
+
 ### 绑定指令
 
 目前绑定数据只支持两种功能：

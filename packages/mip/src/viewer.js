@@ -72,10 +72,13 @@ let viewer = {
 
     this.page.start()
 
-    this.sendMessage('mippageload', {
-      time: Date.now(),
-      title: encodeURIComponent(document.title)
-    })
+    // Only send at first time
+    if (win.MIP.isRootPage) {
+      this.sendMessage('mippageload', {
+        time: Date.now(),
+        title: encodeURIComponent(document.title)
+      })
+    }
 
     // proxy <a mip-link>
     this._proxyLink(this.page)
@@ -111,6 +114,24 @@ let viewer = {
         }
       })
     }
+
+    /**
+     * create a <html> wrapper in iframe
+     * https://hackernoon.com/amp-ios-scrolling-and-position-fixed-redo-the-wrapper-approach-8874f0ee7876
+     */
+    const wrapper = document.createElement('html')
+    // Setup classes and styles.
+    wrapper.className = document.documentElement.className
+    document.documentElement.className = 'mip-html-embeded'
+    wrapper.classList.add('mip-html-wrapper')
+    // Attach wrapper straight inside the document root.
+    document.documentElement.appendChild(wrapper)
+    // Reparent the body.
+    const body = document.body
+    wrapper.appendChild(body)
+    Object.defineProperty(document, 'body', {
+      get: () => body
+    })
   },
 
   /**
@@ -139,11 +160,7 @@ let viewer = {
    */
   sendMessage (eventName, data = {}) {
     if (!win.MIP.standalone) {
-      // window.top.postMessage({
-      //   event: eventName,
-      //   data: data
-      // }, '*')
-      this.messager.sendMessage(eventName, {data})
+      this.messager.sendMessage(eventName, data)
     }
   },
 
@@ -274,16 +291,26 @@ let viewer = {
      */
     event.delegate(document, 'a', 'click', function (e) {
       let $a = this
-      // browser will resolve fullpath, eg. http://localhost:8080/examples/page/tree.html
+
+      /**
+       * browser will resolve fullpath, including path, query & hash
+       * eg. http://localhost:8080/examples/page/tree.html?a=b#hash
+       * don't use `$a.getAttribute('href')`
+       */
       let to = $a.href
+
+      let isMipLink = $a.hasAttribute('mip-link') || $a.getAttribute('data-type') === 'mip'
       let hash = ''
       if (to.lastIndexOf('#') > -1) {
         hash = to.substring(to.lastIndexOf('#'))
       }
+      let isHashInCurrentPage = hash && to.indexOf(window.location.origin + window.location.pathname) > -1
 
+      // invalid <a>, ignore it
       if (!to) {
         return
       }
+
       /**
        * For mail、phone、market、app ...
        * Safari failed when iframed. So add the `target="_top"` to fix it. except uc and tel.
@@ -299,13 +326,14 @@ let viewer = {
       e.preventDefault()
 
       /**
-       * scroll to current hash with an ease transition
+       * we handle two scenario:
+       * 1. <mip-link>
+       * 2. anchor in same page, scroll to current hash with an ease transition
        */
-      if (hash) {
-        page.scrollToHash.bind(page)(hash)
-      }
+      if (isMipLink || isHashInCurrentPage) {
+        // create target route
+        let targetRoute = {path: to}
 
-      if ($a.hasAttribute('mip-link') || $a.getAttribute('data-type') === 'mip') {
         // send statics message to BaiduResult page
         let pushMessage = {
           url: to,
@@ -313,21 +341,22 @@ let viewer = {
         }
         self.sendMessage('pushState', pushMessage)
 
-        // show transition
-        router.rootPage.allowTransition = true
+        if (isMipLink) {
+          // show transition
+          router.rootPage.allowTransition = true
 
-        // create target route with meta
-        let targetRoute = {
-          path: to,
-          meta: {
+          // reload page even if it's already existed
+          targetRoute.meta = {
+            reload: true,
             header: {
-              title: pushMessage.state.title
+              title: pushMessage.state.title,
+              defaultTitle: pushMessage.state.defaultTitle
             }
           }
         }
 
-        // handle <a mip-link replace>
-        if ($a.hasAttribute('replace')) {
+        // handle <a mip-link replace> & hash
+        if (isHashInCurrentPage || $a.hasAttribute('replace')) {
           if (isRootPage) {
             router.replace(targetRoute)
           } else {
@@ -345,6 +374,7 @@ let viewer = {
           })
         }
       } else {
+        // jump in top window directly
         top.location.href = to
       }
     }, false)
@@ -360,10 +390,9 @@ let viewer = {
     let parentNode = this.parentNode
 
     return {
-      click: this.getAttribute('data-click') || parentNode.getAttribute('data-click'),
-      title: this.getAttribute('data-title') ||
-        parentNode.getAttribute('title') ||
-        this.innerText.trim().split('\n')[0]
+      click: this.getAttribute('data-click') || parentNode.getAttribute('data-click') || undefined,
+      title: this.getAttribute('data-title') || parentNode.getAttribute('title') || undefined,
+      defaultTitle: this.innerText.trim().split('\n')[0] || undefined
     }
   }
 }

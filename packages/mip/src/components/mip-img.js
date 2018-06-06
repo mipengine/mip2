@@ -227,7 +227,7 @@ class Placeholder {
      * @return {string}     type of img
      */
   _getImgType (ele) {
-    let srcString = ele.getAttribute('src') || ele.getAttribute('srcset')
+    let srcString = ele.getAttribute('src') || ele.getAttribute('srcset') || 'other'
     let imgType = ''
     for (let type in imgRatio) {
       if (srcString.match(type)) {
@@ -239,21 +239,24 @@ class Placeholder {
 }
 
 class MipImg extends CustomElement {
-  constructor (element) {
-    super(element)
+  static get observedAttributes () {
+    return imgAttributes
+  }
+
+  connectedCallback () {
+    let element = this.element
+
+    if (element.isBuilt()) {
+      return
+    }
+
     let layoutAttr = element.getAttribute('layout')
     let heightAttr = element.getAttribute('height')
-    if (layoutAttr || heightAttr) {
-      // do nothing, use layout as placeholder: Layout.applyLayout
-    } else {
+    if (!layoutAttr && !heightAttr) {
       // 如果没有layout，则增加默认占位
       this.placeholder = new Placeholder(element)
       this.placeholder.init()
     }
-  }
-
-  static get observedAttributes () {
-    return imgAttributes
   }
 
   firstInviewCallback () {
