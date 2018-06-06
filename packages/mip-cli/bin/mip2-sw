@@ -1,0 +1,31 @@
+#!/usr/bin/env node
+
+const cli = require('../lib/cli')
+const generateSw = require('../lib/sw')
+const fs = require('fs')
+const path = require('path')
+
+cli.setup({
+  noArgs: true,
+  options: [
+    ['-c, --config <value>', 'mip-cli 配置文件路径']
+  ],
+  help: [
+    '',
+    '  Examples:',
+    cli.chalk.gray('    # 生成 Service Worker 文件'),
+    '    $ mip2 sw'
+  ].join('\n')
+})
+
+let configPath = path.resolve(process.cwd(), cli.program.config || 'mip.config.js')
+let swConf = {}
+
+if (fs.existsSync(configPath)) {
+  swConf = require(configPath).serviceWorker
+}
+
+generateSw({
+  swConf,
+  options: cli.program
+})
