@@ -9,8 +9,8 @@ var keywords = require('./keywords')
 var is = require('./utils/is')
 var t = require('./utils/type')
 
-var WINDOW_SAFE_KEYWORDS = keywords.WINDOW_ORIGINAL_KEYWORDS
-  .concat(keywords.RESERVED_KEYWORDS)
+var WINDOW_SAFE_KEYWORDS = keywords.WINDOW_ORIGINAL
+  .concat(keywords.RESERVED)
 
 function sandboxExpression (name) {
   return t.memberExpression(

@@ -7,9 +7,9 @@ var detect = require('./global-detect')
 var keywords = require('./keywords')
 var is = require('./utils/is')
 
-var WINDOW_SAFE_KEYWORDS = keywords.WINDOW_ORIGINAL_KEYWORDS
-  .concat(keywords.RESERVED_KEYWORDS)
-  .concat(keywords.WINDOW_CUSTOM_KEYWORDS)
+var WINDOW_SAFE_KEYWORDS = keywords.WINDOW_ORIGINAL
+  .concat(keywords.RESERVED)
+  .concat(keywords.WINDOW_CUSTOM)
 
 module.exports = function (code) {
   var unsafeList = []
