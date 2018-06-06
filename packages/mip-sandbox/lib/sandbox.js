@@ -18,17 +18,13 @@ var defs = defUtils.defs
 var sandbox = {}
 
 defs(sandbox, WINDOW_ORIGINAL_KEYWORDS)
-
 def(sandbox, 'window', sandbox)
 
 var sandboxDocument = {}
 
 defs(sandboxDocument, DOCUMENT_ORIGINAL_KEYWORDS, {host: document, setter: true})
-
 def(sandbox, 'document', sandboxDocument)
-
 def(sandbox, 'MIP', window.MIP)
-
 def(sandbox, 'this', safeThis(sandbox))
 
 module.exports = sandbox
