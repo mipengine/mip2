@@ -245,13 +245,12 @@ body[mip-ready]::after,
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 20001;
+    z-index: -1;
     background: rgba(0, 0, 0, 0.5);
-    display: none;
 
     &.show {
         opacity: 1;
-        display: block;
+        z-index: 20001;
     }
 }
 
@@ -279,5 +278,22 @@ body[mip-ready]::after,
         &:last-of-type {
             .set-border-color(transparent);
         }
+    }
+}
+
+.mip-shell-header-mask {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: @appshell-header-height;
+    background: rgba(0, 0, 0, 0.5);
+    transition: all .35s ease;
+    z-index: -1;
+    opacity: 0;
+
+    &.show {
+        opacity: 1;
+        z-index: 20001;
     }
 }
