@@ -58,10 +58,10 @@ let viewer = {
 
     // add normal scroll class to body. except ios in iframe.
     // Patch for ios+iframe is default in mip.css
-    // if (!platform.needSpecialScroll) {
-    //   document.documentElement.classList.add('mip-i-android-scroll')
-    //   document.body.classList.add('mip-i-android-scroll')
-    // }
+    if (!platform.needSpecialScroll) {
+      document.documentElement.classList.add('mip-i-android-scroll')
+      document.body.classList.add('mip-i-android-scroll')
+    }
 
     if (this.isIframed) {
       this.patchForIframe()
@@ -72,10 +72,13 @@ let viewer = {
 
     this.page.start()
 
-    this.sendMessage('mippageload', {
-      time: Date.now(),
-      title: encodeURIComponent(document.title)
-    })
+    // Only send at first time
+    if (win.MIP.isRootPage) {
+      this.sendMessage('mippageload', {
+        time: Date.now(),
+        title: encodeURIComponent(document.title)
+      })
+    }
 
     // proxy <a mip-link>
     this._proxyLink(this.page)
@@ -112,12 +115,14 @@ let viewer = {
       })
     }
 
-    // Create wrapper.
+    /**
+     * create a <html> wrapper in iframe
+     * https://hackernoon.com/amp-ios-scrolling-and-position-fixed-redo-the-wrapper-approach-8874f0ee7876
+     */
     const wrapper = document.createElement('html')
     // Setup classes and styles.
     wrapper.className = document.documentElement.className
-    document.documentElement.className = ''
-    document.documentElement.style = 'overflow-y: auto; -webkit-overflow-scrolling: touch;'
+    document.documentElement.className = 'mip-html-embeded'
     wrapper.classList.add('mip-html-wrapper')
     // Attach wrapper straight inside the document root.
     document.documentElement.appendChild(wrapper)
@@ -155,11 +160,7 @@ let viewer = {
    */
   sendMessage (eventName, data = {}) {
     if (!win.MIP.standalone) {
-      // window.top.postMessage({
-      //   event: eventName,
-      //   data: data
-      // }, '*')
-      this.messager.sendMessage(eventName, {data})
+      this.messager.sendMessage(eventName, data)
     }
   },
 

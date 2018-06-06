@@ -11,8 +11,7 @@ import {
   getIFrame,
   frameMoveIn,
   frameMoveOut,
-  createLoading,
-  createScrollPosition
+  createLoading
 } from './util/dom'
 import {scrollTo} from './util/ease-scroll'
 import {
@@ -32,9 +31,15 @@ import '../styles/mip.less'
 
 class Page {
   constructor () {
-    if (window.parent && window.parent.MIP_ROOT_PAGE) {
-      this.isRootPage = false
-    } else {
+    try {
+      if (window.parent && window.parent.MIP_ROOT_PAGE) {
+        this.isRootPage = false
+      } else {
+        window.MIP_ROOT_PAGE = true
+        this.isRootPage = true
+      }
+    } catch (e) {
+      // Cross domain error means root page
       window.MIP_ROOT_PAGE = true
       this.isRootPage = true
     }
@@ -131,9 +136,6 @@ class Page {
           customEmit(window, event.name, event.data)
         }
       })
-
-      // create a position div
-      createScrollPosition()
     }
   }
 
@@ -145,23 +147,25 @@ class Page {
   scrollToHash (hash) {
     if (hash) {
       let $htmlWrapper = document.querySelector('.mip-html-wrapper')
-      let $hash = document.querySelector(decodeURIComponent(hash))
-      let scroller
-      let scrollTop
-      if ($hash) {
-        if (this.isRootPage) {
-          scroller = window
-          scrollTop = document.body.scrollTop || document.documentElement.scrollTop
-        } else {
-          scroller = $htmlWrapper
-          scrollTop = scroller.scrollTop
+      try {
+        let $hash = document.querySelector(decodeURIComponent(hash))
+        let scroller
+        let scrollTop
+        if ($hash) {
+          if ($htmlWrapper) {
+            scroller = $htmlWrapper
+            scrollTop = scroller.scrollTop
+          } else {
+            scroller = window
+            scrollTop = document.body.scrollTop || document.documentElement.scrollTop
+          }
+          // scroll to current hash
+          scrollTo($hash.offsetTop, {
+            scroller,
+            scrollTop
+          })
         }
-        // scroll to current hash
-        scrollTo($hash.offsetTop, {
-          scroller,
-          scrollTop
-        })
-      }
+      } catch (e) {}
     }
   }
 
@@ -294,12 +298,7 @@ class Page {
    * @param {Object} options.newPage if just created a new page
    */
   applyTransition (targetPageId, targetMeta, options = {}) {
-    // Disable scrolling of first page when iframe is covered
-    if (targetPageId === this.pageId) {
-      document.body.classList.remove('no-scroll')
-    } else {
-      document.body.classList.add('no-scroll')
-    }
+    let $els = this.getElementsInRootPage()
 
     let localMeta = this.findMetaByPageId(targetPageId)
     /**
@@ -330,6 +329,7 @@ class Page {
 
       this.direction = null
       this.refreshAppShell(targetPageId, finalMeta)
+      $els.forEach(el => el.classList.remove('hide'))
     } else {
       // forward
       frameMoveIn(targetPageId, {
@@ -340,6 +340,8 @@ class Page {
           this.allowTransition = false
           this.currentPageMeta = finalMeta
           this.refreshAppShell(targetPageId, finalMeta)
+          // Disable scrolling of first page when iframe is covered
+          $els.forEach(el => el.classList.add('hide'))
         }
       })
     }
@@ -365,6 +367,18 @@ class Page {
   getPageById (pageId) {
     return (!pageId || pageId === this.pageId)
       ? this : this.children.find(child => child.pageId === pageId)
+  }
+
+  getElementsInRootPage () {
+    let whitelist = [
+      '.mip-page-loading',
+      '.mip-page__iframe',
+      '.mip-appshell-header-wrapper',
+      '.mip-shell-more-button-mask',
+      '.mip-shell-more-button-wrapper'
+    ]
+    let notInWhitelistSelector = whitelist.map(selector => `:not(${selector})`).join('')
+    return document.body.querySelectorAll(`body > ${notInWhitelistSelector}`)
   }
 
   /**
@@ -400,6 +414,7 @@ class Page {
       if (this.pageId === targetPageId) {
         this.pageId = NON_EXISTS_PAGE_ID
         // TODO: delete DOM & trigger disconnectedCallback in root page
+        this.getElementsInRootPage().forEach(el => el.parentNode && el.parentNode.removeChild(el))
       }
       // create an iframe
       createIFrame(targetFullPath, targetPageId)

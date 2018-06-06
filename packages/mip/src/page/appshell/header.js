@@ -1,7 +1,5 @@
 import event from '../../util/dom/event'
-// import {isSameRoute, normalizeLocation} from '../util/route'
-// import {nextFrame, whenTransitionEnds, clickedInEls} from '../util/dom'
-import {clickedInEls, createMoreButtonWrapper} from '../util/dom'
+import {createMoreButtonWrapper} from '../util/dom'
 
 export default class Header {
   constructor (options = {}) {
@@ -9,7 +7,6 @@ export default class Header {
     this.$el = null
     this.data = options.data
     this.clickButtonCallback = options.clickButtonCallback
-    this._clickOutside = this._clickOutside.bind(this)
   }
 
   init () {
@@ -72,8 +69,10 @@ export default class Header {
       } else {
         // only close
         headerHTML += `
-          <div class="mip-appshell-header-button-group-standalone close" mip-header-btn data-button-name="close">
-            <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M579.888 512l190.064-190.064a48 48 0 0 0-67.888-67.872L512 444.112 321.936 254.064a48 48 0 1 0-67.872 67.872L444.112 512 254.064 702.064a48 48 0 1 0 67.872 67.872L512 579.888l190.064 190.064a48 48 0 0 0 67.872-67.888L579.888 512z" fill="#333"/></svg>
+          <div class="mip-appshell-header-button-group-standalone">
+            <div class="button close" mip-header-btn data-button-name="close">
+              <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M579.888 512l190.064-190.064a48 48 0 0 0-67.888-67.872L512 444.112 321.936 254.064a48 48 0 1 0-67.872 67.872L444.112 512 254.064 702.064a48 48 0 1 0 67.872 67.872L512 579.888l190.064 190.064a48 48 0 0 0 67.872-67.888L579.888 512z" fill="#333"/></svg>
+            </div>
           </div>
         `
       }
@@ -94,31 +93,18 @@ export default class Header {
     }
   }
 
-  // TODO DELETE ME
-  _clickOutside (e) {
-    let $dropdown = this.$el.querySelector('.mip-appshell-header-dropdown')
-    if ($dropdown) {
-      let elements = [$dropdown.parentNode]
-      !clickedInEls(e, elements) && setTimeout(() => {
-        // this.isButtonShow && this.hideDropdown()
-      }, 0)
-    }
-  }
-
   bindEvents () {
     let clickButtonCallback = this.clickButtonCallback
     this.eventHandler = event.delegate(this.$el, '[mip-header-btn]', 'click', function (e) {
       let buttonName = this.dataset.buttonName
       clickButtonCallback(buttonName)
     })
-    // TODO button group
 
-    document.body.addEventListener('click', this._clickOutside, true)
+    this.$mask.onclick = () => this.toggleDropdown(false)
   }
 
   unbindEvents () {
     this.eventHandler && this.eventHandler()
-    document.body.removeEventListener('click', this._clickOutside, true)
   }
 
   update (data) {

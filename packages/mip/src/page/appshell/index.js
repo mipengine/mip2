@@ -70,7 +70,7 @@ export default class AppShell {
       window.MIP.viewer.sendMessage('historyNavigate', {step: -1})
     } else if (buttonName === 'more') {
       if (this.header) {
-        this.header.toggleDropdown()
+        this.header.toggleDropdown(true)
       }
     } else if (buttonName === 'close') {
       window.MIP.viewer.sendMessage('close')
