@@ -58,10 +58,10 @@ let viewer = {
 
     // add normal scroll class to body. except ios in iframe.
     // Patch for ios+iframe is default in mip.css
-    if (!platform.needSpecialScroll) {
-      document.documentElement.classList.add('mip-i-android-scroll')
-      document.body.classList.add('mip-i-android-scroll')
-    }
+    // if (!platform.needSpecialScroll) {
+    //   document.documentElement.classList.add('mip-i-android-scroll')
+    //   document.body.classList.add('mip-i-android-scroll')
+    // }
 
     if (this.isIframed) {
       this.patchForIframe()
@@ -111,6 +111,22 @@ let viewer = {
         }
       })
     }
+
+    // Create wrapper.
+    const wrapper = document.createElement('html')
+    // Setup classes and styles.
+    wrapper.className = document.documentElement.className
+    document.documentElement.className = ''
+    document.documentElement.style = 'overflow-y: auto; -webkit-overflow-scrolling: touch;'
+    wrapper.classList.add('mip-html-wrapper')
+    // Attach wrapper straight inside the document root.
+    document.documentElement.appendChild(wrapper)
+    // Reparent the body.
+    const body = document.body
+    wrapper.appendChild(body)
+    Object.defineProperty(document, 'body', {
+      get: () => body
+    })
   },
 
   /**
@@ -338,7 +354,7 @@ let viewer = {
           }
         }
 
-        // handle <a mip-link replace>
+        // handle <a mip-link replace> & hash
         if (isHashInCurrentPage || $a.hasAttribute('replace')) {
           if (isRootPage) {
             router.replace(targetRoute)

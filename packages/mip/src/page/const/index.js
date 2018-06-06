@@ -32,3 +32,6 @@ export const MESSAGE_APPSHELL_REFRESH = 'appshell-refresh'
 export const MESSAGE_APPSHELL_EVENT = 'appshell-event'
 export const MESSAGE_ROUTER_PUSH = 'router-push'
 export const MESSAGE_ROUTER_REPLACE = 'router-replace'
+
+export const NON_EXISTS_PAGE_ID = 'non-exists-page-id'
+export const SCROLL_TO_ANCHOR_CUSTOM_EVENT = 'scroll-to-anchor'

@@ -11,25 +11,42 @@ body {
     box-sizing: border-box;
     -webkit-box-sizing: border-box;
 }
-html,
-body {
-    height: 100% !important;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    position: relative;
+html {
+    &.mip-html-wrapper {
+        display: block;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        body {
+            height: auto;
+            position: relative;
+        }
+    }
 }
-html.mip-i-android-scroll,
-body.mip-i-android-scroll {
-    height: auto !important;
-    overflow-y: visible;
-    position: static;
-}
-html.mip-no-scroll,
-html.mip-no-scroll > body {
-    height: 100% !important;
-    position: relative;
-    overflow: hidden;
-}
+// html,
+// body {
+//     height: 100% !important;
+//     overflow-y: auto;
+//     -webkit-overflow-scrolling: touch;
+//     position: relative;
+// }
+// html.mip-i-android-scroll,
+// body.mip-i-android-scroll {
+//     height: auto !important;
+//     overflow-y: visible;
+//     position: static;
+// }
+// html.mip-no-scroll,
+// html.mip-no-scroll > body {
+//     height: 100% !important;
+//     position: relative;
+//     overflow: hidden;
+// }
 
 a {
     text-decoration : none;

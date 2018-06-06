@@ -2,19 +2,8 @@ import {raf} from './dom'
 
 const HEADER_HEIGHT = 44
 
-export function scrollTop (height, { duration = 5000, scroller = window } = {}) {
+export function scrollTo (height, { duration = 500, scroller = window, scrollTop = 0 } = {}) {
   let top = height - HEADER_HEIGHT
-  let scrollTop = 0
-  /**
-   * retrieve current scroll top in iframe
-   * https://medium.com/@dvoytenko/amp-ios-scrolling-and-position-fixed-b854a5a0d451
-   */
-  let $scrollPosition = document.querySelector('#mip-page-scroll-position')
-  if ($scrollPosition) {
-    scrollTop = -$scrollPosition.getBoundingClientRect().top
-  } else {
-    scrollTop = document.body.scrollTop || document.documentElement.scrollTop
-  }
 
   if (top - HEADER_HEIGHT === scrollTop) {
     return Promise.resolve()
