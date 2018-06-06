@@ -1,4 +1,5 @@
 @import "./variable.less";
+@import "./mip-base.less";
 
 body:first-of-type::before {
     display: block;
@@ -211,8 +212,8 @@ body.no-scroll {
             height: 30px;
             width: 40px;
             & > svg {
-                width: 28px;
-                height: 28px;
+                width: 20px;
+                height: 20px;
             }
         }
 
@@ -239,113 +240,47 @@ body.no-scroll {
     visibility: hidden;
 }
 
-/*
-@appshell-header-dropdown-height: 30px;
+.mip-shell-more-button-mask {
+    transition: all .35s ease;
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20001;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
 
-&-button-group {
-        display: flex;
-        align-items: center;
-        position: relative;
+    &.show {
+        opacity: 1;
+        display: block;
+    }
+}
 
-        .mip-appshell-header-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 24px;
-            height: 24px;
-            margin: 0 4px;
-            a {
-                display: flex;
-            }
-        }
+.mip-shell-more-button-wrapper {
+    transition: all .35s ease;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    z-index: 20002;
+    transform: translateY(100%);
 
-        .mip-appshell-header-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 4px;
-            width: 56px;
-            height: 25px;
-            font-size: 12px;
-            box-sizing: border-box;
-            text-align: center;
-            padding: 3px 0px;
-            line-height: 19px;
-            border-radius: 2px;
+    &.show {
+        transform: translateY(0);
+    }
 
-            &:active {
-                opacity: 0.2;
-            }
+    .mip-shell-button {
+        height: 48px;
+        line-height: 48px;
+        text-align: center;
+        .mip-border();
+        .mip-border-bottom();
 
-            &-outlined {
-                color: #3C76FF;
-                border: 1px solid #3C76FF;
-                background: #fff;
-
-                a {
-                    color: #3C76FF;
-                    display: flex;
-                }
-            }
-
-            &-filled {
-                color: #fff;
-                border: 1px solid #3897F0;
-                background: #3897F0;
-
-                a {
-                    color: #fff;
-                    display: flex;
-                }
-            }
-        }
-
-        .mip-appshell-header-dropdown {
-            position: absolute;
-            z-index: 999999;
-            top: 20px;
-            right: 0;
-            width: 100px;
-            background: white;
-            transition: all 0.3s ease;
-            opacity: 1;
-            transform: translate(0, 0);
-            will-change: transform;
-            box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
-            display: none;
-
-            &.show {
-                display: block;
-            }
-
-            &.slide-enter {
-                transform: translate(0, -10px);
-                opacity: 0;
-            }
-            &.slide-leave-active {
-                transform: translate(0, -10px);
-                opacity: 0;
-            }
-
-            &-item {
-                height: @appshell-header-dropdown-height;
-                display: flex;
-                align-items: center;
-                text-overflow: ellipsis;
-                overflow: hidden;
-                white-space: nowrap;
-                padding: 4px 8px;
-                font-size: 14px;
-
-                &.mip-link-active {
-                    background: rgba(0,0,0,.12);
-                }
-
-                a {
-                    width: 100%;
-                    line-height: @appshell-header-dropdown-height;
-                }
-            }
+        &:last-of-type {
+            .set-border-color(transparent);
         }
     }
- */
+}

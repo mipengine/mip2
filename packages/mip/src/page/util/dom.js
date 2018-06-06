@@ -6,7 +6,7 @@
 import css from '../../util/dom/css'
 import sandbox from '../../sandbox'
 
-import {MIP_IFRAME_CONTAINER} from '../const'
+import {MIP_IFRAME_CONTAINER, XIONGZHANG_MORE_BUTTON_GROUP} from '../const'
 
 let {window: sandWin, document: sandDoc} = sandbox
 let activeZIndex = 10000
@@ -151,7 +151,7 @@ export function addMIPCustomScript (win = window) {
 function getSandboxFunction (script) {
   /* eslint-disable no-new-func */
   return new Function('window', 'document', `
-        let {alert, close, confirm, prompt, setTimeout, setInterval, self, top} = window;
+        let {alert, close, confirm, prompt, setTimeout, setInterval, self, top} = window
 
         ${script}
     `)
@@ -352,4 +352,41 @@ export function createScrollPosition () {
   let $scrollPosition = document.createElement('div')
   $scrollPosition.id = 'mip-page-scroll-position'
   document.body.appendChild($scrollPosition)
+}
+
+function renderMoreButton({name, text, link} = {}) {
+  if (!name || !text) {
+    return ''
+  }
+
+  return `
+    <div class="mip-shell-button" mip-header-btn data-button-name="${name}">
+      ${link ? `<a mip-link href="${link}">${text}</a>` : text }
+    </div>
+  `
+}
+
+/**
+ * Create wrapper for more button in header
+ */
+export function createMoreButtonWrapper({buttonGroup, xiongzhang} = {}) {
+  if (xiongzhang) {
+    buttonGroup = XIONGZHANG_MORE_BUTTON_GROUP
+  }
+
+  if (!Array.isArray(buttonGroup)) {
+    return
+  }
+
+  let mask = document.createElement('div')
+  mask.classList.add('mip-shell-more-button-mask')
+  document.body.appendChild(mask)
+
+  let buttonWrapper = document.createElement('div')
+  buttonWrapper.classList.add('mip-shell-more-button-wrapper')
+  css(buttonWrapper, 'height', 48 * buttonGroup.length)
+  buttonWrapper.innerHTML = buttonGroup.map(button => renderMoreButton(button)).join('')
+  document.body.appendChild(buttonWrapper)
+
+  return {mask, buttonWrapper}
 }

@@ -68,7 +68,7 @@ export default class AppShell {
       this.page.direction = 'back'
       window.MIP_ROUTER.go(-1)
       window.MIP.viewer.sendMessage('historyNavigate', {step: -1})
-    } else if (buttonName === 'dropdown') {
+    } else if (buttonName === 'more') {
       if (this.header) {
         this.header.toggleDropdown()
       }
