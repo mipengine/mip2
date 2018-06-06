@@ -33,7 +33,6 @@ class MipData extends CustomElement {
     })
 
     promise.then(res => {
-
       if (res.ok) {
         res.json().then(data => MIP.$set(data, 0))
       } else {

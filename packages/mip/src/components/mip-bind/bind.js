@@ -76,7 +76,8 @@ class Bind {
           let win = document.getElementsByTagName('iframe')[i].contentWindow
           win.postMessage({
             type: 'bind',
-            m: event.data.m 
+            m: event.data.m,
+            event: 'stateBind'
           }, win.location.protocol + '//' + win.location.host)
         }
       }
@@ -93,7 +94,8 @@ class Bind {
     let win = window.MIP.MIP_ROOT_PAGE ? window : window.parent
     win.postMessage({
       type: 'update',
-      m: data
+      m: data,
+      event: 'stateUpdate'
     }, domain)
   }
 
