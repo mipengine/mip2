@@ -100,7 +100,9 @@ export default class Header {
       clickButtonCallback(buttonName)
     })
 
-    this.$mask.onclick = () => this.toggleDropdown(false)
+    if (this.$mask) {
+      this.$mask.onclick = () => this.toggleDropdown(false)
+    }
   }
 
   unbindEvents () {
