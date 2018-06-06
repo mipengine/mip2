@@ -271,6 +271,7 @@ class Page {
         }
       }
     }
+
     return Object.assign({}, DEFAULT_SHELL_CONFIG)
   }
 

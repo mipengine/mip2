@@ -8,27 +8,33 @@
 /**
  * Object.assign
  *
+ * @see https://github.com/rubennorte/es6-object-assign
+
  * @param {!Object} target target object
- * @param {...Object} args args
  * @return {!Object}
  */
-export function assign (target, ...args) {
-  if (target == null) {
-    throw new TypeError('Cannot convert undefined or null to object')
+export function assign (target) {
+  if (target === undefined || target === null) {
+    throw new TypeError('Cannot convert first argument to object')
   }
 
-  let output = Object(target)
-  for (let arg of args) {
-    let source = args[arg]
-    if (source != null) {
-      Object.keys(source).forEach(key => {
-        if (source.hasOwnProperty(key)) {
-          output[key] = source[key]
-        }
-      })
+  var to = Object(target)
+  for (var i = 1; i < arguments.length; i++) {
+    var nextSource = arguments[i]
+    if (nextSource === undefined || nextSource === null) {
+      continue
+    }
+
+    var keysArray = Object.keys(Object(nextSource))
+    for (var nextIndex = 0, len = keysArray.length; nextIndex < len; nextIndex++) {
+      var nextKey = keysArray[nextIndex]
+      var desc = Object.getOwnPropertyDescriptor(nextSource, nextKey)
+      if (desc !== undefined && desc.enumerable) {
+        to[nextKey] = nextSource[nextKey]
+      }
     }
   }
-  return output
+  return to
 }
 
 /**

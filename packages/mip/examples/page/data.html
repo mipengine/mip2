@@ -120,7 +120,9 @@
                     "name": "sfe",
                     "age": 5,
                     "members": []
-                }
+                },
+                "#city": "上海"
+
             }
         </script>
     </mip-data>
@@ -135,6 +137,9 @@
 
         <br><br>
         <h1 m-text="title" style="margin-left: 20px;"></h1>
+
+        <p m-text="city"></p>
+        <div on="tap:MIP.setData({'#city':'深圳'})" class="button">click change city</div>
 
         <p m-text="size.small"></p>
         <div on="tap:MIP.setData({size:{small:2}})" class="button">click change size.small</div>
@@ -249,6 +254,28 @@
         </script>
     </mip-shell>
 
+    <!-- <mip-script>
+        console.log(1)
+        MIP.watch('num', function () {
+            console.log('num changed callback')
+            var test = 2;
+            location.href = 'test'
+            MIP.setData({
+                title: 'ckkkk changing num'
+            });
+        });
+        function f() {
+            function Animation() {
+
+            }
+            Animation()
+        }
+        g = 1
+        let a = 2
+        window.alert('1')
+        alert('1')
+    </mip-script> -->
+
     <script type="application/mip-script">
         MIP.watch('num', function () {
             console.log('num changed callback')
@@ -282,4 +309,7 @@
     <script src="./components/mip-complevel2.js"></script>
     <script src="./components/mip-complevel1.js"></script>
     <script src="https://c.mipcdn.com/static/v1/mip-form/mip-form.js"></script>
+    <!-- <script src="http://127.0.0.1:8111/mip-script/mip-script.js"></script> -->
+
+
 </body>
