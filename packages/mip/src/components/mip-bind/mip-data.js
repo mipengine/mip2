@@ -9,6 +9,7 @@ class MipData extends CustomElement {
     let ele = this.element.querySelector('script[type="application/json"]')
     window.mipDataPromises = window.mipDataPromises || []
 
+    console.log(1)
     if (src) {
       window.mipDataPromises.push(this.getData(src))
     } else if (ele) {
@@ -18,7 +19,7 @@ class MipData extends CustomElement {
         result = JSON.parse(data)
       } catch (e) {}
       if (result) {
-        MIP.$set(result, 0)
+        MIP.$set(result)
       }
     }
   }
@@ -34,7 +35,7 @@ class MipData extends CustomElement {
 
     promise.then(res => {
       if (res.ok) {
-        res.json().then(data => MIP.$set(data, 0))
+        res.json().then(data => MIP.$set(data))
       } else {
         console.error('Fetch request failed!')
       }
