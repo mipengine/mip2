@@ -7,7 +7,6 @@
 
 var keywords = require('./safe-keywords')
 var defUtils = require('./utils/def')
-var safeThis = require('./utils/safe-this')
 
 var sandbox = {}
 
@@ -19,6 +18,21 @@ var sandboxDocument = {}
 defUtils.defs(sandboxDocument, keywords.DOCUMENT_ORIGINAL, {host: document, setter: true})
 defUtils.def(sandbox, 'document', sandboxDocument)
 defUtils.def(sandbox, 'MIP', window.MIP)
-defUtils.def(sandbox, 'this', safeThis(sandbox))
+
+/**
+ * this sandbox，避免诸如
+ *
+ * (function () {
+ *   console.log(this)
+ * }).call(undefined)
+ *
+ * 上面的 this 指向 window
+ *
+ * @param {Object} that this
+ * @return {Object} safe this
+ */
+defUtils.def(sandbox, 'this', function (that) {
+  return that === window ? sandbox : that === document ? sandbox.document : that
+})
 
 module.exports = sandbox
