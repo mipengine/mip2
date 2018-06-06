@@ -353,14 +353,14 @@ export function createScrollPosition () {
   document.body.appendChild($scrollPosition)
 }
 
-function renderMoreButton({name, text, link} = {}) {
+function renderMoreButton ({name, text, link} = {}) {
   if (!name || !text) {
     return ''
   }
 
   return `
     <div class="mip-shell-button" mip-header-btn data-button-name="${name}">
-      ${link ? `<a mip-link href="${link}">${text}</a>` : text }
+      ${link ? `<a mip-link href="${link}">${text}</a>` : text}
     </div>
   `
 }
@@ -368,7 +368,7 @@ function renderMoreButton({name, text, link} = {}) {
 /**
  * Create wrapper for more button in header
  */
-export function createMoreButtonWrapper({buttonGroup, xiongzhang} = {}) {
+export function createMoreButtonWrapper ({buttonGroup, xiongzhang} = {}) {
   if (xiongzhang) {
     buttonGroup = XIONGZHANG_MORE_BUTTON_GROUP
   }

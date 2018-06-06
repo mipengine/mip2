@@ -9,7 +9,6 @@ export default class Header {
     this.$el = null
     this.data = options.data
     this.clickButtonCallback = options.clickButtonCallback
-    this._clickOutside = this._clickOutside.bind(this)
   }
 
   init () {
@@ -94,31 +93,18 @@ export default class Header {
     }
   }
 
-  // TODO DELETE ME
-  _clickOutside (e) {
-    let $dropdown = this.$el.querySelector('.mip-appshell-header-dropdown')
-    if ($dropdown) {
-      let elements = [$dropdown.parentNode]
-      !clickedInEls(e, elements) && setTimeout(() => {
-        // this.isButtonShow && this.hideDropdown()
-      }, 0)
-    }
-  }
-
   bindEvents () {
     let clickButtonCallback = this.clickButtonCallback
     this.eventHandler = event.delegate(this.$el, '[mip-header-btn]', 'click', function (e) {
       let buttonName = this.dataset.buttonName
       clickButtonCallback(buttonName)
     })
-    // TODO button group
 
-    document.body.addEventListener('click', this._clickOutside, true)
+    this.$mask.onclick = () => this.toggleDropdown(false)
   }
 
   unbindEvents () {
     this.eventHandler && this.eventHandler()
-    document.body.removeEventListener('click', this._clickOutside, true)
   }
 
   update (data) {
