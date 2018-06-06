@@ -8,7 +8,10 @@ var estraverse = require('estraverse')
 var is = require('./utils/is')
 
 module.exports = function (code, fn, type) {
-  var ast = esprima.parseModule(code)
+  var ast = esprima.parseModule(code, {
+    range: true,
+    loc: true
+  })
 
   mark(ast)
   scope(ast)
