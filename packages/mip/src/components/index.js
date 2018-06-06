@@ -11,6 +11,7 @@ import MipCarousel from './mip-carousel'
 import MipIframe from './mip-iframe'
 import MipPix from './mip-pix'
 import MipBind from './mip-bind/bind'
+import MipData from './mip-bind/mip-data'
 import registerElement from '../register-element'
 
 export default {
@@ -24,7 +25,7 @@ export default {
     registerElement('mip-carousel', MipCarousel)
     registerElement('mip-iframe', MipIframe)
     registerElement('mip-video', MipVideo)
-    // registerElement('mip-bind', MipBind);
     new MipBind()
+    registerElement('mip-data', MipData)
   }
 }
