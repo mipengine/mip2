@@ -27,6 +27,7 @@ export function createIFrame (fullpath, pageId, {onLoad, onError} = {}) {
     typeof onError === 'function' && onError()
   }
   // TODO: use XHR to load iframe so that we can get httpRequest.status 404
+  container.setAttribute('name', pageId)
   container.setAttribute('src', fullpath)
   container.setAttribute('class', MIP_IFRAME_CONTAINER)
 
@@ -328,29 +329,14 @@ export function frameMoveOut (pageId, {transition, sourceMeta, targetPageId, onC
   }
 }
 
-function clickedInEl (el, x, y) {
-  const b = el.getBoundingClientRect()
-  return x >= b.left && x <= b.right && y >= b.top && y <= b.bottom
-}
-
-export function clickedInEls (e, elements) {
-  const {clientX: x, clientY: y} = e
-  for (const el of elements) {
-    if (clickedInEl(el, x, y)) {
-      return true
-    }
-  }
-  return false
-}
-
-function renderMoreButton({name, text, link} = {}) {
+function renderMoreButton ({name, text, link} = {}) {
   if (!name || !text) {
     return ''
   }
 
   return `
     <div class="mip-shell-button" mip-header-btn data-button-name="${name}">
-      ${link ? `<a mip-link href="${link}">${text}</a>` : text }
+      ${link ? `<a mip-link href="${link}">${text}</a>` : text}
     </div>
   `
 }
@@ -358,7 +344,7 @@ function renderMoreButton({name, text, link} = {}) {
 /**
  * Create wrapper for more button in header
  */
-export function createMoreButtonWrapper({buttonGroup, xiongzhang} = {}) {
+export function createMoreButtonWrapper ({buttonGroup, xiongzhang} = {}) {
   if (xiongzhang) {
     buttonGroup = XIONGZHANG_MORE_BUTTON_GROUP
   }

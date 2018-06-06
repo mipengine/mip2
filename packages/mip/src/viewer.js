@@ -72,10 +72,13 @@ let viewer = {
 
     this.page.start()
 
-    this.sendMessage('mippageload', {
-      time: Date.now(),
-      title: encodeURIComponent(document.title)
-    })
+    // Only send at first time
+    if (win.MIP.isRootPage) {
+      this.sendMessage('mippageload', {
+        time: Date.now(),
+        title: encodeURIComponent(document.title)
+      })
+    }
 
     // proxy <a mip-link>
     this._proxyLink(this.page)
@@ -157,11 +160,7 @@ let viewer = {
    */
   sendMessage (eventName, data = {}) {
     if (!win.MIP.standalone) {
-      // window.top.postMessage({
-      //   event: eventName,
-      //   data: data
-      // }, '*')
-      this.messager.sendMessage(eventName, {data})
+      this.messager.sendMessage(eventName, data)
     }
   },
 
