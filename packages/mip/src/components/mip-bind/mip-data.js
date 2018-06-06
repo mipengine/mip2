@@ -9,7 +9,6 @@ class MipData extends CustomElement {
     let ele = this.element.querySelector('script[type="application/json"]')
     window.mipDataPromises = window.mipDataPromises || []
 
-    console.log(1)
     if (src) {
       window.mipDataPromises.push(this.getData(src))
     } else if (ele) {

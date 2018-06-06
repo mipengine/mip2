@@ -10,10 +10,11 @@
     "mip2"
   ],
   "scripts": {
-    "lint": "npm run lint:mip && npm run lint:cli && npm run lint:validator",
+    "lint": "npm run lint:mip && npm run lint:cli && npm run lint:validator && npm run lint:sandbox",
     "lint:mip": "eslint packages/mip/src",
     "lint:cli": "eslint packages/mip-cli/lib",
-    "lint:validator": "eslint packages/mip-component-validator/src"
+    "lint:validator": "eslint packages/mip-component-validator/src",
+    "lint:sandbox": "eslint packages/mip-sandbox/lib"
   },
   "author": "sfe-sy@baidu.com",
   "license": "MIT",
