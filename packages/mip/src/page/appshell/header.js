@@ -1,5 +1,5 @@
 import event from '../../util/dom/event'
-import {createMoreButtonWrapper} from '../util/dom'
+import {createMoreButtonWrapper, createPageMask} from '../util/dom'
 
 export default class Header {
   constructor (options = {}) {
@@ -16,15 +16,20 @@ export default class Header {
     // this.$wrapper.prepend(this.$el)
     this.$wrapper.insertBefore(this.$el, this.$wrapper.firstChild)
 
+    // Create mask and wrapper for more button
     if (this.data.xiongzhang ||
       (Array.isArray(this.data.buttonGroup) && this.data.buttonGroup.length > 0)) {
       let {mask, buttonWrapper} = createMoreButtonWrapper({
         buttonGroup: this.data.buttonGroup,
         xiongzhang: this.data.xiongzhang
       })
-      this.$mask = mask
+      this.$buttonMask = mask
       this.$buttonWrapper = buttonWrapper
     }
+
+    // Create mask covering page
+    // Mainly used in dialog within iframe
+    this.$pageMask = createPageMask()
 
     this.bindEvents()
   }
@@ -82,15 +87,12 @@ export default class Header {
   }
 
   toggleDropdown (toggle) {
-    if (toggle) {
-      // show
-      this.$mask.classList.add('show')
-      this.$buttonWrapper.classList.add('show')
-    } else {
-      // hide
-      this.$mask.classList.remove('show')
-      this.$buttonWrapper.classList.remove('show')
-    }
+    toggleInner(this.$buttonMask, toggle)
+    toggleInner(this.$buttonWrapper, toggle)
+  }
+
+  togglePageMask (toggle) {
+    toggleInner(this.$pageMask, toggle)
   }
 
   bindEvents () {
@@ -100,8 +102,8 @@ export default class Header {
       clickButtonCallback(buttonName)
     })
 
-    if (this.$mask) {
-      this.$mask.onclick = () => this.toggleDropdown(false)
+    if (this.$buttonMask) {
+      this.$buttonMask.onclick = () => this.toggleDropdown(false)
     }
   }
 
@@ -111,5 +113,13 @@ export default class Header {
 
   update (data) {
     this.$el.innerHTML = this.render(data)
+  }
+}
+
+function toggleInner (element, toggle) {
+  if (toggle) {
+    element.classList.add('show')
+  } else {
+    element.classList.remove('show')
   }
 }

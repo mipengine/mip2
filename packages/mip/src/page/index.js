@@ -20,7 +20,8 @@ import {
   DEFAULT_SHELL_CONFIG,
   MESSAGE_APPSHELL_EVENT,
   MESSAGE_ROUTER_PUSH,
-  MESSAGE_ROUTER_REPLACE
+  MESSAGE_ROUTER_REPLACE,
+  MESSAGE_TOGGLE_PAGE_MASK
 } from './const'
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
@@ -94,6 +95,8 @@ class Page {
           router.push(data.route)
         } else if (type === MESSAGE_ROUTER_REPLACE) {
           router.replace(data.route)
+        } else if (type === MESSAGE_TOGGLE_PAGE_MASK) {
+          this.appshell.header.togglePageMask(data ? data.toggle : false)
         }
       })
 
@@ -175,7 +178,11 @@ class Page {
    * @param {Object} data eventdata
    */
   notifyRootPage (data) {
-    window.parent.postMessage(data, window.location.origin)
+    if (this.isRootPage) {
+      window.postMessage(data, window.location.origin)
+    } else {
+      window.parent.postMessage(data, window.location.origin)
+    }
   }
 
   start () {

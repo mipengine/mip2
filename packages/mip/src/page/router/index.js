@@ -18,7 +18,11 @@ export default class Router {
   }
 
   push (location) {
-    this.history.push(location)
+    if (!window.MIP.standalone) {
+      this.history.replace(location)
+    } else {
+      this.history.push(location)
+    }
   }
 
   replace (location) {
