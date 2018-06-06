@@ -141,23 +141,25 @@ class Page {
   scrollToHash (hash) {
     if (hash) {
       let $htmlWrapper = document.querySelector('.mip-html-wrapper')
-      let $hash = document.querySelector(decodeURIComponent(hash))
-      let scroller
-      let scrollTop
-      if ($hash) {
-        if ($htmlWrapper) {
-          scroller = $htmlWrapper
-          scrollTop = scroller.scrollTop
-        } else {
-          scroller = window
-          scrollTop = document.body.scrollTop || document.documentElement.scrollTop
+      try {
+        let $hash = document.querySelector(decodeURIComponent(hash))
+        let scroller
+        let scrollTop
+        if ($hash) {
+          if ($htmlWrapper) {
+            scroller = $htmlWrapper
+            scrollTop = scroller.scrollTop
+          } else {
+            scroller = window
+            scrollTop = document.body.scrollTop || document.documentElement.scrollTop
+          }
+          // scroll to current hash
+          scrollTo($hash.offsetTop, {
+            scroller,
+            scrollTop
+          })
         }
-        // scroll to current hash
-        scrollTo($hash.offsetTop, {
-          scroller,
-          scrollTop
-        })
-      }
+      } catch (e) {}
     }
   }
 
