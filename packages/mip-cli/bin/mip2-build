@@ -12,10 +12,11 @@ cli.setup({
     ['-c, --clean', '构建前先清空输出目录']
   ],
   help: [
-    '编译',
+    '',
+    '  Examples:',
+    cli.chalk.gray('    # 编译'),
     '    $ mip build'
-  ]
-    .join('\n')
+  ].join('\n')
 })
 
 build(cli.program)
