@@ -137,7 +137,7 @@ MIP.sandbox.this = function (that) {
 以下变量是 MIP sandbox 暴露给用户可直接使用的全局变量，后续会根据实际需要进行增加或减少：
 
 ```javascript
-var WINDOW_ORIGINAL_KEYWORDS = [
+var WINDOW_ORIGINAL = [
   'Array',
   'ArrayBuffer',
   'Blob',
@@ -241,13 +241,13 @@ var WINDOW_ORIGINAL_KEYWORDS = [
   'webkitRequestAnimationFrame'
 ]
 
-var WINDOW_CUSTOM_KEYWORDS = [
+var WINDOW_CUSTOM = [
   'document',
   'window',
   'MIP'
 ]
 
-var RESERVED_KEYWORDS = [
+var RESERVED = [
   'arguments',
   'MIP',
   'require',
@@ -256,7 +256,7 @@ var RESERVED_KEYWORDS = [
   'define'
 ]
 
-var DOCUMENT_ORIGINAL_KEYWORDS = [
+var DOCUMENT_ORIGINAL = [
   'head',
   'body',
   'title',
@@ -272,6 +272,7 @@ var DOCUMENT_ORIGINAL_KEYWORDS = [
   'querySelector',
   'querySelectorAll'
 ]
+
 
 ```
 
