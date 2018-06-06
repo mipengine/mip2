@@ -1,17 +1,16 @@
 /* global fetch */
+/* global MIP */
 
 import CustomElement from '../../custom-element'
-// import Bind from './bind';
 
 class MipData extends CustomElement {
   build () {
-    // this.uid = uid++;
-    // this.bind = new Bind(this.uid);
-
     let src = this.element.getAttribute('src')
     let ele = this.element.querySelector('script[type="application/json"]')
+    window.mipDataPromises = window.mipDataPromises || []
+
     if (src) {
-      this.getData(src)
+      window.mipDataPromises.push(this.getData(src))
     } else if (ele) {
       let data = ele.textContent.toString()
       let result
@@ -19,9 +18,7 @@ class MipData extends CustomElement {
         result = JSON.parse(data)
       } catch (e) {}
       if (result) {
-        // window.m = window.m ? window.m : {};
-        // MIP.$set(result, 0);
-        this.postMessage(result)
+        MIP.$set(result, 0)
       }
     }
   }
@@ -31,26 +28,20 @@ class MipData extends CustomElement {
       return
     }
 
-    fetch(url, {
+    let promise = fetch(url, {
       credentials: 'include'
-    }).then(res => {
+    })
+
+    promise.then(res => {
+
       if (res.ok) {
-        res.json().then(data => this.postMessage(data))
+        res.json().then(data => MIP.$set(data, 0))
       } else {
         console.error('Fetch request failed!')
       }
     }).catch(console.error)
-  }
 
-  postMessage (data) {
-    window.m = window.m ? window.m : {}
-    let loc = window.location
-    let domain = loc.protocol + '//' + loc.host
-    window.postMessage({
-      // type: 'bind' + this.uid,
-      type: 'bind',
-      m: data
-    }, domain)
+    return promise
   }
 
   prerenderAllowed () {

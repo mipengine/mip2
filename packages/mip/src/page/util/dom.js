@@ -11,36 +11,35 @@ import {MIP_IFRAME_CONTAINER, XIONGZHANG_MORE_BUTTON_GROUP} from '../const'
 let {window: sandWin, document: sandDoc} = sandbox
 let activeZIndex = 10000
 
-export function createIFrame (path, {onLoad, onError} = {}) {
-  let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${path}"]`)
+export function createIFrame (fullpath, pageId, {onLoad, onError} = {}) {
+  let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${pageId}"]`)
 
-  if (!container) {
-    container = document.createElement('iframe')
-    container.onload = () => {
-      typeof onLoad === 'function' && onLoad()
-    }
-    container.onerror = () => {
-      typeof onError === 'function' && onError()
-    }
-    // TODO: use XHR to load iframe so that we can get httpRequest.status 404
-    container.setAttribute('src', path)
-    container.setAttribute('class', MIP_IFRAME_CONTAINER)
-
-    /**
-     * Fix an iOS iframe width bug, see examples/mip1/test.html
-     * https://stackoverflow.com/questions/23083462/how-to-get-an-iframe-to-be-responsive-in-ios-safari
-     */
-    container.setAttribute('width', '100%')
-    container.setAttribute('scrolling', 'no')
-
-    container.setAttribute('data-page-id', path)
-    container.setAttribute('sandbox', 'allow-top-navigation allow-popups allow-scripts allow-forms allow-pointer-lock allow-popups-to-escape-sandbox allow-same-origin allow-modals')
-    document.body.appendChild(container)
-  } else {
-    if (typeof onLoad === 'function') {
-      onLoad()
-    }
+  // if exists, delete it first
+  if (container) {
+    container.parentNode.removeChild(container)
   }
+
+  container = document.createElement('iframe')
+  container.onload = () => {
+    typeof onLoad === 'function' && onLoad()
+  }
+  container.onerror = () => {
+    typeof onError === 'function' && onError()
+  }
+  // TODO: use XHR to load iframe so that we can get httpRequest.status 404
+  container.setAttribute('src', fullpath)
+  container.setAttribute('class', MIP_IFRAME_CONTAINER)
+
+  /**
+   * Fix an iOS iframe width bug, see examples/mip1/test.html
+   * https://stackoverflow.com/questions/23083462/how-to-get-an-iframe-to-be-responsive-in-ios-safari
+   */
+  container.setAttribute('width', '100%')
+  container.setAttribute('scrolling', 'no')
+
+  container.setAttribute('data-page-id', pageId)
+  container.setAttribute('sandbox', 'allow-top-navigation allow-popups allow-scripts allow-forms allow-pointer-lock allow-popups-to-escape-sandbox allow-same-origin allow-modals')
+  document.body.appendChild(container)
 
   return container
 }

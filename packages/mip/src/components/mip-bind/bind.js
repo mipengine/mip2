@@ -14,12 +14,11 @@ import registerElement from '../../register-element'
 /* eslint-disable no-new-func */
 
 class Bind {
-  constructor (id) {
+  constructor () {
     let me = this
-    this._id = id
     this._win = window
-    this._watchers = []
     this._watcherIds = []
+    this.pgStates = []
     // require mip data extension runtime
     this._compile = new Compile()
     this._observer = new Observer()
@@ -58,15 +57,44 @@ class Bind {
     window.addEventListener('message', function (event) {
       let loc = me._win.location
       let domain = loc.protocol + '//' + loc.host
+
       if (event.origin === domain &&
         event.source && event.data &&
-        event.data.type === 'bind' &&
-        // && event.data.type === 'bind' + me._id
-        event.source === me._win
+        event.data.type === 'bind'
+        // event.source === me._win
       ) {
         MIP.$set(event.data.m)
       }
+
+      if (event.origin === domain &&
+        event.source && event.data &&
+        event.data.type === 'update'
+      ) {
+        MIP.$set(event.data.m)
+
+        for (let i = 0; i < document.getElementsByTagName('iframe').length; i++) {
+          let win = document.getElementsByTagName('iframe')[i].contentWindow
+          win.postMessage({
+            type: 'bind',
+            m: event.data.m 
+          }, win.location.protocol + '//' + win.location.host)
+        }
+      }
     })
+  }
+
+  _postMessage (data) {
+    if (!notEmpty(data)) {
+      return
+    }
+
+    let loc = window.location
+    let domain = loc.protocol + '//' + loc.host
+    let win = window.MIP.MIP_ROOT_PAGE ? window : window.parent
+    win.postMessage({
+      type: 'update',
+      m: data
+    }, domain)
   }
 
   _bindTarget (compile, action, from) {
@@ -88,10 +116,11 @@ class Bind {
       } else {
         if (classified.globalData && notEmpty(classified.globalData)) {
           this._assign(this._win.parent.g, classified.globalData)
+          this._postMessage(classified.globalData)
         }
         data = classified.pageData
         for (let field of Object.keys(data)) {
-          if (this._win.m.hasOwnProperty(field)) {
+          if (this.pgStates.indexOf(field) !== -1) {
             this._assign(this._win.m, {[field]: data[field]})
           } else {
             this._dispatch(field, data[field])
@@ -133,24 +162,21 @@ class Bind {
     }
 
     this._watcherIds.push(watcherId)
-    this._watchers.push(new Watcher(
-      null,
-      this._win.m,
-      '',
-      target,
-      cb
-    ))
+    new Watcher(null, this._win.m, '', target, cb) // eslint-disable-line no-new
   }
 
   _dispatch (key, val) {
     let win = this._win
-    if (win.g && win.g.hasOwnProperty(key)) {
-      this._assign(win.g, {[key]: val})
-    } else if (!win.MIP.MIP_ROOT_PAGE && win.parent.g && win.parent.g.hasOwnProperty(key)) {
-      this._assign(win.parent.g, {[key]: val})
-    } else {
-      Object.assign(win.m, {[key]: val})
+    let data = {
+      [key]: val
     }
+    if (win.g && win.g.hasOwnProperty(key)) {
+      this._assign(win.g, data)
+    } else if (!win.MIP.MIP_ROOT_PAGE && win.parent.g && win.parent.g.hasOwnProperty(key)) {
+      this._assign(win.parent.g, data)
+    }
+    Object.assign(win.m, data)
+    this._postMessage(data)
   }
 
   _setGlobalState (data) {
@@ -162,11 +188,14 @@ class Bind {
       win.parent.g = win.parent.g || {}
       Object.assign(win.parent.g, data)
     }
+    this._postMessage(data)
   }
 
   _setPageState (data) {
     let win = this._win
-    Object.assign(win.m, data)
+    let g = win.MIP.MIP_ROOT_PAGE ? win.g : win.parent.g
+    Object.assign(win.m, g, data)
+    this.pgStates = [...Object.keys(data), ...this.pgStates]
     win.m.__proto__ = win.MIP.MIP_ROOT_PAGE ? win.g : win.parent.g // eslint-disable-line no-proto
   }
 

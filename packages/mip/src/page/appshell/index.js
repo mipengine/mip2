@@ -30,7 +30,7 @@ export default class AppShell {
     })
     this.header.init()
 
-    document.body.prepend(this.$wrapper)
+    document.body.insertBefore(this.$wrapper, document.body.firstChild)
   }
 
   refresh (data, targetPageId) {

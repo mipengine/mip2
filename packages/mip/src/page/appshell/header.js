@@ -16,7 +16,8 @@ export default class Header {
     this.$el = document.createElement('div')
     this.$el.classList.add('mip-appshell-header')
     this.$el.innerHTML = this.render(this.data)
-    this.$wrapper.prepend(this.$el)
+    // this.$wrapper.prepend(this.$el)
+    this.$wrapper.insertBefore(this.$el, this.$wrapper.firstChild)
 
     if (this.data.xiongzhang ||
       (Array.isArray(this.data.buttonGroup) && this.data.buttonGroup.length > 0)) {
