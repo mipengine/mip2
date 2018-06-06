@@ -14,8 +14,10 @@ import {
   createLoading,
   createScrollPosition
 } from './util/dom'
-import {scrollTop} from './util/ease-scroll'
+import {scrollTo} from './util/ease-scroll'
 import {
+  NON_EXISTS_PAGE_ID,
+  SCROLL_TO_ANCHOR_CUSTOM_EVENT,
   DEFAULT_SHELL_CONFIG,
   MESSAGE_APPSHELL_EVENT,
   MESSAGE_ROUTER_PUSH,
@@ -142,11 +144,22 @@ class Page {
    */
   scrollToHash (hash) {
     if (hash) {
+      let $htmlWrapper = document.querySelector('.mip-html-wrapper')
       let $hash = document.querySelector(decodeURIComponent(hash))
+      let scroller
+      let scrollTop
       if ($hash) {
+        if (this.isRootPage) {
+          scroller = window
+          scrollTop = document.body.scrollTop || document.documentElement.scrollTop
+        } else {
+          scroller = $htmlWrapper
+          scrollTop = scroller.scrollTop
+        }
         // scroll to current hash
-        scrollTop($hash.offsetTop, {
-          scroller: this.isRootPage ? window : window.document.body
+        scrollTo($hash.offsetTop, {
+          scroller,
+          scrollTop
         })
       }
     }
@@ -188,7 +201,7 @@ class Page {
 
     // scroll to current hash if exists
     this.scrollToHash(window.location.hash)
-    window.addEventListener('scroll-to-hash', (e) => {
+    window.addEventListener(SCROLL_TO_ANCHOR_CUSTOM_EVENT, (e) => {
       this.scrollToHash(e.detail[0])
     })
   }
@@ -367,7 +380,7 @@ class Page {
      */
     if (isSameRoute(from, to, true)) {
       this.emitEventInCurrentPage({
-        name: 'scroll-to-hash',
+        name: SCROLL_TO_ANCHOR_CUSTOM_EVENT,
         data: to.hash
       })
       return
@@ -379,10 +392,15 @@ class Page {
     let targetPage = this.getPageById(targetPageId)
 
     /**
-     * reload iframe when <a mip-link> clicked,
-     * forwarding or going back with browser history won't
+     * reload iframe when <a mip-link> clicked even if it's already existed.
+     * NOTE: forwarding or going back with browser history won't do
      */
     if (!targetPage || (to.meta && to.meta.reload)) {
+      // when reloading root page...
+      if (this.pageId === targetPageId) {
+        this.pageId = NON_EXISTS_PAGE_ID
+        // TODO: delete DOM & trigger disconnectedCallback in root page
+      }
       // create an iframe
       createIFrame(targetFullPath, targetPageId)
       this.applyTransition(targetPageId, to.meta, {newPage: true})
