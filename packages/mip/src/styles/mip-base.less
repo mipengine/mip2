@@ -19,24 +19,19 @@ html {
 
     &.mip-html-embeded {
         overflow-y: auto!important; 
-        -webkit-overflow-scrolling: 
-        touch!important; 
+        -webkit-overflow-scrolling: touch!important; 
         touch-action: pan-y;
         position: static;
     }
 
-    &.mip-html-wrapper {
-        // display: block;
-        // overflow-y: auto;
-        // -webkit-overflow-scrolling: touch;
-        // position: absolute;
-        // top: 0;
-        // left: 0;
-        // right: 0;
-        // bottom: 0;
+    &.mip-no-scroll {
+        overflow: hidden;
+        body {
+            overflow: hidden;
+        }
+    }
 
-        overflow-x: hidden!important;
-        overflow-y: auto!important;
+    &.mip-html-wrapper {
         position: absolute!important;
         top: 0!important;
         left: 0!important;
@@ -45,6 +40,10 @@ html {
         margin: 0!important;
         display: block!important;
         -webkit-overflow-scrolling: touch!important;
+
+        &.with-header {
+            padding-top: @appshell-header-height;
+        }
 
         body {
             -webkit-overflow-scrolling: touch!important;

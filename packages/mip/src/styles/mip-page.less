@@ -44,25 +44,29 @@ body[mip-ready]::after,
     display: none;
 }
 
+body.with-header {
+    padding-top: @appshell-header-height;
+}
+
 .mip-page__iframe {
-    position: fixed;
+    opacity: 0.9; // test for iOS scroll in body
+    position: absolute;
     left: 0;
     top: 0;
     right: 0;
-    bottom: 0;
     border: 0;
     width: 1px;
     min-width: 100%;
-    height: 100%;
     background: #fff;
     z-index: 10000;
     display: none;
-    overflow-y: auto;
 
-    &.with-header {
-        top: @appshell-header-height;
-        height: calc(100% - 44px);
-    }
+    // &.with-header {
+    //     html.mip-html-wrapper {
+    //         padding-top: @appshell-header-height;
+    //     }
+    //     // height: calc(100% - 44px);
+    // }
 }
 
 .mip-page-loading {
@@ -110,8 +114,8 @@ body[mip-ready]::after,
 }
 
 .mip-appshell-header-wrapper {
-    width: 100%;
-    height: @appshell-header-height;
+    // width: 100%;
+    // height: @appshell-header-height;
 
     &.show {
         .mip-appshell-header {
@@ -119,7 +123,7 @@ body[mip-ready]::after,
         }
     }
     &.with-iframe {
-        position: absolute;
+        // position: absolute;
     }
 }
 
@@ -176,7 +180,14 @@ body[mip-ready]::after,
 }
 
 .mip-appshell-header {
+    top: 0;
     display: none;
+    transition: transform ease 300ms;
+    transform: translate3d(0, 0, 0);
+
+    &.slide-up {
+        transform: translate3d(0, (-@appshell-header-height), 0);
+    }
 
     .mip-appshell-header-button-group {
         width: 87px;

@@ -45,10 +45,16 @@ export default class AppShell {
     let targetIFrame = getIFrame(targetPageId)
     if (header.show) {
       this.$wrapper.classList.add('show')
-      targetIFrame && targetIFrame.classList.add('with-header')
+      if (targetIFrame) {
+        // targetIFrame.contentWindow.document.querySelector('.mip-html-wrapper').add('with-header')
+        targetIFrame.classList.add('with-header')
+      }
     } else {
       this.$wrapper.classList.remove('show')
-      targetIFrame && targetIFrame.classList.remove('with-header')
+      if (targetIFrame) {
+        // targetIFrame.contentWindow.document.querySelector('.mip-html-wrapper').remove('with-header')
+        targetIFrame.classList.remove('with-header')
+      }
     }
 
     // redraw entire header

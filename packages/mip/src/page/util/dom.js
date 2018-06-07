@@ -5,6 +5,7 @@
 
 import css from '../../util/dom/css'
 import sandbox from '../../sandbox'
+import viewport from '../../viewport'
 
 import {MIP_IFRAME_CONTAINER, XIONGZHANG_MORE_BUTTON_GROUP} from '../const'
 
@@ -35,6 +36,7 @@ export function createIFrame (fullpath, pageId, {onLoad, onError} = {}) {
    * Fix an iOS iframe width bug, see examples/mip1/test.html
    * https://stackoverflow.com/questions/23083462/how-to-get-an-iframe-to-be-responsive-in-ios-safari
    */
+  container.style.height = `${viewport.getHeight()}px`
   container.setAttribute('width', '100%')
   container.setAttribute('scrolling', 'no')
 

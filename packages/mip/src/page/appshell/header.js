@@ -112,4 +112,12 @@ export default class Header {
   update (data) {
     this.$el.innerHTML = this.render(data)
   }
+
+  slideUp () {
+    this.$el.classList.add('slide-up')
+  }
+
+  slideDown () {
+    this.$el.classList.remove('slide-up')
+  }
 }

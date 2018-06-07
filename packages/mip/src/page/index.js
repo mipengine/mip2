@@ -13,6 +13,7 @@ import {
   frameMoveOut,
   createLoading
 } from './util/dom'
+import Debouncer from './util/debounce'
 import {scrollTo} from './util/ease-scroll'
 import {
   NON_EXISTS_PAGE_ID,
@@ -20,11 +21,14 @@ import {
   DEFAULT_SHELL_CONFIG,
   MESSAGE_APPSHELL_EVENT,
   MESSAGE_ROUTER_PUSH,
-  MESSAGE_ROUTER_REPLACE
+  MESSAGE_ROUTER_REPLACE,
+  MESSAGE_APPSHELL_HEADER_SLIDE_UP,
+  MESSAGE_APPSHELL_HEADER_SLIDE_DOWN
 } from './const'
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
 import util from '../util'
+import viewport from '../viewport'
 import Router from './router'
 import AppShell from './appshell'
 import '../styles/mip.less'
@@ -125,6 +129,14 @@ class Page {
 
       // Create loading div
       createLoading(this.currentPageMeta)
+
+      this.messageHandlers.push((type, data) => {
+        if (type === MESSAGE_APPSHELL_HEADER_SLIDE_UP) {
+          this.appshell.header.slideUp()
+        } else if (type === MESSAGE_APPSHELL_HEADER_SLIDE_DOWN) {
+          this.appshell.header.slideDown()
+        }
+      })
     } else {
       /**
        * in child page:
@@ -137,6 +149,8 @@ class Page {
         }
       })
     }
+
+    this.setupHeaderScroll()
   }
 
   /**
@@ -146,27 +160,67 @@ class Page {
    */
   scrollToHash (hash) {
     if (hash) {
-      let $htmlWrapper = document.querySelector('.mip-html-wrapper')
       try {
         let $hash = document.querySelector(decodeURIComponent(hash))
-        let scroller
-        let scrollTop
         if ($hash) {
-          if ($htmlWrapper) {
-            scroller = $htmlWrapper
-            scrollTop = scroller.scrollTop
-          } else {
-            scroller = window
-            scrollTop = document.body.scrollTop || document.documentElement.scrollTop
-          }
           // scroll to current hash
           scrollTo($hash.offsetTop, {
-            scroller,
-            scrollTop
+            scroller: viewport.scroller,
+            scrollTop: viewport.getScrollTop()
           })
         }
       } catch (e) {}
     }
+  }
+
+  setupHeaderScroll () {
+    const THRESHOLD = 10
+    let scrollTop
+    let lastScrollTop = 0
+    let scrollDistance
+    let scrollHeight = viewport.getScrollHeight()
+    let viewportHeight = viewport.getHeight()
+
+    let showHeader = this.router.rootPage.findMetaByPageId(this.pageId).header.show
+    if (showHeader) {
+      if (viewport.scroller === window) {
+        document.body.classList.add('with-header')
+      } else {
+        viewport.scroller.classList.add('with-header')
+      }
+    }
+
+    this.debouncer = new Debouncer(() => {
+      scrollTop = viewport.getScrollTop()
+      scrollDistance = Math.abs(scrollTop - lastScrollTop)
+
+      // ignore bouncy scrolling in iOS
+      if (scrollTop < 0 || scrollTop + viewportHeight > scrollHeight) {
+        return
+      }
+
+      if (lastScrollTop < scrollTop && scrollDistance >= THRESHOLD) {
+        if (this.isRootPage) {
+          this.appshell.header.slideUp()
+        } else {
+          this.notifyRootPage({
+            type: MESSAGE_APPSHELL_HEADER_SLIDE_UP
+          })
+        }
+      } else if (lastScrollTop > scrollTop && scrollDistance >= THRESHOLD) {
+        if (this.isRootPage) {
+          this.appshell.header.slideDown()
+        } else {
+          this.notifyRootPage({
+            type: MESSAGE_APPSHELL_HEADER_SLIDE_DOWN
+          })
+        }
+      }
+
+      lastScrollTop = scrollTop
+    })
+    viewport.scroller.addEventListener('scroll', this.debouncer, false)
+    this.debouncer.handleEvent()
   }
 
   /**
@@ -176,6 +230,10 @@ class Page {
    */
   notifyRootPage (data) {
     window.parent.postMessage(data, window.location.origin)
+  }
+
+  destroy () {
+    viewport.scroller.removeEventListener('scroll', this.debouncer, false)
   }
 
   start () {
@@ -298,8 +356,6 @@ class Page {
    * @param {Object} options.newPage if just created a new page
    */
   applyTransition (targetPageId, targetMeta, options = {}) {
-    let $els = this.getElementsInRootPage()
-
     let localMeta = this.findMetaByPageId(targetPageId)
     /**
      * priority of header.title:
@@ -325,11 +381,12 @@ class Page {
         backwardOpitons.targetPageId = targetPageId
       }
 
+      this.getElementsInRootPage().forEach(e => e.classList.remove('hide'))
       frameMoveOut(this.currentPageId, backwardOpitons)
 
       this.direction = null
       this.refreshAppShell(targetPageId, finalMeta)
-      $els.forEach(el => el.classList.remove('hide'))
+      // document.documentElement.classList.remove('mip-no-scroll')
     } else {
       // forward
       frameMoveIn(targetPageId, {
@@ -340,8 +397,12 @@ class Page {
           this.allowTransition = false
           this.currentPageMeta = finalMeta
           this.refreshAppShell(targetPageId, finalMeta)
-          // Disable scrolling of first page when iframe is covered
-          $els.forEach(el => el.classList.add('hide'))
+          /**
+           * Disable scrolling of root page when covered by an iframe
+           * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
+           */
+          // document.documentElement.classList.add('mip-no-scroll')
+          this.getElementsInRootPage().forEach(e => e.classList.add('hide'))
         }
       })
     }
@@ -369,6 +430,11 @@ class Page {
       ? this : this.children.find(child => child.pageId === pageId)
   }
 
+  /**
+   * get elements in root page, except some shared by all the pages
+   *
+   * @return {Array<HTMLElement>} elements
+   */
   getElementsInRootPage () {
     let whitelist = [
       '.mip-page-loading',
@@ -413,6 +479,9 @@ class Page {
       // when reloading root page...
       if (this.pageId === targetPageId) {
         this.pageId = NON_EXISTS_PAGE_ID
+        if (targetPage) {
+          targetPage.destroy()
+        }
         // TODO: delete DOM & trigger disconnectedCallback in root page
         this.getElementsInRootPage().forEach(el => el.parentNode && el.parentNode.removeChild(el))
       }
