@@ -5,7 +5,7 @@
 
 // only use in browser env
 
-var keywords = require('./safe-keywords')
+var keywords = require('./keywords')
 var defUtils = require('./utils/def')
 
 var sandbox = {}
