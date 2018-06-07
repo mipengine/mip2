@@ -22,7 +22,7 @@ let configPath = path.resolve(process.cwd(), cli.program.config || 'mip.config.j
 let swConf = {}
 
 if (fs.existsSync(configPath)) {
-  swConf = require(configPath).serviceWorker
+  swConf = require(configPath).serviceWorker || {}
 }
 
 generateSw({
