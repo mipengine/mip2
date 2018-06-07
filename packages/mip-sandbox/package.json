@@ -4,7 +4,8 @@
   "description": "sandbox tools for MIP project",
   "main": "lib/sandbox.js",
   "scripts": {
-    "test": "mocha test/*.spec.js"
+    "test": "mocha test/*.spec.js",
+    "release": "sh publish.sh"
   },
   "keywords": [
     "mip",
