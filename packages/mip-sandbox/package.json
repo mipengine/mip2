@@ -1,18 +1,28 @@
 {
   "name": "mip-sandbox",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "sandbox tools for MIP project",
-  "main": "index.js",
+  "main": "lib/sandbox.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/*.spec.js",
+    "release": "sh publish.sh"
   },
   "keywords": [
     "mip",
     "sandbox",
     "ast"
   ],
-  "author": "clark-t",
+  "contributors": [
+    {
+      "name": "clark-t",
+      "email": "clarktanglei@163.com"
+    }
+  ],
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mipengine/mip2/issues"
+  },
+  "homepage": "https://github.com/mipengine/mip2/blob/master/packages/mip-sandbox/README.md",
   "dependencies": {
     "escodegen": "^1.9.1",
     "esprima": "^4.0.0",

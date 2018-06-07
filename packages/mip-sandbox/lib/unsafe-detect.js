@@ -4,16 +4,18 @@
  */
 
 var detect = require('./global-detect')
-var KEYWORDS = require('./safe-keywords')
+var keywords = require('./keywords')
+var is = require('./utils/is')
 
-var WINDOW_SAFE_KEYWORDS = KEYWORDS.WINDOW_ORIGINAL_KEYWORDS
-  .concat(KEYWORDS.RESERVED_KEYWORDS)
-  .concat(KEYWORDS.WINDOW_CUSTOM_KEYWORDS)
+var WINDOW_SAFE_KEYWORDS = keywords.WINDOW_ORIGINAL
+  .concat(keywords.RESERVED)
+  .concat(keywords.WINDOW_CUSTOM)
 
 module.exports = function (code) {
   var unsafeList = []
+
   detect(code, function (node, parent, ast) {
-    if (detect.is(node, 'ThisExpression')) {
+    if (is(node, 'ThisExpression')) {
       return
     }
 
