@@ -1,5 +1,11 @@
 import event from '../../util/dom/event'
-import {createMoreButtonWrapper, createPageMask} from '../util/dom'
+import {
+  createMoreButtonWrapper,
+  createPageMask,
+  whenTransitionEnds,
+  nextFrame
+} from '../util/dom'
+import css from '../../util/dom/css'
 
 export default class Header {
   constructor (options = {}) {
@@ -88,7 +94,11 @@ export default class Header {
 
   toggleDropdown (toggle) {
     toggleInner(this.$buttonMask, toggle)
-    toggleInner(this.$buttonWrapper, toggle)
+    if (toggle) {
+      this.$buttonWrapper.classList.add('show')
+    } else {
+      this.$buttonWrapper.classList.remove('show')
+    }
   }
 
   togglePageMask (toggle) {
@@ -117,9 +127,21 @@ export default class Header {
 }
 
 function toggleInner (element, toggle) {
-  if (toggle) {
-    element.classList.add('show')
-  } else {
-    element.classList.remove('show')
-  }
+  let direction = toggle ? 'enter' : 'leave'
+  element.classList.add(`fade-${direction}`, `fade-${direction}-active`)
+  css(element, 'display', 'block')
+  // trigger layout
+  /* eslint-disable no-unused-expressions */
+  element.offsetWidth
+  /* eslint-enable no-unused-expressions */
+
+  whenTransitionEnds(element, 'transition', () => {
+    element.classList.remove(`fade-${direction}-to`, `fade-${direction}-active`)
+    css(element, 'display', toggle ? 'block' : 'none')
+  })
+
+  nextFrame(() => {
+    element.classList.add(`fade-${direction}-to`)
+    element.classList.remove(`fade-${direction}`)
+  })
 }
