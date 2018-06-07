@@ -76,7 +76,7 @@ let viewer = {
     this.page.start()
 
     // Only send at first time
-    if (win.MIP.isRootPage) {
+    if (win.MIP.MIP_ROOT_PAGE) {
       this.sendMessage('mippageload', {
         time: Date.now(),
         title: encodeURIComponent(document.title)
@@ -146,6 +146,12 @@ let viewer = {
   sendMessage (eventName, data = {}) {
     if (!win.MIP.standalone) {
       this.messager.sendMessage(eventName, data)
+    }
+  },
+
+  onMessage (eventName, callback) {
+    if (!win.MIP.standalone) {
+      this.messager.on(eventName, callback)
     }
   },
 

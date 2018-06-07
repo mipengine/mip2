@@ -23,7 +23,8 @@ import {
   MESSAGE_ROUTER_PUSH,
   MESSAGE_ROUTER_REPLACE,
   MESSAGE_APPSHELL_HEADER_SLIDE_UP,
-  MESSAGE_APPSHELL_HEADER_SLIDE_DOWN
+  MESSAGE_APPSHELL_HEADER_SLIDE_DOWN,
+  MESSAGE_TOGGLE_PAGE_MASK
 } from './const'
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
@@ -98,10 +99,14 @@ class Page {
           router.push(data.route)
         } else if (type === MESSAGE_ROUTER_REPLACE) {
           router.replace(data.route)
+        } else if (type === MESSAGE_TOGGLE_PAGE_MASK) {
+          this.appshell.header.togglePageMask(data ? data.toggle : false)
         }
       })
 
-      window.MIP.viewer.on('changeState', ({data: {state, url}}) => router.replace(url))
+      window.MIP.viewer.onMessage('changeState', ({url}) => {
+        router.replace(url)
+      })
     } else {
       // inside iframe
       router = window.parent.MIP_ROUTER
@@ -173,6 +178,10 @@ class Page {
     }
   }
 
+  /**
+   * listen to viewport.scroller, toggle header when scrolling up & down
+   *
+   */
   setupHeaderScroll () {
     const THRESHOLD = 10
     let scrollTop
@@ -181,6 +190,7 @@ class Page {
     let scrollHeight = viewport.getScrollHeight()
     let viewportHeight = viewport.getHeight()
 
+    // set `padding-top` on scroller
     let showHeader = this.router.rootPage.findMetaByPageId(this.pageId).header.show
     if (showHeader) {
       if (viewport.scroller === window) {
@@ -229,9 +239,17 @@ class Page {
    * @param {Object} data eventdata
    */
   notifyRootPage (data) {
-    window.parent.postMessage(data, window.location.origin)
+    if (this.isRootPage) {
+      window.postMessage(data, window.location.origin)
+    } else {
+      window.parent.postMessage(data, window.location.origin)
+    }
   }
 
+  /**
+   * destroy current page
+   *
+   */
   destroy () {
     viewport.scroller.removeEventListener('scroll', this.debouncer, false)
   }
@@ -251,10 +269,15 @@ class Page {
 
     // Listen message from inner iframes
     window.addEventListener('message', (e) => {
-      if (e.source.location.origin === window.location.origin) {
-        this.messageHandlers.forEach(handler => {
-          handler.call(this, e.data.type, e.data.data || {})
-        })
+      try {
+        if (e.source.location.origin === window.location.origin) {
+          this.messageHandlers.forEach(handler => {
+            handler.call(this, e.data.type, e.data.data || {})
+          })
+        }
+      } catch (e) {
+        // Message sent from SF will cause cross domain error when reading e.source.location
+        // Just ignore these messages.
       }
     }, false)
 

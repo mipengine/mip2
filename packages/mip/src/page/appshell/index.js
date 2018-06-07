@@ -72,7 +72,10 @@ export default class AppShell {
       // **Important** only allow transition happens when Back btn & <a> clicked
       this.page.allowTransition = true
       this.page.direction = 'back'
-      window.MIP_ROUTER.go(-1)
+      // SF can help to navigate by 'changeState' when standalone = false
+      if (window.MIP.standalone) {
+        window.MIP_ROUTER.go(-1)
+      }
       window.MIP.viewer.sendMessage('historyNavigate', {step: -1})
     } else if (buttonName === 'more') {
       if (this.header) {

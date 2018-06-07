@@ -333,7 +333,7 @@ export function frameMoveOut (pageId, {transition, sourceMeta, targetPageId, onC
 
 function renderMoreButton ({name, text, link} = {}) {
   if (!name || !text) {
-    return ''
+    return
   }
 
   return `
@@ -345,6 +345,10 @@ function renderMoreButton ({name, text, link} = {}) {
 
 /**
  * Create wrapper for more button in header
+ *
+ * @param {Object} options
+ * @param {Array<Object>} options.buttonGroup configures for buttonGroup. This will be ignored when xiongzhang = true
+ * @param {boolean} options.xiongzhang enables xiongzhanghao or not
  */
 export function createMoreButtonWrapper ({buttonGroup, xiongzhang} = {}) {
   if (xiongzhang) {
@@ -361,9 +365,28 @@ export function createMoreButtonWrapper ({buttonGroup, xiongzhang} = {}) {
 
   let buttonWrapper = document.createElement('div')
   buttonWrapper.classList.add('mip-shell-more-button-wrapper')
-  css(buttonWrapper, 'height', 48 * buttonGroup.length)
-  buttonWrapper.innerHTML = buttonGroup.map(button => renderMoreButton(button)).join('')
+
+  let buttonGroupHTMLArray = []
+  buttonGroup.forEach(button => {
+    let tmp = renderMoreButton(button)
+    tmp && buttonGroupHTMLArray.push(tmp)
+  })
+
+  css(buttonWrapper, 'height', 48 * buttonGroupHTMLArray.length)
+  buttonWrapper.innerHTML = buttonGroupHTMLArray.join('')
   document.body.appendChild(buttonWrapper)
 
   return {mask, buttonWrapper}
+}
+
+/**
+ * Create page mask to cover header
+ * Mainly used in dialog within iframes
+ */
+export function createPageMask () {
+  let mask = document.createElement('div')
+  mask.classList.add('mip-shell-header-mask')
+  document.body.appendChild(mask)
+
+  return mask
 }
