@@ -164,6 +164,12 @@ let viewer = {
     }
   },
 
+  onMessage (eventName, callback) {
+    if (!win.MIP.standalone) {
+      this.messager.on(eventName, callback)
+    }
+  },
+
   /**
    * Setup event-action of viewer. To handle `on="tap:xxx"`.
    */

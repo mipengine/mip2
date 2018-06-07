@@ -186,7 +186,7 @@ class Messenger {
         // console.warn('Event data %O is invalid, missing event name.', eventData)
         return
       }
-      messenger.trigger(eventData.event, [eventData.data])
+      messenger.trigger(eventData.event, eventData.data)
     }
   }
 

@@ -100,7 +100,9 @@ class Page {
         }
       })
 
-      window.MIP.viewer.on('changeState', ({data: {state, url}}) => router.replace(url))
+      window.MIP.viewer.onMessage('changeState', ({url}) => {
+        router.replace(url)
+      })
     } else {
       // inside iframe
       router = window.parent.MIP_ROUTER
@@ -200,10 +202,15 @@ class Page {
 
     // Listen message from inner iframes
     window.addEventListener('message', (e) => {
-      if (e.source.location.origin === window.location.origin) {
-        this.messageHandlers.forEach(handler => {
-          handler.call(this, e.data.type, e.data.data || {})
-        })
+      try {
+        if (e.source.location.origin === window.location.origin) {
+          this.messageHandlers.forEach(handler => {
+            handler.call(this, e.data.type, e.data.data || {})
+          })
+        }
+      } catch (e) {
+        // Message sent from SF will cause cross domain error when reading e.source.location
+        // Just ignore these messages.
       }
     }, false)
 
