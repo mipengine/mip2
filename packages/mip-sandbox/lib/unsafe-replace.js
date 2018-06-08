@@ -3,7 +3,6 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-var escodegen = require('escodegen')
 var detect = require('./global-detect')
 var keywords = require('./keywords')
 var is = require('./utils/is')
@@ -29,8 +28,8 @@ function safeThisExpression () {
   )
 }
 
-module.exports = function (code, options) {
-  var ast = detect(
+module.exports = function (code) {
+  return detect(
     code,
     function (node, parent) {
       if (is(node, 'ThisExpression')) {
@@ -48,6 +47,4 @@ module.exports = function (code, options) {
     },
     'replace'
   )
-
-  return escodegen.generate(ast, options)
 }

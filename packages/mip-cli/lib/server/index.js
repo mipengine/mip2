@@ -16,13 +16,15 @@ module.exports = class Server {
     port = 8111,
     dir,
     livereload,
-    asset = '/'
+    asset = '/',
+    ignore
   }) {
     this.port = port
     this.dir = dir
     this.livereload = livereload
     this.app = new Koa()
     this.asset = asset
+    this.ignore = ignore
   }
 
   run () {
@@ -31,7 +33,7 @@ module.exports = class Server {
       await next()
     }
 
-    let scriptMiddlewares = script({dir: this.dir, asset: this.asset})
+    let scriptMiddlewares = script({dir: this.dir, asset: this.asset, ignore: this.ignore})
     let htmlMiddlewares = html({dir: this.dir, livereload: this.livereload})
 
     this.router = new Router()

@@ -1,6 +1,6 @@
 {
   "name": "mip-sandbox",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "sandbox tools for MIP project",
   "main": "lib/sandbox.js",
   "scripts": {
@@ -24,9 +24,9 @@
   },
   "homepage": "https://github.com/mipengine/mip2/blob/master/packages/mip-sandbox/README.md",
   "dependencies": {
-    "escodegen": "^1.9.1",
     "esprima": "^4.0.0",
-    "estraverse": "^4.2.0"
+    "estraverse": "^4.2.0",
+    "source-map": "~0.6.1"
   },
   "devDependencies": {
     "chai": "^4.1.2",

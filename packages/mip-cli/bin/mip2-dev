@@ -12,6 +12,7 @@ cli.setup({
     ['-d, --dir <value>', '组件文件夹路径'],
     ['-l, --livereload', '启用调试自动刷新'],
     ['-a, --autoopen <value>', '自动打开网页'],
+    ['-i, --ignore', '忽略沙盒注入'],
     ['-c, --config <value>', 'mip-cli 配置文件路径']
   ],
   help: [

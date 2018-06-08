@@ -6,8 +6,8 @@
 const globals = require('globals')
 
 const SANDBOX_PREFIX = 'MIP.sandbox'
-const SANDBOX_WINDOW = `${SANDBOX_PREFIX}.window`
-const SANDBOX_DOCUMENT = `${SANDBOX_PREFIX}.document`
+// const SANDBOX_WINDOW = `${SANDBOX_PREFIX}.window`
+// const SANDBOX_DOCUMENT = `${SANDBOX_PREFIX}.document`
 
 const RESERVED_KEYWORDS = Array.from(new Set([
   Object.keys(globals.commonjs),
@@ -42,7 +42,7 @@ module.exports = function ({types: t}) {
     visitor: {
       Identifier (path, state) {
         let nodeName = path.node.name
-        if (nodeName == undefined) {
+        if (nodeName == null) {
           return
         }
         // 判断是否为函数定义
@@ -54,14 +54,14 @@ module.exports = function ({types: t}) {
           return
         }
 
-        if (t.isFunctionDeclaration(path.parent)
-          && path.parent.params.indexOf(path.node) > -1
+        if (t.isFunctionDeclaration(path.parent) &&
+          path.parent.params.indexOf(path.node) > -1
         ) {
           return
         }
 
-        if (t.isArrowFunctionExpression(path.parent)
-          && path.parent.params.indexOf(path.node) > -1
+        if (t.isArrowFunctionExpression(path.parent) &&
+          path.parent.params.indexOf(path.node) > -1
         ) {
           return
         }
@@ -80,15 +80,17 @@ module.exports = function ({types: t}) {
         }
 
         // 对象解构赋值
-        if (t.isProperty(path.parent, {value: path.node})
-          && t.isObjectPattern(path.parentPath.parent)
-          && path.parentPath.parent.properties.indexOf(path.parent) > -1
+        if (t.isProperty(path.parent, {value: path.node}) &&
+          t.isObjectPattern(path.parentPath.parent) &&
+          path.parentPath.parent.properties.indexOf(path.parent) > -1
         ) {
           return
         }
 
         // 数组解构赋值
-        if (t.isArrayPattern(path.parent) && path.parent.elements.indexOf(path.node) > -1) {
+        if (t.isArrayPattern(path.parent) &&
+          path.parent.elements.indexOf(path.node) > -1
+        ) {
           return
         }
 
