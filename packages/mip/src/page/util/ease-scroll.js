@@ -1,4 +1,4 @@
-import {raf} from './dom'
+import {raf} from './feature-detect'
 
 const HEADER_HEIGHT = 44
 

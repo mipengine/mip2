@@ -5,9 +5,11 @@
  * @modify wangpei07 2016-11-30
  */
 
-import resources from '../resources'
+// import resources from '../resources'
 import CustomElement from '../custom-element'
+import viewport from '../viewport'
 
+let resources = viewport.resources
 let carouselParas = {
   boxClass: 'mip-carousel-container',
   wrapBoxClass: 'mip-carousel-wrapper',

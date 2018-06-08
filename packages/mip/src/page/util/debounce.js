@@ -1,4 +1,4 @@
-import {raf} from './dom'
+import {raf} from './feature-detect'
 
 export default class Debouncer {
   constructor (callback) {

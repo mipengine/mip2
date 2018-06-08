@@ -26,6 +26,7 @@ import {
   MESSAGE_APPSHELL_HEADER_SLIDE_DOWN,
   MESSAGE_TOGGLE_PAGE_MASK
 } from './const'
+import {supportsPassives} from './util/feature-detect'
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
 import util from '../util'
@@ -94,16 +95,16 @@ class Page {
 
       window.MIP_ROUTER = router
 
+      // handle events emitted by child iframe
       this.messageHandlers.push((type, data) => {
         if (type === MESSAGE_ROUTER_PUSH) {
           router.push(data.route)
         } else if (type === MESSAGE_ROUTER_REPLACE) {
           router.replace(data.route)
-        } else if (type === MESSAGE_TOGGLE_PAGE_MASK) {
-          this.appshell.header.togglePageMask(data ? data.toggle : false)
         }
       })
 
+      // handle events emitted by BaiduResult page
       window.MIP.viewer.onMessage('changeState', ({url}) => {
         router.replace(url)
       })
@@ -117,6 +118,7 @@ class Page {
   }
 
   initAppShell () {
+    let currentPageMeta
     if (this.isRootPage) {
       /**
        * in root page, we need to:
@@ -126,7 +128,8 @@ class Page {
        */
       this.readMIPShellConfig()
 
-      this.currentPageMeta = this.findMetaByPageId(this.pageId)
+      currentPageMeta = this.findMetaByPageId(this.pageId)
+      this.currentPageMeta = currentPageMeta
 
       this.appshell = new AppShell({
         data: this.currentPageMeta
@@ -140,9 +143,12 @@ class Page {
           this.appshell.header.slideUp()
         } else if (type === MESSAGE_APPSHELL_HEADER_SLIDE_DOWN) {
           this.appshell.header.slideDown()
+        } else if (type === MESSAGE_TOGGLE_PAGE_MASK) {
+          this.appshell.header.togglePageMask(data ? data.toggle : false)
         }
       })
     } else {
+      currentPageMeta = this.router.rootPage.findMetaByPageId(this.pageId)
       /**
        * in child page:
        * 1. notify root page to refresh appshell at first time
@@ -155,7 +161,20 @@ class Page {
       })
     }
 
-    this.setupHeaderScroll()
+    let {show: showHeader, bouncy} = currentPageMeta.header
+    // set `padding-top` on scroller
+    if (showHeader) {
+      if (viewport.scroller === window) {
+        document.body.classList.add('with-header')
+      } else {
+        viewport.scroller.classList.add('with-header')
+      }
+    }
+
+    // set bouncy header
+    if (bouncy) {
+      this.setupBouncyHeader()
+    }
   }
 
   /**
@@ -182,23 +201,13 @@ class Page {
    * listen to viewport.scroller, toggle header when scrolling up & down
    *
    */
-  setupHeaderScroll () {
+  setupBouncyHeader () {
     const THRESHOLD = 10
     let scrollTop
     let lastScrollTop = 0
     let scrollDistance
     let scrollHeight = viewport.getScrollHeight()
     let viewportHeight = viewport.getHeight()
-
-    // set `padding-top` on scroller
-    let showHeader = this.router.rootPage.findMetaByPageId(this.pageId).header.show
-    if (showHeader) {
-      if (viewport.scroller === window) {
-        document.body.classList.add('with-header')
-      } else {
-        viewport.scroller.classList.add('with-header')
-      }
-    }
 
     this.debouncer = new Debouncer(() => {
       scrollTop = viewport.getScrollTop()
@@ -229,7 +238,9 @@ class Page {
 
       lastScrollTop = scrollTop
     })
-    viewport.scroller.addEventListener('scroll', this.debouncer, false)
+
+    // use passive event listener to improve scroll performance
+    viewport.scroller.addEventListener('scroll', this.debouncer, supportsPassives ? {passive: true} : false)
     this.debouncer.handleEvent()
   }
 
