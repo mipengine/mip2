@@ -50,7 +50,7 @@ body.with-header {
 
 .mip-page__iframe {
     // opacity: 0.9; // test for iOS scroll in body
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
     right: 0;
@@ -88,9 +88,10 @@ body.with-header {
 
 .mip-page-loading,
 .mip-page__iframe {
+    transform: translate3d(0, 0, 0);
     &.slide-enter,
     &.slide-leave-to {
-        transform: translate(100%, 0);
+        transform: translate3d(100%, 0, 0);
     }
 
     &.slide-enter-active,
@@ -100,21 +101,15 @@ body.with-header {
 
     &.slide-enter-to,
     &.slide-leave {
-        transform: translate(0, 0);
+        transform: translate3d(0, 0, 0);
     }
 }
 
 .mip-appshell-header-wrapper {
-    // width: 100%;
-    // height: @appshell-header-height;
-
     &.show {
         .mip-appshell-header {
             display: flex;
         }
-    }
-    &.with-iframe {
-        // position: absolute;
     }
 }
 
@@ -129,7 +124,7 @@ body.with-header {
     height: @appshell-header-height;
     line-height: @appshell-header-height;
     font-size: 16px;
-    border-bottom: 1px solid #eee;
+    // border-bottom: 1px solid #eee;
     background: white;
     padding: 0 6px 0 6px;
 
@@ -141,8 +136,8 @@ body.with-header {
         height: 30px;
         width: 30px;
         & > svg {
-            width: 20px;
-            height: 20px;
+            width: 14px;
+            height: 14px;
         }
     }
 

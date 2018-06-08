@@ -72,7 +72,7 @@ export function createLoading (pageMeta) {
   loading.id = 'mip-page-loading'
   loading.setAttribute('class', 'mip-page-loading')
   loading.innerHTML = `
-    <div class="mip-page-loading-header">
+    <div class="mip-page-loading-header mip-border mip-border-bottom">
       <span class="back-button">
         <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M769.405 977.483a68.544 68.544 0 0 1-98.121 0L254.693 553.679c-27.173-27.568-27.173-72.231 0-99.899L671.185 29.976c13.537-13.734 31.324-20.652 49.109-20.652s35.572 6.917 49.109 20.652c27.173 27.568 27.173 72.331 0 99.899L401.921 503.681l367.482 373.904c27.074 27.568 27.074 72.231 0 99.899z"/></svg>
       </span>

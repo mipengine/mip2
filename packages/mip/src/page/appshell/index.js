@@ -1,5 +1,6 @@
 import Header from './header.js'
 import {getIFrame} from '../util/dom'
+import {isPortrait} from '../util/feature-detect'
 
 export default class AppShell {
   constructor (options, page) {
@@ -70,7 +71,9 @@ export default class AppShell {
   handleClickHeaderButton (buttonName) {
     if (buttonName === 'back') {
       // **Important** only allow transition happens when Back btn & <a> clicked
-      this.page.allowTransition = true
+      if (isPortrait()) {
+        this.page.allowTransition = true
+      }
       this.page.direction = 'back'
       // SF can help to navigate by 'changeState' when standalone = false
       if (window.MIP.standalone) {
