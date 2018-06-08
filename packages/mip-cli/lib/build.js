@@ -13,7 +13,8 @@ module.exports = async function ({
   dir = CWD,
   output = 'dist',
   clean,
-  asset = '/'
+  asset = '/',
+  ignore
 } = {}) {
   output = path.resolve(CWD, output)
   dir = path.resolve(CWD, dir)
@@ -22,7 +23,8 @@ module.exports = async function ({
     dir,
     output,
     dev: false,
-    asset
+    asset,
+    ignore
   })
 
   try {

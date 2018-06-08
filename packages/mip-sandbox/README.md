@@ -48,12 +48,13 @@ console.log(result)
 //      loc: [...]
 //   }
 // ]
+
 ```
 
 ### 不安全全局变量替换
 
 ```javascript
-var replace = require('mip-sandbox/lib/unsafe-replace')
+var generate = require('mip-sandbox/lib/generate')
 
 var code = `
 var a = 1
@@ -61,15 +62,13 @@ console.log(b)
 window.console.log(a)
 `
 
-var result = replace(code)
+var result = generate(code)
 
 console.log(result)
 
-// `
 // var a = 1
 // console.log(MIP.sandbox.b)
 // MIP.sandbox.window.console.log(a)
-// `
 
 ```
 
@@ -80,12 +79,20 @@ console.log(result)
 如:
 
 ```javascript
-var output = replace(code, {
-  sourceMap: true
+var output = generate(code, {
+  sourceMap: 'name',
+  sourceMapWithCode: true
 })
 
 // output.code
 // output.map
+```
+
+对于不需要生成 sourceMap 的情况，可以使用 generate-lite 来去掉 source-map 相关代码以减小打包体积：
+
+```javascript
+var generate = require('mip-sandbox/lib/generate-lite')
+var code = generate(code)
 ```
 
 ## 沙盒替换规则
