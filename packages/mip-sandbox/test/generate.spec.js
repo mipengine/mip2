@@ -24,6 +24,7 @@ var gen = {
 describe('generate', function () {
   Object.keys(gen).forEach(function (name) {
     var generate = gen[name]
+
     describe('#' + name, function () {
       it('#this', function () {
         var code = `
