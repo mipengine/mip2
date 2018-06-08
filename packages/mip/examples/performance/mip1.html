@@ -1,0 +1,47 @@
+<!--htmlcs-disable-->
+<!DOCTYPE html>
+<html mip>
+<head>
+    <meta charset="utf-8">
+    <title>MIP 1.0 performance</title>
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      body {
+        height: 100%;
+      }
+      iframe {
+        height: 100vh;
+        border: none;
+        outline: none;
+      }
+      .performance-data {
+        position: absolute;
+        top: 200px;
+        right: 0;
+        background: #fff;
+        font-size: 12px;
+        padding: 10px;
+      }
+      .performance-data span {
+        color: red;
+        margin: 0 5px;
+      }
+    </style>
+</head>
+<body>
+  <iframe src="./iframemip1.html" width="100%" height="100%"></iframe>
+  <div class="performance-data">
+    <p>页面加载时间：<span id="load-page-time">0</span>ms</p>
+    <p>DOM ready 时间：<span id="dom-ready-time">0</span>ms</p>
+    <p>首屏加载时间：<span id="first-screen-time">0</span>ms</p>
+  </div>
+  <script src="./analyze.js"></script>
+</body>
+</html>
