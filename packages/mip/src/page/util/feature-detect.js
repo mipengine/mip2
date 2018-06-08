@@ -12,7 +12,7 @@ try {
   window.addEventListener('testPassive', null, opts)
   window.removeEventListener('testPassive', null, opts)
 } catch (e) {}
-export const supportsPassives = supportsPassiveFlag
+export const supportsPassive = supportsPassiveFlag
 
 /**
  * transition & animation end event

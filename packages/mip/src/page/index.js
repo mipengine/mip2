@@ -26,7 +26,7 @@ import {
   MESSAGE_APPSHELL_HEADER_SLIDE_DOWN,
   MESSAGE_TOGGLE_PAGE_MASK
 } from './const'
-import {supportsPassives} from './util/feature-detect'
+import {supportsPassive} from './util/feature-detect'
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
 import util from '../util'
@@ -34,6 +34,8 @@ import viewport from '../viewport'
 import Router from './router'
 import AppShell from './appshell'
 import '../styles/mip.less'
+
+let eventListenerOptions = supportsPassive ? {passive: true} : false
 
 class Page {
   constructor () {
@@ -240,7 +242,7 @@ class Page {
     })
 
     // use passive event listener to improve scroll performance
-    viewport.scroller.addEventListener('scroll', this.debouncer, supportsPassives ? {passive: true} : false)
+    viewport.scroller.addEventListener('scroll', this.debouncer, eventListenerOptions)
     this.debouncer.handleEvent()
   }
 
