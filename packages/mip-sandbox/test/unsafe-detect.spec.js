@@ -39,7 +39,7 @@ describe('unsafe-detect', function () {
     `
 
     var list = detect(code)
-    expect(list).to.be.equal(undefined)
+    expect(list).to.be.an('array').that.is.empty
   })
 
   it('#amd', function () {
@@ -50,7 +50,7 @@ describe('unsafe-detect', function () {
     `
 
     var list = detect(code)
-    expect(list).to.be.equal(undefined)
+    expect(list).to.be.an('array').that.is.empty
   })
 
   describe('#scope', function () {
