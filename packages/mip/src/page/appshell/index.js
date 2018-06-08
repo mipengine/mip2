@@ -13,7 +13,9 @@ export default class AppShell {
   }
 
   _init () {
-    this.$wrapper = document.createElement('div')
+    this.$wrapper = document.createElement('mip-fixed')
+    this.$wrapper.setAttribute('type', 'top')
+    this.$wrapper.style.height = '44px'
     this.$wrapper.classList.add('mip-appshell-header-wrapper')
     if (this.data.header && this.data.header.show) {
       this.$wrapper.classList.add('show')

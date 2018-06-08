@@ -51,6 +51,7 @@ body.with-header {
 .mip-page__iframe {
     // opacity: 0.9; // test for iOS scroll in body
     position: fixed;
+    // position: absolute;
     left: 0;
     top: 0;
     right: 0;
@@ -78,7 +79,7 @@ body.with-header {
     width: 100%;
     height: 100%;
     background: #fff;
-    z-index: 20000;
+    z-index: 20001!important;
     display: none;
 
     &.only-header {
@@ -106,6 +107,7 @@ body.with-header {
 }
 
 .mip-appshell-header-wrapper {
+    z-index: 20000!important;
     &.show {
         .mip-appshell-header {
             display: flex;
@@ -124,15 +126,15 @@ body.with-header {
     height: @appshell-header-height;
     line-height: @appshell-header-height;
     font-size: 16px;
-    // border-bottom: 1px solid #eee;
     background: white;
     padding: 0 6px 0 6px;
 
     .back-button {
+        position: absolute;
+        top: 7px;
         display: flex;
         justify-content: center;
         align-items: center;
-        position: absolute;
         height: 30px;
         width: 30px;
         & > svg {
@@ -181,7 +183,7 @@ body.with-header {
         border: 1px solid #e6e6e6;
         border-radius: 16px;
         position: absolute;
-        top: 5px;
+        top: 7px;
         right: 3px;
         overflow: hidden;
         display: flex;
@@ -209,18 +211,17 @@ body.with-header {
 
     .mip-appshell-header-button-group-standalone {
         position: absolute;
-        right: 8px;
+        top: 7px;
+        right: 0;
 
-        .button {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 30px;
-            width: 40px;
-            & > svg {
-                width: 20px;
-                height: 20px;
-            }
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 30px;
+        width: 40px;
+        & > svg {
+            width: 20px;
+            height: 20px;
         }
     }
 }

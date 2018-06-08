@@ -68,7 +68,11 @@ function hideAllIFrames () {
 }
 
 export function createLoading (pageMeta) {
-  let loading = document.createElement('div')
+  let loading = document.createElement('mip-fixed')
+  loading.style.top = '0'
+  loading.style.bottom = '0'
+  loading.style.left = '0'
+  loading.style.right = '0'
   loading.id = 'mip-page-loading'
   loading.setAttribute('class', 'mip-page-loading')
   loading.innerHTML = `

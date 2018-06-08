@@ -6,7 +6,7 @@
 import EventEmitter from './util/event-emitter'
 import rect from './util/dom/rect'
 import fn from './util/fn'
-import fixedElement from './fixed-element'
+// import fixedElement from './fixed-element'
 
 // Native objects.
 const docElem = document.documentElement
@@ -62,7 +62,7 @@ let viewport = {
       this.scroller = this.reparentBody()
     }
     rect.setScroller(this.scroller)
-    fixedElement.init()
+    // fixedElement.init()
     this.scroller.addEventListener('scroll', scrollHandle.bind(this), false)
 
     win.addEventListener('resize', resizeEvent.bind(this))

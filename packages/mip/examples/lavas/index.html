@@ -409,27 +409,52 @@ display: none;
         <script type="application/json">
         {
             "routes": [
-                {
-                    "pattern": "/index.html",
-                    "meta": {
-                        "header": {},
-                        "view": {
-                            "isIndex": true,
-                            "transition": {
-                                "mode": "slide"
-                            }
-                        },
-                        "footer": {}
-                    }
-                },
+                
                 {
                     "pattern": "*",
                     "meta": {
                         "header": {
-                            "title": "Lavas 官方网站 | PWA 相关技术",
-                            "show": true
+                            "show": true,
+                            "title": "蓝犀牛",
+                            "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
+                            "xiongzhang": true,
+                            "buttonGroup": [
+                                {
+                                    "type": "button",
+                                    "name": "subscribe",
+                                    "text": "关注",
+                                    "link": "/examples/page/tree.html"
+                                },
+                                {
+                                    "type": "button",
+                                    "name": "chat",
+                                    "text": "发消息",
+                                    "outline": true
+                                },
+                                {
+                                    "type": "icon",
+                                    "name": "search",
+                                    "text": "search",
+                                    "link": "/examples/page/tree.html"
+                                },
+                                {
+                                    "type": "dropdown",
+                                    "items": [
+                                        {
+                                            "name": "subscribe",
+                                            "text": "关注",
+                                            "link": "/examples/page/tree.html"
+                                        },
+                                        {
+                                            "name": "chat",
+                                            "text": "发消息"
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         "view": {
+                            "isIndex": false,
                             "transition": {
                                 "mode": "slide"
                             }

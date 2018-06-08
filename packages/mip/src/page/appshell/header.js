@@ -20,6 +20,7 @@ export default class Header {
     this.$el.classList.add('mip-appshell-header', 'mip-border', 'mip-border-bottom')
     this.$el.innerHTML = this.render(this.data)
     // this.$wrapper.prepend(this.$el)
+    // this.$wrapper.classList.add('mip-fixed')
     this.$wrapper.insertBefore(this.$el, this.$wrapper.firstChild)
 
     // Create mask and wrapper for more button
