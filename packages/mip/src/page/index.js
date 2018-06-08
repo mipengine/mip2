@@ -535,6 +535,10 @@ class Page {
     let targetPageId = this.cleanPageId(targetFullPath)
     let targetPage = this.getPageById(targetPageId)
 
+    if (this.currentPageId === this.pageId) {
+      this.saveScrollPosition()
+    }
+
     /**
      * reload iframe when <a mip-link> clicked even if it's already existed.
      * NOTE: forwarding or going back with browser history won't do
@@ -552,7 +556,6 @@ class Page {
       }
       // create a new iframe
       createIFrame(targetFullPath, targetPageId)
-      this.saveScrollPosition()
       this.applyTransition(targetPageId, to.meta, {newPage: true})
     } else {
       this.applyTransition(targetPageId, to.meta)
