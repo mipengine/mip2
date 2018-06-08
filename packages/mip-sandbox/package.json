@@ -26,6 +26,7 @@
   "dependencies": {
     "esprima": "^4.0.0",
     "estraverse": "^4.2.0",
+    "esutils": "^2.0.2",
     "source-map": "~0.6.1"
   },
   "devDependencies": {
