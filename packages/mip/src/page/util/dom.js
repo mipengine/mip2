@@ -5,42 +5,45 @@
 
 import css from '../../util/dom/css'
 import sandbox from '../../sandbox'
+import viewport from '../../viewport'
 
-import {MIP_IFRAME_CONTAINER} from '../const'
+import {MIP_IFRAME_CONTAINER, XIONGZHANG_MORE_BUTTON_GROUP} from '../const'
+import {raf, transitionEndEvent, animationEndEvent} from './feature-detect'
 
 let {window: sandWin, document: sandDoc} = sandbox
 let activeZIndex = 10000
 
-export function createIFrame (path, {onLoad, onError} = {}) {
-  let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${path}"]`)
+export function createIFrame (fullpath, pageId, {onLoad, onError} = {}) {
+  let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${pageId}"]`)
 
-  if (!container) {
-    container = document.createElement('iframe')
-    container.onload = () => {
-      typeof onLoad === 'function' && onLoad()
-    }
-    container.onerror = () => {
-      typeof onError === 'function' && onError()
-    }
-    // TODO: use XHR to load iframe so that we can get httpRequest.status 404
-    container.setAttribute('src', path)
-    container.setAttribute('class', MIP_IFRAME_CONTAINER)
-
-    /**
-     * Fix an iOS iframe width bug, see examples/mip1/test.html
-     * https://stackoverflow.com/questions/23083462/how-to-get-an-iframe-to-be-responsive-in-ios-safari
-     */
-    container.setAttribute('width', '100%')
-    container.setAttribute('scrolling', 'no')
-
-    container.setAttribute('data-page-id', path)
-    container.setAttribute('sandbox', 'allow-top-navigation allow-popups allow-scripts allow-forms allow-pointer-lock allow-popups-to-escape-sandbox allow-same-origin allow-modals')
-    document.body.appendChild(container)
-  } else {
-    if (typeof onLoad === 'function') {
-      onLoad()
-    }
+  // if exists, delete it first
+  if (container) {
+    container.parentNode.removeChild(container)
   }
+
+  container = document.createElement('iframe')
+  container.onload = () => {
+    typeof onLoad === 'function' && onLoad()
+  }
+  container.onerror = () => {
+    typeof onError === 'function' && onError()
+  }
+  // TODO: use XHR to load iframe so that we can get httpRequest.status 404
+  container.setAttribute('name', pageId)
+  container.setAttribute('src', fullpath)
+  container.setAttribute('class', MIP_IFRAME_CONTAINER)
+
+  /**
+   * Fix an iOS iframe width bug, see examples/mip1/test.html
+   * https://stackoverflow.com/questions/23083462/how-to-get-an-iframe-to-be-responsive-in-ios-safari
+   */
+  container.style.height = `${viewport.getHeight()}px`
+  container.setAttribute('width', '100%')
+  container.setAttribute('scrolling', 'no')
+
+  container.setAttribute('data-page-id', pageId)
+  container.setAttribute('sandbox', 'allow-top-navigation allow-popups allow-scripts allow-forms allow-pointer-lock allow-popups-to-escape-sandbox allow-same-origin allow-modals')
+  document.body.appendChild(container)
 
   return container
 }
@@ -151,33 +154,12 @@ export function addMIPCustomScript (win = window) {
 function getSandboxFunction (script) {
   /* eslint-disable no-new-func */
   return new Function('window', 'document', `
-        let {alert, close, confirm, prompt, setTimeout, setInterval, self, top} = window;
+        let {alert, close, confirm, prompt, setTimeout, setInterval, self, top} = window
 
         ${script}
     `)
   /* eslint-enable no-new-func */
 }
-
-export const inBrowser = typeof window !== 'undefined'
-
-let transitionEndEvent = 'transitionend'
-let animationEndEvent = 'animationend'
-
-if (window.ontransitionend === undefined &&
-    window.onwebkittransitionend !== undefined) {
-  transitionEndEvent = 'webkitTransitionEnd'
-}
-
-if (window.onanimationend === undefined &&
-    window.onwebkitanimationend !== undefined) {
-  animationEndEvent = 'webkitAnimationEnd'
-}
-
-export const raf = inBrowser
-  ? window.requestAnimationFrame
-    ? window.requestAnimationFrame.bind(window)
-    : setTimeout
-  : fn => fn()
 
 export function nextFrame (fn) {
   raf(() => {
@@ -329,27 +311,62 @@ export function frameMoveOut (pageId, {transition, sourceMeta, targetPageId, onC
   }
 }
 
-function clickedInEl (el, x, y) {
-  const b = el.getBoundingClientRect()
-  return x >= b.left && x <= b.right && y >= b.top && y <= b.bottom
-}
-
-export function clickedInEls (e, elements) {
-  const {clientX: x, clientY: y} = e
-  for (const el of elements) {
-    if (clickedInEl(el, x, y)) {
-      return true
-    }
+function renderMoreButton ({name, text, link} = {}) {
+  if (!name || !text) {
+    return
   }
-  return false
+
+  return `
+    <div class="mip-shell-button" mip-header-btn data-button-name="${name}">
+      ${link ? `<a mip-link href="${link}">${text}</a>` : text}
+    </div>
+  `
 }
 
 /**
- * create a <div> in iframe to retrieve current scroll top
- * https://medium.com/@dvoytenko/amp-ios-scrolling-and-position-fixed-b854a5a0d451
+ * Create wrapper for more button in header
+ *
+ * @param {Object} options
+ * @param {Array<Object>} options.buttonGroup configures for buttonGroup. This will be ignored when xiongzhang = true
+ * @param {boolean} options.xiongzhang enables xiongzhanghao or not
  */
-export function createScrollPosition () {
-  let $scrollPosition = document.createElement('div')
-  $scrollPosition.id = 'mip-page-scroll-position'
-  document.body.appendChild($scrollPosition)
+export function createMoreButtonWrapper ({buttonGroup, xiongzhang} = {}) {
+  if (xiongzhang) {
+    buttonGroup = XIONGZHANG_MORE_BUTTON_GROUP
+  }
+
+  if (!Array.isArray(buttonGroup)) {
+    return
+  }
+
+  let mask = document.createElement('div')
+  mask.classList.add('mip-shell-more-button-mask')
+  document.body.appendChild(mask)
+
+  let buttonWrapper = document.createElement('div')
+  buttonWrapper.classList.add('mip-shell-more-button-wrapper')
+
+  let buttonGroupHTMLArray = []
+  buttonGroup.forEach(button => {
+    let tmp = renderMoreButton(button)
+    tmp && buttonGroupHTMLArray.push(tmp)
+  })
+
+  css(buttonWrapper, 'height', 48 * buttonGroupHTMLArray.length)
+  buttonWrapper.innerHTML = buttonGroupHTMLArray.join('')
+  document.body.appendChild(buttonWrapper)
+
+  return {mask, buttonWrapper}
+}
+
+/**
+ * Create page mask to cover header
+ * Mainly used in dialog within iframes
+ */
+export function createPageMask () {
+  let mask = document.createElement('div')
+  mask.classList.add('mip-shell-header-mask')
+  document.body.appendChild(mask)
+
+  return mask
 }

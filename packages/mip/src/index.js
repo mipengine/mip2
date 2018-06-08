@@ -46,14 +46,6 @@ function registerCustomElement (tag, component) {
   registerElement(tag, component)
 }
 
-let standalone
-// 当前是否是独立站，这种判断方法还不太准确，判断不出
-try {
-  standalone = typeof window.top.MIP !== 'undefined'
-} catch (e) {
-  standalone = false
-}
-
 let extensions = window.MIP || []
 
 function push (extension) {
@@ -70,15 +62,25 @@ let mip = {
   hash: util.hash,
   sandbox,
   css: {},
-  standalone,
   push,
   prerenderElement: Resources.prerenderElement
 }
 
 window.MIP = mip
 
+// 当前是否是独立站，这种判断方法还不太准确，判断不出
+let standalone
+try {
+  standalone = typeof window.top.MIP !== 'undefined'
+} catch (e) {
+  standalone = false
+}
+window.MIP.standalone = standalone
+
 // init viewport
 viewport.init()
+// init resource
+viewport.resources = new Resources(viewport)
 
 // install mip1 polyfill
 mip1PolyfillInstall(mip)

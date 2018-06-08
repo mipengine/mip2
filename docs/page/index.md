@@ -63,7 +63,7 @@
 
     5. 默认情况下点击链接后会向 History 中 `push` 一条记录。如果想覆盖当前记录，可以在 `<a>` 元素上增加 `replace` 属性。
 
-    6. 通过 `data-title` 可以设置下一个页面的标题。(详情可见 MIP Shell 相关章节)
+    6. 通过 `data-title` 和 `innerHTML` 可以设置下一个页面的标题。(详情可见 MIP Shell 头部标题章节)
 
 4. 页面内元素的样式中 `z-index` 不能超过 10000，否则会引起页面切换时的样式遮盖问题。
 
@@ -108,6 +108,7 @@
 #### 配置项
 
 目前 `<mip-shell>` 支持包含一个 **基于路由** 的，**全局性** 的配置对象。其中的 `routes` 存放了各个页面及其对应的配置对象，对应关系通过 `pattern` 描述。在各个页面切换时，会通过正则匹配页面 URL 和 `pattern`，应用对应的 App Shell 配置。
+
 ```json
 {
     "routes": [
@@ -143,6 +144,11 @@
 
     指明当前页面是否需要展现头部标题栏。
 
+* header.bouncy
+    __boolean__，默认值：`true`
+
+    开启头部配合页面滚动方向进行展示隐藏效果
+
 * header.title
     __string__, 默认值：当前页面 `<title>` 中的内容
 
@@ -157,7 +163,7 @@
 
     ![MIP Shell header logo](http://boscdn.bpc.baidu.com/assets/mip2/mip-logo-2.png)
 
-* header.xiongzhanghao
+* header.xiongzhang
     __boolean__, 默认值：`false`
 
     配置站点为接入熊掌号极速服务的站点。使用熊掌号配置的站点，头部按钮不可配置，由熊掌号负责控制。因此会忽略 `header.buttonGroup` 配置项。
@@ -165,7 +171,7 @@
 * header.buttonGroup
     __Array__, 默认值：`[]`
 
-    配置头部右侧的按钮区域展开后展现的按钮及其文字，点击行为等。这个配置项是一个由对象组成的数组。__仅当 `header.xiongzhanghao` 为 `false` 或者不配置时生效。熊掌号的按钮不可配置__。
+    配置头部右侧的按钮区域展开后展现的按钮及其文字，点击行为等。这个配置项是一个由对象组成的数组。__仅当 `header.xiongzhang` 为 `false` 或者不配置时生效。熊掌号的按钮不可配置__。
 
     右侧的关闭按钮在搜索结果页中会自动展现，单独打开时不展现，不需要额外配置。
 
@@ -255,7 +261,7 @@
                     "show": false,
                     "title": "",
                     "logo": "",
-                    "xiongzhanghao": false,
+                    "xiongzhang": false,
                     "buttonGroup": []
                 },
                 "view": {
@@ -266,6 +272,44 @@
     ]
 };
 ```
+
+#### 头部标题的生效顺序
+
+MIP 页面总共有 4 处可以配置头部标题，它们的生效顺序依次是：
+
+1. `<a>` 链接中的 `data-title` 属性
+2. `<mip-shell>` 中每个配置项的 `title` 属性
+3. `<a>` 链接的 `innerHTML`
+4. 目标页面的 `<title>`
+
+举例来说，在 A 页面存在如下配置：
+
+```html
+<html>
+    <head></head>
+    <body>
+        <mip-shell>
+            <script type="application/json">
+            {
+                "routes": [
+                    {
+                        "pattern": "*",
+                        "meta": {"header": {"title": "Set in meta"}}
+                    }
+                ]
+            }
+            </script>
+
+            <a href="https://somesite.com/B.html" data-title="Set in data">Set in HTML</a>
+        </mip-shell>
+    </body>
+</html>
+```
+
+那么在打开 B 页面时， B 页面的标题(包括 loading 页面) 将会是 `"Set in data"`。
+如果没有设置 `data-title`，那么标题将是 `"Set in meta"`。
+如果 `data-title` 和 `<mip-shell>` 均没有设置，那么标题将是 `"Set in HTML"`。
+最后，如果都没有设置，将从 `<title>` 中读取，__但 loading 页面将不会展现标题__。
 
 ### 页面切换方案 (扩展)
 

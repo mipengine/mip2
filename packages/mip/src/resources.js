@@ -5,7 +5,7 @@
 
 import fn from './util/fn'
 import Gesture from './util/gesture'
-import viewport from './viewport'
+// import viewport from './viewport'
 import rect from './util/dom/rect'
 
 /**
@@ -28,7 +28,7 @@ let counter = 0
  *
  * @class
  */
-function Resources () {
+function Resources (viewport) {
   /**
    * Resources id
    * @private
@@ -173,4 +173,4 @@ Resources.prototype = {
 
 }
 
-export default new Resources()
+export default Resources

@@ -1,6 +1,7 @@
 @import "./variable.less";
+@import "./mip-base.less";
 
-body:first-of-type::before {
+body::before {
     display: block;
     content: '';
     position: fixed;
@@ -11,7 +12,7 @@ body:first-of-type::before {
     background: #fff;
     z-index: 99999;
 }
-body:first-of-type::after,
+body::after,
 .mip-page-loading::after {
     content: '';
     background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEUAAABFCAMAAAArU9sbAAAAllBMVEUAAAA5kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv98v3f9AAAAMXRSTlMA+u4H8xwSDeG7KBapjYhP28EE9jfmpJoxItOALLFuQcxrZOrXdnPHVDyVe11aSIN5drPNPgAAAx5JREFUWMOlmOl2qlAMhbcyySCiBUFRUazzVXve/+Vuk2NZTgwHvx+uVjBk2MmJopxRkvvecBn0gqXt+ecZ1DEW8654ZO3lLhTQznZHvKNj70dohrWNRDm9rYZ6Rqsiki/7uBhkiZNkg208LLyL/qGOcCkk39eD9hhm5veEZDirdsS/eRGHby9nY+lRZ1VVmJ200XfLb4mlnbmJEhzpsWegCseWEZfcFXJau3vUkX9xsZy3RvjaboJ6Zt/8vNmbK+zJWGsmKZvF/PJEg3PSb6zuMd0emE/v7hSMMGxmjgf6HI5Sr3FQC9yRsSI1qGBNSX7OnSbpjbUBNRydHo2CDbkygCo5faxoTVfnpKgzpA7XIKEW1F2oM6OeWoExyZUr2hBTJ4xALFq5wkzIGdl40xe9qWlvzsFRph20IyPNUBzp7x9LtGRE7ZcD2LGQW8L19QCLEjRBWw6keuBCxUJrRjTbZliwS+0Zchccf19PaA1/3ofNumnPimMJfl9DtGfA46HLJWpPSGcTqNAmKnCT6r7mGpP+raqG64qxW2uFxoKBcjw6vxYjlJHQiYKophfngliGVeJdgg7LqsgtXy4JsVlRI9beoMmSsM7L9cJDb1OniUAQO+nz63mYYttk/msnnVeo/ms1ydEzLpzjWgxPENH5uad1zqspuNT1ZFNB2M5LibojObxzNN9hO/59WOltfPtcqka4sVyci5pKH1bcTgr9mOzkhvl3f1LkI+BaNeVfxMtsqhWHow3ihxJkoSlWn8UcXCjEr2JrcPVX4TURs2fAv1sa+uSMCQWkmPUrubIFI/06QgXtxNvxQy58+vcAFVjMj/uhFZEKTKhxJiNT7WFIkATVMH396fgYqy7NjHk9PYqAvx/84EMc7rQNPiT8kkF9yKBTfJP73EzvgM/IuoKI3Wq5pW5NiqfyzNhY5cVNdbHe17RHfGuO1MA7Jn1dtrNWk5zo73eJ3Hg2sRgKSZA1G0JMMN4MQscwzUm4//F64oZ+0lCPS26X0k2basHcTEtsLFcWFEj86auJ1IEy5mUbD4NIF3r0bR+3lwov/gPz4J/MfidXggAAAABJRU5ErkJggg==);
@@ -35,35 +36,37 @@ body:first-of-type::after,
     }
 }
 
-body:first-of-type[mip-ready]::before,
-body:first-of-type[mip-ready]::after,
+body.mip-fixedlayer::before,
+body.mip-fixedlayer::after,
+body[mip-ready]::before,
+body[mip-ready]::after,
 .mip-page-loading.only-header::after {
     display: none;
 }
 
-body.no-scroll {
-    overflow: hidden;
+body.with-header {
+    padding-top: @appshell-header-height;
 }
 
 .mip-page__iframe {
-    position: fixed;
+    // opacity: 0.9; // test for iOS scroll in body
+    position: absolute;
     left: 0;
     top: 0;
     right: 0;
-    bottom: 0;
     border: 0;
     width: 1px;
     min-width: 100%;
-    height: 100%;
     background: #fff;
     z-index: 10000;
     display: none;
-    overflow-y: auto;
 
-    &.with-header {
-        top: @appshell-header-height;
-        height: calc(100% - 44px);
-    }
+    // &.with-header {
+    //     html.mip-html-wrapper {
+    //         padding-top: @appshell-header-height;
+    //     }
+    //     // height: calc(100% - 44px);
+    // }
 }
 
 .mip-page-loading {
@@ -85,34 +88,25 @@ body.no-scroll {
 
 .mip-page-loading,
 .mip-page__iframe {
-    &.slide-enter {
+    &.slide-enter,
+    &.slide-leave-to {
         transform: translate(100%, 0);
     }
 
-    &.slide-enter-active {
-        transition: all 0.35s ease;
-    }
-
-    &.slide-enter-to {
-        transform: translate(0, 0);
-    }
-
-    &.slide-leave {
-        transform: translate(0, 0);
-    }
-
+    &.slide-enter-active,
     &.slide-leave-active {
         transition: all 0.35s ease;
     }
 
-    &.slide-leave-to {
-        transform: translate(100%, 0);
+    &.slide-enter-to,
+    &.slide-leave {
+        transform: translate(0, 0);
     }
 }
 
 .mip-appshell-header-wrapper {
-    width: 100%;
-    height: @appshell-header-height;
+    // width: 100%;
+    // height: @appshell-header-height;
 
     &.show {
         .mip-appshell-header {
@@ -120,7 +114,7 @@ body.no-scroll {
         }
     }
     &.with-iframe {
-        position: absolute;
+        // position: absolute;
     }
 }
 
@@ -145,7 +139,7 @@ body.no-scroll {
         align-items: center;
         position: absolute;
         height: 30px;
-        width: 40px;
+        width: 30px;
         & > svg {
             width: 20px;
             height: 20px;
@@ -154,6 +148,7 @@ body.no-scroll {
 
     .mip-appshell-header-logo-title {
         margin: 0 auto;
+        max-width: 50%;
 
         .mip-appshell-header-logo,
         .mip-appshell-header-title {
@@ -167,28 +162,22 @@ body.no-scroll {
         }
 
         .mip-appshell-header-title {
-            flex: 1;
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
+            max-width: 100%;
         }
     }
 }
 
 .mip-appshell-header {
+    top: 0;
     display: none;
+    transition: transform ease 300ms;
+    transform: translate3d(0, 0, 0);
 
-    .back-button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: absolute;
-        height: 30px;
-        width: 40px;
-        & > svg {
-            width: 20px;
-            height: 20px;
-        }
+    &.slide-up {
+        transform: translate3d(0, (-@appshell-header-height), 0);
     }
 
     .mip-appshell-header-button-group {
@@ -211,8 +200,8 @@ body.no-scroll {
             height: 30px;
             width: 40px;
             & > svg {
-                width: 28px;
-                height: 28px;
+                width: 20px;
+                height: 20px;
             }
         }
 
@@ -225,8 +214,19 @@ body.no-scroll {
 
     .mip-appshell-header-button-group-standalone {
         position: absolute;
-        right: 18px;
-        top: 9px;
+        right: 8px;
+
+        .button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 30px;
+            width: 40px;
+            & > svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
     }
 }
 
@@ -239,113 +239,69 @@ body.no-scroll {
     visibility: hidden;
 }
 
-/*
-@appshell-header-dropdown-height: 30px;
+.mip-shell-more-button-mask {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 20001;
+}
 
-&-button-group {
-        display: flex;
-        align-items: center;
-        position: relative;
+.mip-shell-more-button-wrapper {
+    transition: all .35s ease;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    z-index: 20002;
+    transform: translateY(100%);
 
-        .mip-appshell-header-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 24px;
-            height: 24px;
-            margin: 0 4px;
-            a {
-                display: flex;
-            }
-        }
+    &.show {
+        transform: translateY(0);
+    }
 
-        .mip-appshell-header-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 4px;
-            width: 56px;
-            height: 25px;
-            font-size: 12px;
-            box-sizing: border-box;
-            text-align: center;
-            padding: 3px 0px;
-            line-height: 19px;
-            border-radius: 2px;
+    .mip-shell-button {
+        height: 48px;
+        line-height: 48px;
+        text-align: center;
+        .mip-border();
+        .mip-border-bottom();
 
-            &:active {
-                opacity: 0.2;
-            }
-
-            &-outlined {
-                color: #3C76FF;
-                border: 1px solid #3C76FF;
-                background: #fff;
-
-                a {
-                    color: #3C76FF;
-                    display: flex;
-                }
-            }
-
-            &-filled {
-                color: #fff;
-                border: 1px solid #3897F0;
-                background: #3897F0;
-
-                a {
-                    color: #fff;
-                    display: flex;
-                }
-            }
-        }
-
-        .mip-appshell-header-dropdown {
-            position: absolute;
-            z-index: 999999;
-            top: 20px;
-            right: 0;
-            width: 100px;
-            background: white;
-            transition: all 0.3s ease;
-            opacity: 1;
-            transform: translate(0, 0);
-            will-change: transform;
-            box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
-            display: none;
-
-            &.show {
-                display: block;
-            }
-
-            &.slide-enter {
-                transform: translate(0, -10px);
-                opacity: 0;
-            }
-            &.slide-leave-active {
-                transform: translate(0, -10px);
-                opacity: 0;
-            }
-
-            &-item {
-                height: @appshell-header-dropdown-height;
-                display: flex;
-                align-items: center;
-                text-overflow: ellipsis;
-                overflow: hidden;
-                white-space: nowrap;
-                padding: 4px 8px;
-                font-size: 14px;
-
-                &.mip-link-active {
-                    background: rgba(0,0,0,.12);
-                }
-
-                a {
-                    width: 100%;
-                    line-height: @appshell-header-dropdown-height;
-                }
-            }
+        &:last-of-type {
+            .set-border-color(transparent);
         }
     }
- */
+}
+
+.mip-shell-header-mask {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: @appshell-header-height;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 20001;
+}
+
+.mip-shell-more-button-mask,
+.mip-shell-header-mask {
+    &.fade-enter,
+    &.fade-leave-to {
+        opacity: 0;
+    }
+
+    &.fade-enter-active,
+    &.fade-leave-active {
+        transition: all 0.35s ease;
+    }
+
+    &.fade-enter-to,
+    &.fade-leave {
+        opacity: 1;
+    }
+}

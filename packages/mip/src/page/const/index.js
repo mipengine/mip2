@@ -4,18 +4,14 @@
  */
 
 export const MIP_IFRAME_CONTAINER = 'mip-page__iframe'
-export const MIP_CONTENT_IGNORE_TAG_LIST = [
-  'mip-shell',
-  'iframe'
-]
-export const MIP_ERROR_ROUTE_PATH = '/mip-error'
 export const DEFAULT_SHELL_CONFIG = {
   header: {
     title: '',
     logo: '',
     xiongzhang: false,
     buttonGroup: [],
-    show: false
+    show: false,
+    bouncy: true
   },
   view: {
     isIndex: false,
@@ -28,7 +24,30 @@ export const DEFAULT_SHELL_CONFIG = {
   footer: {}
 }
 
-export const MESSAGE_APPSHELL_REFRESH = 'appshell-refresh'
 export const MESSAGE_APPSHELL_EVENT = 'appshell-event'
 export const MESSAGE_ROUTER_PUSH = 'router-push'
 export const MESSAGE_ROUTER_REPLACE = 'router-replace'
+export const MESSAGE_APPSHELL_HEADER_SLIDE_UP = 'appshell-header-slide-up'
+export const MESSAGE_APPSHELL_HEADER_SLIDE_DOWN = 'appshell-header-slide-down'
+export const MESSAGE_TOGGLE_PAGE_MASK = 'toggle-page-mask'
+
+export const NON_EXISTS_PAGE_ID = 'non-exists-page-id'
+export const SCROLL_TO_ANCHOR_CUSTOM_EVENT = 'scroll-to-anchor'
+export const XIONGZHANG_MORE_BUTTON_GROUP = [
+  {
+    name: 'xiongzhang-forward',
+    text: '转发'
+  },
+  {
+    name: 'xiongzhang-main',
+    text: '服务首页'
+  },
+  {
+    name: 'xiongzhang-about',
+    text: '关于蓝犀牛'
+  },
+  {
+    name: 'xiongzhang-cancel',
+    text: '取消'
+  }
+]

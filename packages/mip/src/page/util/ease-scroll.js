@@ -1,16 +1,11 @@
-import {raf} from './dom'
+import {raf} from './feature-detect'
 
-export function scrollTop (height, { duration = 500, scroller = window } = {}) {
-  let top = height
-  let scrollTop = 0
-  let $scrollPosition = document.querySelector('#mip-page-scroll-position')
-  if ($scrollPosition) {
-    scrollTop = -$scrollPosition.getBoundingClientRect().top
-  } else {
-    scrollTop = document.body.scrollTop || document.documentElement.scrollTop
-  }
+const HEADER_HEIGHT = 44
 
-  if (top === scrollTop) {
+export function scrollTo (height, { duration = 500, scroller = window, scrollTop = 0 } = {}) {
+  let top = height - HEADER_HEIGHT
+
+  if (top - HEADER_HEIGHT === scrollTop) {
     return Promise.resolve()
   }
 
@@ -35,7 +30,6 @@ export function scrollTop (height, { duration = 500, scroller = window } = {}) {
         return true
       },
       () => {
-        // 防止滚动过程没滚到位
         scroll(top, scroller)
         resolve()
       }
