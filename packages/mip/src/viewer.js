@@ -16,7 +16,8 @@ import fn from './util/fn'
 import Page from './page'
 import {MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE} from './page/const'
 import Messager from './messager'
-import {supportsPassive} from './page/util/feature-detect'
+import {supportsPassive, isPortrait} from './page/util/feature-detect'
+import fixedElement from './fixed-element'
 
 /**
  * Save window.
@@ -77,6 +78,8 @@ let viewer = {
     this.page = new Page()
 
     this.page.start()
+
+    fixedElement.init()
 
     // Only send at first time
     if (win.MIP.MIP_ROOT_PAGE) {
@@ -337,8 +340,10 @@ let viewer = {
         self.sendMessage('pushState', pushMessage)
 
         if (isMipLink) {
-          // show transition
-          router.rootPage.allowTransition = true
+          // show transition only in portrait mode
+          if (isPortrait()) {
+            router.rootPage.allowTransition = true
+          }
 
           // reload page even if it's already existed
           targetRoute.meta = {

@@ -1,11 +1,9 @@
 import {raf} from './feature-detect'
 
-const HEADER_HEIGHT = 44
-
 export function scrollTo (height, { duration = 500, scroller = window, scrollTop = 0 } = {}) {
-  let top = height - HEADER_HEIGHT
+  let top = height
 
-  if (top - HEADER_HEIGHT === scrollTop) {
+  if (top === scrollTop) {
     return Promise.resolve()
   }
 
