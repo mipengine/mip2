@@ -12,6 +12,10 @@
  * @return {boolean} 判断结果
  */
 module.exports = function (node, name, props) {
+  if (!node) {
+    return false
+  }
+
   if (typeof name === 'string') {
     if (node.type !== name) {
       return false

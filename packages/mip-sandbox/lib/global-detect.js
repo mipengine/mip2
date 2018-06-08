@@ -61,6 +61,9 @@ function mark (ast) {
   //    1. function a(args) {} 中的 args
   //    2. var a = function (args) {} 中的 args
   //    3. var b = (args) => {} 中的 args
+  // 6. CatchClause
+  //    1. try {} catch (e) {} 的 e
+  //    2. 这个 e 有可能会以解构的形式去写
 
   // 无需关心的 Identifier case
   // 1. MemberExpression
@@ -147,6 +150,10 @@ function mark (ast) {
         })
       } else if (is(node, 'ClassDeclaration')) {
         node.id.isVar = true
+      } else if (is(node, 'CatchClause')) {
+        if (is(node.param, 'Identifier')) {
+          node.param.isVar = true
+        }
       } else if (is(node, 'MemberExpression')) {
         // a.b.c 的 b c 忽略
         if (is(node.property, 'Identifier') && !node.computed) {
@@ -182,7 +189,8 @@ function scope (ast, parentAst) {
 
       if (is(node, /Function/) ||
         is(node, 'BlockStatement') ||
-        is(node, 'ForStatement')
+        is(node, 'ForStatement') ||
+        is(node, 'CatchClause')
       ) {
         scope(node, parentAst.concat(ast))
         this.skip()

@@ -158,6 +158,46 @@ describe('generate', function () {
 
         expect(generate(code)).to.be.equal(format(expected))
       })
+
+      it('#CatchClause', function () {
+        var code = `
+          try {}
+          catch (e) {
+            console.log(e)
+          }
+
+          console.log(e)
+
+          try {}
+          catch ({message, code}) {
+            console.log(code)
+            console.log(message)
+          }
+
+          console.log(message)
+          console.log(code)
+        `
+
+        var expected = `
+          try {}
+          catch (e) {
+            console.log(e)
+          }
+
+          console.log(MIP.sandbox.e)
+
+          try {}
+          catch ({message, code}) {
+            console.log(code)
+            console.log(message)
+          }
+
+          console.log(MIP.sandbox.message)
+          console.log(MIP.sandbox.code)
+        `
+
+        expect(generate(code)).to.be.equal(format(expected))
+      })
     })
   })
 
