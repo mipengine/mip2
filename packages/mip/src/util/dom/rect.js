@@ -43,7 +43,7 @@ export default {
    */
   getElementRect (element) {
     let clientRect = element.getBoundingClientRect()
-    return this.get(clientRect.left, clientRect.top,
+    return this.get(clientRect.left + this.getScrollLeft(), clientRect.top + this.getScrollTop(),
       clientRect.width, clientRect.height)
   },
 

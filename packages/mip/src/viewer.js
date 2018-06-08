@@ -16,6 +16,7 @@ import fn from './util/fn'
 import Page from './page'
 import {MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE} from './page/const'
 import Messager from './messager'
+import {supportsPassive} from './page/util/feature-detect'
 
 /**
  * Save window.
@@ -24,6 +25,8 @@ import Messager from './messager'
  * @type {Object}
  */
 const win = window
+
+const eventListenerOptions = supportsPassive ? {passive: true} : false
 
 /**
  * The mip viewer.Complement native viewer, and solve the page-level problems.
@@ -237,7 +240,7 @@ let viewer = {
     wrapper.addEventListener('touchstart', e => {
       scrollTop = viewport.getScrollTop()
       scrollHeight = viewport.getScrollHeight()
-    })
+    }, eventListenerOptions)
 
     function pagemove (e) {
       scrollTop = viewport.getScrollTop()
@@ -261,7 +264,7 @@ let viewer = {
         self.sendMessage('mipscroll', {direct: 0})
       }
     }
-    wrapper.addEventListener('touchmove', event => pagemove(event))
+    wrapper.addEventListener('touchmove', event => pagemove(event), eventListenerOptions)
     wrapper.addEventListener('touchend', event => pagemove(event))
   },
 
@@ -272,7 +275,8 @@ let viewer = {
    */
   _proxyLink (page = {}) {
     let self = this
-    let {router, isRootPage, notifyRootPage} = page
+    let {router, isRootPage} = page
+    let notifyRootPage = page.notifyRootPage.bind(page)
     let httpRegexp = /^http/
     let telRegexp = /^tel:/
 
@@ -396,29 +400,6 @@ let viewer = {
   _lockBodyScroll () {
     let wrapper = viewport.scroller
     let viewportHeight = viewport.getHeight()
-    // let initialClientY = -1
-
-    // wrapper.addEventListener('touchstart', e => {
-    //   scrollTop = viewport.getScrollTop()
-    //   scrollHeight = viewport.getScrollHeight()
-    //   initialClientY = e.targetTouches[0].clientY
-    // })
-
-    // wrapper.addEventListener('touchmove', e => {
-    //   scrollTop = viewport.getScrollTop()
-    //   scrollHeight = viewport.getScrollHeight()
-    //   let clientYDistance = e.targetTouches[0].clientY - initialClientY
-    //   if (scrollTop === 0 && clientYDistance > 0) {
-    //     // element is at the top of its scroll
-    //     e.preventDefault()
-    //     return false
-    //   }
-    //   if (scrollHeight - scrollTop <= viewportHeight && clientYDistance < 0) {
-    //     // element is at the top of its scroll
-    //     e.preventDefault()
-    //     return false
-    //   }
-    // })
 
     wrapper.addEventListener('touchstart', e => {
       let scrollTop = viewport.getScrollTop()
@@ -428,7 +409,7 @@ let viewer = {
       } else if (scrollHeight - scrollTop <= viewportHeight) {
         wrapper.scrollTop = scrollTop - 1
       }
-    })
+    }, eventListenerOptions)
   }
 }
 
