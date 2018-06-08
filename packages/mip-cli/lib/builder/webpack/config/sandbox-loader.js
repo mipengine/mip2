@@ -23,7 +23,7 @@ module.exports = async function (source, map, meta) {
     let outputMap
 
     if (map) {
-      outputMap = mergeSourceMap(newMap, map)
+      outputMap = await mergeSourceMap(newMap, map)
     } else {
       outputMap = newMap
     }

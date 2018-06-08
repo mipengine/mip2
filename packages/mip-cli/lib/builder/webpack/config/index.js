@@ -45,7 +45,7 @@ module.exports = function (options) {
               babelLoader
             ]
             : [
-              // path.resolve(__dirname, 'sandbox-loader.js'),
+              path.resolve(__dirname, 'sandbox-loader.js'),
               babelLoader
             ]
         },
