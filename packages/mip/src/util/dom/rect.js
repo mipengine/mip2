@@ -5,64 +5,20 @@
 
 'use strict'
 
-/* globals pageXOffset, pageYOffset, top */
-
-import platform from '../platform'
-
 // Save the native object or method.
 let docBody = document.body
 let docElem = document.documentElement
 let round = Math.round
 
 /**
- * When page in IOS-IFRAME, scroll and rect have some bugs.
- * So we need add some elements to solve this problem.
- *
- * @inner
- * @param {boolean} isEnd Create a ending element or not.
- * @return {?HTMLElement}
- */
-function patchForIOS (isEnd) {
-  if (platform.needSpecialScroll && window !== top) {
-    let element = document.createElement('div')
-    element.style.cssText = isEnd
-      ? 'position:absolute;width:0;height:0;visibility:hidden;'
-      : 'position:absolute;top:0;left:0;width:0;height:0;visibility:hidden;'
-    docBody.appendChild(element)
-    return element
-  }
-  return null
-}
-
-/**
- * Element for getting scroll values.
- *
- * @inner
- * @type {HTMLElement}
- */
-let getterElement = patchForIOS()
-
-/**
- * Element for setting scroll values.
- *
- * @inner
- * @type {HTMLElement}
- */
-let setterElement = patchForIOS()
-
-/**
- * Element for get page height.
- *
- * @inner
- * @type {HTMLElement}
- */
-let endElement = patchForIOS(true)
-
-/**
  * Browsers have some bugs in frame of IOS, the native getBoundingClientRect() also needs to recalculate,
  * so increase the "this" module.
  */
 export default {
+
+  setScroller (scroller) {
+    this.scroller = scroller
+  },
 
   get (left, top, width, height) {
     left = round(left)
@@ -80,13 +36,6 @@ export default {
   },
 
   /**
-   * The scrollingElement
-   * @type {HTMLElement}
-   */
-  scrollingElement: document.scrollingElement || (platform.isWebkit() &&
-        docBody) || docElem,
-
-  /**
    * Get an element's rect.
    *
    * @param {HTMLElement} element element
@@ -94,7 +43,7 @@ export default {
    */
   getElementRect (element) {
     let clientRect = element.getBoundingClientRect()
-    return this.get(clientRect.left + this.getScrollLeft(), clientRect.top + this.getScrollTop(),
+    return this.get(clientRect.left, clientRect.top,
       clientRect.width, clientRect.height)
   },
 
@@ -120,9 +69,8 @@ export default {
    * @return {number}
    */
   getScrollLeft () {
-    return round(
-      (getterElement && -getterElement.getBoundingClientRect().left) ||
-        this.scrollingElement.scrollLeft || pageXOffset || 0)
+    return round(this.scroller === window ? (docBody.scrollLeft || docElem.scrollLeft)
+      : this.scroller.scrollLeft)
   },
 
   /**
@@ -131,9 +79,8 @@ export default {
    * @return {number}
    */
   getScrollTop () {
-    return round(
-      (getterElement && -getterElement.getBoundingClientRect().top) ||
-        this.scrollingElement.scrollTop || pageYOffset || 0)
+    return round(this.scroller === window ? (docBody.scrollTop || docElem.scrollTop)
+      : this.scroller.scrollTop)
   },
 
   /**
@@ -142,12 +89,7 @@ export default {
    * @param {number} top top
    */
   setScrollTop (top) {
-    if (setterElement) {
-      setterElement.style.top = top + 'px'
-      setterElement.scrollIntoView(true)
-    } else {
-      this.scrollingElement.scrollTop = top
-    }
+    this.scroller.scrollTop = top
   },
 
   /**
@@ -156,10 +98,8 @@ export default {
    * @return {number}
    */
   getScrollHeight () {
-    if (endElement && endElement !== docBody.lastElementChild) {
-      docBody.appendChild(endElement)
-    }
-    return round(endElement ? endElement.offsetTop : this.scrollingElement.scrollHeight)
+    return round(this.scroller === window ? (docBody.scrollHeight || docElem.scrollHeight)
+      : this.scroller.scrollHeight)
   },
 
   /**

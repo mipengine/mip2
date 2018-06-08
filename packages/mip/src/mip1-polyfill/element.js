@@ -6,7 +6,8 @@
 import cssLoader from '../util/dom/css-loader'
 import layout from '../layout'
 import performance from '../performance'
-import resources from '../resources'
+// import resources from '../resources'
+import viewport from '../viewport'
 import customElementsStore from '../custom-element-store'
 
 /* globals HTMLElement */
@@ -59,7 +60,7 @@ function createBaseElementProto () {
      * @private
      * @type {Object}
      */
-    this._resources = resources
+    this._resources = viewport.resources
 
     /**
      * Instantiated the custom element.

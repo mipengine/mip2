@@ -10,7 +10,8 @@ export const DEFAULT_SHELL_CONFIG = {
     logo: '',
     xiongzhang: false,
     buttonGroup: [],
-    show: false
+    show: false,
+    bouncy: true
   },
   view: {
     isIndex: false,
@@ -26,6 +27,8 @@ export const DEFAULT_SHELL_CONFIG = {
 export const MESSAGE_APPSHELL_EVENT = 'appshell-event'
 export const MESSAGE_ROUTER_PUSH = 'router-push'
 export const MESSAGE_ROUTER_REPLACE = 'router-replace'
+export const MESSAGE_APPSHELL_HEADER_SLIDE_UP = 'appshell-header-slide-up'
+export const MESSAGE_APPSHELL_HEADER_SLIDE_DOWN = 'appshell-header-slide-down'
 export const MESSAGE_TOGGLE_PAGE_MASK = 'toggle-page-mask'
 
 export const NON_EXISTS_PAGE_ID = 'non-exists-page-id'

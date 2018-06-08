@@ -45,10 +45,16 @@ export default class AppShell {
     let targetIFrame = getIFrame(targetPageId)
     if (header.show) {
       this.$wrapper.classList.add('show')
-      targetIFrame && targetIFrame.classList.add('with-header')
+      if (targetIFrame) {
+        // targetIFrame.contentWindow.document.querySelector('.mip-html-wrapper').add('with-header')
+        targetIFrame.classList.add('with-header')
+      }
     } else {
       this.$wrapper.classList.remove('show')
-      targetIFrame && targetIFrame.classList.remove('with-header')
+      if (targetIFrame) {
+        // targetIFrame.contentWindow.document.querySelector('.mip-html-wrapper').remove('with-header')
+        targetIFrame.classList.remove('with-header')
+      }
     }
 
     // redraw entire header
@@ -66,7 +72,10 @@ export default class AppShell {
       // **Important** only allow transition happens when Back btn & <a> clicked
       this.page.allowTransition = true
       this.page.direction = 'back'
-      window.MIP_ROUTER.go(-1)
+      // SF can help to navigate by 'changeState' when standalone = false
+      if (window.MIP.standalone) {
+        window.MIP_ROUTER.go(-1)
+      }
       window.MIP.viewer.sendMessage('historyNavigate', {step: -1})
     } else if (buttonName === 'more') {
       if (this.header) {

@@ -5,8 +5,10 @@
 
 import css from '../../util/dom/css'
 import sandbox from '../../sandbox'
+import viewport from '../../viewport'
 
 import {MIP_IFRAME_CONTAINER, XIONGZHANG_MORE_BUTTON_GROUP} from '../const'
+import {raf, transitionEndEvent, animationEndEvent} from './feature-detect'
 
 let {window: sandWin, document: sandDoc} = sandbox
 let activeZIndex = 10000
@@ -35,6 +37,7 @@ export function createIFrame (fullpath, pageId, {onLoad, onError} = {}) {
    * Fix an iOS iframe width bug, see examples/mip1/test.html
    * https://stackoverflow.com/questions/23083462/how-to-get-an-iframe-to-be-responsive-in-ios-safari
    */
+  container.style.height = `${viewport.getHeight()}px`
   container.setAttribute('width', '100%')
   container.setAttribute('scrolling', 'no')
 
@@ -157,27 +160,6 @@ function getSandboxFunction (script) {
     `)
   /* eslint-enable no-new-func */
 }
-
-export const inBrowser = typeof window !== 'undefined'
-
-let transitionEndEvent = 'transitionend'
-let animationEndEvent = 'animationend'
-
-if (window.ontransitionend === undefined &&
-    window.onwebkittransitionend !== undefined) {
-  transitionEndEvent = 'webkitTransitionEnd'
-}
-
-if (window.onanimationend === undefined &&
-    window.onwebkitanimationend !== undefined) {
-  animationEndEvent = 'webkitAnimationEnd'
-}
-
-export const raf = inBrowser
-  ? window.requestAnimationFrame
-    ? window.requestAnimationFrame.bind(window)
-    : setTimeout
-  : fn => fn()
 
 export function nextFrame (fn) {
   raf(() => {
