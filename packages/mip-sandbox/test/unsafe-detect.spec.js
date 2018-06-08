@@ -3,15 +3,15 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
+/* globals describe, it */
 var chai = require('chai')
 var detect = require('../lib/unsafe-detect')
 var expect = chai.expect
 
-function printNames(nodes) {
+function printNames (nodes) {
   return nodes.map(function (node) {
     return node.name
-  })
-  .join('-')
+  }).join('-')
 }
 
 describe('unsafe-detect', function () {
@@ -39,7 +39,7 @@ describe('unsafe-detect', function () {
     `
 
     var list = detect(code)
-    expect(list).to.be.undefined
+    expect(list).to.be.equal(undefined)
   })
 
   it('#amd', function () {
@@ -50,7 +50,7 @@ describe('unsafe-detect', function () {
     `
 
     var list = detect(code)
-    expect(list).to.be.undefined
+    expect(list).to.be.equal(undefined)
   })
 
   describe('#scope', function () {
@@ -63,21 +63,68 @@ describe('unsafe-detect', function () {
           console.log(d)
           console.log(e)
           console.log(f)
+          console.log(g)
+          console.log(h)
+          console.log(i)
+          console.log(j)
+          console.log(k)
+          console.log(l)
+          console.log(m)
+          console.log(n)
+
 
           if (true) {
-            var d = 2
-            let e = 3
-            function f() {}
+            var a = 1
+            let b = 1
+            function c(d) {
+              e = 1
+              var f = 1
+
+              console.log(a)
+              console.log(b)
+              console.log(c)
+              console.log(d)
+              console.log(e)
+              console.log(f)
+              console.log(g)
+              console.log(h)
+              console.log(i)
+              console.log(j)
+              console.log(k)
+              console.log(l)
+              console.log(m)
+              console.log(n)
+            }
           }
         })()
 
-        var a = 1
-        function b() {}
-        let c = 2
+        var g = 1
+        function h() {}
+        let i = 1
+        class j extends k.l.m {
+
+        }
+
+        n = 1
+
+        console.log(a)
+        console.log(b)
+        console.log(c)
+        console.log(d)
+        console.log(e)
+        console.log(f)
+        console.log(g)
+        console.log(h)
+        console.log(i)
+        console.log(j)
+        console.log(k)
+        console.log(l)
+        console.log(m)
+        console.log(n)
       `
 
       var list = detect(code)
-      expect(printNames(list)).to.be.equal('e')
+      expect(printNames(list)).to.be.equal('b-d-e-f-k-l-m-n-e-e-k-l-m-n-k-n-a-b-c-d-e-f-k-l-m-n')
     })
 
     it('for statement', function () {
@@ -139,10 +186,129 @@ describe('unsafe-detect', function () {
 
     it('function', function () {
       var code = `
-        function a(b) {
+        function a(b, {c: d}, ...e) {
+          console.log(a)
+          console.log(b)
+          console.log(c)
+          console.log(d)
+          console.log(e)
+          console.log(f)
+          console.log(g)
+          console.log(n)
+          console.log(o)
 
+          function f(g) {}
         }
+
+        const h = i => i.j()
+        var k = {
+          l(m) {
+            console.log(a)
+            console.log(b)
+            console.log(c)
+            console.log(d)
+            console.log(e)
+            console.log(f)
+            console.log(g)
+            console.log(h)
+            console.log(i)
+            console.log(j)
+            console.log(k)
+            console.log(l)
+            console.log(m)
+            console.log(n)
+            console.log(o)
+          }
+        }
+
+        var n = function o() {}
+
+        console.log(n)
+        console.log(o)
       `
+
+      var list = detect(code)
+      expect(printNames(list)).to.be.equal('c-g-o-b-c-d-e-f-g-i-j-l-o-o')
     })
+
+    it('class', function () {
+      var code = `
+        class a extends b {
+          c({d}, [e, f, ...g], ...h) {
+            console.log(a)
+            console.log(b)
+            console.log(c)
+            console.log(d)
+            console.log(e)
+            console.log(f)
+            console.log(g)
+            console.log(h)
+            console.log(i)
+            console.log(j)
+            console.log(k)
+            console.log(l)
+          }
+
+          i({j = 1, k: {l = 1}}) {
+            console.log(a)
+            console.log(b)
+            console.log(c)
+            console.log(d)
+            console.log(e)
+            console.log(f)
+            console.log(g)
+            console.log(h)
+            console.log(i)
+            console.log(j)
+            console.log(k)
+            console.log(l)
+          }
+        }
+
+        console.log(a)
+        console.log(b)
+        console.log(c)
+        console.log(d)
+        console.log(e)
+        console.log(f)
+        console.log(g)
+        console.log(h)
+        console.log(i)
+        console.log(j)
+        console.log(k)
+        console.log(l)
+      `
+
+      var list = detect(code)
+      expect(printNames(list)).to.be.equal('b-b-c-i-j-k-l-b-c-d-e-f-g-h-i-k-b-c-d-e-f-g-h-i-j-k-l')
+    })
+  })
+
+  it('#computed', function () {
+    var code = `
+      var a = b[c][d.e[f]].g[h()]
+      var i = {
+        [j[k].l()]: function j() {}
+      }
+    `
+    var list = detect(code)
+    expect(printNames(list)).to.be.equal('b-c-d-f-h-j-k')
+  })
+
+  it('#template string', function () {
+    /* eslint-disable */
+    var code = 'var a = `bcdef${g}hijk${l.m[n.o][p].q["r"]}`'
+    /* eslint-enable */
+    var list = detect(code)
+    expect(printNames(list)).to.be.equal('g-l-n-p')
+  })
+
+  it('#object', function () {
+    var code = `
+      var a = {b}
+      var c = {c}
+    `
+    var list = detect(code)
+    expect(printNames(list)).to.be.equal('b')
   })
 })

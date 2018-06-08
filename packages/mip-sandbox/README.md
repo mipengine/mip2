@@ -48,12 +48,13 @@ console.log(result)
 //      loc: [...]
 //   }
 // ]
+
 ```
 
 ### 不安全全局变量替换
 
 ```javascript
-var replace = require('mip-sandbox/lib/unsafe-replace')
+var generate = require('mip-sandbox/lib/generate')
 
 var code = `
 var a = 1
@@ -61,15 +62,13 @@ console.log(b)
 window.console.log(a)
 `
 
-var result = replace(code)
+var result = generate(code)
 
 console.log(result)
 
-// `
 // var a = 1
 // console.log(MIP.sandbox.b)
 // MIP.sandbox.window.console.log(a)
-// `
 
 ```
 
@@ -80,12 +79,20 @@ console.log(result)
 如:
 
 ```javascript
-var output = replace(code, {
-  sourceMap: true
+var output = generate(code, {
+  sourceMap: 'name',
+  sourceMapWithCode: true
 })
 
 // output.code
 // output.map
+```
+
+对于不需要生成 sourceMap 的情况，可以使用 generate-lite 来去掉 source-map 相关代码以减小打包体积：
+
+```javascript
+var generate = require('mip-sandbox/lib/generate-lite')
+var code = generate(code)
 ```
 
 ## 沙盒替换规则
@@ -137,7 +144,7 @@ MIP.sandbox.this = function (that) {
 以下变量是 MIP sandbox 暴露给用户可直接使用的全局变量，后续会根据实际需要进行增加或减少：
 
 ```javascript
-var WINDOW_ORIGINAL_KEYWORDS = [
+var WINDOW_ORIGINAL = [
   'Array',
   'ArrayBuffer',
   'Blob',
@@ -241,13 +248,13 @@ var WINDOW_ORIGINAL_KEYWORDS = [
   'webkitRequestAnimationFrame'
 ]
 
-var WINDOW_CUSTOM_KEYWORDS = [
+var WINDOW_CUSTOM = [
   'document',
   'window',
   'MIP'
 ]
 
-var RESERVED_KEYWORDS = [
+var RESERVED = [
   'arguments',
   'MIP',
   'require',
@@ -256,7 +263,7 @@ var RESERVED_KEYWORDS = [
   'define'
 ]
 
-var DOCUMENT_ORIGINAL_KEYWORDS = [
+var DOCUMENT_ORIGINAL = [
   'head',
   'body',
   'title',
@@ -272,6 +279,7 @@ var DOCUMENT_ORIGINAL_KEYWORDS = [
   'querySelector',
   'querySelectorAll'
 ]
+
 
 ```
 

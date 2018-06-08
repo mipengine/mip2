@@ -5,30 +5,34 @@
 
 // only use in browser env
 
-var keywords = require('./safe-keywords')
+var keywords = require('./keywords')
 var defUtils = require('./utils/def')
-var safeThis = require('./utils/safe-this')
-
-var WINDOW_ORIGINAL_KEYWORDS = keywords.WINDOW_ORIGINAL_KEYWORDS
-var DOCUMENT_ORIGINAL_KEYWORDS = keywords.DOCUMENT_ORIGINAL_KEYWORDS
-
-var def = defUtils.def
-var defs = defUtils.defs
 
 var sandbox = {}
 
-defs(sandbox, WINDOW_ORIGINAL_KEYWORDS)
-
-def(sandbox, 'window', sandbox)
+defUtils.defs(sandbox, keywords.WINDOW_ORIGINAL)
+defUtils.def(sandbox, 'window', sandbox)
 
 var sandboxDocument = {}
 
-defs(sandboxDocument, DOCUMENT_ORIGINAL_KEYWORDS, {host: document, setter: true})
+defUtils.defs(sandboxDocument, keywords.DOCUMENT_ORIGINAL, {host: document, setter: true})
+defUtils.def(sandbox, 'document', sandboxDocument)
+defUtils.def(sandbox, 'MIP', window.MIP)
 
-def(sandbox, 'document', sandboxDocument)
-
-def(sandbox, 'MIP', window.MIP)
-
-def(sandbox, 'this', safeThis(sandbox))
+/**
+ * this sandbox，避免诸如
+ *
+ * (function () {
+ *   console.log(this)
+ * }).call(undefined)
+ *
+ * 上面的 this 指向 window
+ *
+ * @param {Object} that this
+ * @return {Object} safe this
+ */
+defUtils.def(sandbox, 'this', function (that) {
+  return that === window ? sandbox : that === document ? sandbox.document : that
+})
 
 module.exports = sandbox

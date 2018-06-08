@@ -1,12 +1,8 @@
-import {inBrowser} from './dom'
-
-export const supportsPushState = inBrowser &&
-    window.history &&
+export const supportsPushState = window.history &&
     'pushState' in window.history
 
 // use User Timing api (if present) for more accurate key precision
-const Time = inBrowser &&
-    window.performance &&
+const Time = window.performance &&
     window.performance.now
   ? window.performance
   : Date

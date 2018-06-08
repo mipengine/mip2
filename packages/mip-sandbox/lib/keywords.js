@@ -3,7 +3,7 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-var WINDOW_ORIGINAL_KEYWORDS = [
+var WINDOW_ORIGINAL = [
   'Array',
   'ArrayBuffer',
   'Blob',
@@ -107,13 +107,13 @@ var WINDOW_ORIGINAL_KEYWORDS = [
   'webkitRequestAnimationFrame'
 ]
 
-var WINDOW_CUSTOM_KEYWORDS = [
+var WINDOW_CUSTOM = [
   'document',
   'window',
   'MIP'
 ]
 
-var RESERVED_KEYWORDS = [
+var RESERVED = [
   'arguments',
   'MIP',
   'require',
@@ -122,7 +122,7 @@ var RESERVED_KEYWORDS = [
   'define'
 ]
 
-var DOCUMENT_ORIGINAL_KEYWORDS = [
+var DOCUMENT_ORIGINAL = [
   'head',
   'body',
   'title',
@@ -140,8 +140,8 @@ var DOCUMENT_ORIGINAL_KEYWORDS = [
 ]
 
 module.exports = {
-  WINDOW_ORIGINAL_KEYWORDS: WINDOW_ORIGINAL_KEYWORDS,
-  WINDOW_CUSTOM_KEYWORDS: WINDOW_CUSTOM_KEYWORDS,
-  DOCUMENT_ORIGINAL_KEYWORDS: DOCUMENT_ORIGINAL_KEYWORDS,
-  RESERVED_KEYWORDS: RESERVED_KEYWORDS
+  WINDOW_ORIGINAL: WINDOW_ORIGINAL,
+  WINDOW_CUSTOM: WINDOW_CUSTOM,
+  DOCUMENT_ORIGINAL: DOCUMENT_ORIGINAL,
+  RESERVED: RESERVED
 }

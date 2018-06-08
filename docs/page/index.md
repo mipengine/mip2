@@ -144,6 +144,11 @@
 
     指明当前页面是否需要展现头部标题栏。
 
+* header.bouncy
+    __boolean__，默认值：`true`
+
+    开启头部配合页面滚动方向进行展示隐藏效果
+
 * header.title
     __string__, 默认值：当前页面 `<title>` 中的内容
 

@@ -58,14 +58,17 @@ let viewer = {
 
     // add normal scroll class to body. except ios in iframe.
     // Patch for ios+iframe is default in mip.css
-    if (!platform.needSpecialScroll) {
-      document.documentElement.classList.add('mip-i-android-scroll')
-      document.body.classList.add('mip-i-android-scroll')
-    }
+    // if (!platform.needSpecialScroll) {
+    //   document.documentElement.classList.add('mip-i-android-scroll')
+    //   document.body.classList.add('mip-i-android-scroll')
+    // }
 
     if (this.isIframed) {
       this.patchForIframe()
       this._viewportScroll()
+      if (platform.isIos()) {
+        this._lockBodyScroll()
+      }
     }
 
     this.page = new Page()
@@ -114,24 +117,6 @@ let viewer = {
         }
       })
     }
-
-    /**
-     * create a <html> wrapper in iframe
-     * https://hackernoon.com/amp-ios-scrolling-and-position-fixed-redo-the-wrapper-approach-8874f0ee7876
-     */
-    const wrapper = document.createElement('html')
-    // Setup classes and styles.
-    wrapper.className = document.documentElement.className
-    document.documentElement.className = 'mip-html-embeded'
-    wrapper.classList.add('mip-html-wrapper')
-    // Attach wrapper straight inside the document root.
-    document.documentElement.appendChild(wrapper)
-    // Reparent the body.
-    const body = document.body
-    wrapper.appendChild(body)
-    Object.defineProperty(document, 'body', {
-      get: () => body
-    })
   },
 
   /**
@@ -161,6 +146,12 @@ let viewer = {
   sendMessage (eventName, data = {}) {
     if (!win.MIP.standalone) {
       this.messager.sendMessage(eventName, data)
+    }
+  },
+
+  onMessage (eventName, callback) {
+    if (!win.MIP.standalone) {
+      this.messager.on(eventName, callback)
     }
   },
 
@@ -241,14 +232,14 @@ let viewer = {
     // let lastDirect;
     let scrollHeight = viewport.getScrollHeight()
     let lastScrollTop = 0
-    let wrapper = (platform.needSpecialScroll ? document.body : win)
+    let wrapper = viewport.scroller
 
-    wrapper.addEventListener('touchstart', event => {
+    wrapper.addEventListener('touchstart', e => {
       scrollTop = viewport.getScrollTop()
       scrollHeight = viewport.getScrollHeight()
     })
 
-    function pagemove () {
+    function pagemove (e) {
       scrollTop = viewport.getScrollTop()
       scrollHeight = viewport.getScrollHeight()
       if (scrollTop > 0 && scrollTop < scrollHeight) {
@@ -270,8 +261,8 @@ let viewer = {
         self.sendMessage('mipscroll', {direct: 0})
       }
     }
-    wrapper.addEventListener('touchmove', event => pagemove())
-    wrapper.addEventListener('touchend', event => pagemove())
+    wrapper.addEventListener('touchmove', event => pagemove(event))
+    wrapper.addEventListener('touchend', event => pagemove(event))
   },
 
   /**
@@ -394,6 +385,50 @@ let viewer = {
       title: this.getAttribute('data-title') || parentNode.getAttribute('title') || undefined,
       defaultTitle: this.innerText.trim().split('\n')[0] || undefined
     }
+  },
+
+  /**
+   * lock body scroll in iOS
+   *
+   * https://medium.com/jsdownunder/locking-body-scroll-for-all-devices-22def9615177
+   * http://blog.christoffer.online/2015-06-10-six-things-i-learnt-about-ios-rubberband-overflow-scrolling/
+   */
+  _lockBodyScroll () {
+    let wrapper = viewport.scroller
+    let viewportHeight = viewport.getHeight()
+    // let initialClientY = -1
+
+    // wrapper.addEventListener('touchstart', e => {
+    //   scrollTop = viewport.getScrollTop()
+    //   scrollHeight = viewport.getScrollHeight()
+    //   initialClientY = e.targetTouches[0].clientY
+    // })
+
+    // wrapper.addEventListener('touchmove', e => {
+    //   scrollTop = viewport.getScrollTop()
+    //   scrollHeight = viewport.getScrollHeight()
+    //   let clientYDistance = e.targetTouches[0].clientY - initialClientY
+    //   if (scrollTop === 0 && clientYDistance > 0) {
+    //     // element is at the top of its scroll
+    //     e.preventDefault()
+    //     return false
+    //   }
+    //   if (scrollHeight - scrollTop <= viewportHeight && clientYDistance < 0) {
+    //     // element is at the top of its scroll
+    //     e.preventDefault()
+    //     return false
+    //   }
+    // })
+
+    wrapper.addEventListener('touchstart', e => {
+      let scrollTop = viewport.getScrollTop()
+      let scrollHeight = viewport.getScrollHeight()
+      if (scrollTop === 0) {
+        wrapper.scrollTop = 1
+      } else if (scrollHeight - scrollTop <= viewportHeight) {
+        wrapper.scrollTop = scrollTop - 1
+      }
+    })
   }
 }
 
