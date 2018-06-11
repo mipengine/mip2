@@ -11,40 +11,59 @@ import {
   getIFrame,
   frameMoveIn,
   frameMoveOut,
-  createLoading,
-  createScrollPosition
+  createLoading
 } from './util/dom'
-import {scrollTop} from './util/ease-scroll'
+import Debouncer from './util/debounce'
+import {scrollTo} from './util/ease-scroll'
 import {
+  NON_EXISTS_PAGE_ID,
+  SCROLL_TO_ANCHOR_CUSTOM_EVENT,
   DEFAULT_SHELL_CONFIG,
   MESSAGE_APPSHELL_EVENT,
   MESSAGE_ROUTER_PUSH,
-  MESSAGE_ROUTER_REPLACE
+  MESSAGE_ROUTER_REPLACE,
+  MESSAGE_APPSHELL_HEADER_SLIDE_UP,
+  MESSAGE_APPSHELL_HEADER_SLIDE_DOWN,
+  MESSAGE_TOGGLE_PAGE_MASK
 } from './const'
+import {supportsPassive} from './util/feature-detect'
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
 import util from '../util'
+import viewport from '../viewport'
 import Router from './router'
 import AppShell from './appshell'
 import '../styles/mip.less'
 
+/**
+ * use passive event listeners if supported
+ * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
+ */
+const eventListenerOptions = supportsPassive ? {passive: true} : false
+
 class Page {
   constructor () {
-    if (window.parent && window.parent.MIP_ROOT_PAGE) {
-      this.isRootPage = false
-    } else {
+    try {
+      if (window.parent && window.parent.MIP_ROOT_PAGE) {
+        this.isRootPage = false
+      } else {
+        window.MIP_ROOT_PAGE = true
+        this.isRootPage = true
+      }
+    } catch (e) {
+      // Cross domain error means root page
       window.MIP_ROOT_PAGE = true
       this.isRootPage = true
     }
     this.pageId = undefined
 
     // root page
-    this.appshell = null
+    this.appshell = undefined
     this.children = []
-    this.currentPageId = null
+    this.currentPageId = undefined
     this.messageHandlers = []
     this.currentPageMeta = {}
-    this.direction = null
+    this.direction = undefined
     this.appshellRoutes = []
     this.appshellCache = {}
 
@@ -55,11 +74,22 @@ class Page {
     this.allowTransition = false
   }
 
+  /**
+   * clean pageId
+   *
+   * @param {string} pageId pageId
+   * @return {string} cleaned pageId
+   */
+  cleanPageId (pageId) {
+    let hashReg = /#.*$/
+    return pageId && pageId.replace(hashReg, '')
+  }
+
   initRouter () {
     let router
 
     // generate pageId
-    this.pageId = window.location.href
+    this.pageId = this.cleanPageId(window.location.href)
     this.currentPageId = this.pageId
 
     if (this.isRootPage) {
@@ -71,6 +101,7 @@ class Page {
 
       window.MIP_ROUTER = router
 
+      // handle events emitted by child iframe
       this.messageHandlers.push((type, data) => {
         if (type === MESSAGE_ROUTER_PUSH) {
           router.push(data.route)
@@ -79,7 +110,10 @@ class Page {
         }
       })
 
-      window.MIP.viewer.on('changeState', ({data: {state, url}}) => router.replace(url))
+      // handle events emitted by BaiduResult page
+      window.MIP.viewer.onMessage('changeState', ({url}) => {
+        router.replace(url)
+      })
     } else {
       // inside iframe
       router = window.parent.MIP_ROUTER
@@ -90,6 +124,7 @@ class Page {
   }
 
   initAppShell () {
+    let currentPageMeta
     if (this.isRootPage) {
       /**
        * in root page, we need to:
@@ -99,7 +134,8 @@ class Page {
        */
       this.readMIPShellConfig()
 
-      this.currentPageMeta = this.findMetaByPageId(this.pageId)
+      currentPageMeta = this.findMetaByPageId(this.pageId)
+      this.currentPageMeta = currentPageMeta
 
       this.appshell = new AppShell({
         data: this.currentPageMeta
@@ -107,7 +143,25 @@ class Page {
 
       // Create loading div
       createLoading(this.currentPageMeta)
+
+      this.messageHandlers.push((type, data) => {
+        if (type === MESSAGE_APPSHELL_HEADER_SLIDE_UP) {
+          this.appshell.header.slideUp()
+        } else if (type === MESSAGE_APPSHELL_HEADER_SLIDE_DOWN) {
+          this.appshell.header.slideDown()
+        } else if (type === MESSAGE_TOGGLE_PAGE_MASK) {
+          this.appshell.header.togglePageMask(data ? data.toggle : false)
+        }
+      })
+
+      // recaculate all the iframes' height
+      viewport.on('resize', () => {
+        document.querySelectorAll('.mip-page__iframe').forEach($el => {
+          $el.style.height = `${viewport.getHeight()}px`
+        })
+      })
     } else {
+      currentPageMeta = this.router.rootPage.findMetaByPageId(this.pageId)
       /**
        * in child page:
        * 1. notify root page to refresh appshell at first time
@@ -118,9 +172,21 @@ class Page {
           customEmit(window, event.name, event.data)
         }
       })
+    }
 
-      // create a position div
-      createScrollPosition()
+    let {show: showHeader, bouncy} = currentPageMeta.header
+    // set `padding-top` on scroller
+    if (showHeader) {
+      if (viewport.scroller === window) {
+        document.body.classList.add('with-header')
+      } else {
+        viewport.scroller.classList.add('with-header')
+      }
+    }
+
+    // set bouncy header
+    if (bouncy) {
+      this.setupBouncyHeader()
     }
   }
 
@@ -131,14 +197,64 @@ class Page {
    */
   scrollToHash (hash) {
     if (hash) {
-      let $hash = document.querySelector(decodeURIComponent(hash))
-      if ($hash) {
-        // scroll to current hash
-        scrollTop($hash.offsetTop, {
-          scroller: this.isRootPage ? window : window.document.body
-        })
-      }
+      try {
+        let $hash = document.querySelector(decodeURIComponent(hash))
+        if ($hash) {
+          // scroll to current hash
+          scrollTo($hash.offsetTop, {
+            scroller: viewport.scroller,
+            scrollTop: viewport.getScrollTop()
+          })
+        }
+      } catch (e) {}
     }
+  }
+
+  /**
+   * listen to viewport.scroller, toggle header when scrolling up & down
+   *
+   */
+  setupBouncyHeader () {
+    const THRESHOLD = 10
+    let scrollTop
+    let lastScrollTop = 0
+    let scrollDistance
+    let scrollHeight = viewport.getScrollHeight()
+    let viewportHeight = viewport.getHeight()
+
+    this.debouncer = new Debouncer(() => {
+      scrollTop = viewport.getScrollTop()
+      scrollDistance = Math.abs(scrollTop - lastScrollTop)
+
+      // ignore bouncy scrolling in iOS
+      if (scrollTop < 0 || scrollTop + viewportHeight > scrollHeight) {
+        return
+      }
+
+      if (lastScrollTop < scrollTop && scrollDistance >= THRESHOLD) {
+        if (this.isRootPage) {
+          this.appshell.header.slideUp()
+        } else {
+          this.notifyRootPage({
+            type: MESSAGE_APPSHELL_HEADER_SLIDE_UP
+          })
+        }
+      } else if (lastScrollTop > scrollTop && scrollDistance >= THRESHOLD) {
+        if (this.isRootPage) {
+          this.appshell.header.slideDown()
+        } else {
+          this.notifyRootPage({
+            type: MESSAGE_APPSHELL_HEADER_SLIDE_DOWN
+          })
+        }
+      }
+
+      lastScrollTop = scrollTop
+    })
+
+    // use passive event listener to improve scroll performance
+    viewport.scroller.addEventListener('scroll', this.debouncer, eventListenerOptions)
+    this.debouncer.handleEvent()
   }
 
   /**
@@ -147,7 +263,19 @@ class Page {
    * @param {Object} data eventdata
    */
   notifyRootPage (data) {
-    window.parent.postMessage(data, window.location.origin)
+    if (this.isRootPage) {
+      window.postMessage(data, window.location.origin)
+    } else {
+      window.parent.postMessage(data, window.location.origin)
+    }
+  }
+
+  /**
+   * destroy current page
+   *
+   */
+  destroy () {
+    viewport.scroller.removeEventListener('scroll', this.debouncer, false)
   }
 
   start () {
@@ -165,10 +293,15 @@ class Page {
 
     // Listen message from inner iframes
     window.addEventListener('message', (e) => {
-      if (e.source.location.origin === window.location.origin) {
-        this.messageHandlers.forEach(handler => {
-          handler.call(this, e.data.type, e.data.data || {})
-        })
+      try {
+        if (e.source.location.origin === window.location.origin) {
+          this.messageHandlers.forEach(handler => {
+            handler.call(this, e.data.type, e.data.data || {})
+          })
+        }
+      } catch (e) {
+        // Message sent from SF will cause cross domain error when reading e.source.location
+        // Just ignore these messages.
       }
     }, false)
 
@@ -177,6 +310,9 @@ class Page {
 
     // scroll to current hash if exists
     this.scrollToHash(window.location.hash)
+    window.addEventListener(SCROLL_TO_ANCHOR_CUSTOM_EVENT, (e) => {
+      this.scrollToHash(e.detail[0])
+    })
   }
 
   /**
@@ -244,6 +380,7 @@ class Page {
         }
       }
     }
+
     return Object.assign({}, DEFAULT_SHELL_CONFIG)
   }
 
@@ -258,6 +395,20 @@ class Page {
   }
 
   /**
+   * save scroll position in root page
+   */
+  saveScrollPosition () {
+    this.rootPageScrollPosition = viewport.getScrollTop()
+  }
+
+  /**
+   * restore scroll position in root page
+   */
+  restoreScrollPosition () {
+    viewport.scroller.scrollTo(0, this.rootPageScrollPosition)
+  }
+
+  /**
    * apply transition effect to relative two pages
    *
    * @param {string} targetPageId targetPageId
@@ -266,15 +417,15 @@ class Page {
    * @param {Object} options.newPage if just created a new page
    */
   applyTransition (targetPageId, targetMeta, options = {}) {
-    // Disable scrolling of first page when iframe is covered
-    if (targetPageId === this.pageId) {
-      document.body.classList.remove('no-scroll')
-    } else {
-      document.body.classList.add('no-scroll')
-    }
-
     let localMeta = this.findMetaByPageId(targetPageId)
-    let finalMeta = util.fn.extend(true, {}, localMeta, targetMeta)
+    /**
+     * priority of header.title:
+     * 1. <a mip-link data-title>
+     * 2. <mip-shell> route.meta.header.title
+     * 3. <a mip-link></a> innerText
+     */
+    let innerTitle = {title: targetMeta.defaultTitle || undefined}
+    let finalMeta = util.fn.extend(true, innerTitle, localMeta, targetMeta)
 
     if (targetPageId === this.pageId || this.direction === 'back') {
       // backward
@@ -291,10 +442,16 @@ class Page {
         backwardOpitons.targetPageId = targetPageId
       }
 
+      this.getElementsInRootPage().forEach(e => e.classList.remove('hide'))
       frameMoveOut(this.currentPageId, backwardOpitons)
 
       this.direction = null
       this.refreshAppShell(targetPageId, finalMeta)
+
+      // restore scroll position in root page
+      if (targetPageId === this.pageId) {
+        this.restoreScrollPosition()
+      }
     } else {
       // forward
       frameMoveIn(targetPageId, {
@@ -305,6 +462,11 @@ class Page {
           this.allowTransition = false
           this.currentPageMeta = finalMeta
           this.refreshAppShell(targetPageId, finalMeta)
+          /**
+           * Disable scrolling of root page when covered by an iframe
+           * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
+           */
+          this.getElementsInRootPage().forEach(e => e.classList.add('hide'))
         }
       })
     }
@@ -322,32 +484,31 @@ class Page {
   }
 
   /**
-   * compare with two pageIds
-   *
-   * @param {string} pageId pageId
-   * @param {string} anotherPageId another pageId
-   * @return {boolean} result
-   */
-  isSamePage (pageId, anotherPageId) {
-    let hashReg = /#.*$/
-    if (pageId && anotherPageId) {
-      return pageId.replace(hashReg, '') === anotherPageId.replace(hashReg, '')
-    }
-    return false
-  }
-
-  /**
    * get page by pageId
    *
    * @param {string} pageId pageId
    * @return {Page} page
    */
   getPageById (pageId) {
-    if (!pageId) {
-      return this
-    }
-    return this.isSamePage(pageId, this.pageId)
-      ? this : this.children.find(child => this.isSamePage(child.pageId, pageId))
+    return (!pageId || pageId === this.pageId)
+      ? this : this.children.find(child => child.pageId === pageId)
+  }
+
+  /**
+   * get elements in root page, except some shared by all the pages
+   *
+   * @return {Array<HTMLElement>} elements
+   */
+  getElementsInRootPage () {
+    let whitelist = [
+      '.mip-page-loading',
+      '.mip-page__iframe',
+      '.mip-appshell-header-wrapper',
+      '.mip-shell-more-button-mask',
+      '.mip-shell-more-button-wrapper'
+    ]
+    let notInWhitelistSelector = whitelist.map(selector => `:not(${selector})`).join('')
+    return document.body.querySelectorAll(`body > ${notInWhitelistSelector}`)
   }
 
   /**
@@ -362,16 +523,39 @@ class Page {
      * scroll in current page
      */
     if (isSameRoute(from, to, true)) {
+      this.emitEventInCurrentPage({
+        name: SCROLL_TO_ANCHOR_CUSTOM_EVENT,
+        data: to.hash
+      })
       return
     }
 
     // otherwise, render target page
-    let targetPageId = getFullPath(to)
+    let targetFullPath = getFullPath(to)
+    let targetPageId = this.cleanPageId(targetFullPath)
     let targetPage = this.getPageById(targetPageId)
 
-    if (!targetPage) {
-      // create an iframe
-      createIFrame(targetPageId)
+    if (this.currentPageId === this.pageId) {
+      this.saveScrollPosition()
+    }
+
+    /**
+     * reload iframe when <a mip-link> clicked even if it's already existed.
+     * NOTE: forwarding or going back with browser history won't do
+     */
+    if (!targetPage || (to.meta && to.meta.reload)) {
+      // when reloading root page...
+      if (this.pageId === targetPageId) {
+        this.pageId = NON_EXISTS_PAGE_ID
+        // destroy root page first
+        if (targetPage) {
+          targetPage.destroy()
+        }
+        // TODO: delete DOM & trigger disconnectedCallback in root page
+        this.getElementsInRootPage().forEach(el => el.parentNode && el.parentNode.removeChild(el))
+      }
+      // create a new iframe
+      createIFrame(targetFullPath, targetPageId)
       this.applyTransition(targetPageId, to.meta, {newPage: true})
     } else {
       this.applyTransition(targetPageId, to.meta)

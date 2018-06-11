@@ -5,7 +5,7 @@
 
 /* global HTMLElement */
 
-import resources from './resources'
+import viewport from './viewport'
 import layout from './layout'
 import performance from './performance'
 import customElementsStore from './custom-element-store'
@@ -36,7 +36,7 @@ class BaseElement extends HTMLElement {
      * @private
      * @type {Object}
      */
-    this._resources = resources
+    this._resources = viewport.resources
 
     /**
      * Instantiated the custom element.

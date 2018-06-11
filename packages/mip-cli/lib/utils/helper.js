@@ -177,6 +177,23 @@ function resolveModule (moduleName, rest) {
   }
 }
 
+function pathFormat (pathname, removeExt = true) {
+  pathname = pathname.replace(/\\/g, '/')
+  if (!removeExt) {
+    return pathname
+  }
+
+  return removeExt(pathname)
+}
+
+function removeExt (pathname) {
+  let ext = path.extname(pathname)
+  if (ext === '') {
+    return pathname
+  }
+  return pathname.slice(0, -ext.length)
+}
+
 module.exports = {
   noop,
   getId,
@@ -194,5 +211,7 @@ module.exports = {
   // findIndexByRegExp,
   // removeRegExpGlabal,
   // findIndexes,
-  resolveModule
+  resolveModule,
+  pathFormat,
+  removeExt
 }

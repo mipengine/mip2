@@ -21,6 +21,7 @@ module.exports = class WebpackBuilder {
     this.dir = options.dir
     this.componentDir = projectPath.components(this.dir)
     this.asset = options.asset
+    this.ignore = options.ignore
 
     if (options.dev) {
       this.mode = 'development'
@@ -45,10 +46,8 @@ module.exports = class WebpackBuilder {
       webpack(this.config, (err, result) => {
         if (err) {
           reject(err)
-          // cli.error(err);
         } else if (result.hasErrors()) {
           reject(result.compilation.errors)
-          // resolve(result);
         } else {
           resolve(result)
         }
@@ -91,7 +90,8 @@ module.exports = class WebpackBuilder {
       outputPath: this.outputDir,
       mode: this.mode,
       context: this.dir,
-      asset: this.asset
+      asset: this.asset,
+      ignore: this.ignore
     })
   }
 

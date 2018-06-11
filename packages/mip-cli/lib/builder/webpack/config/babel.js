@@ -3,9 +3,7 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-/* eslint-disable */
-const {resolveModule} = require('../../../utils/helper');
-/* eslint-enable */
+const {resolveModule, pathFormat} = require('../../../utils/helper')
 const fs = require('fs')
 
 let externals = {
@@ -14,8 +12,9 @@ let externals = {
 
 fs.readdirSync(resolveModule('babel-runtime/helpers'))
   .forEach(filename => {
-    let key = filename.slice(0, -3).replace(/\\/g, '/')
-    externals[resolveModule(`babel-runtime/helpers/${key}`)] = `babelRuntimeHelpers.${key}`
+    let key = pathFormat(filename, false)
+    key = resolveModule(`babel-runtime/helpers/${key}`)
+    externals[key.slice(0, -3)] = `babelRuntimeHelpers.${pathFormat(filename)}`
   })
 
 module.exports = {
@@ -36,7 +35,7 @@ module.exports = {
         resolveModule('babel-preset-stage-2')
       ],
       plugins: [
-        require('./babel-plugin-sandbox'),
+        // require('./babel-plugin-sandbox'),
         [
           require('babel-plugin-transform-runtime'),
           {

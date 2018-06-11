@@ -9,7 +9,8 @@ module.exports = function (config) {
   let builder = new Builder({
     dir: config.dir,
     dev: true,
-    asset: config.asset
+    asset: config.asset,
+    ignore: config.ignore
   })
 
   return [

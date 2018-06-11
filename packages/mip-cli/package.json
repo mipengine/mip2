@@ -1,6 +1,6 @@
 {
   "name": "mip2",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CLI for mip 2.0",
   "preferGlobal": true,
   "bin": {
@@ -49,6 +49,7 @@
     "file-loader": "^1.1.11",
     "fs-extra": "^6.0.0",
     "glob": "^7.1.2",
+    "globals": "^11.5.0",
     "imports-loader": "^0.8.0",
     "inquirer": "^5.2.0",
     "koa": "^2.5.1",
@@ -59,6 +60,7 @@
     "livereload": "^0.7.0",
     "metalsmith": "^2.3.0",
     "mip-component-validator": "^1.0.3",
+    "mip-sandbox": "^1.0.4",
     "mip-validator": "^1.5.15",
     "opn": "^5.3.0",
     "ora": "^2.1.0",

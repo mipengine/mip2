@@ -16,6 +16,8 @@ import fn from './util/fn'
 import Page from './page'
 import {MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE} from './page/const'
 import Messager from './messager'
+import {supportsPassive, isPortrait} from './page/util/feature-detect'
+import fixedElement from './fixed-element'
 
 /**
  * Save window.
@@ -24,6 +26,8 @@ import Messager from './messager'
  * @type {Object}
  */
 const win = window
+
+const eventListenerOptions = supportsPassive ? {passive: true} : false
 
 /**
  * The mip viewer.Complement native viewer, and solve the page-level problems.
@@ -58,24 +62,32 @@ let viewer = {
 
     // add normal scroll class to body. except ios in iframe.
     // Patch for ios+iframe is default in mip.css
-    if (!platform.needSpecialScroll) {
-      document.documentElement.classList.add('mip-i-android-scroll')
-      document.body.classList.add('mip-i-android-scroll')
-    }
+    // if (!platform.needSpecialScroll) {
+    //   document.documentElement.classList.add('mip-i-android-scroll')
+    //   document.body.classList.add('mip-i-android-scroll')
+    // }
 
     if (this.isIframed) {
       this.patchForIframe()
       this._viewportScroll()
+      if (platform.isIos()) {
+        this._lockBodyScroll()
+      }
     }
 
     this.page = new Page()
 
     this.page.start()
 
-    this.sendMessage('mippageload', {
-      time: Date.now(),
-      title: encodeURIComponent(document.title)
-    })
+    fixedElement.init()
+
+    // Only send at first time
+    if (win.MIP.MIP_ROOT_PAGE) {
+      this.sendMessage('mippageload', {
+        time: Date.now(),
+        title: encodeURIComponent(document.title)
+      })
+    }
 
     // proxy <a mip-link>
     this._proxyLink(this.page)
@@ -139,11 +151,13 @@ let viewer = {
    */
   sendMessage (eventName, data = {}) {
     if (!win.MIP.standalone) {
-      // window.top.postMessage({
-      //   event: eventName,
-      //   data: data
-      // }, '*')
-      this.messager.sendMessage(eventName, {data})
+      this.messager.sendMessage(eventName, data)
+    }
+  },
+
+  onMessage (eventName, callback) {
+    if (!win.MIP.standalone) {
+      this.messager.on(eventName, callback)
     }
   },
 
@@ -224,14 +238,14 @@ let viewer = {
     // let lastDirect;
     let scrollHeight = viewport.getScrollHeight()
     let lastScrollTop = 0
-    let wrapper = (platform.needSpecialScroll ? document.body : win)
+    let wrapper = viewport.scroller
 
-    wrapper.addEventListener('touchstart', event => {
+    wrapper.addEventListener('touchstart', e => {
       scrollTop = viewport.getScrollTop()
       scrollHeight = viewport.getScrollHeight()
-    })
+    }, eventListenerOptions)
 
-    function pagemove () {
+    function pagemove (e) {
       scrollTop = viewport.getScrollTop()
       scrollHeight = viewport.getScrollHeight()
       if (scrollTop > 0 && scrollTop < scrollHeight) {
@@ -253,8 +267,8 @@ let viewer = {
         self.sendMessage('mipscroll', {direct: 0})
       }
     }
-    wrapper.addEventListener('touchmove', event => pagemove())
-    wrapper.addEventListener('touchend', event => pagemove())
+    wrapper.addEventListener('touchmove', event => pagemove(event), eventListenerOptions)
+    wrapper.addEventListener('touchend', event => pagemove(event))
   },
 
   /**
@@ -264,7 +278,8 @@ let viewer = {
    */
   _proxyLink (page = {}) {
     let self = this
-    let {router, isRootPage, notifyRootPage} = page
+    let {router, isRootPage} = page
+    let notifyRootPage = page.notifyRootPage.bind(page)
     let httpRegexp = /^http/
     let telRegexp = /^tel:/
 
@@ -274,16 +289,26 @@ let viewer = {
      */
     event.delegate(document, 'a', 'click', function (e) {
       let $a = this
-      // browser will resolve fullpath, eg. http://localhost:8080/examples/page/tree.html
+
+      /**
+       * browser will resolve fullpath, including path, query & hash
+       * eg. http://localhost:8080/examples/page/tree.html?a=b#hash
+       * don't use `$a.getAttribute('href')`
+       */
       let to = $a.href
+
+      let isMipLink = $a.hasAttribute('mip-link') || $a.getAttribute('data-type') === 'mip'
       let hash = ''
       if (to.lastIndexOf('#') > -1) {
         hash = to.substring(to.lastIndexOf('#'))
       }
+      let isHashInCurrentPage = hash && to.indexOf(window.location.origin + window.location.pathname) > -1
 
+      // invalid <a>, ignore it
       if (!to) {
         return
       }
+
       /**
        * For mail、phone、market、app ...
        * Safari failed when iframed. So add the `target="_top"` to fix it. except uc and tel.
@@ -299,13 +324,14 @@ let viewer = {
       e.preventDefault()
 
       /**
-       * scroll to current hash with an ease transition
+       * we handle two scenario:
+       * 1. <mip-link>
+       * 2. anchor in same page, scroll to current hash with an ease transition
        */
-      if (hash) {
-        page.scrollToHash.bind(page)(hash)
-      }
+      if (isMipLink || isHashInCurrentPage) {
+        // create target route
+        let targetRoute = {path: to}
 
-      if ($a.hasAttribute('mip-link') || $a.getAttribute('data-type') === 'mip') {
         // send statics message to BaiduResult page
         let pushMessage = {
           url: to,
@@ -313,21 +339,24 @@ let viewer = {
         }
         self.sendMessage('pushState', pushMessage)
 
-        // show transition
-        router.rootPage.allowTransition = true
+        if (isMipLink) {
+          // show transition only in portrait mode
+          if (isPortrait()) {
+            router.rootPage.allowTransition = true
+          }
 
-        // create target route with meta
-        let targetRoute = {
-          path: to,
-          meta: {
+          // reload page even if it's already existed
+          targetRoute.meta = {
+            reload: true,
             header: {
-              title: pushMessage.state.title
+              title: pushMessage.state.title,
+              defaultTitle: pushMessage.state.defaultTitle
             }
           }
         }
 
-        // handle <a mip-link replace>
-        if ($a.hasAttribute('replace')) {
+        // handle <a mip-link replace> & hash
+        if (isHashInCurrentPage || $a.hasAttribute('replace')) {
           if (isRootPage) {
             router.replace(targetRoute)
           } else {
@@ -345,6 +374,7 @@ let viewer = {
           })
         }
       } else {
+        // jump in top window directly
         top.location.href = to
       }
     }, false)
@@ -360,11 +390,31 @@ let viewer = {
     let parentNode = this.parentNode
 
     return {
-      click: this.getAttribute('data-click') || parentNode.getAttribute('data-click'),
-      title: this.getAttribute('data-title') ||
-        parentNode.getAttribute('title') ||
-        this.innerText.trim().split('\n')[0]
+      click: this.getAttribute('data-click') || parentNode.getAttribute('data-click') || undefined,
+      title: this.getAttribute('data-title') || parentNode.getAttribute('title') || undefined,
+      defaultTitle: this.innerText.trim().split('\n')[0] || undefined
     }
+  },
+
+  /**
+   * lock body scroll in iOS
+   *
+   * https://medium.com/jsdownunder/locking-body-scroll-for-all-devices-22def9615177
+   * http://blog.christoffer.online/2015-06-10-six-things-i-learnt-about-ios-rubberband-overflow-scrolling/
+   */
+  _lockBodyScroll () {
+    let wrapper = viewport.scroller
+    let viewportHeight = viewport.getHeight()
+
+    wrapper.addEventListener('touchstart', e => {
+      let scrollTop = viewport.getScrollTop()
+      let scrollHeight = viewport.getScrollHeight()
+      if (scrollTop === 0) {
+        wrapper.scrollTop = 1
+      } else if (scrollHeight - scrollTop <= viewportHeight) {
+        wrapper.scrollTop = scrollTop - 1
+      }
+    }, eventListenerOptions)
   }
 }
 

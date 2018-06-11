@@ -1,5 +1,6 @@
 import Header from './header.js'
 import {getIFrame} from '../util/dom'
+import {isPortrait} from '../util/feature-detect'
 
 export default class AppShell {
   constructor (options, page) {
@@ -12,7 +13,9 @@ export default class AppShell {
   }
 
   _init () {
-    this.$wrapper = document.createElement('div')
+    this.$wrapper = document.createElement('mip-fixed')
+    this.$wrapper.setAttribute('type', 'top')
+    this.$wrapper.style.height = '44px'
     this.$wrapper.classList.add('mip-appshell-header-wrapper')
     if (this.data.header && this.data.header.show) {
       this.$wrapper.classList.add('show')
@@ -30,7 +33,7 @@ export default class AppShell {
     })
     this.header.init()
 
-    document.body.prepend(this.$wrapper)
+    document.body.insertBefore(this.$wrapper, document.body.firstChild)
   }
 
   refresh (data, targetPageId) {
@@ -45,10 +48,16 @@ export default class AppShell {
     let targetIFrame = getIFrame(targetPageId)
     if (header.show) {
       this.$wrapper.classList.add('show')
-      targetIFrame && targetIFrame.classList.add('with-header')
+      if (targetIFrame) {
+        // targetIFrame.contentWindow.document.querySelector('.mip-html-wrapper').add('with-header')
+        targetIFrame.classList.add('with-header')
+      }
     } else {
       this.$wrapper.classList.remove('show')
-      targetIFrame && targetIFrame.classList.remove('with-header')
+      if (targetIFrame) {
+        // targetIFrame.contentWindow.document.querySelector('.mip-html-wrapper').remove('with-header')
+        targetIFrame.classList.remove('with-header')
+      }
     }
 
     // redraw entire header
@@ -64,13 +73,18 @@ export default class AppShell {
   handleClickHeaderButton (buttonName) {
     if (buttonName === 'back') {
       // **Important** only allow transition happens when Back btn & <a> clicked
-      this.page.allowTransition = true
+      if (isPortrait()) {
+        this.page.allowTransition = true
+      }
       this.page.direction = 'back'
-      window.MIP_ROUTER.go(-1)
+      // SF can help to navigate by 'changeState' when standalone = false
+      if (window.MIP.standalone) {
+        window.MIP_ROUTER.go(-1)
+      }
       window.MIP.viewer.sendMessage('historyNavigate', {step: -1})
-    } else if (buttonName === 'dropdown') {
+    } else if (buttonName === 'more') {
       if (this.header) {
-        this.header.toggleDropdown()
+        this.header.toggleDropdown(true)
       }
     } else if (buttonName === 'close') {
       window.MIP.viewer.sendMessage('close')

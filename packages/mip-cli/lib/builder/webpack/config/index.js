@@ -40,10 +40,14 @@ module.exports = function (options) {
         {
           test: /\.js$/,
           exclude: /node_modules/,
-          use: [
-            // sandboxLoader,
-            babelLoader
-          ]
+          use: options.ignore
+            ? [
+              babelLoader
+            ]
+            : [
+              path.resolve(__dirname, 'sandbox-loader.js'),
+              babelLoader
+            ]
         },
         {
           test: /\.(png|jpe?g|gif)$/,
