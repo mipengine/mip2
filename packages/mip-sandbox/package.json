@@ -1,6 +1,6 @@
 {
   "name": "mip-sandbox",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "sandbox tools for MIP project",
   "main": "lib/sandbox.js",
   "scripts": {
@@ -26,6 +26,7 @@
   "dependencies": {
     "esprima": "^4.0.0",
     "estraverse": "^4.2.0",
+    "esutils": "^2.0.2",
     "source-map": "~0.6.1"
   },
   "devDependencies": {

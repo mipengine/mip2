@@ -46,6 +46,14 @@ function registerCustomElement (tag, component) {
   registerElement(tag, component)
 }
 
+// 当前是否是独立站，这种判断方法还不太准确，判断不出
+let standalone
+try {
+  standalone = !viewer.isIframed || typeof window.top.MIP !== 'undefined'
+} catch (e) {
+  standalone = false
+}
+
 let extensions = window.MIP || []
 
 function push (extension) {
@@ -60,6 +68,7 @@ let mip = {
   viewer,
   viewport,
   hash: util.hash,
+  standalone,
   sandbox,
   css: {},
   push,
@@ -67,15 +76,6 @@ let mip = {
 }
 
 window.MIP = mip
-
-// 当前是否是独立站，这种判断方法还不太准确，判断不出
-let standalone
-try {
-  standalone = typeof window.top.MIP !== 'undefined'
-} catch (e) {
-  standalone = false
-}
-window.MIP.standalone = standalone
 
 // init viewport
 viewport.init()

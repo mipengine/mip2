@@ -5,7 +5,7 @@
  */
 
 const Validator = require('mip-validator')
-const rules = require('./rules-template.json')
+const rules = require('./lib/rules-template.json')
 const validator = new Validator(rules)
 
 module.exports = {

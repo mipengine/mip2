@@ -23,8 +23,5 @@ module.exports = function (code) {
       unsafeList.push(node)
     }
   })
-
-  if (unsafeList.length) {
-    return unsafeList
-  }
+  return unsafeList
 }

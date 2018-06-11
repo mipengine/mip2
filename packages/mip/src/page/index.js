@@ -26,7 +26,7 @@ import {
   MESSAGE_APPSHELL_HEADER_SLIDE_DOWN,
   MESSAGE_TOGGLE_PAGE_MASK
 } from './const'
-import {supportsPassives} from './util/feature-detect'
+import {supportsPassive} from './util/feature-detect'
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
 import util from '../util'
@@ -34,6 +34,12 @@ import viewport from '../viewport'
 import Router from './router'
 import AppShell from './appshell'
 import '../styles/mip.less'
+
+/**
+ * use passive event listeners if supported
+ * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
+ */
+const eventListenerOptions = supportsPassive ? {passive: true} : false
 
 class Page {
   constructor () {
@@ -147,6 +153,13 @@ class Page {
           this.appshell.header.togglePageMask(data ? data.toggle : false)
         }
       })
+
+      // recaculate all the iframes' height
+      viewport.on('resize', () => {
+        document.querySelectorAll('.mip-page__iframe').forEach($el => {
+          $el.style.height = `${viewport.getHeight()}px`
+        })
+      })
     } else {
       currentPageMeta = this.router.rootPage.findMetaByPageId(this.pageId)
       /**
@@ -240,7 +253,7 @@ class Page {
     })
 
     // use passive event listener to improve scroll performance
-    viewport.scroller.addEventListener('scroll', this.debouncer, supportsPassives ? {passive: true} : false)
+    viewport.scroller.addEventListener('scroll', this.debouncer, eventListenerOptions)
     this.debouncer.handleEvent()
   }
 
@@ -382,6 +395,20 @@ class Page {
   }
 
   /**
+   * save scroll position in root page
+   */
+  saveScrollPosition () {
+    this.rootPageScrollPosition = viewport.getScrollTop()
+  }
+
+  /**
+   * restore scroll position in root page
+   */
+  restoreScrollPosition () {
+    viewport.scroller.scrollTo(0, this.rootPageScrollPosition)
+  }
+
+  /**
    * apply transition effect to relative two pages
    *
    * @param {string} targetPageId targetPageId
@@ -420,7 +447,11 @@ class Page {
 
       this.direction = null
       this.refreshAppShell(targetPageId, finalMeta)
-      // document.documentElement.classList.remove('mip-no-scroll')
+
+      // restore scroll position in root page
+      if (targetPageId === this.pageId) {
+        this.restoreScrollPosition()
+      }
     } else {
       // forward
       frameMoveIn(targetPageId, {
@@ -435,7 +466,6 @@ class Page {
            * Disable scrolling of root page when covered by an iframe
            * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
            */
-          // document.documentElement.classList.add('mip-no-scroll')
           this.getElementsInRootPage().forEach(e => e.classList.add('hide'))
         }
       })
@@ -505,6 +535,10 @@ class Page {
     let targetPageId = this.cleanPageId(targetFullPath)
     let targetPage = this.getPageById(targetPageId)
 
+    if (this.currentPageId === this.pageId) {
+      this.saveScrollPosition()
+    }
+
     /**
      * reload iframe when <a mip-link> clicked even if it's already existed.
      * NOTE: forwarding or going back with browser history won't do
@@ -513,13 +547,14 @@ class Page {
       // when reloading root page...
       if (this.pageId === targetPageId) {
         this.pageId = NON_EXISTS_PAGE_ID
+        // destroy root page first
         if (targetPage) {
           targetPage.destroy()
         }
         // TODO: delete DOM & trigger disconnectedCallback in root page
         this.getElementsInRootPage().forEach(el => el.parentNode && el.parentNode.removeChild(el))
       }
-      // create an iframe
+      // create a new iframe
       createIFrame(targetFullPath, targetPageId)
       this.applyTransition(targetPageId, to.meta, {newPage: true})
     } else {

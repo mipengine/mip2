@@ -16,6 +16,8 @@ import fn from './util/fn'
 import Page from './page'
 import {MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE} from './page/const'
 import Messager from './messager'
+import {supportsPassive, isPortrait} from './page/util/feature-detect'
+import fixedElement from './fixed-element'
 
 /**
  * Save window.
@@ -24,6 +26,8 @@ import Messager from './messager'
  * @type {Object}
  */
 const win = window
+
+const eventListenerOptions = supportsPassive ? {passive: true} : false
 
 /**
  * The mip viewer.Complement native viewer, and solve the page-level problems.
@@ -74,6 +78,8 @@ let viewer = {
     this.page = new Page()
 
     this.page.start()
+
+    fixedElement.init()
 
     // Only send at first time
     if (win.MIP.MIP_ROOT_PAGE) {
@@ -205,6 +211,81 @@ let viewer = {
     }
   },
 
+  open (to, {isMipLink = true, replace = false, state}) {
+    let {router, isRootPage} = this.page
+    let notifyRootPage = this.page.notifyRootPage.bind(this.page)
+    if (!state) {
+      state = {click: undefined, title: undefined, defaultTitle: undefined}
+    }
+
+    let hash = ''
+    if (to.lastIndexOf('#') > -1) {
+      hash = to.substring(to.lastIndexOf('#'))
+    }
+    let isHashInCurrentPage = hash && to.indexOf(window.location.origin + window.location.pathname) > -1
+
+    // invalid <a>, ignore it
+    if (!to) {
+      return
+    }
+
+    /**
+     * we handle two scenario:
+     * 1. <mip-link>
+     * 2. anchor in same page, scroll to current hash with an ease transition
+     */
+    if (isMipLink || isHashInCurrentPage) {
+      // create target route
+      let targetRoute = {path: to}
+
+      // send statics message to BaiduResult page
+      let pushMessage = {
+        url: to,
+        state
+      }
+
+      this.sendMessage('pushState', pushMessage)
+
+      if (isMipLink) {
+        // show transition only in portrait mode
+        if (isPortrait()) {
+          router.rootPage.allowTransition = true
+        }
+
+        // reload page even if it's already existed
+        targetRoute.meta = {
+          reload: true,
+          header: {
+            title: pushMessage.state.title,
+            defaultTitle: pushMessage.state.defaultTitle
+          }
+        }
+      }
+
+      // handle <a mip-link replace> & hash
+      if (isHashInCurrentPage || replace) {
+        if (isRootPage) {
+          router.replace(targetRoute)
+        } else {
+          notifyRootPage({
+            type: MESSAGE_ROUTER_REPLACE,
+            data: {route: targetRoute}
+          })
+        }
+      } else if (isRootPage) {
+        router.push(targetRoute)
+      } else {
+        notifyRootPage({
+          type: MESSAGE_ROUTER_PUSH,
+          data: {route: targetRoute}
+        })
+      }
+    } else {
+      // jump in top window directly
+      top.location.href = to
+    }
+  },
+
   /**
    * Event binding callback.
    * For overridding _bindEventCallback of EventEmitter.
@@ -237,7 +318,7 @@ let viewer = {
     wrapper.addEventListener('touchstart', e => {
       scrollTop = viewport.getScrollTop()
       scrollHeight = viewport.getScrollHeight()
-    })
+    }, eventListenerOptions)
 
     function pagemove (e) {
       scrollTop = viewport.getScrollTop()
@@ -261,7 +342,7 @@ let viewer = {
         self.sendMessage('mipscroll', {direct: 0})
       }
     }
-    wrapper.addEventListener('touchmove', event => pagemove(event))
+    wrapper.addEventListener('touchmove', event => pagemove(event), eventListenerOptions)
     wrapper.addEventListener('touchend', event => pagemove(event))
   },
 
@@ -272,7 +353,6 @@ let viewer = {
    */
   _proxyLink (page = {}) {
     let self = this
-    let {router, isRootPage, notifyRootPage} = page
     let httpRegexp = /^http/
     let telRegexp = /^tel:/
 
@@ -280,7 +360,7 @@ let viewer = {
      * if an <a> tag has `mip-link` or `data-type='mip'` let router handle it,
      * otherwise let TOP jump
      */
-    event.delegate(document, 'a', 'click', function (e) {
+    event.delegate(document, 'a', 'click', function (event) {
       let $a = this
 
       /**
@@ -289,18 +369,9 @@ let viewer = {
        * don't use `$a.getAttribute('href')`
        */
       let to = $a.href
-
       let isMipLink = $a.hasAttribute('mip-link') || $a.getAttribute('data-type') === 'mip'
-      let hash = ''
-      if (to.lastIndexOf('#') > -1) {
-        hash = to.substring(to.lastIndexOf('#'))
-      }
-      let isHashInCurrentPage = hash && to.indexOf(window.location.origin + window.location.pathname) > -1
-
-      // invalid <a>, ignore it
-      if (!to) {
-        return
-      }
+      let replace = $a.hasAttribute('replace')
+      let state = this._getMipLinkData.call($a)
 
       /**
        * For mail、phone、market、app ...
@@ -314,60 +385,9 @@ let viewer = {
         return
       }
 
-      e.preventDefault()
+      self.open(to, {isMipLink, replace, state})
 
-      /**
-       * we handle two scenario:
-       * 1. <mip-link>
-       * 2. anchor in same page, scroll to current hash with an ease transition
-       */
-      if (isMipLink || isHashInCurrentPage) {
-        // create target route
-        let targetRoute = {path: to}
-
-        // send statics message to BaiduResult page
-        let pushMessage = {
-          url: to,
-          state: self._getMipLinkData.call($a)
-        }
-        self.sendMessage('pushState', pushMessage)
-
-        if (isMipLink) {
-          // show transition
-          router.rootPage.allowTransition = true
-
-          // reload page even if it's already existed
-          targetRoute.meta = {
-            reload: true,
-            header: {
-              title: pushMessage.state.title,
-              defaultTitle: pushMessage.state.defaultTitle
-            }
-          }
-        }
-
-        // handle <a mip-link replace> & hash
-        if (isHashInCurrentPage || $a.hasAttribute('replace')) {
-          if (isRootPage) {
-            router.replace(targetRoute)
-          } else {
-            notifyRootPage({
-              type: MESSAGE_ROUTER_REPLACE,
-              data: {route: targetRoute}
-            })
-          }
-        } else if (isRootPage) {
-          router.push(targetRoute)
-        } else {
-          notifyRootPage({
-            type: MESSAGE_ROUTER_PUSH,
-            data: {route: targetRoute}
-          })
-        }
-      } else {
-        // jump in top window directly
-        top.location.href = to
-      }
+      event.preventDefault()
     }, false)
   },
 
@@ -396,29 +416,6 @@ let viewer = {
   _lockBodyScroll () {
     let wrapper = viewport.scroller
     let viewportHeight = viewport.getHeight()
-    // let initialClientY = -1
-
-    // wrapper.addEventListener('touchstart', e => {
-    //   scrollTop = viewport.getScrollTop()
-    //   scrollHeight = viewport.getScrollHeight()
-    //   initialClientY = e.targetTouches[0].clientY
-    // })
-
-    // wrapper.addEventListener('touchmove', e => {
-    //   scrollTop = viewport.getScrollTop()
-    //   scrollHeight = viewport.getScrollHeight()
-    //   let clientYDistance = e.targetTouches[0].clientY - initialClientY
-    //   if (scrollTop === 0 && clientYDistance > 0) {
-    //     // element is at the top of its scroll
-    //     e.preventDefault()
-    //     return false
-    //   }
-    //   if (scrollHeight - scrollTop <= viewportHeight && clientYDistance < 0) {
-    //     // element is at the top of its scroll
-    //     e.preventDefault()
-    //     return false
-    //   }
-    // })
 
     wrapper.addEventListener('touchstart', e => {
       let scrollTop = viewport.getScrollTop()
@@ -428,7 +425,7 @@ let viewer = {
       } else if (scrollHeight - scrollTop <= viewportHeight) {
         wrapper.scrollTop = scrollTop - 1
       }
-    })
+    }, eventListenerOptions)
   }
 }
 

@@ -24,6 +24,7 @@ var gen = {
 describe('generate', function () {
   Object.keys(gen).forEach(function (name) {
     var generate = gen[name]
+
     describe('#' + name, function () {
       it('#this', function () {
         var code = `
@@ -154,6 +155,46 @@ describe('generate', function () {
           console.log(MIP.sandbox.s)
           var t = {u: MIP.sandbox.u}
           var v = {v}
+        `
+
+        expect(generate(code)).to.be.equal(format(expected))
+      })
+
+      it('#CatchClause', function () {
+        var code = `
+          try {}
+          catch (e) {
+            console.log(e)
+          }
+
+          console.log(e)
+
+          try {}
+          catch ({message, code}) {
+            console.log(code)
+            console.log(message)
+          }
+
+          console.log(message)
+          console.log(code)
+        `
+
+        var expected = `
+          try {}
+          catch (e) {
+            console.log(e)
+          }
+
+          console.log(MIP.sandbox.e)
+
+          try {}
+          catch ({message, code}) {
+            console.log(code)
+            console.log(message)
+          }
+
+          console.log(MIP.sandbox.message)
+          console.log(MIP.sandbox.code)
         `
 
         expect(generate(code)).to.be.equal(format(expected))
