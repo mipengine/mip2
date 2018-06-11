@@ -16,10 +16,11 @@ cli.setup({
     ['-c, --config <value>', 'mip-cli 配置文件路径']
   ],
   help: [
-    '启动MIP调试服务器',
+    '',
+    '  Examples:',
+    cli.chalk.gray('    # 启动MIP调试服务器'),
     '    $ mip2 dev'
-  ]
-    .join('\n')
+  ].join('\n')
 })
 
 let configPath = path.resolve(process.cwd(), cli.program.config || 'mip.config.js')
