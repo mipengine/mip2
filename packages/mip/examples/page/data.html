@@ -121,8 +121,8 @@
                     "age": 5,
                     "members": []
                 },
-                "#city": "上海"
-
+                "#city": "上海",
+                "#test": "ckkkk2"
             }
         </script>
     </mip-data>
@@ -254,29 +254,16 @@
         </script>
     </mip-shell>
 
-    <!-- <mip-script>
-        console.log(1)
+    <mip-script>
         MIP.watch('num', function () {
             console.log('num changed callback')
-            var test = 2;
-            location.href = 'test'
             MIP.setData({
                 title: 'ckkkk changing num'
             });
         });
-        function f() {
-            function Animation() {
+    </mip-script>
 
-            }
-            Animation()
-        }
-        g = 1
-        let a = 2
-        window.alert('1')
-        alert('1')
-    </mip-script> -->
-
-    <script type="application/mip-script">
+    <!-- <script type="application/mip-script">
         MIP.watch('num', function () {
             console.log('num changed callback')
             MIP.setData({
@@ -304,12 +291,12 @@
         MIP.watch(['userInfo', 'userInfo.name'], function (newVal, oldVal) {
             console.log('userInfo', newVal, oldVal);
         });
-    </script>
+    </script> -->
     <script src="../../dist/mip.js"></script>
     <script src="./components/mip-complevel2.js"></script>
     <script src="./components/mip-complevel1.js"></script>
     <script src="https://c.mipcdn.com/static/v1/mip-form/mip-form.js"></script>
-    <!-- <script src="http://127.0.0.1:8111/mip-script/mip-script.js"></script> -->
+    <script src="http://127.0.0.1:8111/mip-script/mip-script.js"></script>
 
 
 </body>
