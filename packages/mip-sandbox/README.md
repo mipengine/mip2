@@ -42,6 +42,8 @@ sandbox.document.cookie
  */
 ```
 
+使用例子如下：
+
 ```javascript
 var detect = require('mip-sandbox/lib/unsafe-detect')
 var keywords = require('mip-sandbox/lib/keywords')
@@ -69,6 +71,25 @@ console.log(result)
 ```
 
 ### 不安全全局变量替换
+
+使用 `mip-sandbox/lib/generate` 方法进行不安全全局变量替换，该函数的定义如下
+
+```javascript
+/**
+ * 不安全全局变量替换
+ *
+ * @param {string|AST} code 代码字符串或代码 AST
+ * @param {Array=} keywords 安全全局变量声明列表，
+ *                           在默认情况下，所有全局变量包括 window document 等均认为不安全，
+ *                           需要传入该参数进行条件过滤
+ * @param {Object=} options options
+ * @param {string=} options.prefix 默认全局变量注入的前缀，默认为 MIP.sandbox
+ * @param {Object=} options.escodegen 透传给 escodegen 的参数
+ * @return {string} 替换后的代码字符串
+ */
+```
+
+使用例子如下：
 
 ```javascript
 var generate = require('mip-sandbox/lib/generate')
@@ -110,7 +131,7 @@ var result = generate(code, keywords.WHITELIST, {prefix: 'MIP.sandbox.strict'})
 如:
 
 ```javascript
-var output = generate(code, {
+var output = generate(code, keywords.WHITELIST, {
   escodegen: {
     sourceMap: 'name',
     sourceMapWithCode: true
@@ -121,12 +142,41 @@ var output = generate(code, {
 // output.map
 ```
 
-对于不需要生成 sourceMap 的情况，可以使用 generate-lite 来去掉 source-map 相关代码以减小打包体积：
+对于不需要生成 sourceMap 的情况，可以使用 generate-lite 来去掉 source-map 相关代码以减小打包体积。
+
+该方法的定义如下：
+
+```javascript
+/**
+ * 不安全全局变量替换
+ *
+ * @param {string|AST} code 代码字符串或代码 AST
+ * @param {Array=} keywords 安全全局变量声明列表，
+ *                           在默认情况下，所有全局变量包括 window document 等均认为不安全，
+ *                           需要传入该参数进行条件过滤
+ * @return {string} 替换后的代码字符串
+ */
+```
 
 ```javascript
 var generate = require('mip-sandbox/lib/generate-lite')
 var keywords = require('mip-sandbox/lib/keywords')
 var code = generate(code, keywords.WHITELIST)
+```
+
+### 沙盒检测替换优化
+
+在某些场景下需要同时使用 detect 和 generate 去实现功能，这时，如果对这两个方法传入的 code 都是字符串的话，就需要对字符串做两次 ast 解析和标记，为了解决这个问题，可以调用 global-mark 生成解析标记好的 ast，再将 ast 传入 detect 和 generate 中，从而提高效率：
+
+```javascript
+var mark = require('mip-sandbox/lib/global-mark')
+var detect = require('mip-sandbox/lib/unsafe-detect')
+var generate = require('mip-sandbox/lib/generate')
+var keywords = require('mip-sandbox/lib/keywords')
+
+var ast - mark(code)
+var unsafeList = detect(ast, keywords.WHITELIST)
+var generated = generated(ast, keywords.WHITELIST)
 ```
 
 ## 沙盒替换规则
