@@ -371,7 +371,7 @@ let viewer = {
       let to = $a.href
       let isMipLink = $a.hasAttribute('mip-link') || $a.getAttribute('data-type') === 'mip'
       let replace = $a.hasAttribute('replace')
-      let state = this._getMipLinkData.call($a)
+      let state = self._getMipLinkData.call($a)
 
       /**
        * For mail、phone、market、app ...
