@@ -206,8 +206,10 @@ describe('generate', function () {
   it('#sourcemap', function () {
     var code = 'var a = 0'
     var output = generateFull(code, keywords.WHITELIST, {
-      sourceMap: 'hehe',
-      sourceMapWithCode: true
+      escodegen: {
+        sourceMap: 'hehe',
+        sourceMapWithCode: true
+      }
     })
 
     var mapString = output.map.toString()
