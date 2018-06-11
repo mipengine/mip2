@@ -9,6 +9,7 @@ var chai = require('chai')
 var expect = chai.expect
 var generateFull = require('../lib/generate')
 var generateLite = require('../lib/generate-lite')
+var keywords = require('../lib/keywords')
 var esprima = require('esprima')
 var escodegen = require('../deps/escodegen')
 
@@ -49,7 +50,7 @@ describe('generate', function () {
           }
         `
 
-        expect(generate(code)).to.be.equal(format(expected))
+        expect(generate(code, keywords.WHITELIST)).to.be.equal(format(expected))
       })
 
       it('#string', function () {
@@ -57,7 +58,7 @@ describe('generate', function () {
         var code = '`abcd${this[this].this}efg${b[c].d}`'
         var expected = '`abcd${MIP.sandbox.this(this)[MIP.sandbox.this(this)].this}efg${MIP.sandbox.b[MIP.sandbox.c].d}`'
         /* eslint-enable */
-        expect(generate(code)).to.be.equal(format(expected))
+        expect(generate(code, keywords.WHITELIST)).to.be.equal(format(expected))
       })
 
       it('#object', function () {
@@ -73,7 +74,7 @@ describe('generate', function () {
           var d = {setTimeout}
         `
 
-        expect(generate(code)).to.be.equal(format(expected))
+        expect(generate(code, keywords.WHITELIST)).to.be.equal(format(expected))
       })
 
       it('#unsafe', function () {
@@ -157,7 +158,7 @@ describe('generate', function () {
           var v = {v}
         `
 
-        expect(generate(code)).to.be.equal(format(expected))
+        expect(generate(code, keywords.WHITELIST)).to.be.equal(format(expected))
       })
 
       it('#CatchClause', function () {
@@ -197,14 +198,14 @@ describe('generate', function () {
           console.log(MIP.sandbox.code)
         `
 
-        expect(generate(code)).to.be.equal(format(expected))
+        expect(generate(code, keywords.WHITELIST)).to.be.equal(format(expected))
       })
     })
   })
 
   it('#sourcemap', function () {
     var code = 'var a = 0'
-    var output = generateFull(code, {
+    var output = generateFull(code, keywords.WHITELIST, {
       sourceMap: 'hehe',
       sourceMapWithCode: true
     })

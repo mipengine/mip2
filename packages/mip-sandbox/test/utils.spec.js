@@ -9,15 +9,40 @@ var expect = chai.expect
 
 var defUtils = require('../lib/utils/def')
 var is = require('../lib/utils/is')
+var keys = require('../lib/utils/keys')
+
+var mockWindow = {
+  Date: Date,
+  Promise: Promise,
+  NaN: NaN,
+  Infinity: Infinity,
+  setTimeout: setTimeout,
+  isNaN: isNaN,
+  undefined: undefined,
+  innerWidth: 200,
+  document: {
+    cookie: 'cookie',
+    getElementById: function () {
+      console.log('getElementById')
+    }
+  }
+}
+
+mockWindow.window = mockWindow
 
 describe('utils/def', function () {
-  describe('#defs', function () {
-    var defs = defUtils.defs
+  defUtils.globals = mockWindow
+
+  describe('#def', function () {
+    var def = defUtils.def
 
     it('define class', function () {
       var obj = {}
-      // mocha 环境没有 window 需要传入 global
-      defs(obj, ['Date', 'Promise', 'NaN', 'Infinity'], {host: global})
+
+      def(obj, 'Date', 'Date')
+      def(obj, 'Promise', 'Promise')
+      def(obj, 'NaN', 'NaN')
+      def(obj, 'Infinity', 'Infinity')
 
       expect(obj.Date).to.be.equal(Date)
       expect(obj.Promise).to.be.equal(Promise)
@@ -27,7 +52,8 @@ describe('utils/def', function () {
 
     it('define function', function () {
       var obj = {}
-      defs(obj, ['setTimeout', 'isNaN'], {host: global})
+      def(obj, 'setTimeout', 'setTimeout')
+      def(obj, 'isNaN', 'isNaN')
 
       expect(obj.setTimeout).to.not.be.equal(setTimeout)
       expect(obj.isNaN(NaN)).to.be.equal(true)
@@ -35,22 +61,58 @@ describe('utils/def', function () {
 
     it('define property', function () {
       var obj = {}
-      // 别个 什么 location 在 当前测试环境下都没有诶
-      defs(obj, ['undefined'], {host: global})
+
+      def(obj, 'undefined', 'undefined', {access: 'readonly'})
+      def(obj, 'innerWidth', 'innerWidth', {access: 'readonly'})
+
       expect(obj.undefined).to.be.equal(undefined)
-      // writable = false
+      expect(obj.innerWidth).to.be.equal(200)
+
       obj.undefined = 1
+      obj.innerWidth = 100
       expect(obj.undefined).to.be.equal(undefined)
+      expect(obj.innerWidth).to.be.equal(200)
+    })
+
+    it('define getter', function () {
+      var obj = {}
+      var list = ['a', 'b', 'c']
+      def(obj, 'list', list)
+      expect(obj.list).to.be.equal(list)
     })
   })
 
-  describe('#def', function () {
-    it('object', function () {
-      var def = defUtils.def
-      var obj = {}
-      var sandbox = {}
-      def(obj, 'sandbox', sandbox)
-      expect(obj.sandbox).to.be.equal(sandbox)
+  describe('#traverse', function () {
+    var sandbox = {
+      access: 'readonly',
+      host: 'window',
+      children: [
+        'Date',
+        'NaN',
+        'setTimeout',
+        'innerWidth',
+        {
+          name: 'document',
+          host: 'document',
+          children: [
+            'cookie'
+          ]
+        }
+      ]
+    }
+
+    var obj = defUtils.traverse(sandbox)
+
+    it('enumerable', function () {
+      expect(Object.keys(obj)).to.be.deep.equal(['Date', 'NaN', 'setTimeout', 'innerWidth', 'document'])
+    })
+
+    it('child node', function () {
+      expect(obj.document.cookie).to.be.equal('cookie')
+    })
+
+    it('child node exclude', function () {
+      expect(obj.document.getElementById).to.be.equal(undefined)
     })
   })
 })
@@ -133,5 +195,17 @@ describe('utils/is', function () {
         {properties: [prop2]}
       )
     ).to.be.equal(false)
+  })
+})
+
+describe('utils/keys', function () {
+  it('should be equal', function () {
+    var list = [
+      'a',
+      'b',
+      'c',
+      {name: 'd'}
+    ]
+    expect(keys(list)).to.be.deep.equal(['a', 'b', 'c', 'd'])
   })
 })

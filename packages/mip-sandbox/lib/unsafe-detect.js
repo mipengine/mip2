@@ -4,14 +4,14 @@
  */
 
 var detect = require('./global-detect')
-var keywords = require('./keywords')
+// var keywords = require('./keywords')
 var is = require('./utils/is')
 
-var WINDOW_SAFE_KEYWORDS = keywords.WINDOW_ORIGINAL
-  .concat(keywords.RESERVED)
-  .concat(keywords.WINDOW_CUSTOM)
+// var WINDOW_SAFE_KEYWORDS = keywords.WINDOW_ORIGINAL
+//   .concat(keywords.RESERVED)
+//   .concat(keywords.WINDOW_CUSTOM)
 
-module.exports = function (code) {
+module.exports = function (code, keywords) {
   var unsafeList = []
 
   detect(code, function (node, parent, ast) {
@@ -19,7 +19,7 @@ module.exports = function (code) {
       return
     }
 
-    if (WINDOW_SAFE_KEYWORDS.indexOf(node.name) === -1) {
+    if (keywords.indexOf(node.name) === -1) {
       unsafeList.push(node)
     }
   })
