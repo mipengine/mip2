@@ -1,5 +1,4 @@
 const validator = require('../src/validator');
 
-validator.validate('../test/mip-demo').then((results) =>{
-    console.log(results);
-})
+const result = validator.validate('./test/mip-demo');
+console.log(result)
