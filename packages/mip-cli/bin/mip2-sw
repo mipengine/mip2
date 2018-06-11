@@ -8,6 +8,7 @@ const path = require('path')
 cli.setup({
   noArgs: true,
   options: [
+    ['-o, --output <value>', 'Service Worker 导出路径'],
     ['-c, --config <value>', 'mip-cli 配置文件路径']
   ],
   help: [
@@ -23,6 +24,11 @@ let swConf = {}
 
 if (fs.existsSync(configPath)) {
   swConf = require(configPath).serviceWorker || {}
+}
+
+if (cli.program.output && path.extname(cli.program.output) !== '.js') {
+  cli.warn('请检查文件路径，如 ./dist/sw.js')
+  return
 }
 
 generateSw({

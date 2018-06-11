@@ -11,6 +11,7 @@ const fs = require('fs-extra')
 
 module.exports = function generateSw (config) {
   const dist = path.resolve(process.cwd(), 'dist')
+  const cmdOutput = config.options.output ? path.join(process.cwd(), config.options.output) : null
   const workboxCDN = 'https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/workbox-v3.2.0'
 
   let defaultConf = {
@@ -58,7 +59,8 @@ module.exports = function generateSw (config) {
       const setConfClause = `workbox.setConfig({modulePathPrefix: "${workboxCDN}"});`
       const outputSWString = swString.replace(/importScripts(.|\n)+workbox-sw\.js"\n\);/, `$&\n${setConfClause}`)
 
-      const swDest = workboxConf.swDest || path.join(dist, 'sw.js')
+      const swDest = cmdOutput || path.join(dist, 'sw.js')
+
       fs.outputFileSync(swDest, outputSWString)
 
       cli.info(`Service Workder file generated at: ${swDest}`)
