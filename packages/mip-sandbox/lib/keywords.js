@@ -96,8 +96,10 @@ var RESERVED = [
 ]
 
 var SANDBOX_STRICT = {
+  name: 'strict',
   access: 'readyonly',
   host: 'window',
+  mount: 'MIP.sandbox.strict',
   children: ORIGINAL.concat([
     {
       name: 'document',
@@ -143,6 +145,7 @@ var SANDBOX_STRICT = {
 var SANDBOX = {
   access: 'readonly',
   host: 'window',
+  mount: 'MIP.sandbox',
   children: ORIGINAL.concat([
     'File',
     'FileList',
@@ -194,10 +197,7 @@ var SANDBOX = {
       name: 'MIP',
       host: 'MIP'
     },
-    {
-      name: 'strict',
-      children: SANDBOX_STRICT
-    }
+    SANDBOX_STRICT
   ])
 }
 

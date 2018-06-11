@@ -28,15 +28,32 @@ sandbox.document.cookie
 
 ### 不安全全局变量检测
 
+使用 `mip-sandbox/lib/unsafe-detect` 方法进行不安全全局变量检测，该函数的定义如下
+
+```javascript
+/**
+ * 不安全全局变量检测
+ *
+ * @params {string|AST} code 代码字符串或代码 AST
+ * @params {Array=} keywords 安全全局变量声明列表，
+ *                           在默认情况下，所有全局变量包括 window document 等均认为不安全，
+ *                           需要传入该参数进行条件过滤
+ * @return {Array.<ASTNode>} 不安全全局变量列表
+ */
+```
+
 ```javascript
 var detect = require('mip-sandbox/lib/unsafe-detect')
+var keywords = require('mip-sandbox/lib/keywords')
 
 var code = `
 var a = 1
 console.log(b)
 `
 
-var results = detect(code)
+// 严格模式 请使用 keywords.WHITLIST_STRICT
+// 在前端使用时，可通过 MIP.sandbox.WHITELIST 去拿该列表
+var results = detect(code, keywords.WHITELIST)
 
 console.log(result)
 
@@ -55,6 +72,7 @@ console.log(result)
 
 ```javascript
 var generate = require('mip-sandbox/lib/generate')
+var keywords = require('mip-sandbox/lib/keywords')
 
 var code = `
 var a = 1
@@ -62,26 +80,41 @@ console.log(b)
 window.console.log(a)
 `
 
-var result = generate(code)
+var result = generate(code, keywords.WHITELIST)
 
 console.log(result)
 
 // var a = 1
 // console.log(MIP.sandbox.b)
 // MIP.sandbox.window.console.log(a)
+```
 
+对于严格模式下 window 需要替换成 `MIP.sandbox.strict.window` 在这种情况下，需要传入第三个参数：
+
+**options.prefix**
+
+默认的 options.prefix === 'MIP.sandbox'，在严格下可以传入 MIP.sandbox.strict，得到的结果将如下所示：
+
+```javascript
+var result = generate(code, keywords.WHITELIST, {prefix: 'MIP.sandbox.strict'})
+
+// var a = 1
+// console.log(MIP.sandbox.b)
+// MIP.sandbox.strict.window.console.log(a)
 ```
 
 该方法使用 [escodegen](https://github.com/estools/escodegen) 实现的 ast to string
 
-该方法的第二个参数 options 将会透传给 escodegen 因此比如需要返回 sourcemap 的话，请于第二个参数传入 sourcemap 相关参数
+该方法的第三个参数 options.escodegen 将会透传给 escodegen 因此比如需要返回 sourcemap 的话，请于第二个参数传入 sourcemap 相关参数
 
 如:
 
 ```javascript
 var output = generate(code, {
-  sourceMap: 'name',
-  sourceMapWithCode: true
+  escodegen: {
+    sourceMap: 'name',
+    sourceMapWithCode: true
+  }
 })
 
 // output.code
@@ -92,7 +125,8 @@ var output = generate(code, {
 
 ```javascript
 var generate = require('mip-sandbox/lib/generate-lite')
-var code = generate(code)
+var keywords = require('mip-sandbox/lib/keywords')
+var code = generate(code, keywords.WHITELIST)
 ```
 
 ## 沙盒替换规则
@@ -138,6 +172,12 @@ MIP.sandbox.this = function (that) {
   return that === window ? MIP.sandbox : that === document ? MIP.sandbox.document : that
 }
 ```
+
+## 严格模式
+
+在 mip-script 中，理论上只允许进行数据运算和发请求等等操作，不允许直接操作 DOM ，因此在 mip-script 中写的 js 将会以沙盒的严格模式进行全局变量替换，比如 window 会被替换成 `MIP.sandbox.strict.window`、 this 将会替换成 `MIP..strict.this(this)`。
+
+其中 MIP.sandbox.strict 是 MIP.sandbox 的子集。
 
 ## 可用全局变量
 
@@ -279,7 +319,6 @@ var DOCUMENT_ORIGINAL = [
   'querySelector',
   'querySelectorAll'
 ]
-
 
 ```
 

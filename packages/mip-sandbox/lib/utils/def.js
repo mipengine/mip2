@@ -13,43 +13,62 @@ var utils = {
 function prop (obj, name) {
   var keys = name.split('.')
   for (var i = 0; i < keys.length; i++) {
+    if (!obj) {
+      return
+    }
     obj = obj[keys[i]]
   }
   return obj
 }
 
-// function merge (a, b) {
-//   var keys = Object.keys(b)
-//   for (var i = 0; i < keys.length; i++) {
-//     a[keys[i]] = b[keys[i]]
-//   }
+function merge (a, b, exclude) {
+  var keys = Object.keys(b)
+  for (var i = 0; i < keys.length; i++) {
+    if (!exclude || exclude.indexOf(keys[i]) === -1) {
+      a[keys[i]] = b[keys[i]]
+    }
+  }
 
-//   return a
-// }
+  return a
+}
 
-function traverse (node, parent) {
-  // if (!node.children) {
-  //   def(parent, node.name, prop(utils.globals, node.host))
-  //   return
-  // }
+function traverse (node, parent, mount) {
+  mount = mount || {}
 
-  // if (!node.children.length) {
-  //   return
-  // }
+  var host
+
+  if (typeof node.host === 'string') {
+    host = prop(utils.globals, node.host)
+    if (host == null) {
+      host = mount[node.host]
+    }
+
+    if (host == null) {
+      throw Error('host ' + node.host + ' not found.')
+    }
+  } else {
+    host = utils.globals
+  }
+
+  if (!node.children && parent) {
+    def(parent, node.name, host)
+    return
+  }
+
+  var options = merge({}, node, ['children'])
+  merge(options, {host: host})
 
   var obj = {}
 
-  if (typeof node.host === 'string') {
-    node._host = prop(utils.globals, node.host)
-  } else {
-    node._host = utils.globals
+  if (node.mount) {
+    mount[node.mount] = obj
   }
 
   node.children.forEach(function (child) {
     if (typeof child === 'string') {
-      def(obj, child, child, node)
+      def(obj, child, child, options)
     } else {
-      traverse(child, obj)
+      traverse(child, obj, mount)
     }
   })
 
@@ -73,7 +92,7 @@ function def (obj, name, props, options) {
       configurable: false
     }
 
-    var host = options._host || options.host || utils.globals
+    var host = options.host || utils.globals
 
     if (typeof host[name] === 'function') {
       if (/^[A-Z]/.test(name)) {

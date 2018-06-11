@@ -5,8 +5,8 @@
 
 /* globals describe, it */
 var chai = require('chai')
-var detect = require('../lib/unsafe-detect')
-var keywords = require('../lib/keywords')
+var detect = require('../../lib/unsafe-detect')
+var keywords = require('../../lib/keywords')
 var expect = chai.expect
 
 function printNames (nodes) {

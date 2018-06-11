@@ -20,11 +20,16 @@ var sandbox = defUtils.traverse(keywords.SANDBOX)
  * 上面的 this 指向 window
  *
  * @param {Object} that this
- * @return {Object} safe this
+ * @return {Function} 返回 safe this 的方法
  */
-defUtils.def(sandbox, 'this', function (that) {
-  return that === window ? sandbox : that === document ? sandbox.document : that
-})
+function safeThis (sandbox) {
+  return function (that) {
+    return that === window ? sandbox : that === document ? sandbox.document : that
+  }
+}
+
+defUtils.def(sandbox, 'this', safeThis(sandbox))
+defUtils.def(sandbox.strict, 'this', safeThis(sandbox.strict))
 
 defUtils.def(sandbox, 'WHITELIST', keywords.WHITELIST)
 defUtils.def(sandbox, 'WHITELIST_STRICT', keywords.WHITELIST_STRICT)

@@ -7,11 +7,11 @@
 
 var chai = require('chai')
 var expect = chai.expect
-var generateFull = require('../lib/generate')
-var generateLite = require('../lib/generate-lite')
-var keywords = require('../lib/keywords')
+var generateFull = require('../../lib/generate')
+var generateLite = require('../../lib/generate-lite')
+var keywords = require('../../lib/keywords')
 var esprima = require('esprima')
-var escodegen = require('../deps/escodegen')
+var escodegen = require('../../deps/escodegen')
 
 function format (a) {
   return escodegen.generate(esprima.parseModule(a))
