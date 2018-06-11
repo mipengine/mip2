@@ -13,10 +13,11 @@ cli.setup({
     ['-i, --ignore', '忽略沙盒注入']
   ],
   help: [
-    '编译',
+    '',
+    '  Examples:',
+    cli.chalk.gray('    # 编译'),
     '    $ mip build'
-  ]
-    .join('\n')
+  ].join('\n')
 })
 
 build(cli.program)
