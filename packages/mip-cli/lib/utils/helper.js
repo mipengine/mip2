@@ -177,9 +177,9 @@ function resolveModule (moduleName, rest) {
   }
 }
 
-function pathFormat (pathname, removeExt = true) {
+function pathFormat (pathname, shouldRemoveExt = true) {
   pathname = pathname.replace(/\\/g, '/')
-  if (!removeExt) {
+  if (!shouldRemoveExt) {
     return pathname
   }
 

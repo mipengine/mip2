@@ -8,7 +8,8 @@ cli.setup({
   noArgs: true,
   help: [
     '',
-    '  初始化 MIP 项目',
+    '  Examples:',
+    cli.chalk.gray('    # 初始化 MIP 项目'),
     '    $ mip2 init'
   ].join('\n')
 })
