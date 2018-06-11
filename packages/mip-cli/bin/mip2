@@ -21,4 +21,5 @@ cli.program
   .command('validate', cli.chalk.green('验证 MIP 2.0 网页或组件'))
   .command('dev', cli.chalk.green('启动调试服务器'))
   .command('build', cli.chalk.green('组件打包'))
+  .command('sw', cli.chalk.green('生成 Service Worker'))
   .parse(process.argv)

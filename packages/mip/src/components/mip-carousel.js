@@ -7,9 +7,10 @@
 
 // import resources from '../resources'
 import CustomElement from '../custom-element'
-import viewport from '../viewport'
+import Resources from '../resources'
 
-let resources = viewport.resources
+let prerenderElement = Resources.prerenderElement
+
 let carouselParas = {
   boxClass: 'mip-carousel-container',
   wrapBoxClass: 'mip-carousel-wrapper',
@@ -193,12 +194,12 @@ class MipCarousel extends CustomElement {
       self.applyFillContent(ele, true)
       // inview callback  bug, TODO
       // let MIP = window.MIP || {};
-      resources.prerenderElement(ele)
+      prerenderElement(ele)
       let allImgs = ele.querySelectorAll('mip-img')
       let len = allImgs.length
       for (let idx = 0; idx < len; idx++) {
         self.applyFillContent(allImgs[idx], true)
-        resources.prerenderElement(allImgs[idx])
+        prerenderElement(allImgs[idx])
       }
     })
 

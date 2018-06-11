@@ -1,6 +1,6 @@
 {
   "name": "mip-component-validator",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "MIP component validate",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/mip-project/mip-component-validator#readme",
   "dependencies": {
+    "mip-sandbox": "^1.0.4",
     "mip-validator": "^1.5.15",
     "vue-template-compiler": "^2.5.16"
   }

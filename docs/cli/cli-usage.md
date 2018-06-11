@@ -51,7 +51,7 @@ myproject
 
 我们可以在项目的 `components` 目录中开发站点所需的自定义组件，然后依据 `example/index.html` 页面模板，引用官方或自定义组件来实现 MIP 页面。
 
-通常情况下，官方提供的[通用组件库](https://github.com/mipengine/mip2-extensions)已经能满足站点的基本需求。如果站点有使用复杂组件的场景，我们可以[编写自定义组件](./start-writing-first-mip.md)，并通过第三方组件仓库（TODO）进行提交，通过审核上线后，即能使用。
+通常情况下，官方提供的[通用组件库](https://github.com/mipengine/mip2-extensions)已经能满足站点的基本需求。如果站点有使用复杂组件的场景，我们可以[编写站长自定义组件](./contribute-to-site-extensions-repo.md)，并通过[站长组件仓库](https://github.com/mipengine/mip2-extensions-platform)进行提交，通过审核上线后，即能使用。
 
 同时，我们也欢迎开发者向官方通用组件库[贡献优秀的组件](./contribute-to-official-repo.md)。
 

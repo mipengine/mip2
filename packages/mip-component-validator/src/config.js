@@ -7,12 +7,9 @@
 module.exports = {
   vue: [
     'component-name',
-    'component-styles'
+    'component-styles',
+    'disallowed-global-var'
   ],
-  js: [
-
-  ],
-  css: [
-
-  ]
+  js: [],
+  css: []
 }

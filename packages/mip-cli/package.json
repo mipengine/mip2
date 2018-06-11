@@ -1,6 +1,6 @@
 {
   "name": "mip2",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "description": "CLI for mip 2.0",
   "preferGlobal": true,
   "bin": {
@@ -43,6 +43,7 @@
     "chokidar": "^2.0.3",
     "commander": "^2.15.1",
     "css-loader": "^0.28.11",
+    "deepmerge": "^2.1.1",
     "download-git-repo": "^1.0.2",
     "etpl": "^3.2.0",
     "file-loader": "^1.1.11",
@@ -76,6 +77,7 @@
     "vue-style-loader": "^4.1.0",
     "vue-template-compiler": "2.5.16",
     "webpack": "^4.8.3",
+    "workbox-build": "3.2.0",
     "wrapper-webpack-plugin": "^2.0.0"
   },
   "engines": {

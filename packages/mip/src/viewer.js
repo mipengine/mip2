@@ -211,6 +211,81 @@ let viewer = {
     }
   },
 
+  open (to, {isMipLink = true, replace = false, state}) {
+    let {router, isRootPage} = this.page
+    let notifyRootPage = this.page.notifyRootPage.bind(this.page)
+    if (!state) {
+      state = {click: undefined, title: undefined, defaultTitle: undefined}
+    }
+
+    let hash = ''
+    if (to.lastIndexOf('#') > -1) {
+      hash = to.substring(to.lastIndexOf('#'))
+    }
+    let isHashInCurrentPage = hash && to.indexOf(window.location.origin + window.location.pathname) > -1
+
+    // invalid <a>, ignore it
+    if (!to) {
+      return
+    }
+
+    /**
+     * we handle two scenario:
+     * 1. <mip-link>
+     * 2. anchor in same page, scroll to current hash with an ease transition
+     */
+    if (isMipLink || isHashInCurrentPage) {
+      // create target route
+      let targetRoute = {path: to}
+
+      // send statics message to BaiduResult page
+      let pushMessage = {
+        url: to,
+        state
+      }
+
+      this.sendMessage('pushState', pushMessage)
+
+      if (isMipLink) {
+        // show transition only in portrait mode
+        if (isPortrait()) {
+          router.rootPage.allowTransition = true
+        }
+
+        // reload page even if it's already existed
+        targetRoute.meta = {
+          reload: true,
+          header: {
+            title: pushMessage.state.title,
+            defaultTitle: pushMessage.state.defaultTitle
+          }
+        }
+      }
+
+      // handle <a mip-link replace> & hash
+      if (isHashInCurrentPage || replace) {
+        if (isRootPage) {
+          router.replace(targetRoute)
+        } else {
+          notifyRootPage({
+            type: MESSAGE_ROUTER_REPLACE,
+            data: {route: targetRoute}
+          })
+        }
+      } else if (isRootPage) {
+        router.push(targetRoute)
+      } else {
+        notifyRootPage({
+          type: MESSAGE_ROUTER_PUSH,
+          data: {route: targetRoute}
+        })
+      }
+    } else {
+      // jump in top window directly
+      top.location.href = to
+    }
+  },
+
   /**
    * Event binding callback.
    * For overridding _bindEventCallback of EventEmitter.
@@ -278,8 +353,6 @@ let viewer = {
    */
   _proxyLink (page = {}) {
     let self = this
-    let {router, isRootPage} = page
-    let notifyRootPage = page.notifyRootPage.bind(page)
     let httpRegexp = /^http/
     let telRegexp = /^tel:/
 
@@ -287,7 +360,7 @@ let viewer = {
      * if an <a> tag has `mip-link` or `data-type='mip'` let router handle it,
      * otherwise let TOP jump
      */
-    event.delegate(document, 'a', 'click', function (e) {
+    event.delegate(document, 'a', 'click', function (event) {
       let $a = this
 
       /**
@@ -296,18 +369,9 @@ let viewer = {
        * don't use `$a.getAttribute('href')`
        */
       let to = $a.href
-
       let isMipLink = $a.hasAttribute('mip-link') || $a.getAttribute('data-type') === 'mip'
-      let hash = ''
-      if (to.lastIndexOf('#') > -1) {
-        hash = to.substring(to.lastIndexOf('#'))
-      }
-      let isHashInCurrentPage = hash && to.indexOf(window.location.origin + window.location.pathname) > -1
-
-      // invalid <a>, ignore it
-      if (!to) {
-        return
-      }
+      let replace = $a.hasAttribute('replace')
+      let state = self._getMipLinkData.call($a)
 
       /**
        * For mail、phone、market、app ...
@@ -321,62 +385,9 @@ let viewer = {
         return
       }
 
-      e.preventDefault()
+      self.open(to, {isMipLink, replace, state})
 
-      /**
-       * we handle two scenario:
-       * 1. <mip-link>
-       * 2. anchor in same page, scroll to current hash with an ease transition
-       */
-      if (isMipLink || isHashInCurrentPage) {
-        // create target route
-        let targetRoute = {path: to}
-
-        // send statics message to BaiduResult page
-        let pushMessage = {
-          url: to,
-          state: self._getMipLinkData.call($a)
-        }
-        self.sendMessage('pushState', pushMessage)
-
-        if (isMipLink) {
-          // show transition only in portrait mode
-          if (isPortrait()) {
-            router.rootPage.allowTransition = true
-          }
-
-          // reload page even if it's already existed
-          targetRoute.meta = {
-            reload: true,
-            header: {
-              title: pushMessage.state.title,
-              defaultTitle: pushMessage.state.defaultTitle
-            }
-          }
-        }
-
-        // handle <a mip-link replace> & hash
-        if (isHashInCurrentPage || $a.hasAttribute('replace')) {
-          if (isRootPage) {
-            router.replace(targetRoute)
-          } else {
-            notifyRootPage({
-              type: MESSAGE_ROUTER_REPLACE,
-              data: {route: targetRoute}
-            })
-          }
-        } else if (isRootPage) {
-          router.push(targetRoute)
-        } else {
-          notifyRootPage({
-            type: MESSAGE_ROUTER_PUSH,
-            data: {route: targetRoute}
-          })
-        }
-      } else {
-        // jump in top window directly
-        top.location.href = to
-      }
+      event.preventDefault()
     }, false)
   },
 
