@@ -82,6 +82,11 @@ class Bind {
       return
     }
 
+    for (let k of Object.keys(data)) {
+      data[`#${k}`] = data[k]
+      delete data[k]
+    }
+
     let loc = window.location
     let domain = loc.protocol + '//' + loc.host
     let win = window.MIP.MIP_ROOT_PAGE ? window : window.parent
@@ -104,14 +109,14 @@ class Bind {
       this._compile.upadteData(JSON.parse(origin))
       let classified = this._normalize(data)
       if (compile) {
-        this._setGlobalState(classified.globalData)
+        this._setGlobalState(classified.globalData, cancel)
         this._setPageState(classified.pageData, cancel)
         this._observer.start(this._win.m)
         this._compile.start(this._win.m)
       } else {
         if (classified.globalData && notEmpty(classified.globalData)) {
           this._assign(this._win.parent.g, classified.globalData)
-          this._postMessage(classified.globalData)
+          !cancel && this._postMessage(classified.globalData)
         }
         data = classified.pageData
         for (let field of Object.keys(data)) {
@@ -160,22 +165,22 @@ class Bind {
     new Watcher(null, this._win.m, '', target, cb) // eslint-disable-line no-new
   }
 
-  _dispatch (key, val) {
+  _dispatch (key, val, cancel) {
     let win = this._win
     let data = {
       [key]: val
     }
     if (win.g && win.g.hasOwnProperty(key)) {
       this._assign(win.g, data)
-      this._postMessage(data)
+      !cancel && this._postMessage(data)
     } else if (!win.MIP.MIP_ROOT_PAGE && win.parent.g && win.parent.g.hasOwnProperty(key)) {
       this._assign(win.parent.g, data)
-      this._postMessage(data)
+      !cancel && this._postMessage(data)
     }
     Object.assign(win.m, data)
   }
 
-  _setGlobalState (data) {
+  _setGlobalState (data, cancel) {
     let win = this._win
     if (win.MIP.MIP_ROOT_PAGE) {
       win.g = win.g || {}
@@ -183,7 +188,7 @@ class Bind {
     } else {
       win.parent.g = win.parent.g || {}
       Object.assign(win.parent.g, data)
-      this._postMessage(data)
+      !cancel && this._postMessage(data)
     }
   }
 
