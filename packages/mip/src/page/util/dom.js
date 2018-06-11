@@ -374,3 +374,16 @@ export function createPageMask () {
 
   return mask
 }
+
+/**
+ * Append <script>
+ */
+export function appendScript (src) {
+  return new Promise((resolve, reject) => {
+    let script = document.createElement('script')
+    script.onload = resolve
+    script.onerror = reject
+    script.src = src
+    document.body.appendChild(script)
+  })
+}

@@ -30,6 +30,7 @@ export const MESSAGE_ROUTER_REPLACE = 'router-replace'
 export const MESSAGE_APPSHELL_HEADER_SLIDE_UP = 'appshell-header-slide-up'
 export const MESSAGE_APPSHELL_HEADER_SLIDE_DOWN = 'appshell-header-slide-down'
 export const MESSAGE_TOGGLE_PAGE_MASK = 'toggle-page-mask'
+export const MESSAGE_REGISTER_GLOBAL_COMPONENT = 'register-global-comonent'
 
 export const NON_EXISTS_PAGE_ID = 'non-exists-page-id'
 export const SCROLL_TO_ANCHOR_CUSTOM_EVENT = 'scroll-to-anchor'
@@ -50,4 +51,13 @@ export const XIONGZHANG_MORE_BUTTON_GROUP = [
     name: 'xiongzhang-cancel',
     text: '取消'
   }
+]
+
+export const BUILT_IN_COMPONENTS = [
+  'mip-data',
+  'mip-carousel',
+  'mip-iframe',
+  'mip-img',
+  'mip-pix',
+  'mip-video'
 ]
