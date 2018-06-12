@@ -24,7 +24,8 @@ import {
   MESSAGE_ROUTER_REPLACE,
   MESSAGE_APPSHELL_HEADER_SLIDE_UP,
   MESSAGE_APPSHELL_HEADER_SLIDE_DOWN,
-  MESSAGE_TOGGLE_PAGE_MASK
+  MESSAGE_TOGGLE_PAGE_MASK,
+  MESSAGE_REGISTER_GLOBAL_COMPONENT
 } from './const'
 import {supportsPassive} from './util/feature-detect'
 
@@ -33,6 +34,7 @@ import util from '../util'
 import viewport from '../viewport'
 import Router from './router'
 import AppShell from './appshell'
+import GlobalComponent from './appshell/globalComponent'
 import '../styles/mip.less'
 
 /**
@@ -141,16 +143,24 @@ class Page {
         data: this.currentPageMeta
       }, this)
 
+      this.globalComponent = new GlobalComponent()
+
       // Create loading div
       createLoading(this.currentPageMeta)
 
       this.messageHandlers.push((type, data) => {
         if (type === MESSAGE_APPSHELL_HEADER_SLIDE_UP) {
+          // AppShell header animation
           this.appshell.header.slideUp()
         } else if (type === MESSAGE_APPSHELL_HEADER_SLIDE_DOWN) {
+          // AppShell header animation
           this.appshell.header.slideDown()
         } else if (type === MESSAGE_TOGGLE_PAGE_MASK) {
+          // Toggle mask for AppShell header
           this.appshell.header.togglePageMask(data ? data.toggle : false)
+        } else if (type === MESSAGE_REGISTER_GLOBAL_COMPONENT) {
+          // Register global component
+          // this.globalComponent.register(data)
         }
       })
 
@@ -221,6 +231,13 @@ class Page {
     let scrollDistance
     let scrollHeight = viewport.getScrollHeight()
     let viewportHeight = viewport.getHeight()
+
+    // viewportHeight = 0 before frameMoveIn animation ends
+    // Wait a minute
+    if (viewportHeight === 0) {
+      setTimeout(this.setupBouncyHeader.bind(this), 100)
+      return
+    }
 
     this.debouncer = new Debouncer(() => {
       scrollTop = viewport.getScrollTop()
@@ -427,6 +444,9 @@ class Page {
     let innerTitle = {title: targetMeta.defaultTitle || undefined}
     let finalMeta = util.fn.extend(true, innerTitle, localMeta, targetMeta)
 
+    this.appshell.header.toggleTransition(false)
+    this.appshell.header.slideDown()
+
     if (targetPageId === this.pageId || this.direction === 'back') {
       // backward
       let backwardOpitons = {
@@ -435,6 +455,7 @@ class Page {
         onComplete: () => {
           this.allowTransition = false
           this.currentPageMeta = finalMeta
+          this.appshell.header.toggleTransition(true)
         }
       }
 
@@ -461,6 +482,7 @@ class Page {
         onComplete: () => {
           this.allowTransition = false
           this.currentPageMeta = finalMeta
+          this.appshell.header.toggleTransition(true)
           this.refreshAppShell(targetPageId, finalMeta)
           /**
            * Disable scrolling of root page when covered by an iframe
@@ -505,7 +527,8 @@ class Page {
       '.mip-page__iframe',
       '.mip-appshell-header-wrapper',
       '.mip-shell-more-button-mask',
-      '.mip-shell-more-button-wrapper'
+      '.mip-shell-more-button-wrapper',
+      '[mip-global-component]'
     ]
     let notInWhitelistSelector = whitelist.map(selector => `:not(${selector})`).join('')
     return document.body.querySelectorAll(`body > ${notInWhitelistSelector}`)

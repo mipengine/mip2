@@ -18,21 +18,16 @@ module.exports = function validate (config) {
     cli.error('path not exist')
   }
 
+  let result = {}
   if (config.options.page) {
     let content = fs.readFileSync(filePath, 'utf-8')
-    let result = {
-      type: 'page',
-      errors: pageValidator.validate(content)
-    }
-    report(result, filePath)
+    result.type = 'page'
+    result.errors = pageValidator.validate(content)
   } else {
-    compValidator.validate(filePath).then(result => {
-      result.type = 'component'
-      report(result, filePath)
-    }, e => {
-      cli.error(filePath, e.message)
-    })
+    result = compValidator.validate(filePath)
+    result.type = 'component'
   }
+  report(result, filePath)
 }
 
 function report (data, filePath) {

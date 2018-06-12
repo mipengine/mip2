@@ -17,7 +17,7 @@ export default class Header {
 
   init () {
     this.$el = document.createElement('div')
-    this.$el.classList.add('mip-appshell-header', 'mip-border', 'mip-border-bottom')
+    this.$el.classList.add('mip-appshell-header', 'mip-border', 'mip-border-bottom', 'transition')
     this.$el.innerHTML = this.render(this.data)
     // this.$wrapper.prepend(this.$el)
     // this.$wrapper.classList.add('mip-fixed')
@@ -124,6 +124,10 @@ export default class Header {
 
   update (data) {
     this.$el.innerHTML = this.render(data)
+  }
+
+  toggleTransition (toggle) {
+    toggle ? this.$el.classList.add('transition') : this.$el.classList.remove('transition')
   }
 
   slideUp () {

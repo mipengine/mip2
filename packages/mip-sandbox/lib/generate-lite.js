@@ -6,7 +6,7 @@
 var escodegen = require('../deps/escodegen-lite')
 var replace = require('./unsafe-replace')
 
-module.exports = function (code) {
-  var ast = replace(code)
+module.exports = function (code, keywords, options) {
+  var ast = replace(code, keywords, options && options.prefix)
   return escodegen.generate(ast)
 }

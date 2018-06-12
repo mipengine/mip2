@@ -2,8 +2,9 @@
  * @file safe-keywords.js
  * @author clark-t (clarktanglei@163.com)
  */
+var keys = require('./utils/keys')
 
-var WINDOW_ORIGINAL = [
+var ORIGINAL = [
   'Array',
   'ArrayBuffer',
   'Blob',
@@ -12,15 +13,10 @@ var WINDOW_ORIGINAL = [
   'DOMException',
   'Date',
   'Error',
-  'File',
-  'FileList',
-  'FileReader',
   'Float32Array',
   'Float64Array',
   'FormData',
   'Headers',
-  'Image',
-  'ImageBitmap',
   'Infinity',
   'Int16Array',
   'Int32Array',
@@ -28,9 +24,7 @@ var WINDOW_ORIGINAL = [
   'JSON',
   'Map',
   'Math',
-  'MutationObserver',
   'NaN',
-  'Notification',
   'Number',
   'Object',
   'Promise',
@@ -54,12 +48,9 @@ var WINDOW_ORIGINAL = [
   'Uint8Array',
   'Uint8ClampedArray',
   'WritableStream',
-  'addEventListener',
-  'cancelAnimationFrame',
   'clearInterval',
   'clearTimeout',
   'console',
-  'createImageBitmap',
   'decodeURI',
   'decodeURIComponent',
   'devicePixelRatio',
@@ -68,16 +59,12 @@ var WINDOW_ORIGINAL = [
   'escape',
   'fetch',
   'getComputedStyle',
-  // 待定
-  'history',
   'innerHeight',
   'innerWidth',
   'isFinite',
   'isNaN',
   'isSecureContext',
   'localStorage',
-  // 待定
-  'location',
   'length',
   'matchMedia',
   'navigator',
@@ -85,63 +72,141 @@ var WINDOW_ORIGINAL = [
   'outerWidth',
   'parseFloat',
   'parseInt',
-  'removeEventListener',
-  'requestAnimationFrame',
   'screen',
   'screenLeft',
   'screenTop',
   'screenX',
   'screenY',
-  'scroll',
-  'scrollBy',
-  'scrollTo',
   'scrollX',
   'scrollY',
-  'scrollbars',
   'sessionStorage',
   'setInterval',
   'setTimeout',
   'undefined',
-  'unescape',
-  'webkitCancelAnimationFrame',
-  'webkitRequestAnimationFrame'
-]
-
-var WINDOW_CUSTOM = [
-  'document',
-  'window',
-  'MIP'
+  'unescape'
 ]
 
 var RESERVED = [
   'arguments',
-  'MIP',
+  // 'MIP',
   'require',
   'module',
   'exports',
   'define'
 ]
 
-var DOCUMENT_ORIGINAL = [
-  'head',
-  'body',
-  'title',
-  'cookie',
-  'referrer',
-  'readyState',
-  'documentElement',
-  'createElement',
-  'createDcoumentFragment',
-  'getElementById',
-  'getElementsByClassName',
-  'getElementsByTagName',
-  'querySelector',
-  'querySelectorAll'
-]
+var SANDBOX_STRICT = {
+  name: 'strict',
+  access: 'readyonly',
+  host: 'window',
+  mount: 'MIP.sandbox.strict',
+  children: ORIGINAL.concat([
+    {
+      name: 'document',
+      host: 'document',
+      children: [
+        'cookie'
+      ]
+    },
+    {
+      name: 'location',
+      host: 'location',
+      access: 'readonly',
+      children: [
+        'href',
+        'protocol',
+        'host',
+        'hostname',
+        'port',
+        'pathname',
+        'search',
+        'hash',
+        'origin'
+      ]
+    },
+    {
+      name: 'MIP',
+      host: 'MIP',
+      children: [
+        'watch',
+        'setData',
+        'viewPort',
+        'util',
+        'sandbox'
+      ]
+    },
+    {
+      name: 'window',
+      host: 'MIP.sandbox.strict'
+    }
+  ])
+}
+
+var SANDBOX = {
+  access: 'readonly',
+  host: 'window',
+  mount: 'MIP.sandbox',
+  children: ORIGINAL.concat([
+    'File',
+    'FileList',
+    'FileReader',
+    'Image',
+    'ImageBitmap',
+    'MutationObserver',
+    'Notification',
+    'addEventListener',
+    'cancelAnimationFrame',
+    'createImageBitmap',
+    // 待定
+    'history',
+    // 待定
+    'location',
+    'removeEventListener',
+    'requestAnimationFrame',
+    'scrollBy',
+    'scrollTo',
+    'scroll',
+    'scrollbars',
+    'webkitCancelAnimationFrame',
+    'webkitRequestAnimationFrame',
+    {
+      name: 'document',
+      host: 'document',
+      children: [
+        'head',
+        'body',
+        'title',
+        'cookie',
+        'referrer',
+        'readyState',
+        'documentElement',
+        'createElement',
+        'createDcoumentFragment',
+        'getElementById',
+        'getElementsByClassName',
+        'getElementsByTagName',
+        'querySelector',
+        'querySelectorAll'
+      ]
+    },
+    {
+      name: 'window',
+      host: 'MIP.sandbox'
+    },
+    {
+      name: 'MIP',
+      host: 'MIP'
+    },
+    SANDBOX_STRICT
+  ])
+}
 
 module.exports = {
-  WINDOW_ORIGINAL: WINDOW_ORIGINAL,
-  WINDOW_CUSTOM: WINDOW_CUSTOM,
-  DOCUMENT_ORIGINAL: DOCUMENT_ORIGINAL,
-  RESERVED: RESERVED
+  ORIGINAL: ORIGINAL,
+  RESERVED: RESERVED,
+  SANDBOX: SANDBOX,
+  SANDBOX_STRICT: SANDBOX_STRICT,
+  WHITELIST: keys(SANDBOX.children).concat(RESERVED),
+  WHITELIST_STRICT: keys(SANDBOX_STRICT.children).concat(RESERVED),
+  WHITELIST_RESERVED: ORIGINAL.concat(RESERVED)
 }

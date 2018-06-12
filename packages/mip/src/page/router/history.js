@@ -14,7 +14,6 @@ export default class HTML5History {
 
     const initLocation = getLocation()
     window.addEventListener('popstate', e => {
-      console.log('popstate triggered')
       // Avoiding first `popstate` event dispatched in some browsers but first
       // history route not updated since async guard at the same time.
       const location = getLocation()
@@ -35,14 +34,12 @@ export default class HTML5History {
   }
 
   push (location) {
-    console.log('push from history.js')
     this.transitionTo(location, route => {
       pushState(route.fullPath)
     })
   }
 
   replace (location) {
-    console.log('replace from history.js')
     this.transitionTo(location, route => {
       replaceState(route.fullPath)
     })
