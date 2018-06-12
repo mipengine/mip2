@@ -59,7 +59,7 @@
     "less-loader": "^4.1.0",
     "livereload": "^0.7.0",
     "metalsmith": "^2.3.0",
-    "mip-component-validator": "^1.0.3",
+    "mip-component-validator": "^1.0.5",
     "mip-sandbox": "^1.0.4",
     "mip-validator": "^1.5.15",
     "opn": "^5.3.0",
