@@ -37,6 +37,7 @@ module.exports = {
           devMode
             ? {loader: 'style-loader', options: {insertAt: 'top'}}
             : MiniCssExtractPlugin.loader,
+          'vue-style-loader',
           {
             loader: 'css-loader',
             options: devMode
