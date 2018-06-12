@@ -13,7 +13,7 @@ module.exports = async function (source, map, meta) {
   let callback = this.async()
 
   try {
-    let output = generate(source, keywords.WHITELIST, {
+    let output = generate(source, keywords.WHITELIST_RESERVED, {
       escodegen: {
         sourceMapWithCode: true,
         sourceMap: path.basename(this.resourcePath),

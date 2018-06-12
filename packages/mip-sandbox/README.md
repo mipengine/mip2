@@ -101,7 +101,7 @@ console.log(b)
 window.console.log(a)
 `
 
-var result = generate(code, keywords.WHITELIST)
+var result = generate(code, keywords.WHITELIST_RESERVED)
 
 console.log(result)
 
@@ -117,7 +117,7 @@ console.log(result)
 默认的 options.prefix === 'MIP.sandbox'，在严格下可以传入 MIP.sandbox.strict，得到的结果将如下所示：
 
 ```javascript
-var result = generate(code, keywords.WHITELIST, {prefix: 'MIP.sandbox.strict'})
+var result = generate(code, keywords.WHITELIST_STRICT_RESERVED, {prefix: 'MIP.sandbox.strict'})
 
 // var a = 1
 // console.log(MIP.sandbox.b)
@@ -131,7 +131,7 @@ var result = generate(code, keywords.WHITELIST, {prefix: 'MIP.sandbox.strict'})
 如:
 
 ```javascript
-var output = generate(code, keywords.WHITELIST, {
+var output = generate(code, keywords.WHITELIST_RESERVED, {
   escodegen: {
     sourceMap: 'name',
     sourceMapWithCode: true
@@ -161,7 +161,7 @@ var output = generate(code, keywords.WHITELIST, {
 ```javascript
 var generate = require('mip-sandbox/lib/generate-lite')
 var keywords = require('mip-sandbox/lib/keywords')
-var code = generate(code, keywords.WHITELIST)
+var code = generate(code, keywords.WHITELIST_RESERVED)
 ```
 
 ### 沙盒检测替换优化
@@ -176,7 +176,7 @@ var keywords = require('mip-sandbox/lib/keywords')
 
 var ast = mark(code)
 var unsafeList = detect(ast, keywords.WHITELIST)
-var generated = generated(ast, keywords.WHITELIST)
+var generated = generated(ast, keywords.WHITELIST_RESERVED)
 ```
 
 ## 沙盒替换规则
@@ -225,16 +225,22 @@ MIP.sandbox.this = function (that) {
 
 ## 严格模式
 
-在 mip-script 中，理论上只允许进行数据运算和发请求等等操作，不允许直接操作 DOM ，因此在 mip-script 中写的 js 将会以沙盒的严格模式进行全局变量替换，比如 window 会被替换成 `MIP.sandbox.strict.window`、 this 将会替换成 `MIP..strict.this(this)`。
+在 mip-script 中，理论上只允许进行数据运算和发请求等等操作，不允许直接操作 DOM ，因此在 mip-script 中写的 js 将会以沙盒的严格模式进行全局变量替换，比如 window 会被替换成 `MIP.sandbox.strict.window`、 this 将会替换成 `MIP.sandbox.strict.this(this)`。
 
 其中 MIP.sandbox.strict 是 MIP.sandbox 的子集。
 
 ## 可用全局变量
 
-以下变量是 MIP sandbox 暴露给用户可直接使用的全局变量，后续会根据实际需要进行增加或减少：
+以下变量是 MIP sandbox 暴露给用户可直接使用的全局变量，后续会根据实际需要进行增加或减少。
+
+
+### 原生安全的全局变量
+
+以下全局变量被认为是安全的，在沙盒注入过程中不会加上任何沙盒前缀：
 
 ```javascript
-var WINDOW_ORIGINAL = [
+
+var ORIGINAL = [
   'Array',
   'ArrayBuffer',
   'Blob',
@@ -243,15 +249,10 @@ var WINDOW_ORIGINAL = [
   'DOMException',
   'Date',
   'Error',
-  'File',
-  'FileList',
-  'FileReader',
   'Float32Array',
   'Float64Array',
   'FormData',
   'Headers',
-  'Image',
-  'ImageBitmap',
   'Infinity',
   'Int16Array',
   'Int32Array',
@@ -259,9 +260,7 @@ var WINDOW_ORIGINAL = [
   'JSON',
   'Map',
   'Math',
-  'MutationObserver',
   'NaN',
-  'Notification',
   'Number',
   'Object',
   'Promise',
@@ -285,12 +284,9 @@ var WINDOW_ORIGINAL = [
   'Uint8Array',
   'Uint8ClampedArray',
   'WritableStream',
-  'addEventListener',
-  'cancelAnimationFrame',
   'clearInterval',
   'clearTimeout',
   'console',
-  'createImageBitmap',
   'decodeURI',
   'decodeURIComponent',
   'devicePixelRatio',
@@ -299,16 +295,12 @@ var WINDOW_ORIGINAL = [
   'escape',
   'fetch',
   'getComputedStyle',
-  // 待定
-  'history',
   'innerHeight',
   'innerWidth',
   'isFinite',
   'isNaN',
   'isSecureContext',
   'localStorage',
-  // 待定
-  'location',
   'length',
   'matchMedia',
   'navigator',
@@ -316,61 +308,165 @@ var WINDOW_ORIGINAL = [
   'outerWidth',
   'parseFloat',
   'parseInt',
-  'removeEventListener',
-  'requestAnimationFrame',
   'screen',
   'screenLeft',
   'screenTop',
   'screenX',
   'screenY',
-  'scroll',
-  'scrollBy',
-  'scrollTo',
   'scrollX',
   'scrollY',
-  'scrollbars',
   'sessionStorage',
   'setInterval',
   'setTimeout',
   'undefined',
-  'unescape',
-  'webkitCancelAnimationFrame',
-  'webkitRequestAnimationFrame'
-]
-
-var WINDOW_CUSTOM = [
-  'document',
-  'window',
-  'MIP'
+  'unescape'
 ]
 
 var RESERVED = [
   'arguments',
-  'MIP',
+  // 'MIP',
   'require',
   'module',
   'exports',
   'define'
 ]
 
-var DOCUMENT_ORIGINAL = [
-  'head',
-  'body',
-  'title',
-  'cookie',
-  'referrer',
-  'readyState',
-  'documentElement',
-  'createElement',
-  'createDcoumentFragment',
-  'getElementById',
-  'getElementsByClassName',
-  'getElementsByTagName',
-  'querySelector',
-  'querySelectorAll'
-]
-
 ```
 
+### 普通模式的沙盒安全变量
 
+普通模式下的沙盒安全变量包含原生安全变量的全部，并且添加了以下变量：
+
+```javascript
+// 全局安全变量
+var WHITELIST_ORIGINAL = [
+  ...ORIGINAL,
+  ...RESERVED,
+  'File',
+  'FileList',
+  'FileReader',
+  'Image',
+  'ImageBitmap',
+  'MutationObserver',
+  'Notification',
+  'addEventListener',
+  'cancelAnimationFrame',
+  'createImageBitmap',
+  // 待定
+  'history',
+  // 待定
+  'location',
+  'removeEventListener',
+  'requestAnimationFrame',
+  'scrollBy',
+  'scrollTo',
+  'scroll',
+  'scrollbars',
+  'webkitCancelAnimationFrame',
+  'webkitRequestAnimationFrame'
+]
+
+// 自定义安全变量
+var WHITELIST_CUSTOM = [
+  {
+    name: 'document',
+    // document 允许使用以下属性或方法
+    properties: [
+      'head',
+      'body',
+      'title',
+      'cookie',
+      'referrer',
+      'readyState',
+      'documentElement',
+      'createElement',
+      'createDcoumentFragment',
+      'getElementById',
+      'getElementsByClassName',
+      'getElementsByTagName',
+      'querySelector',
+      'querySelectorAll'
+    ]
+  },
+  {
+    name: 'window',
+    // window 指向 window.MIP.sandbox
+    getter: 'MIP.sandbox'
+  },
+  {
+    name: 'MIP',
+    // MIP 指向 window.MIP
+    getter: 'MIP'
+  }
+]
+```
+
+因此，白名单的定义为，普通模式下的全局安全变量与自定义安全变量的集合：
+
+```javascript
+var WHITELIST = WHITELIST_ORIGINAL.concat(WHITELIST_CUSTOM.map(item => item.name))
+var WHITELIST_RESERVED = WHITELIST_ORIGINAL
+```
+
+### 严格模式下的沙盒安全变量
+严格模式下的沙盒安全变量包含原生安全变量的全部，并且添加了以下变量：
+
+```javascript
+// 安全原生全局变量
+var WHITELIST_STRICT_ORIGINAL = [
+  ...ORIGINAL,
+  ...RESERVED
+]
+
+// 安全自定义全局变量
+var WHITELIST_STRICT_CUSTOM = [
+  // 只允许访问 document.cookie
+  {
+    name: 'document',
+    properties: [
+      'cookie'
+    ]
+  },
+  // location 只放开读权限
+  {
+    name: 'location',
+    access: 'readonly',
+    properties: [
+      'href',
+      'protocol',
+      'host',
+      'hostname',
+      'port',
+      'pathname',
+      'search',
+      'hash',
+      'origin'
+    ]
+  },
+  // MIP 对象只开放部分工具函数
+  {
+    name: 'MIP',
+    access: 'readonly',
+    properties: [
+      'watch',
+      'setData',
+      'viewPort',
+      'util',
+      'sandbox'
+    ]
+  },
+  // 严格模式下的 window 对象指向 MIP.sandbox.strict
+  {
+    name: 'window',
+    getter: 'MIP.sandbox.strict'
+  }
+]
+```
+
+因此，严格模式下白名单的定义为，普通模式下的全局安全变量与自定义安全变量的集合：
+
+```javascript
+var WHITELIST_STRICT = WHITELIST_STRICT_ORIGINAL.concat(WHITELIST_STRICT_CUSTOM.map(item => item.name))
+var WHITELIST_STRICT_RESERVED = WHITELIST_STRICT_ORIGINAL
+```
 

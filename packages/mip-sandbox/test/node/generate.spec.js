@@ -50,7 +50,7 @@ describe('generate', function () {
           }
         `
 
-        expect(generate(code, keywords.WHITELIST)).to.be.equal(format(expected))
+        expect(generate(code, keywords.WHITELIST_RESERVED)).to.be.equal(format(expected))
       })
 
       it('#string', function () {
@@ -58,7 +58,7 @@ describe('generate', function () {
         var code = '`abcd${this[this].this}efg${b[c].d}`'
         var expected = '`abcd${MIP.sandbox.this(this)[MIP.sandbox.this(this)].this}efg${MIP.sandbox.b[MIP.sandbox.c].d}`'
         /* eslint-enable */
-        expect(generate(code, keywords.WHITELIST)).to.be.equal(format(expected))
+        expect(generate(code, keywords.WHITELIST_RESERVED)).to.be.equal(format(expected))
       })
 
       it('#object', function () {
@@ -74,7 +74,7 @@ describe('generate', function () {
           var d = {setTimeout}
         `
 
-        expect(generate(code, keywords.WHITELIST)).to.be.equal(format(expected))
+        expect(generate(code, keywords.WHITELIST_RESERVED)).to.be.equal(format(expected))
       })
 
       it('#unsafe', function () {
@@ -158,7 +158,7 @@ describe('generate', function () {
           var v = {v}
         `
 
-        expect(generate(code, keywords.WHITELIST)).to.be.equal(format(expected))
+        expect(generate(code, keywords.WHITELIST_RESERVED)).to.be.equal(format(expected))
       })
 
       it('#CatchClause', function () {
@@ -198,14 +198,38 @@ describe('generate', function () {
           console.log(MIP.sandbox.code)
         `
 
-        expect(generate(code, keywords.WHITELIST)).to.be.equal(format(expected))
+        expect(generate(code, keywords.WHITELIST_RESERVED)).to.be.equal(format(expected))
+      })
+
+      it('#strict', function () {
+        var code = `
+          var a = location.href
+          var b = document.createElement('div')
+        `
+
+        var expected = `
+          var a = location.href
+          var b = MIP.sandbox.document.createElement('div')
+        `
+
+        var expectedInStrict = `
+          var a = MIP.sandbox.strict.location.href
+          var b = MIP.sandbox.strict.document.createElement('div')
+        `
+
+        expect(generate(code, keywords.WHITELIST_RESERVED)).to.be.equal(format(expected))
+        expect(generate(
+          code,
+          keywords.WHITELIST_STRICT_RESERVED,
+          {prefix: 'MIP.sandbox.strict'}
+        )).to.be.equal(format(expectedInStrict))
       })
     })
   })
 
   it('#sourcemap', function () {
     var code = 'var a = 0'
-    var output = generateFull(code, keywords.WHITELIST, {
+    var output = generateFull(code, keywords.WHITELIST_RESERVED, {
       escodegen: {
         sourceMap: 'hehe',
         sourceMapWithCode: true

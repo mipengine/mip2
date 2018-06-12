@@ -100,5 +100,6 @@ describe('utils/keys', function () {
       {name: 'd'}
     ]
     expect(keys(list)).to.be.deep.equal(['a', 'b', 'c', 'd'])
+    expect(keys(list, true)).to.be.deep.equal(['a', 'b', 'c'])
   })
 })

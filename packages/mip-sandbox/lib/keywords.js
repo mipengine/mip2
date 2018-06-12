@@ -205,7 +205,8 @@ var SANDBOX = {
 
 var WHITELIST = keys(SANDBOX.properties).concat(RESERVED)
 var WHITELIST_STRICT = keys(SANDBOX_STRICT.properties).concat(RESERVED)
-var WHITELIST_RESERVED = ORIGINAL.concat(RESERVED)
+var WHITELIST_RESERVED = keys(SANDBOX.properties, true).concat(RESERVED)
+var WHITELIST_STRICT_RESERVED = keys(SANDBOX_STRICT.properties, true).concat(RESERVED)
 
 // 防止用户篡改数组，因此每次返回的都是数组浅拷贝
 
@@ -226,6 +227,12 @@ var whiteListProperties = [
     name: 'WHITELIST_RESERVED',
     getter: function () {
       return WHITELIST_RESERVED.slice()
+    }
+  },
+  {
+    name: 'WHITELIST_STRICT_RESERVED',
+    getter: function () {
+      return WHITELIST_STRICT_RESERVED.slice()
     }
   }
 ]
