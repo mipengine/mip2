@@ -16,12 +16,57 @@ export function getAttributes (children) {
   return attributes
 }
 
+/**
+ * Get childNodes of an element
+ * @param {HTMLElement} element
+ * @returns {NodeList}
+ */
+export function getChildNodes (element) {
+  if (element.childNodes.length) return element.childNodes
+  if (element.content && element.content.childNodes && element.content.childNodes.length) {
+    return element.content.childNodes
+  }
+
+  const placeholder = document.createElement('div')
+
+  placeholder.innerHTML = element.innerHTML
+
+  return placeholder.childNodes
+}
+
+/**
+ * Get Vue element representing a template for use with slots
+ * @param {Function} createElement - createElement function from vm
+ * @param {HTMLElement} element - template element
+ * @param {Object} elementOptions
+ * @returns {VNode}
+ */
+export function templateElement (createElement, element, elementOptions) {
+  const templateChildren = getChildNodes(element)
+
+  const vueTemplateChildren = toArray(templateChildren).map((child) => {
+    // children passed to create element can be a string
+    // https://vuejs.org/v2/guide/render-function#createElement-Arguments
+    if (child.nodeName === '#text') return child.nodeValue
+
+    return createElement(child.tagName, {
+      attrs: getAttributes(child),
+      domProps: {
+        innerHTML: child.innerHTML
+      }
+    })
+  })
+
+  elementOptions.slot = element.id
+
+  return createElement('template', elementOptions, vueTemplateChildren)
+}
+
 // Helper utility returning slots for render function
 export function getSlots (innerHTML, createElement) {
   let emptyNode = document.createElement('div')
   emptyNode.innerHTML = innerHTML
   let children = emptyNode.children
-
   const slots = []
   toArray(children).forEach(child => {
     if (child.nodeName === '#text') {
@@ -42,7 +87,11 @@ export function getSlots (innerHTML, createElement) {
         attributes.slot = undefined
       }
 
-      slots.push(createElement(child.tagName, elementOptions))
+      const slotVueElement = (child.tagName === 'TEMPLATE')
+        ? templateElement(createElement, child, elementOptions)
+        : createElement(child.tagName, elementOptions)
+
+      slots.push(slotVueElement)
     }
   })
 

@@ -170,8 +170,11 @@ body.with-header {
 .mip-appshell-header {
     top: 0;
     display: none;
-    transition: transform ease 300ms;
     transform: translate3d(0, 0, 0);
+
+    &.transition {
+        transition: transform ease 300ms;
+    }
 
     &.slide-up {
         transform: translate3d(0, (-@appshell-header-height), 0);

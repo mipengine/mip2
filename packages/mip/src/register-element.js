@@ -38,6 +38,8 @@ class BaseElement extends HTMLElement {
      */
     this._resources = viewport.resources
 
+    this.__innerHTML = this.innerHTML
+
     /**
      * Instantiated the custom element.
      * @type {Object}
