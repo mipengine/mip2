@@ -5,7 +5,8 @@
 
 /* globals describe, it */
 var chai = require('chai')
-var detect = require('../lib/unsafe-detect')
+var detect = require('../../lib/unsafe-detect')
+var keywords = require('../../lib/keywords')
 var expect = chai.expect
 
 function printNames (nodes) {
@@ -28,7 +29,7 @@ describe('unsafe-detect', function () {
       console.log(c)
     `
 
-    var list = detect(code)
+    var list = detect(code, keywords.WHITELIST)
     expect(list.map(item => item.name).join('-')).to.be.equal('b')
   })
 
@@ -38,7 +39,7 @@ describe('unsafe-detect', function () {
       module.exports = a
     `
 
-    var list = detect(code)
+    var list = detect(code, keywords.WHITELIST)
     expect(list).to.be.an('array').that.is.empty
   })
 
@@ -49,7 +50,7 @@ describe('unsafe-detect', function () {
       })
     `
 
-    var list = detect(code)
+    var list = detect(code, keywords.WHITELIST)
     expect(list).to.be.an('array').that.is.empty
   })
 
@@ -123,7 +124,7 @@ describe('unsafe-detect', function () {
         console.log(n)
       `
 
-      var list = detect(code)
+      var list = detect(code, keywords.WHITELIST)
       expect(printNames(list)).to.be.equal('b-d-e-f-k-l-m-n-e-e-k-l-m-n-k-n-a-b-c-d-e-f-k-l-m-n')
     })
 
@@ -147,7 +148,7 @@ describe('unsafe-detect', function () {
         console.log(f)
       `
 
-      var list = detect(code)
+      var list = detect(code, keywords.WHITELIST)
       expect(printNames(list)).to.be.equal('c-d-e')
     })
 
@@ -180,7 +181,7 @@ describe('unsafe-detect', function () {
         console.log(i)
       `
 
-      var list = detect(code)
+      var list = detect(code, keywords.WHITELIST)
       expect(printNames(list)).to.be.equal('a-b-d-e-a-b-d-e-f-g-h-i')
     })
 
@@ -227,7 +228,7 @@ describe('unsafe-detect', function () {
         console.log(o)
       `
 
-      var list = detect(code)
+      var list = detect(code, keywords.WHITELIST)
       expect(printNames(list)).to.be.equal('c-g-o-b-c-d-e-f-g-i-j-l-o-o')
     })
 
@@ -279,7 +280,7 @@ describe('unsafe-detect', function () {
         console.log(l)
       `
 
-      var list = detect(code)
+      var list = detect(code, keywords.WHITELIST)
       expect(printNames(list)).to.be.equal('b-b-c-i-j-k-l-b-c-d-e-f-g-h-i-k-b-c-d-e-f-g-h-i-j-k-l')
     })
   })
@@ -291,7 +292,7 @@ describe('unsafe-detect', function () {
         [j[k].l()]: function j() {}
       }
     `
-    var list = detect(code)
+    var list = detect(code, keywords.WHITELIST)
     expect(printNames(list)).to.be.equal('b-c-d-f-h-j-k')
   })
 
@@ -299,7 +300,7 @@ describe('unsafe-detect', function () {
     /* eslint-disable */
     var code = 'var a = `bcdef${g}hijk${l.m[n.o][p].q["r"]}`'
     /* eslint-enable */
-    var list = detect(code)
+    var list = detect(code, keywords.WHITELIST)
     expect(printNames(list)).to.be.equal('g-l-n-p')
   })
 
@@ -308,7 +309,7 @@ describe('unsafe-detect', function () {
       var a = {b}
       var c = {c}
     `
-    var list = detect(code)
+    var list = detect(code, keywords.WHITELIST)
     expect(printNames(list)).to.be.equal('b')
   })
 })

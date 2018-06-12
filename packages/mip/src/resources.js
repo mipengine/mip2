@@ -28,47 +28,48 @@ let counter = 0
  *
  * @class
  */
-function Resources (viewport) {
+
+class Resources {
+  constructor (viewport) {
   /**
    * Resources id
    * @private
    * @type {number}
    */
-  this._rid = counter++
+    this._rid = counter++
 
-  /**
-   * Element id
-   * @private
-   * @type {number}
-   */
-  this._eid = 0
+    /**
+     * Element id
+     * @private
+     * @type {number}
+     */
+    this._eid = 0
 
-  // add to resources
-  resources[this._rid] = {}
+    // add to resources
+    resources[this._rid] = {}
 
-  /**
+    /**
    * The method to udpate state.
    * @type {Function}
    */
-  this.updateState = this._update.bind(this)
+    this.updateState = this._update.bind(this)
 
-  /**
+    /**
    * Viewport
    * @private
    * @type {Object}
    */
-  this._viewport = viewport
+    this._viewport = viewport
 
-  this._gesture = new Gesture(document.body, {
-    preventX: false
-  })
-  this._bindEvent()
-}
+    this._gesture = new Gesture(document.body, {
+      preventX: false
+    })
+    this._bindEvent()
+  }
 
-Resources.prototype = {
   /**
-   * Bind the events of current object.
-   */
+ * Bind the events of current object.
+ */
   _bindEvent () {
     let self = this
     let timer
@@ -82,7 +83,7 @@ Resources.prototype = {
     })
 
     this.updateState()
-  },
+  }
 
   /**
    * Add an element for current object and update all the elements's state.
@@ -97,7 +98,7 @@ Resources.prototype = {
     // setTimeout(() => {
     //     this.updateState();
     // });
-  },
+  }
 
   /**
    * Remove element from current resources object.
@@ -112,7 +113,7 @@ Resources.prototype = {
       return true
     }
     return false
-  },
+  }
 
   /**
    * Return an object of resources.
@@ -121,7 +122,7 @@ Resources.prototype = {
    */
   getResources () {
     return resources[this._rid]
-  },
+  }
 
   /**
    * Return an array of resources.
@@ -130,7 +131,7 @@ Resources.prototype = {
    */
   getResourcesList () {
     return fn.values(this.getResources())
-  },
+  }
 
   /**
    * Set an element's viewport state to 'true' or 'false'.
@@ -142,7 +143,7 @@ Resources.prototype = {
     if (element.inViewport() !== inViewport) {
       element.viewportCallback(inViewport)
     }
-  },
+  }
 
   /**
    * Update elements's viewport state.
@@ -158,19 +159,18 @@ Resources.prototype = {
         rect.overlapping(rect.getElementRect(resources[i]), viewportRect)
       this.setInViewport(resources[i], inViewport)
     }
-  },
+  }
 
   /**
    * Forced set the element's viewport state to 'true'.
    *
    * @param {MIPElement} element element
    */
-  prerenderElement (element) {
+  static prerenderElement (element) {
     if (element.inViewport && !element.inViewport()) {
       element.viewportCallback && element.viewportCallback(true)
     }
   }
-
 }
 
 export default Resources

@@ -5,6 +5,7 @@
  */
 
 const detect = require('mip-sandbox/lib/unsafe-detect')
+const keywords = require('mip-sandbox/lib/keywords')
 const utils = require('../utils')
 
 module.exports = {
@@ -15,7 +16,7 @@ module.exports = {
       return
     }
     
-    const results = detect(script.content)
+    const results = detect(script.content, keywords.WHITELIST)
     results.forEach((result) => {
       reporter.error(file.path, '禁止的全局变量 `' + result.name + '`.', result.loc.start.line, result.loc.start.column)
     })

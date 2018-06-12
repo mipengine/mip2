@@ -4,45 +4,43 @@
  */
 
 var detect = require('./global-detect')
-var keywords = require('./keywords')
 var is = require('./utils/is')
 var t = require('./utils/type')
 
-var WINDOW_SAFE_KEYWORDS = keywords.WINDOW_ORIGINAL
-  .concat(keywords.RESERVED)
-
-function sandboxExpression (name) {
-  return t.memberExpression(
-    t.memberExpression(
-      t.identifier('MIP'),
-      t.identifier('sandbox')
-    ),
-    t.identifier(name)
-  )
+function memberExpression (name) {
+  var keys = name.split('.')
+  var expression = t.identifier(keys[0])
+  for (var i = 1; i < keys.length; i++) {
+    expression = t.memberExpression(expression, t.identifier(keys[i]))
+  }
+  return expression
 }
 
-function safeThisExpression () {
+function safeThisExpression (prefix) {
   return t.callExpression(
-    sandboxExpression('this'),
+    memberExpression(prefix + '.this'),
     [t.thisExpression()]
   )
 }
 
-module.exports = function (code) {
+module.exports = function (code, keywords, prefix) {
+  keywords = keywords || []
+  prefix = prefix || 'MIP.sandbox'
+
   return detect(
     code,
     function (node, parent) {
       if (is(node, 'ThisExpression')) {
         this.skip()
-        return safeThisExpression()
+        return safeThisExpression(prefix)
       }
 
-      if (WINDOW_SAFE_KEYWORDS.indexOf(node.name) === -1) {
+      if (keywords.indexOf(node.name) === -1) {
         this.skip()
         if (is(parent, 'Property', {shorthand: true})) {
           parent.shorthand = false
         }
-        return sandboxExpression(node.name)
+        return memberExpression(prefix + '.' + node.name)
       }
     },
     'replace'
