@@ -53,7 +53,7 @@ var a = 1
 console.log(b)
 `
 
-// 严格模式 请使用 keywords.WHITLIST_STRICT
+// 严格模式 请使用 keywords.WHITELIST_STRICT
 // 在前端使用时，可通过 MIP.sandbox.WHITELIST 去拿该列表
 var results = detect(code, keywords.WHITELIST)
 
@@ -174,7 +174,7 @@ var detect = require('mip-sandbox/lib/unsafe-detect')
 var generate = require('mip-sandbox/lib/generate')
 var keywords = require('mip-sandbox/lib/keywords')
 
-var ast - mark(code)
+var ast = mark(code)
 var unsafeList = detect(ast, keywords.WHITELIST)
 var generated = generated(ast, keywords.WHITELIST)
 ```

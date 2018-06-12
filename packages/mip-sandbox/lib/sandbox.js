@@ -23,20 +23,16 @@ var sandbox = defUtils.traverse(keywords.SANDBOX)
  * @return {Function} 返回 safe this 的方法
  */
 function safeThis (sandbox) {
-  return function (that) {
-    return that === window ? sandbox : that === document ? sandbox.document : that
+  // define property getter
+  return function () {
+    // safe this
+    return function (that) {
+      return that === window ? sandbox : that === document ? sandbox.document : that
+    }
   }
 }
 
 defUtils.def(sandbox, 'this', safeThis(sandbox))
 defUtils.def(sandbox.strict, 'this', safeThis(sandbox.strict))
-
-defUtils.def(sandbox, 'WHITELIST', keywords.WHITELIST)
-defUtils.def(sandbox, 'WHITELIST_STRICT', keywords.WHITELIST_STRICT)
-defUtils.def(sandbox, 'WHITELIST_RESERVED', keywords.WHITELIST_RESERVED)
-
-defUtils.def(sandbox.strict, 'WHITELIST', keywords.WHITELIST)
-defUtils.def(sandbox.strict, 'WHITELIST_STRICT', keywords.WHITELIST_STRICT)
-defUtils.def(sandbox.strict, 'WHITELIST_RESERVED', keywords.WHITELIST_RESERVED)
 
 module.exports = sandbox

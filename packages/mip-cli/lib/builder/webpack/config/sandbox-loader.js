@@ -4,6 +4,7 @@
  */
 
 const generate = require('mip-sandbox/lib/generate')
+const keywords = require('mip-sandbox/lib/keywords')
 const path = require('path')
 const sourceMap = require('source-map')
 
@@ -12,11 +13,13 @@ module.exports = async function (source, map, meta) {
   let callback = this.async()
 
   try {
-    let output = generate(source, {
-      sourceMapWithCode: true,
-      sourceMap: path.basename(this.resourcePath),
-      sourceMapRoot: path.relative(this.rootContext, this.context),
-      sourceContent: source
+    let output = generate(source, keywords.WHITELIST, {
+      escodegen: {
+        sourceMapWithCode: true,
+        sourceMap: path.basename(this.resourcePath),
+        sourceMapRoot: path.relative(this.rootContext, this.context),
+        sourceContent: source
+      }
     })
 
     let newMap = JSON.parse(output.map.toString())

@@ -97,14 +97,14 @@ var RESERVED = [
 
 var SANDBOX_STRICT = {
   name: 'strict',
-  access: 'readyonly',
+  access: 'readonly',
   host: 'window',
   mount: 'MIP.sandbox.strict',
-  children: ORIGINAL.concat([
+  properties: ORIGINAL.concat([
     {
       name: 'document',
       host: 'document',
-      children: [
+      properties: [
         'cookie'
       ]
     },
@@ -112,7 +112,7 @@ var SANDBOX_STRICT = {
       name: 'location',
       host: 'location',
       access: 'readonly',
-      children: [
+      properties: [
         'href',
         'protocol',
         'host',
@@ -127,7 +127,8 @@ var SANDBOX_STRICT = {
     {
       name: 'MIP',
       host: 'MIP',
-      children: [
+      access: 'readonly',
+      properties: [
         'watch',
         'setData',
         'viewPort',
@@ -137,16 +138,17 @@ var SANDBOX_STRICT = {
     },
     {
       name: 'window',
-      host: 'MIP.sandbox.strict'
+      getter: 'MIP.sandbox.strict'
     }
   ])
 }
 
 var SANDBOX = {
+  name: 'sandbox',
   access: 'readonly',
   host: 'window',
   mount: 'MIP.sandbox',
-  children: ORIGINAL.concat([
+  properties: ORIGINAL.concat([
     'File',
     'FileList',
     'FileReader',
@@ -172,7 +174,7 @@ var SANDBOX = {
     {
       name: 'document',
       host: 'document',
-      children: [
+      properties: [
         'head',
         'body',
         'title',
@@ -191,22 +193,52 @@ var SANDBOX = {
     },
     {
       name: 'window',
-      host: 'MIP.sandbox'
+      getter: 'MIP.sandbox'
     },
     {
       name: 'MIP',
-      host: 'MIP'
+      getter: 'MIP'
     },
     SANDBOX_STRICT
   ])
 }
+
+var WHITELIST = keys(SANDBOX.properties).concat(RESERVED)
+var WHITELIST_STRICT = keys(SANDBOX_STRICT.properties).concat(RESERVED)
+var WHITELIST_RESERVED = ORIGINAL.concat(RESERVED)
+
+// 防止用户篡改数组，因此每次返回的都是数组浅拷贝
+
+var whiteListProperties = [
+  {
+    name: 'WHITELIST',
+    getter: function () {
+      return WHITELIST.slice()
+    }
+  },
+  {
+    name: 'WHITELIST_STRICT',
+    getter: function () {
+      return WHITELIST_STRICT.slice()
+    }
+  },
+  {
+    name: 'WHITELIST_RESERVED',
+    getter: function () {
+      return WHITELIST_RESERVED.slice()
+    }
+  }
+]
+
+SANDBOX.properties = SANDBOX.properties.concat(whiteListProperties)
+SANDBOX_STRICT.properties = SANDBOX_STRICT.properties.concat(whiteListProperties)
 
 module.exports = {
   ORIGINAL: ORIGINAL,
   RESERVED: RESERVED,
   SANDBOX: SANDBOX,
   SANDBOX_STRICT: SANDBOX_STRICT,
-  WHITELIST: keys(SANDBOX.children).concat(RESERVED),
-  WHITELIST_STRICT: keys(SANDBOX_STRICT.children).concat(RESERVED),
-  WHITELIST_RESERVED: ORIGINAL.concat(RESERVED)
+  WHITELIST: WHITELIST,
+  WHITELIST_STRICT: WHITELIST_STRICT,
+  WHITELIST_RESERVED: WHITELIST_RESERVED
 }
