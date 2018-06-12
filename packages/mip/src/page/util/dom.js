@@ -264,10 +264,6 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, onComplet
 export function frameMoveOut (pageId, {transition, sourceMeta, targetPageId, onComplete} = {}) {
   let iframe = getIFrame(pageId)
 
-  if (!iframe) {
-    return
-  }
-
   if (targetPageId) {
     let targetIFrame = getIFrame(targetPageId)
     activeZIndex -= 2
@@ -275,6 +271,12 @@ export function frameMoveOut (pageId, {transition, sourceMeta, targetPageId, onC
       display: 'block',
       'z-index': activeZIndex++
     })
+  }
+
+  // Init page cannot apply transition
+  if (!iframe) {
+    onComplete && onComplete()
+    return
   }
 
   if (transition) {

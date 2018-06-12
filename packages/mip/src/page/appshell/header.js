@@ -17,7 +17,7 @@ export default class Header {
 
   init () {
     this.$el = document.createElement('div')
-    this.$el.classList.add('mip-appshell-header', 'mip-border', 'mip-border-bottom')
+    this.$el.classList.add('mip-appshell-header', 'mip-border', 'mip-border-bottom', 'transition')
     this.$el.innerHTML = this.render(this.data)
     // this.$wrapper.prepend(this.$el)
     // this.$wrapper.classList.add('mip-fixed')

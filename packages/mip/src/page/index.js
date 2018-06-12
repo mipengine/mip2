@@ -160,7 +160,7 @@ class Page {
           this.appshell.header.togglePageMask(data ? data.toggle : false)
         } else if (type === MESSAGE_REGISTER_GLOBAL_COMPONENT) {
           // Register global component
-          this.globalComponent.register(data)
+          // this.globalComponent.register(data)
         }
       })
 
