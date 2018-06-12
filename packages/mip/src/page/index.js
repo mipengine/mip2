@@ -232,6 +232,13 @@ class Page {
     let scrollHeight = viewport.getScrollHeight()
     let viewportHeight = viewport.getHeight()
 
+    // viewportHeight = 0 before frameMoveIn animation ends
+    // Wait a minute
+    if (viewportHeight === 0) {
+      setTimeout(this.setupBouncyHeader.bind(this), 100)
+      return
+    }
+
     this.debouncer = new Debouncer(() => {
       scrollTop = viewport.getScrollTop()
       scrollDistance = Math.abs(scrollTop - lastScrollTop)
@@ -437,6 +444,9 @@ class Page {
     let innerTitle = {title: targetMeta.defaultTitle || undefined}
     let finalMeta = util.fn.extend(true, innerTitle, localMeta, targetMeta)
 
+    this.appshell.header.toggleTransition(false)
+    this.appshell.header.slideDown()
+
     if (targetPageId === this.pageId || this.direction === 'back') {
       // backward
       let backwardOpitons = {
@@ -445,6 +455,7 @@ class Page {
         onComplete: () => {
           this.allowTransition = false
           this.currentPageMeta = finalMeta
+          this.appshell.header.toggleTransition(true)
         }
       }
 
@@ -471,6 +482,7 @@ class Page {
         onComplete: () => {
           this.allowTransition = false
           this.currentPageMeta = finalMeta
+          this.appshell.header.toggleTransition(true)
           this.refreshAppShell(targetPageId, finalMeta)
           /**
            * Disable scrolling of root page when covered by an iframe

@@ -126,6 +126,10 @@ export default class Header {
     this.$el.innerHTML = this.render(data)
   }
 
+  toggleTransition (toggle) {
+    toggle ? this.$el.classList.add('transition') : this.$el.classList.remove('transition')
+  }
+
   slideUp () {
     this.$el.classList.add('slide-up')
   }
