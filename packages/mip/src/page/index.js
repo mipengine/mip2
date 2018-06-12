@@ -528,6 +528,7 @@ class Page {
       '.mip-appshell-header-wrapper',
       '.mip-shell-more-button-mask',
       '.mip-shell-more-button-wrapper',
+      '.mip-shell-header-mask',
       '[mip-global-component]'
     ]
     let notInWhitelistSelector = whitelist.map(selector => `:not(${selector})`).join('')
