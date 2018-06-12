@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/mipengine/mip2#readme",
   "devDependencies": {
+    "babel-plugin-transform-builtin-classes": "^0.6.1",
     "babel-plugin-transform-custom-element-classes": "^0.1.0",
     "eslint": "^5.0.0-alpha",
     "eslint-config-standard": "^12.0.0-alpha",

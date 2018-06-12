@@ -10,6 +10,14 @@
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
     <!-- <link rel="stylesheet" href="../../dist/mip.css"></link> -->
     <link rel="stylesheet" type="text/css" href="style.css">
+    <script>
+        window.onerror = function (message, source, lineno, colno, error) {
+            alert('Ops, js 报错了，请联系 FE 修复')
+            alert(message)
+            alert(source + ':' + lineno + ':' + colno)
+            alert(JSON.stringify(error))
+        }
+    </script>
 </head>
 
 <body>
