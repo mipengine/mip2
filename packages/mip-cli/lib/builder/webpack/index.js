@@ -112,7 +112,8 @@ module.exports = class WebpackBuilder {
     this.midd = middleware({
       compiler,
       dev: {
-        publicPath: '/'
+        publicPath: '/',
+        stats: 'errors-only'
       },
       hot: false
     })
