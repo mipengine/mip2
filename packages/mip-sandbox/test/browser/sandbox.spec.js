@@ -5,11 +5,16 @@
 
 /* globals describe, it */
 
-window.MIP = {}
-
 var chai = require('chai')
 var expect = chai.expect
 var sandbox = require('../../lib/sandbox')
+
+// 假定 MIP 在 sandbox 后定义
+window.MIP = {
+  watch: function () {
+    return 'watch'
+  }
+}
 
 describe('sandbox', function () {
   it('keys', function () {
@@ -17,6 +22,7 @@ describe('sandbox', function () {
   })
 
   it('this', function () {
+    expect(typeof sandbox.this).to.be.equal('function')
     expect(sandbox.this(window)).to.be.equal(sandbox)
     expect(sandbox.this(document)).to.be.equal(sandbox.document)
     expect(sandbox.strict.this(window)).to.be.equal(sandbox.strict)
@@ -36,6 +42,11 @@ describe('sandbox', function () {
   })
 
   it('WHITELIST', function () {
-    expect(sandbox.WHITELIST).to.be.equal(sandbox.strict.WHITELIST)
+    expect(sandbox.WHITELIST).to.not.be.equal(sandbox.strict.WHITELIST)
+  })
+
+  it('sandbox.watch', function () {
+    expect(sandbox.MIP.watch()).to.be.equal('watch')
+    expect(sandbox.strict.MIP.watch()).to.be.equal('watch')
   })
 })

@@ -56,7 +56,9 @@ describe('utils/def', function () {
     it('define getter', function () {
       var obj = {}
       var list = ['a', 'b', 'c']
-      def(obj, 'list', list)
+      def(obj, 'list', function () {
+        return list
+      })
       expect(obj.list).to.be.equal(list)
     })
   })
@@ -65,7 +67,8 @@ describe('utils/def', function () {
     var sandbox = {
       access: 'readonly',
       host: 'window',
-      children: [
+      mount: 'MIP.sandbox',
+      properties: [
         'Date',
         'NaN',
         'setTimeout',
@@ -73,10 +76,14 @@ describe('utils/def', function () {
         {
           name: 'location',
           host: 'location',
-          children: [
+          properties: [
             'href',
             'protocol'
           ]
+        },
+        {
+          name: 'window',
+          getter: 'MIP.sandbox'
         }
       ]
     }
@@ -84,12 +91,16 @@ describe('utils/def', function () {
     var obj = defUtils.traverse(sandbox)
 
     it('enumerable', function () {
-      expect(Object.keys(obj)).to.be.deep.equal(['Date', 'NaN', 'setTimeout', 'innerWidth', 'location'])
+      expect(Object.keys(obj)).to.be.deep.equal(['Date', 'NaN', 'setTimeout', 'innerWidth', 'location', 'window'])
       expect(Object.keys(obj.location)).to.be.deep.equal(['href', 'protocol'])
     })
 
     it('child node', function () {
       expect(obj.location.href).to.have.string(obj.location.protocol)
+    })
+
+    it('window', function () {
+      expect(obj.window).to.be.equal(obj)
     })
   })
 })
