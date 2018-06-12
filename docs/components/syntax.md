@@ -46,7 +46,7 @@ customElement 也可以互相嵌套使用：
 
 ## 数据传入
 
-customElement 其实就是和我们一只熟悉的 HTML 标签是一样的，但是我们怎么保证 customElement 对应的组件能够明确的执行正确的逻辑呢？说白了，怎么让 MIP 组件实例对象能够顺利的拿到 customElement 的数据呢？
+customElement 其实就是和我们一直熟悉的 HTML 标签是一样的，但是我们怎么保证 customElement 对应的组件能够明确的执行正确的逻辑呢？说白了，怎么让 MIP 组件实例对象能够顺利的拿到 customElement 的数据呢？
 
 ### props
 
@@ -67,7 +67,7 @@ customElement 其实就是和我们一只熟悉的 HTML 标签是一样的，但
 <!--mip-hello-world.vue-->
 <template>
   <div class="mip-hello-world-wrap">
-    {{ greet }}, {{ name }}
+    {{ greeting }}, {{ name }}
   </div>
 </template>
 <script>
@@ -75,7 +75,7 @@ customElement 其实就是和我们一只熟悉的 HTML 标签是一样的，但
     // 如果开发自定义组件的时候，任何要用到的数据都需要在 props 这里预定义
     props: ['attr1', 'attr2'],
     computed: {
-      greet() {
+      greeting() {
         return this.attr1;
       },
       name() {
@@ -191,7 +191,7 @@ customElement 属性传值的方式很方便以及毫无违和感，但是属性
 ```html
 <mip-demo>
   <div class="header">i am header</div>
-  <div class="footrt">i am footer</div>
+  <div class="footer">i am footer</div>
 </mip-demo>
 ```
 
@@ -228,14 +228,14 @@ customElement 属性传值的方式很方便以及毫无违和感，但是属性
 </template>
 ```
 
-这样就回渲染出我们想要的内容了：
+这样就会渲染出我们想要的内容了：
 
 ```html
 <mip-demo>
   <div class="mip-demo-wrap">
     default component content
     <div class="header">i am header</div>
-    <div class="footrt">i am footer</div>
+    <div class="footer">i am footer</div>
   </div>
 </mip-demo>
 ```
@@ -247,7 +247,7 @@ customElement 属性传值的方式很方便以及毫无违和感，但是属性
   <div class="mip-demo-wrap">
     <div class="header">i am header</div>
     default component content
-    <div class="footrt">i am footer</div>
+    <div class="footer">i am footer</div>
   </div>
 </mip-demo>
 ```
@@ -282,7 +282,7 @@ customElement 属性传值的方式很方便以及毫无违和感，但是属性
 
 ### Q: 能不能在 MIP2 组件的单 Vue 文件中使用其他的 Vue 组件？
 
-答：可以的，可以直接通过 component import 的方式直接引入使用，如果不需要通过 custom element 渲染，引入的 Vue 组件可以不通过 `mip2 add` 添加，可以直接拷贝过去使用，注意：现在 MIP 组件不支持通过 `Vue.use` 方式引入组件库。
+答：可以的，可以直接通过 component import 的方式直接引入使用，如果不需要通过 customElement 渲染，引入的 Vue 组件可以不通过 `mip2 add` 添加，可以直接拷贝过去使用，注意：现在 MIP 组件不支持通过 `Vue.use()` 方式引入组件库。
 
 ### Q: 是不是必须写 Vue 单文件开发 MIP2 组件呢？
 
@@ -304,7 +304,7 @@ customElement 属性传值的方式很方便以及毫无违和感，但是属性
 </script>
 ```
 
-而应该在单文件的 `template` 标签中写模版，因为 MIP 集成的 Vue 是不包含 compiler 的 runtime 版本，所以不能编译 template 属性，只能执行通过组件 cli 编译 `template` 标签之后的 `render()` 方法，所以如果想要模版顺利渲染，必须按照以下方式书写模版：
+而应该在单文件的 `template` 标签中写模版，因为 MIP 集成的 Vue 是不包含 compiler 的 runtime 版本，所以不能编译 template 属性，只能执行通过组件 cli 工具编译 `template` 标签之后的 `render()` 方法，所以如果想要组件模版顺利渲染，必须按照以下单文件的方式书写模版：
 
 ```html
 <!--good case-->
@@ -321,4 +321,17 @@ export default {
 </script>
 ```
 
-> PS: 目前还在持续更新中。。
+### Q：除了单文件，我还有没有别的方式引入别的组件
+
+如果你有方法拿到一个 Vue 的 Component 对象，那可以直接引入这个 Component 对象，然后就可以通过 customElement 渲染这个 Vue 的 Component，可以借助于 `MIP.registerVueCustomElement()` 方法：
+
+```js
+let aVueComponentObject = require('./a-vue-component-object');
+// 假设 aVueComponentObject 是一个完整的 Vue Component 对象
+
+registerVueCustomElement('mip-demo-vue-component', aVueComponentObject);
+```
+
+这样就可以直接使用 `<mip-demo-vue-component>` customElement 标签啦。
+
+> PS: 目前常见问题还在持续更新中。。
