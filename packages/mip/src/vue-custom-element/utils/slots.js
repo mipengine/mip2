@@ -44,7 +44,7 @@ export function getChildNodes (element) {
 export function templateElement (createElement, element, elementOptions) {
   const templateChildren = getChildNodes(element)
 
-  const vueTemplateChildren = toArray(templateChildren).map((child) => {
+  const vueTemplateChildren = toArray(templateChildren).map(child => {
     // children passed to create element can be a string
     // https://vuejs.org/v2/guide/render-function#createElement-Arguments
     if (child.nodeName === '#text') return child.nodeValue
