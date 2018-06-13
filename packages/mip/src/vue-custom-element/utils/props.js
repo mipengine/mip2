@@ -19,23 +19,26 @@ export function convertAttributeValue (value, overrideType, attr, element) {
     propsValue.match(/^0+[^.]\d*$/g)
 
   if (overrideType && overrideType !== Boolean) {
-    propsValue = overrideType(value)
+    // 只有组件在 props 中指定了需要 Object 类型，才进行 JSON.parse 处理，否则按照 props 给定的 type 进行处理
+    if (overrideType === Object) {
+      try {
+        propsValue = JSON.parse(propsValue)
+      } catch (e) {
+        console.warn(element, attr.name || '', 'attribute content should be a valid JSON string!')
+      }
+
+      // hide the data attribute
+      element && element.removeAttribute(attr.name)
+    } else {
+      propsValue = overrideType(value)
+    }
   } else if (isBoolean || overrideType === Boolean) {
     propsValue = propsValue === 'true'
   } else if (isNumber) {
     propsValue = valueParsed
   }
 
-  // compatible: for let props recive object data
-  let temp = propsValue
-  try {
-    temp = JSON.parse(propsValue)
-  } catch (e) {}
-
-  // hide the data attribute
-  // element && element.removeAttribute(attr.name);
-
-  return temp
+  return propsValue
 }
 
 function extractProps (collection, props) {
@@ -45,7 +48,7 @@ function extractProps (collection, props) {
       props.camelCase.indexOf(camelCaseProp) === -1 && props.camelCase.push(camelCaseProp)
     })
   } else if (collection && typeof collection === 'object') {
-    for (let prop in collection) { // eslint-disable-line no-restricted-syntax, guard-for-in
+    for (let prop in collection) {
       let camelCaseProp = camelize(prop)
       props.camelCase.indexOf(camelCaseProp) === -1 && props.camelCase.push(camelCaseProp)
 
@@ -94,7 +97,7 @@ export function reactiveProps (element, props) {
           this.vm[propName] = value
         } else {
           let type = props.types[props.camelCase[index]]
-          this.setAttribute(props.hyphenate[index], convertAttributeValue(value, type))
+          this.setAttribute(props.hyphenate[index], convertAttributeValue(value, type, {name}, element))
         }
       }
     })
@@ -116,20 +119,13 @@ export function getPropsData (element, componentDefinition, props) {
       scriptData = {}
     }
 
-    element && element.removeChild(dataElement)
     propsData = Object.assign({}, propsData, scriptData)
   }
 
   props.hyphenate.forEach((name, index) => {
     let propCamelCase = props.camelCase[index]
     let type = null
-    let propValue = element.attributes[name] ||
-    /**
-     * 这里有一个 bug：<mip-link append> 使用的 append 属性，在 DOM Element 是一个 Function
-     * 此时 props 初始化就出错了。
-     */
-    // || element[propCamelCase]
-    propsData[name]
+    let propValue = element.attributes[name] || element[propCamelCase] || propsData[name]
 
     if (props.types[propCamelCase]) {
       type = props.types[propCamelCase]

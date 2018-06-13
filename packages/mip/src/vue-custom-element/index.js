@@ -76,7 +76,7 @@ function install (Vue) {
           try {
             value = JSON.parse(value)
           } catch (e) {}
-          this.vueInstance[nameCamelCase] = convertAttributeValue(value, type)
+          this.vueInstance[nameCamelCase] = convertAttributeValue(value, type, {name}, this.element)
         }
       }
 
