@@ -24,7 +24,7 @@ import performance from './performance'
 import mip1PolyfillInstall from './mip1-polyfill'
 
 import './log/monitor'
-import './polyfills'
+import './components-polyfills'
 
 /**
  * register vue as custom element v1
