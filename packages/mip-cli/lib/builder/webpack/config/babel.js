@@ -29,7 +29,7 @@ module.exports = {
           require('babel-plugin-transform-runtime'),
           {
             helpers: true,
-            polyfill: true,
+            polyfill: false,
             regenerator: true,
             moduleName: resolveModule('babel-runtime')
           }

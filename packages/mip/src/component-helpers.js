@@ -11,12 +11,6 @@ const componentNormalizer = require('vue-loader/lib/runtime/componentNormalizer'
 const addStylesClient = require('vue-style-loader/lib/addStylesClient')
 const listToStyles = require('vue-style-loader/lib/listToStyles')
 
-require('core-js/library/modules/es6.object.assign')
-require('core-js/library/modules/es6.object.create')
-require('core-js/library/modules/es6.array.from')
-require('core-js/library/modules/es6.promise')
-require('core-js/library/modules/es6.symbol')
-
 let helpers = {}
 
 requires.keys().forEach(filename => {
@@ -31,5 +25,3 @@ helpers['vue-style-loader/lib/addStylesClient'] = addStylesClient
 helpers['vue-style-loader/lib/listToStyles'] = listToStyles
 
 export default helpers
-
-// polyfill
