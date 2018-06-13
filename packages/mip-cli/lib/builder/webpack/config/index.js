@@ -12,6 +12,7 @@ const {resolveModule} = require('../../../utils/helper');
 /* eslint-enable */
 const {babelLoader, babelExternals} = require('./babel')
 const path = require('path')
+const componentExternals = require('./component-externals')
 
 module.exports = function (options) {
   return {
@@ -72,7 +73,11 @@ module.exports = function (options) {
         ...styleLoaders
       ]
     },
-    externals: babelExternals,
+    externals: [
+      babelExternals,
+      componentExternals
+    ],
+    // externals: Object.assign({}, babelExternals, externals),
     resolve: {
       extensions: ['.js', '.json', '.vue'],
       alias: {

@@ -63,15 +63,15 @@ export function templateElement (createElement, element, elementOptions) {
 }
 
 // Helper utility returning slots for render function
-export function getSlots (innerHTML, createElement) {
+export function getSlots (innerHTML, createElement, createText) {
   let emptyNode = document.createElement('div')
   emptyNode.innerHTML = innerHTML
-  let children = emptyNode.children
+  let children = emptyNode.childNodes
   const slots = []
   toArray(children).forEach(child => {
     if (child.nodeName === '#text') {
       if (child.nodeValue.trim()) {
-        slots.push(createElement('span', child.nodeValue))
+        slots.push(createText(child.nodeValue))
       }
     } else if (child.nodeName !== '#comment') {
       const attributes = getAttributes(child)

@@ -11,7 +11,9 @@
   "plugins": [
     "syntax-dynamic-import",
     "transform-object-rest-spread",
-    "transform-custom-element-classes",
+    ["transform-builtin-classes", {
+      "globals": ["HTMLElement"]
+    }],
     [
       "transform-runtime",
       {

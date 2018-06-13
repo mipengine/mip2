@@ -4,18 +4,19 @@
  */
 
 const {resolveModule, pathFormat} = require('../../../utils/helper')
-const fs = require('fs')
+const path = require('path')
+// const fs = require('fs')
 
-let externals = {
-  [resolveModule('babel-runtime/regenerator')]: 'babelRuntimeHelpers.regenerator'
-}
+// let externals = {
+//   [resolveModule('babel-runtime/regenerator')]: 'babelRuntimeHelpers.regenerator'
+// }
 
-fs.readdirSync(resolveModule('babel-runtime/helpers'))
-  .forEach(filename => {
-    let key = pathFormat(filename, false)
-    key = resolveModule(`babel-runtime/helpers/${key}`)
-    externals[key.slice(0, -3)] = `babelRuntimeHelpers.${pathFormat(filename)}`
-  })
+// fs.readdirSync(resolveModule('babel-runtime/helpers'))
+//   .forEach(filename => {
+//     let key = pathFormat(filename, false)
+//     key = resolveModule(`babel-runtime/helpers/${key}`)
+//     externals[key.slice(0, -3)] = `babelRuntimeHelpers.${pathFormat(filename)}`
+//   })
 
 module.exports = {
   babelLoader: {
@@ -48,5 +49,18 @@ module.exports = {
       ]
     }
   },
-  babelExternals: externals
+  babelExternals (context, request, callback) {
+    let req = pathFormat(path.resolve(context, request))
+
+    if (/babel-runtime\/regenerator/.test(req)) {
+      return callback(null, 'root babelRuntimeHelpers.regenerator')
+    }
+
+    if (/babel-runtime\/helpers\//.test(req)) {
+      let match = req.match(/babel-runtime\/helpers\/(.*)/)
+      return callback(null, `root babelRuntimeHelpers['${match[1]}']`)
+    }
+
+    callback()
+  }
 }

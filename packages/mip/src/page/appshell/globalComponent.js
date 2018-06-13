@@ -27,7 +27,7 @@ export default class GlobalComponent {
 
   _init () {
     // Add initial scripts
-    document.querySelectorAll('script').forEach(script => {
+    [].slice.call(document.querySelectorAll('script')).forEach(script => {
       let src = script.src || ''
       let match = src.match(/\/(mip-[^/]+)\.js/)
 

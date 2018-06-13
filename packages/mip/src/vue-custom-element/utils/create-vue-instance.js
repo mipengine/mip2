@@ -63,7 +63,7 @@ export default function createVueInstance (
         {
           props: this.reactiveProps
         },
-        getSlots(element.__innerHTML, createElement)
+        getSlots(element.__innerHTML, createElement, this._v.bind(this))
       )
     }
   }

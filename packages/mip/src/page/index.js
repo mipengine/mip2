@@ -166,7 +166,7 @@ class Page {
 
       // recaculate all the iframes' height
       viewport.on('resize', () => {
-        document.querySelectorAll('.mip-page__iframe').forEach($el => {
+        [].slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
           $el.style.height = `${viewport.getHeight()}px`
         })
       })
