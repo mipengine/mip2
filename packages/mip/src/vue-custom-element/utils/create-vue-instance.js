@@ -38,9 +38,6 @@ export default function createVueInstance (
 
   // let elementOriginalChildren = [].slice.call(element.childNodes).map(node => node.cloneNode(true)); // clone hack due to IE compatibility
 
-  if (element && element.tagName.toLowerCase() === 'mip-script') {
-    element.__innerHTML = `<div>${element.innerHTML}</div>`
-  }
   element.innerHTML = '<div></div>'
 
   let rootElement = {
