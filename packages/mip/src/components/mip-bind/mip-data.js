@@ -16,7 +16,9 @@ class MipData extends CustomElement {
       let result
       try {
         result = JSON.parse(data)
-      } catch (e) {}
+      } catch (e) {
+        console.error(e)
+      }
       if (result) {
         MIP.$set(result)
       }

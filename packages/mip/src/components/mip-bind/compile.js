@@ -146,7 +146,9 @@ class Compile {
       let fn = this.getWithResult(exp)
       value = fn.call(this.data)
       node.removeAttribute(attrName)
-    } catch (e) {}
+    } catch (e) {
+      // console.error(e)
+    }
     return value
   }
 
