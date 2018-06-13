@@ -82,5 +82,4 @@ module.exports = {
       '__VERSION__': JSON.stringify(version.toString())
     })
   ]
-
 }
