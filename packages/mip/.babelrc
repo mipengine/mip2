@@ -14,14 +14,7 @@
     ["transform-builtin-classes", {
       "globals": ["HTMLElement"]
     }],
-    [
-      "transform-runtime",
-      {
-        "helpers": false,
-        "polyfill": false,
-        "regenerator": true
-      }
-    ]
+    "transform-runtime"
   ],
   "ignore": ["dist/*.js"]
 }
