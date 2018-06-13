@@ -102,8 +102,8 @@ export default class Header {
     }
   }
 
-  togglePageMask (toggle) {
-    toggleInner(this.$pageMask, toggle)
+  togglePageMask (toggle, skipTransition) {
+    toggleInner(this.$pageMask, toggle, skipTransition)
   }
 
   bindEvents () {
@@ -139,7 +139,12 @@ export default class Header {
   }
 }
 
-function toggleInner (element, toggle) {
+function toggleInner (element, toggle, skipTransition) {
+  if (skipTransition) {
+    css(element, 'display', toggle ? 'block' : 'none')
+    return
+  }
+
   let direction = toggle ? 'enter' : 'leave'
   element.classList.add(`fade-${direction}`, `fade-${direction}-active`)
   css(element, 'display', 'block')
