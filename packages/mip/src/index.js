@@ -22,9 +22,9 @@ import registerElement from './register-element'
 import sleepWakeModule from './sleepWakeModule'
 import performance from './performance'
 import mip1PolyfillInstall from './mip1-polyfill'
+import componentHelpers from './component-helpers'
 
 import './log/monitor'
-import './components-polyfills'
 
 /**
  * register vue as custom element v1
@@ -72,7 +72,8 @@ let mip = {
   sandbox,
   css: {},
   push,
-  prerenderElement: Resources.prerenderElement
+  prerenderElement: Resources.prerenderElement,
+  componentHelpers
 }
 
 window.MIP = mip
