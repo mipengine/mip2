@@ -54,6 +54,7 @@
     "inquirer": "^5.2.0",
     "koa": "^2.5.1",
     "koa-router": "^7.4.0",
+    "koa-static": "^4.0.3",
     "koa-webpack": "^4.0.0",
     "less": "^3.0.4",
     "less-loader": "^4.1.0",
