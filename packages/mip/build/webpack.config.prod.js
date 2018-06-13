@@ -8,7 +8,7 @@ const merge = require('webpack-merge')
 const baseConfig = require('./webpack.config.base')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 const resolve = p => path.resolve(__dirname, '../', p)
 
@@ -24,7 +24,7 @@ module.exports = merge.smart(baseConfig, {
 
   plugins: [
     new MiniCssExtractPlugin({filename: 'mip.css'}),
-    new UglifyJsPlugin(),
-    new BundleAnalyzerPlugin()
+    new UglifyJsPlugin()
+    // new BundleAnalyzerPlugin()
   ]
 })
