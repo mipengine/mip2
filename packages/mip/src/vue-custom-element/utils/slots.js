@@ -87,11 +87,12 @@ export function getSlots (innerHTML, createElement, createText) {
         attributes.slot = undefined
       }
 
-      const slotVueElement = (child.tagName === 'TEMPLATE')
-        ? templateElement(createElement, child, elementOptions)
-        : createElement(child.tagName, elementOptions)
-
-      slots.push(slotVueElement)
+      if (child.tagName !== 'SCRIPT') {
+        const slotVueElement = (child.tagName === 'TEMPLATE')
+          ? templateElement(createElement, child, elementOptions)
+          : createElement(child.tagName, elementOptions)
+        slots.push(slotVueElement)
+      }
     }
   })
 

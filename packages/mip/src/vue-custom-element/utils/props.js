@@ -119,7 +119,6 @@ export function getPropsData (element, componentDefinition, props) {
       scriptData = {}
     }
 
-    element && element.removeChild(dataElement)
     propsData = Object.assign({}, propsData, scriptData)
   }
 
