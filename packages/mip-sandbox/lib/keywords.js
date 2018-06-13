@@ -131,9 +131,20 @@ var SANDBOX_STRICT = {
       properties: [
         'watch',
         'setData',
-        'viewPort',
+        'viewport',
         'util',
-        'sandbox'
+        'sandbox',
+        {
+          name: 'viewer',
+          access: 'readonly',
+          properties: [
+            'isIframed',
+            'sendMessage',
+            'open'
+          ]
+        },
+        // 'viewer',
+        'MIP_ROOT_PAGE'
       ]
     },
     {
