@@ -5,18 +5,7 @@
 
 const {resolveModule, pathFormat} = require('../../../utils/helper')
 const path = require('path')
-// const fs = require('fs')
-
-// let externals = {
-//   [resolveModule('babel-runtime/regenerator')]: 'babelRuntimeHelpers.regenerator'
-// }
-
-// fs.readdirSync(resolveModule('babel-runtime/helpers'))
-//   .forEach(filename => {
-//     let key = pathFormat(filename, false)
-//     key = resolveModule(`babel-runtime/helpers/${key}`)
-//     externals[key.slice(0, -3)] = `babelRuntimeHelpers.${pathFormat(filename)}`
-//   })
+const prefix = 'MIP.componentHelpers'
 
 module.exports = {
   babelLoader: {
@@ -36,12 +25,11 @@ module.exports = {
         resolveModule('babel-preset-stage-2')
       ],
       plugins: [
-        // require('./babel-plugin-sandbox'),
         [
           require('babel-plugin-transform-runtime'),
           {
             helpers: true,
-            polyfill: true,
+            polyfill: false,
             regenerator: true,
             moduleName: resolveModule('babel-runtime')
           }
@@ -53,12 +41,12 @@ module.exports = {
     let req = pathFormat(path.resolve(context, request))
 
     if (/babel-runtime\/regenerator/.test(req)) {
-      return callback(null, 'root babelRuntimeHelpers.regenerator')
+      return callback(null, `root ${prefix}['babel-runtime/regenerator']`)
     }
 
     if (/babel-runtime\/helpers\//.test(req)) {
-      let match = req.match(/babel-runtime\/helpers\/(.*)/)
-      return callback(null, `root babelRuntimeHelpers['${match[1]}']`)
+      let match = req.match(/(babel-runtime\/helpers\/.*)/)
+      return callback(null, `root ${prefix}['${match[1]}']`)
     }
 
     callback()

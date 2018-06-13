@@ -108,10 +108,9 @@ body.with-header {
 
 .mip-appshell-header-wrapper {
     z-index: 20000!important;
-    &.show {
-        .mip-appshell-header {
-            display: flex;
-        }
+    height: @appshell-header-height;
+    &.hide {
+        display: none;
     }
 }
 
@@ -169,7 +168,6 @@ body.with-header {
 
 .mip-appshell-header {
     top: 0;
-    display: none;
     transform: translate3d(0, 0, 0);
 
     &.transition {

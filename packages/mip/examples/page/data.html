@@ -343,5 +343,12 @@
     <script src="https://c.mipcdn.com/static/v1/mip-form/mip-form.js"></script>
     <script src="./components/mip-global.js"></script>
     <script src="http://127.0.0.1:8111/mip-script/mip-script.js"></script>
+    <!-- <script src="http://127.0.0.1:8111/mip-script/mip-script.js"></script> -->
+    <script>
+        window.onload = function () {
+            window.MIP.viewer.page.togglePageMask(true)
+        }
+    </script>
+    <div style="position: fixed; top: 0;left:0;right:0;bottom:0;background: rgba(0,0,0,0.5);z-index: 9999999"></div>
 
 </body>

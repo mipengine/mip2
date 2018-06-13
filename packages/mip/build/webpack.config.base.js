@@ -27,10 +27,10 @@ module.exports = {
         exclude: /node_modules|fetch.js/,
         loader: 'babel-loader'
       },
-      {
-        test: /\.vue$/,
-        loader: 'vue-loader'
-      },
+      // {
+      //   test: /\.vue$/,
+      //   loader: 'vue-loader'
+      // },
       {
         test: /\.(css|less)$/,
         use: [
@@ -82,5 +82,4 @@ module.exports = {
       '__VERSION__': JSON.stringify(version.toString())
     })
   ]
-
 }

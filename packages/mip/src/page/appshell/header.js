@@ -93,8 +93,14 @@ export default class Header {
     return headerHTML
   }
 
+  /**
+   * Toggle more button wrapper
+   *
+   * @param {boolean} toggle display or not
+   */
   toggleDropdown (toggle) {
     toggleInner(this.$buttonMask, toggle)
+
     if (toggle) {
       this.$buttonWrapper.classList.add('show')
     } else {
@@ -102,8 +108,16 @@ export default class Header {
     }
   }
 
-  togglePageMask (toggle) {
-    toggleInner(this.$pageMask, toggle)
+  /**
+   * Toggle display of page mask
+   * Mainly used to cover header in iframes
+   *
+   * @param {boolean} toggle display or not
+   * @param {Object} options
+   * @param {boolean} options.skipTransition show result without transition
+   */
+  togglePageMask (toggle, {skipTransition} = {}) {
+    toggleInner(this.$pageMask, toggle, skipTransition)
   }
 
   bindEvents () {
@@ -139,7 +153,12 @@ export default class Header {
   }
 }
 
-function toggleInner (element, toggle) {
+function toggleInner (element, toggle, skipTransition) {
+  if (skipTransition) {
+    css(element, 'display', toggle ? 'block' : 'none')
+    return
+  }
+
   let direction = toggle ? 'enter' : 'leave'
   element.classList.add(`fade-${direction}`, `fade-${direction}-active`)
   css(element, 'display', 'block')
