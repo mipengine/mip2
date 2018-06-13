@@ -13,6 +13,7 @@ const listToStyles = require('vue-style-loader/lib/listToStyles')
 
 const promise = require('babel-runtime/core-js/promise').default
 const symbol = require('babel-runtime/core-js/symbol').default
+const set = require('babel-runtime/core-js/set').default
 const arrayFrom = require('babel-runtime/core-js/array/from').default
 const objectAssign = require('babel-runtime/core-js/object/assign').default
 
@@ -28,6 +29,7 @@ function mount (obj, name, host = window) {
 
 mount(promise, 'Promise')
 mount(symbol, 'Symbol')
+mount(set, 'Set')
 mount(arrayFrom, 'from', Array)
 mount(objectAssign, 'assign', Object)
 
