@@ -334,14 +334,13 @@ class Page {
 
   // ========================= Util functions for developers =========================
   togglePageMask (toggle) {
-    if (this.isRootPage) {
-      this.appshell.header.togglePageMask(toggle)
-    } else {
+    // Page mask won't show in root page
+    if (!this.isRootPage) {
       window.parent.MIP.viewer.page.appshell.header.togglePageMask(toggle)
     }
   }
 
-  toggleDropDown (toggle) {
+  toggleDropdown (toggle) {
     if (this.isRootPage) {
       this.appshell.header.toggleDropdown(toggle)
     } else {
@@ -577,7 +576,9 @@ class Page {
     }
 
     // Hide page mask and skip transition
-    this.appshell.header.togglePageMask(false, true)
+    this.appshell.header.togglePageMask(false, {
+      skipTransition: true
+    })
 
     /**
      * reload iframe when <a mip-link> clicked even if it's already existed.
