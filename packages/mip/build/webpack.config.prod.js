@@ -24,7 +24,7 @@ module.exports = merge.smart(baseConfig, {
 
   plugins: [
     new MiniCssExtractPlugin({filename: 'mip.css'}),
-    new UglifyJsPlugin()
-    // new BundleAnalyzerPlugin()
+    new UglifyJsPlugin(),
+    new BundleAnalyzerPlugin()
   ]
 })
