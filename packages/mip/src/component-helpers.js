@@ -14,7 +14,7 @@ const listToStyles = require('vue-style-loader/lib/listToStyles')
 let helpers = {}
 
 requires.keys().forEach(filename => {
-  helpers[`babel-runtime/${filename.slice(2, -3)}`] = requires(filename)
+  helpers[`babel-runtime/helpers/${filename.slice(2, -3)}`] = requires(filename)
 })
 
 helpers['babel-runtime/regenerator'] = regenerator
@@ -23,5 +23,6 @@ helpers['css-loader/lib/css-base'] = cssBase
 helpers['vue-loader/lib/runtime/componentNormalizer'] = componentNormalizer
 helpers['vue-style-loader/lib/addStylesClient'] = addStylesClient
 helpers['vue-style-loader/lib/listToStyles'] = listToStyles
+
 
 export default helpers
