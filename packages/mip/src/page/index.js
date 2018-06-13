@@ -332,11 +332,23 @@ class Page {
     })
   }
 
-  /**
-   *
-   * Root Page methods
-   *
-   */
+  // ========================= Util functions for developers =========================
+  togglePageMask (toggle) {
+    // Page mask won't show in root page
+    if (!this.isRootPage) {
+      window.parent.MIP.viewer.page.appshell.header.togglePageMask(toggle)
+    }
+  }
+
+  toggleDropdown (toggle) {
+    if (this.isRootPage) {
+      this.appshell.header.toggleDropdown(toggle)
+    } else {
+      window.parent.MIP.viewer.page.appshell.header.toggleDropdown(toggle)
+    }
+  }
+
+  // =============================== Root Page methods ===============================
 
   /**
    * emit a custom event in current page
@@ -562,6 +574,11 @@ class Page {
     if (this.currentPageId === this.pageId) {
       this.saveScrollPosition()
     }
+
+    // Hide page mask and skip transition
+    this.appshell.header.togglePageMask(false, {
+      skipTransition: true
+    })
 
     /**
      * reload iframe when <a mip-link> clicked even if it's already existed.
