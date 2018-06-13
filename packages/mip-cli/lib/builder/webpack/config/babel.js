@@ -35,7 +35,7 @@ module.exports = {
         resolveModule('babel-preset-stage-2')
       ],
       plugins: [
-        // require('./babel-plugin-sandbox'),
+        require('./babel-plugin-sandbox'),
         [
           require('babel-plugin-transform-runtime'),
           {

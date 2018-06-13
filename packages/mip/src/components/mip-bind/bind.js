@@ -16,23 +16,21 @@ class Bind {
     let me = this
     this._win = window
     this._watcherIds = []
-    this.pgStates = new Set()
+    this._win.pgStates = new Set()
     // require mip data extension runtime
     this._compile = new Compile()
     this._observer = new Observer()
-    this._bindEvent()
     // from=0 called by html attributes
     // from=1 refers the method called by mip.js
     MIP.setData = function (action, from) {
       me._bindTarget(false, action, from)
     }
-    MIP.$set = function (action, from, cancel) {
-      me._bindTarget(true, action, from, cancel)
-      me._eventEmit()
+    MIP.$set = function (action, from, cancel, win) {
+      me._bindTarget(true, action, from, cancel, win)
     }
     MIP.$recompile = function () {
       me._observer.start(me._win.m)
-      me._compile.start(me._win.m)
+      me._compile.start(me._win.m, me._win)
     }
     MIP.watch = function (target, cb) {
       me._bindWatch(target, cb)
@@ -40,41 +38,6 @@ class Bind {
 
     window.m = window.m || {}
     MIP.$set(window.m)
-  }
-
-  // Bind event for post message when fetch data returned, then compile dom again
-  _bindEvent () {
-    let me = this
-
-    window.addEventListener('message', function (event) {
-      let loc = me._win.location
-      let domain = loc.protocol + '//' + loc.host
-
-      if (event.origin !== domain ||
-        !event.source || !event.data
-        // event.source === me._win
-      ) {
-        return
-      }
-
-      if (event.data.type === 'bind') {
-        MIP.$set(event.data.m, 0, event.data.cancel)
-      }
-
-      if (event.data.type === 'update') {
-        MIP.$set(event.data.m, 0, true)
-
-        for (let i = 0; i < document.getElementsByTagName('iframe').length; i++) {
-          let win = document.getElementsByTagName('iframe')[i].contentWindow
-          win.postMessage({
-            type: 'bind',
-            m: event.data.m,
-            cancel: true,
-            event: 'stateBind'
-          }, win.location.protocol + '//' + win.location.host)
-        }
-      }
-    })
   }
 
   _postMessage (data) {
@@ -87,17 +50,16 @@ class Bind {
       delete data[k]
     }
 
-    let loc = window.location
-    let domain = loc.protocol + '//' + loc.host
     let win = window.MIP.MIP_ROOT_PAGE ? window : window.parent
-    win.postMessage({
-      type: 'update',
-      m: data,
-      event: 'stateUpdate'
-    }, domain)
+    MIP.$set(data, 0, true, win)
+
+    for (let i = 0; i < win.document.getElementsByTagName('iframe').length; i++) {
+      let subwin = win.document.getElementsByTagName('iframe')[i].contentWindow
+      MIP.$set({}, 0, true, subwin)
+    }
   }
 
-  _bindTarget (compile, action, from, cancel) {
+  _bindTarget (compile, action, from, cancel, win = this._win) {
     let data = from ? action.arg : action
     let evt = from ? action.event.target : {}
     if (typeof data === 'string') {
@@ -105,25 +67,28 @@ class Bind {
     }
 
     if (typeof data === 'object') {
-      let origin = JSON.stringify(window.m || {})
+      let origin = JSON.stringify(win.m || {})
       this._compile.upadteData(JSON.parse(origin))
       let classified = this._normalize(data)
       if (compile) {
-        this._setGlobalState(classified.globalData, cancel)
-        this._setPageState(classified.pageData, cancel)
-        this._observer.start(this._win.m)
-        this._compile.start(this._win.m)
+        this._setGlobalState(classified.globalData, cancel, win)
+        this._setPageState(classified.pageData, cancel, win)
+        this._observer.start(win.m)
+        this._compile.start(win.m, win)
       } else {
         if (classified.globalData && notEmpty(classified.globalData)) {
-          this._assign(this._win.parent.g, classified.globalData)
+          let g = window.MIP.MIP_ROOT_PAGE ? window.g : window.parent.g
+          this._assign(g, classified.globalData)
           !cancel && this._postMessage(classified.globalData)
         }
         data = classified.pageData
         for (let field of Object.keys(data)) {
-          if (this.pgStates.has(field)) {
-            this._assign(this._win.m, {[field]: data[field]})
+          if (win.pgStates.has(field)) {
+            this._assign(win.m, {
+              [field]: data[field]
+            })
           } else {
-            this._dispatch(field, data[field], cancel)
+            this._dispatch(field, data[field], cancel, win)
           }
         }
       }
@@ -165,8 +130,7 @@ class Bind {
     new Watcher(null, this._win.m, '', target, cb) // eslint-disable-line no-new
   }
 
-  _dispatch (key, val, cancel) {
-    let win = this._win
+  _dispatch (key, val, cancel, win = this._win) {
     let data = {
       [key]: val
     }
@@ -180,8 +144,7 @@ class Bind {
     Object.assign(win.m, data)
   }
 
-  _setGlobalState (data, cancel) {
-    let win = this._win
+  _setGlobalState (data, cancel, win = this._win) {
     if (win.MIP.MIP_ROOT_PAGE) {
       win.g = win.g || {}
       Object.assign(win.g, data)
@@ -192,13 +155,12 @@ class Bind {
     }
   }
 
-  _setPageState (data, cancel) {
-    let win = this._win
+  _setPageState (data, cancel, win = this._win) {
     let g = win.MIP.MIP_ROOT_PAGE ? win.g : win.parent.g
     Object.assign(win.m, data)
-    !cancel && Object.keys(data).forEach(k => this.pgStates.add(k))
+    !cancel && Object.keys(data).forEach(k => win.pgStates.add(k))
     for (let key of Object.keys(g)) {
-      if (!this.pgStates.has(key) && win.m.hasOwnProperty(key)) {
+      if (!win.pgStates.has(key) && win.m.hasOwnProperty(key)) {
         win.m[key] = g[key]
       }
     }
@@ -227,24 +189,21 @@ class Bind {
     for (let k of Object.keys(newData)) {
       if (isObj(newData[k]) && oldData[k]) {
         this._assign(oldData[k], newData[k])
-        let obj = JSON.parse(JSON.stringify({[k]: oldData[k]}))
+        let obj = JSON.parse(JSON.stringify({
+          [k]: oldData[k]
+        }))
         Object.assign(oldData, obj)
       } else {
         oldData[k] = newData[k]
       }
     }
   }
-
-  _eventEmit () {
-    this._win.dispatchEvent(
-      util.event.create('ready-to-watch')
-    )
-  }
 }
 
 function isObj (obj) {
   return Object.prototype.toString.call(obj) === '[object Object]'
 }
+
 function notEmpty (obj) {
   return isObj(obj) && Object.keys(obj).length !== 0
 }

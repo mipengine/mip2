@@ -14,9 +14,9 @@ class Compile {
     this._el = document.documentElement
   }
 
-  start (data) {
+  start (data, win) {
     this.data = data
-    this._compileElement(this._el)
+    this._compileElement(win.document.documentElement)
     // this._fragment = this._cloneNode();
     // this._compileElement(this._fragment);
     // this._el.appendChild(this._fragment);

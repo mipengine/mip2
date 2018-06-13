@@ -122,6 +122,7 @@
                     "members": []
                 },
                 "#city": "上海",
+                "city1": "厦门",
                 "#test": "ckkkk2"
             }
         </script>
@@ -142,6 +143,12 @@
 
         <p m-text="city"></p>
         <div on="tap:MIP.setData({'city':'深圳'})" class="button">click change city</div>
+
+        <p m-text="city1"></p>
+        <div on="tap:MIP.setData({'city1':'成都'})" class="button">click change city1</div>
+
+        <p m-text="test"></p>
+        <div on="tap:MIP.setData({'test':'haha'})" class="button">click change test</div>
 
         <p m-text="size.small"></p>
         <div on="tap:MIP.setData({size:{small:2}})" class="button">click change size.small</div>
@@ -165,7 +172,7 @@
             }
             </script>
         </mip-data>
-        <p>
+        <p id="form">
             DOM.value*m.price =
             <span m-text="price"></span>
         </p>
@@ -256,14 +263,15 @@
         </script>
     </mip-shell>
 
-    <mip-script>
+    <!-- <mip-script>
+        console.log(document.getElementById('form'))
         MIP.watch('num', function () {
             console.log('num changed callback')
             MIP.setData({
                 title: 'ckkkk changing num'
             });
         });
-    </mip-script>
+    </mip-script> -->
 
     <!-- <script type="application/mip-script">
         MIP.watch('num', function () {
@@ -298,9 +306,7 @@
     <script src="./components/mip-complevel2.js"></script>
     <script src="./components/mip-complevel1.js"></script>
     <script src="https://c.mipcdn.com/static/v1/mip-form/mip-form.js"></script>
-    <!--<script src="http://127.0.0.1:8111/mip-script/mip-script.js"></script>-->
     <script src="./components/mip-global.js"></script>
     <!-- <script src="http://127.0.0.1:8111/mip-script/mip-script.js"></script> -->
-
 
 </body>
