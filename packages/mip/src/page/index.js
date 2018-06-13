@@ -24,7 +24,6 @@ import {
   MESSAGE_ROUTER_REPLACE,
   MESSAGE_APPSHELL_HEADER_SLIDE_UP,
   MESSAGE_APPSHELL_HEADER_SLIDE_DOWN,
-  MESSAGE_TOGGLE_PAGE_MASK,
   MESSAGE_REGISTER_GLOBAL_COMPONENT
 } from './const'
 import {supportsPassive} from './util/feature-detect'
@@ -155,9 +154,6 @@ class Page {
         } else if (type === MESSAGE_APPSHELL_HEADER_SLIDE_DOWN) {
           // AppShell header animation
           this.appshell.header.slideDown()
-        } else if (type === MESSAGE_TOGGLE_PAGE_MASK) {
-          // Toggle mask for AppShell header
-          this.appshell.header.togglePageMask(data ? data.toggle : false)
         } else if (type === MESSAGE_REGISTER_GLOBAL_COMPONENT) {
           // Register global component
           // this.globalComponent.register(data)
@@ -333,10 +329,10 @@ class Page {
   }
 
   // ========================= Util functions for developers =========================
-  togglePageMask (toggle) {
+  togglePageMask (toggle, options) {
     // Page mask won't show in root page
     if (!this.isRootPage) {
-      window.parent.MIP.viewer.page.appshell.header.togglePageMask(toggle)
+      window.parent.MIP.viewer.page.appshell.header.togglePageMask(toggle, options)
     }
   }
 
