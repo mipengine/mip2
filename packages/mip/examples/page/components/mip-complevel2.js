@@ -6,8 +6,10 @@
 /* global MIP */
 
 MIP.registerVueCustomElement('mip-complevel2', {
-  template: `
-    <p>{{userinfo.name}}</p>
+  template: `<div>
+      <p>{{userinfo.name}}</p>
+      <p>{{msg}}</p>
+    </div>
   `,
   props: {
     userinfo: {
@@ -15,7 +17,11 @@ MIP.registerVueCustomElement('mip-complevel2', {
         return {}
       },
       type: Object
-    }
+    },
+    msg: String
+  },
+  mounted () {
+    console.log(this.msg)
   },
   updated () {
     // console.log(this.userinfo)
