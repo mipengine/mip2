@@ -33,6 +33,13 @@ import './log/monitor'
  * @param {*} component vue component
  */
 function registerVueCustomElement (tag, component) {
+  // 对于组件需要暴露一些子组件到外部的情况，可以通过组件的 components 定义 mip-xxx 格式的组件
+  // 这样就可以在组件外部使用 mip-xxx 啦，内部还是照常跟原来一样作为一个 vue 组件使用
+  if (component.components) {
+    Object.keys(component.components)
+      .filter(key => key.slice(0, 4) === 'mip-')
+      .forEach(key => registerVueCustomElement(key, component.components[key]))
+  }
   Vue.customElement(tag, component)
 }
 
