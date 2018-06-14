@@ -41,9 +41,12 @@ function getProp (name) {
 }
 
 function getRuntimeProp (name) {
-  return function runtimeProp () {
+  var runtimeProp = function () {
     return prop(globals, name)
   }
+
+  runtimeProp._name = 'runtimeProp'
+  return runtimeProp
 }
 
 function formatOptions (options, mount) {
@@ -71,6 +74,8 @@ function formatOptions (options, mount) {
   if (!options.host) {
     options.host = globals
   }
+
+  return options
 }
 
 function traverse (node, parent, mount) {
@@ -132,7 +137,7 @@ function formatDescriptor (props, options) {
     return props
   }
 
-  if (typeof options.host === 'function' && options.host.name === 'runtimeProp') {
+  if (typeof options.host === 'function' && options.host._name === 'runtimeProp') {
     descriptor.get = function () {
       var runtimeHost = options.host()
       return runtimeHost[props]
