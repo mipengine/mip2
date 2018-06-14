@@ -17,12 +17,6 @@ export default function createVueInstance (
   let ComponentDefinition = Vue.util.extend({}, componentDefinition)
   let propsData = getPropsData(element, ComponentDefinition, props)
 
-  // for mip-template syntax
-  // @TODO: 这里有个 bug， 如果 Vue 不带 compiler，那这个 template 没法用，只能用 render 方法
-  if (element && element.tagName.toLowerCase() === 'mip-template') {
-    ComponentDefinition.template = `<div class="mip-template-wrap">${element.innerHTML}</div>`
-  }
-
   // Auto event handling based on $emit
   function beforeCreate () { // eslint-disable-line no-inner-declarations
     // 将 element 挂到 vue 下方便使用
@@ -38,9 +32,6 @@ export default function createVueInstance (
 
   // let elementOriginalChildren = [].slice.call(element.childNodes).map(node => node.cloneNode(true)); // clone hack due to IE compatibility
 
-  if (element && element.tagName.toLowerCase() === 'mip-script') {
-    element.__innerHTML = `<div>${element.innerHTML}</div>`
-  }
   element.innerHTML = '<div></div>'
 
   let rootElement = {

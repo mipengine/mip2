@@ -11,16 +11,32 @@ const componentNormalizer = require('vue-loader/lib/runtime/componentNormalizer'
 const addStylesClient = require('vue-style-loader/lib/addStylesClient')
 const listToStyles = require('vue-style-loader/lib/listToStyles')
 
-require('core-js/library/modules/es6.object.assign')
-require('core-js/library/modules/es6.object.create')
-require('core-js/library/modules/es6.array.from')
-require('core-js/library/modules/es6.promise')
-require('core-js/library/modules/es6.symbol')
+const promise = require('babel-runtime/core-js/promise').default
+const symbol = require('babel-runtime/core-js/symbol').default
+const set = require('babel-runtime/core-js/set').default
+const arrayFrom = require('babel-runtime/core-js/array/from').default
+const objectAssign = require('babel-runtime/core-js/object/assign').default
+
+function mount (obj, name, host = window) {
+  if (typeof host[name] === 'undefined') {
+    host[name] = obj
+    // Object.defineProperty(host, name, {
+    //   value: obj,
+    //   enumerable: true
+    // })
+  }
+}
+
+mount(promise, 'Promise')
+mount(symbol, 'Symbol')
+mount(set, 'Set')
+mount(arrayFrom, 'from', Array)
+mount(objectAssign, 'assign', Object)
 
 let helpers = {}
 
 requires.keys().forEach(filename => {
-  helpers[`babel-runtime/${filename.slice(2, -3)}`] = requires(filename)
+  helpers[`babel-runtime/helpers/${filename.slice(2, -3)}`] = requires(filename)
 })
 
 helpers['babel-runtime/regenerator'] = regenerator
@@ -31,5 +47,3 @@ helpers['vue-style-loader/lib/addStylesClient'] = addStylesClient
 helpers['vue-style-loader/lib/listToStyles'] = listToStyles
 
 export default helpers
-
-// polyfill
