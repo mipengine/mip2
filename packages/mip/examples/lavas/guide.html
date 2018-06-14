@@ -218,7 +218,7 @@
                     z-index: 100000;
                     animation: loading-rotate 1s linear infinite
                 }
-    
+
                 @keyframes loading-rotate {
                     from {
                         transform: rotate(0deg)
@@ -227,7 +227,7 @@
                         transform: rotate(360deg)
                     }
                 }
-    
+
                 body.mip-fixedlayer::before,
                 body.mip-fixedlayer::after,
                 body[mip-ready]::before,
@@ -248,63 +248,21 @@
                                 "header": {},
                                 "view": {
                                     "isIndex": true,
-                                    "transition": {
-                                        "mode": "slide"
-                                    }
-                                },
-                                "footer": {}
+                                }
                             }
                         },
                         {
                             "pattern": "*",
                             "meta": {
                                 "header": {
-                                    "show": true,
+                                    "show": false,
                                     "title": "蓝犀牛",
                                     "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
-                                    "xiongzhang": true,
-                                    "buttonGroup": [
-                                        {
-                                            "type": "button",
-                                            "name": "subscribe",
-                                            "text": "关注",
-                                            "link": "/examples/page/tree.html"
-                                        },
-                                        {
-                                            "type": "button",
-                                            "name": "chat",
-                                            "text": "发消息",
-                                            "outline": true
-                                        },
-                                        {
-                                            "type": "icon",
-                                            "name": "search",
-                                            "text": "search",
-                                            "link": "/examples/page/tree.html"
-                                        },
-                                        {
-                                            "type": "dropdown",
-                                            "items": [
-                                                {
-                                                    "name": "subscribe",
-                                                    "text": "关注",
-                                                    "link": "/examples/page/tree.html"
-                                                },
-                                                {
-                                                    "name": "chat",
-                                                    "text": "发消息"
-                                                }
-                                            ]
-                                        }
-                                    ]
+                                    "xiongzhang": true
                                 },
                                 "view": {
-                                    "isIndex": true,
-                                    "transition": {
-                                        "mode": "slide"
-                                    }
+                                    "isIndex": false
                                 },
-                                "footer": {}
                             }
                         }
                     ]
