@@ -53,7 +53,6 @@ try {
 } catch (e) {
   standalone = false
 }
-
 let extensions = window.MIP || []
 
 function push (extension) {
