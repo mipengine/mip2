@@ -18,9 +18,10 @@ module.exports = function checkVersion () {
         const latestVersion = JSON.parse(body)['dist-tags'].latest
 
         if (semver.lt(localVersion, latestVersion)) {
-          console.log(chalk.yellow(' 检测到有新版本的 mip-cli 可用'))
           console.log()
-          console.log('  最新版本:    ' + chalk.green(latestVersion))
+          console.log(chalk.yellow('  *** 检测到有新版本的 mip-cli 可用 ***'))
+          console.log()
+          console.log('  最新版本: ' + chalk.green(latestVersion))
           console.log('  当前版本: ' + chalk.red(localVersion))
           console.log()
           console.log(' 您可以使用 npm update -g mip2 进行更新')
