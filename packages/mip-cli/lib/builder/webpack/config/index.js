@@ -41,14 +41,17 @@ module.exports = function (options) {
         {
           test: /\.js$/,
           exclude: /node_modules/,
-          use: options.ignore
-            ? [
-              babelLoader
-            ]
-            : [
-              path.resolve(__dirname, 'sandbox-loader.js'),
-              babelLoader
-            ]
+          use: [
+            babelLoader
+          ]
+          // use: options.ignore
+          //   ? [
+          //     babelLoader
+          //   ]
+          //   : [
+          //     path.resolve(__dirname, 'sandbox-loader.js'),
+          //     babelLoader
+          //   ]
         },
         {
           test: /\.(png|jpe?g|gif)$/,
