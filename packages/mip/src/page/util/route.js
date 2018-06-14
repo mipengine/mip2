@@ -6,7 +6,7 @@ const locationRE = /^(http(?:s?):\/\/[^/]+)(.*)/
 
 /**
  * convert pattern to regexp
- *
+ * @deprecated
  * @param {string} pattern pattern string
  * @return {Regexp} regexp
  */

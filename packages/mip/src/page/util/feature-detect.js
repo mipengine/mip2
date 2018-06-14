@@ -35,8 +35,8 @@ export const animationEndEvent = animationEndEventName
  * raf
  */
 export const raf = window.requestAnimationFrame
-    ? window.requestAnimationFrame.bind(window)
-    : setTimeout
+  ? window.requestAnimationFrame.bind(window)
+  : setTimeout
 
 export function isPortrait () {
   return window.innerHeight > window.innerWidth

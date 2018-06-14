@@ -7,7 +7,7 @@ import css from '../../util/dom/css'
 import sandbox from '../../sandbox'
 import viewport from '../../viewport'
 
-import {MIP_IFRAME_CONTAINER, XIONGZHANG_MORE_BUTTON_GROUP} from '../const'
+import {MIP_IFRAME_CONTAINER} from '../const'
 import {raf, transitionEndEvent, animationEndEvent} from './feature-detect'
 
 let {window: sandWin, document: sandDoc} = sandbox
@@ -315,66 +315,6 @@ export function frameMoveOut (pageId, {transition, sourceMeta, targetPageId, onC
     })
     onComplete && onComplete()
   }
-}
-
-function renderMoreButton ({name, text, link} = {}) {
-  if (!name || !text) {
-    return
-  }
-
-  return `
-    <div class="mip-shell-button" mip-header-btn data-button-name="${name}">
-      ${link ? `<a mip-link href="${link}">${text}</a>` : text}
-    </div>
-  `
-}
-
-/**
- * Create wrapper for more button in header
- *
- * @param {Object} options
- * @param {Array<Object>} options.buttonGroup configures for buttonGroup. This will be ignored when xiongzhang = true
- * @param {boolean} options.xiongzhang enables xiongzhanghao or not
- */
-export function createMoreButtonWrapper ({buttonGroup, xiongzhang} = {}) {
-  if (xiongzhang) {
-    buttonGroup = XIONGZHANG_MORE_BUTTON_GROUP
-  }
-
-  if (!Array.isArray(buttonGroup)) {
-    return
-  }
-
-  let mask = document.createElement('div')
-  mask.classList.add('mip-shell-more-button-mask')
-  document.body.appendChild(mask)
-
-  let buttonWrapper = document.createElement('div')
-  buttonWrapper.classList.add('mip-shell-more-button-wrapper')
-
-  let buttonGroupHTMLArray = []
-  buttonGroup.forEach(button => {
-    let tmp = renderMoreButton(button)
-    tmp && buttonGroupHTMLArray.push(tmp)
-  })
-
-  css(buttonWrapper, 'height', 48 * buttonGroupHTMLArray.length)
-  buttonWrapper.innerHTML = buttonGroupHTMLArray.join('')
-  document.body.appendChild(buttonWrapper)
-
-  return {mask, buttonWrapper}
-}
-
-/**
- * Create page mask to cover header
- * Mainly used in dialog within iframes
- */
-export function createPageMask () {
-  let mask = document.createElement('div')
-  mask.classList.add('mip-shell-header-mask')
-  document.body.appendChild(mask)
-
-  return mask
 }
 
 /**

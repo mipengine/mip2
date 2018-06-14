@@ -1,0 +1,190 @@
+/**
+ * @file MIP Shell styles
+ * @author wangyisheng@baidu.com (wangyisheng)
+ */
+
+@import "./variable.less";
+
+.mip-shell-header-wrapper {
+    z-index: 20000!important;
+    height: @shell-header-height;
+    &.hide {
+        display: none;
+    }
+}
+
+.mip-shell-header {
+    position: fixed;
+    right: 0;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    z-index: 20000;
+    height: @shell-header-height;
+    line-height: @shell-header-height;
+    font-size: 16px;
+    background: white;
+    padding: 0 6px 0 6px;
+    transform: translate3d(0, 0, 0);
+
+    &.transition {
+        transition: transform ease 300ms;
+    }
+
+    &.slide-up {
+        transform: translate3d(0, (-@shell-header-height), 0);
+    }
+
+    .back-button {
+        position: absolute;
+        top: 7px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 30px;
+        width: 30px;
+        & > svg {
+            width: 14px;
+            height: 14px;
+        }
+    }
+
+    .mip-shell-header-logo-title {
+        margin: 0 auto;
+        max-width: 50%;
+
+        .mip-shell-header-logo,
+        .mip-shell-header-title {
+            float: left;
+        }
+
+        .mip-shell-header-logo {
+            height: 32px;
+            width: 32px;
+            margin: 4px 8px 0 0;
+        }
+
+        .mip-shell-header-title {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            max-width: 100%;
+        }
+    }
+
+    .mip-shell-header-button-group {
+        width: 87px;
+        height: 32px;
+        border: 1px solid #e6e6e6;
+        border-radius: 16px;
+        position: absolute;
+        top: 7px;
+        right: 3px;
+        overflow: hidden;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+
+        .button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 30px;
+            width: 40px;
+            & > svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        .split {
+            width: 1px;
+            height: 15px;
+            background: #ccc;
+        }
+    }
+
+    .mip-shell-header-button-group-standalone {
+        position: absolute;
+        top: 7px;
+        right: 0;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 30px;
+        width: 40px;
+        & > svg {
+            width: 20px;
+            height: 20px;
+        }
+    }
+}
+
+.mip-shell-more-button-mask {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 20001;
+}
+
+.mip-shell-more-button-wrapper {
+    transition: all .35s ease;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    z-index: 20002;
+    transform: translateY(100%);
+
+    &.show {
+        transform: translateY(0);
+    }
+
+    .mip-shell-button {
+        height: 48px;
+        line-height: 48px;
+        text-align: center;
+        .mip-border();
+        .mip-border-bottom();
+
+        &:last-of-type {
+            .set-border-color(transparent);
+        }
+    }
+}
+
+.mip-shell-header-mask {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: @shell-header-height;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 20001;
+}
+
+.mip-shell-more-button-mask,
+.mip-shell-header-mask {
+    &.fade-enter,
+    &.fade-leave-to {
+        opacity: 0;
+    }
+
+    &.fade-enter-active,
+    &.fade-leave-active {
+        transition: all 0.35s ease;
+    }
+
+    &.fade-enter-to,
+    &.fade-leave {
+        opacity: 1;
+    }
+}

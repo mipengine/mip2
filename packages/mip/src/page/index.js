@@ -12,8 +12,10 @@ import {
   frameMoveIn,
   frameMoveOut,
   createLoading
+  // createLoading
 } from './util/dom'
 import Debouncer from './util/debounce'
+import {supportsPassive} from './util/feature-detect'
 import {scrollTo} from './util/ease-scroll'
 import {
   NON_EXISTS_PAGE_ID,
@@ -22,18 +24,18 @@ import {
   MESSAGE_APPSHELL_EVENT,
   MESSAGE_ROUTER_PUSH,
   MESSAGE_ROUTER_REPLACE,
-  MESSAGE_APPSHELL_HEADER_SLIDE_UP,
-  MESSAGE_APPSHELL_HEADER_SLIDE_DOWN,
+  MESSAGE_MIP_SHELL_CONFIG,
   MESSAGE_REGISTER_GLOBAL_COMPONENT
+  // MESSAGE_APPSHELL_HEADER_SLIDE_UP,
+  // MESSAGE_APPSHELL_HEADER_SLIDE_DOWN,
 } from './const'
-import {supportsPassive} from './util/feature-detect'
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
 import util from '../util'
 import viewport from '../viewport'
 import Router from './router'
-import AppShell from './appshell'
-import GlobalComponent from './appshell/globalComponent'
+// import AppShell from './appshell'
+// import GlobalComponent from './appshell/globalComponent'
 import '../styles/mip.less'
 
 /**
@@ -125,75 +127,114 @@ class Page {
   }
 
   initAppShell () {
-    let currentPageMeta
     if (this.isRootPage) {
-      /**
-       * in root page, we need to:
-       * 1. read global config from <mip-shell>
-       * 2. refresh appshell with current data in <mip-shell>
-       * 3. listen to a refresh event emited by current child iframe
-       */
-      this.readMIPShellConfig()
-
-      currentPageMeta = this.findMetaByPageId(this.pageId)
-      this.currentPageMeta = currentPageMeta
-
-      this.appshell = new AppShell({
-        data: this.currentPageMeta
-      }, this)
-
-      this.globalComponent = new GlobalComponent()
-
-      // Create loading div
-      createLoading(this.currentPageMeta)
-
+      // this.globalComponent = new globalComponent()
       this.messageHandlers.push((type, data) => {
-        if (type === MESSAGE_APPSHELL_HEADER_SLIDE_UP) {
-          // AppShell header animation
-          this.appshell.header.slideUp()
-        } else if (type === MESSAGE_APPSHELL_HEADER_SLIDE_DOWN) {
-          // AppShell header animation
-          this.appshell.header.slideDown()
+        if (type === MESSAGE_MIP_SHELL_CONFIG) {
+          this.appshellRoutes = data
+          this.currentPageMeta = this.findMetaByPageId(this.pageId)
+          createLoading(this.currentPageMeta)
+
+          // Set bouncy header
+          if (this.currentPageMeta.header.bouncy) {
+            this.setupBouncyHeader()
+          }
         } else if (type === MESSAGE_REGISTER_GLOBAL_COMPONENT) {
           // Register global component
+          console.log('register global component')
           // this.globalComponent.register(data)
         }
       })
 
-      // recaculate all the iframes' height
+      // Set iframe height when resizing
       viewport.on('resize', () => {
         [].slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
           $el.style.height = `${viewport.getHeight()}px`
         })
       })
     } else {
-      currentPageMeta = this.router.rootPage.findMetaByPageId(this.pageId)
-      /**
-       * in child page:
-       * 1. notify root page to refresh appshell at first time
-       * 2. listen to appshell events such as `click-button` emited by root page
-       */
       this.messageHandlers.push((type, event) => {
         if (type === MESSAGE_APPSHELL_EVENT) {
           customEmit(window, event.name, event.data)
         }
       })
-    }
 
-    let {show: showHeader, bouncy} = currentPageMeta.header
-    // set `padding-top` on scroller
-    if (showHeader) {
-      if (viewport.scroller === window) {
-        document.body.classList.add('with-header')
-      } else {
-        viewport.scroller.classList.add('with-header')
+      let parentPage = window.parent.MIP.viewer.page
+      let currentPageMeta = parentPage.findMetaByPageId(this.pageId)
+
+      if (currentPageMeta.header.bouncy) {
+        this.setupBouncyHeader()
       }
     }
+  //   let currentPageMeta
+  //   if (this.isRootPage) {
+  //     /**
+  //      * in root page, we need to:
+  //      * 1. read global config from <mip-shell>
+  //      * 2. refresh appshell with current data in <mip-shell>
+  //      * 3. listen to a refresh event emited by current child iframe
+  //      */
+  //     this.readMIPShellConfig()
 
-    // set bouncy header
-    if (bouncy) {
-      this.setupBouncyHeader()
-    }
+  //     currentPageMeta = this.findMetaByPageId(this.pageId)
+  //     this.currentPageMeta = currentPageMeta
+
+  //     this.appshell = new AppShell({
+  //       data: this.currentPageMeta
+  //     }, this)
+
+  //     this.globalComponent = new GlobalComponent()
+
+  //     // Create loading div
+  //     createLoading(this.currentPageMeta)
+
+  //     this.messageHandlers.push((type, data) => {
+  //       if (type === MESSAGE_APPSHELL_HEADER_SLIDE_UP) {
+  //         // AppShell header animation
+  //         this.appshell.header.slideUp()
+  //       } else if (type === MESSAGE_APPSHELL_HEADER_SLIDE_DOWN) {
+  //         // AppShell header animation
+  //         this.appshell.header.slideDown()
+  //       } else if (type === MESSAGE_REGISTER_GLOBAL_COMPONENT) {
+  //         // Register global component
+  //         // this.globalComponent.register(data)
+  //       }
+  //     })
+
+  //     // recaculate all the iframes' height
+  //     viewport.on('resize', () => {
+  //       [].slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
+  //         $el.style.height = `${viewport.getHeight()}px`
+  //       })
+  //     })
+  //   } else {
+  //     currentPageMeta = this.router.rootPage.findMetaByPageId(this.pageId)
+  //     /**
+  //      * in child page:
+  //      * 1. notify root page to refresh appshell at first time
+  //      * 2. listen to appshell events such as `click-button` emited by root page
+  //      */
+  //     this.messageHandlers.push((type, event) => {
+  //       if (type === MESSAGE_APPSHELL_EVENT) {
+  //         customEmit(window, event.name, event.data)
+  //       }
+  //     })
+  //   }
+
+  //   let {show: showHeader, bouncy} = currentPageMeta.header
+  //   // set `padding-top` on scroller
+  //   if (showHeader) {
+  //     if (viewport.scroller === window) {
+  //       document.body.classList.add('with-header')
+  //     } else {
+  //       viewport.scroller.classList.add('with-header')
+  //     }
+  //   }
+
+  //   // set bouncy header
+  //   if (bouncy) {
+  //     this.setupBouncyHeader()
+  //   }
   }
 
   /**
@@ -227,6 +268,7 @@ class Page {
     let scrollDistance
     let scrollHeight = viewport.getScrollHeight()
     let viewportHeight = viewport.getHeight()
+    let lastScrollDirection
 
     // viewportHeight = 0 before frameMoveIn animation ends
     // Wait a minute
@@ -245,21 +287,31 @@ class Page {
       }
 
       if (lastScrollTop < scrollTop && scrollDistance >= THRESHOLD) {
-        if (this.isRootPage) {
-          this.appshell.header.slideUp()
-        } else {
-          this.notifyRootPage({
-            type: MESSAGE_APPSHELL_HEADER_SLIDE_UP
-          })
+        if (lastScrollDirection !== 'up') {
+          lastScrollDirection = 'up'
+          let target = this.isRootPage ? window : window.parent
+          customEmit(target, 'mipShellHeaderSlide', {direction: 'up'})
         }
+        // if (this.isRootPage) {
+        //   this.appshell.header.slideUp()
+        // } else {
+        //   this.notifyRootPage({
+        //     type: MESSAGE_APPSHELL_HEADER_SLIDE_UP
+        //   })
+        // }
       } else if (lastScrollTop > scrollTop && scrollDistance >= THRESHOLD) {
-        if (this.isRootPage) {
-          this.appshell.header.slideDown()
-        } else {
-          this.notifyRootPage({
-            type: MESSAGE_APPSHELL_HEADER_SLIDE_DOWN
-          })
+        if (lastScrollDirection !== 'down') {
+          lastScrollDirection = 'down'
+          let target = this.isRootPage ? window : window.parent
+          customEmit(target, 'mipShellHeaderSlide', {direction: 'down'})
         }
+        // if (this.isRootPage) {
+        //   this.appshell.header.slideDown()
+        // } else {
+        //   this.notifyRootPage({
+        //     type: MESSAGE_APPSHELL_HEADER_SLIDE_DOWN
+        //   })
+        // }
       }
 
       lastScrollTop = scrollTop
@@ -388,7 +440,6 @@ class Page {
 
   /**
    * find route.meta by pageId
-   *
    * @param {string} pageId pageId
    * @return {Object} meta object
    */

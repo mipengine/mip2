@@ -12,6 +12,7 @@ import MipIframe from './mip-iframe'
 import MipPix from './mip-pix'
 import MipBind from './mip-bind/bind'
 import MipData from './mip-bind/mip-data'
+import MipShell from './mip-shell/index'
 import registerElement from '../register-element'
 
 export default {
@@ -27,5 +28,6 @@ export default {
     registerElement('mip-video', MipVideo)
     new MipBind()
     registerElement('mip-data', MipData)
+    registerElement('mip-shell', MipShell)
   }
 }
