@@ -343,16 +343,37 @@ on="事件:MIP.setData({}) 事件:MIP.setData({}) 事件:MIP.setData({})"
             <input type='text' on="change:MIP.setData({price:DOM.value*m.price})">
         </mip-form>
         ```
-
+<br />
 ### 观察数据
 
-提供 `MIP.watch(value, cb)` 方法。其中 `value` 为数据源中的属性名，多层数据可以以 `.` 连接，允许是单个字符串或字符串数组。`cb` 接收两个参数，分别是 `newVal`，`oldVal`。
+提供 `MIP.watch(value, cb)` 方法注册观察行为。
+
+其中 `value` 为数据源中的属性名，多层数据可以以 `.` 连接，允许是单个字符串或字符串数组。
+`cb` 接收两个参数，分别是 `newVal`，`oldVal`。
 
 当指定的 `value` 数据源发生变化，会自动执行相应的 `cb`。
 
-`watch` 的时机为需要等待 `mip-data` 加载的数据完成。我们计划开放书写自定义 js 的方法来让开发者自由调用 `watch` 观察数据而无需关心 `watch` 的调用时机。[TODO]
-如果页面中没有使用 `<mip-data></mip-data>` 来设置初始数据，而却需要在自定义 js 里 watch 数据，开发者仍然需要在 html 中加入以下：
-
 ```html
-<mip-data><script type="application/json">{}</script></mip-data>
+<mip-data>
+    <script type="application/json">
+    {
+        "price": 20,
+        "title": "Initial price = 20"
+    }
+    </script>
+</mip-data>
+<p m-text="title"></p>
+<div>
+    DOM.value*m.price = <span m-text="price"></span>
+</div>
+<mip-form url="https://www.mipengine.org/">
+    <input type='text' on="change:MIP.setData({price:DOM.value*m.price})">
+</mip-form>
+<mip-script >
+    MIP.watch('price', (newVal, oldVal) => {
+        MIP.setData({
+            title: 'price changed to ' + newVal
+        })
+    })
+</mip-script>
 ```

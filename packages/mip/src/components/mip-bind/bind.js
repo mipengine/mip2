@@ -37,6 +37,7 @@ class Bind {
     }
 
     window.m = window.m || {}
+    window.mipDataPromises = window.mipDataPromises || []
     MIP.$set(window.m)
   }
 
