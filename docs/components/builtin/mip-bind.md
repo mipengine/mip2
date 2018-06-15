@@ -344,6 +344,7 @@ on="事件:MIP.setData({}) 事件:MIP.setData({}) 事件:MIP.setData({})"
         </mip-form>
         ```
 <br />
+
 ### 观察数据
 
 提供 `MIP.watch(value, cb)` 方法注册观察行为。
@@ -352,6 +353,10 @@ on="事件:MIP.setData({}) 事件:MIP.setData({}) 事件:MIP.setData({})"
 `cb` 接收两个参数，分别是 `newVal`，`oldVal`。
 
 当指定的 `value` 数据源发生变化，会自动执行相应的 `cb`。
+
+#### 示例：
+
+通过调用 `watch` 方法，监听 price 的数据变化，并在其变化时改变 title 的值
 
 ```html
 <mip-data>

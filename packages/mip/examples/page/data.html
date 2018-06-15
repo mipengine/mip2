@@ -295,9 +295,11 @@
         </script>
     </mip-shell>
 
-    <mip-script src="http://172.18.182.73:8848/test-script.js"></mip-script>
+    <!-- <mip-script src="http://172.18.182.73:8848/test-script.js"></mip-script> -->
 
     <mip-script>
+        alert(1)
+        alert(2)
         MIP.watch('num', function () {
             console.log('num changed callback')
             MIP.setData({
