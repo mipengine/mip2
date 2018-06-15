@@ -24,7 +24,8 @@ import {
   MESSAGE_APPSHELL_EVENT,
   MESSAGE_ROUTER_PUSH,
   MESSAGE_ROUTER_REPLACE,
-  MESSAGE_MIP_SHELL_CONFIG,
+  MESSAGE_SET_MIP_SHELL_CONFIG,
+  MESSAGE_UPDATE_MIP_SHELL_CONFIG,
   MESSAGE_REGISTER_GLOBAL_COMPONENT
   // MESSAGE_APPSHELL_HEADER_SLIDE_UP,
   // MESSAGE_APPSHELL_HEADER_SLIDE_DOWN,
@@ -130,8 +131,9 @@ class Page {
     if (this.isRootPage) {
       // this.globalComponent = new globalComponent()
       this.messageHandlers.push((type, data) => {
-        if (type === MESSAGE_MIP_SHELL_CONFIG) {
-          this.appshellRoutes = data
+        if (type === MESSAGE_SET_MIP_SHELL_CONFIG) {
+          // Set mip shell config in root page
+          this.appshellRoutes = data.shellConfig
           this.currentPageMeta = this.findMetaByPageId(this.pageId)
           createLoading(this.currentPageMeta)
 
@@ -139,6 +141,8 @@ class Page {
           if (this.currentPageMeta.header.bouncy) {
             this.setupBouncyHeader()
           }
+        } else if (type === MESSAGE_UPDATE_MIP_SHELL_CONFIG) {
+          console.log('update mip shell config', data)
         } else if (type === MESSAGE_REGISTER_GLOBAL_COMPONENT) {
           // Register global component
           console.log('register global component')
@@ -290,28 +294,24 @@ class Page {
         if (lastScrollDirection !== 'up') {
           lastScrollDirection = 'up'
           let target = this.isRootPage ? window : window.parent
-          customEmit(target, 'mipShellHeaderSlide', {direction: 'up'})
+          customEmit(target, 'mipShellEvents', {
+            type: 'slide',
+            data: {
+              direction: 'up'
+            }
+          })
         }
-        // if (this.isRootPage) {
-        //   this.appshell.header.slideUp()
-        // } else {
-        //   this.notifyRootPage({
-        //     type: MESSAGE_APPSHELL_HEADER_SLIDE_UP
-        //   })
-        // }
       } else if (lastScrollTop > scrollTop && scrollDistance >= THRESHOLD) {
         if (lastScrollDirection !== 'down') {
           lastScrollDirection = 'down'
           let target = this.isRootPage ? window : window.parent
-          customEmit(target, 'mipShellHeaderSlide', {direction: 'down'})
+          customEmit(target, 'mipShellEvents', {
+            type: 'slide',
+            data: {
+              direction: 'down'
+            }
+          })
         }
-        // if (this.isRootPage) {
-        //   this.appshell.header.slideDown()
-        // } else {
-        //   this.notifyRootPage({
-        //     type: MESSAGE_APPSHELL_HEADER_SLIDE_DOWN
-        //   })
-        // }
       }
 
       lastScrollTop = scrollTop
@@ -382,18 +382,26 @@ class Page {
 
   // ========================= Util functions for developers =========================
   togglePageMask (toggle, options) {
-    // Page mask won't show in root page
+    // Only show page mask in root page
     if (!this.isRootPage) {
-      window.parent.MIP.viewer.page.appshell.header.togglePageMask(toggle, options)
+      customEmit(window.parent, 'mipShellEvents', {
+        type: 'togglePageMask',
+        data: {
+          toggle,
+          options
+        }
+      })
     }
   }
 
   toggleDropdown (toggle) {
-    if (this.isRootPage) {
-      this.appshell.header.toggleDropdown(toggle)
-    } else {
-      window.parent.MIP.viewer.page.appshell.header.toggleDropdown(toggle)
-    }
+    let target = this.isRootPage ? window : window.parent
+    customEmit(target, 'mipShellEvents', {
+      type: 'toggleDropdown',
+      data: {
+        toggle
+      }
+    })
   }
 
   // =============================== Root Page methods ===============================
@@ -466,9 +474,9 @@ class Page {
    * @param {string} targetPageId targetPageId
    * @param {Object} extraData extraData
    */
-  refreshAppShell (targetPageId, extraData) {
-    this.appshell.refresh(extraData, targetPageId)
-  }
+  // refreshAppShell (targetPageId, extraData) {
+  //   this.appshell.refresh(extraData, targetPageId)
+  // }
 
   /**
    * save scroll position in root page
@@ -503,8 +511,12 @@ class Page {
     let innerTitle = {title: targetMeta.defaultTitle || undefined}
     let finalMeta = util.fn.extend(true, innerTitle, localMeta, targetMeta)
 
-    this.appshell.header.toggleTransition(false)
-    this.appshell.header.slideDown()
+    customEmit(window, 'mipShellEvents', {
+      type: 'toggleTransition',
+      data: {
+        toggle: false
+      }
+    })
 
     if (targetPageId === this.pageId || this.direction === 'back') {
       // backward
@@ -514,7 +526,12 @@ class Page {
         onComplete: () => {
           this.allowTransition = false
           this.currentPageMeta = finalMeta
-          this.appshell.header.toggleTransition(true)
+          customEmit(window, 'mipShellEvents', {
+            type: 'toggleTransition',
+            data: {
+              toggle: true
+            }
+          })
         }
       }
 
@@ -526,7 +543,9 @@ class Page {
       frameMoveOut(this.currentPageId, backwardOpitons)
 
       this.direction = null
-      this.refreshAppShell(targetPageId, finalMeta)
+      // TODO
+      console.log('refresh appshell')
+      // this.refreshAppShell(targetPageId, finalMeta)
 
       // restore scroll position in root page
       if (targetPageId === this.pageId) {
@@ -541,8 +560,15 @@ class Page {
         onComplete: () => {
           this.allowTransition = false
           this.currentPageMeta = finalMeta
-          this.appshell.header.toggleTransition(true)
-          this.refreshAppShell(targetPageId, finalMeta)
+          customEmit(window, 'mipShellEvents', {
+            type: 'toggleTransition',
+            data: {
+              toggle: true
+            }
+          })
+          // TODO
+          console.log('refresh appshell')
+          // this.refreshAppShell(targetPageId, finalMeta)
           /**
            * Disable scrolling of root page when covered by an iframe
            * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
@@ -623,8 +649,14 @@ class Page {
     }
 
     // Hide page mask and skip transition
-    this.appshell.header.togglePageMask(false, {
-      skipTransition: true
+    customEmit(window, 'mipShellEvents', {
+      type: 'togglePageMask',
+      data: {
+        toggle: false,
+        options: {
+          skipTransition: true
+        }
+      }
     })
 
     /**

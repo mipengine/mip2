@@ -54,6 +54,7 @@ function findMetaByPageId (pageId) {
 }
 
 class MipShell extends CustomElement {
+  // ===================== CustomElement LifeCycle =====================
   build () {
     page = window.MIP.viewer.page
 
@@ -78,9 +79,13 @@ class MipShell extends CustomElement {
       })
 
       // Pass shell config to page
+      let messageType = page.isRootPage ? 'set-mip-shell-config' : 'update-mip-shell-config'
       page.notifyRootPage({
-        type: 'mip-shell-config',
-        data: shellConfig
+        type: messageType,
+        data: {
+          shellConfig,
+          pageId: page.pageId
+        }
       })
     }
   }
@@ -96,6 +101,14 @@ class MipShell extends CustomElement {
       this.bindEvents()
     }
   }
+
+  disconnectedCallback () {
+    if (page.isRootPage) {
+      this.unbindEvents()
+    }
+  }
+
+  // ===================== Other Functions =====================
 
   /**
    * Create belows:
@@ -201,21 +214,43 @@ class MipShell extends CustomElement {
     }
 
     // Listen bouncy header events
-    if (bouncy) {
-      window.addEventListener('mipShellHeaderSlide', e => {
-        this.slideHeader(e.detail[0].direction)
-      })
-    }
+    window.addEventListener('mipShellEvents', e => {
+      let {type, data} = e.detail[0]
+
+      if (type === 'slide' && bouncy) {
+        this.slideHeader(data.direction)
+      } else if (type === 'togglePageMask') {
+        this.togglePageMask(data.toggle, data.options)
+      } else if (type === 'toggleDropdown') {
+        this.toggleDropdown(data.toggle)
+      } else if (type === 'toggleTransition') {
+        this.toggleTransition(data.toggle)
+      }
+    })
 
     // only rootpage maybe?
-    this.eventHandler = event.delegate(document.body, '[mip-header-btn]', 'click', function (e) {
+    // Delegate header
+    this.headerEventHandler = event.delegate(this.$el, '[mip-header-btn]', 'click', function (e) {
       let buttonName = this.dataset.buttonName
       me.handleClickHeaderButton(buttonName)
     })
 
-    if (this.$buttonMask) {
-      this.$buttonMask.onclick = () => this.toggleDropdown(false)
+    // Delegate dropdown button
+    if (this.$buttonWrapper) {
+      this.buttonEventHandler = event.delegate(this.$buttonWrapper, '[mip-header-btn]', 'click', function (e) {
+        let buttonName = this.dataset.buttonName
+        me.handleClickHeaderButton(buttonName)
+      })
+
+      if (this.$buttonMask) {
+        this.$buttonMask.onclick = () => this.toggleDropdown(false)
+      }
     }
+  }
+
+  unbindEvents () {
+    this.headerEventHandler && this.headerEventHandler()
+    this.buttonEventHandler && this.buttonEventHandler()
   }
 
   handleClickHeaderButton (buttonName) {
@@ -234,11 +269,19 @@ class MipShell extends CustomElement {
       this.toggleDropdown(true)
     } else if (buttonName === 'close') {
       window.MIP.viewer.sendMessage('close')
+    } else if (buttonName === 'cancel') {
+      this.toggleDropdown(false)
     }
+
+    this.handleShellCustomButton(buttonName)
 
     page.emitEventInCurrentPage({
       name: `shell-header:click-${buttonName}`
     })
+  }
+
+  handleShellCustomButton () {
+    // Extend by child
   }
 
   slideHeader (direction) {
@@ -274,6 +317,10 @@ class MipShell extends CustomElement {
    */
   togglePageMask (toggle, {skipTransition} = {}) {
     toggleInner(this.$pageMask, toggle, skipTransition)
+  }
+
+  toggleTransition (toggle) {
+    toggle ? this.$el.classList.add('transition') : this.$el.classList.remove('transition')
   }
 }
 
