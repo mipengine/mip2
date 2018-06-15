@@ -1,0 +1,12 @@
+#!/usr/bin/env node
+
+const cli = require('../lib/cli')
+
+cli.program.parse(process.argv)
+
+// input only `mip2`, show help and do nothing
+if (!cli.program.args.length) {
+  return
+}
+
+cli.info('no command found, ready to install...')

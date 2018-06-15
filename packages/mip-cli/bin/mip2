@@ -24,5 +24,11 @@ checkVersion().then(() => {
     .command('dev', cli.chalk.green('启动调试服务器'))
     .command('build', cli.chalk.green('组件打包'))
     .command('sw', cli.chalk.green('生成 Service Worker'))
+    .command('addPlugin', 'default for add Plugin', {isDefault: true, noHelp: true})
     .parse(process.argv)
+
+  // input only `mip2`, show help info
+  if (cli.program.args[0] === 'addPlugin' && cli.program.args.length === 1) {
+    cli.program.help()
+  }
 })
