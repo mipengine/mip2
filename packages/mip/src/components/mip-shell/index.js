@@ -61,14 +61,18 @@ class MipShell extends CustomElement {
     // Read config
     let ele = this.element.querySelector('script[type="application/json"]')
 
-    if (ele) {
-      try {
-        shellConfig = JSON.parse(ele.textContent.toString()).routes || []
-      } catch (e) {
-        shellConfig = []
-      }
+    if (!ele) {
+      return
+    }
+    let tmpShellConfig
+    try {
+      tmpShellConfig = JSON.parse(ele.textContent.toString()).routes || []
+    } catch (e) {
+      tmpShellConfig = []
+    }
 
-      shellConfig.forEach(route => {
+    if (page.isRootPage) {
+      tmpShellConfig.forEach(route => {
         route.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, route.meta || {})
         route.regexp = convertPatternToRegexp(route.pattern || '*')
 
@@ -78,13 +82,35 @@ class MipShell extends CustomElement {
         }
       })
 
-      // Pass shell config to page
-      let messageType = page.isRootPage ? 'set-mip-shell-config' : 'update-mip-shell-config'
+      shellConfig = tmpShellConfig
       page.notifyRootPage({
-        type: messageType,
+        type: 'set-mip-shell-config',
         data: {
-          shellConfig,
-          pageId: page.pageId
+          shellConfig
+        }
+      })
+    } else {
+      let pageId = page.pageId
+      let pageMeta = DEFAULT_SHELL_CONFIG
+      for (let i = 0; i < tmpShellConfig.length; i++) {
+        let config = tmpShellConfig[i]
+        config.regexp = convertPatternToRegexp(config.pattern || '*')
+        if (config.regexp.test(pageId)) {
+          config.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, config.meta || {})
+          // get title from <title> tag
+          if (!config.meta.header.title) {
+            config.meta.header.title = (document.querySelector('title') || {}).innerHTML || ''
+          }
+          pageMeta = pageMetaCache[pageId] = config.meta
+          break
+        }
+      }
+
+      page.notifyRootPage({
+        type: 'update-mip-shell-config',
+        data: {
+          pageMeta,
+          pageId
         }
       })
     }
@@ -95,16 +121,19 @@ class MipShell extends CustomElement {
   }
 
   firstInviewCallback () {
+    this.currentPageMeta = findMetaByPageId(page.pageId)
+
     if (page.isRootPage) {
-      this.currentPageMeta = findMetaByPageId(page.pageId)
       this.initShell()
-      this.bindEvents()
+      this.bindRootEvents()
     }
+
+    this.bindAllEvents()
   }
 
   disconnectedCallback () {
     if (page.isRootPage) {
-      this.unbindEvents()
+      this.unbindHeaderEvents()
     }
   }
 
@@ -134,11 +163,9 @@ class MipShell extends CustomElement {
 
     // Button wrapper & mask
     let buttonGroup = this.currentPageMeta.header.buttonGroup
-    if (Array.isArray(buttonGroup) && buttonGroup.length > 0) {
-      let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup)
-      this.$buttonMask = mask
-      this.$buttonWrapper = buttonWrapper
-    }
+    let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup)
+    this.$buttonMask = mask
+    this.$buttonWrapper = buttonWrapper
 
     // Page mask
     this.$pageMask = createPageMask()
@@ -146,9 +173,12 @@ class MipShell extends CustomElement {
     document.body.insertBefore(this.$wrapper, document.body.firstChild)
   }
 
-  renderHeader () {
-    let {buttonGroup, title, logo} = this.currentPageMeta.header
-    let showBackIcon = !this.currentPageMeta.view.isIndex
+  renderHeader (pageMeta) {
+    if (!pageMeta) {
+      pageMeta = this.currentPageMeta
+    }
+    let {buttonGroup, title, logo} = pageMeta.header
+    let showBackIcon = !pageMeta.view.isIndex
 
     let headerHTML = `
       ${showBackIcon ? `<span class="back-button" mip-header-btn
@@ -200,35 +230,38 @@ class MipShell extends CustomElement {
     return headerHTML
   }
 
-  bindEvents () {
-    let me = this
-    // rootpage and slavepage maybe?
-    let {show: showHeader, bouncy} = this.currentPageMeta.header
-    // Set `padding-top` on scroller
-    if (showHeader) {
-      if (viewport.scroller === window) {
-        document.body.classList.add('with-header')
-      } else {
-        viewport.scroller.classList.add('with-header')
-      }
-    }
-
+  /**
+   * Only root page
+   */
+  bindRootEvents () {
     // Listen bouncy header events
     window.addEventListener('mipShellEvents', e => {
       let {type, data} = e.detail[0]
 
-      if (type === 'slide' && bouncy) {
-        this.slideHeader(data.direction)
-      } else if (type === 'togglePageMask') {
-        this.togglePageMask(data.toggle, data.options)
-      } else if (type === 'toggleDropdown') {
-        this.toggleDropdown(data.toggle)
-      } else if (type === 'toggleTransition') {
-        this.toggleTransition(data.toggle)
+      switch (type) {
+        case 'updateShell':
+          this.refreshShell(data.pageMeta)
+          break
+        case 'slide':
+          this.slideHeader(data.direction)
+          break
+        case 'togglePageMask':
+          this.togglePageMask(data.toggle, data.options)
+          break
+        case 'toggleDropdown':
+          this.toggleDropdown(data.toggle)
+          break
+        case 'toggleTransition':
+          this.toggleTransition(data.toggle)
+          break
       }
     })
 
-    // only rootpage maybe?
+    this.bindHeaderEvents()
+  }
+
+  bindHeaderEvents () {
+    let me = this
     // Delegate header
     this.headerEventHandler = event.delegate(this.$el, '[mip-header-btn]', 'click', function (e) {
       let buttonName = this.dataset.buttonName
@@ -236,19 +269,17 @@ class MipShell extends CustomElement {
     })
 
     // Delegate dropdown button
-    if (this.$buttonWrapper) {
-      this.buttonEventHandler = event.delegate(this.$buttonWrapper, '[mip-header-btn]', 'click', function (e) {
-        let buttonName = this.dataset.buttonName
-        me.handleClickHeaderButton(buttonName)
-      })
+    this.buttonEventHandler = event.delegate(this.$buttonWrapper, '[mip-header-btn]', 'click', function (e) {
+      let buttonName = this.dataset.buttonName
+      me.handleClickHeaderButton(buttonName)
+    })
 
-      if (this.$buttonMask) {
-        this.$buttonMask.onclick = () => this.toggleDropdown(false)
-      }
+    if (this.$buttonMask) {
+      this.$buttonMask.onclick = () => this.toggleDropdown(false)
     }
   }
 
-  unbindEvents () {
+  unbindHeaderEvents () {
     this.headerEventHandler && this.headerEventHandler()
     this.buttonEventHandler && this.buttonEventHandler()
   }
@@ -282,6 +313,39 @@ class MipShell extends CustomElement {
 
   handleShellCustomButton () {
     // Extend by child
+  }
+
+  /**
+   * Both root page and other pages
+   */
+  bindAllEvents () {
+    let {show: showHeader} = this.currentPageMeta.header
+    // Set `padding-top` on scroller
+    if (showHeader) {
+      if (viewport.scroller === window) {
+        document.body.classList.add('with-header')
+      } else {
+        viewport.scroller.classList.add('with-header')
+      }
+    }
+  }
+
+  refreshShell (pageMeta) {
+    // Unbind header events
+    this.unbindHeaderEvents()
+
+    // Refresh header
+    this.slideHeader('down')
+    this.$el.innerHTML = this.renderHeader(pageMeta)
+
+    // Button wrapper & mask
+    let buttonGroup = pageMeta.header.buttonGroup
+    let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup, {update: true})
+    this.$buttonMask = mask
+    this.$buttonWrapper = buttonWrapper
+
+    // Rebind header events
+    this.bindHeaderEvents()
   }
 
   slideHeader (direction) {

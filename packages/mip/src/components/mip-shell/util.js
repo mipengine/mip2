@@ -33,31 +33,42 @@ function renderMoreButton ({name, text, link} = {}) {
 /**
  * Create wrapper for more button in header
  *
- * @param {Object} options
- * @param {Array<Object>} options.buttonGroup configures for buttonGroup. This will be ignored when xiongzhang = true
- * @param {boolean} options.xiongzhang enables xiongzhanghao or not
+ * @param {Array<Object>} buttonGroup configures for buttonGroup
+ * @param {Object} options options
+ * @param {boolean} options.update If this is an update operation
  */
-export function createMoreButtonWrapper (buttonGroup) {
+export function createMoreButtonWrapper (buttonGroup, options = {}) {
   if (!Array.isArray(buttonGroup)) {
-    return
+    buttonGroup = []
   }
 
-  let mask = document.createElement('div')
-  mask.classList.add('mip-shell-more-button-mask')
-  document.body.appendChild(mask)
+  let renderButtonWrapper = (buttonWrapper) => {
+    let buttonGroupHTMLArray = []
+    buttonGroup.forEach(button => {
+      let tmp = renderMoreButton(button)
+      tmp && buttonGroupHTMLArray.push(tmp)
+    })
 
-  let buttonWrapper = document.createElement('div')
-  buttonWrapper.classList.add('mip-shell-more-button-wrapper')
+    css(buttonWrapper, 'height', 48 * buttonGroupHTMLArray.length)
+    buttonWrapper.innerHTML = buttonGroupHTMLArray.join('')
+  }
+  let mask
+  let buttonWrapper
 
-  let buttonGroupHTMLArray = []
-  buttonGroup.forEach(button => {
-    let tmp = renderMoreButton(button)
-    tmp && buttonGroupHTMLArray.push(tmp)
-  })
+  if (options.update) {
+    mask = document.querySelector('.mip-shell-more-button-mask')
+    buttonWrapper = document.querySelector('.mip-shell-more-button-wrapper')
+    renderButtonWrapper(buttonWrapper)
+  } else {
+    mask = document.createElement('div')
+    mask.classList.add('mip-shell-more-button-mask')
+    document.body.appendChild(mask)
 
-  css(buttonWrapper, 'height', 48 * buttonGroupHTMLArray.length)
-  buttonWrapper.innerHTML = buttonGroupHTMLArray.join('')
-  document.body.appendChild(buttonWrapper)
+    buttonWrapper = document.createElement('div')
+    buttonWrapper.classList.add('mip-shell-more-button-wrapper')
+    renderButtonWrapper(buttonWrapper)
+    document.body.appendChild(buttonWrapper)
+  }
 
   return {mask, buttonWrapper}
 }

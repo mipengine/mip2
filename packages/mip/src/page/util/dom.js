@@ -80,9 +80,9 @@ export function createLoading (pageMeta) {
       <span class="back-button">
         <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M769.405 977.483a68.544 68.544 0 0 1-98.121 0L254.693 553.679c-27.173-27.568-27.173-72.231 0-99.899L671.185 29.976c13.537-13.734 31.324-20.652 49.109-20.652s35.572 6.917 49.109 20.652c27.173 27.568 27.173 72.331 0 99.899L401.921 503.681l367.482 373.904c27.074 27.568 27.074 72.231 0 99.899z"/></svg>
       </span>
-      <div class="mip-appshell-header-logo-title">
-        <img class="mip-appshell-header-logo" src="${pageMeta.header.logo}">
-        <span class="mip-appshell-header-title"></span>
+      <div class="mip-shell-header-logo-title">
+        <img class="mip-shell-header-logo" src="${pageMeta.header.logo}">
+        <span class="mip-shell-header-title"></span>
       </div>
     </div>
   `
@@ -107,7 +107,7 @@ export function getLoading (targetMeta, onlyHeader) {
     css(loading.querySelector('.mip-page-loading-header'), 'display', 'flex')
   }
 
-  let $logo = loading.querySelector('.mip-appshell-header-logo')
+  let $logo = loading.querySelector('.mip-shell-header-logo')
   if (targetMeta.header.logo) {
     $logo.setAttribute('src', targetMeta.header.logo)
     css($logo, 'display', 'block')
@@ -116,7 +116,7 @@ export function getLoading (targetMeta, onlyHeader) {
   }
 
   if (targetMeta.header.title) {
-    loading.querySelector('.mip-appshell-header-title')
+    loading.querySelector('.mip-shell-header-title')
       .innerHTML = targetMeta.header.title
   }
 

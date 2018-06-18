@@ -142,7 +142,11 @@ class Page {
             this.setupBouncyHeader()
           }
         } else if (type === MESSAGE_UPDATE_MIP_SHELL_CONFIG) {
-          console.log('update mip shell config', data)
+          this.appshellCache[data.pageId] = data.pageMeta
+          customEmit(window, 'mipShellEvents', {
+            type: 'updateShell',
+            data
+          })
         } else if (type === MESSAGE_REGISTER_GLOBAL_COMPONENT) {
           // Register global component
           console.log('register global component')
@@ -543,8 +547,7 @@ class Page {
       frameMoveOut(this.currentPageId, backwardOpitons)
 
       this.direction = null
-      // TODO
-      console.log('refresh appshell')
+      // console.log('refresh appshell maybe deprecated?')
       // this.refreshAppShell(targetPageId, finalMeta)
 
       // restore scroll position in root page
@@ -560,14 +563,14 @@ class Page {
         onComplete: () => {
           this.allowTransition = false
           this.currentPageMeta = finalMeta
+          // TODO: Prevent transition on first view in some cases
           customEmit(window, 'mipShellEvents', {
             type: 'toggleTransition',
             data: {
               toggle: true
             }
           })
-          // TODO
-          console.log('refresh appshell')
+          // console.log('refresh appshell maybe deprecated?')
           // this.refreshAppShell(targetPageId, finalMeta)
           /**
            * Disable scrolling of root page when covered by an iframe
@@ -610,7 +613,8 @@ class Page {
     let whitelist = [
       '.mip-page-loading',
       '.mip-page__iframe',
-      '.mip-appshell-header-wrapper',
+      'mip-shell',
+      '.mip-shell-header-wrapper',
       '.mip-shell-more-button-mask',
       '.mip-shell-more-button-wrapper',
       '.mip-shell-header-mask',
