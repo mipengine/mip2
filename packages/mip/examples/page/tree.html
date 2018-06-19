@@ -150,14 +150,21 @@
     <a class="link" href="./data.html" mip-link>Go to Data</a>
 
     <p m-text="city"></p>
+    <div on="tap:MIP.setData({'city':'深圳'})" class="button">click change city</div>
 
     <br><br>
     <span>Read from global store(group.info.name) from index.html</span>
     <span m-text="group.info.name"></span>
+    <mip-script>
+        MIP.watch('city', function () {
+            console.log('city changed callback')
+        });
+    </mip-script>
 
 
     <script src="../../dist/mip.js"></script>
     <script src="./components/mip-tree.js"></script>
+    <script src="http://127.0.0.1:8111/mip-script/mip-script.js"></script>
 </body>
 
 </html>

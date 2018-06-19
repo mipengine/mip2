@@ -20,7 +20,7 @@ export function convertAttributeValue (value, overrideType, attr, element) {
 
   if (overrideType && overrideType !== Boolean) {
     // 只有组件在 props 中指定了需要 Object 类型，才进行 JSON.parse 处理，否则按照 props 给定的 type 进行处理
-    if (overrideType === Object) {
+    if (overrideType === Object || overrideType === Array) {
       try {
         propsValue = JSON.parse(propsValue)
       } catch (e) {
