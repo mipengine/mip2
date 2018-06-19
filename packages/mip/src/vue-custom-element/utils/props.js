@@ -16,7 +16,7 @@ export function convertAttributeValue (value, overrideType, attr, element) {
   let valueParsed = parseFloat(propsValue, 10)
   let isNumber = !isNaN(valueParsed) &&
     isFinite(propsValue) &&
-    propsValue.match(/^0+[^.]\d*$/g)
+    !propsValue.match(/^0+[^.]\d*$/g)
 
   if (overrideType && overrideType !== Boolean) {
     // 只有组件在 props 中指定了需要 Object 类型，才进行 JSON.parse 处理，否则按照 props 给定的 type 进行处理
