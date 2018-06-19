@@ -8,6 +8,7 @@ const proxy = require('http-proxy-middleware')
 const webpack = require('webpack')
 const webpackDevMiddleware = require('webpack-dev-middleware')
 const WebpackConfig = require('../build/webpack.config.dev')
+const serveIndex = require('serve-index')
 
 const app = express()
 const path = require('path')
@@ -22,13 +23,27 @@ app.use(webpackDevMiddleware(webpack(WebpackConfig), {
   }
 }))
 
-app.use(express.static(path.join(__dirname, '../')))
+let staticDir = path.join(__dirname, '../')
+app.use(
+  express.static(staticDir, {
+    index: false
+  }),
+  serveIndex(staticDir, {
+    filter: function (file) {
+      let extname = path.extname(file)
+      return !extname || extname === '.html'
+    },
+    icons: true
+  })
+)
 
 // wecoffee api proxy
 app.use('/api/store', proxy({
   target: 'https://weecoffee-lighthouse.oott123.com',
   changeOrigin: true
 }))
+
+// app.use(express.static(path.join(__dirname, '../')))
 
 const port = process.env.PORT || 8080
 
