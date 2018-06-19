@@ -25,9 +25,7 @@ MIP.registerVueCustomElement('mip-complevel2', {
     list: {
       type: Array
     },
-    num: {
-      type: Number
-    }
+    num: Number
   },
   mounted () {
     console.log(this.userinfo)
