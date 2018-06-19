@@ -18,6 +18,7 @@ import viewer from './viewer'
 import viewport from './viewport'
 import Resources from './resources'
 import builtinComponents from './components'
+import MipShell from './components/mip-shell/index'
 import registerElement from './register-element'
 import sleepWakeModule from './sleepWakeModule'
 import performance from './performance'
@@ -54,7 +55,7 @@ function registerCustomElement (tag, component) {
   registerElement(tag, component)
 }
 
-// 当前是否是独立站，这种判断方法还不太准确，判断不出
+// 当前是否是独立站
 let standalone
 try {
   standalone = !viewer.isIframed || typeof window.top.MIP !== 'undefined'
@@ -80,7 +81,10 @@ let mip = {
   css: {},
   push,
   prerenderElement: Resources.prerenderElement,
-  componentHelpers
+  componentHelpers,
+  builtinComponents: {
+    MipShell
+  }
 }
 
 window.MIP = mip

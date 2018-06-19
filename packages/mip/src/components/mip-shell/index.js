@@ -27,31 +27,10 @@ const DEFAULT_SHELL_CONFIG = {
     isIndex: false
   }
 }
-let page
-let pageMetaCache = Object.create(null)
-let shellConfig
 
-/**
- * find route.meta by pageId
- *
- * @param {string} pageId pageId
- * @return {Object} meta object
- */
-function findMetaByPageId (pageId) {
-  if (pageMetaCache[pageId]) {
-    return pageMetaCache[pageId]
-  } else {
-    for (let i = 0; i < shellConfig.length; i++) {
-      let route = shellConfig[i]
-      if (route.regexp.test(pageId)) {
-        pageMetaCache[pageId] = route.meta
-        return route.meta
-      }
-    }
-  }
-
-  return Object.assign({}, DEFAULT_SHELL_CONFIG)
-}
+let page = null
+window.MIP_PAGE_META_CACHE = Object.create(null)
+window.MIP_SHELL_CONFIG = null
 
 class MipShell extends CustomElement {
   // ===================== CustomElement LifeCycle =====================
@@ -82,35 +61,42 @@ class MipShell extends CustomElement {
         }
       })
 
-      shellConfig = tmpShellConfig
+      this.processShellConfig(tmpShellConfig)
+
+      window.MIP_SHELL_CONFIG = tmpShellConfig
       page.notifyRootPage({
         type: 'set-mip-shell-config',
         data: {
-          shellConfig
+          shellConfig: tmpShellConfig
         }
       })
     } else {
       let pageId = page.pageId
-      let pageMeta = DEFAULT_SHELL_CONFIG
-      for (let i = 0; i < tmpShellConfig.length; i++) {
-        let config = tmpShellConfig[i]
-        config.regexp = convertPatternToRegexp(config.pattern || '*')
-        if (config.regexp.test(pageId)) {
-          config.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, config.meta || {})
-          // get title from <title> tag
-          if (!config.meta.header.title) {
-            config.meta.header.title = (document.querySelector('title') || {}).innerHTML || ''
+      let pageMeta
+      if (this.alwaysRefreshOnLoad()) {
+        pageMeta = DEFAULT_SHELL_CONFIG
+        for (let i = 0; i < tmpShellConfig.length; i++) {
+          let config = tmpShellConfig[i]
+          config.regexp = convertPatternToRegexp(config.pattern || '*')
+          if (config.regexp.test(pageId)) {
+            config.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, config.meta || {})
+            // get title from <title> tag
+            if (!config.meta.header.title) {
+              config.meta.header.title = (document.querySelector('title') || {}).innerHTML || ''
+            }
+
+            this.processShellConfig([config.meta])
+            pageMeta = window.MIP_PAGE_META_CACHE[pageId] = config.meta
+            break
           }
-          pageMeta = pageMetaCache[pageId] = config.meta
-          break
         }
       }
 
       page.notifyRootPage({
         type: 'update-mip-shell-config',
         data: {
-          pageMeta,
-          pageId
+          pageId,
+          pageMeta
         }
       })
     }
@@ -121,7 +107,7 @@ class MipShell extends CustomElement {
   }
 
   firstInviewCallback () {
-    this.currentPageMeta = findMetaByPageId(page.pageId)
+    this.currentPageMeta = this.findMetaByPageId(page.pageId)
 
     if (page.isRootPage) {
       this.initShell()
@@ -137,7 +123,7 @@ class MipShell extends CustomElement {
     }
   }
 
-  // ===================== Other Functions =====================
+  // ===================== Only Root Page Functions =====================
 
   /**
    * Create belows:
@@ -230,9 +216,6 @@ class MipShell extends CustomElement {
     return headerHTML
   }
 
-  /**
-   * Only root page
-   */
   bindRootEvents () {
     // Listen bouncy header events
     window.addEventListener('mipShellEvents', e => {
@@ -240,7 +223,7 @@ class MipShell extends CustomElement {
 
       switch (type) {
         case 'updateShell':
-          this.refreshShell(data.pageMeta)
+          this.refreshShell({pageMeta: data.pageMeta})
           break
         case 'slide':
           this.slideHeader(data.direction)
@@ -318,28 +301,13 @@ class MipShell extends CustomElement {
     })
   }
 
-  handleShellCustomButton () {
-    // Extend by child
-  }
-
-  /**
-   * Both root page and other pages
-   */
-  bindAllEvents () {
-    let {show: showHeader} = this.currentPageMeta.header
-    // Set `padding-top` on scroller
-    if (showHeader) {
-      if (viewport.scroller === window) {
-        document.body.classList.add('with-header')
-      } else {
-        viewport.scroller.classList.add('with-header')
-      }
-    }
-  }
-
-  refreshShell (pageMeta) {
+  refreshShell ({pageMeta, pageId} = {}) {
     // Unbind header events
     this.unbindHeaderEvents()
+
+    if (pageId) {
+      pageMeta = this.findMetaByPageId(pageId)
+    }
 
     if (!(pageMeta.header && pageMeta.header.show)) {
       this.$wrapper.classList.add('hide')
@@ -398,6 +366,73 @@ class MipShell extends CustomElement {
 
   toggleTransition (toggle) {
     toggle ? this.$el.classList.add('transition') : this.$el.classList.remove('transition')
+  }
+
+  // ===================== All Page Functions =====================
+  bindAllEvents () {
+    let {show: showHeader} = this.currentPageMeta.header
+    // Set `padding-top` on scroller
+    if (showHeader) {
+      if (viewport.scroller === window) {
+        document.body.classList.add('with-header')
+      } else {
+        viewport.scroller.classList.add('with-header')
+      }
+    }
+  }
+
+  updateShellConfig (newShellConfig) {
+    if (page.isRootPage) {
+      window.MIP_SHELL_CONFIG = newShellConfig
+      window.MIP_PAGE_META_CACHE = Object.create(null)
+      page.notifyRootPage({
+        type: 'set-mip-shell-config',
+        data: {
+          shellConfig: newShellConfig
+        }
+      })
+    }
+    // TODO else
+  }
+
+  /**
+   * find route.meta by pageId
+   *
+   * @param {string} pageId pageId
+   * @return {Object} meta object
+   */
+  findMetaByPageId (pageId) {
+    let target = window.MIP.viewer.page.isRootPage ? window : window.parent
+    if (target.MIP_PAGE_META_CACHE[pageId]) {
+      return target.MIP_PAGE_META_CACHE[pageId]
+    } else {
+      for (let i = 0; i < target.MIP_SHELL_CONFIG.length; i++) {
+        let route = target.MIP_SHELL_CONFIG[i]
+        if (route.regexp.test(pageId)) {
+          target.MIP_PAGE_META_CACHE[pageId] = route.meta
+          return route.meta
+        }
+      }
+    }
+
+    return Object.assign({}, DEFAULT_SHELL_CONFIG)
+  }
+
+  // ===================== Interfaces =====================
+  processShellConfig (routeConfig) {
+    // Change shell config
+    // E.g. `routeConfig.header.buttonGroup = []` forces empty buttons
+  }
+
+  handleShellCustomButton (buttonName) {
+    // Handle click on custom button
+    // The only param `butonName` equals attribute values of `data-button-name`
+    // E.g. click on `<div mip-header-btn data-button-name="hello"></div>` will pass `'hello'` as buttonName
+  }
+
+  alwaysRefreshOnLoad () {
+    // If true, always load configures from `<mip-shell>` and overwrite shellConfig when opening new page
+    return true
   }
 }
 

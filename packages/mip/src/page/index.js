@@ -12,7 +12,6 @@ import {
   frameMoveIn,
   frameMoveOut,
   createLoading
-  // createLoading
 } from './util/dom'
 import Debouncer from './util/debounce'
 import {supportsPassive} from './util/feature-detect'
@@ -142,7 +141,11 @@ class Page {
             this.setupBouncyHeader()
           }
         } else if (type === MESSAGE_UPDATE_MIP_SHELL_CONFIG) {
-          this.appshellCache[data.pageId] = data.pageMeta
+          if (data.pageMeta) {
+            this.appshellCache[data.pageId] = data.pageMeta
+          } else {
+            data.pageMeta = this.findMetaByPageId(data.pageId)
+          }
           customEmit(window, 'mipShellEvents', {
             type: 'updateShell',
             data

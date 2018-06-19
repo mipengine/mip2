@@ -60,83 +60,23 @@
 </head>
 
 <body>
-    <mip-shell>
+    <mip-shell-is>
         <script type="application/json">
         {
             "routes": [
                 {
-                    "pattern": "/tree.html",
-                    "meta": {
-                        "header": {}
-                    }
-                },
-                {
-                    "pattern": "/data.html",
-                    "meta": {
-                        "header": {
-                            "show": true,
-                            "title": "蓝犀牛数据",
-                            "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
-                            "xiongzhang": true
-                        }
-                    }
-                },
-                {
                     "pattern": "*",
                     "meta": {
                         "header": {
-                            "show": true,
-                            "title": "蓝犀牛",
-                            "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
-                            "xiongzhang": true,
-                            "buttonGroup": [
-                                {
-                                    "type": "button",
-                                    "name": "subscribe",
-                                    "text": "关注",
-                                    "link": "/examples/page/tree.html"
-                                },
-                                {
-                                    "type": "button",
-                                    "name": "chat",
-                                    "text": "发消息",
-                                    "outline": true
-                                },
-                                {
-                                    "type": "icon",
-                                    "name": "search",
-                                    "text": "search",
-                                    "link": "/examples/page/tree.html"
-                                },
-                                {
-                                    "type": "dropdown",
-                                    "items": [
-                                        {
-                                            "name": "subscribe",
-                                            "text": "关注",
-                                            "link": "/examples/page/tree.html"
-                                        },
-                                        {
-                                            "name": "chat",
-                                            "text": "发消息"
-                                        }
-                                    ]
-                                }
-                            ]
+                            "show": true
                         },
-                        "view": {
-                            "isIndex": true,
-                            "transition": {
-                                "mode": "slide"
-                            }
-                        },
-                        "footer": {}
+                        "isId": 123
                     }
                 }
             ]
         }
         </script>
-    </mip-shell>
+    </mip-shell-is>
 
     <p>This is Page#2, using different component (mip-tree)</p>
 
@@ -158,6 +98,7 @@
 
     <script src="../../dist/mip.js"></script>
     <script src="./components/mip-tree.js"></script>
+    <script src="./components/mip-shell-is.js"></script>
 </body>
 
 </html>
