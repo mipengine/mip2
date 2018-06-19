@@ -18,7 +18,7 @@ import viewer from './viewer'
 import viewport from './viewport'
 import Resources from './resources'
 import builtinComponents from './components'
-import registerElement from './register-element'
+import registerCustomElement from './register-element'
 import sleepWakeModule from './sleepWakeModule'
 import performance from './performance'
 import mip1PolyfillInstall from './mip1-polyfill'
@@ -33,17 +33,15 @@ import './log/monitor'
  * @param {*} component vue component
  */
 function registerVueCustomElement (tag, component) {
+  // 先注释，具体机制需要再讨论讨论
+  // // 对于组件需要暴露一些子组件到外部的情况，可以通过组件的 components 定义 mip-xxx 格式的组件
+  // // 这样就可以在组件外部使用 mip-xxx 啦，内部还是照常跟原来一样作为一个 vue 组件使用
+  // if (component.components) {
+  //   Object.keys(component.components)
+  //     .filter(key => key.slice(0, 4) === 'mip-')
+  //     .forEach(key => registerVueCustomElement(key, component.components[key]))
+  // }
   Vue.customElement(tag, component)
-}
-
-/**
- * register custom element v1
- *
- * @param {string} tag custom element name, mip-*
- * @param {HTMLElement} component component clazz
- */
-function registerCustomElement (tag, component) {
-  registerElement(tag, component)
 }
 
 // 当前是否是独立站，这种判断方法还不太准确，判断不出
@@ -53,7 +51,6 @@ try {
 } catch (e) {
   standalone = false
 }
-
 let extensions = window.MIP || []
 
 function push (extension) {

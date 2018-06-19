@@ -211,7 +211,7 @@ let viewer = {
     }
   },
 
-  open (to, {isMipLink = true, replace = false, state}) {
+  open (to, {isMipLink = true, replace = false, state} = {}) {
     let {router, isRootPage} = this.page
     let notifyRootPage = this.page.notifyRootPage.bind(this.page)
     if (!state) {

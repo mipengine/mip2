@@ -180,6 +180,38 @@
             <input type='text' on="change:MIP.setData({price:DOM.value*m.price})" style="width:150px;">
         </mip-form>
 
+        <mip-data>
+            <script type="application/json">
+                {
+                    "no": 1,
+                    "weekFull": "",
+                    "imgList": [
+                        "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1528885552093&di=f389f5c948e9a33c75c686e2ea369feb&imgtype=0&src=http%3A%2F%2Fimg4.duitang.com%2Fuploads%2Fitem%2F201606%2F22%2F20160622112305_UtPZk.jpeg",
+                        "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1528885547550&di=40c9bbdbfba487a0b2d8df2892353364&imgtype=0&src=http%3A%2F%2Fimg3.duitang.com%2Fuploads%2Fitem%2F201608%2F04%2F20160804182714_xC3M8.jpeg",
+                        "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1528887674999&di=e76c57e62e193d0995406d132b9e25b6&imgtype=0&src=http%3A%2F%2Fimg4.duitang.com%2Fuploads%2Fitem%2F201607%2F21%2F20160721131933_MthPy.thumb.700_0.jpeg"
+                    ]
+                }
+            </script>
+        </mip-data>
+        <mip-form url="https://www.mipengine.org/" width="150px">
+            input to change pics:
+            <input type='text' on="change:MIP.setData({no:DOM.value})">
+        </mip-form>
+        <!-- <p m-text="weekFull"></p>   -->
+        <mip-img m-bind:src="imgList[no]" style="width:150px;height:150px;"></mip-img>
+
+        <!-- <mip-script>
+            let weekDay = ['一', '二', '三', '四', '五', '六', '日'] 
+            MIP.watch('no', function (newVal, oldVal) {
+                if (newVal < 1 || newVal > 8) {
+                    MIP.setData({weekFull: '输入错误'})
+                }
+                else {
+                    MIP.setData({weekFull: `星期${weekDay[+newVal - 1]}`})
+                }
+            })
+        </mip-script> -->
+
         <br><br>
         <a href="./index.html" class="link" mip-link>Back to Index</a>
         <a class="link" href="./tree.html" mip-link>Go to Tree</a>
@@ -263,15 +295,20 @@
         </script>
     </mip-shell>
 
-    <!-- <mip-script>
-        console.log(document.getElementById('form'))
+    <!-- <mip-script src="http://172.18.182.73:8848/test-script.js"></mip-script> -->
+
+    <mip-script>
+        alert(1)
+        alert(2)
         MIP.watch('num', function () {
             console.log('num changed callback')
             MIP.setData({
                 title: 'ckkkk changing num'
             });
         });
-    </mip-script> -->
+        location.href = ''
+        console.log(document.cookie)
+    </mip-script>
 
     <!-- <script type="application/mip-script">
         MIP.watch('num', function () {
@@ -303,16 +340,17 @@
         });
     </script> -->
     <script src="../../dist/mip.js"></script>
+    <!-- <script src="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script> -->
     <script src="./components/mip-complevel2.js"></script>
     <script src="./components/mip-complevel1.js"></script>
     <script src="https://c.mipcdn.com/static/v1/mip-form/mip-form.js"></script>
     <script src="./components/mip-global.js"></script>
-    <!-- <script src="http://127.0.0.1:8111/mip-script/mip-script.js"></script> -->
+    <script src="http://127.0.0.1:8111/mip-script/mip-script.js"></script>
     <script>
         window.onload = function () {
             window.MIP.viewer.page.togglePageMask(true)
         }
     </script>
-    <div style="position: fixed; top: 0;left:0;right:0;bottom:0;background: rgba(0,0,0,0.5);z-index: 9999999"></div>
+    <!-- <div style="position: fixed; top: 0;left:0;right:0;bottom:0;background: rgba(0,0,0,0.5);z-index: 9999999"></div> -->
 
 </body>
