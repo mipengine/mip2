@@ -1,6 +1,6 @@
 {
   "name": "mip-sandbox",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "sandbox tools for MIP project",
   "main": "lib/sandbox.js",
   "scripts": {
@@ -22,7 +22,7 @@
   "bugs": {
     "url": "https://github.com/mipengine/mip2/issues"
   },
-  "homepage": "https://github.com/mipengine/mip2/blob/master/packages/mip-sandbox/README.md",
+  "homepage": "https://github.com/mipengine/mip2/blob/master/packages/mip-sandbox",
   "dependencies": {
     "esprima": "^4.0.0",
     "estraverse": "^4.2.0",
