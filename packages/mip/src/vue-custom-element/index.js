@@ -5,7 +5,7 @@
 
 import createVueInstance from './utils/create-vue-instance'
 import {getProps, convertAttributeValue} from './utils/props'
-import {camelize} from './utils/helpers'
+import {camelize, parseJSON} from './utils/helpers'
 import CustomElement from '../custom-element'
 import registerElement from '../register-element'
 
@@ -74,7 +74,7 @@ function install (Vue) {
           const nameCamelCase = camelize(name)
           const type = this.props.types[nameCamelCase]
           try {
-            value = JSON.parse(value)
+            value = parseJSON(value)
           } catch (e) {}
           this.vueInstance[nameCamelCase] = convertAttributeValue(value, type, {name}, this.element)
         }

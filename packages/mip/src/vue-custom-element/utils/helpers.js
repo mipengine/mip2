@@ -27,3 +27,20 @@ export function toArray (list, start = 0) {
   }
   return ret
 }
+
+export function parseJSON (str) {
+  str = str.replace(/[[{,]\s*((['"]?).*?\2)\s*:/g, function (item) {
+    return item.replace(/[^{[,].*/g, function (a) {
+      if (!/(['"]).*?\1/.test(a)) {
+        return a.replace(/^\s*/, '"').replace(/:$/, '":')
+      }
+      return a.replace(/(').*\1/, function (b) {
+        return b.replace(/"/g, '\\"').replace(/((^')|('$))/g, '"')
+      })
+    })
+  })
+
+  try {
+    return JSON.parse(str)
+  } catch (e) { throw e }
+}
