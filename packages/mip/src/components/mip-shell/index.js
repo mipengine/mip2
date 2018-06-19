@@ -280,8 +280,15 @@ class MipShell extends CustomElement {
   }
 
   unbindHeaderEvents () {
-    this.headerEventHandler && this.headerEventHandler()
-    this.buttonEventHandler && this.buttonEventHandler()
+    if (this.headerEventHandler) {
+      this.headerEventHandler()
+      this.headerEventHandler = undefined
+    }
+
+    if (this.buttonEventHandler) {
+      this.buttonEventHandler()
+      this.buttonEventHandler = undefined
+    }
   }
 
   handleClickHeaderButton (buttonName) {
@@ -333,6 +340,12 @@ class MipShell extends CustomElement {
   refreshShell (pageMeta) {
     // Unbind header events
     this.unbindHeaderEvents()
+
+    if (!(pageMeta.header && pageMeta.header.show)) {
+      this.$wrapper.classList.add('hide')
+      return
+    }
+    this.$wrapper.classList.remove('hide')
 
     // Refresh header
     this.slideHeader('down')
