@@ -1,57 +1,321 @@
-## Sandbox（沙盒）
+# 沙盒机制
 
-> zhangzhiqiang(zhiqiangzhang37@163.com)
+MIP 允许开发者通过提交 MIP 组件和写 `<mip-script>` 等方式去写 JS，但是从性能和代码维护的层面考虑，部分 `API` 是不应该使用的，比如 `alert`、`confirm` 等等，因此我们提供了沙盒机制，去屏蔽和限制这类 API/属性 的使用。
 
-由于组件是开放的，任何开发者想要使用一个新的功能，都可以写一个新的组件出来。
+## 沙盒注入对象
 
-为了方便管理，也为了 mip2.0 开发的站点的性能更优考虑，**我们在组件中使用了一个沙盒的机制**。事实上基于性能以及代码维护层面考虑，部分 `API` 是约定不应使用的，但约定无法从根本上杜绝使用，所以使用了沙盒这种强制的手段。
+相关工具：
 
-沙盒的机制一句话概括就是 —— 在沙盒的环境中运行指定的代码，这个环境限制了部分能力/API的使用
+1. [mip-cli](https://github.com/mipengine/mip2/tree/master/packages/mip-cli)
+2. [mip-sandbox](https://github.com/mipengine/mip2/tree/master/packages/mip-sandbox)
 
+会被沙盒注入的对象为**全部白名单以外的原生对象**和**全部作用域链上未定义的变量**。我们通过**白名单**的机制对原生对象进行限制，即开发者只能使用白名单上的对象，如果调用白名单以外的，会拿不到对象。在具体实现上，我们使用 MIP 编译工具 mip-cli 在组件调试和编译上线的时候调用 mip-sandbox 工具，将白名单之外的对象代码注入 `MIP.sandbox` 前缀，比如 `window` 将会编译得到 `MIP.sandbox.window`，然后通过控制对 MIP.sandbox 上属性或方法的定义，从而实现沙盒的白名单机制。
 
-### 被限制的能力/API列表
-
-* 限制访问全局 `window` 对象，沙盒环境中 `window` 对象是局部的
-	* 限制使用 `alert`、`window.alert`
-	* 限制使用 `close`、`window.close`
-	* 限制使用 `confirm`、`window.confirm`
-	* 限制使用 `prompt`、`window.prompt`
-	* 限制使用 `eval`、`window.eval`
-	* 限制使用 `opener`、`window.opener`
-	* 限制使用 `customElement`、`window.customElements`
-	* `parent` 对象如果指向当前页面 `window`、则被重写为指向局部的 `window` 对象
-	* `top` 对象如果指向当前页面 `window`、则被重写为指向局部的 `window` 对象
-	* `self` 被指向了局部的 `window` 对象
-	* `setTimeout`、	`window.setTimeout` 被重写过，内部的this指向了局部的 `window` 对象
-	* `setInterval`、`window.setInterval` 被重写过，内部的this指向了局部的 `window` 对象
-
-* 限制访问全局 `document` 对象，沙盒中 `document` 对象是局部的
-	* 限制使用 `document.createElement`
-	* 限制使用 `document.createElementNS`
-	* 限制使用 `document.write`
-	* 限制使用 `document.writeln`
-	* 限制使用 `document.registerElement`
-	
-### 使用详解
-
-在沙盒中使用了限制的API和正常使用没有区别，但是被限制的API取值是 `undefined`，所以不管是属性值还是函数都是无法使用的。而 `window` 对象和 `document` 对象则因为是局部的，所以无法往这两个原本是全局的对象上挂载全局的变量，其余未被限制的API可以正常使用，例如 `window.devicePixelRatio`、 `window.onresize = () => {}` 等
-
-示例：
+举个例子，假设 js 代码如下所示：
 
 ```javascript
+function sleep(time) {
+  return new Promise(resolve => setTimeout(resolve, time))
+}
 
-alert('test'); // Uncaught TypeError: alert is not a function
+export default {
+  async mounted() {
+    await sleep(3000)
+    console.log('mounted')
+    window.setTimeout(() => {
+      console.log('mounted')
+    }, 3000)
+    a = 1 + 1
+    alert('mounted')
+  }
+}
+```
 
-window.alert('test'); // Uncaught TypeError: window.alert is not a function
+将会编译生成：
 
-document.write('test'); // Uncaught TypeError: document.write is not a function
+```javascript
+function sleep(time) {
+	return new Promise(resolve => setTimeout(resolve, time))
+}
 
-// 可正常使用
-console.log(document.origin); // http://localhost:8080
+export default {
+  async mounted() {
+    await sleep(3000)
+    console.log('mounted')
+    MIP.sandbox.window.setTimeout(() => {
+      console.log('mounted')
+    }, 3000)
+    MIP.sandbox.a = 1 + 1
+    MIP.sandbox.alert('mounted')
+  }
+}
+```
 
-// 可正常使用
-window.onresize = (event) => {
-	console.log(event);
-};
+可以看到 alert window 全被注入了 MIP.sandbox 前缀，a 由于没有在作用域链上声明，因此也被注入 MIP.sandbox 前缀。由于 MIP.sandbox.alert 不在白名单里，因此程序执行到此处将报错并且控制台打印以下错误信息：
 
+```shell
+> Uncaught TypeError: MIP.sandbox.alert is not a function
+```
+
+## 白名单
+
+白名单分为普通模式和严格模式，其中严格模式是普通模式的子集，在开发组件的时候使用普通模式，在 HTML 页面写 mip-script 的时候使用严格模式。
+
+### 安全原生对象
+
+当原生对象被认为是安全原生对象时，在沙盒注入过程中不会加上任何沙盒前缀，比如：
+
+```javascript
+var util = require('path/to/util')
+
+new Promise(function (resolve) {
+  setTimeout(resolve, 3000)
+})
+.then(function () {
+  console.log('after 3s')
+})
+
+```
+
+以上代码使用到了 require、Promise、setTimeout、console 四个原生对象，由于这四个对象均被认为是安全的，所以不做任何沙盒注入的操作。
+
+以下原生对象被认为是安全的：
+
+```javascript
+var RESERVED = [
+  'arguments',
+  'require',
+  'module',
+  'exports',
+  'define'
+]
+
+var ORIGINAL = [
+  'Array',
+  'ArrayBuffer',
+  'Blob',
+  'Boolean',
+  'DOMError',
+  'DOMException',
+  'Date',
+  'Error',
+  'Float32Array',
+  'Float64Array',
+  'FormData',
+  'Headers',
+  'Infinity',
+  'Int16Array',
+  'Int32Array',
+  'Int8Array',
+  'JSON',
+  'Map',
+  'Math',
+  'NaN',
+  'Number',
+  'Object',
+  'Promise',
+  'Proxy',
+  'ReadableStream',
+  'ReferenceError',
+  'Reflect',
+  'RegExp',
+  'Request',
+  'Response',
+  'Set',
+  'String',
+  'Symbol',
+  'SyntaxError',
+  'TypeError',
+  'URIError',
+  'URL',
+  'URLSearchParams',
+  'Uint16Array',
+  'Uint32Array',
+  'Uint8Array',
+  'Uint8ClampedArray',
+  'WritableStream',
+  'clearInterval',
+  'clearTimeout',
+  'console',
+  'decodeURI',
+  'decodeURIComponent',
+  'devicePixelRatio',
+  'encodeURI',
+  'encodeURIComponent',
+  'escape',
+  'fetch',
+  'getComputedStyle',
+  'innerHeight',
+  'innerWidth',
+  'isFinite',
+  'isNaN',
+  'isSecureContext',
+  'localStorage',
+  'length',
+  'matchMedia',
+  'navigator',
+  'outerHeight',
+  'outerWidth',
+  'parseFloat',
+  'parseInt',
+  'screen',
+  'screenLeft',
+  'screenTop',
+  'screenX',
+  'screenY',
+  'scrollX',
+  'scrollY',
+  'sessionStorage',
+  'setInterval',
+  'setTimeout',
+  'undefined',
+  'unescape'
+]
+```
+
+其中 ORIGINAL 数组内的变量会在 MIP.sandbox 上定义一份，而 RESERVED 不会，因此：
+
+```javascript
+typeof MIP.sandbox.Promise === 'function'
+typeof MIP.sandbox.arguments === 'undefined'
+```
+
+### 普通模式
+
+普通模式下的沙盒安全变量包含原生安全变量的全部，并且添加了以下变量：
+
+```javascript
+var WHITELIST_ORIGINAL = [
+  ...ORIGINAL,
+  ...RESERVED,
+  'File',
+  'FileList',
+  'FileReader',
+  'Image',
+  'ImageBitmap',
+  'MutationObserver',
+  'Notification',
+  'addEventListener',
+  'cancelAnimationFrame',
+  'createImageBitmap',
+  // 待定
+  'history',
+  // 待定
+  'location',
+  'removeEventListener',
+  'requestAnimationFrame',
+  'scrollBy',
+  'scrollTo',
+  'scroll',
+  'scrollbars',
+  'webkitCancelAnimationFrame',
+  'webkitRequestAnimationFrame'
+]
+```
+
+以上对象在普通模式下均不会注入沙盒。
+
+在普通模式下自定义了以下对象：
+
+```javascript
+var WHITELIST_CUSTOM = [
+  {
+    name: 'document',
+    // document 允许使用以下属性或方法
+    properties: [
+      'head',
+      'body',
+      'title',
+      'cookie',
+      'referrer',
+      'readyState',
+      'documentElement',
+      'createElement',
+      'createDcoumentFragment',
+      'getElementById',
+      'getElementsByClassName',
+      'getElementsByTagName',
+      'querySelector',
+      'querySelectorAll'
+    ]
+  },
+  {
+    name: 'window',
+    // window 指向 window.MIP.sandbox
+    getter: 'MIP.sandbox'
+  },
+  {
+    name: 'MIP',
+    // MIP 指向 window.MIP
+    getter: 'MIP'
+  }
+]
+```
+
+以上对象会被沙盒注入 MIP.sandbox 前缀，但由于这些对象是存在定义的，因此可以使用自定义后的功能：
+
+```javascript
+document.cookie // => MIP.sandbox.document OK
+window.Promise // => MIP.sandbox.Promise OK
+window.eval // => MIP.sandbox.eval undefined
+MIP // => MIP.sandbox.MIP OK
+```
+
+### 严格模式
+
+严格模式是普通模式的子集，其安全沙盒变量仅包含了安全原生对象的全部：
+
+```javascript
+var WHITELIST_STRICT_ORIGINAL = [
+  ...ORIGINAL,
+  ...RESERVED
+]
+```
+
+严格模式下自定义了以下对象：
+
+```javascript
+// 安全自定义全局变量
+var WHITELIST_STRICT_CUSTOM = [
+  // document 只允许访问 document.cookie
+  {
+    name: 'document',
+    properties: [
+      'cookie'
+    ]
+  },
+  // location 只放开以下属性的读权限
+  {
+    name: 'location',
+    access: 'readonly',
+    properties: [
+      'href',
+      'protocol',
+      'host',
+      'hostname',
+      'port',
+      'pathname',
+      'search',
+      'hash',
+      'origin'
+    ]
+  },
+  // MIP 对象只开放部分工具函数
+  {
+    name: 'MIP',
+    access: 'readonly',
+    properties: [
+      'watch',
+      'setData',
+      'viewPort',
+      'util',
+      'sandbox'
+    ]
+  },
+  // 严格模式下的 window 对象指向 MIP.sandbox.strict
+  {
+    name: 'window',
+    getter: 'MIP.sandbox.strict'
+  }
+]
 ```

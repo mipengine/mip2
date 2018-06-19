@@ -4,6 +4,7 @@ const cli = require('../lib/cli')
 const semver = require('semver')
 const requiredNodeVersion = require('../package').engines.node
 const version = require('../package').version
+const checkVersion = require('../lib/check-version')
 
 if (!semver.satisfies(process.version, requiredNodeVersion)) {
   console.log(cli.chalk.red(
@@ -13,13 +14,15 @@ if (!semver.satisfies(process.version, requiredNodeVersion)) {
   process.exit(1)
 }
 
-cli.program
-  .usage('<command> [options]')
-  .version(version)
-  .command('init', cli.chalk.green('初始化 MIP 2.0 项目'))
-  .command('add', cli.chalk.green('新增一个组件'))
-  .command('validate', cli.chalk.green('验证 MIP 2.0 网页或组件'))
-  .command('dev', cli.chalk.green('启动调试服务器'))
-  .command('build', cli.chalk.green('组件打包'))
-  .command('sw', cli.chalk.green('生成 Service Worker'))
-  .parse(process.argv)
+checkVersion().then(() => {
+  cli.program
+    .usage('<command> [options]')
+    .version(version)
+    .command('init', cli.chalk.green('初始化 MIP 2.0 项目'))
+    .command('add', cli.chalk.green('新增一个组件'))
+    .command('validate', cli.chalk.green('验证 MIP 2.0 网页或组件'))
+    .command('dev', cli.chalk.green('启动调试服务器'))
+    .command('build', cli.chalk.green('组件打包'))
+    .command('sw', cli.chalk.green('生成 Service Worker'))
+    .parse(process.argv)
+})
