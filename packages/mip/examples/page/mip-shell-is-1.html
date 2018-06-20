@@ -2,7 +2,7 @@
 <html lang="en" mip>
 <!--htmlcs-disable-->
 <head>
-    <title>MIP Tree Page</title>
+    <title>MIP Shell IS 1</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
@@ -60,61 +60,25 @@
 </head>
 
 <body>
-    <mip-shell>
+    <mip-shell-is [mip-shell]>
         <script type="application/json">
         {
             "routes": [
                 {
-                    "pattern": "/tree.html",
-                    "meta": {
-                        "header": {}
-                    }
-                },
-                {
-                    "pattern": "/data.html",
-                    "meta": {
-                        "header": {
-                            "show": true,
-                            "title": "蓝犀牛数据",
-                            "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
-                            "xiongzhang": true
-                        }
-                    }
-                },
-                {
                     "pattern": "*",
                     "meta": {
                         "header": {
-                            "show": true,
-                            "title": "蓝犀牛",
-                            "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
-                            "buttonGroup": [
-                                {
-                                    "name": "subscribe",
-                                    "text": "关注",
-                                    "link": "/examples/page/tree.html"
-                                },
-                                {
-                                    "name": "chat",
-                                    "text": "发消息"
-                                },
-                                {
-                                    "name": "cancel",
-                                    "text": "取消"
-                                }
-                            ]
-                        },
-                        "view": {
-                            "isIndex": true
+                            "show": true
                         }
                     }
                 }
-            ]
+            ],
+            "isId": 123
         }
         </script>
-    </mip-shell>
+    </mip-shell-is>
 
-    <p>This is Page#2, using different component (mip-tree)</p>
+    <p>This is MIP SHELL IS 1</p>
 
     <mip-tree>
         <script type="application/json">
@@ -122,24 +86,11 @@
         </script>
     </mip-tree>
 
-    <a class="link" href="./index.html" mip-link>Back to Index</a>
-    <a class="link" href="./data.html" mip-link>Go to Data</a>
-
-    <p m-text="city"></p>
-    <div on="tap:MIP.setData({'city':'深圳'})" class="button">click change city</div>
-
-    <br><br>
-    <span>Read from global store(group.info.name) from index.html</span>
-    <span m-text="group.info.name"></span>
-    <mip-script>
-        MIP.watch('city', function () {
-            console.log('city changed callback')
-        });
-    </mip-script>
-
+    <a class="link" href="./mip-shell-is-2.html" mip-link>Go to MIP SHELL IS 2</a>
 
     <script src="../../dist/mip.js"></script>
     <script src="./components/mip-tree.js"></script>
+    <script src="./components/mip-shell-is.js"></script>
 </body>
 
 </html>

@@ -25,6 +25,7 @@ import {
   MESSAGE_ROUTER_REPLACE,
   MESSAGE_SET_MIP_SHELL_CONFIG,
   MESSAGE_UPDATE_MIP_SHELL_CONFIG,
+  MESSAGE_SYNC_PAGE_CONFIG,
   MESSAGE_REGISTER_GLOBAL_COMPONENT
   // MESSAGE_APPSHELL_HEADER_SLIDE_UP,
   // MESSAGE_APPSHELL_HEADER_SLIDE_DOWN,
@@ -35,7 +36,7 @@ import util from '../util'
 import viewport from '../viewport'
 import Router from './router'
 // import AppShell from './appshell'
-// import GlobalComponent from './appshell/globalComponent'
+import GlobalComponent from './appshell/globalComponent'
 import '../styles/mip.less'
 
 /**
@@ -62,7 +63,7 @@ class Page {
     this.pageId = undefined
 
     // root page
-    this.appshell = undefined
+    // this.appshell = undefined
     this.children = []
     this.currentPageId = undefined
     this.messageHandlers = []
@@ -70,6 +71,9 @@ class Page {
     this.direction = undefined
     this.appshellRoutes = []
     this.appshellCache = Object.create(null)
+
+    // sync from mip-shell
+    this.transitionContainsHeader = true
 
     /**
      * transition will be executed only when `Back` button clicked,
@@ -129,7 +133,7 @@ class Page {
 
   initAppShell () {
     if (this.isRootPage) {
-      // this.globalComponent = new globalComponent()
+      this.globalComponent = new GlobalComponent()
       this.messageHandlers.push((type, data) => {
         if (type === MESSAGE_SET_MIP_SHELL_CONFIG) {
           // Set mip shell config in root page
@@ -153,6 +157,9 @@ class Page {
             type: 'updateShell',
             data
           })
+        } else if (type === MESSAGE_SYNC_PAGE_CONFIG) {
+          // Sync config from mip-shell
+          this.transitionContainsHeader = data.transitionContainsHeader
         } else if (type === MESSAGE_REGISTER_GLOBAL_COMPONENT) {
           // Register global component
           console.log('register global component')
@@ -533,6 +540,7 @@ class Page {
       let backwardOpitons = {
         transition: this.allowTransition,
         sourceMeta: this.currentPageMeta,
+        transitionContainsHeader: this.transitionContainsHeader,
         onComplete: () => {
           this.allowTransition = false
           this.currentPageMeta = finalMeta
@@ -566,6 +574,7 @@ class Page {
         transition: this.allowTransition,
         targetMeta: finalMeta,
         newPage: options.newPage,
+        transitionContainsHeader: this.transitionContainsHeader,
         onComplete: () => {
           this.allowTransition = false
           this.currentPageMeta = finalMeta
