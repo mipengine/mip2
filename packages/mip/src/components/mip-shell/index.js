@@ -95,8 +95,8 @@ class MipShell extends CustomElement {
       let pageMeta
       if (this.alwaysReadConfigOnLoad) {
         pageMeta = DEFAULT_SHELL_CONFIG
-        for (let i = 0; i < tmpShellConfig.length; i++) {
-          let config = tmpShellConfig[i]
+        for (let i = 0; i < tmpShellConfig.routes.length; i++) {
+          let config = tmpShellConfig.routes[i]
           config.regexp = convertPatternToRegexp(config.pattern || '*')
           if (config.regexp.test(pageId)) {
             config.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, config.meta || {})
