@@ -9,7 +9,7 @@ MIP.registerVueCustomElement('mip-complevel2', {
   template: `<div>
       <p>{{userinfo.name}}</p>
       <p v-if="loading">{{msg}}</p>
-      <p>{{list[0]}}</p>
+      <p>{{list && list[0]}}</p>
       <p>{{num}}</p>
     </div>
   `,

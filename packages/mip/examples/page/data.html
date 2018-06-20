@@ -163,7 +163,7 @@
         </script>
     </mip-data>
 
-    <!-- <mip-complevel1 m-bind:userinfo="userInfo"></mip-complevel1> -->
+    <mip-complevel1 m-bind:userinfo="userInfo"></mip-complevel1>
 
     <div class="main-content">
         <mip-global></mip-global>
@@ -335,51 +335,32 @@
 
     <mip-script>
         MIP.watch('lxndata.moveInAddress.location', function () {
-            console.log(1)
+            console.log('lxndata.moveInAddress.location')
         });
         MIP.watch('lxndata.currentmap', function () {
-            console.log(2)
+            console.log('lxndata.currentmap')
         });
         MIP.watch('lxndata.moveOutAddress.location.lat', function () {
-            console.log(3)
+            console.log('lxndata.moveOutAddress.location.lat')
+        });
+        MIP.watch('lxndata', function () {
+            console.log('lxndata')
+        });
+        MIP.watch('num', function () {
+            console.log('num changed')
+        });
+        MIP.watch('num', function () {
+            console.log('num changed')
         });
     </mip-script>
 
-    <!-- <script type="application/mip-script">
-        MIP.watch('num', function () {
-            console.log('num changed callback')
-            MIP.setData({
-                title: 'ckkkk changing num'
-            });
-        });
-        MIP.watch('sp.three', function () {
-            console.log('sp.three')
-            MIP.setData({
-                title: 'ckkkk changing sp.three'
-            });
-        });
-        MIP.watch('comments', function () {
-            console.log('comments')
-            MIP.setData({
-                title: 'ckkkk changing comments'
-            });
-        });
-        MIP.watch(['basePrice', 'img.first'], function () {
-            console.log('multi')
-            MIP.setData({
-                title: 'ckkkk changing multi'
-            });
-        });
-        MIP.watch(['userInfo', 'userInfo.name'], function (newVal, oldVal) {
-            console.log('userInfo', newVal, oldVal);
-        });
-    </script> -->
     <script src="../../dist/mip.js"></script>
     <!-- <script src="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script> -->
     <script src="./components/mip-complevel2.js"></script>
     <script src="./components/mip-complevel1.js"></script>
     <script src="https://c.mipcdn.com/static/v1/mip-form/mip-form.js"></script>
     <script src="./components/mip-global.js"></script>
-    <!-- <script src="http://127.0.0.1:8111/mip-script/mip-script.js"></script> -->
+    <script src="./components/mip-shell-is.js"></script>
+    <script src="http://127.0.0.1:8111/mip-script/mip-script.js"></script>
 
 </body>
