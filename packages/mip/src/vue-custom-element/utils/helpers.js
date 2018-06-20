@@ -47,10 +47,8 @@ export function parseJSON (jsonStr) {
       /* eslint-disable */
       return eval('(' + jsonStr + ')')
       /* eslint-enable */
-    } catch (e) {
-      throw new Error(jsonStr + ' is not a valid JSON string!')
-    }
+    } catch (e) { throw e }
   } else {
-    throw new Error(jsonStr + ' is not a valid JSON string!')
+    throw new Error(jsonStr + ' Content should be a valid JSON string!')
   }
 }
