@@ -6,6 +6,7 @@
 import Compile from './compile'
 import Observer from './observer'
 import Watcher from './watcher'
+import {isObj, objNotEmpty} from './util'
 
 /* global MIP */
 /* eslint-disable no-new-func */
@@ -45,7 +46,7 @@ class Bind {
    * @param {Object} data data
    */
   _postMessage (data) {
-    if (!notEmpty(data)) {
+    if (!objNotEmpty(data)) {
       return
     }
 
@@ -75,7 +76,7 @@ class Bind {
         this._observer.start(win.m)
         this._compile.start(win.m, win)
       } else {
-        if (classified.globalData && notEmpty(classified.globalData)) {
+        if (classified.globalData && objNotEmpty(classified.globalData)) {
           let g = window.MIP.MIP_ROOT_PAGE ? window.g : window.parent.g
           assign(g, classified.globalData)
           !cancel && this._postMessage(classified.globalData)
@@ -185,22 +186,14 @@ class Bind {
   }
 }
 
-function isObj (obj) {
-  return Object.prototype.toString.call(obj) === '[object Object]'
-}
-
-function notEmpty (obj) {
-  return isObj(obj) && Object.keys(obj).length !== 0
-}
-
 function assign (oldData, newData) {
   for (let k of Object.keys(newData)) {
-    if (isObj(newData[k]) && oldData[k]) {
+    if (isObj(newData[k]) && oldData[k] && isObj(oldData[k])) {
       assign(oldData[k], newData[k])
-      // let obj = JSON.parse(JSON.stringify({
-      //   [k]: oldData[k]
-      // }))
-      // Object.assign(oldData, obj)
+      let obj = JSON.parse(JSON.stringify({
+        [k]: oldData[k]
+      }))
+      Object.assign(oldData, obj)
     } else {
       oldData[k] = newData[k]
     }
