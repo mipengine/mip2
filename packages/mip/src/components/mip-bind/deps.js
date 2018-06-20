@@ -8,6 +8,7 @@ let uid = 0
 
 class Deps {
   constructor () {
+    this.isDep = true
     this.subs = []
     this.id = uid++
   }
@@ -16,9 +17,11 @@ class Deps {
     Deps.target.addWatcher(this)
   }
 
-  notify () {
+  notify (key) {
     this.subs.forEach(function (sub) {
-      sub.update()
+      if (sub._exp.match(new RegExp(`${key}$`))) {
+        sub.update()
+      }
     })
   }
 

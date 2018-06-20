@@ -77,12 +77,12 @@ class Compile {
       fnName = 'bind'
     }
     let data = me._getMVal(node, attrName, expression)
-    if (data || data === 0) {
+    if (typeof data !== 'undefined') {
       me[fnName] && me[fnName](node, attrName, data)
     }
     this._listenerFormElement(node, directive, expression)
     /* eslint-disable */
-    new Watcher(node, me.data, attrName, expression, function (dir, newVal, oldVal) {
+    new Watcher(node, me.data, attrName, expression, function (dir, newVal) {
       if (typeof me[fnName] === 'function') {
         me[fnName](node, dir, newVal)
       }
@@ -106,7 +106,7 @@ class Compile {
   }
 
   text (node, directive, newVal) {
-    node.textContent = (newVal || newVal === 0) ? newVal : ''
+    node.textContent = newVal
   }
 
   bind (node, directive, newVal) {
@@ -145,7 +145,7 @@ class Compile {
     try {
       let fn = this.getWithResult(exp)
       value = fn.call(this.data)
-      node.removeAttribute(attrName)
+      value !== '' && node.removeAttribute(attrName)
     } catch (e) {
       // console.error(e)
     }

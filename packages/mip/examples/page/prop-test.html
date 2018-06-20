@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+    <meta charset="utf-8">
+    <title>MIP Data Page</title>
+    <meta name="keywords" content="vue,mip,store">
+    <meta name="description" content="mip-store">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <style mip-custom>
+    .main-content .link {
+        text-align: center;
+        margin-top: 20px;
+        display: block;
+    }
+    .main-content p,
+    .main-content .button {
+        width: 150px;
+        display: inline-block;
+        margin: 20px 0 0 20px;
+    }
+    </style>
+</head>
+
+<body>
+    <mip-data>
+        <script type="application/json">
+            {
+              "name": "hbb",
+              "loading": false,
+              "list": [1,2,3],
+              "num": 47,
+              "userinfo": {
+                "name": "test"
+              }
+            }
+        </script>
+    </mip-data>
+
+    <mip-complevel1></mip-complevel1>
+    <mip-complevel2 m-bind:userinfo="userinfo" m-bind:msg="name" m-bind:loading="loading" m-bind:list="list" m-bind:num="num"></mip-complevel2>
+    <script src="../../dist/mip.js"></script>
+    <!-- <script src="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script>  -->
+    <script src="./components/mip-complevel2.js"></script>
+    <script src="./components/mip-complevel1.js"></script>
+
+</body>

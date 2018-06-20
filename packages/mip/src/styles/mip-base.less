@@ -18,8 +18,8 @@ html {
     height: auto!important;
 
     &.mip-html-embeded {
-        overflow-y: auto!important; 
-        -webkit-overflow-scrolling: touch!important; 
+        overflow-y: auto!important;
+        -webkit-overflow-scrolling: touch!important;
         touch-action: pan-y;
         position: static;
     }
@@ -42,7 +42,7 @@ html {
         -webkit-overflow-scrolling: touch!important;
 
         &.with-header {
-            padding-top: @appshell-header-height;
+            padding-top: @shell-header-height;
         }
 
         body {
@@ -287,5 +287,5 @@ imip-sizer {
 }
 
 mip-script {
-    display: none;
+    display: none !important;
 }

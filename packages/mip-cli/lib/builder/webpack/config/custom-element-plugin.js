@@ -10,11 +10,13 @@ const customElementHeader = `(function () {
     var __mip_component__ = `
 
 function customElementFooter (filename) {
-  let basename = path.basename(filename, path.extname(filename))
+  let ext = path.extname(filename)
+  let basename = path.basename(filename, ext)
   return `
-        MIP.registerVueCustomElement(
+        __mip_component__ = __mip_component__.default || __mip_component__;
+        MIP[typeof __mip_component__ === 'function' ? 'registerCustomElement' : 'registerVueCustomElement'](
             '${basename}',
-            __mip_component__.default ? __mip_component__.default : __mip_component__
+            __mip_component__
         );
     })();`
 }

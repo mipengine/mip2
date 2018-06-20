@@ -34,9 +34,9 @@ class Watcher {
     if (newVal !== oldVal) {
       this._value = newVal
       if (this._dir) {
-        this._cb.call(this._data, this._dir, newVal, oldVal)
+        this._cb.call(this._data, this._dir, newVal)
       } else {
-        this._cb.call(this._data, newVal, oldVal)
+        this._cb.call(this._data, newVal)
       }
     }
   }

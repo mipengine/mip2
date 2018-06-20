@@ -4,28 +4,25 @@
  */
 
 import Deps from './deps'
-
+import {isObj} from './util'
 class Observer {
-  _walk (data) {
+  _walk (data, depMap) {
     if (!data || typeof data !== 'object') {
       return
     }
 
     for (let key in data) {
-      this._define(data, key, data[key])
+      this._define(data, key, data[key], depMap)
     }
   }
 
-  _define (data, key, value) {
-    // // if value has observed, stop it
-    // if (value && value.__ob__) {
-    //     return;
-    // }
-
+  _define (data, key, value, depMap) {
     // if value is object, define it's value
     let me = this
+    let deep = false
     if (value && typeof value === 'object') {
-      this.start(value)
+      deep = true
+      this._walk(value, depMap[key])
     }
 
     let property = Object.getOwnPropertyDescriptor(data, key)
@@ -35,7 +32,20 @@ class Observer {
     let getter = property && property.get
     let setter = property && property.set
 
-    let deps = new Deps()
+    let deps
+    if (!deep && depMap[key] && depMap[key].isDep) {
+      deps = depMap[key]
+    } else if (deep && depMap[key] && depMap[key]._deps) {
+      deps = depMap[key]._deps
+    } else {
+      deps = new Deps()
+      if (!deep) {
+        depMap[key] = deps
+      } else {
+        depMap[key]._deps = deps
+      }
+    }
+
     Object.defineProperty(data, key, {
       enumerable: true,
       configurable: true,
@@ -56,19 +66,23 @@ class Observer {
         } else {
           value = newVal
         }
-        me._walk(newVal)
-        deps.notify()
+        me._walk(newVal, depMap[key])
+        if (depMap[key]._deps && !isObj(newVal)) {
+          depMap[key] = depMap[key]._deps
+        } else if (depMap[key].isDep && isObj(newVal)) {
+          depMap[key]._deps = depMap[key]
+        }
+        deps.notify(key)
       }
     })
-
-    // try {
-    //     value.__ob__ = this;
-    // }
-    // catch (e) {}
   }
 
   start (data) {
-    this._walk(data)
+    this._depMap = {}
+    for (let key in data) {
+      this._depMap[key] = JSON.parse(JSON.stringify(data[key]))
+    }
+    this._walk(data, this._depMap)
   }
 }
 

@@ -9,6 +9,7 @@ import viewport from './viewport'
 import layout from './layout'
 import performance from './performance'
 import customElementsStore from './custom-element-store'
+import cssLoader from './util/dom/css-loader'
 
 class BaseElement extends HTMLElement {
   constructor (element) {
@@ -132,6 +133,18 @@ class BaseElement extends HTMLElement {
 }
 
 /**
+ * Add a style tag to head by csstext
+ *
+ * @param {string} css Css code
+ * @param {string} name name
+ */
+function loadCss (css, name) {
+  if (css) {
+    cssLoader.insertStyleElement(document, document.head, css, name, false)
+  }
+}
+
+/**
  * Register MIPElement.
  *
  * @param {string} name Name of a MIPElement.
@@ -146,7 +159,7 @@ function registerElement (name, elementClass, css) {
   // store the name-clazz pair
   customElementsStore.set(name, elementClass, 'mip2')
 
-  // loadCss(css, name);
+  loadCss(css, name)
   window.customElements.define(name, class extends BaseElement {
     static get observedAttributes () {
       return elementClass.observedAttributes

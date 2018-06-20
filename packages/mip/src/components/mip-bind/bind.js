@@ -6,7 +6,7 @@
 import Compile from './compile'
 import Observer from './observer'
 import Watcher from './watcher'
-import util from '../../util'
+import {isObj, objNotEmpty} from './util'
 
 /* global MIP */
 /* eslint-disable no-new-func */
@@ -37,21 +37,21 @@ class Bind {
     }
 
     window.m = window.m || {}
+    window.mipDataPromises = window.mipDataPromises || []
     MIP.$set(window.m)
   }
 
+  /*
+   * broadcast: to recompile because shared data updated
+   * @param {Object} data data
+   */
   _postMessage (data) {
-    if (!notEmpty(data)) {
+    if (!objNotEmpty(data)) {
       return
     }
 
-    for (let k of Object.keys(data)) {
-      data[`#${k}`] = data[k]
-      delete data[k]
-    }
-
     let win = window.MIP.MIP_ROOT_PAGE ? window : window.parent
-    MIP.$set(data, 0, true, win)
+    MIP.$set({}, 0, true, win)
 
     for (let i = 0; i < win.document.getElementsByTagName('iframe').length; i++) {
       let subwin = win.document.getElementsByTagName('iframe')[i].contentWindow
@@ -76,15 +76,15 @@ class Bind {
         this._observer.start(win.m)
         this._compile.start(win.m, win)
       } else {
-        if (classified.globalData && notEmpty(classified.globalData)) {
+        if (classified.globalData && objNotEmpty(classified.globalData)) {
           let g = window.MIP.MIP_ROOT_PAGE ? window.g : window.parent.g
-          this._assign(g, classified.globalData)
+          assign(g, classified.globalData)
           !cancel && this._postMessage(classified.globalData)
         }
         data = classified.pageData
         for (let field of Object.keys(data)) {
           if (win.pgStates.has(field)) {
-            this._assign(win.m, {
+            assign(win.m, {
               [field]: data[field]
             })
           } else {
@@ -113,7 +113,7 @@ class Bind {
 
     let reg = target.split('.').reduce((total, current) => {
       if (total) {
-        total += '{("[^{}:]+":{[^{}]+},)*'
+        total += '{("[^{}:"]+":[^,]+,)*'
       }
       return total + `"${current}":`
     }, '')
@@ -135,10 +135,10 @@ class Bind {
       [key]: val
     }
     if (win.g && win.g.hasOwnProperty(key)) {
-      this._assign(win.g, data)
+      assign(win.g, data)
       !cancel && this._postMessage(data)
     } else if (!win.MIP.MIP_ROOT_PAGE && win.parent.g && win.parent.g.hasOwnProperty(key)) {
-      this._assign(win.parent.g, data)
+      assign(win.parent.g, data)
       !cancel && this._postMessage(data)
     }
     Object.assign(win.m, data)
@@ -184,28 +184,20 @@ class Bind {
       pageData: pageData || {}
     }
   }
+}
 
-  _assign (oldData, newData) {
-    for (let k of Object.keys(newData)) {
-      if (isObj(newData[k]) && oldData[k]) {
-        this._assign(oldData[k], newData[k])
-        let obj = JSON.parse(JSON.stringify({
-          [k]: oldData[k]
-        }))
-        Object.assign(oldData, obj)
-      } else {
-        oldData[k] = newData[k]
-      }
+function assign (oldData, newData) {
+  for (let k of Object.keys(newData)) {
+    if (isObj(newData[k]) && oldData[k] && isObj(oldData[k])) {
+      assign(oldData[k], newData[k])
+      let obj = JSON.parse(JSON.stringify({
+        [k]: oldData[k]
+      }))
+      Object.assign(oldData, obj)
+    } else {
+      oldData[k] = newData[k]
     }
   }
-}
-
-function isObj (obj) {
-  return Object.prototype.toString.call(obj) === '[object Object]'
-}
-
-function notEmpty (obj) {
-  return isObj(obj) && Object.keys(obj).length !== 0
 }
 
 export default Bind

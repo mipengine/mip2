@@ -1,8 +1,46 @@
-# MIP 2.0 组件实例生命周期和回调钩子
+# MIP 2.0 组件实例的生命周期和回调钩子
+
+## 创建一个简单的 mip 组件
+
+为了提升 mip 组件的开发效率，我们允许开发者使用 vue 开发 mip 组件，然后通过 mip-cli 工具编译成 mip 组件，下面是一个用 vue 写的 mip 组件 `mip-example`：
+
+```html
+<template>
+  <div>
+    <h1>MIP 2.0 component example</h1>
+  </div>
+</template>
+
+<style scoped></style>
+
+<script>
+export default {
+    // component options
+}
+</script>
+```
+
+然后使用 mip-cli 工具编译打包后大概是这样的：
+
+```js
+// 创建 style 标签，并为 css 加上 scope
+// 将 template 编译成 render 函数
+
+// 注册自定义组件
+MIP.registerVueCustomElement(
+    'mip-example',
+    componentDefinition // component options
+);
+```
+
+## mip 和 vue 的关系
+
+mip 组件是基于[Web Component](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements) 规范实现的一种用于创建自定义 HTML 元素。为了方便开发，mip2 支持开发者使用 vue 的方式开发 mip 组件，而隐藏了自定义元素注册和生命周期回调，开发者可以完全专注 vue 组件的开发。下面是 vue 和 mip 之间的关系示意图：
+
+![vue 和 mip 关系示意图](../assets/vue-and-mip-component.png)
+
 
 ## 组件实例生命周期
-
-mip 自定义元素 (Custom Element) 本质上是基于 [Web Component](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements) 规范实现的一种用于创建自定 HTML 元素的功能。为了方便开发，mip2 支持开发者使用 vue 的方式 mip 自定义元素，而隐藏了自定义元素注册和生命周期回调，开发者可以完全专注 vue 组件的开发。
 
 你可以定义以下的生命周期回调钩子,这些回调会在自定义元素的生命周期的不同点回调。所有的生命周期钩子自动绑定 this 上下文到 vue 实例中，因此你可以访问数据，对属性和方法进行运算。这意味着 你不能使用箭头函数来定义一个生命周期方法 (例如 created: () => this.fetchTodos())。这是因为箭头函数绑定了父上下文，因此 this 与你期待的 Vue 实例不同，this.fetchTodos 的行为未定义。
 
@@ -60,7 +98,7 @@ mip 自定义元素 (Custom Element) 本质上是基于 [Web Component](https://
 - 类型：Function
 - 详细：
 
-    自定义元素的生命周期钩子，元素挂载到 DOM 上之后执行，该钩子在执行 mounted 之后执行。如果
+    自定义元素的生命周期钩子，元素挂载到 DOM 上之后执行，该钩子在执行 mounted 之后执行。
 
 ### disconnectedCallback
 
@@ -69,49 +107,9 @@ mip 自定义元素 (Custom Element) 本质上是基于 [Web Component](https://
 
     自定义元素的生命周期钩子，元素从 DOM 上移除之后执行。
 
-例子：
-
-```js
-mip.registerVueCustomElement('mip-sample', {
-    template: `<div> i am mip-sample </div>`,
-    props: {
-        name: 'sample'
-    },
-    data() {
-        return {};
-    },
-    beforeCreate() {
-        console.log('beforeCreated');
-    },
-    created() {
-        console.log('created');
-    },
-    beforeMount() {
-        console.log('beforeMount');
-    },
-    mounted() {
-        console.log('mounted')
-    },
-    beforeUpdate(oldVal, newVal) {
-        console.log('beforeUpdate');
-    },
-    updated(oldVal, newVal) {
-        console.log('updated');
-    },
-    connectedCallback(element) {
-        console.log('connectedCallback')
-    },
-    disconnectedCallback(element) {
-        console.log('disconnectedCallback');
-    },
-    firstInviewCallback(element) {
-        console.log('firstInviewCallback');
-    }
-});
-```
 
 ### 生命周期图示
 
-下图展示了通过 vue 编写 mip 组件实例的生命周期，其中红色框暴露给开发者的生命周期钩子，可以看到除了 firstInviewCallback 钩子，其他钩子都是 vue 的生命周期，这么做也是为了降低学习成本，提高开发效率。
+下图展示了通过 vue 编写 mip 组件实例的生命周期，其中红色框暴露给开发者的生命周期钩子，可以看到除了 firstInviewCallback / connectedCallback / disconnectCallback 钩子，其他钩子都是 vue 的生命周期，这么做也是为了降低学习成本，提高开发效率。
 
 ![mip2 组件生命周期](http://bos.nj.bpc.baidu.com/v1/assets/mip/mip2-component-lifecycle.png)
