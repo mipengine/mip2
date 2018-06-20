@@ -69,7 +69,8 @@ async function mergeSourceMap (map, inputMap) {
       column: mapping.generatedColumn,
       source: source
     })
-    if (generatedPosition.column != null) {
+
+    if (generatedPosition.column != null && mapping.originalLine != null && mapping.originalColumn != null) {
       mergedGenerator.addMapping({
         source: mapping.source,
 
