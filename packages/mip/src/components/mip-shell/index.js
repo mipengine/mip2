@@ -38,10 +38,21 @@ class MipShell extends CustomElement {
     super(...args)
 
     // If true, always load configures from `<mip-shell>` and overwrite shellConfig when opening new page
-    this.alwaysRefreshOnLoad = true
+    this.alwaysReadConfigOnLoad = true
+
+    // If true, page switching transition contains header
+    this.transitionContainsHeader = true
   }
+
   build () {
     page = window.MIP.viewer.page
+
+    page.notifyRootPage({
+      type: 'sync-page-config',
+      data: {
+        transitionContainsHeader: this.transitionContainsHeader
+      }
+    })
 
     // Read config
     let ele = this.element.querySelector('script[type="application/json"]')
@@ -82,7 +93,7 @@ class MipShell extends CustomElement {
     } else {
       let pageId = page.pageId
       let pageMeta
-      if (this.alwaysRefreshOnLoad) {
+      if (this.alwaysReadConfigOnLoad) {
         pageMeta = DEFAULT_SHELL_CONFIG
         for (let i = 0; i < tmpShellConfig.length; i++) {
           let config = tmpShellConfig[i]

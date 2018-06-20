@@ -7,7 +7,8 @@ class MipShellIS extends window.MIP.builtinComponents.MipShell {
   constructor (...args) {
     super(...args)
 
-    this.alwaysRefreshOnLoad = false
+    this.alwaysReadConfigOnLoad = false
+    this.transitionContainsHeader = false
   }
 
   processShellConfig (shellConfig) {

@@ -67,17 +67,17 @@ function hideAllIFrames () {
   document.querySelectorAll(`.${MIP_IFRAME_CONTAINER}`).forEach(iframe => css(iframe, 'display', 'none'))
 }
 
+/**
+ * Create loading div
+ *
+ * @param {Object} pageMeta Page meta info
+ */
 export function createLoading (pageMeta) {
-  let old = document.querySelector('.mip-page-loading')
-  if (old) {
-    old.remove()
+  if (document.querySelector('.mip-page-loading')) {
+    return
   }
 
   let loading = document.createElement('mip-fixed')
-  loading.style.top = '0'
-  loading.style.bottom = '0'
-  loading.style.left = '0'
-  loading.style.right = '0'
   loading.id = 'mip-page-loading'
   loading.setAttribute('class', 'mip-page-loading')
   loading.innerHTML = `
@@ -94,19 +94,26 @@ export function createLoading (pageMeta) {
   document.body.appendChild(loading)
 }
 
-export function getLoading (targetMeta, onlyHeader) {
+/**
+ * Change loading according to targetMeta
+ *
+ * @param {Object} targetMeta Page meta of target page
+ * @param {Object} options
+ * @param {boolean} options.onlyHeader Moving out only needs header, not loading body
+ * @param {boolean} options.transitionContainsHeader whether transition contains header
+ */
+function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
   let loading = document.querySelector('#mip-page-loading')
   if (!targetMeta) {
     return loading
   }
 
-  if (onlyHeader) {
-    loading.classList.add('only-header')
-  } else {
-    loading.classList.remove('only-header')
+  loading.classList.toggle('transition-without-header', !transitionContainsHeader)
+  if (transitionContainsHeader) {
+    loading.classList.toggle('only-header', !!onlyHeader)
   }
 
-  if (!targetMeta.header.show) {
+  if (!transitionContainsHeader || !targetMeta.header.show) {
     css(loading.querySelector('.mip-page-loading-header'), 'display', 'none')
   } else {
     css(loading.querySelector('.mip-page-loading-header'), 'display', 'flex')
@@ -125,11 +132,7 @@ export function getLoading (targetMeta, onlyHeader) {
       .innerHTML = targetMeta.header.title
   }
 
-  if (targetMeta.view.isIndex) {
-    css(loading.querySelector('.back-button'), 'display', 'none')
-  } else {
-    css(loading.querySelector('.back-button'), 'display', 'flex')
-  }
+  css(loading.querySelector('.back-button'), 'display', targetMeta.view.isIndex ? 'none' : 'flex')
 
   return loading
 }
@@ -202,9 +205,10 @@ export function whenTransitionEnds (el, type, cb) {
  * @param {boolean} options.transition allowTransition
  * @param {Object} options.targetMeta pageMeta of target page
  * @param {string} options.newPage whether iframe is just created
+ * @param {boolean} options.transitionContainsHeader whether transition contains header
  * @param {Function} options.onComplete callback on complete
  */
-export function frameMoveIn (pageId, {transition, targetMeta, newPage, onComplete} = {}) {
+export function frameMoveIn (pageId, {transition, targetMeta, newPage, transitionContainsHeader, onComplete} = {}) {
   let iframe = getIFrame(pageId)
 
   if (!iframe) {
@@ -212,7 +216,7 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, onComplet
   }
 
   if (transition) {
-    let loading = getLoading(targetMeta)
+    let loading = getLoading(targetMeta, {transitionContainsHeader})
     css(loading, 'display', 'block')
 
     loading.classList.add('slide-enter', 'slide-enter-active')
@@ -264,9 +268,10 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, onComplet
  * @param {boolean} options.transition allowTransition
  * @param {Object} options.sourceMeta pageMeta of current page
  * @param {string} options.targetPageId indicating target iframe id when switching between iframes. undefined when switching to init page.
+ * @param {boolean} options.transitionContainsHeader whether transition contains header
  * @param {Function} options.onComplete callback on complete
  */
-export function frameMoveOut (pageId, {transition, sourceMeta, targetPageId, onComplete} = {}) {
+export function frameMoveOut (pageId, {transition, sourceMeta, targetPageId, transitionContainsHeader, onComplete} = {}) {
   let iframe = getIFrame(pageId)
 
   if (targetPageId) {
@@ -285,7 +290,8 @@ export function frameMoveOut (pageId, {transition, sourceMeta, targetPageId, onC
   }
 
   if (transition) {
-    let loading = getLoading(sourceMeta, true)
+    // Moving out only needs header, not loading body.
+    let loading = getLoading(sourceMeta, {onlyHeader: true, transitionContainsHeader})
     css(loading, 'display', 'block')
 
     iframe.classList.add('slide-leave', 'slide-leave-active')
