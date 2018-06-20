@@ -36,7 +36,7 @@ import util from '../util'
 import viewport from '../viewport'
 import Router from './router'
 // import AppShell from './appshell'
-// import GlobalComponent from './appshell/globalComponent'
+import GlobalComponent from './appshell/globalComponent'
 import '../styles/mip.less'
 
 /**
@@ -133,7 +133,7 @@ class Page {
 
   initAppShell () {
     if (this.isRootPage) {
-      // this.globalComponent = new globalComponent()
+      this.globalComponent = new GlobalComponent()
       this.messageHandlers.push((type, data) => {
         if (type === MESSAGE_SET_MIP_SHELL_CONFIG) {
           // Set mip shell config in root page
