@@ -123,7 +123,42 @@
                 },
                 "#city": "上海",
                 "city1": "厦门",
-                "#test": "ckkkk2"
+                "#test": "ckkkk2",
+                "lxndata":{
+                    "user":"未登录",
+                    "ordercity":"北京",
+                    "carType":3,
+                    "orderTime":"",
+                    "kilometer":0,
+                    "moveOutNum":"",
+                    "moveInNum":"",
+                    "moveInAddress":{
+                        "location":{
+                            "address":"in",
+                            "city":"",
+                            "province":"",
+                            "lat":"",
+                            "lng":"",
+                            "title":""
+                        },
+                        "address":"",
+                        "phone":""
+                    },
+                    "currentmap":"out",
+                    "moveOutAddress":{
+                        "location":{
+                            "address":"out",
+                            "city":"",
+                            "province":"",
+                            "lat":"",
+                            "lng":"",
+                            "title":""
+                        },
+                        "address":"",
+                        "phone":""
+                    },
+                    "order":""
+                }
             }
         </script>
     </mip-data>
@@ -145,7 +180,7 @@
         <div on="tap:MIP.setData({'city':'深圳'})" class="button">click change city</div>
 
         <p m-text="city1"></p>
-        <div on="tap:MIP.setData({'city1':'成都'})" class="button">click change city1</div>
+        <div on="tap:MIP.setData({'#city1':'成都'})" class="button">click change city1</div>
 
         <p m-text="test"></p>
         <div on="tap:MIP.setData({'test':'haha'})" class="button">click change test</div>
@@ -298,16 +333,15 @@
     <!-- <mip-script src="http://172.18.182.73:8848/test-script.js"></mip-script> -->
 
     <mip-script>
-        alert(1)
-        alert(2)
-        MIP.watch('num', function () {
-            console.log('num changed callback')
-            MIP.setData({
-                title: 'ckkkk changing num'
-            });
+        MIP.watch('lxndata.moveInAddress.location', function () {
+            console.log(1)
         });
-        location.href = ''
-        console.log(document.cookie)
+        MIP.watch('lxndata.currentmap', function () {
+            console.log(2)
+        });
+        MIP.watch('lxndata.moveOutAddress.location.lat', function () {
+            console.log(3)
+        });
     </mip-script>
 
     <!-- <script type="application/mip-script">
