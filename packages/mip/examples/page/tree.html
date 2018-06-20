@@ -60,7 +60,7 @@
 </head>
 
 <body>
-    <mip-shell-is>
+    <mip-shell-is [mip-shell]>
         <script type="application/json">
         {
             "routes": [
@@ -69,11 +69,11 @@
                     "meta": {
                         "header": {
                             "show": true
-                        },
-                        "isId": 123
+                        }
                     }
                 }
-            ]
+            ],
+            "isId": 123
         }
         </script>
     </mip-shell-is>

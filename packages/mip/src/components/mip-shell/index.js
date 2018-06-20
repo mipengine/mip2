@@ -34,6 +34,12 @@ window.MIP_SHELL_CONFIG = null
 
 class MipShell extends CustomElement {
   // ===================== CustomElement LifeCycle =====================
+  constructor (...args) {
+    super(...args)
+
+    // If true, always load configures from `<mip-shell>` and overwrite shellConfig when opening new page
+    this.alwaysRefreshOnLoad = true
+  }
   build () {
     page = window.MIP.viewer.page
 
@@ -45,13 +51,16 @@ class MipShell extends CustomElement {
     }
     let tmpShellConfig
     try {
-      tmpShellConfig = JSON.parse(ele.textContent.toString()).routes || []
+      tmpShellConfig = JSON.parse(ele.textContent.toString()) || {}
+      if (!tmpShellConfig.routes) {
+        tmpShellConfig.routes = []
+      }
     } catch (e) {
-      tmpShellConfig = []
+      tmpShellConfig = {routes: []}
     }
 
     if (page.isRootPage) {
-      tmpShellConfig.forEach(route => {
+      tmpShellConfig.routes.forEach(route => {
         route.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, route.meta || {})
         route.regexp = convertPatternToRegexp(route.pattern || '*')
 
@@ -63,17 +72,17 @@ class MipShell extends CustomElement {
 
       this.processShellConfig(tmpShellConfig)
 
-      window.MIP_SHELL_CONFIG = tmpShellConfig
+      window.MIP_SHELL_CONFIG = tmpShellConfig.routes
       page.notifyRootPage({
         type: 'set-mip-shell-config',
         data: {
-          shellConfig: tmpShellConfig
+          shellConfig: tmpShellConfig.routes
         }
       })
     } else {
       let pageId = page.pageId
       let pageMeta
-      if (this.alwaysRefreshOnLoad()) {
+      if (this.alwaysRefreshOnLoad) {
         pageMeta = DEFAULT_SHELL_CONFIG
         for (let i = 0; i < tmpShellConfig.length; i++) {
           let config = tmpShellConfig[i]
@@ -217,7 +226,6 @@ class MipShell extends CustomElement {
   }
 
   bindRootEvents () {
-    // Listen bouncy header events
     window.addEventListener('mipShellEvents', e => {
       let {type, data} = e.detail[0]
 
@@ -383,12 +391,13 @@ class MipShell extends CustomElement {
 
   updateShellConfig (newShellConfig) {
     if (page.isRootPage) {
-      window.MIP_SHELL_CONFIG = newShellConfig
+      window.MIP_SHELL_CONFIG = newShellConfig.routes
       window.MIP_PAGE_META_CACHE = Object.create(null)
       page.notifyRootPage({
         type: 'set-mip-shell-config',
         data: {
-          shellConfig: newShellConfig
+          shellConfig: newShellConfig.routes,
+          update: true
         }
       })
     }
@@ -428,11 +437,6 @@ class MipShell extends CustomElement {
     // Handle click on custom button
     // The only param `butonName` equals attribute values of `data-button-name`
     // E.g. click on `<div mip-header-btn data-button-name="hello"></div>` will pass `'hello'` as buttonName
-  }
-
-  alwaysRefreshOnLoad () {
-    // If true, always load configures from `<mip-shell>` and overwrite shellConfig when opening new page
-    return true
   }
 }
 

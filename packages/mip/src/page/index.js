@@ -14,7 +14,7 @@ import {
   createLoading
 } from './util/dom'
 import Debouncer from './util/debounce'
-import {supportsPassive} from './util/feature-detect'
+// import {supportsPassive} from './util/feature-detect'
 import {scrollTo} from './util/ease-scroll'
 import {
   NON_EXISTS_PAGE_ID,
@@ -42,7 +42,8 @@ import '../styles/mip.less'
  * use passive event listeners if supported
  * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
  */
-const eventListenerOptions = supportsPassive ? {passive: true} : false
+// const eventListenerOptions = supportsPassive ? {passive: true} : false
+const eventListenerOptions = false
 
 class Page {
   constructor () {
@@ -68,7 +69,7 @@ class Page {
     this.currentPageMeta = {}
     this.direction = undefined
     this.appshellRoutes = []
-    this.appshellCache = {}
+    this.appshellCache = Object.create(null)
 
     /**
      * transition will be executed only when `Back` button clicked,
@@ -133,14 +134,16 @@ class Page {
         if (type === MESSAGE_SET_MIP_SHELL_CONFIG) {
           // Set mip shell config in root page
           this.appshellRoutes = data.shellConfig
+          this.appshellCache = Object.create(null)
           this.currentPageMeta = this.findMetaByPageId(this.pageId)
           createLoading(this.currentPageMeta)
 
           // Set bouncy header
-          if (this.currentPageMeta.header.bouncy) {
+          if (!data.update && this.currentPageMeta.header.bouncy) {
             this.setupBouncyHeader()
           }
         } else if (type === MESSAGE_UPDATE_MIP_SHELL_CONFIG) {
+          // ERROR HERE
           if (data.pageMeta) {
             this.appshellCache[data.pageId] = data.pageMeta
           } else {
@@ -617,6 +620,7 @@ class Page {
       '.mip-page-loading',
       '.mip-page__iframe',
       'mip-shell',
+      '[mip-shell]',
       '.mip-shell-header-wrapper',
       '.mip-shell-more-button-mask',
       '.mip-shell-more-button-wrapper',
@@ -663,6 +667,14 @@ class Page {
         options: {
           skipTransition: true
         }
+      }
+    })
+
+    // Show header
+    customEmit(window, 'mipShellEvents', {
+      type: 'slide',
+      data: {
+        direction: 'down'
       }
     })
 
