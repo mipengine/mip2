@@ -57,7 +57,7 @@ module.exports = {
       return callback(null, `root Promise`)
     }
 
-    if (/babel-runtime\/core-js\/symbol([^\/]|$)/.test(req)) {
+    if (/babel-runtime\/core-js\/symbol([^/]|$)/.test(req)) {
       return callback(null, `root Symbol`)
     }
 
