@@ -19,7 +19,7 @@ import viewport from './viewport'
 import Resources from './resources'
 import builtinComponents from './components'
 import MipShell from './components/mip-shell/index'
-import registerElement from './register-element'
+import registerCustomElement from './register-element'
 import sleepWakeModule from './sleepWakeModule'
 import performance from './performance'
 import mip1PolyfillInstall from './mip1-polyfill'
@@ -43,16 +43,6 @@ function registerVueCustomElement (tag, component) {
   //     .forEach(key => registerVueCustomElement(key, component.components[key]))
   // }
   Vue.customElement(tag, component)
-}
-
-/**
- * register custom element v1
- *
- * @param {string} tag custom element name, mip-*
- * @param {HTMLElement} component component clazz
- */
-function registerCustomElement (tag, component) {
-  registerElement(tag, component)
 }
 
 // 当前是否是独立站

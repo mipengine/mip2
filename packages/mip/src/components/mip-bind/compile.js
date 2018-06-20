@@ -77,7 +77,7 @@ class Compile {
       fnName = 'bind'
     }
     let data = me._getMVal(node, attrName, expression)
-    if (data || data === 0) {
+    if (typeof data !== 'undefined') {
       me[fnName] && me[fnName](node, attrName, data)
     }
     this._listenerFormElement(node, directive, expression)
@@ -106,7 +106,7 @@ class Compile {
   }
 
   text (node, directive, newVal) {
-    node.textContent = (newVal || newVal === 0) ? newVal : ''
+    node.textContent = newVal
   }
 
   bind (node, directive, newVal) {
@@ -145,7 +145,7 @@ class Compile {
     try {
       let fn = this.getWithResult(exp)
       value = fn.call(this.data)
-      value && node.removeAttribute(attrName)
+      value !== '' && node.removeAttribute(attrName)
     } catch (e) {
       // console.error(e)
     }

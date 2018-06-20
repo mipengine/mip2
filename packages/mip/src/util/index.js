@@ -18,7 +18,6 @@ import naboo from './naboo'
 import EventEmitter from './event-emitter'
 import Gesture from './gesture'
 import customStorage from './customStorage'
-import json5 from 'json5'
 
 /**
  * Exchange a url to cache url.
@@ -99,7 +98,6 @@ function getOriginalUrl () {
 }
 
 export default {
-  json5,
   fn,
   dom,
   event,

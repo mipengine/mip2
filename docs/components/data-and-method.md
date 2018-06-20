@@ -210,9 +210,10 @@
 
 #### 组件内使用数据
 
-**MIP2 要求开发者以类单向数据流的方式使用数据**
+**类单向数据流**
 
-**[规范]** 仅允许在 html 页面使用 `m-bind` 来绑定数据，以 `props` 的形式向组件传递数据。组件内部 ***不允许*** 使用 `m-bind` 语法来绑定全局数据，也无法直接读取到全局数据 `m`。
+**[规范]** 仅允许在 html 页面使用 `m-bind` 来绑定数据，以 `props` 的形式向组件传递数据。组件内部 ***不允许*** 使用 `m-bind` 语法来绑定全局数据，也无法直接读取到全局数据 `m`，仅允许绑定通过 props 获得的数据。
+组件内部需要使用 props 预定义所需数据。对于 Object/Array 类型的数据，需要显式指定数据类型。
 
 如果组件内部实现存在自定义标签嵌套的情况，传递数据时 `应` 按照 vue 父子组件的写法来传递数据。
 
@@ -228,11 +229,19 @@ index.html：
         {
             "userInfo": {
                 "name": "baidu"
-            }
+            },
+            "list": [1, 2, 3],
+            "num": 2,
+            "msg": "info",
+            "loading": false
         }
     </script>
 </mip-data>
-<mip-a m-bind:userinfo="userInfo"></mip-a>
+<mip-a m-bind:userinfo="userInfo"
+    m-bind:list="list"
+    m-bind:num="num"
+    m-bind:msg="msg"
+    m-bind:loading="loading"></mip-a>
 ```
 
 mip-a 组件内部：
@@ -242,12 +251,19 @@ template: `
     <div>
         <mip-b :userinfo="userinfo"></mip-b>
         <p @click="changeData"></p>
+        <p v-if="loading">{{msg}}</p>
     </div>
 `,
 props: {
     userinfo: {
         type: Object
-    }
+    },
+    list: {
+        type: Array
+    },
+    num: Number,
+    loading: Boolean,
+    msg: String
 },
 methods: {
     changeData() {
