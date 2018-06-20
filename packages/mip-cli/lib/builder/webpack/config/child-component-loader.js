@@ -18,8 +18,9 @@ module.exports = async function (source, map, meta) {
   this.addContextDependency(this.context)
 
   let basename = path.basename(this.resourcePath)
+  let name = path.basename(basename, path.extname(basename))
 
-  let components = await globPify('mip-*.@(vue|js)', {
+  let components = await globPify(`${name}*.@(vue|js)`, {
     cwd: this.context,
     root: this.context
   }).then(arr => arr.filter(name => name !== basename))
