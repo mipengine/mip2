@@ -82,7 +82,7 @@ class Compile {
     }
     this._listenerFormElement(node, directive, expression)
     /* eslint-disable */
-    new Watcher(node, me.data, attrName, expression, function (dir, newVal, oldVal) {
+    new Watcher(node, me.data, attrName, expression, function (dir, newVal) {
       if (typeof me[fnName] === 'function') {
         me[fnName](node, dir, newVal)
       }

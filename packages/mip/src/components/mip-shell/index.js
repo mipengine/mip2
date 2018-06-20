@@ -95,8 +95,8 @@ class MipShell extends CustomElement {
       let pageMeta
       if (this.alwaysReadConfigOnLoad) {
         pageMeta = DEFAULT_SHELL_CONFIG
-        for (let i = 0; i < tmpShellConfig.length; i++) {
-          let config = tmpShellConfig[i]
+        for (let i = 0; i < tmpShellConfig.routes.length; i++) {
+          let config = tmpShellConfig.routes[i]
           config.regexp = convertPatternToRegexp(config.pattern || '*')
           if (config.regexp.test(pageId)) {
             config.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, config.meta || {})
@@ -203,7 +203,7 @@ class MipShell extends CustomElement {
         // only more
         headerHTML += `
           <div class="mip-shell-header-button-group-standalone more" mip-header-btn data-button-name="more">
-            <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M227.4 608c-55 0-99.4-42.8-99.4-96 0-53 44.4-96 99.4-96 55.2 0 99.6 43 99.6 96 0 53.2-44.4 96-99.6 96zM512 608c-55 0-99.6-42.8-99.6-96 0-53 44.6-96 99.6-96 55 0 99.4 43 99.4 96 0 53.2-44.4 96-99.4 96zM796.4 608c-55 0-99.6-42.8-99.6-96 0-53 44.4-96 99.6-96 55 0 99.6 43 99.6 96 0 53.2-44.4 96-99.6 96z"/></svg>
+            <svg t="1529487280740" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6294" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><path d="M64 512a85.333333 85.333333 0 1 1 170.666667 0 85.333333 85.333333 0 0 1-170.666667 0zM512 597.333333a85.333333 85.333333 0 1 1 0-170.666666 85.333333 85.333333 0 0 1 0 170.666666zM789.333333 512a85.333333 85.333333 0 1 1 170.666667 0 85.333333 85.333333 0 0 1-170.666667 0z" fill="#555555" p-id="6295"></path></svg>
           </div>
         `
       }
@@ -213,11 +213,11 @@ class MipShell extends CustomElement {
         headerHTML += `
           <div class="mip-shell-header-button-group">
             <div class="button more" mip-header-btn data-button-name="more">
-              <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M227.4 608c-55 0-99.4-42.8-99.4-96 0-53 44.4-96 99.4-96 55.2 0 99.6 43 99.6 96 0 53.2-44.4 96-99.6 96zM512 608c-55 0-99.6-42.8-99.6-96 0-53 44.6-96 99.6-96 55 0 99.4 43 99.4 96 0 53.2-44.4 96-99.4 96zM796.4 608c-55 0-99.6-42.8-99.6-96 0-53 44.4-96 99.6-96 55 0 99.6 43 99.6 96 0 53.2-44.4 96-99.6 96z"/></svg>
+              <svg t="1529487280740" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6294" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><path d="M64 512a85.333333 85.333333 0 1 1 170.666667 0 85.333333 85.333333 0 0 1-170.666667 0zM512 597.333333a85.333333 85.333333 0 1 1 0-170.666666 85.333333 85.333333 0 0 1 0 170.666666zM789.333333 512a85.333333 85.333333 0 1 1 170.666667 0 85.333333 85.333333 0 0 1-170.666667 0z" fill="#555555" p-id="6295"></path></svg>
             </div>
             <div class="split"></div>
             <div class="button close" mip-header-btn data-button-name="close">
-              <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M579.888 512l190.064-190.064a48 48 0 0 0-67.888-67.872L512 444.112 321.936 254.064a48 48 0 1 0-67.872 67.872L444.112 512 254.064 702.064a48 48 0 1 0 67.872 67.872L512 579.888l190.064 190.064a48 48 0 0 0 67.872-67.888L579.888 512z" fill="#333"/></svg>
+              <svg t="1529487311635" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6410" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><path d="M557.482667 512L822.613333 246.869333a32.149333 32.149333 0 0 0-45.44-45.44L512 466.517333 246.890667 201.408a32.149333 32.149333 0 1 0-45.44 45.44L466.56 512 201.429333 777.130667a32.149333 32.149333 0 0 0 45.461334 45.44l265.130666-265.109334L777.173333 822.592a32.149333 32.149333 0 1 0 45.461334-45.44L557.482667 512z" fill="#555555" p-id="6411"></path></svg>
             </div>
           </div>
         `
@@ -226,7 +226,7 @@ class MipShell extends CustomElement {
         headerHTML += `
           <div class="mip-shell-header-button-group-standalone">
             <div class="button close" mip-header-btn data-button-name="close">
-              <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M579.888 512l190.064-190.064a48 48 0 0 0-67.888-67.872L512 444.112 321.936 254.064a48 48 0 1 0-67.872 67.872L444.112 512 254.064 702.064a48 48 0 1 0 67.872 67.872L512 579.888l190.064 190.064a48 48 0 0 0 67.872-67.888L579.888 512z" fill="#333"/></svg>
+              <svg t="1529487311635" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6410" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><path d="M557.482667 512L822.613333 246.869333a32.149333 32.149333 0 0 0-45.44-45.44L512 466.517333 246.890667 201.408a32.149333 32.149333 0 1 0-45.44 45.44L466.56 512 201.429333 777.130667a32.149333 32.149333 0 0 0 45.461334 45.44l265.130666-265.109334L777.173333 822.592a32.149333 32.149333 0 1 0 45.461334-45.44L557.482667 512z" fill="#555555" p-id="6411"></path></svg>
             </div>
           </div>
         `
