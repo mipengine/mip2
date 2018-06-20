@@ -138,7 +138,7 @@ class BaseElement extends HTMLElement {
  * @param {string} css Css code
  * @param {string} name name
  */
-function loadCss(css, name) {
+function loadCss (css, name) {
   if (css) {
     cssLoader.insertStyleElement(document, document.head, css, name, false)
   }
@@ -159,7 +159,7 @@ function registerElement (name, elementClass, css) {
   // store the name-clazz pair
   customElementsStore.set(name, elementClass, 'mip2')
 
-  loadCss(css, name);
+  loadCss(css, name)
   window.customElements.define(name, class extends BaseElement {
     static get observedAttributes () {
       return elementClass.observedAttributes

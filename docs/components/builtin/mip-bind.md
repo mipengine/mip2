@@ -350,7 +350,7 @@ on="事件:MIP.setData({}) 事件:MIP.setData({}) 事件:MIP.setData({})"
 提供 `MIP.watch(value, cb)` 方法注册观察行为。
 
 其中 `value` 为数据源中的属性名，多层数据可以以 `.` 连接，允许是单个字符串或字符串数组。
-`cb` 接收两个参数，分别是 `newVal`，`oldVal`。
+`cb` 接收一个参数，为 `newVal`。
 
 当指定的 `value` 数据源发生变化，会自动执行相应的 `cb`。
 
@@ -375,7 +375,7 @@ on="事件:MIP.setData({}) 事件:MIP.setData({}) 事件:MIP.setData({})"
     <input type='text' on="change:MIP.setData({price:DOM.value*m.price})">
 </mip-form>
 <mip-script >
-    MIP.watch('price', (newVal, oldVal) => {
+    MIP.watch('price', newVal => {
         MIP.setData({
             title: 'price changed to ' + newVal
         })

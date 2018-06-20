@@ -1,16 +1,26 @@
 <!DOCTYPE html>
-<html lang="en" mip>
-<!--htmlcs-disable-->
+<html mip>
+
 <head>
-    <title>MIP Tree Page</title>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <title>MIP Shell IS 2</title>
+    <meta name="keywords" content="vue,mip,store">
+    <meta name="description" content="mip-store">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
     <style mip-custom>
-    .link {
+    .main-content .link {
         text-align: center;
         margin-top: 20px;
         display: block;
+    }
+    .main-content p,
+    .main-content .button {
+        width: 150px;
+        display: inline-block;
+        margin: 20px 0 0 20px;
     }
     </style>
     <style>
@@ -60,86 +70,60 @@
 </head>
 
 <body>
-    <mip-shell>
+    <div class="main-content">
+        <p>
+        Progressive Web Apps are user experiences that have the reach of the web, and are:
+    Reliable - Load instantly and never show the downasaur, even in uncertain network conditions.
+    Fast - Respond quickly to user interactions with silky smooth animations and no janky scrolling.
+        </p>
+        <p>
+        Progressive Web Apps are user experiences that have the reach of the web, and are:
+    Reliable - Load instantly and never show the downasaur, even in uncertain network conditions.
+    Fast - Respond quickly to user interactions with silky smooth animations and no janky scrolling.
+        </p>
+        <p>
+        Progressive Web Apps are user experiences that have the reach of the web, and are:
+    Reliable - Load instantly and never show the downasaur, even in uncertain network conditions.
+    Fast - Respond quickly to user interactions with silky smooth animations and no janky scrolling.
+        </p>
+        <p>
+        Progressive Web Apps are user experiences that have the reach of the web, and are:
+    Reliable - Load instantly and never show the downasaur, even in uncertain network conditions.
+    Fast - Respond quickly to user interactions with silky smooth animations and no janky scrolling.
+        </p>
+        <p>
+        Progressive Web Apps are user experiences that have the reach of the web, and are:
+    Reliable - Load instantly and never show the downasaur, even in uncertain network conditions.
+    Fast - Respond quickly to user interactions with silky smooth animations and no janky scrolling.
+        </p>
+        <p>
+        Progressive Web Apps are user experiences that have the reach of the web, and are:
+    Reliable - Load instantly and never show the downasaur, even in uncertain network conditions.
+    Fast - Respond quickly to user interactions with silky smooth animations and no janky scrolling.
+        </p>
+        <br><br>
+        <a href="./mip-shell-is-1.html" class="link" mip-link>Go to MIP SHELL IS 1</a>
+    </div>
+    <br><br>
+
+    <mip-shell-is [mip-shell]>
         <script type="application/json">
         {
             "routes": [
                 {
-                    "pattern": "/tree.html",
-                    "meta": {
-                        "header": {}
-                    }
-                },
-                {
-                    "pattern": "/data.html",
-                    "meta": {
-                        "header": {
-                            "show": true,
-                            "title": "蓝犀牛数据",
-                            "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
-                            "xiongzhang": true
-                        }
-                    }
-                },
-                {
                     "pattern": "*",
                     "meta": {
                         "header": {
-                            "show": true,
-                            "title": "蓝犀牛",
-                            "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
-                            "buttonGroup": [
-                                {
-                                    "name": "subscribe",
-                                    "text": "关注",
-                                    "link": "/examples/page/tree.html"
-                                },
-                                {
-                                    "name": "chat",
-                                    "text": "发消息"
-                                },
-                                {
-                                    "name": "cancel",
-                                    "text": "取消"
-                                }
-                            ]
-                        },
-                        "view": {
-                            "isIndex": true
+                            "show": true
                         }
                     }
                 }
-            ]
+            ],
+            "isId": 123
         }
         </script>
-    </mip-shell>
-
-    <p>This is Page#2, using different component (mip-tree)</p>
-
-    <mip-tree>
-        <script type="application/json">
-            {"model":{"name":"My Tree","children":[{"name":"hello"},{"name":"wat"},{"name":"child folder","children":[{"name":"child folder","children":[{"name":"hello"},{"name":"wat"}]},{"name":"hello"},{"name":"wat"},{"name":"child folder","children":[{"name":"hello"},{"name":"wat"}]}]}]}}
-        </script>
-    </mip-tree>
-
-    <a class="link" href="./index.html" mip-link>Back to Index</a>
-    <a class="link" href="./data.html" mip-link>Go to Data</a>
-
-    <p m-text="city"></p>
-    <div on="tap:MIP.setData({'city':'深圳'})" class="button">click change city</div>
-
-    <br><br>
-    <span>Read from global store(group.info.name) from index.html</span>
-    <span m-text="group.info.name"></span>
-    <mip-script>
-        MIP.watch('city', function () {
-            console.log('city changed callback')
-        });
-    </mip-script>
-
+    </mip-shell-is>
 
     <script src="../../dist/mip.js"></script>
-    <script src="./components/mip-tree.js"></script>
+    <script src="./components/mip-shell-is.js"></script>
 </body>
-
-</html>

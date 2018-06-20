@@ -61,11 +61,19 @@ module.exports = class WebpackBuilder {
       root: this.componentDir
     }
 
-    let complexComponents = await globPify('mip-*/mip-*.vue', globOpts)
-      .then(arr => arr.filter(name => /(mip-[\w-]+)\/\1\.vue$/.test(name)))
+    let components = await globPify('mip-*/mip-*.@(vue|js)', globOpts)
+      .then(arr => arr.filter(name => /(mip-[\w-]+)\/\1\.(vue|js)$/.test(name)))
 
-    return complexComponents.reduce((entries, pathname) => {
-      let basename = path.basename(pathname, '.vue')
+    // let [vueComponents, jsComponents] = await Promise.all([
+    //   globPify('mip-*/mip-*.vue', globOpts).then(arr => arr.filter(name => /(mip-[\w-]+)\/\1\.vue$/.test(name))),
+    //   globPify('mip-*/mip-*.vue', globOpts).then(arr => arr.filter(name => /(mip-[\w-]+)\/\1\.vue$/.test(name)))
+    // ])
+
+    // globPify('mip-*/mip-*.vue', globOpts)
+    //   .then(arr => arr.filter(name => /(mip-[\w-]+)\/\1\.vue$/.test(name)))
+
+    return components.reduce((entries, pathname) => {
+      let basename = path.basename(pathname, path.extname(pathname))
       entries[basename] = path.resolve(this.componentDir, pathname)
       return entries
     }, {})

@@ -8,6 +8,8 @@
 MIP.registerVueCustomElement('mip-complevel1', {
   template: `
     <div class="mip-complevel1">
+      <mip-complevel2 :userinfo="userinfo"></mip-complevel2>
+      <p @click="changeData">click to change userinfo</p>
     </div>
   `,
   props: {

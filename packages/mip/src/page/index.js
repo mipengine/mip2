@@ -14,6 +14,7 @@ import {
   createLoading
 } from './util/dom'
 import Debouncer from './util/debounce'
+// import {supportsPassive} from './util/feature-detect'
 import {scrollTo} from './util/ease-scroll'
 import {
   NON_EXISTS_PAGE_ID,
@@ -22,17 +23,19 @@ import {
   MESSAGE_APPSHELL_EVENT,
   MESSAGE_ROUTER_PUSH,
   MESSAGE_ROUTER_REPLACE,
-  MESSAGE_APPSHELL_HEADER_SLIDE_UP,
-  MESSAGE_APPSHELL_HEADER_SLIDE_DOWN,
+  MESSAGE_SET_MIP_SHELL_CONFIG,
+  MESSAGE_UPDATE_MIP_SHELL_CONFIG,
+  MESSAGE_SYNC_PAGE_CONFIG,
   MESSAGE_REGISTER_GLOBAL_COMPONENT
+  // MESSAGE_APPSHELL_HEADER_SLIDE_UP,
+  // MESSAGE_APPSHELL_HEADER_SLIDE_DOWN,
 } from './const'
-import {supportsPassive} from './util/feature-detect'
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
 import util from '../util'
 import viewport from '../viewport'
 import Router from './router'
-import AppShell from './appshell'
+// import AppShell from './appshell'
 import GlobalComponent from './appshell/globalComponent'
 import '../styles/mip.less'
 
@@ -40,7 +43,8 @@ import '../styles/mip.less'
  * use passive event listeners if supported
  * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
  */
-const eventListenerOptions = supportsPassive ? {passive: true} : false
+// const eventListenerOptions = supportsPassive ? {passive: true} : false
+const eventListenerOptions = false
 
 class Page {
   constructor () {
@@ -59,14 +63,17 @@ class Page {
     this.pageId = undefined
 
     // root page
-    this.appshell = undefined
+    // this.appshell = undefined
     this.children = []
     this.currentPageId = undefined
     this.messageHandlers = []
     this.currentPageMeta = {}
     this.direction = undefined
     this.appshellRoutes = []
-    this.appshellCache = {}
+    this.appshellCache = Object.create(null)
+
+    // sync from mip-shell
+    this.transitionContainsHeader = true
 
     /**
      * transition will be executed only when `Back` button clicked,
@@ -125,75 +132,130 @@ class Page {
   }
 
   initAppShell () {
-    let currentPageMeta
     if (this.isRootPage) {
-      /**
-       * in root page, we need to:
-       * 1. read global config from <mip-shell>
-       * 2. refresh appshell with current data in <mip-shell>
-       * 3. listen to a refresh event emited by current child iframe
-       */
-      this.readMIPShellConfig()
-
-      currentPageMeta = this.findMetaByPageId(this.pageId)
-      this.currentPageMeta = currentPageMeta
-
-      this.appshell = new AppShell({
-        data: this.currentPageMeta
-      }, this)
-
       this.globalComponent = new GlobalComponent()
-
-      // Create loading div
-      createLoading(this.currentPageMeta)
-
       this.messageHandlers.push((type, data) => {
-        if (type === MESSAGE_APPSHELL_HEADER_SLIDE_UP) {
-          // AppShell header animation
-          this.appshell.header.slideUp()
-        } else if (type === MESSAGE_APPSHELL_HEADER_SLIDE_DOWN) {
-          // AppShell header animation
-          this.appshell.header.slideDown()
+        if (type === MESSAGE_SET_MIP_SHELL_CONFIG) {
+          // Set mip shell config in root page
+          this.appshellRoutes = data.shellConfig
+          this.appshellCache = Object.create(null)
+          this.currentPageMeta = this.findMetaByPageId(this.pageId)
+          createLoading(this.currentPageMeta)
+
+          // Set bouncy header
+          if (!data.update && this.currentPageMeta.header.bouncy) {
+            this.setupBouncyHeader()
+          }
+        } else if (type === MESSAGE_UPDATE_MIP_SHELL_CONFIG) {
+          // ERROR HERE
+          if (data.pageMeta) {
+            this.appshellCache[data.pageId] = data.pageMeta
+          } else {
+            data.pageMeta = this.findMetaByPageId(data.pageId)
+          }
+          customEmit(window, 'mipShellEvents', {
+            type: 'updateShell',
+            data
+          })
+        } else if (type === MESSAGE_SYNC_PAGE_CONFIG) {
+          // Sync config from mip-shell
+          this.transitionContainsHeader = data.transitionContainsHeader
         } else if (type === MESSAGE_REGISTER_GLOBAL_COMPONENT) {
           // Register global component
+          console.log('register global component')
           // this.globalComponent.register(data)
         }
       })
 
-      // recaculate all the iframes' height
+      // Set iframe height when resizing
       viewport.on('resize', () => {
         [].slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
           $el.style.height = `${viewport.getHeight()}px`
         })
       })
     } else {
-      currentPageMeta = this.router.rootPage.findMetaByPageId(this.pageId)
-      /**
-       * in child page:
-       * 1. notify root page to refresh appshell at first time
-       * 2. listen to appshell events such as `click-button` emited by root page
-       */
       this.messageHandlers.push((type, event) => {
         if (type === MESSAGE_APPSHELL_EVENT) {
           customEmit(window, event.name, event.data)
         }
       })
-    }
 
-    let {show: showHeader, bouncy} = currentPageMeta.header
-    // set `padding-top` on scroller
-    if (showHeader) {
-      if (viewport.scroller === window) {
-        document.body.classList.add('with-header')
-      } else {
-        viewport.scroller.classList.add('with-header')
+      let parentPage = window.parent.MIP.viewer.page
+      let currentPageMeta = parentPage.findMetaByPageId(this.pageId)
+
+      if (currentPageMeta.header.bouncy) {
+        this.setupBouncyHeader()
       }
     }
+  //   let currentPageMeta
+  //   if (this.isRootPage) {
+  //     /**
+  //      * in root page, we need to:
+  //      * 1. read global config from <mip-shell>
+  //      * 2. refresh appshell with current data in <mip-shell>
+  //      * 3. listen to a refresh event emited by current child iframe
+  //      */
+  //     this.readMIPShellConfig()
 
-    // set bouncy header
-    if (bouncy) {
-      this.setupBouncyHeader()
-    }
+  //     currentPageMeta = this.findMetaByPageId(this.pageId)
+  //     this.currentPageMeta = currentPageMeta
+
+  //     this.appshell = new AppShell({
+  //       data: this.currentPageMeta
+  //     }, this)
+
+  //     this.globalComponent = new GlobalComponent()
+
+  //     // Create loading div
+  //     createLoading(this.currentPageMeta)
+
+  //     this.messageHandlers.push((type, data) => {
+  //       if (type === MESSAGE_APPSHELL_HEADER_SLIDE_UP) {
+  //         // AppShell header animation
+  //         this.appshell.header.slideUp()
+  //       } else if (type === MESSAGE_APPSHELL_HEADER_SLIDE_DOWN) {
+  //         // AppShell header animation
+  //         this.appshell.header.slideDown()
+  //       } else if (type === MESSAGE_REGISTER_GLOBAL_COMPONENT) {
+  //         // Register global component
+  //         // this.globalComponent.register(data)
+  //       }
+  //     })
+
+  //     // recaculate all the iframes' height
+  //     viewport.on('resize', () => {
+  //       [].slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
+  //         $el.style.height = `${viewport.getHeight()}px`
+  //       })
+  //     })
+  //   } else {
+  //     currentPageMeta = this.router.rootPage.findMetaByPageId(this.pageId)
+  //     /**
+  //      * in child page:
+  //      * 1. notify root page to refresh appshell at first time
+  //      * 2. listen to appshell events such as `click-button` emited by root page
+  //      */
+  //     this.messageHandlers.push((type, event) => {
+  //       if (type === MESSAGE_APPSHELL_EVENT) {
+  //         customEmit(window, event.name, event.data)
+  //       }
+  //     })
+  //   }
+
+  //   let {show: showHeader, bouncy} = currentPageMeta.header
+  //   // set `padding-top` on scroller
+  //   if (showHeader) {
+  //     if (viewport.scroller === window) {
+  //       document.body.classList.add('with-header')
+  //     } else {
+  //       viewport.scroller.classList.add('with-header')
+  //     }
+  //   }
+
+  //   // set bouncy header
+  //   if (bouncy) {
+  //     this.setupBouncyHeader()
+  //   }
   }
 
   /**
@@ -227,6 +289,7 @@ class Page {
     let scrollDistance
     let scrollHeight = viewport.getScrollHeight()
     let viewportHeight = viewport.getHeight()
+    let lastScrollDirection
 
     // viewportHeight = 0 before frameMoveIn animation ends
     // Wait a minute
@@ -245,19 +308,25 @@ class Page {
       }
 
       if (lastScrollTop < scrollTop && scrollDistance >= THRESHOLD) {
-        if (this.isRootPage) {
-          this.appshell.header.slideUp()
-        } else {
-          this.notifyRootPage({
-            type: MESSAGE_APPSHELL_HEADER_SLIDE_UP
+        if (lastScrollDirection !== 'up') {
+          lastScrollDirection = 'up'
+          let target = this.isRootPage ? window : window.parent
+          customEmit(target, 'mipShellEvents', {
+            type: 'slide',
+            data: {
+              direction: 'up'
+            }
           })
         }
       } else if (lastScrollTop > scrollTop && scrollDistance >= THRESHOLD) {
-        if (this.isRootPage) {
-          this.appshell.header.slideDown()
-        } else {
-          this.notifyRootPage({
-            type: MESSAGE_APPSHELL_HEADER_SLIDE_DOWN
+        if (lastScrollDirection !== 'down') {
+          lastScrollDirection = 'down'
+          let target = this.isRootPage ? window : window.parent
+          customEmit(target, 'mipShellEvents', {
+            type: 'slide',
+            data: {
+              direction: 'down'
+            }
           })
         }
       }
@@ -330,18 +399,26 @@ class Page {
 
   // ========================= Util functions for developers =========================
   togglePageMask (toggle, options) {
-    // Page mask won't show in root page
+    // Only show page mask in root page
     if (!this.isRootPage) {
-      window.parent.MIP.viewer.page.appshell.header.togglePageMask(toggle, options)
+      customEmit(window.parent, 'mipShellEvents', {
+        type: 'togglePageMask',
+        data: {
+          toggle,
+          options
+        }
+      })
     }
   }
 
   toggleDropdown (toggle) {
-    if (this.isRootPage) {
-      this.appshell.header.toggleDropdown(toggle)
-    } else {
-      window.parent.MIP.viewer.page.appshell.header.toggleDropdown(toggle)
-    }
+    let target = this.isRootPage ? window : window.parent
+    customEmit(target, 'mipShellEvents', {
+      type: 'toggleDropdown',
+      data: {
+        toggle
+      }
+    })
   }
 
   // =============================== Root Page methods ===============================
@@ -388,7 +465,6 @@ class Page {
 
   /**
    * find route.meta by pageId
-   *
    * @param {string} pageId pageId
    * @return {Object} meta object
    */
@@ -415,9 +491,9 @@ class Page {
    * @param {string} targetPageId targetPageId
    * @param {Object} extraData extraData
    */
-  refreshAppShell (targetPageId, extraData) {
-    this.appshell.refresh(extraData, targetPageId)
-  }
+  // refreshAppShell (targetPageId, extraData) {
+  //   this.appshell.refresh(extraData, targetPageId)
+  // }
 
   /**
    * save scroll position in root page
@@ -452,18 +528,28 @@ class Page {
     let innerTitle = {title: targetMeta.defaultTitle || undefined}
     let finalMeta = util.fn.extend(true, innerTitle, localMeta, targetMeta)
 
-    this.appshell.header.toggleTransition(false)
-    this.appshell.header.slideDown()
+    customEmit(window, 'mipShellEvents', {
+      type: 'toggleTransition',
+      data: {
+        toggle: false
+      }
+    })
 
     if (targetPageId === this.pageId || this.direction === 'back') {
       // backward
       let backwardOpitons = {
         transition: this.allowTransition,
         sourceMeta: this.currentPageMeta,
+        transitionContainsHeader: this.transitionContainsHeader,
         onComplete: () => {
           this.allowTransition = false
           this.currentPageMeta = finalMeta
-          this.appshell.header.toggleTransition(true)
+          customEmit(window, 'mipShellEvents', {
+            type: 'toggleTransition',
+            data: {
+              toggle: true
+            }
+          })
         }
       }
 
@@ -475,7 +561,8 @@ class Page {
       frameMoveOut(this.currentPageId, backwardOpitons)
 
       this.direction = null
-      this.refreshAppShell(targetPageId, finalMeta)
+      // console.log('refresh appshell maybe deprecated?')
+      // this.refreshAppShell(targetPageId, finalMeta)
 
       // restore scroll position in root page
       if (targetPageId === this.pageId) {
@@ -487,11 +574,19 @@ class Page {
         transition: this.allowTransition,
         targetMeta: finalMeta,
         newPage: options.newPage,
+        transitionContainsHeader: this.transitionContainsHeader,
         onComplete: () => {
           this.allowTransition = false
           this.currentPageMeta = finalMeta
-          this.appshell.header.toggleTransition(true)
-          this.refreshAppShell(targetPageId, finalMeta)
+          // TODO: Prevent transition on first view in some cases
+          customEmit(window, 'mipShellEvents', {
+            type: 'toggleTransition',
+            data: {
+              toggle: true
+            }
+          })
+          // console.log('refresh appshell maybe deprecated?')
+          // this.refreshAppShell(targetPageId, finalMeta)
           /**
            * Disable scrolling of root page when covered by an iframe
            * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
@@ -533,7 +628,9 @@ class Page {
     let whitelist = [
       '.mip-page-loading',
       '.mip-page__iframe',
-      '.mip-appshell-header-wrapper',
+      'mip-shell',
+      '[mip-shell]',
+      '.mip-shell-header-wrapper',
       '.mip-shell-more-button-mask',
       '.mip-shell-more-button-wrapper',
       '.mip-shell-header-mask',
@@ -572,8 +669,22 @@ class Page {
     }
 
     // Hide page mask and skip transition
-    this.appshell.header.togglePageMask(false, {
-      skipTransition: true
+    customEmit(window, 'mipShellEvents', {
+      type: 'togglePageMask',
+      data: {
+        toggle: false,
+        options: {
+          skipTransition: true
+        }
+      }
+    })
+
+    // Show header
+    customEmit(window, 'mipShellEvents', {
+      type: 'slide',
+      data: {
+        direction: 'down'
+      }
     })
 
     /**

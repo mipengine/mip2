@@ -12,7 +12,6 @@ MIP.registerVueCustomElement('mip-global', {
   firstInviewCallback () {
     console.log(window.MIP.MIP_ROOT_PAGE)
     if (!window.MIP.MIP_ROOT_PAGE) {
-      console.log('notifyRootPage ready')
       window.MIP.viewer.page.notifyRootPage({
         type: 'register-global-component',
         data: {

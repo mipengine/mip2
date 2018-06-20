@@ -123,12 +123,47 @@
                 },
                 "#city": "上海",
                 "city1": "厦门",
-                "#test": "ckkkk2"
+                "#test": "ckkkk2",
+                "lxndata":{
+                    "user":"未登录",
+                    "ordercity":"北京",
+                    "carType":3,
+                    "orderTime":"",
+                    "kilometer":0,
+                    "moveOutNum":"",
+                    "moveInNum":"",
+                    "moveInAddress":{
+                        "location":{
+                            "address":"in",
+                            "city":"",
+                            "province":"",
+                            "lat":"",
+                            "lng":"",
+                            "title":""
+                        },
+                        "address":"",
+                        "phone":""
+                    },
+                    "currentmap":"out",
+                    "moveOutAddress":{
+                        "location":{
+                            "address":"out",
+                            "city":"",
+                            "province":"",
+                            "lat":"",
+                            "lng":"",
+                            "title":""
+                        },
+                        "address":"",
+                        "phone":""
+                    },
+                    "order":""
+                }
             }
         </script>
     </mip-data>
 
-    <!-- <mip-complevel1 m-bind:userinfo="userInfo"></mip-complevel1> -->
+    <mip-complevel1 m-bind:userinfo="userInfo"></mip-complevel1>
 
     <div class="main-content">
         <mip-global></mip-global>
@@ -145,7 +180,7 @@
         <div on="tap:MIP.setData({'city':'深圳'})" class="button">click change city</div>
 
         <p m-text="city1"></p>
-        <div on="tap:MIP.setData({'city1':'成都'})" class="button">click change city1</div>
+        <div on="tap:MIP.setData({'#city1':'成都'})" class="button">click change city1</div>
 
         <p m-text="test"></p>
         <div on="tap:MIP.setData({'test':'haha'})" class="button">click change test</div>
@@ -201,7 +236,7 @@
         <mip-img m-bind:src="imgList[no]" style="width:150px;height:150px;"></mip-img>
 
         <!-- <mip-script>
-            let weekDay = ['一', '二', '三', '四', '五', '六', '日'] 
+            let weekDay = ['一', '二', '三', '四', '五', '六', '日']
             MIP.watch('no', function (newVal, oldVal) {
                 if (newVal < 1 || newVal > 8) {
                     MIP.setData({weekFull: '输入错误'})
@@ -216,6 +251,7 @@
         <a href="./index.html" class="link" mip-link>Back to Index</a>
         <a class="link" href="./tree.html" mip-link>Go to Tree</a>
     </div>
+    <br><br>
 
     <mip-shell>
         <script type="application/json">
@@ -298,59 +334,33 @@
     <!-- <mip-script src="http://172.18.182.73:8848/test-script.js"></mip-script> -->
 
     <mip-script>
-        alert(1)
-        alert(2)
-        MIP.watch('num', function () {
-            console.log('num changed callback')
-            MIP.setData({
-                title: 'ckkkk changing num'
-            });
+        MIP.watch('lxndata.moveInAddress.location', function () {
+            console.log('lxndata.moveInAddress.location')
         });
-        location.href = ''
-        console.log(document.cookie)
+        MIP.watch('lxndata.currentmap', function () {
+            console.log('lxndata.currentmap')
+        });
+        MIP.watch('lxndata.moveOutAddress.location.lat', function () {
+            console.log('lxndata.moveOutAddress.location.lat')
+        });
+        MIP.watch('lxndata', function () {
+            console.log('lxndata')
+        });
+        MIP.watch('num', function () {
+            console.log('num changed')
+        });
+        MIP.watch('num', function () {
+            console.log('num changed')
+        });
     </mip-script>
 
-    <!-- <script type="application/mip-script">
-        MIP.watch('num', function () {
-            console.log('num changed callback')
-            MIP.setData({
-                title: 'ckkkk changing num'
-            });
-        });
-        MIP.watch('sp.three', function () {
-            console.log('sp.three')
-            MIP.setData({
-                title: 'ckkkk changing sp.three'
-            });
-        });
-        MIP.watch('comments', function () {
-            console.log('comments')
-            MIP.setData({
-                title: 'ckkkk changing comments'
-            });
-        });
-        MIP.watch(['basePrice', 'img.first'], function () {
-            console.log('multi')
-            MIP.setData({
-                title: 'ckkkk changing multi'
-            });
-        });
-        MIP.watch(['userInfo', 'userInfo.name'], function (newVal, oldVal) {
-            console.log('userInfo', newVal, oldVal);
-        });
-    </script> -->
     <script src="../../dist/mip.js"></script>
     <!-- <script src="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script> -->
     <script src="./components/mip-complevel2.js"></script>
     <script src="./components/mip-complevel1.js"></script>
     <script src="https://c.mipcdn.com/static/v1/mip-form/mip-form.js"></script>
     <script src="./components/mip-global.js"></script>
+    <script src="./components/mip-shell-is.js"></script>
     <script src="http://127.0.0.1:8111/mip-script/mip-script.js"></script>
-    <script>
-        window.onload = function () {
-            window.MIP.viewer.page.togglePageMask(true)
-        }
-    </script>
-    <!-- <div style="position: fixed; top: 0;left:0;right:0;bottom:0;background: rgba(0,0,0,0.5);z-index: 9999999"></div> -->
 
 </body>
