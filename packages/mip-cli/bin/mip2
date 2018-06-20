@@ -5,6 +5,7 @@ const semver = require('semver')
 const requiredNodeVersion = require('../package').engines.node
 const version = require('../package').version
 const checkVersion = require('../lib/check-version')
+const {showPluginCmdHelpInfo} = require('../lib/utils/plugin')
 
 if (!semver.satisfies(process.version, requiredNodeVersion)) {
   console.log(cli.chalk.red(
@@ -25,9 +26,13 @@ checkVersion().then(() => {
     .command('build', cli.chalk.green('组件打包'))
     .command('sw', cli.chalk.green('生成 Service Worker'))
     .command('addPlugin', 'default for add Plugin', {isDefault: true, noHelp: true})
+    .on('--help', () => {
+      // only for user plugin command's help info
+      showPluginCmdHelpInfo()
+    })
     .parse(process.argv)
 
-  // input only `mip2`, show help info
+  // if input only `mip2`, show help info
   if (cli.program.args[0] === 'addPlugin' && cli.program.args.length === 1) {
     cli.program.help()
   }
