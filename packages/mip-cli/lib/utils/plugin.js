@@ -13,6 +13,10 @@ const chalk = require('chalk')
 // under specific scope：@somescope/mip-cli-plugin-xxx
 const pluginREG = /^(mip-|@[\w-]+\/mip-)cli-plugin-/
 
+// mip2 & mip-cli-plugin-xxx install path
+const installedPath = path.join(__dirname, '../../..')
+// const installedPath = path.resolve(__dirname, '../../../../node_modules') // for dev mode only
+
 exports.resolvePluginName = name => {
   if (pluginREG.test(name)) {
     return name
@@ -28,8 +32,7 @@ exports.installPackage = async (targetDir, command, packageName) => {
 }
 
 exports.isInstalled = pkg => {
-  // const packageDir = path.resolve(__dirname, '../../..', pkg)
-  const packageDir = path.resolve(__dirname, '../../../../node_modules', pkg)
+  const packageDir = path.join(installedPath, pkg)
   return fs.existsSync(packageDir)
 }
 
@@ -101,10 +104,7 @@ exports.showPluginCmdHelpInfo = () => {
 }
 
 exports.getPluginPackages = () => {
-  // let installDir = path.join(__dirname, '../../..')
-  let installDir = path.join(__dirname, '../../../../node_modules')
-
-  let pkgs = fs.readdirSync(installDir)
+  let pkgs = fs.readdirSync(installedPath)
   return pkgs.filter(item => pluginREG.test(item))
 }
 

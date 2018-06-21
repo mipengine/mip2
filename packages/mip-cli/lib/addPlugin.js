@@ -23,8 +23,14 @@ module.exports = async function addPlugin ({pluginName, options = {}, context = 
 
   // install if necessary
   if (!isInstalled(packageName)) {
-    cli.info(`Ready to install ${cli.chalk.cyan(packageName)} automatically...`)
-    await installPackage(path.resolve(__dirname, '../../..'), 'npm', packageName)
+    cli.info(`Built-in command not found. Ready to install ${cli.chalk.cyan(packageName)} automatically...`)
+
+    try {
+      await installPackage(path.resolve(__dirname, '../../..'), 'npm', packageName)
+    } catch (e) {
+      return cli.warn(`${cli.chalk.cyan(packageName)} does not exist, check your input again.`)
+    }
+
     cli.info(`${cli.chalk.cyan(packageName)} successfully installed`)
   }
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const cli = require('../lib/cli')
-const add = require('../lib/addPlugin')
+const addPlugin = require('../lib/addPlugin')
 
 cli.program.parse(process.argv)
 
@@ -10,7 +10,7 @@ if (!cli.program.args.length) {
   return
 }
 
-add({
+addPlugin({
   pluginName: cli.program.args[0],
   options: cli.program
 })
