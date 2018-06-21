@@ -1,0 +1,14 @@
+/**
+ * @file karma.dev.conf.js
+ * @author huanghuiquan (huanghuiquan@baidu.com)
+ */
+
+const base = require('./karma.base.conf')
+
+module.exports = function (config) {
+  config.set(Object.assign(base, {
+    plugins: base.plugins.concat([
+      'karma-chrome-launcher'
+    ])
+  }))
+}
