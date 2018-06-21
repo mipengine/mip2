@@ -30,7 +30,7 @@ export function toArray (list, start = 0) {
 
 /**
  * object string parser like JSON5
- * borrowed form https://github.com/douglascrockford/JSON-js/blob/9139a9f6729f3c1623ca3ff5ccd58dec1523acab/json2.js
+ * Refer to https://github.com/douglascrockford/JSON-js/blob/9139a9f6729f3c1623ca3ff5ccd58dec1523acab/json2.js
  *
  * @param {String} jsonStr Object string
  */
@@ -39,8 +39,11 @@ export function parseJSON (jsonStr) {
   let rxone = /^[\],:{}\s]*$/
   let rxtwo = /\\(?:["'\\/bfnrt]|u[0-9a-fA-F]{4})/g
   let rxthree = /"[^"\\\n\r]*"|'[^'\\\n\r]*'|[+-]?(Infinity|NaN)|([\u2e80-\u9fff]+|[_\w$][_\w\d$]*)\s*:|true|false|null|[+-]?\.?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?([xX][0-9a-fA-F]{1,2})?/g
-  let rxfour = /(?:^|:|,)?(?:\s*\[)+/g
-  let validate = jsonStr.replace(rxtwo, '@').replace(rxthree, ']').replace(rxfour, '')
+  let rxfour = /(?:^|:|,)(?:\s*\[)+/g
+  let validate = jsonStr
+    .replace(rxtwo, '@')
+    .replace(rxthree, item => (']' + /:$/.test(item) ? ':' : ''))
+    .replace(rxfour, '')
 
   if (rxone.test(validate)) {
     try {

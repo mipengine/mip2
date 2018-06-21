@@ -5,7 +5,7 @@
 
 /* global Image */
 
-import util from '../util'
+import util from '../util/index'
 import CustomElement from '../custom-element'
 
 /**

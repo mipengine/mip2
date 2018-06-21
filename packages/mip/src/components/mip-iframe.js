@@ -3,7 +3,7 @@
  * @author zhangzhiqiang(zhiqiangzhang37@163.com)
  */
 
-import util from '../util'
+import util from '../util/index'
 import CustomElement from '../custom-element'
 
 let attrList = ['allowfullscreen', 'allowtransparency', 'sandbox']
