@@ -17,10 +17,10 @@ function componentsDir (dir) {
 //     ];
 // }
 
-function componentPath (dir, id) {
-  let compDir = componentsDir(dir)
-  return path.resolve(compDir, id, id + '.vue')
-}
+// function componentPath (dir, id) {
+//   let compDir = componentsDir(dir)
+//   return path.resolve(compDir, id, id + '.vue')
+// }
 
 function testDir (dir) {
   return path.resolve(dir, 'example')
@@ -34,11 +34,28 @@ function storeDir (dir) {
   return path.resolve(dir, 'store')
 }
 
+function isComponentPath (rootDir, pathname) {
+  // let basename = path.basename(pathname)
+  // 非入口文件的增减则不做任何处理
+  if (!/(mip-[\w-]+)\/\1\.(vue|js)$/.test(pathname)) {
+    return false
+  }
+
+  let basename = path.basename(pathname)
+
+  return path.resolve(
+    componentsDir(rootDir),
+    path.basename(basename, path.extname(basename)),
+    basename
+  ) === path.resolve(pathname)
+}
+
 module.exports = {
   components: componentsDir,
-  componentPath: componentPath,
+  // componentPath: componentPath,
   componentTestDir: componentTestDir,
   // possibleComponents: possibleComponentPaths,
   test: testDir,
-  store: storeDir
+  store: storeDir,
+  isComponentPath
 }

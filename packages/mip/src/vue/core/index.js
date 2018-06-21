@@ -3,8 +3,6 @@
  * @author sfe-sy(sfe-sy@baidu.com)
  */
 
-/* global __VERSION__ */
-
 import Vue from './instance/index'
 import {initGlobalAPI} from './global-api/index'
 import {isServerRendering} from 'core/util/env'
@@ -22,6 +20,6 @@ Object.defineProperty(Vue.prototype, '$ssrContext', {
   }
 })
 
-Vue.version = __VERSION__
+Vue.version = '__VERSION__'
 
 export default Vue

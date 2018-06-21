@@ -8,7 +8,7 @@
 import platform from './util/platform'
 import css from './util/dom/css'
 import layout from './layout'
-import util from './util'
+import util from './util/index'
 
 /**
  * The fixed element processor.

@@ -7,7 +7,7 @@ import css from '../../util/dom/css'
 import sandbox from '../../sandbox'
 import viewport from '../../viewport'
 
-import {MIP_IFRAME_CONTAINER} from '../const'
+import {MIP_IFRAME_CONTAINER} from '../const/index'
 import {raf, transitionEndEvent, animationEndEvent} from './feature-detect'
 
 let {window: sandWin, document: sandDoc} = sandbox

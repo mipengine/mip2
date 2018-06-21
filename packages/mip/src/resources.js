@@ -4,7 +4,7 @@
  */
 
 import fn from './util/fn'
-import Gesture from './util/gesture'
+import Gesture from './util/gesture/index'
 // import viewport from './viewport'
 import rect from './util/dom/rect'
 

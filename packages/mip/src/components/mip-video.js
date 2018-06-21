@@ -4,7 +4,7 @@
  * @version 1.0
  * @copyright 2016 Baidu.com, Inc. All Rights Reserved
  */
-import util from '../util'
+import util from '../util/index'
 import viewer from '../viewer'
 import CustomElement from '../custom-element'
 

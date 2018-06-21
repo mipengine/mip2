@@ -30,12 +30,12 @@ import {
   MESSAGE_REGISTER_GLOBAL_COMPONENT
   // MESSAGE_APPSHELL_HEADER_SLIDE_UP,
   // MESSAGE_APPSHELL_HEADER_SLIDE_DOWN,
-} from './const'
+} from './const/index'
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
-import util from '../util'
+import util from '../util/index'
 import viewport from '../viewport'
-import Router from './router'
+import Router from './router/index'
 // import AppShell from './appshell'
 import GlobalComponent from './appshell/globalComponent'
 import '../styles/mip.less'
