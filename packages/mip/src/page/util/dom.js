@@ -229,9 +229,9 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, transitio
     css(loading, 'display', 'block')
     loading.classList.add('slide-enter', 'slide-enter-active')
 
-    let header = document.querySelector('.mip-shell-header-wrapper')
+    let headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
     if (!transitionContainsHeader) {
-      header.classList.add('fade-out')
+      headerLogoTitle.classList.add('fade-out')
     }
 
     // trigger layout
@@ -306,11 +306,11 @@ export function frameMoveOut (pageId, {transition, sourceMeta, targetPageId, tra
   if (transition) {
     // Moving out only needs header, not loading body.
     let loading = getLoading(sourceMeta, {onlyHeader: true, transitionContainsHeader})
-    let header = document.querySelector('.mip-shell-header-wrapper')
+    let headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
     if (transitionContainsHeader) {
       css(loading, 'display', 'block')
     } else {
-      header.classList.add('fade-out')
+      headerLogoTitle.classList.add('fade-out')
     }
 
     iframe.classList.add('slide-leave', 'slide-leave-active')
