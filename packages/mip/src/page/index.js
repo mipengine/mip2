@@ -147,7 +147,6 @@ class Page {
             this.setupBouncyHeader()
           }
         } else if (type === MESSAGE_UPDATE_MIP_SHELL_CONFIG) {
-          // ERROR HERE
           if (data.pageMeta) {
             this.appshellCache[data.pageId] = data.pageMeta
           } else {
@@ -187,75 +186,6 @@ class Page {
         this.setupBouncyHeader()
       }
     }
-  //   let currentPageMeta
-  //   if (this.isRootPage) {
-  //     /**
-  //      * in root page, we need to:
-  //      * 1. read global config from <mip-shell>
-  //      * 2. refresh appshell with current data in <mip-shell>
-  //      * 3. listen to a refresh event emited by current child iframe
-  //      */
-  //     this.readMIPShellConfig()
-
-  //     currentPageMeta = this.findMetaByPageId(this.pageId)
-  //     this.currentPageMeta = currentPageMeta
-
-  //     this.appshell = new AppShell({
-  //       data: this.currentPageMeta
-  //     }, this)
-
-  //     this.globalComponent = new GlobalComponent()
-
-  //     // Create loading div
-  //     createLoading(this.currentPageMeta)
-
-  //     this.messageHandlers.push((type, data) => {
-  //       if (type === MESSAGE_APPSHELL_HEADER_SLIDE_UP) {
-  //         // AppShell header animation
-  //         this.appshell.header.slideUp()
-  //       } else if (type === MESSAGE_APPSHELL_HEADER_SLIDE_DOWN) {
-  //         // AppShell header animation
-  //         this.appshell.header.slideDown()
-  //       } else if (type === MESSAGE_REGISTER_GLOBAL_COMPONENT) {
-  //         // Register global component
-  //         // this.globalComponent.register(data)
-  //       }
-  //     })
-
-  //     // recaculate all the iframes' height
-  //     viewport.on('resize', () => {
-  //       [].slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
-  //         $el.style.height = `${viewport.getHeight()}px`
-  //       })
-  //     })
-  //   } else {
-  //     currentPageMeta = this.router.rootPage.findMetaByPageId(this.pageId)
-  //     /**
-  //      * in child page:
-  //      * 1. notify root page to refresh appshell at first time
-  //      * 2. listen to appshell events such as `click-button` emited by root page
-  //      */
-  //     this.messageHandlers.push((type, event) => {
-  //       if (type === MESSAGE_APPSHELL_EVENT) {
-  //         customEmit(window, event.name, event.data)
-  //       }
-  //     })
-  //   }
-
-  //   let {show: showHeader, bouncy} = currentPageMeta.header
-  //   // set `padding-top` on scroller
-  //   if (showHeader) {
-  //     if (viewport.scroller === window) {
-  //       document.body.classList.add('with-header')
-  //     } else {
-  //       viewport.scroller.classList.add('with-header')
-  //     }
-  //   }
-
-  //   // set bouncy header
-  //   if (bouncy) {
-  //     this.setupBouncyHeader()
-  //   }
   }
 
   /**
@@ -516,6 +446,7 @@ class Page {
    * @param {Object} targetMeta metainfo of targetPage
    * @param {Object} options
    * @param {Object} options.newPage if just created a new page
+   * @param {Function} options.onComplete if just created a new page
    */
   applyTransition (targetPageId, targetMeta, options = {}) {
     let localMeta = this.findMetaByPageId(targetPageId)
@@ -550,6 +481,7 @@ class Page {
               toggle: true
             }
           })
+          options.onComplete && options.onComplete()
         }
       }
 
@@ -561,9 +493,6 @@ class Page {
       frameMoveOut(this.currentPageId, backwardOpitons)
 
       this.direction = null
-      // console.log('refresh appshell maybe deprecated?')
-      // this.refreshAppShell(targetPageId, finalMeta)
-
       // restore scroll position in root page
       if (targetPageId === this.pageId) {
         this.restoreScrollPosition()
@@ -585,13 +514,12 @@ class Page {
               toggle: true
             }
           })
-          // console.log('refresh appshell maybe deprecated?')
-          // this.refreshAppShell(targetPageId, finalMeta)
           /**
            * Disable scrolling of root page when covered by an iframe
            * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
            */
           this.getElementsInRootPage().forEach(e => e.classList.add('hide'))
+          options.onComplete && options.onComplete()
         }
       })
     }
@@ -626,8 +554,8 @@ class Page {
    */
   getElementsInRootPage () {
     let whitelist = [
-      '.mip-page-loading',
       '.mip-page__iframe',
+      '.mip-page-loading-wrapper',
       'mip-shell',
       '[mip-shell]',
       '.mip-shell-header-wrapper',
@@ -702,11 +630,20 @@ class Page {
         // TODO: delete DOM & trigger disconnectedCallback in root page
         this.getElementsInRootPage().forEach(el => el.parentNode && el.parentNode.removeChild(el))
       }
-      // create a new iframe
+      // Create a new iframe
       createIFrame(targetFullPath, targetPageId)
       this.applyTransition(targetPageId, to.meta, {newPage: true})
     } else {
-      this.applyTransition(targetPageId, to.meta)
+      this.applyTransition(targetPageId, to.meta, {
+        onComplete: () => {
+          // Update shell if new iframe has not been created
+          let pageMeta = this.findMetaByPageId(targetPageId)
+          customEmit(window, 'mipShellEvents', {
+            type: 'updateShell',
+            data: {pageMeta}
+          })
+        }
+      })
       window.MIP.$recompile()
     }
 

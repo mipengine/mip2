@@ -1,0 +1,10 @@
+{
+  "env": {
+    "mocha": true
+  },
+  "globals": {
+    "MIP": true,
+    "should": true,
+    "expect": true
+  }
+}

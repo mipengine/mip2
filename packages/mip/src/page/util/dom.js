@@ -73,15 +73,15 @@ function hideAllIFrames () {
  * @param {Object} pageMeta Page meta info
  */
 export function createLoading (pageMeta) {
-  if (document.querySelector('.mip-page-loading')) {
+  if (document.querySelector('#mip-page-loading-wrapper')) {
     return
   }
 
   let loading = document.createElement('mip-fixed')
-  loading.id = 'mip-page-loading'
-  loading.setAttribute('class', 'mip-page-loading')
+  loading.id = 'mip-page-loading-wrapper'
+  loading.setAttribute('class', 'mip-page-loading-wrapper')
   loading.innerHTML = `
-    <div class="mip-page-loading-header mip-border mip-border-bottom">
+    <div class="mip-shell-header mip-border mip-border-bottom">
       <span class="back-button">
         <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M769.405 977.483a68.544 68.544 0 0 1-98.121 0L254.693 553.679c-27.173-27.568-27.173-72.231 0-99.899L671.185 29.976c13.537-13.734 31.324-20.652 49.109-20.652s35.572 6.917 49.109 20.652c27.173 27.568 27.173 72.331 0 99.899L401.921 503.681l367.482 373.904c27.074 27.568 27.074 72.231 0 99.899z"/></svg>
       </span>
@@ -96,15 +96,24 @@ export function createLoading (pageMeta) {
 
 /**
  * Change loading according to targetMeta
+ * Return loading div
  *
  * @param {Object} targetMeta Page meta of target page
  * @param {Object} options
  * @param {boolean} options.onlyHeader Moving out only needs header, not loading body
  * @param {boolean} options.transitionContainsHeader whether transition contains header
+ * @returns {HTMLElement}
  */
 function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
-  let loading = document.querySelector('#mip-page-loading')
+  let loading = document.querySelector('#mip-page-loading-wrapper')
   if (!targetMeta) {
+    return loading
+  }
+
+  // Transition only need header (frameMovingOut) but doesn't contains header (extended from child mip-shell-xxx)
+  // Means doesn't need loading
+  if (!transitionContainsHeader && onlyHeader) {
+    css(loading, 'display', 'none')
     return loading
   }
 
@@ -114,9 +123,9 @@ function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
   }
 
   if (!transitionContainsHeader || !targetMeta.header.show) {
-    css(loading.querySelector('.mip-page-loading-header'), 'display', 'none')
+    css(loading.querySelector('.mip-shell-header'), 'display', 'none')
   } else {
-    css(loading.querySelector('.mip-page-loading-header'), 'display', 'flex')
+    css(loading.querySelector('.mip-shell-header'), 'display', 'flex')
   }
 
   let $logo = loading.querySelector('.mip-shell-header-logo')
@@ -218,8 +227,12 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, transitio
   if (transition) {
     let loading = getLoading(targetMeta, {transitionContainsHeader})
     css(loading, 'display', 'block')
-
     loading.classList.add('slide-enter', 'slide-enter-active')
+
+    let header = document.querySelector('.mip-shell-header-wrapper')
+    if (!transitionContainsHeader) {
+      header.classList.add('fade-out')
+    }
 
     // trigger layout
     /* eslint-disable no-unused-expressions */
@@ -229,6 +242,7 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, transitio
     let done = () => {
       hideAllIFrames()
       css(loading, 'display', 'none')
+
       css(iframe, {
         'z-index': activeZIndex++,
         display: 'block'
@@ -292,10 +306,17 @@ export function frameMoveOut (pageId, {transition, sourceMeta, targetPageId, tra
   if (transition) {
     // Moving out only needs header, not loading body.
     let loading = getLoading(sourceMeta, {onlyHeader: true, transitionContainsHeader})
-    css(loading, 'display', 'block')
+    let header = document.querySelector('.mip-shell-header-wrapper')
+    if (transitionContainsHeader) {
+      css(loading, 'display', 'block')
+    } else {
+      header.classList.add('fade-out')
+    }
 
     iframe.classList.add('slide-leave', 'slide-leave-active')
-    loading.classList.add('slide-leave', 'slide-leave-active')
+    if (transitionContainsHeader) {
+      loading.classList.add('slide-leave', 'slide-leave-active')
+    }
 
     // trigger layout
     /* eslint-disable no-unused-expressions */
@@ -309,15 +330,19 @@ export function frameMoveOut (pageId, {transition, sourceMeta, targetPageId, tra
       })
       css(loading, 'display', 'none')
       iframe.classList.remove('slide-leave-to', 'slide-leave-active')
-      loading.classList.remove('slide-leave-to', 'slide-leave-active')
+      if (transitionContainsHeader) {
+        loading.classList.remove('slide-leave-to', 'slide-leave-active')
+      }
       onComplete && onComplete()
     })
 
     nextFrame(() => {
       iframe.classList.add('slide-leave-to')
       iframe.classList.remove('slide-leave')
-      loading.classList.add('slide-leave-to')
-      loading.classList.remove('slide-leave')
+      if (transitionContainsHeader) {
+        loading.classList.add('slide-leave-to')
+        loading.classList.remove('slide-leave')
+      }
     })
   } else {
     css(iframe, {

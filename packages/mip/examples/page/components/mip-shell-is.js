@@ -16,33 +16,33 @@ class MipShellIS extends window.MIP.builtinComponents.MipShell {
     shellConfig.routes.forEach(routeConfig => {
       routeConfig.meta.header.title = '极速服务'
       routeConfig.meta.header.logo = 'https://www.baidu.com/favicon.ico'
+      routeConfig.meta.header.bouncy = false
     })
 
     let isId = shellConfig.isId
     console.log('Simulate async request with isId:', isId)
     setTimeout(() => {
-      shellConfig.routes.forEach(routeConfig => {
-        routeConfig.meta.header.title = '蓝犀牛'
-        routeConfig.meta.header.logo = 'http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png'
-        routeConfig.meta.header.buttonGroup = [
-          {
-            name: 'share',
-            text: '分享'
-          },
-          {
-            name: 'indexPage',
-            text: '首页'
-          },
-          {
-            name: 'about',
-            text: '关于蓝犀牛'
-          },
-          {
-            name: 'cancel',
-            text: '取消'
-          }
-        ]
-      })
+      shellConfig.routes[0].meta.header.title = '蓝犀牛'
+      shellConfig.routes[0].meta.header.logo = 'http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png'
+      shellConfig.routes[0].meta.header.buttonGroup = [
+        {
+          name: 'share',
+          text: '分享'
+        },
+        {
+          name: 'indexPage',
+          text: '首页'
+        },
+        {
+          name: 'about',
+          text: '关于蓝犀牛'
+        },
+        {
+          name: 'cancel',
+          text: '取消'
+        }
+      ]
+
       this.updateShellConfig(shellConfig)
 
       this.refreshShell({pageId: window.MIP.viewer.page.pageId})
