@@ -35,10 +35,14 @@ export function toArray (list, start = 0) {
  * @param {String} jsonStr Object string
  */
 export function parseJSON (jsonStr) {
-  jsonStr = jsonStr.replace(/\/\/.*\n?/g, '').replace(/\/\*.*\*\//g, '')
+  jsonStr = jsonStr
+    .replace(/(['"]).*?\1/g, item => item.replace(/[/*]/g, s => '\\' + s))
+    .replace(/\/\/.*\n?/g, '')
+    .replace(/\/\*.*\*\//g, '')
+
   let rxone = /^[\],:{}\s]*$/
   let rxtwo = /\\(?:["'\\/bfnrt]|u[0-9a-fA-F]{4})/g
-  let rxthree = /"[^"\\\n\r]*"|'[^'\\\n\r]*'|[+-]?(Infinity|NaN)|([\u2e80-\u9fff]+|[_\w$][_\w\d$]*)\s*:|true|false|null|[+-]?\.?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?([xX][0-9a-fA-F]{1,2})?/g
+  let rxthree = /"[^"\n\r]*"|'[^'\n\r]*'|[+-]?(Infinity|NaN)|([\u2e80-\u9fff]+|[_\w$][_\w\d$]*)\s*:|true|false|null|[+-]?\.?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?([xX][0-9a-fA-F]{1,2})?/g
   let rxfour = /(?:^|:|,)(?:\s*\[)+/g
   let validate = jsonStr
     .replace(rxtwo, '@')
