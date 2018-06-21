@@ -70,7 +70,6 @@ body.with-header {
 }
 
 .mip-page-loading {
-    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -109,6 +108,17 @@ body.with-header {
     }
 }
 
+.mip-page-fade-header {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: @shell-header-height;
+    z-index: 20002!important;
+    display: none;
+    // TODO HERE
+}
+
+.mip-page-fade-header-main,
 .mip-page-loading-header {
     position: fixed;
     right: 0;
