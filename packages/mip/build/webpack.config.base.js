@@ -7,6 +7,7 @@ const path = require('path')
 const webpack = require('webpack')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const version = process.env.VERSION || require('../package.json').version
+const alias = require('./alias')
 
 const resolve = p => path.resolve(__dirname, '../', p)
 const devMode = process.env.NODE_ENV !== 'production'
@@ -27,10 +28,6 @@ module.exports = {
         exclude: /node_modules|fetch.js/,
         loader: 'babel-loader'
       },
-      // {
-      //   test: /\.vue$/,
-      //   loader: 'vue-loader'
-      // },
       {
         test: /\.(css|less)$/,
         use: [
@@ -59,15 +56,7 @@ module.exports = {
   },
 
   resolve: {
-    alias: {
-      vue: resolve('src/vue/platforms/web/entry-runtime'),
-      compiler: resolve('src/vue/compiler'),
-      core: resolve('src/vue/core'),
-      shared: resolve('src/vue/shared'),
-      web: resolve('src/vue/platforms/web'),
-      sfc: resolve('src/vue/sfc'),
-      deps: resolve('deps')
-    }
+    alias
   },
 
   // Expose __dirname to allow automatically setting basename.

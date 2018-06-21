@@ -9,9 +9,6 @@ module.exports = {
   core: resolve('src/vue/core'),
   shared: resolve('src/vue/shared'),
   web: resolve('src/vue/platforms/web'),
-  weex: resolve('src/vue/platforms/weex'),
-  server: resolve('src/vue/server'),
-  entries: resolve('src/vue/entries'),
   sfc: resolve('src/vue/sfc'),
   deps: resolve('deps')
 }
