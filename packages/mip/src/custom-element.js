@@ -19,6 +19,16 @@ class CustomElement {
   }
 
   /**
+   * Set observed attributes
+   *
+   * @static
+   * @return {Array} array of attribute name
+   */
+  static get observedAttributes () {
+    return []
+  }
+
+  /**
    * Apply the fill content style to an element
    *
    * @param {HTMLElement} ele element

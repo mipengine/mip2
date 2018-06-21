@@ -124,7 +124,7 @@
                 "#city": "上海",
                 "city1": "厦门",
                 "#test": "ckkkk2",
-                "lxndata":{
+                "#lxndata":{
                     "user":"未登录",
                     "ordercity":"北京",
                     "carType":3,
@@ -343,11 +343,11 @@
         MIP.watch('lxndata.moveOutAddress.location.lat', function () {
             console.log('lxndata.moveOutAddress.location.lat')
         });
+        MIP.watch('lxndata.ordercity', function () {
+            console.log('lxndata.ordercity')
+        });
         MIP.watch('lxndata', function () {
             console.log('lxndata')
-        });
-        MIP.watch('num', function () {
-            console.log('num changed')
         });
         MIP.watch('num', function () {
             console.log('num changed')

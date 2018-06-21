@@ -61,12 +61,12 @@ class BaseElement extends HTMLElement {
     this.customElement.connectedCallback()
 
     // Add to resource manager.
-    this._resources.add(this)
+    this._resources && this._resources.add(this)
   }
 
   disconnectedCallback () {
     this.customElement.disconnectedCallback()
-    this._resources.remove(this)
+    this._resources && this._resources.remove(this)
     // performance.fsElementLoaded(this);
   }
 
