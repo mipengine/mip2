@@ -343,7 +343,8 @@ class MipShell extends CustomElement {
     this.$buttonMask = mask
     this.$buttonWrapper = buttonWrapper
 
-    this.$wrapper.classList.remove('hide', 'fade-out')
+    this.$wrapper.classList.remove('hide')
+    this.$el.querySelector('.mip-shell-header-logo-title').classList.remove('fade-out')
 
     // Rebind header events
     this.bindHeaderEvents()

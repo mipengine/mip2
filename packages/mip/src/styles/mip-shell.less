@@ -8,13 +8,8 @@
 .mip-shell-header-wrapper {
     z-index: 20000!important;
     height: @shell-header-height;
-    opacity: 1;
-    transition: opacity .35s ease;
     &.hide {
         display: none;
-    }
-    &.fade-out {
-        opacity: 0;
     }
 }
 
@@ -58,6 +53,11 @@
     .mip-shell-header-logo-title {
         margin: 0 auto;
         max-width: 50%;
+        opacity: 1;
+        transition: opacity .35s ease;
+        &.fade-out {
+            opacity: 0;
+        }
 
         .mip-shell-header-logo,
         .mip-shell-header-title {
