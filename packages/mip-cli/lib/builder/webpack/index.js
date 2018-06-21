@@ -135,17 +135,25 @@ module.exports = class WebpackBuilder {
         return
       }
 
-      let basename = path.basename(pathname)
-      // 非入口文件的增减则不做任何处理
-      if (!/^mip-[\w-]+\.vue$/.test(basename)) {
+      if (!projectPath.isComponentPath(this.dir, pathname)) {
         return
       }
 
-      // pathname = path.resolve(pathname);
+      // let basename = path.basename(pathname)
+      // // 非入口文件的增减则不做任何处理
+      // if (!/^mip-[\w-]+\.(vue|js)$/.test(basename)) {
+      //   return
+      // }
 
-      if (projectPath.componentPath(this.dir, basename.slice(0, -4)) !== path.resolve(pathname)) {
-        return
-      }
+      // if (
+      //   path.resolve(
+      //     projectPath.componentDir(this.dir),
+      //     path.basename(basename, path.extname(basename)),
+      //     basename
+      //   ) !== path.resolve(pathname)
+      // ) {
+      //   return
+      // }
 
       // let possibleComponents = projectPath.possibleComponents(this.componentDir, basename.slice(-4));
       // if (possibleComponents.indexOf(pathname) < 0) {

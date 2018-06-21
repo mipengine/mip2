@@ -4,7 +4,7 @@
  */
 
 import {appendScript} from '../util/dom'
-import {BUILT_IN_COMPONENTS} from '../const'
+import {BUILT_IN_COMPONENTS} from '../const/index'
 
 export default class GlobalComponent {
   constructor () {

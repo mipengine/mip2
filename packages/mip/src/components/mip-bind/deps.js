@@ -19,7 +19,7 @@ class Deps {
 
   notify (key) {
     this.subs.forEach(function (sub) {
-      if (sub._exp.match(new RegExp(`${key}$`))) {
+      if (sub._exp.match(new RegExp(`.${key}$`)) || sub._exp === key) {
         sub.update()
       }
     })

@@ -3,7 +3,7 @@
  * @author sekiyika(pengxing@baidu.com)
  */
 
-import util from './util'
+import util from './util/index'
 import viewer from './viewer'
 
 const EventEmitter = util.EventEmitter
