@@ -90,17 +90,25 @@ exports.showPluginCmdHelpInfo = () => {
       description = cmdModule.cli.config.description
     } catch (e) {}
 
-    if (cmd && description) {
-      console.log(`    ${cmd}       ${chalk.green(description)}`)
+    if (cmd) {
+      // used for left-align commands list
+      const MAGIC = 15
+      console.log(`    ${pad(cmd, MAGIC)}${chalk.green(description || '')}`)
     }
-
-    console.log()
   })
+
+  console.log()
 }
 
 exports.getPluginPackages = () => {
   // let installDir = path.join(__dirname, '../../..')
   let installDir = path.join(__dirname, '../../../../node_modules')
+
   let pkgs = fs.readdirSync(installDir)
   return pkgs.filter(item => pluginREG.test(item))
+}
+
+function pad (str, width) {
+  let len = Math.max(0, width - str.length)
+  return str + Array(len + 1).join(' ')
 }
