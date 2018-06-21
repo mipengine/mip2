@@ -11,8 +11,7 @@ import {
   getIFrame,
   frameMoveIn,
   frameMoveOut,
-  createLoading,
-  createFadeHeader
+  createLoading
 } from './util/dom'
 import Debouncer from './util/debounce'
 // import {supportsPassive} from './util/feature-detect'
@@ -142,9 +141,6 @@ class Page {
           this.appshellCache = Object.create(null)
           this.currentPageMeta = this.findMetaByPageId(this.pageId)
           createLoading(this.currentPageMeta)
-          if (!this.transitionContainsHeader) {
-            createFadeHeader(this.currentPageMeta)
-          }
 
           // Set bouncy header
           if (!data.update && this.currentPageMeta.header.bouncy) {
@@ -450,6 +446,7 @@ class Page {
    * @param {Object} targetMeta metainfo of targetPage
    * @param {Object} options
    * @param {Object} options.newPage if just created a new page
+   * @param {Function} options.onComplete if just created a new page
    */
   applyTransition (targetPageId, targetMeta, options = {}) {
     let localMeta = this.findMetaByPageId(targetPageId)
@@ -484,6 +481,7 @@ class Page {
               toggle: true
             }
           })
+          options.onComplete && options.onComplete()
         }
       }
 
@@ -495,9 +493,6 @@ class Page {
       frameMoveOut(this.currentPageId, backwardOpitons)
 
       this.direction = null
-      // console.log('refresh appshell maybe deprecated?')
-      // this.refreshAppShell(targetPageId, finalMeta)
-
       // restore scroll position in root page
       if (targetPageId === this.pageId) {
         this.restoreScrollPosition()
@@ -519,13 +514,12 @@ class Page {
               toggle: true
             }
           })
-          // console.log('refresh appshell maybe deprecated?')
-          // this.refreshAppShell(targetPageId, finalMeta)
           /**
            * Disable scrolling of root page when covered by an iframe
            * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
            */
           this.getElementsInRootPage().forEach(e => e.classList.add('hide'))
+          options.onComplete && options.onComplete()
         }
       })
     }
@@ -561,8 +555,7 @@ class Page {
   getElementsInRootPage () {
     let whitelist = [
       '.mip-page__iframe',
-      '.mip-page-loading',
-      '.mip-page-fade-header',
+      '.mip-page-loading-wrapper',
       'mip-shell',
       '[mip-shell]',
       '.mip-shell-header-wrapper',
@@ -641,14 +634,16 @@ class Page {
       createIFrame(targetFullPath, targetPageId)
       this.applyTransition(targetPageId, to.meta, {newPage: true})
     } else {
-      // Update shell if new iframe has not been created
-      let pageMeta = this.findMetaByPageId(targetPageId)
-      customEmit(window, 'mipShellEvents', {
-        type: 'updateShell',
-        data: {pageMeta}
+      this.applyTransition(targetPageId, to.meta, {
+        onComplete: () => {
+          // Update shell if new iframe has not been created
+          let pageMeta = this.findMetaByPageId(targetPageId)
+          customEmit(window, 'mipShellEvents', {
+            type: 'updateShell',
+            data: {pageMeta}
+          })
+        }
       })
-
-      this.applyTransition(targetPageId, to.meta)
       window.MIP.$recompile()
     }
 

@@ -332,7 +332,6 @@ class MipShell extends CustomElement {
       this.$wrapper.classList.add('hide')
       return
     }
-    this.$wrapper.classList.remove('hide')
 
     // Refresh header
     this.slideHeader('down')
@@ -343,6 +342,8 @@ class MipShell extends CustomElement {
     let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup, {update: true})
     this.$buttonMask = mask
     this.$buttonWrapper = buttonWrapper
+
+    this.$wrapper.classList.remove('hide', 'fade-out')
 
     // Rebind header events
     this.bindHeaderEvents()
