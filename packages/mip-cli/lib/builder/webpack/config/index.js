@@ -43,11 +43,13 @@ module.exports = function (options) {
           exclude: /node_modules/,
           use: options.ignore
             ? [
-              babelLoader
+              babelLoader,
+              path.resolve(__dirname, 'child-component-loader.js')
             ]
             : [
               path.resolve(__dirname, 'sandbox-loader.js'),
-              babelLoader
+              babelLoader,
+              path.resolve(__dirname, 'child-component-loader.js')
             ]
         },
         {
