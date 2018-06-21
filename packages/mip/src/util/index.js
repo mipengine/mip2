@@ -16,7 +16,7 @@ import css from './dom/css'
 import platform from './platform'
 import naboo from './naboo'
 import EventEmitter from './event-emitter'
-import Gesture from './gesture'
+import Gesture from './gesture/index'
 import customStorage from './customStorage'
 
 /**

@@ -11,18 +11,18 @@ import 'script-loader!document-register-element/build/document-register-element'
 
 import Vue from 'vue'
 import vueCustomElement from './vue-custom-element/index'
-import util from './util'
+import util from './util/index'
 import sandbox from './sandbox'
 import layout from './layout'
 import viewer from './viewer'
 import viewport from './viewport'
 import Resources from './resources'
-import builtinComponents from './components'
+import builtinComponents from './components/index'
 import MipShell from './components/mip-shell/index'
 import registerCustomElement from './register-element'
 import sleepWakeModule from './sleepWakeModule'
 import performance from './performance'
-import mip1PolyfillInstall from './mip1-polyfill'
+import mip1PolyfillInstall from './mip1-polyfill/index'
 import componentHelpers from './component-helpers'
 
 import './log/monitor'
@@ -34,13 +34,13 @@ import './log/monitor'
  * @param {*} component vue component
  */
 function registerVueCustomElement (tag, component) {
-  // 对于组件需要暴露一些子组件到外部的情况，可以通过组件的 components 定义 mip-xxx 格式的组件
-  // 这样就可以在组件外部使用 mip-xxx 啦，内部还是照常跟原来一样作为一个 vue 组件使用
-  if (component.components) {
-    Object.keys(component.components)
-      .filter(key => key.slice(0, 4) === 'mip-')
-      .forEach(key => registerVueCustomElement(key, component.components[key]))
-  }
+  // // 对于组件需要暴露一些子组件到外部的情况，可以通过组件的 components 定义 mip-xxx 格式的组件
+  // // 这样就可以在组件外部使用 mip-xxx 啦，内部还是照常跟原来一样作为一个 vue 组件使用
+  // if (component.components) {
+  //   Object.keys(component.components)
+  //     .filter(key => key.slice(0, 4) === 'mip-')
+  //     .forEach(key => registerVueCustomElement(key, component.components[key]))
+  // }
   Vue.customElement(tag, component)
 }
 

@@ -7,7 +7,7 @@
 import 'script-loader!esljs'
 /* eslint-enable import/no-webpack-loader-syntax */
 
-import util from '../util'
+import util from '../util/index'
 import hash from '../util/hash'
 import viewer from '../viewer'
 import viewport from '../viewport'
