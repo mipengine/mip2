@@ -78,6 +78,6 @@
     "document-register-element": "^1.8.1",
     "esljs": "^2.2.1",
     "fetch-jsonp": "^1.1.3",
-    "mip-sandbox": "^1.0.10"
+    "mip-sandbox": "^1.0.12"
   }
 }
