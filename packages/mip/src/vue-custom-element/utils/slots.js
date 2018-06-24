@@ -73,7 +73,7 @@ export function getSlots (innerHTML, createElement, createText) {
       if (child.nodeValue.trim()) {
         slots.push(createText(child.nodeValue))
       }
-    } else if (child.nodeName !== '#comment') {
+    } else if (child.nodeName !== '#comment' && child.tagName !== 'SCRIPT') {
       const attributes = getAttributes(child)
       const elementOptions = {
         attrs: attributes,
@@ -87,14 +87,11 @@ export function getSlots (innerHTML, createElement, createText) {
         attributes.slot = undefined
       }
 
-      if (child.tagName !== 'SCRIPT') {
-        const slotVueElement = (child.tagName === 'TEMPLATE')
-          ? templateElement(createElement, child, elementOptions)
-          : createElement(child.tagName, elementOptions)
-        slots.push(slotVueElement)
-      }
+      const slotVueElement = (child.tagName === 'TEMPLATE')
+        ? templateElement(createElement, child, elementOptions)
+        : createElement(child.tagName, elementOptions)
+      slots.push(slotVueElement)
     }
   })
-
   return slots
 }
