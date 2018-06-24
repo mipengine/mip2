@@ -3,6 +3,7 @@
  * @author wangyisheng@baidu.com (wangyisheng)
  */
 
+import css from '../../util/dom/css'
 import CustomElement from '../../custom-element'
 import fn from '../../util/fn'
 import viewport from '../../viewport'
@@ -345,6 +346,9 @@ class MipShell extends CustomElement {
 
     this.$wrapper.classList.remove('hide')
     this.$el.querySelector('.mip-shell-header-logo-title').classList.remove('fade-out')
+    setTimeout(() => {
+      css(document.querySelector('.mip-page-fade-header-wrapper'), 'display', 'none')
+    }, 350)
 
     // Rebind header events
     this.bindHeaderEvents()

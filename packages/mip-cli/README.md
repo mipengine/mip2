@@ -67,8 +67,45 @@ $ mip2 validate -p page.html
 $ mip2 build
 ```
 
+生成 Service Worker
+
+mip2 CLI 提供了 `sw` 命令，帮助开发者更简单快速地生成 Service Worker，支持离线可用等特性。
+
+``` bash
+# 在项目根目录运行
+$ mip2 sw
+```
+
+默认情况下，将导出 Service Worker 文件到 `dist/sw.js`，并对静态资源(如 js,css)及 html 文档进行缓存，实现页面的离线可用。
+
+`mip2 sw` 命令提供了选项：
+
+``` javascript
+-o, --output // 指定 sw 导出路径，如 mip2 -o output/service-worker.js
+-c, --config // 指定配置文件路径，默认使用项目根目录 mip.config.js
+```
+
+除此之外，我们可以在 `mip.config.js` 中增加 `serviceWorker` 配置项，对 Service Worker 进行进一步的配置，如预缓存列表、动态缓存策略、`skipWaiting`、`clientsClaim` 等。
+
+``` javascript
+module.exports = {
+    dev: {/*...*/},
+    serviceWorker: {
+        cacheId: 'mipuser',
+        skipWaiting: true,
+        clientsClaim: true,
+        runtimeCaching: [],
+        globPatterns: [],
+        globIgnores: []
+    }
+}
+```
+
+更多的配置选项可以参考 [Workbox 配置项](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateswstring_mode)
+
 ## changelog
 
 - 1.0.11
     1. 支持组件通过 `import()` 和 `require.ensure` 异步加载模块
     2. dev 模式自动对组件 script 注入 md5
+
