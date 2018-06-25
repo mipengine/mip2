@@ -274,6 +274,28 @@ describe('generate', function () {
 
         expect(generate(code, keywords.WHITELIST_RESERVED)).to.be.equal(format(expected))
       })
+
+      it('export', function () {
+        var code = `
+          export {haha as hehe} from 'path/to/haha'
+          export {lala} from 'path/to/lala'
+          export function a() {}
+          var b = 123
+          export {b, a as c}
+          export default b
+        `
+
+        var expected = `
+          export {haha as hehe} from 'path/to/haha'
+          export {lala} from 'path/to/lala'
+          export function a() {}
+          var b = 123
+          export {b, a as c}
+          export default b
+        `
+
+        expect(generate(code, keywords.WHITELIST_RESERVED)).to.be.equal(format(expected))
+      })
     })
   })
 

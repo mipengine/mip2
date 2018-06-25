@@ -160,6 +160,9 @@ function mark (ast) {
         node.type = 'Identifier'
         node.name = 'import'
         node.isIgnore = true
+      } else if (is(node, 'ExportSpecifier')) {
+        node.exported.isIgnore = true
+        node.local.isIgnore = true
       }
     }
   })
