@@ -20,6 +20,10 @@ mip-cli 的组件编译模块使用 webpack4 实现，内置了以下 loader：
 
 ## 资源引用
 
+### 资源位置
+
+mip-cli 允许开发者引入 npm 包，通过在项目根目录 `npm install --save [包名]` 安装 npm 包，可在组件代码中通过 `import '[包名]'` 或者是 `require('[包名]')` 的方式引入。同时，对于项目中多个组件公用的资源，可以放在 `common` 文件夹中。
+
 ### 后缀省略
 
 在进行资源引用的时候，允许省略的后缀有：`.js`、`.json`、`.vue`。
@@ -47,8 +51,22 @@ test-proj
     .class-name {
         background: url(~@/static/mip.png);
     }
-<style>
+</style>
 ```
+
+### 异步加载
+
+`mip-cli@1.0.11` 以上版本支持组件异步加载，可通过 `import()` 或 `require.ensure()` 实现，这两个方法返回 Promise 对象，函数的具体说明可以查看 [webpack dynamic import](https://webpack.js.org/guides/code-splitting/#dynamic-imports)，在使用的时候可如下所示：
+
+```javascript
+export default {
+    async mounted() {
+        let etpl = await import('etpl/src/main')
+        console.log(etpl.version)
+    }
+}
+```
+
 ## 沙盒机制
 
 mip 在组件开发的时候限制使用 `window`、`document` 等对象或函数，在组件构建时，会将组件内使用诸如 `document.createElement()` 会被替换成 `mip.sandbox.document.createElement()`，在运行时会限制原有的能力，或者是直接抛出错误。
