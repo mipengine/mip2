@@ -4,7 +4,7 @@
  */
 
 /* eslint-disable import/no-webpack-loader-syntax */
-import 'script-loader!esljs'
+import 'deps/esl.js'
 /* eslint-enable import/no-webpack-loader-syntax */
 
 import util from '../util/index'

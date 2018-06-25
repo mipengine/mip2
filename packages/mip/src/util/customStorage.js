@@ -449,7 +449,8 @@ class CookieStorage {
 
     let cks = document.cookie
     let cookies = cks ? cks.split(';') : []
-    for (let cookie of cookies) {
+    for (let i = 0, len = cookies.length; i < len; i++) {
+      let cookie = cookies[i]
       let items = cookie.split('=')
       if (items[0].trim() === name) {
         return items[1]
