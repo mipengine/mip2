@@ -38,7 +38,7 @@ function build (builds) {
 function buildEntry (config) {
   const output = config.output
   const { file, banner } = output
-  const isProd = false
+  const isProd = true
   return rollup.rollup(config)
     .then(bundle => bundle.generate(output))
     .then(({ code }) => {

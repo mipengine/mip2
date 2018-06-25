@@ -13,5 +13,7 @@ module.exports = {
   server: resolve('src/vue/server'),
   entries: resolve('src/vue/entries'),
   sfc: resolve('src/vue/sfc'),
-  deps: resolve('deps')
+  'deps': resolve('deps'),
+  'script-loader!deps': resolve('deps'),
+  'script-loader!document-register-element': resolve('node_modules/document-register-element')
 }

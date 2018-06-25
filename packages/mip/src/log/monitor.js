@@ -4,15 +4,17 @@
  * @author schoeu
  */
 
-const ls = require('./logSend')
-let tags = require('./coreTags')
-const RATE = 0.1
+import ls from './logSend'
+import coreTags from './coreTags'
 
-if (!Array.isArray(tags)) {
+const RATE = 0.1
+let tags
+
+if (!Array.isArray(coreTags)) {
   tags = []
 }
 
-tags = tags.filter((it = '') => !!it.trim())
+tags = coreTags.filter((it = '') => !!it.trim())
 
 /**
  * MIP错误捕获处理

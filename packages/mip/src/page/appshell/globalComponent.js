@@ -37,7 +37,7 @@ export default class GlobalComponent {
     })
   }
 
-  async register ({name, html, src}) {
+  register ({name, html, src}) {
     console.log('register', name)
     // Each global component can be registered only once
     if (this.registeredGlobalComponent.indexOf(name) !== -1) {
@@ -46,8 +46,9 @@ export default class GlobalComponent {
 
     // Add component script if needed
     if (src && this.loadedScripts.indexOf(name) === -1 && BUILT_IN_COMPONENTS.indexOf(name) === -1) {
-      await appendScript(src)
-      this.loadedScripts.push(name)
+      appendScript(src).then(() => {
+        this.loadedScripts.push(name)
+      })
     }
 
     document.body.innerHTML += html

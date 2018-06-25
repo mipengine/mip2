@@ -59,9 +59,9 @@ class Watcher {
   }
 
   teardown () {
-    for (let key of Object.keys(this._depIds)) {
+    Object.keys(this._depIds).forEach(key => {
       this._depIds[key].subs = []
-    }
+    })
   }
 }
 
