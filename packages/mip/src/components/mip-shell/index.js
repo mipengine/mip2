@@ -178,6 +178,8 @@ class MipShell extends CustomElement {
     this.$pageMask = createPageMask()
 
     document.body.insertBefore(this.$wrapper, document.body.firstChild)
+
+    window.MIP.viewer.fixedElement.init()
   }
 
   renderHeader (pageMeta) {
