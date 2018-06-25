@@ -20,13 +20,13 @@ export function objNotEmpty (obj) {
 
 export function arrayToObject (arr) {
   let obj = {}
-  for (let item of arr) {
+  arr.forEach(item => {
     if (isObject(item)) {
       Object.assign(obj, item)
     } else {
       obj[item] = true
     }
-  }
+  })
   return obj
 }
 
@@ -45,9 +45,9 @@ export function parseClass (classSpecs) {
 
   let newClasses = {}
   if (isObject(classSpecs)) {
-    for (let k of Object.keys(classSpecs)) {
+    Object.keys(classSpecs).forEach(k => {
       k && (newClasses[k] = classSpecs[k])
-    }
+    })
     return newClasses
   }
 }
@@ -56,16 +56,16 @@ export function parseStyle (styleSpecs) {
   let styles = {}
 
   if (isArray(styleSpecs)) {
-    for (let styleObj of styleSpecs) {
+    styleSpecs.forEach(styleObj => {
       styles = Object.assign(styles, parseStyle(styleObj))
-    }
+    })
     return styles
   }
   if (!isObject(styleSpecs)) {
     return ''
   }
 
-  for (let k of Object.keys(styleSpecs)) {
+  Object.keys(styleSpecs).forEach(k => {
     let normalizedName = normalize(k)
     let newKey = normalizedName.replace(/[A-Z]/g, match => '-' + match.toLowerCase())
     let val = styleSpecs[k]
@@ -76,7 +76,7 @@ export function parseStyle (styleSpecs) {
     } else {
       styles[newKey] = val
     }
-  }
+  })
   return styles
 }
 
@@ -120,8 +120,8 @@ export function objectToStyle (obj) {
   }
 
   let styles = ''
-  for (let k of Object.keys(obj)) {
+  Object.keys(obj).forEach(k => {
     styles += `${k}:${obj[k]};`
-  }
+  })
   return styles
 }

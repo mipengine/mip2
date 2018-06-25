@@ -17,7 +17,7 @@ class Observer {
   }
 
   _define (data, key, value, depMap) {
-    if (!depMap[key]) {
+    if (typeof depMap[key] === 'undefined') {
       return
     }
 
