@@ -60,7 +60,7 @@
 </head>
 
 <body>
-    <mip-shell-is [mip-shell]>
+    <mip-shell-is mip-shell>
         <script type="application/json">
         {
             "routes": [
@@ -69,6 +69,9 @@
                     "meta": {
                         "header": {
                             "show": true
+                        },
+                        "view": {
+                            "isIndex": true
                         }
                     }
                 },
