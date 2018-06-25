@@ -14,10 +14,6 @@
 }
 
 .mip-shell-header {
-    position: fixed;
-    right: 0;
-    left: 0;
-    top: 0;
     display: flex;
     align-items: center;
     z-index: 20000;
@@ -29,11 +25,19 @@
     transform: translate3d(0, 0, 0);
 
     &.transition {
-        transition: transform ease 300ms;
+        transition: transform .35s ease;
     }
 
     &.slide-up {
         transform: translate3d(0, (-@shell-header-height), 0);
+    }
+
+    [mip-header-btn] {
+        height: 30px;
+        width: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .back-button {
@@ -42,8 +46,6 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 30px;
-        width: 30px;
         & > svg {
             width: 14px;
             height: 14px;
@@ -53,6 +55,11 @@
     .mip-shell-header-logo-title {
         margin: 0 auto;
         max-width: 50%;
+        opacity: 1;
+        transition: opacity .35s ease;
+        &.fade-out {
+            opacity: 0;
+        }
 
         .mip-shell-header-logo,
         .mip-shell-header-title {
@@ -110,11 +117,10 @@
         top: 7px;
         right: 0;
 
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        
         height: 30px;
         width: 40px;
+
         & > svg {
             width: 20px;
             height: 20px;
@@ -123,7 +129,6 @@
 }
 
 .mip-shell-more-button-mask {
-    position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
@@ -135,7 +140,6 @@
 
 .mip-shell-more-button-wrapper {
     transition: all .35s ease;
-    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
@@ -161,7 +165,6 @@
 }
 
 .mip-shell-header-mask {
-    position: fixed;
     top: 0;
     right: 0;
     left: 0;

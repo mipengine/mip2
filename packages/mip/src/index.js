@@ -4,9 +4,12 @@
  */
 
 /* eslint-disable import/no-webpack-loader-syntax */
+// add polyfills
 import 'script-loader!deps/fetch.js'
-import 'script-loader!fetch-jsonp'
+import 'script-loader!deps/fetch-jsonp.js'
 import 'script-loader!document-register-element/build/document-register-element'
+import 'deps/promise.js'
+import 'deps/object-assign.js'
 /* eslint-enable import/no-webpack-loader-syntax */
 
 import Vue from 'vue'

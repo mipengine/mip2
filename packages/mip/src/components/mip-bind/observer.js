@@ -7,7 +7,7 @@ import Deps from './deps'
 import {isObject} from './util'
 class Observer {
   _walk (data, depMap) {
-    if (!data || typeof data !== 'object') {
+    if (typeof data !== 'object' || typeof depMap !== 'object') {
       return
     }
 
@@ -17,6 +17,10 @@ class Observer {
   }
 
   _define (data, key, value, depMap) {
+    if (!depMap[key]) {
+      return
+    }
+
     // if value is object, define it's value
     let me = this
     let deep = false

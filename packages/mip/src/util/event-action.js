@@ -154,7 +154,8 @@ class EventAction {
    * @param {Array.<Object>} actions event action
    */
   _execute (actions) {
-    for (let action of actions) {
+    for (let i = 0, len = actions.length; i < len; i++) {
+      let action = actions[i]
       let globalTarget = this.globalTargets[action.id]
       if (globalTarget) {
         globalTarget(action)
@@ -173,7 +174,8 @@ class EventAction {
     }
     let actions = actionString.trim().split(' ')
     let result = []
-    for (let action of actions) {
+    for (let i = 0, len = actions.length; i < len; i++) {
+      let action = actions[i]
       let matchedResult = action.match(PARSE_REG)
       if (matchedResult && matchedResult[1] === type) {
         result.push({

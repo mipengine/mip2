@@ -79,6 +79,7 @@ let viewer = {
 
     this.page.start()
 
+    this.fixedElement = fixedElement
     fixedElement.init()
 
     // Only send at first time

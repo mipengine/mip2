@@ -45,7 +45,8 @@ class EventEmitter {
       '_getEvent', '_removeEventCallback'
     ]
 
-    for (let key of whitelist) {
+    for (let i = 0, len = whitelist.length; i < len; i++) {
+      let key = whitelist[i]
       if (obj[key]) {
         continue
       }

@@ -13,6 +13,8 @@ module.exports = function (config) {
     ignore: config.ignore
   })
 
+  config.app.builder = builder
+
   return [
     async function (ctx, next) {
       await builder.dev(ctx, next)

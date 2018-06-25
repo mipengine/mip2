@@ -8,13 +8,14 @@
     "build": "node build/build.js",
     "uploadjs": "baidubce bos --put-object dist/mip.js bos://assets/mip/projects/mip.js",
     "uploadcss": "baidubce bos --put-object dist/mip.css bos://assets/mip/projects/mip.css",
-    "deploy:dev": "npm run build && npm run uploadjs && npm run uploadcss"
+    "deploy:dev": "npm run build && npm run uploadjs && npm run uploadcss",
+    "test:dev": "cross-env NODE_ENV=test karma start test/karma.dev.conf.js",
+    "test:cover": "cross-env NODE_ENV=test karma start test/karma.cover.conf.js"
   },
   "devDependencies": {
     "autoprefixer": "^8.4.1",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.3",
-    "babel-plugin-external-helpers": "^6.22.0",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "babel-plugin-transform-builtin-classes": "^0.6.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
@@ -22,7 +23,9 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-vue": "^2.0.2",
     "babel-runtime": "^6.26.0",
+    "chai": "^4.1.2",
     "chalk": "^2.4.1",
+    "cross-env": "^5.2.0",
     "css-loader": "^0.28.11",
     "es6-promise": "^4.2.4",
     "express": "^4.16.3",
@@ -31,9 +34,19 @@
     "fs-extra": "^6.0.0",
     "he": "^1.1.1",
     "http-proxy-middleware": "^0.18.0",
+    "istanbul-instrumenter-loader": "^3.0.1",
+    "karma": "^2.0.3",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-coverage": "^1.1.2",
+    "karma-mocha": "^1.3.0",
+    "karma-mocha-reporter": "^2.2.5",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-webpack": "^3.0.0",
     "less": "^3.0.4",
     "less-loader": "^4.1.0",
     "mini-css-extract-plugin": "^0.4.0",
+    "mocha": "^5.2.0",
     "ora": "^2.1.0",
     "path-to-regexp": "^1.7.0",
     "postcss-csso": "^3.0.0",
@@ -62,8 +75,6 @@
   },
   "dependencies": {
     "document-register-element": "^1.8.1",
-    "esljs": "^2.2.1",
-    "fetch-jsonp": "^1.1.3",
-    "mip-sandbox": "^1.0.10"
+    "mip-sandbox": "^1.0.13"
   }
 }
