@@ -127,7 +127,7 @@ let BaseElement = _fixBabelExtend(function (_HTMLElement) {
      *
      * @type {NodeList}
      */
-    this.templates = this.querySelectorAll('template[type^=mip-]')
+    _this.templates = _this.querySelectorAll('template[type^=mip-]')
 
     /**
      * Instantiated the custom element.
