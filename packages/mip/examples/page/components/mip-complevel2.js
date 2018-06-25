@@ -28,11 +28,12 @@ MIP.registerVueCustomElement('mip-complevel2', {
     num: Number
   },
   mounted () {
-    console.log(this.userinfo)
-    console.log(this.msg)
-    console.log(typeof this.loading)
-    console.log(this.list)
-    console.log(this.num)
+    // console.log(this.loading)
+    // console.log(this.userinfo)
+    // console.log(this.msg)
+    // console.log(typeof this.loading)
+    // console.log(this.list)
+    // console.log(this.num)
   },
   updated () {
     // console.log(this.loading)

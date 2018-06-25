@@ -6,7 +6,7 @@
 import Compile from './compile'
 import Observer from './observer'
 import Watcher from './watcher'
-import {isObj, objNotEmpty} from './util'
+import {isObject, objNotEmpty} from './util'
 
 /* global MIP */
 /* eslint-disable no-new-func */
@@ -189,7 +189,7 @@ class Bind {
 
 function assign (oldData, newData) {
   for (let k of Object.keys(newData)) {
-    if (isObj(newData[k]) && oldData[k] && isObj(oldData[k])) {
+    if (isObject(newData[k]) && oldData[k] && isObject(oldData[k])) {
       assign(oldData[k], newData[k])
       let obj = JSON.parse(JSON.stringify({
         [k]: oldData[k]

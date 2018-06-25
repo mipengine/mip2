@@ -4,18 +4,24 @@
  */
 
 import Deps from './deps'
+import {parseContent} from './util'
 
 class Watcher {
   constructor (node, data, dir, exp, cb) {
     this._data = data
     this._dir = dir
     this._exp = exp
+    let specPrefix
+    if ((specPrefix = exp.slice(0, 6)) === 'class:' || specPrefix === 'style:') {
+      this._specWatcher = specPrefix.slice(0, 5)
+      this._exp = exp = exp.slice(6)
+    }
     this._node = node
     this._depIds = {}
     if (typeof exp === 'function') {
       this._getter = exp
     } else {
-      let fn = this.getWithResult.bind(this, exp)
+      let fn = this.getWithResult.bind(this, this._exp)
       this._getter = fn.call(this._data)
     }
     this._cb = cb
@@ -46,6 +52,7 @@ class Watcher {
     Deps.target = this
     if (this._getter) {
       value = this._getter.call(this._data, this._data)
+      this._specWatcher && (value = parseContent(value, this._specWatcher))
     }
     Deps.target = null
     return value

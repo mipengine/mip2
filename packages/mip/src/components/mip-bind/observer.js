@@ -4,7 +4,7 @@
  */
 
 import Deps from './deps'
-import {isObj} from './util'
+import {isObject} from './util'
 class Observer {
   _walk (data, depMap) {
     if (!data || typeof data !== 'object') {
@@ -67,9 +67,9 @@ class Observer {
           value = newVal
         }
         me._walk(newVal, depMap[key])
-        if (depMap[key]._deps && !isObj(newVal)) {
+        if (depMap[key]._deps && !isObject(newVal)) {
           depMap[key] = depMap[key]._deps
-        } else if (depMap[key].isDep && isObj(newVal)) {
+        } else if (depMap[key].isDep && isObject(newVal)) {
           depMap[key]._deps = depMap[key]
         }
         deps.notify(key)
