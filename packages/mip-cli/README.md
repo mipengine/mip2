@@ -3,7 +3,7 @@
 
 Command Line Interface for MIP 2.0.
 
-### Installation
+## Installation
 
 Prerequisites: [Node.js](https://nodejs.org/en/) (>=8.x), npm version 3+ and [Git](https://git-scm.com/).
 
@@ -11,7 +11,7 @@ Prerequisites: [Node.js](https://nodejs.org/en/) (>=8.x), npm version 3+ and [Gi
 $ npm install -g mip2
 ```
 
-### Usage
+## Usage
 
 创建项目
 
@@ -102,3 +102,10 @@ module.exports = {
 ```
 
 更多的配置选项可以参考 [Workbox 配置项](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateswstring_mode)
+
+## changelog
+
+- 1.0.11
+    1. 支持组件通过 `import()` 和 `require.ensure` 异步加载模块
+    2. dev 模式自动对组件 script 注入 md5
+

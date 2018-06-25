@@ -32,14 +32,20 @@
         transform: translate3d(0, (-@shell-header-height), 0);
     }
 
+    [mip-header-btn] {
+        height: 30px;
+        width: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
     .back-button {
         position: absolute;
         top: 7px;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 30px;
-        width: 30px;
         & > svg {
             width: 14px;
             height: 14px;
@@ -111,11 +117,10 @@
         top: 7px;
         right: 0;
 
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        
         height: 30px;
         width: 40px;
+
         & > svg {
             width: 20px;
             height: 20px;

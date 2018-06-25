@@ -10,11 +10,33 @@ var expect = chai.expect
 var generateFull = require('../../lib/generate')
 var generateLite = require('../../lib/generate-lite')
 var keywords = require('../../lib/keywords')
-var esprima = require('esprima')
+// var esprima = require('esprima')
+var acorn = require('acorn-dynamic-import').default
+var estraverse = require('estraverse')
 var escodegen = require('../../deps/escodegen')
 
 function format (a) {
-  return escodegen.generate(esprima.parseModule(a))
+  // return escodegen.generate(esprima.parseModule(a))
+  var ast = acorn.parse(a, {
+    ecmaVersion: 8,
+    sourceType: 'module',
+    locations: true,
+    plugins: {
+      dynamicImport: true
+    }
+  })
+
+  estraverse.traverse(ast, {
+    enter: function (node) {
+      if (node.type === 'Import') {
+        node.type = 'Identifier'
+        node.name = 'import'
+        node.isIgnore = true
+      }
+    }
+  })
+
+  return escodegen.generate(ast)
 }
 
 var gen = {
@@ -223,6 +245,34 @@ describe('generate', function () {
           keywords.WHITELIST_STRICT_RESERVED,
           {prefix: 'MIP.sandbox.strict'}
         )).to.be.equal(format(expectedInStrict))
+      })
+
+      it('#dynamic import', function () {
+        var code = `
+          var dynamicA = import('path/to/a')
+          export default {
+            async mounted () {
+              var a = await dynamicA
+              var b = await import('path/to/b')
+              console.log(a)
+              console.log(c)
+            }
+          }
+        `
+
+        var expected = `
+          var dynamicA = import('path/to/a')
+          export default {
+            async mounted () {
+              var a = await dynamicA
+              var b = await import('path/to/b')
+              console.log(a)
+              console.log(MIP.sandbox.c)
+            }
+          }
+        `
+
+        expect(generate(code, keywords.WHITELIST_RESERVED)).to.be.equal(format(expected))
       })
     })
   })
