@@ -3,6 +3,7 @@
 /* global mipDataPromises */
 
 import CustomElement from '../../custom-element'
+import jsonParse from '../../util/json-parse'
 
 class MipData extends CustomElement {
   build () {
@@ -15,7 +16,7 @@ class MipData extends CustomElement {
       let data = ele.textContent.toString()
       let result
       try {
-        result = JSON.parse(data)
+        result = jsonParse(data)
       } catch (e) {
         console.error(e)
       }
