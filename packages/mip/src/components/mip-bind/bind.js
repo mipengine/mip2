@@ -82,7 +82,7 @@ class Bind {
           !cancel && this._postMessage(classified.globalData)
         }
         data = classified.pageData
-        for (let field of Object.keys(data)) {
+        Object.keys(data).forEach(field => {
           if (win.pgStates.has(field)) {
             assign(win.m, {
               [field]: data[field]
@@ -90,7 +90,7 @@ class Bind {
           } else {
             this._dispatch(field, data[field], cancel, win)
           }
-        }
+        })
       }
     } else {
       console.error('setData method must accept an object!')
@@ -99,9 +99,7 @@ class Bind {
 
   _bindWatch (target, cb) {
     if (target.constructor === Array) {
-      for (let key of target) {
-        MIP.watch(key, cb)
-      }
+      target.forEach(key => MIP.watch(key, cb))
       return
     }
     if (typeof target !== 'string') {
@@ -160,11 +158,11 @@ class Bind {
     let g = win.MIP.MIP_ROOT_PAGE ? win.g : win.parent.g
     Object.assign(win.m, data)
     !cancel && Object.keys(data).forEach(k => win.pgStates.add(k))
-    for (let key of Object.keys(g)) {
+    Object.keys(g).forEach(key => {
       if (!win.pgStates.has(key) && win.m.hasOwnProperty(key)) {
         win.m[key] = g[key]
       }
-    }
+    })
     win.m.__proto__ = win.MIP.MIP_ROOT_PAGE ? win.g : win.parent.g // eslint-disable-line no-proto
   }
 
@@ -172,13 +170,13 @@ class Bind {
     let globalData = {}
     let pageData = {}
 
-    for (let k of Object.keys(data)) {
+    Object.keys(data).forEach(k => {
       if (/^#/.test(k)) {
         globalData[k.substr(1)] = data[k]
       } else {
         pageData[k] = data[k]
       }
-    }
+    })
 
     return {
       globalData,
@@ -188,7 +186,7 @@ class Bind {
 }
 
 function assign (oldData, newData) {
-  for (let k of Object.keys(newData)) {
+  Object.keys(newData).forEach(k => {
     if (isObj(newData[k]) && oldData[k] && isObj(oldData[k])) {
       assign(oldData[k], newData[k])
       let obj = JSON.parse(JSON.stringify({
@@ -198,7 +196,7 @@ function assign (oldData, newData) {
     } else {
       oldData[k] = newData[k]
     }
-  }
+  })
 }
 
 export default Bind

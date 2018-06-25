@@ -48,9 +48,7 @@ body.with-header {
 }
 
 .mip-page__iframe {
-    // opacity: 0.9; // test for iOS scroll in body
     position: fixed;
-    // position: absolute;
     left: 0;
     top: 0;
     right: 0;
@@ -59,14 +57,6 @@ body.with-header {
     min-width: 100%;
     background: #fff;
     z-index: 10000;
-    display: none;
-
-    // &.with-header {
-    //     html.mip-html-wrapper {
-    //         padding-top: @shell-header-height;
-    //     }
-    //     // height: calc(100% - 44px);
-    // }
 }
 
 .mip-page-loading-wrapper {
@@ -105,6 +95,51 @@ body.with-header {
     &.slide-enter-to,
     &.slide-leave {
         transform: translate3d(0, 0, 0);
+    }
+}
+
+.mip-page-fade-header-wrapper {
+    top: 0;
+    left: 36px;
+    right: 36px;
+    height: @shell-header-height;
+    background: #fff;
+    z-index: 20001!important;
+    display: none;
+
+    .mip-shell-header-logo-title {
+        margin: 0 auto;
+        max-width: 50%;
+
+        .mip-shell-header-logo,
+        .mip-shell-header-title {
+            float: left;
+        }
+
+        .mip-shell-header-logo {
+            height: 32px;
+            width: 32px;
+            margin: 4px 8px 0 0;
+        }
+
+        .mip-shell-header-title {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            max-width: 100%;
+        }
+    }
+
+    &.fade-enter {
+        opacity: 0
+    }
+
+    &.fade-enter-active {
+        transition: opacity 0.35s ease;
+    }
+
+    &.fade-enter-to {
+        opacity: 1;
     }
 }
 

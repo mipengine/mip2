@@ -20,6 +20,7 @@ module.exports = function (options) {
     output: {
       path: options.outputPath,
       filename: '[name]/[name].js',
+      chunkFilename: '[name].[hash].js',
       publicPath: options.asset.replace(/\/$/, '') + '/'
     },
     mode: options.mode,

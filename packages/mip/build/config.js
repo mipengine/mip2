@@ -1,18 +1,11 @@
 const path = require('path')
-const buble = require('rollup-plugin-babel')
+const buble = require('rollup-plugin-buble')
 const alias = require('rollup-plugin-alias')
 const replace = require('rollup-plugin-replace')
 const less = require('rollup-plugin-less')
 const node = require('rollup-plugin-node-resolve')
 const cjs = require('rollup-plugin-commonjs')
 const version = process.env.VERSION || require('../package.json').version
-
-const banner =
-  '/*!\n' +
-  ' * Mip.js v' + version + '\n' +
-  ' * (c) 2016-' + new Date().getFullYear() + ' Baidu Inc\n' +
-  ' * Released under the MIT License.\n' +
-  ' */'
 
 const aliases = require('./alias')
 const resolve = p => {
@@ -29,8 +22,7 @@ const builds = {
     entry: resolve('mip'),
     dest: resolve('dist/mip.js'),
     format: 'umd',
-    env: 'production',
-    banner
+    env: 'production'
   }
 }
 
@@ -43,13 +35,17 @@ function genConfig (name) {
       replace({
         __VERSION__: version
       }),
+      alias(Object.assign({}, aliases, opts.alias)),
       less({
         output: resolve('dist/mip.css')
       }),
-      buble(),
       node(),
-      cjs(),
-      alias(Object.assign({}, aliases, opts.alias))
+      cjs(
+        {
+          include: 'node_modules/**'
+        }
+      ),
+      buble()
     ].concat(opts.plugins || []),
     output: {
       file: opts.dest,

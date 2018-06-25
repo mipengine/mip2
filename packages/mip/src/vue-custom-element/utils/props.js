@@ -54,6 +54,8 @@ function extractProps (collection, props) {
 
       if (collection[camelCaseProp] && collection[camelCaseProp].type) {
         props.types[prop] = [].concat(collection[camelCaseProp].type)[0]
+      } else if (collection[camelCaseProp]) {
+        props.types[prop] = collection[camelCaseProp]
       }
     }
   }

@@ -115,10 +115,10 @@ module.exports = class WebpackBuilder {
     }
 
     await this.initConfig()
-    let compiler = webpack(this.config)
+    this.compiler = webpack(this.config)
 
     this.midd = middleware({
-      compiler,
+      compiler: this.compiler,
       dev: {
         publicPath: '/',
         stats: 'errors-only'

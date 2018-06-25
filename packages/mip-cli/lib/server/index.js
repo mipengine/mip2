@@ -34,8 +34,8 @@ module.exports = class Server {
       await next()
     }
 
-    let scriptMiddlewares = script({dir: this.dir, asset: this.asset, ignore: this.ignore})
-    let htmlMiddlewares = html({dir: this.dir, livereload: this.livereload})
+    let scriptMiddlewares = script({dir: this.dir, asset: this.asset, ignore: this.ignore, app: this.app})
+    let htmlMiddlewares = html({dir: this.dir, livereload: this.livereload, app: this.app})
 
     this.router = new Router()
     this.router

@@ -3,15 +3,22 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-var esprima = require('esprima')
+var acorn = require('acorn-dynamic-import').default
+// var esprima = require('esprima')
 var estraverse = require('estraverse')
 var is = require('./utils/is')
 
 module.exports = function (code) {
-  var ast = esprima.parseModule(code, {
-    range: true,
-    loc: true
+  var ast = acorn.parse(code, {
+    ecmaVersion: 8,
+    sourceType: 'module',
+    locations: true,
+    plugins: {dynamicImport: true}
   })
+  // var ast = esprima.parseModule(code, {
+  //   range: true,
+  //   loc: true
+  // })
 
   mark(ast)
   scope(ast)
@@ -139,10 +146,23 @@ function mark (ast) {
         }
       } else if (is(node, 'Property')) {
         if (is(node.key, 'Identifier') && !node.computed) {
+          // 在 acorn 里面，类似 var a = {b} 的这种情况 property 的 key 跟 value 指向同一个 Identifier object 非常蛋疼
+          if (node.shorthand) {
+            node.key = clone(node.key)
+            node.key.isIgnore = true
+          }
           node.key.isIgnore = true
         }
       } else if (is(node, 'MethodDefinition') && !node.computed) {
         node.key.isIgnore = true
+      } else if (is(node, 'Import')) {
+        // import('a/b/c') 这种情况，在 sandbox 检测的时候只要当成普通的 function 就好，不然 estraverse 和 escodegen 都得报错
+        node.type = 'Identifier'
+        node.name = 'import'
+        node.isIgnore = true
+      } else if (is(node, 'ExportSpecifier')) {
+        node.exported.isIgnore = true
+        node.local.isIgnore = true
       }
     }
   })
@@ -195,4 +215,11 @@ function scope (ast, parentAst) {
       }
     }
   })
+}
+
+function clone (node) {
+  return Object.keys(node).reduce(function (obj, key) {
+    obj[key] = node[key]
+    return obj
+  }, {})
 }

@@ -11,7 +11,8 @@ import {
   getIFrame,
   frameMoveIn,
   frameMoveOut,
-  createLoading
+  createLoading,
+  createFadeHeader
 } from './util/dom'
 import Debouncer from './util/debounce'
 // import {supportsPassive} from './util/feature-detect'
@@ -141,6 +142,10 @@ class Page {
           this.appshellCache = Object.create(null)
           this.currentPageMeta = this.findMetaByPageId(this.pageId)
           createLoading(this.currentPageMeta)
+
+          if (!this.transitionContainsHeader) {
+            createFadeHeader(this.currentPageMeta)
+          }
 
           // Set bouncy header
           if (!data.update && this.currentPageMeta.header.bouncy) {
@@ -487,6 +492,9 @@ class Page {
 
       if (this.direction === 'back') {
         backwardOpitons.targetPageId = targetPageId
+        backwardOpitons.targetPageMeta = this.findMetaByPageId(targetPageId)
+      } else {
+        backwardOpitons.targetPageMeta = this.currentPageMeta
       }
 
       this.getElementsInRootPage().forEach(e => e.classList.remove('hide'))
