@@ -2,18 +2,18 @@
 
 除了内置的 `init`，`dev`，`add`，`validate` 等命令，mip2 CLI 亦提供了自定义扩展机制，开发者可以根据自身需求来开发相应的扩展命令，丰富命令行的功能。
 
-## 扩展自己的 mip2 命令
+## 使用自定义扩展命令
 
-我们可以通过 npm package 的方式开发自己的扩展命令。我们约定，用户自定义扩展包名为：**`mip-cli-plugin-{Command}`**
+用户自定义扩展命令使用 npm package 的方式进行开发。我们约定，扩展包名为：**`mip-cli-plugin-{Command}`**
 
-如需使用自己或他人开发的扩展命令只需运行 `mip2 {Command}` 即可一步完成安装调用的流程。
+如需使用自己或社区的扩展命令，无需手动进行安装，只需运行 `mip2 {Command}` 即可快速开始使用。
 
 ``` bash
 # eg: 运行包名为 mip-cli-plugin-foo 的扩展命令
 $ mip2 foo
 ```
 
-可以使用 `--help` 选项查看当前内置 + 扩展命令列表
+可以使用 `--help` 选项查看当前内置命令和扩展命令列表
 
 ``` bash
 $ mip2 --help
@@ -24,10 +24,7 @@ $ mip2 --help
 Usage: mip2 <command> [options]
 
 Options:
-
--V, --version  output the version number
--h, --help     output usage information
-
+...
 Commands:
 
 init           初始化 MIP 2.0 项目
@@ -40,8 +37,6 @@ foo            foo 扩展命令
 ```
 
 ## 开发扩展命令（User Plugin Command）
-
-我们可以通过以下步骤来创建一个自己的扩展命令：
 
 ### 1. 创建项目
 
