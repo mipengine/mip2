@@ -56,7 +56,7 @@ test-proj
 
 ### 异步加载
 
-`mip-cli@1.0.11` 以上版本支持组件异步加载，可通过 `import()` 或 `require.ensure()` 实现，这两个方法返回 Promise 对象，函数的具体说明可以查看 [webpack dynamic import](https://webpack.js.org/guides/code-splitting/#dynamic-imports)，在使用的时候可如下所示：
+`mip-cli@1.0.13` 以上版本支持组件异步加载，可通过 `import()` 或 `require.ensure()` 实现，这两个方法返回 Promise 对象，函数的具体说明可以查看 [webpack dynamic import](https://webpack.js.org/guides/code-splitting/#dynamic-imports)，在使用的时候可如下所示：
 
 ```javascript
 export default {

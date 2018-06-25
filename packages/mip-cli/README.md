@@ -105,7 +105,7 @@ module.exports = {
 
 ## changelog
 
-- 1.0.11
+- 1.0.13
     1. 支持组件通过 `import()` 和 `require.ensure` 异步加载模块
     2. dev 模式自动对组件 script 注入 md5
 
