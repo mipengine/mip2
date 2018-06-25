@@ -9,6 +9,18 @@ MIP
 $ cnpm install # npm install
 ```
 
+## Test and coverage
+
+- karma + mocha + chai + istanbul
+
+```
+# watch mode
+$ npm run test:dev
+
+# test case and coverage summary
+$ npm run test:cover
+```
+
 ## 常用命令
 
 ```sh

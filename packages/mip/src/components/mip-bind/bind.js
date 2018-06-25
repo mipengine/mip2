@@ -138,8 +138,9 @@ class Bind {
     } else if (!win.MIP.MIP_ROOT_PAGE && win.parent.g && win.parent.g.hasOwnProperty(key)) {
       assign(win.parent.g, data)
       !cancel && this._postMessage(data)
+    } else {
+      Object.assign(win.m, data)
     }
-    Object.assign(win.m, data)
   }
 
   _setGlobalState (data, cancel, win = this._win) {

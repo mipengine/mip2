@@ -123,6 +123,13 @@ let BaseElement = _fixBabelExtend(function (_HTMLElement) {
     _this.__innerHTML = _this.innerHTML
 
     /**
+     * Mip templates nodelist
+     *
+     * @type {NodeList}
+     */
+    this.templates = this.querySelectorAll('template[type^=mip-]')
+
+    /**
      * Instantiated the custom element.
      * @type {Object}
      * @public
@@ -143,12 +150,12 @@ let BaseElement = _fixBabelExtend(function (_HTMLElement) {
     this.customElement.connectedCallback()
 
     // Add to resource manager.
-    this._resources.add(this)
+    this._resources && this._resources.add(this)
   }
 
   BaseElement.prototype.disconnectedCallback = function disconnectedCallback () {
     this.customElement.disconnectedCallback()
-    this._resources.remove(this)
+    this._resources && this._resources.remove(this)
     // performance.fsElementLoaded(this);
   }
 

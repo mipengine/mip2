@@ -92,7 +92,8 @@ var RESERVED = [
   'require',
   'module',
   'exports',
-  'define'
+  'define',
+  'import'
 ]
 
 var SANDBOX_STRICT = {

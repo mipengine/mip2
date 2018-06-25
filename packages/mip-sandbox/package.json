@@ -1,10 +1,12 @@
 {
   "name": "mip-sandbox",
-  "version": "1.0.10",
+  "version": "1.0.12",
   "description": "sandbox tools for MIP project",
   "main": "lib/sandbox.js",
   "scripts": {
     "test": "sh test/test.sh",
+    "test:node": "mocha test/node/**/*.spec.js",
+    "test:browser": "karma start test/browser/karma.config.js",
     "release": "sh publish.sh"
   },
   "keywords": [
@@ -24,7 +26,7 @@
   },
   "homepage": "https://github.com/mipengine/mip2/blob/master/packages/mip-sandbox",
   "dependencies": {
-    "esprima": "^4.0.0",
+    "acorn": "^5.7.1",
     "estraverse": "^4.2.0",
     "esutils": "^2.0.2",
     "source-map": "~0.6.1"
