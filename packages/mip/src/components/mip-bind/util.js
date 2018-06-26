@@ -62,9 +62,11 @@ export function parseStyle (styleSpecs) {
     let newKey = normalizedName.replace(/[A-Z]/g, match => '-' + match.toLowerCase())
     let val = styleSpecs[k]
     if (isArray(val)) {
+      let div = document.createElement('div')
       for (let i = 0, len = val.length; i < len; i++) {
-        styles[newKey] = val[i]
+        div.style[newKey] = val[i]
       }
+      styles[newKey] = div.style[newKey]
     } else {
       styles[newKey] = val
     }
