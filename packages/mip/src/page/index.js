@@ -142,7 +142,10 @@ class Page {
           this.appshellCache = Object.create(null)
           this.currentPageMeta = this.findMetaByPageId(this.pageId)
           createLoading(this.currentPageMeta)
+
+          // if (!this.transitionContainsHeader) {
           createFadeHeader(this.currentPageMeta)
+          // }
 
           // Set bouncy header
           if (!data.update && this.currentPageMeta.header.bouncy) {
@@ -561,6 +564,7 @@ class Page {
     let whitelist = [
       '.mip-page__iframe',
       '.mip-page-loading-wrapper',
+      '.mip-page-fade-header-wrapper',
       'mip-shell',
       '[mip-shell]',
       '.mip-shell-header-wrapper',
