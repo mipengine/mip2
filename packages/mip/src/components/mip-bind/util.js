@@ -7,7 +7,7 @@ const vendorNames = ['Webkit', 'Moz', 'ms']
 let emptyStyle
 
 export function isObject (obj) {
-  return obj && obj.constructor === Object
+  return obj && Object.prototype.toString.call(obj) === '[object Object]'
 }
 
 export function isArray (obj) {
