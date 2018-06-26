@@ -4,7 +4,7 @@
  */
 
 import Deps from './deps'
-import {isObject} from './util'
+
 class Observer {
   _walk (data, depMap) {
     if (typeof data !== 'object' || typeof depMap !== 'object') {
