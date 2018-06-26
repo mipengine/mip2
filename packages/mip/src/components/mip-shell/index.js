@@ -395,6 +395,22 @@ class MipShell extends CustomElement {
     toggleInner(this.$pageMask, toggle, skipTransition)
   }
 
+  /**
+   * Toggle something
+   *
+   * @param {HTMLElement} dom
+   * @param {boolean} toggle
+   */
+  toggleDOM (dom, toggle) {
+    toggleInner(dom, toggle)
+  }
+
+  /**
+   * Toggle header transition class
+   * Remove transition during page switching
+   *
+   * @param {boolean} toggle
+   */
   toggleTransition (toggle) {
     toggle ? this.$el.classList.add('transition') : this.$el.classList.remove('transition')
   }

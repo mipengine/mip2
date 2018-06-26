@@ -9,19 +9,19 @@
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
     <style mip-custom>
         .mip-shell-footer-wrapper {
-            z-index: 20000!important;
+            z-index: 20002!important;
             height: 150px;
+            transform: translateY(100%);
+            transition: transform .35s ease
+        }
+
+        .mip-shell-footer-wrapper.show {
+            transform: translateY(0);
         }
 
         .mip-shell-footer {
             height: 150px;
             background: white;
-            z-index: 20002!important;
-            transform: translateY(100%);
-        }
-
-        .mip-shell-footer.show {
-            transform: translateY(0);
         }
 
         .mip-shell-footer .upper {
