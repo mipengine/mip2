@@ -36,13 +36,13 @@ class MipShellNovel extends window.MIP.builtinComponents.MipShell {
     let pageMeta = this.currentPageMeta
     let {buttonGroup} = pageMeta.footer
     let renderFooterButtonGroup = buttonGroup => buttonGroup.map(buttonConfig => `
-      <div class="button">${buttonConfig.text}</div>
+      <div class="button" mip-footer-btn data-button-name="${buttonConfig.name}">${buttonConfig.text}</div>
     `).join('')
 
     let footerHTML = `
       <div class="upper mip-border mip-border-bottom">
-        <div class="switch switch-left">&lt;上一章</div>
-        <div class="switch switch-right">下一章&gt;</div>
+        <div class="switch switch-left" mip-footer-btn data-button-name="previous">&lt;上一章</div>
+        <div class="switch switch-right" mip-footer-btn data-button-name="next">下一章&gt;</div>
       </div>
       <div class="button-wrapper">
         ${renderFooterButtonGroup(buttonGroup)}
@@ -50,6 +50,35 @@ class MipShellNovel extends window.MIP.builtinComponents.MipShell {
     `
 
     return footerHTML
+  }
+
+  bindHeaderEvents () {
+    super.bindHeaderEvents()
+
+    let me = this
+    let event = window.MIP.util.event
+
+    // Delegate dropdown button
+    this.footEventHandler = event.delegate(this.$footerWrapper, '[mip-footer-btn]', 'click', function (e) {
+      let buttonName = this.dataset.buttonName
+      me.handleFooterButton(buttonName)
+    })
+
+    if (this.$buttonMask) {
+      this.$buttonMask.onclick = () => {
+        this.toggleDropdown(false)
+        this.$footerWrapper.classList.remove('show')
+      }
+    }
+  }
+
+  unbindHeaderEvents () {
+    super.unbindHeaderEvents()
+
+    if (this.footEventHandler) {
+      this.footEventHandler()
+      this.footEventHandler = undefined
+    }
   }
 
   handleShellCustomButton (buttonName) {
@@ -60,6 +89,12 @@ class MipShellNovel extends window.MIP.builtinComponents.MipShell {
       this.$buttonWrapper.classList.remove('show')
       this.$footerWrapper.classList.add('show')
     }
+  }
+
+  handleFooterButton (buttonName) {
+    console.log('click on footer:', buttonName)
+    this.toggleDropdown(false)
+    this.$footerWrapper.classList.remove('show')
   }
 }
 
