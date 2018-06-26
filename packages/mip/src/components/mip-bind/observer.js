@@ -71,9 +71,9 @@ class Observer {
           value = newVal
         }
         me._walk(newVal, depMap[key])
-        if (depMap[key]._deps && !isObject(newVal)) {
+        if (depMap[key]._deps && typeof newVal !== 'object') {
           depMap[key] = depMap[key]._deps
-        } else if (depMap[key].isDep && isObject(newVal)) {
+        } else if (depMap[key].isDep && typeof newVal === 'object') {
           depMap[key]._deps = depMap[key]
         }
         deps.notify(key)
