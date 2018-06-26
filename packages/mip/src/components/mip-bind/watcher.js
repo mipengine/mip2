@@ -4,7 +4,7 @@
  */
 
 import Deps from './deps'
-import {parseContent} from './util'
+import * as util from './util'
 
 class Watcher {
   constructor (node, data, dir, exp, cb) {
@@ -12,7 +12,7 @@ class Watcher {
     this._dir = dir
     this._exp = exp
     let specPrefix
-    if ((specPrefix = exp.slice(0, 6)) === 'class:' || specPrefix === 'style:') {
+    if ((specPrefix = exp.slice(0, 6)) === 'Class:' || specPrefix === 'Style:') {
       this._specWatcher = specPrefix.slice(0, 5)
       this._exp = exp = exp.slice(6)
     }
@@ -52,7 +52,7 @@ class Watcher {
     Deps.target = this
     if (this._getter) {
       value = this._getter.call(this._data, this._data)
-      this._specWatcher && (value = parseContent(value, this._specWatcher))
+      this._specWatcher && (value = util['parse' + this._specWatcher](value))
     }
     Deps.target = null
     return value

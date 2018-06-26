@@ -30,14 +30,6 @@ export function arrayToObject (arr) {
   return obj
 }
 
-export function parseContent (specs, type) {
-  if (type === 'class') {
-    return parseClass(specs)
-  } else if (type === 'style') {
-    return parseStyle(specs)
-  }
-}
-
 export function parseClass (classSpecs) {
   if (isArray(classSpecs)) {
     classSpecs = arrayToObject(classSpecs)

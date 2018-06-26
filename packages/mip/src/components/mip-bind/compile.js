@@ -4,7 +4,7 @@
  */
 
 import Watcher from './watcher'
-import {parseContent, objNotEmpty, styleToObject, objectToStyle} from './util'
+import * as util from './util'
 
 let VALUE = /^value$/
 let TAGNAMES = /^(input|textarea|select)$/i
@@ -79,13 +79,14 @@ class Compile {
     if (/^bind:/.test(fnName)) {
       let attr = fnName.slice(5)
       if (attr === 'class' || attr === 'style') {
+        let attrKey = attr.charAt(0).toUpperCase() + attr.slice(1)
         try {
           let fn = this.getWithResult(expression)
-          data = parseContent(fn.call(this.data), attr) // eslint-disable-line no-new-func
+          data = util['parse' + attrKey](fn.call(this.data))
         } catch (e) {
           data = {}
         }
-        expression = `${attr}:${expression}`
+        expression = `${attrKey}:${expression}`
       }
       fnName = 'bind'
     }
@@ -135,20 +136,19 @@ class Compile {
       return
     }
     if (attr === 'class') {
-      if (objNotEmpty(newVal)) {
+      if (util.objNotEmpty(newVal)) {
         for (let k of Object.keys(newVal)) {
           node.classList.toggle(k, newVal[k])
         }
-        // class 和 style 可能关联了多个数据，这些数据可能分布在不同的 mip-data 中，clear 的时机应该是什么？
         node.removeAttribute(directive)
       }
     } else if (attr === 'style') {
-      if (objNotEmpty(newVal)) {
-        let staticStyle = styleToObject(node.getAttribute(attr) || '')
+      if (util.objNotEmpty(newVal)) {
+        let staticStyle = util.styleToObject(node.getAttribute(attr) || '')
         for (let styleAttr of Object.keys(newVal)) {
           staticStyle[styleAttr] = newVal[styleAttr]
         }
-        node.setAttribute(attr, objectToStyle(staticStyle))
+        node.setAttribute(attr, util.objectToStyle(staticStyle))
         node.removeAttribute(directive)
       }
     } else {
