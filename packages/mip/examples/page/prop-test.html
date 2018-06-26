@@ -34,7 +34,7 @@
             {
               "name": "hbb",
               "loading": false,
-              "list": [1,2,3],
+              "list": [],
               "num": 47,
               "userinfo": {
                 "name": "test"
@@ -60,22 +60,22 @@
         </script>
     </mip-data>
 
-    <mip-complevel1 m-bind:class="{loading: loading}" m-bind:userinfo="userinfo"></mip-complevel1>
     <p on="tap:MIP.setData({loading:true})">click me to change class</p>
+    <br />
     <p on="tap:MIP.setData({baseStyles:{display:'block'}})">click me to change style</p>
     <br />
-    <mip-complevel1 class="static"
-        m-bind:class="{loading: loading, 'text-danger': danger }">
-    </mip-complevel1 >
+    <!-- class example -->
+    <div class="static"m-bind:class="{loading: loading, 'text-danger': danger }"></div>
     <br />
-    <mip-complevel1 m-bind:class="classObject"></mip-complevel1>
+    <div m-bind:class="classObject"></div>
     <br />
-    <mip-complevel1 m-bind:class="[loadingClass, errorClass]"></mip-complevel1>
+    <div m-bind:class="[loadingClass, errorClass]"></div>
     <br />
-    <mip-complevel1 m-bind:class="[loading ? loadingClass : '', errorClass]"></mip-complevel1>
+    <div m-bind:class="[loading ? loadingClass : '', errorClass]"></div>
     <br />
-    <mip-complevel1 m-bind:class="[{ loading: loading }, errorClass]"></mip-complevel1>
+    <div m-bind:class="[{ loading: loading }, errorClass]"></div>
     <br />
+    <!-- style example -->
     <div m-bind:style="{color: activeColor, fontSize: fontSize + 'px'}"></div>
     <br />
     <div m-bind:style="styleObject" style="width:100px"></div>
@@ -83,6 +83,9 @@
     <div m-bind:style="[baseStyles, styleObject]"></div>
     <br />
     <div m-bind:style="{ display: ['-webkit-box', '-ms-flexbox', 'flex'] }" style="width:100px"></div>
+    <br />
+    <!-- props example -->
+    <mip-complevel1 m-bind:class="{loading: loading}" m-bind:userinfo="userinfo"></mip-complevel1>
     <br />
     <mip-complevel2 m-bind:userinfo="userinfo" m-bind:msg="name" m-bind:loading="loading" m-bind:list="list" m-bind:num="num"></mip-complevel2>
     <script src="../../dist/mip.js"></script>
