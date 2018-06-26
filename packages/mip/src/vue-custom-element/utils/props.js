@@ -5,7 +5,8 @@
 
 /* global Attr */
 
-import {camelize, hyphenate, parseJSON} from './helpers'
+import {camelize, hyphenate} from './helpers'
+import jsonParse from '../../util/json-parse'
 
 // Number and Boolean props are treated as strings
 // We should convert it so props will behave as intended
@@ -22,7 +23,7 @@ export function convertAttributeValue (value, overrideType, attr, element) {
     // 只有组件在 props 中指定了需要 Object/Array 类型，才进行 JSON.parse 处理，否则按照 props 给定的 type 进行处理
     if (overrideType === Object || overrideType === Array) {
       try {
-        propsValue = parseJSON(propsValue)
+        propsValue = jsonParse(propsValue)
       } catch (e) {
         console.warn(element, attr.name || '', 'attribute content should be a valid JSON string!')
       }
@@ -115,7 +116,7 @@ export function getPropsData (element, componentDefinition, props) {
   if (dataElement) {
     let scriptData
     try {
-      scriptData = parseJSON(dataElement.innerHTML) || {}
+      scriptData = jsonParse(dataElement.innerHTML) || {}
     } catch (err) {
       console.warn(dataElement, 'Content should be a valid JSON string!')
       scriptData = {}
