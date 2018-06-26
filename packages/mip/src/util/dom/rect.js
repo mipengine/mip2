@@ -80,7 +80,7 @@ export default {
    */
   getScrollTop () {
     return round(this.scroller === window ? (docBody.scrollTop || docElem.scrollTop)
-      : this.scroller.scrollTop)
+      : (this.scroller.scrollTop === 1 ? 0 : this.scroller.scrollTop))
   },
 
   /**
@@ -89,7 +89,13 @@ export default {
    * @param {number} top top
    */
   setScrollTop (top) {
-    this.scroller.scrollTop = top
+    if (this.scroller === window) {
+      window.scrollTo(0, top)
+    } else {
+      // scroll top is 0, it's set to 1 to avoid scroll-freeze issue
+      // https://github.com/ampproject/amphtml/issues/330
+      this.scroller.scrollTop = top || 1
+    }
   },
 
   /**
