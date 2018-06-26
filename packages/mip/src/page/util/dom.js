@@ -386,7 +386,6 @@ export function frameMoveOut (pageId,
     } else {
       headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
       headerLogoTitle.classList.add('fade-out')
-      console.log(targetPageMeta)
       fadeHeader = getFadeHeader(targetPageMeta)
       css(fadeHeader, 'display', 'block')
     }

@@ -142,10 +142,7 @@ class Page {
           this.appshellCache = Object.create(null)
           this.currentPageMeta = this.findMetaByPageId(this.pageId)
           createLoading(this.currentPageMeta)
-
-          if (!this.transitionContainsHeader) {
-            createFadeHeader(this.currentPageMeta)
-          }
+          createFadeHeader(this.currentPageMeta)
 
           // Set bouncy header
           if (!data.update && this.currentPageMeta.header.bouncy) {
