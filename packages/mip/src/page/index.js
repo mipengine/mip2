@@ -143,9 +143,9 @@ class Page {
           this.currentPageMeta = this.findMetaByPageId(this.pageId)
           createLoading(this.currentPageMeta)
 
-          // if (!this.transitionContainsHeader) {
-          createFadeHeader(this.currentPageMeta)
-          // }
+          if (!this.transitionContainsHeader) {
+            createFadeHeader(this.currentPageMeta)
+          }
 
           // Set bouncy header
           if (!data.update && this.currentPageMeta.header.bouncy) {
