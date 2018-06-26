@@ -31,20 +31,20 @@ MIP.registerVueCustomElement('mip-complevel1', {
   },
   created () {
     MIP.setData({
-      // name: 'nbbaly',
-      // loading: true,
-      // num: 77,
-      list: [
-        {
-          name: 'Jack'
-        },
-        {
-          name: 'Mike'
-        },
-        {
-          name: 'Jenny'
-        }
-      ]
+      name: 'nbbaly',
+      num: 77,
+      list: ['a', 'b', 'c']
+      // list: [
+      //   {
+      //     name: 'Jack'
+      //   },
+      //   {
+      //     name: 'Mike'
+      //   },
+      //   {
+      //     name: 'Jenny'
+      //   }
+      // ]
     })
   },
   updated () {

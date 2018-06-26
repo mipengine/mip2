@@ -10,9 +10,9 @@ MIP.registerVueCustomElement('mip-complevel2', {
       <p>{{userinfo.name}}</p>
       <p v-if="loading">{{msg}}</p>
       <ul v-if="list && list.length">
-        <li>{{list[0].name}}</li>
-        <li>{{list[1].name}}</li>
-        <li>{{list[2].name}}</li>
+        <li>{{list[0]}}</li>
+        <li>{{list[1]}}</li>
+        <li>{{list[2]}}</li>
       </ul>
       <p>{{num}}</p>
     </div>
