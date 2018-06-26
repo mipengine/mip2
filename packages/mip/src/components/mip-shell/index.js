@@ -440,7 +440,6 @@ class MipShell extends CustomElement {
         }
       })
     }
-    // TODO else
   }
 
   /**
