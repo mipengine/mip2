@@ -51,6 +51,16 @@ class MipShellNovel extends window.MIP.builtinComponents.MipShell {
 
     return footerHTML
   }
+
+  handleShellCustomButton (buttonName) {
+    if (buttonName === 'share') {
+      console.log('share')
+      this.toggleDropdown(false)
+    } else if (buttonName === 'setting') {
+      this.$buttonWrapper.classList.remove('show')
+      this.$footerWrapper.classList.add('show')
+    }
+  }
 }
 
 window.MIP.registerCustomElement('mip-shell-novel', MipShellNovel)
