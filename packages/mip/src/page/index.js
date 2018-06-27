@@ -481,7 +481,7 @@ class Page {
         backwardOpitons.targetPageMeta = this.currentPageMeta
       }
 
-      this.getElementsInRootPage().forEach(e => e.classList.remove('hide'))
+      Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
       frameMoveOut(this.currentPageId, backwardOpitons)
 
       this.direction = null
@@ -510,7 +510,7 @@ class Page {
            * Disable scrolling of root page when covered by an iframe
            * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
            */
-          this.getElementsInRootPage().forEach(e => e.classList.add('hide'))
+          Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
           options.onComplete && options.onComplete()
         }
       })
@@ -621,7 +621,7 @@ class Page {
           targetPage.destroy()
         }
         // TODO: delete DOM & trigger disconnectedCallback in root page
-        this.getElementsInRootPage().forEach(el => el.parentNode && el.parentNode.removeChild(el))
+        Array.prototype.slice.call(this.getElementsInRootPage()).forEach(el => el.parentNode && el.parentNode.removeChild(el))
       }
       // Create a new iframe
       createIFrame(targetFullPath, targetPageId)
