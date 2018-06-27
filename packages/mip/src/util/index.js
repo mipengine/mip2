@@ -18,6 +18,7 @@ import naboo from './naboo'
 import EventEmitter from './event-emitter'
 import Gesture from './gesture/index'
 import customStorage from './customStorage'
+import jsonParse from './json-parse'
 
 /**
  * Exchange a url to cache url.
@@ -111,5 +112,6 @@ export default {
   EventEmitter,
   Gesture,
   customStorage,
-  naboo
+  naboo,
+  jsonParse
 }
