@@ -11,11 +11,21 @@
         .mip-shell-footer-wrapper {
             z-index: 20002!important;
             height: 150px;
-            transform: translateY(100%);
-            transition: transform .35s ease
+            display: none;
         }
 
-        .mip-shell-footer-wrapper.show {
+        .mip-shell-footer-wrapper.slide-enter,
+        .mip-shell-footer-wrapper.slide-leave-to {
+            transform: translateY(100%);
+        }
+
+        .mip-shell-footer-wrapper.slide-enter-active,
+        .mip-shell-footer-wrapper.slide-leave-active {
+            transition: all 0.35s ease;
+        }
+
+        .mip-shell-footer-wrapper.slide-enter-to,
+        .mip-shell-footer-wrapper.slide-leave {
             transform: translateY(0);
         }
 
