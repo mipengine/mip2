@@ -37,6 +37,8 @@ export const MESSAGE_SYNC_PAGE_CONFIG = 'sync-page-config'
 
 export const NON_EXISTS_PAGE_ID = 'non-exists-page-id'
 export const SCROLL_TO_ANCHOR_CUSTOM_EVENT = 'scroll-to-anchor'
+export const SHOW_PAGE_CUSTOM_EVENT = 'show-page'
+export const HIDE_PAGE_CUSTOM_EVENT = 'hide-page'
 
 export const BUILT_IN_COMPONENTS = [
   'mip-data',

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <title>隐藏 iframe 导致页面无法响应？</title>
+    <style>
+        html, body, iframe {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+        }
+        iframe {
+            /* position: fixed;
+            top: 40px;
+            left: 0;
+            right: 0;
+            bottom: 0; */
+            width: 100%;
+            height: 80%;
+        }
+        button {
+            width: 49%;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+<p>
+    在 UC/手百 中打开该页面，隐藏 iframe 后导致页面假死。
+    尝试过线上已有的 mip1 页面，如 m.baidu，以及 AMP 的页面。
+    但是 eleme，PC baidu 之类的页面就没这个问题。
+
+    经过一番测试发现是弹性滚动导致。隐藏 iframe 时需要同时将其去掉。
+    微信不存在这个问题，使用了较新的 WKWebview。而 UC/手百 使用的是 UIWebView。
+    <a href="https://harttle.land/2018/06/23/uiwebview-bugs.html">链接</a>
+</p>
+<button onclick="toggle();">隐藏/显示</button>
+<button onclick="alert('js 正常执行！')">测试js执行</button>
+<label><input type="checkbox"> 测试选中</label>
+<iframe frameborder="0"></iframe>
+<script>
+var iframe = document.querySelector('iframe');
+var head
+var style
+
+iframe.src = [
+    // 测试滚动页面
+    location.origin + '/examples/page/iframe/scroll.html',
+    // 线上手百页面
+    // 'https://m.baidu.com/feed/data/landingpage?nid=3627066851061108990&amp;n_type=0&amp;p_from=2#viewportType=virtual&amp;paddingTop=54&amp;pageType=&amp;pageInfo=',
+    // AMP 页面
+    // location.origin + '/examples/page/iframe/amp-img.html',
+    // eleme H5 页面
+    // 'https://h5.ele.me/msite/'
+][0]
+
+iframe.onload = function () {
+    style = iframe.contentDocument.createElement('style')
+    head = iframe.contentDocument.head || iframe.contentDocument.getElementsByTagName('head')[0]
+
+    style.setAttribute('mip-bouncy-scrolling', '')
+    style.textContent = '* {-webkit-overflow-scrolling: auto!important;}'
+}
+
+var display = false;
+function toggle() {
+    display = !display;
+    
+    // 使用 display/visibility 会导致假死
+    iframe.style.display = display ? 'none' : 'block';
+    // iframe.style.visibility = display ? 'hidden' : 'visible';
+
+    // 使用 opacity 看似可以，但是一旦配合 height/width = 0，依然有问题
+    // iframe.style.opacity = display ? '0' : '1';
+    // iframe.style.height = display ? 0 : '80%'
+    // iframe.style.width = display ? 0 : '100%'
+
+    // 需要在隐藏的同时去掉 -webkit-overflow-scrolling: touch;
+    // if (display) {
+    //     iframe.contentDocument.querySelector('.menu').classList.remove('touch-scrolling')
+    // } else {
+    //     iframe.contentDocument.querySelector('.menu').classList.add('touch-scrolling')
+    // }
+    
+    if (display) {
+        head.appendChild(style)
+    } else {
+        head.removeChild(style)
+    }
+}
+</script>
+</body>
+</html>
