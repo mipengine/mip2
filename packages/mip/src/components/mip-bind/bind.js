@@ -53,9 +53,15 @@ class Bind {
     let win = window.MIP.MIP_ROOT_PAGE ? window : window.parent
     MIP.$set({}, 0, true, win)
 
-    for (let i = 0; i < win.document.getElementsByTagName('iframe').length; i++) {
-      let subwin = win.document.getElementsByTagName('iframe')[i].contentWindow
-      MIP.$set({}, 0, true, subwin)
+    for (let i = 0, frames = win.document.getElementsByTagName('iframe'); i < frames.length; i++) {
+      if (frames[i].classList.contains('mip-page__iframe') &&
+          frames[i].getAttribute('name') &&
+          frames[i].getAttribute('data-page-id') &&
+          frames[i].getAttribute('name') === frames[i].getAttribute('data-page-id')
+      ) {
+        let subwin = frames[i].contentWindow
+        MIP.$set({}, 0, true, subwin)
+      }
     }
   }
 
