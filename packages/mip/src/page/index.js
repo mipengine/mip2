@@ -175,11 +175,11 @@ class Page {
       })
 
       // Set iframe height when resizing
-      viewport.on('resize', () => {
-        [].slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
-          $el.style.height = `${viewport.getHeight()}px`
-        })
-      })
+      // viewport.on('resize', () => {
+      //   [].slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
+      //     $el.style.height = `${viewport.getHeight()}px`
+      //   })
+      // })
     } else {
       this.messageHandlers.push((type, event) => {
         if (type === MESSAGE_APPSHELL_EVENT) {
