@@ -12,33 +12,6 @@
             margin: 0;
             cursor: pointer;
         }
-        .wrapper4 {
-            min-height: initial;
-            position: relative;
-            z-index: 501;
-        }
-        .wrapper3 {
-            overflow: hidden;
-            position: relative;
-            right: 0;
-            left: 0;
-            top: 0;
-            box-sizing: border-box;
-            display: block;
-        }
-        .wrapper2 {
-            position: static;
-            display: block;
-            transform: translate3d(0%, 0px, 0px);
-            top: 0;
-            left: 0;
-            width: 100%;
-            float: left;
-        }
-        .wrapper1 {
-            overflow: auto;
-            -webkit-overflow-scrolling: touch;
-        }
         .topFrame {
             position: fixed;
             top: 0;
@@ -55,9 +28,6 @@
     </style>
     <script>
         window.onload = function () {
-            // document.querySelector('.wrapper3').style.minHeight = window.innerHeight + 'px'
-            // document.querySelector('.wrapper1').style.height = window.innerHeight + 'px'
-            // document.querySelector('.wrapper1').style.width = window.innerWidth + 'px'
             let $iframe = document.querySelector('iframe')
             $iframe.style.height = window.innerHeight + 'px'
 
@@ -84,15 +54,7 @@
     </script>
 </head>
 <body>
-    <!-- <div class="wrapper4">
-        <div class="wrapper3">
-            <div class="wrapper2">
-                <div class="wrapper1"> -->
-                    <iframe scrolling="no" src="/examples/lavas/index.html" class="topFrame"></iframe>
-                <!-- </div>
-            </div>
-        </div>
-    </div> -->
+    <iframe scrolling="no" src="/examples/lavas/index.html" class="topFrame"></iframe>
     <h1>xxxxxxxxxx</h1>
     <h1>xxxxxxxxxx</h1>
 </body>

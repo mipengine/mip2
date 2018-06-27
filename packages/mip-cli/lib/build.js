@@ -31,8 +31,13 @@ module.exports = async function ({
     if (clean) {
       await fs.remove(output)
     }
-
     await builder.build()
+    let mipComponentWebpackHelperFilePath = path.resolve(__dirname, '../node_modules/mip-components-webpack-helpers/dist/mip-components-webpack-helpers.js')
+    let targetFilePath = path.resolve(output, 'mip-components-webpack-helpers.js')
+    if (fs.existsSync(targetFilePath)) {
+      fs.removeSync(targetFilePath)
+    }
+    fs.copySync(mipComponentWebpackHelperFilePath, targetFilePath)
     cli.info('编译成功！')
   } catch (e) {
     cli.error('编译失败')

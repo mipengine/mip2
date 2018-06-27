@@ -25,20 +25,22 @@ html {
     overflow-x: hidden!important;
     height: auto!important;
 
+    // 嵌在 iframe 中的情况
     &.mip-html-embeded {
         overflow-y: auto!important;
-        -webkit-overflow-scrolling: touch!important;
         touch-action: pan-y;
         position: static;
+        -webkit-overflow-scrolling: touch;
     }
 
-    &.mip-no-scroll {
-        overflow: hidden;
-        body {
-            overflow: hidden;
-        }
-    }
+    // &.mip-no-scroll {
+    //     overflow: hidden;
+    //     body {
+    //         overflow: hidden;
+    //     }
+    // }
 
+    // 为 body 创建的一个新的 wrapper
     &.mip-html-wrapper {
         position: absolute!important;
         top: 0!important;
@@ -47,39 +49,19 @@ html {
         bottom: 0!important;
         margin: 0!important;
         display: block!important;
-        -webkit-overflow-scrolling: touch!important;
+        -webkit-overflow-scrolling: touch;
 
         &.with-header {
             padding-top: @shell-header-height;
         }
 
         body {
-            -webkit-overflow-scrolling: touch!important;
+            -webkit-overflow-scrolling: touch;
             height: auto;
             position: relative;
         }
     }
 }
-
-// html,
-// body {
-//     height: 100% !important;
-//     overflow-y: auto;
-//     -webkit-overflow-scrolling: touch;
-//     position: relative;
-// }
-// html.mip-i-android-scroll,
-// body.mip-i-android-scroll {
-//     height: auto !important;
-//     overflow-y: visible;
-//     position: static;
-// }
-// html.mip-no-scroll,
-// html.mip-no-scroll > body {
-//     height: 100% !important;
-//     position: relative;
-//     overflow: hidden;
-// }
 
 a {
     text-decoration : none;

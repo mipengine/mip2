@@ -98,7 +98,8 @@ export function styleToObject (style) {
 
   let styles = style.split(';')
   let styleObj = {}
-  for (let item of styles) {
+  for (let i = 0, len = styles.length; i < len; i++) {
+    let item = styles[i]
     if (!item) {
       continue
     }

@@ -1,16 +1,13 @@
 /**
  * @file webpack builder
- * @author clark-t (clarktanglei@163.com
- * )
+ * @author clark-t (clarktanglei@163.com)
  */
 
 const webpack = require('webpack')
 const middleware = require('koa-webpack')
 const config = require('./config')
 const chokidar = require('chokidar')
-/* eslint-disable */
-const {globPify} = require('../../utils/helper');
-/* eslint-enable */
+const {globPify} = require('../../utils/helper')
 const projectPath = require('../../utils/project-path')
 const path = require('path')
 const cli = require('../../cli')

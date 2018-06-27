@@ -83,7 +83,7 @@ export function createLoading (pageMeta) {
   loading.setAttribute('class', 'mip-page-loading-wrapper')
   loading.innerHTML = `
     <div class="mip-shell-header mip-border mip-border-bottom">
-      <span class="back-button">
+      <span mip-header-btn class="back-button">
         <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M769.405 977.483a68.544 68.544 0 0 1-98.121 0L254.693 553.679c-27.173-27.568-27.173-72.231 0-99.899L671.185 29.976c13.537-13.734 31.324-20.652 49.109-20.652s35.572 6.917 49.109 20.652c27.173 27.568 27.173 72.331 0 99.899L401.921 503.681l367.482 373.904c27.074 27.568 27.074 72.231 0 99.899z"/></svg>
       </span>
       <div class="mip-shell-header-logo-title">
@@ -427,4 +427,21 @@ export function appendScript (src) {
     script.src = src
     document.body.appendChild(script)
   })
+}
+
+/**
+ * Fix a UC/Shoubai bug when hiding current iframe
+ * https://github.com/mipengine/mip2/issues/19
+ */
+let $style = document.createElement('style')
+let $head = document.head || document.getElementsByTagName('head')[0]
+$style.setAttribute('mip-bouncy-scrolling', '')
+$style.textContent = '* {-webkit-overflow-scrolling: auto!important;}'
+export function disableBouncyScrolling () {
+  $head.appendChild($style)
+}
+export function enableBouncyScrolling () {
+  try {
+    $head.removeChild($style)
+  } catch (e) {}
 }

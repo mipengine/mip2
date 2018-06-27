@@ -11,7 +11,9 @@ import {
   frameMoveIn,
   frameMoveOut,
   createLoading,
-  createFadeHeader
+  createFadeHeader,
+  enableBouncyScrolling,
+  disableBouncyScrolling
 } from './util/dom'
 import Debouncer from './util/debounce'
 // import {supportsPassive} from './util/feature-detect'
@@ -19,6 +21,8 @@ import {scrollTo} from './util/ease-scroll'
 import {
   NON_EXISTS_PAGE_ID,
   SCROLL_TO_ANCHOR_CUSTOM_EVENT,
+  SHOW_PAGE_CUSTOM_EVENT,
+  HIDE_PAGE_CUSTOM_EVENT,
   DEFAULT_SHELL_CONFIG,
   MESSAGE_APPSHELL_EVENT,
   MESSAGE_ROUTER_PUSH,
@@ -329,6 +333,16 @@ class Page {
     window.addEventListener(SCROLL_TO_ANCHOR_CUSTOM_EVENT, (e) => {
       this.scrollToHash(e.detail[0])
     })
+
+    // fix a UC/shoubai bug https://github.com/mipengine/mip2/issues/19
+    window.addEventListener(SHOW_PAGE_CUSTOM_EVENT, (e) => {
+      enableBouncyScrolling()
+    })
+    window.addEventListener(HIDE_PAGE_CUSTOM_EVENT, (e) => {
+      disableBouncyScrolling()
+    })
+
+    this.emitEventInCurrentPage({name: SHOW_PAGE_CUSTOM_EVENT})
   }
 
   // ========================= Util functions for developers =========================
@@ -636,7 +650,9 @@ class Page {
       window.MIP.$recompile()
     }
 
+    this.emitEventInCurrentPage({name: HIDE_PAGE_CUSTOM_EVENT})
     this.currentPageId = targetPageId
+    this.emitEventInCurrentPage({name: SHOW_PAGE_CUSTOM_EVENT})
   }
 }
 
