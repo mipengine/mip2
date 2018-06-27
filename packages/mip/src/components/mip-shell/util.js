@@ -9,6 +9,11 @@ import {
   nextFrame
 } from '../../page/util/dom'
 
+/**
+ * convert pattern to regexp
+ * @param {string} pattern pattern string
+ * @return {Regexp} regexp
+ */
 export function convertPatternToRegexp (pattern) {
   if (pattern === '*') {
     return /.*/
@@ -60,11 +65,11 @@ export function createMoreButtonWrapper (buttonGroup, options = {}) {
     buttonWrapper = document.querySelector('.mip-shell-more-button-wrapper')
     renderButtonWrapper(buttonWrapper)
   } else {
-    mask = document.createElement('div')
+    mask = document.createElement('mip-fixed')
     mask.classList.add('mip-shell-more-button-mask')
     document.body.appendChild(mask)
 
-    buttonWrapper = document.createElement('div')
+    buttonWrapper = document.createElement('mip-fixed')
     buttonWrapper.classList.add('mip-shell-more-button-wrapper')
     renderButtonWrapper(buttonWrapper)
     document.body.appendChild(buttonWrapper)
@@ -78,7 +83,7 @@ export function createMoreButtonWrapper (buttonGroup, options = {}) {
  * Mainly used in dialog within iframes
  */
 export function createPageMask () {
-  let mask = document.createElement('div')
+  let mask = document.createElement('mip-fixed')
   mask.classList.add('mip-shell-header-mask')
   document.body.appendChild(mask)
 

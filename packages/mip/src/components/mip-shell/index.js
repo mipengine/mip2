@@ -168,6 +168,8 @@ class MipShell extends CustomElement {
     this.$el.innerHTML = this.renderHeader()
     this.$wrapper.insertBefore(this.$el, this.$wrapper.firstChild)
 
+    document.body.insertBefore(this.$wrapper, document.body.firstChild)
+
     // Button wrapper & mask
     let buttonGroup = this.currentPageMeta.header.buttonGroup
     let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup)
@@ -177,15 +179,14 @@ class MipShell extends CustomElement {
     // Page mask
     this.$pageMask = createPageMask()
 
-    document.body.insertBefore(this.$wrapper, document.body.firstChild)
+    // Other parts
+    this.renderOtherParts()
 
     window.MIP.viewer.fixedElement.init()
   }
 
-  renderHeader (pageMeta) {
-    if (!pageMeta) {
-      pageMeta = this.currentPageMeta
-    }
+  renderHeader () {
+    let pageMeta = this.currentPageMeta
     let {buttonGroup, title, logo} = pageMeta.header
     let showBackIcon = !pageMeta.view.isIndex
 
@@ -330,6 +331,7 @@ class MipShell extends CustomElement {
     if (pageId) {
       pageMeta = this.findMetaByPageId(pageId)
     }
+    this.currentPageMeta = pageMeta
 
     if (!(pageMeta.header && pageMeta.header.show)) {
       this.$wrapper.classList.add('hide')
@@ -338,7 +340,9 @@ class MipShell extends CustomElement {
 
     // Refresh header
     this.slideHeader('down')
-    this.$el.innerHTML = this.renderHeader(pageMeta)
+    this.$el.innerHTML = this.renderHeader()
+
+    this.updateOtherParts()
 
     // Button wrapper & mask
     let buttonGroup = pageMeta.header.buttonGroup
@@ -391,6 +395,22 @@ class MipShell extends CustomElement {
     toggleInner(this.$pageMask, toggle, skipTransition)
   }
 
+  /**
+   * Toggle something
+   *
+   * @param {HTMLElement} dom
+   * @param {boolean} toggle
+   */
+  toggleDOM (dom, toggle) {
+    toggleInner(dom, toggle)
+  }
+
+  /**
+   * Toggle header transition class
+   * Remove transition during page switching
+   *
+   * @param {boolean} toggle
+   */
   toggleTransition (toggle) {
     toggle ? this.$el.classList.add('transition') : this.$el.classList.remove('transition')
   }
@@ -420,7 +440,6 @@ class MipShell extends CustomElement {
         }
       })
     }
-    // TODO else
   }
 
   /**
@@ -456,6 +475,18 @@ class MipShell extends CustomElement {
     // Handle click on custom button
     // The only param `butonName` equals attribute values of `data-button-name`
     // E.g. click on `<div mip-header-btn data-button-name="hello"></div>` will pass `'hello'` as buttonName
+  }
+
+  renderOtherParts () {
+    // Render other shell parts (except header)
+    // Use `this.currentPageMeta` to get page config
+    // E.g. footer, sidebar
+  }
+
+  updateOtherParts () {
+    // Update other shell parts (except header)
+    // Use `this.currentPageMeta` to get page config
+    // E.g. footer, sidebar
   }
 }
 

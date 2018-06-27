@@ -11,6 +11,9 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
     <style mip-custom>
+        body {
+            padding: 30px;
+        }
     .main-content .link {
         text-align: center;
         margin-top: 20px;
@@ -31,17 +34,64 @@
             {
               "name": "hbb",
               "loading": false,
-              "list": [1,2,3],
+              "list": [],
               "num": 47,
               "userinfo": {
                 "name": "test"
-              }
+              },
+              "danger": true,
+              "loadingClass": "m-loading",
+              "errorClass": "",
+              "classObject": {
+                "warning-class": true,
+                "active-class": false
+              },
+              "styleObject": {
+                "color": "red",
+                "fontSize": "13px"
+              },
+              "baseStyles": {
+                "display": "flex",
+                "margin-after": "10px"
+              },
+              "activeColor": "blue",
+              "fontSize": 12
             }
         </script>
     </mip-data>
 
-    <mip-complevel1></mip-complevel1>
+    <p on="tap:MIP.setData({loading:true})">click me to change class</p>
+    <br />
+    <p on="tap:MIP.setData({baseStyles:{display:'block'}})">click me to change style</p>
+    <br />
+
+    <!-- class example -->
+    <div class="static"m-bind:class="{loading: loading, 'text-danger': danger }"></div>
+    <br />
+    <div m-bind:class="classObject"></div>
+    <br />
+    <div m-bind:class="[loadingClass, errorClass]"></div>
+    <br />
+    <div m-bind:class="[loading ? loadingClass : '', errorClass]"></div>
+    <br />
+    <div m-bind:class="[{ loading: loading }, errorClass]"></div>
+    <br />
+
+    <!-- style example -->
+    <div m-bind:style="{color: activeColor, fontSize: fontSize + 'px'}"></div>
+    <br />
+    <div m-bind:style="styleObject" style="width:100px"></div>
+    <br />
+    <div m-bind:style="[baseStyles, styleObject]"></div>
+    <br />
+    <div m-bind:style="{ display: ['-webkit-box', '-ms-flexbox', 'flex'] }" style="width:100px"></div>
+    <br />
+
+    <!-- props example -->
+    <mip-complevel1 m-bind:class="{loading: loading}" m-bind:userinfo="userinfo"></mip-complevel1>
+    <br />
     <mip-complevel2 m-bind:userinfo="userinfo" m-bind:msg="name" m-bind:loading="loading" m-bind:list="list" m-bind:num="num"></mip-complevel2>
+    
     <script src="../../dist/mip.js"></script>
     <!-- <script src="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script>  -->
     <script src="./components/mip-complevel2.js"></script>

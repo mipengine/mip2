@@ -57,6 +57,7 @@ body.with-header {
     min-width: 100%;
     background: #fff;
     z-index: 10000;
+    display: none;
 }
 
 .mip-page-loading-wrapper {
@@ -100,35 +101,12 @@ body.with-header {
 
 .mip-page-fade-header-wrapper {
     top: 0;
-    left: 36px;
-    right: 36px;
+    left: 0;
+    right: 0;
     height: @shell-header-height;
     background: #fff;
     z-index: 20001!important;
     display: none;
-
-    .mip-shell-header-logo-title {
-        margin: 0 auto;
-        max-width: 50%;
-
-        .mip-shell-header-logo,
-        .mip-shell-header-title {
-            float: left;
-        }
-
-        .mip-shell-header-logo {
-            height: 32px;
-            width: 32px;
-            margin: 4px 8px 0 0;
-        }
-
-        .mip-shell-header-title {
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-            max-width: 100%;
-        }
-    }
 
     &.fade-enter {
         opacity: 0

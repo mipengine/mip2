@@ -4,6 +4,7 @@
  */
 
 /* global HTMLElement */
+/* eslint-disable no-proto */
 
 import viewport from './viewport'
 import layout from './layout'
@@ -11,57 +12,138 @@ import performance from './performance'
 import customElementsStore from './custom-element-store'
 import cssLoader from './util/dom/css-loader'
 
-class BaseElement extends HTMLElement {
-  constructor (element) {
-    super(element)
+let _typeof = typeof Symbol === 'function' && typeof Symbol.iterator === 'symbol'
+  ? obj => typeof obj
+  : obj => (obj && typeof Symbol === 'function' && obj.constructor === Symbol && obj !== Symbol.prototype ? 'symbol' : typeof obj)
 
+let _fixBabelExtend = (function (O) {
+  let gPO = O.getPrototypeOf || function (o) {
+    return o.__proto__
+  }
+  let sPO = O.setPrototypeOf || function (o, p) {
+    o.__proto__ = p
+    return o
+  }
+  let construct = (typeof Reflect === 'undefined' ? 'undefined' : _typeof(Reflect)) === 'object' ? Reflect.construct : function (Parent, args, Class) {
+    let Constructor
+    let a = [null]
+    a.push.apply(a, args)
+    Constructor = Parent.bind.apply(Parent, a)
+    return sPO(new Constructor(), Class.prototype)
+  }
+
+  return function fixBabelExtend (Class) {
+    var Parent = gPO(Class)
+    return sPO(Class, sPO(function Super () {
+      return construct(Parent, arguments, gPO(this).constructor)
+    }, Parent))
+  }
+}(Object))
+
+function inherits (subClass, superClass) {
+  if (typeof superClass !== 'function' && superClass !== null) {
+    throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass)
+  }
+
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  })
+  if (superClass) {
+    Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass
+  }
+}
+
+function possibleConstructorReturn (self, call) {
+  return call && (typeof call === 'object' || typeof call === 'function') ? call : self
+}
+
+let createClass = (function createClass () {
+  function defineProperties (target, props) {
+    for (let i = 0; i < props.length; i++) {
+      let descriptor = props[i]
+      descriptor.enumerable = descriptor.enumerable || false
+      descriptor.configurable = true
+      if ('value' in descriptor) {
+        descriptor.writable = true
+      }
+      Object.defineProperty(target, descriptor.key, descriptor)
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) {
+      defineProperties(Constructor.prototype, protoProps)
+    }
+    if (staticProps) {
+      defineProperties(Constructor, staticProps)
+    }
+    return Constructor
+  }
+}())
+
+let BaseElement = _fixBabelExtend(function (_HTMLElement) {
+  inherits(BaseElement, _HTMLElement)
+
+  function BaseElement (element) {
     // get mip2 clazz from custom elements store
-    let CustomElement = customElementsStore.get(this.tagName.toLowerCase(), 'mip2')
+
+    var _this = possibleConstructorReturn(
+      this,
+      (BaseElement.__proto__ || Object.getPrototypeOf(BaseElement)).call(this, element)
+    )
+
+    var CustomElement = customElementsStore.get(_this.tagName.toLowerCase(), 'mip2')
 
     /**
      * Viewport state
      * @private
      * @type {boolean}
      */
-    this._inViewport = false
+    _this._inViewport = false
 
     /**
      * Whether the element is into the viewport.
      * @private
      * @type {boolean}
      */
-    this._firstInViewport = false
+    _this._firstInViewport = false
 
     /**
      * The resources object.
      * @private
      * @type {Object}
      */
-    this._resources = viewport.resources
+    _this._resources = viewport.resources
 
-    this.__innerHTML = this.innerHTML
+    _this.__innerHTML = _this.innerHTML
 
     /**
      * Mip templates nodelist
      *
      * @type {NodeList}
      */
-    this.templates = this.querySelectorAll('template[type^=mip-]')
+    _this.templates = _this.querySelectorAll('template[type^=mip-]')
 
     /**
      * Instantiated the custom element.
      * @type {Object}
      * @public
      */
-    let customElement = this.customElement = new CustomElement(this)
+    var customElement = _this.customElement = new CustomElement(_this)
 
     // Add first-screen element to performance.
     if (customElement.hasResources()) {
-      performance.addFsElement(this)
+      performance.addFsElement(_this)
     }
+    return _this
   }
 
-  connectedCallback () {
+  BaseElement.prototype.connectedCallback = function connectedCallback () {
     // Apply layout for this.
     this.classList.add('mip-element')
     this._layout = layout.applyLayout(this)
@@ -71,18 +153,18 @@ class BaseElement extends HTMLElement {
     this._resources && this._resources.add(this)
   }
 
-  disconnectedCallback () {
+  BaseElement.prototype.disconnectedCallback = function disconnectedCallback () {
     this.customElement.disconnectedCallback()
     this._resources && this._resources.remove(this)
     // performance.fsElementLoaded(this);
   }
 
-  attributeChangedCallback () {
-    let ele = this.customElement
+  BaseElement.prototype.attributeChangedCallback = function attributeChangedCallback () {
+    var ele = this.customElement
     ele.attributeChangedCallback.apply(ele, arguments)
   }
 
-  build () {
+  BaseElement.prototype.build = function build () {
     if (this.isBuilt()) {
       return
     }
@@ -95,21 +177,21 @@ class BaseElement extends HTMLElement {
     }
   }
 
-  isBuilt () {
+  BaseElement.prototype.isBuilt = function isBuilt () {
     return this._built
   }
 
-  cloneNode (deep) {
-    let newNode = super.cloneNode(deep)
+  BaseElement.prototype.cloneNode = function cloneNode (deep) {
+    var newNode = HTMLElement.prototype.cloneNode.call(this, deep)
     newNode.__innerHTML = this.__innerHTML
     return newNode
   }
 
-  inViewport () {
+  BaseElement.prototype.inViewport = function inViewport () {
     return this._inViewport
   }
 
-  viewportCallback (inViewport) {
+  BaseElement.prototype.viewportCallback = function viewportCallback (inViewport) {
     this._inViewport = inViewport
     if (!this._firstInViewport) {
       this._firstInViewport = true
@@ -118,7 +200,7 @@ class BaseElement extends HTMLElement {
     this.customElement.viewportCallback(inViewport)
   }
 
-  executeEventAction (action) {
+  BaseElement.prototype.executeEventAction = function executeEventAction (action) {
     this.customElement.executeEventAction(action)
   }
 
@@ -127,17 +209,19 @@ class BaseElement extends HTMLElement {
    *
    * @return {boolean}
    */
-  prerenderAllowed () {
+  BaseElement.prototype.prerenderAllowed = function prerenderAllowed () {
     return this.customElement.prerenderAllowed()
   }
 
   /**
    * Called by customElement. And tell the performance that element is loaded.
    */
-  resourcesComplete () {
+  BaseElement.prototype.resourcesComplete = function resourcesComplete () {
     performance.fsElementLoaded(this)
   }
-}
+
+  return BaseElement
+}(HTMLElement))
 
 /**
  * Add a style tag to head by csstext
@@ -165,13 +249,26 @@ function registerElement (name, elementClass, css) {
 
   // store the name-clazz pair
   customElementsStore.set(name, elementClass, 'mip2')
-
   loadCss(css, name)
-  window.customElements.define(name, class extends BaseElement {
-    static get observedAttributes () {
-      return elementClass.observedAttributes
+  // window.customElements.define(name, class extends BaseElement {
+  //   static get observedAttributes () {
+  //     return elementClass.observedAttributes
+  //   }
+  // })
+  window.customElements.define(name, (function (_BaseElement) {
+    function clazz () {
+      return possibleConstructorReturn(this, (clazz.__proto__ || Object.getPrototypeOf(clazz)).apply(this, arguments))
     }
-  })
+    inherits(clazz, _BaseElement)
+
+    createClass(clazz, null, [{
+      key: 'observedAttributes',
+      get () {
+        return elementClass.observedAttributes
+      }
+    }])
+    return clazz
+  }(BaseElement)))
 }
 
 export default registerElement

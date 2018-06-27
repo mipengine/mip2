@@ -5,19 +5,6 @@ const trailingSlashRE = /\/?$/
 const locationRE = /^(http(?:s?):\/\/[^/]+)(.*)/
 
 /**
- * convert pattern to regexp
- * @deprecated
- * @param {string} pattern pattern string
- * @return {Regexp} regexp
- */
-export function convertPatternToRegexp (pattern) {
-  if (pattern === '*') {
-    return /.*/
-  }
-  return new RegExp(pattern)
-}
-
-/**
  * create route with raw url
  *
  * @param {string|Object} rawUrl rawUrl or location object

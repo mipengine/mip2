@@ -3,10 +3,9 @@
  * @author wangyisheng@baidu.com (wangyisheng)
  */
 
-import {isSameRoute, getFullPath, convertPatternToRegexp} from './util/route'
+import {isSameRoute, getFullPath} from './util/route'
 import {
-  getMIPShellConfig,
-  addMIPCustomScript,
+  ensureMIPShell,
   createIFrame,
   getIFrame,
   frameMoveIn,
@@ -308,9 +307,9 @@ class Page {
     // Set global mark
     window.MIP.MIP_ROOT_PAGE = window.MIP_ROOT_PAGE
 
+    ensureMIPShell()
     this.initRouter()
     this.initAppShell()
-    addMIPCustomScript()
 
     // Listen message from inner iframes
     window.addEventListener('message', (e) => {
@@ -391,25 +390,6 @@ class Page {
       // emit CustomEvent in root page
       customEmit(window, name, data)
     }
-  }
-
-  /**
-   * read <mip-shell> if provided
-   *
-   */
-  readMIPShellConfig () {
-    // read <mip-shell> and save in `data`
-    this.appshellRoutes = getMIPShellConfig().routes || []
-
-    this.appshellRoutes.forEach(route => {
-      route.meta = util.fn.extend(true, {}, DEFAULT_SHELL_CONFIG, route.meta || {})
-      route.regexp = convertPatternToRegexp(route.pattern || '*')
-
-      // get title from <title> tag
-      if (!route.meta.header.title) {
-        route.meta.header.title = (document.querySelector('title') || {}).innerHTML || ''
-      }
-    })
   }
 
   /**
@@ -578,6 +558,7 @@ class Page {
     let whitelist = [
       '.mip-page__iframe',
       '.mip-page-loading-wrapper',
+      '.mip-page-fade-header-wrapper',
       'mip-shell',
       '[mip-shell]',
       '.mip-shell-header-wrapper',

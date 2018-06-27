@@ -4,6 +4,7 @@
  */
 
 import Watcher from './watcher'
+import * as util from './util'
 
 let VALUE = /^value$/
 let TAGNAMES = /^(input|textarea|select)$/i
@@ -73,13 +74,27 @@ class Compile {
     let me = this
     let fnName = directive.name.slice(2)
     let attrName = directive.name
+    let data
+
     if (/^bind:/.test(fnName)) {
+      let attr = fnName.slice(5)
+      if (attr === 'class' || attr === 'style') {
+        let attrKey = attr.charAt(0).toUpperCase() + attr.slice(1)
+        try {
+          let fn = this.getWithResult(expression)
+          data = util['parse' + attrKey](fn.call(this.data))
+        } catch (e) {
+          data = {}
+        }
+        expression = `${attrKey}:${expression}`
+      }
       fnName = 'bind'
     }
-    let data = me._getMVal(node, attrName, expression)
+    !data && (data = me._getMVal(node, attrName, expression))
     if (typeof data !== 'undefined') {
       me[fnName] && me[fnName](node, attrName, data)
     }
+
     this._listenerFormElement(node, directive, expression)
     /* eslint-disable */
     new Watcher(node, me.data, attrName, expression, function (dir, newVal) {
@@ -120,15 +135,33 @@ class Compile {
       Object.assign(window.m, this.origin)
       return
     }
-    if (typeof newVal === 'object') {
-      newVal = JSON.stringify(newVal)
-    }
-    newVal !== '' ? node.setAttribute(attr, newVal) : node.removeAttribute(attr)
-    if (TAGNAMES.test(node.tagName)) {
-      if (ATTRS.test(attr)) {
-        node[attr] = !!newVal
-      } else if (VALUE.test(attr)) {
-        node[attr] = newVal
+    if (attr === 'class') {
+      if (util.objNotEmpty(newVal)) {
+        for (let k of Object.keys(newVal)) {
+          node.classList.toggle(k, newVal[k])
+        }
+        node.removeAttribute(directive)
+      }
+    } else if (attr === 'style') {
+      if (util.objNotEmpty(newVal)) {
+        let staticStyle = util.styleToObject(node.getAttribute(attr) || '')
+        for (let styleAttr of Object.keys(newVal)) {
+          staticStyle[styleAttr] = newVal[styleAttr]
+        }
+        node.setAttribute(attr, util.objectToStyle(staticStyle))
+        node.removeAttribute(directive)
+      }
+    } else {
+      if (typeof newVal === 'object') {
+        newVal = JSON.stringify(newVal)
+      }
+      newVal !== '' ? node.setAttribute(attr, newVal) : node.removeAttribute(attr)
+      if (TAGNAMES.test(node.tagName)) {
+        if (ATTRS.test(attr)) {
+          node[attr] = !!newVal
+        } else if (VALUE.test(attr)) {
+          node[attr] = newVal
+        }
       }
     }
   }

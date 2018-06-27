@@ -93,7 +93,8 @@ class Gesture extends EventEmitter {
     name = RecognizerClass.recName
     let recognizer = this._recognizers[name] = new RecognizerClass(this)
     let conflictList = Recognizer.getConflictList(recognizer.recName)
-    for (name of conflictList) {
+    for (let i = 0, len = conflictList.length; i < len; i++) {
+      let name = conflictList[i]
       let conflictRecognizer = this._recognizers[name]
       if (conflictRecognizer) {
         conflictRecognizer.conflictList[recognizer.recName] = recognizer
@@ -169,7 +170,8 @@ function touchHandler (event) {
  */
 function listenersHelp (element, events, handler, method) {
   let list = events.split(' ')
-  for (let item of list) {
+  for (let i = 0, len = list.length; i < len; i++) {
+    let item = list[i]
     if (method === false) {
       element.removeEventListener(item, handler)
     } else {

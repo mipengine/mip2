@@ -19,6 +19,10 @@ module.exports = {
    * @return {Array}  解析后的参数集合
    */
   setup (config) {
+    if (config.name) {
+      program.name(config.name)
+    }
+
     if (config.usage) {
       program.arguments(config.usage)
     }

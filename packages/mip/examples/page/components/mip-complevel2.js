@@ -9,7 +9,11 @@ MIP.registerVueCustomElement('mip-complevel2', {
   template: `<div>
       <p>{{userinfo.name}}</p>
       <p v-if="loading">{{msg}}</p>
-      <p>{{list && list[0]}}</p>
+      <ul v-if="list && list.length">
+        <li>{{list[0]}}</li>
+        <li>{{list[1]}}</li>
+        <li>{{list[2]}}</li>
+      </ul>
       <p>{{num}}</p>
     </div>
   `,
@@ -23,16 +27,20 @@ MIP.registerVueCustomElement('mip-complevel2', {
     msg: String,
     loading: Boolean,
     list: {
+      default () {
+        return []
+      },
       type: Array
     },
     num: Number
   },
   mounted () {
-    console.log(this.userinfo)
-    console.log(this.msg)
-    console.log(typeof this.loading)
-    console.log(this.list)
-    console.log(this.num)
+    // console.log(this.loading)
+    // console.log(this.userinfo)
+    // console.log(this.msg)
+    // console.log(typeof this.loading)
+    // console.log(this.list)
+    // console.log(this.num)
   },
   updated () {
     // console.log(this.loading)

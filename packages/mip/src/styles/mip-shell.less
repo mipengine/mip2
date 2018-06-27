@@ -9,15 +9,11 @@
     z-index: 20000!important;
     height: @shell-header-height;
     &.hide {
-        display: none;
+        display: none!important;
     }
 }
 
 .mip-shell-header {
-    position: fixed;
-    right: 0;
-    left: 0;
-    top: 0;
     display: flex;
     align-items: center;
     z-index: 20000;
@@ -50,6 +46,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        width: 30px;
+        height: 30px;
         & > svg {
             width: 14px;
             height: 14px;
@@ -121,7 +119,7 @@
         top: 7px;
         right: 0;
 
-        
+
         height: 30px;
         width: 40px;
 
@@ -133,24 +131,23 @@
 }
 
 .mip-shell-more-button-mask {
-    position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.5);
     display: none;
-    z-index: 20001;
+    z-index: 20001!important;
 }
 
 .mip-shell-more-button-wrapper {
     transition: all .35s ease;
-    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     background: #fff;
-    z-index: 20002;
+    display: block!important;
+    z-index: 20002!important;
     transform: translateY(100%);
 
     &.show {
@@ -171,14 +168,13 @@
 }
 
 .mip-shell-header-mask {
-    position: fixed;
     top: 0;
     right: 0;
     left: 0;
     height: @shell-header-height;
     background: rgba(0, 0, 0, 0.5);
     display: none;
-    z-index: 20001;
+    z-index: 20001!important;
 }
 
 .mip-shell-more-button-mask,
