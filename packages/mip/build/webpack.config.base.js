@@ -41,6 +41,7 @@ module.exports = {
               ? {importLoaders: 1}
               : {importLoaders: 1, minimize: true}
           },
+          'postcss-loader',
           'less-loader'
         ]
       },
