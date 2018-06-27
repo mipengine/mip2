@@ -401,16 +401,6 @@ class Page {
   }
 
   /**
-   * refresh appshell with data from <mip-shell>
-   *
-   * @param {string} targetPageId targetPageId
-   * @param {Object} extraData extraData
-   */
-  // refreshAppShell (targetPageId, extraData) {
-  //   this.appshell.refresh(extraData, targetPageId)
-  // }
-
-  /**
    * save scroll position in root page
    */
   saveScrollPosition () {
