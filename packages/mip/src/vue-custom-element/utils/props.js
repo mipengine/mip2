@@ -3,8 +3,6 @@
  * @author sfe-sy (sfe-sy@baidu.com)
  */
 
-/* global Attr */
-
 import {camelize, hyphenate} from './helpers'
 import jsonParse from '../../util/json-parse'
 

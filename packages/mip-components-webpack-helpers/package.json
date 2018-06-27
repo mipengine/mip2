@@ -1,6 +1,6 @@
 {
   "name": "mip-components-webpack-helpers",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "helpers for mip components",
   "main": "dist/mip-components-webpack-helpers.js",
   "scripts": {
