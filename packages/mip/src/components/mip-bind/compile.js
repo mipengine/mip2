@@ -137,17 +137,15 @@ class Compile {
     }
     if (attr === 'class') {
       if (util.objNotEmpty(newVal)) {
-        for (let k of Object.keys(newVal)) {
-          node.classList.toggle(k, newVal[k])
-        }
+        Object.keys(newVal).forEach(k => node.classList.toggle(k, newVal[k]))
         node.removeAttribute(directive)
       }
     } else if (attr === 'style') {
       if (util.objNotEmpty(newVal)) {
         let staticStyle = util.styleToObject(node.getAttribute(attr) || '')
-        for (let styleAttr of Object.keys(newVal)) {
+        Object.keys(newVal).forEach(styleAttr => {
           staticStyle[styleAttr] = newVal[styleAttr]
-        }
+        })
         node.setAttribute(attr, util.objectToStyle(staticStyle))
         node.removeAttribute(directive)
       }

@@ -89,7 +89,7 @@ module.exports = function (options) {
     },
     plugins: [
       new VueLoaderPlugin(),
-      new CustomElementPlugin()
+      new CustomElementPlugin(options)
     ]
   }
 }
