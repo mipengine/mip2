@@ -1,6 +1,7 @@
 # MIP 页面和组织方式
 
 > wangyisheng (wangyisheng@outlook.com)
+>
 > panyuqi (panyuqi@baidu.com)
 
 熟悉 MIP 的开发者可能了解，MIP 全称 Mobile Instant Pages，因此是以 __页面 (Page)__ 为单位来运行的。开发者通过改造/提交一个个页面，继而被百度收录并展示。

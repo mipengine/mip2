@@ -64,7 +64,9 @@ export function getIFrame (iframe) {
 function hideAllIFrames () {
   let iframes = document.querySelectorAll(`.${MIP_IFRAME_CONTAINER}`)
   if (iframes) {
-    iframes.forEach(iframe => css(iframe, 'display', 'none'))
+    for (let i = 0; i < iframes.length; i++) {
+      css(iframes[i], 'display', 'none')
+    }
   }
 }
 
