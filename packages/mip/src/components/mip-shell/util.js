@@ -9,6 +9,11 @@ import {
   nextFrame
 } from '../../page/util/dom'
 
+/**
+ * convert pattern to regexp
+ * @param {string} pattern pattern string
+ * @return {Regexp} regexp
+ */
 export function convertPatternToRegexp (pattern) {
   if (pattern === '*') {
     return /.*/

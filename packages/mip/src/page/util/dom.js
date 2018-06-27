@@ -4,13 +4,11 @@
  */
 
 import css from '../../util/dom/css'
-import sandbox from '../../sandbox'
 import viewport from '../../viewport'
 
 import {MIP_IFRAME_CONTAINER} from '../const/index'
 import {raf, transitionEndEvent, animationEndEvent} from './feature-detect'
 
-let {window: sandWin, document: sandDoc} = sandbox
 let activeZIndex = 10000
 
 export function createIFrame (fullpath, pageId, {onLoad, onError} = {}) {
@@ -197,40 +195,18 @@ function getFadeHeader (targetMeta) {
   return fadeHeader
 }
 
-export function getMIPShellConfig () {
-  let rawJSON
-  let $shell = document.body.querySelector('mip-shell')
-  if ($shell) {
-    rawJSON = $shell.children[0].innerHTML
+/**
+ * Add empty `<mip-shell>` if not found in page
+ */
+export function ensureMIPShell () {
+  if (!document.querySelector('mip-shell') && !document.querySelector('[mip-shell]')) {
+    let shell = document.createElement('mip-shell')
+    let script = document.createElement('script')
+    script.setAttribute('type', 'application/json')
+    script.innerHTML = '{}'
+    shell.appendChild(script)
+    document.body.appendChild(shell)
   }
-  try {
-    return JSON.parse(rawJSON)
-  } catch (e) {}
-
-  return {}
-}
-
-export function addMIPCustomScript (win = window) {
-  let doc = win.document
-  let script = doc.querySelector('script[type="application/mip-script"]')
-  if (!script) {
-    return
-  }
-
-  let customFunction = getSandboxFunction(script.innerHTML)
-  script.remove()
-
-  win.addEventListener('ready-to-watch', () => customFunction(sandWin, sandDoc))
-}
-
-function getSandboxFunction (script) {
-  /* eslint-disable no-new-func */
-  return new Function('window', 'document', `
-        let {alert, close, confirm, prompt, setTimeout, setInterval, self, top} = window
-
-        ${script}
-    `)
-  /* eslint-enable no-new-func */
 }
 
 export function nextFrame (fn) {
