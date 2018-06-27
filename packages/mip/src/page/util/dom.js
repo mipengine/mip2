@@ -438,5 +438,7 @@ export function disableBouncyScrolling () {
   $head.appendChild($style)
 }
 export function enableBouncyScrolling () {
-  $head.removeChild($style)
+  try {
+    $head.removeChild($style)
+  } catch (e) {}
 }
