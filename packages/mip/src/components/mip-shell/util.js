@@ -90,14 +90,23 @@ export function createPageMask () {
   return mask
 }
 
-export function toggleInner (element, toggle, skipTransition) {
+/**
+ * Toggle something
+ *
+ * @param {HTMLElement} element
+ * @param {boolean} toggle
+ * @param {Object} options
+ * @param {boolean} options.skipTransition Show result without transition
+ * @param {boolean} options.transitionName Transition name. Defaults to 'fade'
+ */
+export function toggleInner (element, toggle, {skipTransition, transitionName = 'fade'} = {}) {
   if (skipTransition) {
     css(element, 'display', toggle ? 'block' : 'none')
     return
   }
 
   let direction = toggle ? 'enter' : 'leave'
-  element.classList.add(`fade-${direction}`, `fade-${direction}-active`)
+  element.classList.add(`${transitionName}-${direction}`, `${transitionName}-${direction}-active`)
   css(element, 'display', 'block')
   // trigger layout
   /* eslint-disable no-unused-expressions */
@@ -105,12 +114,12 @@ export function toggleInner (element, toggle, skipTransition) {
   /* eslint-enable no-unused-expressions */
 
   whenTransitionEnds(element, 'transition', () => {
-    element.classList.remove(`fade-${direction}-to`, `fade-${direction}-active`)
+    element.classList.remove(`${transitionName}-${direction}-to`, `${transitionName}-${direction}-active`)
     css(element, 'display', toggle ? 'block' : 'none')
   })
 
   nextFrame(() => {
-    element.classList.add(`fade-${direction}-to`)
-    element.classList.remove(`fade-${direction}`)
+    element.classList.add(`${transitionName}-${direction}-to`)
+    element.classList.remove(`${transitionName}-${direction}`)
   })
 }

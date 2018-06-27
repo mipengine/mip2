@@ -4,7 +4,7 @@
  */
 
 import css from '../../util/dom/css'
-import viewport from '../../viewport'
+// import viewport from '../../viewport'
 
 import {MIP_IFRAME_CONTAINER} from '../const/index'
 import {raf, transitionEndEvent, animationEndEvent} from './feature-detect'
@@ -35,7 +35,7 @@ export function createIFrame (fullpath, pageId, {onLoad, onError} = {}) {
    * Fix an iOS iframe width bug, see examples/mip1/test.html
    * https://stackoverflow.com/questions/23083462/how-to-get-an-iframe-to-be-responsive-in-ios-safari
    */
-  container.style.height = `${viewport.getHeight()}px`
+  // container.style.height = `${viewport.getHeight()}px`
   container.setAttribute('width', '100%')
   container.setAttribute('scrolling', 'no')
 
@@ -62,7 +62,12 @@ export function getIFrame (iframe) {
 }
 
 function hideAllIFrames () {
-  document.querySelectorAll(`.${MIP_IFRAME_CONTAINER}`).forEach(iframe => css(iframe, 'display', 'none'))
+  let iframes = document.querySelectorAll(`.${MIP_IFRAME_CONTAINER}`)
+  if (iframes) {
+    for (let i = 0; i < iframes.length; i++) {
+      css(iframes[i], 'display', 'none')
+    }
+  }
 }
 
 /**

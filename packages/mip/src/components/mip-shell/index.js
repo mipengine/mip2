@@ -375,12 +375,7 @@ class MipShell extends CustomElement {
    */
   toggleDropdown (toggle) {
     toggleInner(this.$buttonMask, toggle)
-
-    if (toggle) {
-      this.$buttonWrapper.classList.add('show')
-    } else {
-      this.$buttonWrapper.classList.remove('show')
-    }
+    toggleInner(this.$buttonWrapper, toggle, {transitionName: 'slide'})
   }
 
   /**
@@ -392,7 +387,7 @@ class MipShell extends CustomElement {
    * @param {boolean} options.skipTransition show result without transition
    */
   togglePageMask (toggle, {skipTransition} = {}) {
-    toggleInner(this.$pageMask, toggle, skipTransition)
+    toggleInner(this.$pageMask, toggle, {skipTransition})
   }
 
   /**
@@ -400,9 +395,12 @@ class MipShell extends CustomElement {
    *
    * @param {HTMLElement} dom
    * @param {boolean} toggle
+   * @param {Object} options
+   * @param {boolean} options.skipTransition Show result without transition
+   * @param {boolean} options.transitionName Transition name. Defaults to 'fade'
    */
-  toggleDOM (dom, toggle) {
-    toggleInner(dom, toggle)
+  toggleDOM (dom, toggle, options) {
+    toggleInner(dom, toggle, options)
   }
 
   /**

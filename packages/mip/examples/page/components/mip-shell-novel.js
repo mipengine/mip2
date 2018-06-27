@@ -86,15 +86,15 @@ class MipShellNovel extends window.MIP.builtinComponents.MipShell {
       console.log('share')
       this.toggleDropdown(false)
     } else if (buttonName === 'setting') {
-      this.$buttonWrapper.classList.remove('show')
-      this.$footerWrapper.classList.add('show')
+      this.toggleDOM(this.$buttonWrapper, false, {transitionName: 'slide'})
+      this.toggleDOM(this.$footerWrapper, true, {transitionName: 'slide'})
     }
   }
 
   handleFooterButton (buttonName) {
     console.log('click on footer:', buttonName)
-    this.toggleDropdown(false)
-    this.$footerWrapper.classList.remove('show')
+    this.toggleDOM(this.$buttonMask, false)
+    this.toggleDOM(this.$footerWrapper, false, {transitionName: 'slide'})
   }
 }
 

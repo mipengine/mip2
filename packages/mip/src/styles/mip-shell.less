@@ -141,16 +141,25 @@
 }
 
 .mip-shell-more-button-wrapper {
-    transition: all .35s ease;
     bottom: 0;
     left: 0;
     right: 0;
     background: #fff;
-    display: block!important;
     z-index: 20002!important;
-    transform: translateY(100%);
+    display: none;
 
-    &.show {
+    &.slide-enter,
+    &.slide-leave-to {
+        transform: translateY(100%);
+    }
+
+    &.slide-enter-active,
+    &.slide-leave-active {
+        transition: all 0.35s ease;
+    }
+
+    &.slide-enter-to,
+    &.slide-leave {
         transform: translateY(0);
     }
 

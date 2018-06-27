@@ -52,6 +52,6 @@ helpers['vue-loader/lib/runtime/componentNormalizer'] = componentNormalizer
 helpers['vue-style-loader/lib/addStylesClient'] = addStylesClient
 helpers['vue-style-loader/lib/listToStyles'] = listToStyles
 
-window.__mipComponentsWebpackHelpers = helpers
+window.__mipComponentsWebpackHelpers__ = helpers
 
 module.exports = helpers

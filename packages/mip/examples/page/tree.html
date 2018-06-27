@@ -65,23 +65,6 @@
         {
             "routes": [
                 {
-                    "pattern": "/tree.html",
-                    "meta": {
-                        "header": {}
-                    }
-                },
-                {
-                    "pattern": "/data.html",
-                    "meta": {
-                        "header": {
-                            "show": true,
-                            "title": "蓝犀牛数据",
-                            "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
-                            "xiongzhang": true
-                        }
-                    }
-                },
-                {
                     "pattern": "*",
                     "meta": {
                         "header": {
@@ -105,7 +88,7 @@
                             ]
                         },
                         "view": {
-                            "isIndex": true
+                            "isIndex": false
                         }
                     }
                 }
@@ -125,6 +108,7 @@
     <a class="link" href="./index.html" mip-link>Back to Index</a>
     <a class="link" href="./data.html" mip-link>Go to Data</a>
 
+    <input type="text">
     <p m-text="city"></p>
     <div on="tap:MIP.setData({'city':'深圳'})" class="button">click change city</div>
 

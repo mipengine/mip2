@@ -175,11 +175,11 @@ class Page {
       })
 
       // Set iframe height when resizing
-      viewport.on('resize', () => {
-        [].slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
-          $el.style.height = `${viewport.getHeight()}px`
-        })
-      })
+      // viewport.on('resize', () => {
+      //   [].slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
+      //     $el.style.height = `${viewport.getHeight()}px`
+      //   })
+      // })
     } else {
       this.messageHandlers.push((type, event) => {
         if (type === MESSAGE_APPSHELL_EVENT) {
@@ -415,16 +415,6 @@ class Page {
   }
 
   /**
-   * refresh appshell with data from <mip-shell>
-   *
-   * @param {string} targetPageId targetPageId
-   * @param {Object} extraData extraData
-   */
-  // refreshAppShell (targetPageId, extraData) {
-  //   this.appshell.refresh(extraData, targetPageId)
-  // }
-
-  /**
    * save scroll position in root page
    */
   saveScrollPosition () {
@@ -491,7 +481,7 @@ class Page {
         backwardOpitons.targetPageMeta = this.currentPageMeta
       }
 
-      this.getElementsInRootPage().forEach(e => e.classList.remove('hide'))
+      Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
       frameMoveOut(this.currentPageId, backwardOpitons)
 
       this.direction = null
@@ -520,7 +510,7 @@ class Page {
            * Disable scrolling of root page when covered by an iframe
            * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
            */
-          this.getElementsInRootPage().forEach(e => e.classList.add('hide'))
+          Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
           options.onComplete && options.onComplete()
         }
       })
@@ -631,7 +621,7 @@ class Page {
           targetPage.destroy()
         }
         // TODO: delete DOM & trigger disconnectedCallback in root page
-        this.getElementsInRootPage().forEach(el => el.parentNode && el.parentNode.removeChild(el))
+        Array.prototype.slice.call(this.getElementsInRootPage()).forEach(el => el.parentNode && el.parentNode.removeChild(el))
       }
       // Create a new iframe
       createIFrame(targetFullPath, targetPageId)
