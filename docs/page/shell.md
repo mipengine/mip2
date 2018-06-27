@@ -13,11 +13,15 @@ MIP Shell 使用配置进行工作。在编写配置项使用 MIP Shell 之前�
 涉及内置标签 `<mip-shell>` 的角色主要是两方：
 
 * MIP 核心开发小组：即 MIP 核心的开发者，负责 MIP 本身和 `<mip-shell>` 标签的内部实现，也是本文的编写方。
-* 站长或站点开发人员
+* 站长或站点开发人员：负责编写页面 HTML，引用 `mip.js` 和组件 JS 等。`<mip-shell>` 的配置也由站长进行。
 
-开发者可以在每个页面中使用 `<mip-shell>` 标签来定义 Shell 的各项配置。目前 MIP 仅提供头部 Shell，但后续会陆续提供多种类型，多种样式的 Shell 供开发者选择。
+*在 Shell 的继承部分，还会引入第三个使用方。*
 
-#### 配置方法
+## 内置 MIP Shell
+
+使用 MIP Shell 最简单直接的方式是直接使用内置的组件 `<mip-shell>`。开发者可以在 __每个页面中__ 使用这个标签来定义 Shell 的各项配置。内置的 `<mip-shell>` 仅提供头部标题栏，但通过 __继承内置 Shell__，开发者可以实现渲染其他部件，如底部菜单栏，侧边栏等等。(继承内置 Shell 的相关内容会在文章的后半部分进行讲述)
+
+### 配置方法
 
 在页面的 `<body>` 标签内编写 `<mip-shell>` 标签，写法如下：
 
@@ -41,13 +45,17 @@ MIP Shell 使用配置进行工作。在编写配置项使用 MIP Shell 之前�
 注意点：
 
 1. 一个页面 __至多只允许存在一个__ `<mip-shell>` 配置项。可以不写则使用默认配置项。
-2. `<mip-shell>` 的位置 __必须__ 位于 `<body>` 内部，并且 __必须__ 在 mip script，mip.js 和组件 js 文件之前。(见本文档前半部分 js 文件顺序章节)
+2. `<mip-shell>` __必须__ 是 `<body>` 的 __直接子节点__。
 3. `<mip-shell>` 内部只允许存在一个 `<script>` 节点，并且 `type` 必须设置为 `application/json`。
 4. `<script>`内部是一个合法的 JSON 对象。
 
-#### 配置项
+### 配置项
 
-目前 `<mip-shell>` 支持包含一个 **基于路由** 的，**全局性** 的配置对象。其中的 `routes` 存放了各个页面及其对应的配置对象，对应关系通过 `pattern` 描述。在各个页面切换时，会通过正则匹配页面 URL 和 `pattern`，应用对应的 App Shell 配置。
+`<mip-shell>` 支持包含一个 **基于路由** 的，**全局性** 的配置对象。其中的 `routes` 存放了各个页面及其对应的配置对象，对应关系通过 `pattern` 描述。在各个页面切换时，会通过正则匹配页面 URL 和 `pattern`，应用对应的 App Shell 配置。
+
+> __为什么要在每个页面配置站点全局数据？__
+>
+> 主要是为了让页面切换的效果更佳顺畅。如果每个页面只配置当前页面的信息，那么在加载下一个页面时，因为下一个页面的 Shell 配置信息 （如头部是否显示，头部标题文字，LOGO 图片等等）都需要在 loading 结束之后才能获取。那么在 loading 结束切换到真实目标页面时可能会出现闪动，不太友好。
 
 ```json
 {
@@ -66,8 +74,8 @@ MIP Shell 使用配置进行工作。在编写配置项使用 MIP Shell 之前�
 
 注意点：
 
-* `*` 可以匹配所有 URL，建议放在 `routes` 数组的最后一项，并且在此设置整个站点的默认配置数据，例如默认标题等等。
-* `pattern` 虽然是字符串类型，但其内容实质是一个正则表达式。因此也可以写成 `"/\w?detail$"` 用以匹配例如 `/detail`, `/productdetail` 这样的 URL。
+* `*` 可以匹配所有 URL，建议放在 `routes` 数组的最后一项，作为整个站点的默认配置数据，例如默认标题和 LOGO 等等。
+* `pattern` 虽然是字符串类型，但其内容实质是一个正则表达式。因此也可以写成 `"/\\w+detail$"` 用以匹配例如 `/detail`, `/productdetail` 这样的 URL。__注意 `\` 的转义__。
 
 每个 `meta` 对象包括：
 
@@ -99,25 +107,22 @@ MIP Shell 使用配置进行工作。在编写配置项使用 MIP Shell 之前�
 * header.logo
     __string__, 默认值：无
 
-    配置头部左侧的 LOGO 的 URL，建议是一个正方形的图片，长宽不小于 64px。如果不配置则不显示 LOGO，__不会留白__。
+    配置头部左侧的 LOGO 的 URL，建议是一个正方形的图片，长宽不小于 64px。如果不配置则不显示 LOGO。
 
     ![MIP Shell header logo](http://boscdn.bpc.baidu.com/assets/mip2/mip-logo-2.png)
-
-* header.xiongzhang
-    __boolean__, 默认值：`false`
-
-    配置站点为接入熊掌号极速服务的站点。使用熊掌号配置的站点，头部按钮不可配置，由熊掌号负责控制。因此会忽略 `header.buttonGroup` 配置项。
 
 * header.buttonGroup
     __Array__, 默认值：`[]`
 
-    配置头部右侧的按钮区域展开后展现的按钮及其文字，点击行为等。这个配置项是一个由对象组成的数组。__仅当 `header.xiongzhang` 为 `false` 或者不配置时生效。熊掌号的按钮不可配置__。
+    配置头部右侧的按钮区域展开后展现的按钮及其文字，点击行为等。这个配置项是一个由对象组成的数组。
 
-    右侧的关闭按钮在搜索结果页中会自动展现，单独打开时不展现，不需要额外配置。
+    右侧的关闭按钮在百度搜索结果页中会自动展现，单独打开时不展现，不需要额外配置。
 
     ![MIP Shell header button](http://boscdn.bpc.baidu.com/assets/mip2/mip-button-2.png)
 
-    <!--TODO 增加一张浮层的图片-->
+    点开“更多”按钮，会出现浮层展现 `buttonGroup` 中配置的按钮，效果如下：
+
+    ![Drop Down](http://boscdn.bpc.baidu.com/assets/mip2/page/dropdown.png)
 
     每一个配置对象由 3 个属性构成，分别是 `name`, `text` 和 `link`。这三个配置项均 __没有__ 默认值，如果缺少某个则被认为非法配置，__会被跳过而不进行渲染__。
 
@@ -141,7 +146,7 @@ MIP Shell 使用配置进行工作。在编写配置项使用 MIP Shell 之前�
     }
     ```
 
-#### 完整示例
+### 完整示例
 
 ```html
 <mip-shell>
@@ -187,7 +192,7 @@ MIP Shell 使用配置进行工作。在编写配置项使用 MIP Shell 之前�
 </mip-shell>
 ```
 
-#### 默认配置
+### 默认配置
 
 如果开发者没有在页面中编写 `<mip-shell>`，那么一套默认配置会被应用。默认配置如下，效果是隐藏掉头部：
 
@@ -201,7 +206,6 @@ MIP Shell 使用配置进行工作。在编写配置项使用 MIP Shell 之前�
                     "show": false,
                     "title": "",
                     "logo": "",
-                    "xiongzhang": false,
                     "buttonGroup": []
                 },
                 "view": {
@@ -213,7 +217,7 @@ MIP Shell 使用配置进行工作。在编写配置项使用 MIP Shell 之前�
 };
 ```
 
-#### 头部标题的生效顺序
+### 头部标题的生效顺序
 
 MIP 页面总共有 4 处可以配置头部标题，它们的生效顺序依次是：
 
@@ -250,3 +254,7 @@ MIP 页面总共有 4 处可以配置头部标题，它们的生效顺序依次�
 如果没有设置 `data-title`，那么标题将是 `"Set in meta"`。
 如果 `data-title` 和 `<mip-shell>` 均没有设置，那么标题将是 `"Set in HTML"`。
 最后，如果都没有设置，将从 `<title>` 中读取，__但 loading 页面将不会展现标题__。
+
+## 个性化 Shell
+
+如果您的站点有一些特殊的需求，官方内置的 MIP Shell 无法满足需求，那么您可以需要个性化 Shell，即自己实现一个类 (class) 继承 MIP Shell。举例来说，如果您
