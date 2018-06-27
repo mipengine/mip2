@@ -5,7 +5,7 @@
 
 const {pathFormat} = require('../../../utils/helper')
 const path = require('path')
-const prefix = 'MIP.componentHelpers'
+const prefix = '__mipComponentsWepackHelpers__'
 
 module.exports = function (context, request, callback) {
   let req = pathFormat(path.resolve(context, request))

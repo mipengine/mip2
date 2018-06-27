@@ -1,0 +1,42 @@
+{
+  "name": "mip-components-webpack-helpers",
+  "version": "1.0.3",
+  "description": "helpers for mip components",
+  "main": "dist/mip-components-webpack-helpers.js",
+  "scripts": {
+    "build": "node build/build.js",
+    "prepublish": "npm run build"
+  },
+  "dependencies": {
+    "babel-runtime": "^6.26.0",
+    "css-loader": "^0.28.11",
+    "vue-loader": "^15.2.4",
+    "vue-style-loader": "^4.1.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
+    "chalk": "^2.4.1",
+    "ora": "^2.1.0",
+    "rimraf": "^2.6.2",
+    "uglifyjs-webpack-plugin": "^1.2.7",
+    "webpack": "^4.12.1",
+    "webpack-merge": "^4.1.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mipengine/mip2.git"
+  },
+  "keywords": [
+    "mip2",
+    "webpack",
+    "components"
+  ],
+  "author": "mj (zoumiaojiang@gmail.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mipengine/mip2/issues"
+  },
+  "homepage": "https://github.com/mipengine/mip2#readme"
+}
