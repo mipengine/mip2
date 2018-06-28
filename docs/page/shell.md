@@ -6,17 +6,6 @@
 
 ![头部标题栏](http://boscdn.bpc.baidu.com/assets/mip2/page/mip-shell.png)
 
-MIP Shell 使用配置进行工作。在编写配置项使用 MIP Shell 之前，我们需要先弄清楚 MIP Shell (或者说整个 MIP) 中参与的角色。这会让 Shell 后续的说明 (尤其是 Shell 的继承部分) 变的更加清晰。
-
-## Shell 的使用方
-
-涉及内置标签 `<mip-shell>` 的角色主要是两方：
-
-* MIP 核心开发小组：即 MIP 核心的开发者，负责 MIP 本身和 `<mip-shell>` 标签的内部实现，也是本文的编写方。
-* 站长或站点开发人员：负责编写页面 HTML，引用 `mip.js` 和组件 JS 等。`<mip-shell>` 的配置也由站长进行。
-
-*在 Shell 的继承部分，还会引入第三个使用方。*
-
 ## 内置 MIP Shell
 
 使用 MIP Shell 最简单直接的方式是直接使用内置的组件 `<mip-shell>`。开发者可以在 __每个页面中__ 使用这个标签来定义 Shell 的各项配置。内置的 `<mip-shell>` 仅提供头部标题栏，但通过 __继承内置 Shell__，开发者可以实现渲染其他部件，如底部菜单栏，侧边栏等等。(继承内置 Shell 的相关内容会在文章的后半部分进行讲述)
@@ -257,4 +246,83 @@ MIP 页面总共有 4 处可以配置头部标题，它们的生效顺序依次�
 
 ## 个性化 Shell
 
-如果您的站点有一些特殊的需求，官方内置的 MIP Shell 无法满足需求，那么您可以需要个性化 Shell，即自己实现一个类 (class) 继承 MIP Shell。举例来说，如果您
+如果您的站点有一些特殊的需求，官方内置的 MIP Shell 无法满足需求，那么您可以需要个性化 Shell，即自己实现一个类 (class) 继承 MIP Shell。
+
+这里列举几个比较常见的通过个性化 Shell 可以实现的需求，供大家参考：
+
+* 对于默认的头部标题栏样式或者 DOM 结构不满意，有修改的需求。
+
+* 除了头部，还有底部栏或者侧边栏需要额外渲染和绑定事件。例如下图：
+
+    ![Bottom Shell](http://boscdn.bpc.baidu.com/assets/mip2/page/bottom-shell.png)
+
+* 开发者需要控制站点的 Shell 配置，修改/禁用/忽略某些选项。
+
+    例如开发者希望忽略 HTML 中的配置项而固定选择某些按钮，或者希望在配置之外增加某些按钮等。
+
+### 继承方式
+
+全局的 MIP 对象会暴露一个 MIP Shell 基类供大家继承。例如我们要创建一个 MIP Shell Example 组件，我们可以写如下代码：
+
+```javascript
+export default class MipShellExample extends window.MIP.builtinComponents.MipShell {
+    // Functions go here
+}
+```
+
+类名使用驼峰命名，组件平台会自动把驼峰转化为符合 HTML 规范的短划线连接形式，如 `<mip-shell-example>`。
+
+### 使用个性化 Shell
+
+个性化 Shell 的使用和内置的 MIP Shell 基本类似。唯一的区别是为标签增加一个属性 `mip-shell`，例子如下：
+
+```html
+<mip-shell-example mip-shell>
+    <script type="application/json">
+        {
+            "routes": [
+                {
+                    "pattern": "*",
+                    "meta": {
+                       "header": {
+                            "show": true,
+                            "title": "Mip Index",
+                            "logo": "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg"
+                        },
+                    }
+                }
+            ],
+            "exampleUserId": 1
+        }
+    </script>
+</mip-shell>
+```
+
+可以看到这个例子中在 `routes` 平级增加了一个 `exampleUserId`，将会在后续继承父类方法中使用到。个性化 Shell 就可以通过传入自定义数据来处理额外的逻辑。
+
+### 供子类继承的方法列表
+
+#### constructor
+
+构造函数中有两个属性可以被子类修改，他们分别是：
+
+* __alwaysReadConfigOnLoad__, 默认值 `true`
+    因为每个页面都有全部的配置，因此在页面切换时，目标页面的配置同时存在于当前页面和目标页面两处（正常情况下两处配置应该相同）。这个属性可以控制以哪一份配置为准。
+
+    如果确认每个页面的配置是严格相同的，或者为了性能考虑，则应该使用 `false`，从而保证只有第一次读入配置，后续均不读取。反之如果需要每次均读取覆盖，则应该使用 `true`。
+
+* __transitionContainsHeader__, 默认值 `true`
+    默认的页面切换动画会连同头部一起进行侧向滑动。如果这个值设置为 `false`，则头部不参与侧滑动画，转而使用 fade (渐隐渐现) 效果取代。
+
+开发者可以在构造函数中修改这两个属性，也可以初始化自己之后将要使用的其他属性和变量。__注意在初始化时，必须要调用 `super` 并且带上参数__，如下：
+
+```javascript
+constructor (...args) {
+  super(...args)
+
+  this.alwaysReadConfigOnLoad = false
+  this.transitionContainsHeader = false
+}
+```
+
+#### showHeaderCloseButton

@@ -67,7 +67,7 @@ class MipShellNovel extends window.MIP.builtinComponents.MipShell {
     if (this.$buttonMask) {
       this.$buttonMask.onclick = () => {
         this.toggleDropdown(false)
-        this.$footerWrapper.classList.remove('show')
+        this.toggleDOM(this.$footerWrapper, false, {transitionName: 'slide'})
       }
     }
   }
