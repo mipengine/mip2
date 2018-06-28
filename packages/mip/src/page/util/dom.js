@@ -275,7 +275,7 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, transitio
     let fadeHeader
     if (!transitionContainsHeader) {
       headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
-      headerLogoTitle.classList.add('fade-out')
+      headerLogoTitle && headerLogoTitle.classList.add('fade-out')
       fadeHeader = getFadeHeader(targetMeta)
       css(fadeHeader, 'display', 'block')
       fadeHeader.classList.add('fade-enter', 'fade-enter-active')
@@ -376,7 +376,7 @@ export function frameMoveOut (pageId,
       css(loading, 'display', 'block')
     } else {
       headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
-      headerLogoTitle.classList.add('fade-out')
+      headerLogoTitle && headerLogoTitle.classList.add('fade-out')
       fadeHeader = getFadeHeader(targetPageMeta)
       css(fadeHeader, 'display', 'block')
     }
