@@ -297,3 +297,32 @@ export default class MipShellExample extends window.MIP.builtinComponents.MipShe
     </script>
 </mip-shell>
 ```
+
+可以看到这个例子中在 `routes` 平级增加了一个 `exampleUserId`，将会在后续继承父类方法中使用到。个性化 Shell 就可以通过传入自定义数据来处理额外的逻辑。
+
+### 供子类继承的方法列表
+
+#### constructor
+
+构造函数中有两个属性可以被子类修改，他们分别是：
+
+* __alwaysReadConfigOnLoad__, 默认值 `true`
+    因为每个页面都有全部的配置，因此在页面切换时，目标页面的配置同时存在于当前页面和目标页面两处（正常情况下两处配置应该相同）。这个属性可以控制以哪一份配置为准。
+
+    如果确认每个页面的配置是严格相同的，或者为了性能考虑，则应该使用 `false`，从而保证只有第一次读入配置，后续均不读取。反之如果需要每次均读取覆盖，则应该使用 `true`。
+
+* __transitionContainsHeader__, 默认值 `true`
+    默认的页面切换动画会连同头部一起进行侧向滑动。如果这个值设置为 `false`，则头部不参与侧滑动画，转而使用 fade (渐隐渐现) 效果取代。
+
+开发者可以在构造函数中修改这两个属性，也可以初始化自己之后将要使用的其他属性和变量。__注意在初始化时，必须要调用 `super` 并且带上参数__，如下：
+
+```javascript
+constructor (...args) {
+  super(...args)
+
+  this.alwaysReadConfigOnLoad = false
+  this.transitionContainsHeader = false
+}
+```
+
+#### showHeaderCloseButton
