@@ -103,7 +103,7 @@ body.with-header {
 .mip-page-fade-header-wrapper {
     top: 0;
     left: 0;
-    right: 0;
+    right: 36px;
     height: @shell-header-height;
     background: #fff;
     z-index: 20001!important;
@@ -119,6 +119,14 @@ body.with-header {
 
     &.fade-enter-to {
         opacity: 1;
+    }
+
+    .mip-shell-header {
+        padding-left: 42px;
+
+        .back-button {
+            left: 6px
+        }
     }
 }
 
