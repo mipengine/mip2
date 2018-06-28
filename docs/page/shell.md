@@ -6,17 +6,6 @@
 
 ![头部标题栏](http://boscdn.bpc.baidu.com/assets/mip2/page/mip-shell.png)
 
-MIP Shell 使用配置进行工作。在编写配置项使用 MIP Shell 之前，我们需要先弄清楚 MIP Shell (或者说整个 MIP) 中参与的角色。这会让 Shell 后续的说明 (尤其是 Shell 的继承部分) 变的更加清晰。
-
-## Shell 的使用方
-
-涉及内置标签 `<mip-shell>` 的角色主要是两方：
-
-* MIP 核心开发小组：即 MIP 核心的开发者，负责 MIP 本身和 `<mip-shell>` 标签的内部实现，也是本文的编写方。
-* 站长或站点开发人员：负责编写页面 HTML，引用 `mip.js` 和组件 JS 等。`<mip-shell>` 的配置也由站长进行。
-
-*在 Shell 的继承部分，还会引入第三个使用方。*
-
 ## 内置 MIP Shell
 
 使用 MIP Shell 最简单直接的方式是直接使用内置的组件 `<mip-shell>`。开发者可以在 __每个页面中__ 使用这个标签来定义 Shell 的各项配置。内置的 `<mip-shell>` 仅提供头部标题栏，但通过 __继承内置 Shell__，开发者可以实现渲染其他部件，如底部菜单栏，侧边栏等等。(继承内置 Shell 的相关内容会在文章的后半部分进行讲述)
@@ -259,12 +248,52 @@ MIP 页面总共有 4 处可以配置头部标题，它们的生效顺序依次�
 
 如果您的站点有一些特殊的需求，官方内置的 MIP Shell 无法满足需求，那么您可以需要个性化 Shell，即自己实现一个类 (class) 继承 MIP Shell。
 
-这里列举两个比较常见的通过个性化 Shell 可以实现的需求，供大家参考：
+这里列举几个比较常见的通过个性化 Shell 可以实现的需求，供大家参考：
 
-* 对于默认的头部标题栏样式不满意，有修改的需求。
+* 对于默认的头部标题栏样式或者 DOM 结构不满意，有修改的需求。
 
-* 除了头部，还有底部栏或者侧边栏需要额外渲染和绑定事件。如下图所示：
+* 除了头部，还有底部栏或者侧边栏需要额外渲染和绑定事件。例如下图：
 
     ![Bottom Shell](http://boscdn.bpc.baidu.com/assets/mip2/page/bottom-shell.png)
 
 * 开发者需要控制站点的 Shell 配置，修改/禁用/忽略某些选项。
+
+    例如开发者希望忽略 HTML 中的配置项而固定选择某些按钮，或者希望在配置之外增加某些按钮等。
+
+### 继承方式
+
+全局的 MIP 对象会暴露一个 MIP Shell 基类供大家继承。例如我们要创建一个 MIP Shell Example 组件，我们可以写如下代码：
+
+```javascript
+export default class MipShellExample extends window.MIP.builtinComponents.MipShell {
+    // Functions go here
+}
+```
+
+类名使用驼峰命名，组件平台会自动把驼峰转化为符合 HTML 规范的短划线连接形式，如 `<mip-shell-example>`。
+
+### 使用个性化 Shell
+
+个性化 Shell 的使用和内置的 MIP Shell 基本类似。唯一的区别是为标签增加一个属性 `mip-shell`，例子如下：
+
+```html
+<mip-shell-example mip-shell>
+    <script type="application/json">
+        {
+            "routes": [
+                {
+                    "pattern": "*",
+                    "meta": {
+                       "header": {
+                            "show": true,
+                            "title": "Mip Index",
+                            "logo": "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg"
+                        },
+                    }
+                }
+            ],
+            "exampleUserId": 1
+        }
+    </script>
+</mip-shell>
+```

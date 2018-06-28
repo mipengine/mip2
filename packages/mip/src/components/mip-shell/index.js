@@ -6,7 +6,6 @@
 import css from '../../util/dom/css'
 import CustomElement from '../../custom-element'
 import fn from '../../util/fn'
-import viewport from '../../viewport'
 import event from '../../util/dom/event'
 import {isPortrait} from '../../page/util/feature-detect'
 import {
