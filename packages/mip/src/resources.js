@@ -166,7 +166,7 @@ class Resources {
    *
    * @param {MIPElement} element element
    */
-  static prerenderElement (element) {
+  prerenderElement (element) {
     if (element.inViewport && !element.inViewport()) {
       element.viewportCallback && element.viewportCallback(true)
     }
