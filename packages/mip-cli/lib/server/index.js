@@ -40,7 +40,7 @@ module.exports = class Server {
     this.router = new Router()
     this.router
       .get(['/:id([^\\.]*)', '/:id([^\\.]+\\.html)'], ...htmlMiddlewares)
-      .get('/mip-components-webpack-helpers.js', koaStatic(path.resolve(__dirname, '../../node_modules/mip-components-webpack-helpers/dist')))
+      // .get('/mip-components-webpack-helpers.js', koaStatic(path.resolve(__dirname, '../../node_modules/mip-components-webpack-helpers/dist')))
       .get('*', ...scriptMiddlewares, koaStatic(this.dir))
 
     this.app

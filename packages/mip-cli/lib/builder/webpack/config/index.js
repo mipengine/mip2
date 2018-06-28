@@ -13,13 +13,14 @@ const {resolveModule} = require('../../../utils/helper');
 const {babelLoader, babelExternals} = require('./babel')
 const path = require('path')
 const componentExternals = require('./component-externals')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = function (options) {
   return {
     entry: options.entry,
     output: {
       path: options.outputPath,
-      filename: '[name]/[name].js',
+      filename: '[name].js',
       chunkFilename: '[name].[hash].js',
       publicPath: options.asset.replace(/\/$/, '') + '/'
     },
@@ -89,7 +90,14 @@ module.exports = function (options) {
     },
     plugins: [
       new VueLoaderPlugin(),
-      new CustomElementPlugin(options)
+      new CustomElementPlugin(options),
+      new CopyWebpackPlugin([
+        {
+          from: resolveModule('mip-components-webpack-helpers/dist/mip-components-webpack-helpers.js'),
+          to: 'mip-components-webpack-helpers.js',
+          toType: 'file'
+        }
+      ], {debug: 'error'})
     ]
   }
 }
