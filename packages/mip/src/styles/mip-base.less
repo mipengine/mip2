@@ -20,9 +20,13 @@ body {
     }
 }
 html, body {
-    height: 100% !important;
+    // height: 100% !important;
     overflow-y: auto;
     position: relative;
+
+    &.trigger-layout {
+        height: 100% !important;
+    }
 }
 html.mip-i-ios-scroll,
 html.mip-i-ios-scroll > body[mip-ready] {

@@ -338,6 +338,10 @@ class Page {
 
     // trigger layout
     window.innerHeight
+    setTimeout(() => {
+      document.documentElement.classList.add('trigger-layout')
+      document.body.classList.add('trigger-layout')
+    })
 
     // scroll to current hash if exists
     this.scrollToHash(window.location.hash)
