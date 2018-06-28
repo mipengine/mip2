@@ -326,3 +326,11 @@ constructor (...args) {
 ```
 
 #### showHeaderCloseButton
+
+MIP Shell 的头部标题栏右侧的按钮区域会根据 MIP 页面当前所处的状态来决定是否展示关闭按钮。当处于百度搜索结果页中（即拥有 SuperFrame 环境时）会额外渲染一个关闭按钮，点击效果用以通知 SuperFrame 关闭自身，如下图所示：
+
+![Close Button](http://boscdn.bpc.baidu.com/assets/mip2/page/close-button.png)
+
+MIP 页面判断当前是否处于 SuperFrame 环境的判断依据是 `window.MIP.standalone` 值等于 `false`。
+
+如果开发者有特殊需求，要求即便在 `window.MIP.standalone === false` 成立时依然 __不展现__ 关闭按钮，可以继承这个方法。这个方法在 `standalone` 的判断之后生效，根据返回值确认是否渲染关闭按钮。
