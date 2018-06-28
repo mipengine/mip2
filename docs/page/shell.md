@@ -115,7 +115,7 @@
 
     每一个配置对象由 3 个属性构成，分别是 `name`, `text` 和 `link`。这三个配置项均 __没有__ 默认值，如果缺少某个则被认为非法配置，__会被跳过而不进行渲染__。
 
-    * name: __string__。__必填__。标识按钮的名字。在点击按钮后，会向 __当前页面__ 触发名为 `appheader:click-[name]` 的事件供其他组件监听并处理。例如当 `name` 为 `search` 时，事件名称为 `appheader:click-search`。
+    * name: __string__。__必填__。标识按钮的名字。在点击按钮后，会向 __当前页面__ 触发名为 `appheader:click-[name]` 的事件供其他组件监听并处理。例如当 `name` 为 `search` 时，事件名称为 `appheader:click-search`。__不能使用保留名字__，包括 `back`, `more` 和 `close`。
 
     * text: __string__。__必填__。标识按钮的显示文字。
 
@@ -327,8 +327,8 @@ constructor (...args) {
 
 #### showHeaderCloseButton
 
-* __参数__： 无
-* __返回值__：__boolean__，`true` 或者 `false`。默认 `true`。
+* __参数__： 无。
+* __返回值__：__boolean__，默认 `true`。
 
 MIP Shell 的头部标题栏右侧的按钮区域会根据 MIP 页面当前所处的状态来决定是否展示关闭按钮。当处于百度搜索结果页中（即拥有 SuperFrame 环境时）会额外渲染一个关闭按钮，点击效果用以通知 SuperFrame 关闭自身，如下图所示：
 
@@ -336,7 +336,7 @@ MIP Shell 的头部标题栏右侧的按钮区域会根据 MIP 页面当前所�
 
 MIP 页面判断当前是否处于 SuperFrame 环境的判断依据是 `window.MIP.standalone` 值等于 `false`。
 
-如果开发者有特殊需求，要求即便在 `window.MIP.standalone === false` 成立时依然 __不展现__ 关闭按钮，可以继承这个方法。这个方法在 `standalone` 的判断之后生效，根据返回值确认是否渲染关闭按钮。
+如果开发者有特殊需求，要求即便在 `window.MIP.standalone === false` 成立时依然 __不展现__ 关闭按钮，可以继承这个方法并返回 `false`。这个方法在 `standalone` 的判断 __之后__ 生效，因此即便它返回 `true`，只要 `standalone` 也为 `true` 则关闭按钮依然不展现。
 
 ```javascript
 showHeaderCloseButton () {
@@ -347,3 +347,31 @@ showHeaderCloseButton () {
   }
 }
 ```
+
+#### handleShellCustomButton
+
+* __参数__：`buttonName`, __string__, 按钮配置时的 `name` 属性。
+* __返回值__：无。
+
+MIP Shell 的头部标题栏上所有的按钮（如默认的后退，关闭，更多以及用户配置的 `buttonGroup`）在点击时都会调用这个方法。
+
+虽然默认的后退(`back`)， 关闭(`close`)和更多(`more`)按钮已有其对应的处理方法（如点击更多展现浮层，点击后退路由后退等），但开发者依然可以在这里接到这些值，以添加可能存在的额外操作。
+
+在 `buttonGroup` 配置时，每一个按钮均有一个 `name` 属性，这个 `name` 属性也会当做参数传入这个方法。
+
+```javascript
+handleShellCustomButton (buttonName) {
+  if (buttonName === 'back') {
+    // Default header contains a button named 'back'
+    console.log('click on back')
+    // Do more things besides default operations
+  } else if (buttonName === 'about') {
+    // Assume you have configured a button named 'about'
+    console.log('click on about')
+    window.MIP.viewer.open('./about.html')
+    // Just for demo. Actually you should use 'link' in 'buttonGroup' to jump pages
+  }
+}
+```
+
+特别地，在 MIP Shell 基类逻辑中还定义了一个名为 `cancel` 的按钮的点击响应，作用是关闭更多按钮的浮层。因此如果开发者在 `buttonGroup` 中配置了名为 `cancel` 的按钮，可以不必自行实现关闭浮层的响应即可获得相同的效果。

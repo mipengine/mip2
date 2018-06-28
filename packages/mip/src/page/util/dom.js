@@ -121,7 +121,8 @@ function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
   // Transition only need header (frameMovingOut) but doesn't contains header (extended from child mip-shell-xxx)
   // Means doesn't need loading
   if (!transitionContainsHeader && onlyHeader) {
-    css(loading, 'display', 'none')
+    // css(loading, 'display', 'none')
+    loading.classList.remove('show')
     return loading
   }
 
@@ -275,8 +276,11 @@ export function frameMoveIn (pageId,
 
   if (transition) {
     let loading = getLoading(targetMeta, {transitionContainsHeader})
-    loading.classList.add('slide-enter', 'slide-enter-active')
-    css(loading, 'display', 'block')
+    loading.classList.add('slide-enter', 'slide-enter-active', 'show')
+    // setTimeout(() => {
+    //   css(loading, 'display', 'block')
+    //   console.log('loading display block')
+    // }, 0)
 
     let headerLogoTitle
     let fadeHeader
@@ -295,12 +299,12 @@ export function frameMoveIn (pageId,
 
     let done = () => {
       hideAllIFrames()
-      css(loading, 'display', 'none')
-
       css(iframe, {
         'z-index': activeZIndex++,
         display: 'block'
       })
+      // css(loading, 'display', 'none')
+      loading.classList.remove('show')
 
       onComplete && onComplete()
     }
@@ -317,14 +321,18 @@ export function frameMoveIn (pageId,
       }
     })
 
-    nextFrame(() => {
-      loading.classList.add('slide-enter-to')
-      loading.classList.remove('slide-enter')
-      if (!transitionContainsHeader) {
-        fadeHeader.classList.add('fade-enter-to')
-        fadeHeader.classList.remove('fade-enter')
-      }
-    })
+    setTimeout(() => {
+      nextFrame(() => {
+        // css(loading, 'display', 'block')
+        // console.log('loading display block')
+        loading.classList.add('slide-enter-to')
+        loading.classList.remove('slide-enter')
+        if (!transitionContainsHeader) {
+          fadeHeader.classList.add('fade-enter-to')
+          fadeHeader.classList.remove('fade-enter')
+        }
+      })
+    }, 0)
   } else {
     hideAllIFrames()
     css(iframe, {
@@ -380,7 +388,8 @@ export function frameMoveOut (pageId,
     let fadeHeader
 
     if (transitionContainsHeader) {
-      css(loading, 'display', 'block')
+      // css(loading, 'display', 'block')
+      loading.classList.add('show')
     } else {
       headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
       headerLogoTitle && headerLogoTitle.classList.add('fade-out')
@@ -405,10 +414,10 @@ export function frameMoveOut (pageId,
         display: 'none',
         'z-index': 10000
       })
-      css(loading, 'display', 'none')
+      // css(loading, 'display', 'none')
       iframe.classList.remove('slide-leave-to', 'slide-leave-active')
       if (transitionContainsHeader) {
-        loading.classList.remove('slide-leave-to', 'slide-leave-active')
+        loading.classList.remove('slide-leave-to', 'slide-leave-active', 'show')
       } else {
         fadeHeader.classList.remove('fade-enter-to', 'fade-enter')
       }
