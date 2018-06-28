@@ -41,8 +41,8 @@ import viewport from '../viewport'
 import Router from './router/index'
 // import AppShell from './appshell'
 import GlobalComponent from './appshell/globalComponent'
+import platform from '../util/platform'
 import '../styles/mip.less'
-import platform from '../util/platform';
 
 /**
  * use passive event listeners if supported

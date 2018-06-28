@@ -259,7 +259,14 @@ export function whenTransitionEnds (el, type, cb) {
  * @param {boolean} options.transitionContainsHeader whether transition contains header
  * @param {Function} options.onComplete callback on complete
  */
-export function frameMoveIn (pageId, {transition, targetMeta, newPage, transitionContainsHeader, onComplete} = {}) {
+export function frameMoveIn (pageId,
+  {
+    transition,
+    targetMeta,
+    newPage,
+    transitionContainsHeader,
+    onComplete
+  } = {}) {
   let iframe = getIFrame(pageId)
 
   if (!iframe) {
@@ -268,8 +275,8 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, transitio
 
   if (transition) {
     let loading = getLoading(targetMeta, {transitionContainsHeader})
-    css(loading, 'display', 'block')
     loading.classList.add('slide-enter', 'slide-enter-active')
+    css(loading, 'display', 'block')
 
     let headerLogoTitle
     let fadeHeader
@@ -277,8 +284,8 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, transitio
       headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
       headerLogoTitle && headerLogoTitle.classList.add('fade-out')
       fadeHeader = getFadeHeader(targetMeta)
-      css(fadeHeader, 'display', 'block')
       fadeHeader.classList.add('fade-enter', 'fade-enter-active')
+      css(fadeHeader, 'display', 'block')
     }
 
     // trigger layout
