@@ -48,6 +48,7 @@ body.with-header {
 }
 
 .mip-page__iframe {
+    opacity: 0.9;
     position: fixed;
     left: 0;
     top: 0;
@@ -59,6 +60,8 @@ body.with-header {
     background: #fff;
     z-index: 10000;
     display: none;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .mip-page-loading-wrapper {
@@ -120,13 +123,4 @@ body.with-header {
     &.fade-enter-to {
         opacity: 1;
     }
-}
-
-#mip-page-scroll-position {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0;
-    visibility: hidden;
 }

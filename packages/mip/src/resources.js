@@ -5,7 +5,7 @@
 
 import fn from './util/fn'
 import Gesture from './util/gesture/index'
-// import viewport from './viewport'
+import viewport from './viewport'
 import rect from './util/dom/rect'
 
 /**
@@ -30,12 +30,12 @@ let counter = 0
  */
 
 class Resources {
-  constructor (viewport) {
-  /**
-   * Resources id
-   * @private
-   * @type {number}
-   */
+  constructor () {
+    /**
+     * Resources id
+     * @private
+     * @type {number}
+     */
     this._rid = counter++
 
     /**
@@ -49,16 +49,16 @@ class Resources {
     resources[this._rid] = {}
 
     /**
-   * The method to udpate state.
-   * @type {Function}
-   */
+     * The method to udpate state.
+     * @type {Function}
+     */
     this.updateState = this._update.bind(this)
 
     /**
-   * Viewport
-   * @private
-   * @type {Object}
-   */
+     * Viewport
+     * @private
+     * @type {Object}
+     */
     this._viewport = viewport
 
     this._gesture = new Gesture(document.body, {
@@ -68,8 +68,8 @@ class Resources {
   }
 
   /**
- * Bind the events of current object.
- */
+   * Bind the events of current object.
+   */
   _bindEvent () {
     let self = this
     let timer
@@ -173,4 +173,4 @@ class Resources {
   }
 }
 
-export default Resources
+export default new Resources()

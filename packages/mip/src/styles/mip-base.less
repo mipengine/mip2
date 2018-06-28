@@ -5,61 +5,42 @@
     padding: 0
 }
 
+html {
+    font-size: 100px;
+}
 body {
     font-size-adjust:  none;
     text-size-adjust: none;
     font: 14px Arial, Helvetica, sans-serif;
     box-sizing: border-box;
     -webkit-box-sizing: border-box;
-    height: auto!important;
+
+    &.with-header {
+        padding-top: @shell-header-height;
+    }
+}
+html, body {
+    height: 100% !important;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+}
+html.mip-i-android-scroll,
+body.mip-i-android-scroll {
+    height: auto !important;
+    overflow-y: visible;
+    position: static;
+}
+html.mip-no-scroll,
+html.mip-no-scroll > body {
+    height: 100% !important;
+    position: relative;
+    overflow: hidden;
 }
 
 @media screen and (max-width: 360px) {
     html {
         font-size: 90px!important;
-    }
-}
-
-html {
-    font-size: 100px;
-    overflow-x: hidden!important;
-    height: auto!important;
-
-    // 嵌在 iframe 中的情况
-    &.mip-html-embeded {
-        overflow-y: auto!important;
-        touch-action: pan-y;
-        position: static;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    // &.mip-no-scroll {
-    //     overflow: hidden;
-    //     body {
-    //         overflow: hidden;
-    //     }
-    // }
-
-    // 为 body 创建的一个新的 wrapper
-    &.mip-html-wrapper {
-        position: absolute!important;
-        top: 0!important;
-        left: 0!important;
-        right: 0!important;
-        bottom: 0!important;
-        margin: 0!important;
-        display: block!important;
-        -webkit-overflow-scrolling: touch;
-
-        &.with-header {
-            padding-top: @shell-header-height;
-        }
-
-        body {
-            -webkit-overflow-scrolling: touch;
-            height: auto;
-            position: relative;
-        }
     }
 }
 

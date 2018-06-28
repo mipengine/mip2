@@ -6,6 +6,7 @@
 import EventEmitter from './util/event-emitter'
 import rect from './util/dom/rect'
 import fn from './util/fn'
+import platform from './util/platform'
 // import fixedElement from './fixed-element'
 
 // Native objects.
@@ -50,45 +51,18 @@ let resizeEvent = fn.throttle(function (event) {
  * provide some additional methods.
  */
 let viewport = {
-
   /**
    * Initialize the viewport
    *
    * @return {Viewport}
    */
   init () {
-    this.scroller = win
-    if (win.MIP.viewer.isIframed) {
-      this.scroller = this.reparentBody()
-    }
-    rect.setScroller(this.scroller)
+    this.scroller = platform.needSpecialScroll ? document.body : win
+
     // fixedElement.init()
     this.scroller.addEventListener('scroll', scrollHandle.bind(this), false)
 
     win.addEventListener('resize', resizeEvent.bind(this))
-  },
-
-  /**
-   * create a <html> wrapper in iframe
-   * https://hackernoon.com/amp-ios-scrolling-and-position-fixed-redo-the-wrapper-approach-8874f0ee7876
-   *
-   * @return {HTMLElement} wrapper
-   */
-  reparentBody () {
-    const wrapper = document.createElement('html')
-    // Setup classes and styles
-    wrapper.className = document.documentElement.className
-    document.documentElement.className = 'mip-html-embeded'
-    wrapper.classList.add('mip-html-wrapper')
-    // Attach wrapper straight inside the document root
-    document.documentElement.appendChild(wrapper)
-    // Reparent the body
-    const body = document.body
-    wrapper.appendChild(body)
-    Object.defineProperty(document, 'body', {
-      get: () => body
-    })
-    return wrapper
   },
 
   /**

@@ -4,7 +4,7 @@
  */
 
 import css from '../../util/dom/css'
-// import viewport from '../../viewport'
+import platform from '../../util/platform'
 
 import {MIP_IFRAME_CONTAINER} from '../const/index'
 import {raf, transitionEndEvent, animationEndEvent} from './feature-detect'
@@ -37,7 +37,7 @@ export function createIFrame (fullpath, pageId, {onLoad, onError} = {}) {
    */
   // container.style.height = `${viewport.getHeight()}px`
   container.setAttribute('width', '100%')
-  container.setAttribute('scrolling', 'no')
+  container.setAttribute('scrolling', platform.isIos() ? 'no' : 'yes')
 
   container.setAttribute('data-page-id', pageId)
   container.setAttribute('sandbox', 'allow-top-navigation allow-popups allow-scripts allow-forms allow-pointer-lock allow-popups-to-escape-sandbox allow-same-origin allow-modals')
