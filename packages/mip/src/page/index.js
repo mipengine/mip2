@@ -42,6 +42,7 @@ import Router from './router/index'
 // import AppShell from './appshell'
 import GlobalComponent from './appshell/globalComponent'
 import '../styles/mip.less'
+import platform from '../util/platform';
 
 /**
  * use passive event listeners if supported
@@ -208,7 +209,6 @@ class Page {
         if ($hash) {
           // scroll to current hash
           scrollTo($hash.offsetTop, {
-            scroller: viewport.scroller,
             scrollTop: viewport.getScrollTop()
           })
         }
@@ -336,10 +336,16 @@ class Page {
 
     // fix a UC/shoubai bug https://github.com/mipengine/mip2/issues/19
     window.addEventListener(SHOW_PAGE_CUSTOM_EVENT, (e) => {
-      enableBouncyScrolling()
+      if (platform.isIos() &&
+        (platform.isUc() || platform.isBaidu() || platform.isBaiduApp())) {
+        enableBouncyScrolling()
+      }
     })
     window.addEventListener(HIDE_PAGE_CUSTOM_EVENT, (e) => {
-      disableBouncyScrolling()
+      if (platform.isIos() &&
+        (platform.isUc() || platform.isBaidu() || platform.isBaiduApp())) {
+        disableBouncyScrolling()
+      }
     })
 
     this.emitEventInCurrentPage({name: SHOW_PAGE_CUSTOM_EVENT})
@@ -425,7 +431,7 @@ class Page {
    * restore scroll position in root page
    */
   restoreScrollPosition () {
-    viewport.scroller.scrollTo(0, this.rootPageScrollPosition)
+    viewport.setScrollTop(this.rootPageScrollPosition)
   }
 
   /**
@@ -481,6 +487,7 @@ class Page {
         backwardOpitons.targetPageMeta = this.currentPageMeta
       }
 
+      document.documentElement.classList.remove('mip-no-scroll')
       Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
       frameMoveOut(this.currentPageId, backwardOpitons)
 
@@ -510,6 +517,7 @@ class Page {
            * Disable scrolling of root page when covered by an iframe
            * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
            */
+          document.documentElement.classList.add('mip-no-scroll')
           Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
           options.onComplete && options.onComplete()
         }

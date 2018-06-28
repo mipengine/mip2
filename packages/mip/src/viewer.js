@@ -62,10 +62,10 @@ let viewer = {
 
     // add normal scroll class to body. except ios in iframe.
     // Patch for ios+iframe is default in mip.css
-    // if (!platform.needSpecialScroll) {
-    //   document.documentElement.classList.add('mip-i-android-scroll')
-    //   document.body.classList.add('mip-i-android-scroll')
-    // }
+    if (!platform.needSpecialScroll) {
+      document.documentElement.classList.add('mip-i-android-scroll')
+      document.body.classList.add('mip-i-android-scroll')
+    }
 
     if (this.isIframed) {
       this.patchForIframe()
@@ -416,15 +416,14 @@ let viewer = {
    */
   _lockBodyScroll () {
     let wrapper = viewport.scroller
-    let viewportHeight = viewport.getHeight()
-
     wrapper.addEventListener('touchstart', e => {
+      let viewportHeight = viewport.getHeight()
       let scrollTop = viewport.getScrollTop()
       let scrollHeight = viewport.getScrollHeight()
       if (scrollTop === 0) {
-        wrapper.scrollTop = 1
+        viewport.setScrollTop(1)
       } else if (scrollHeight - scrollTop <= viewportHeight) {
-        wrapper.scrollTop = scrollTop - 1
+        viewport.setScrollTop(scrollTop - 1)
       }
     }, eventListenerOptions)
   }
