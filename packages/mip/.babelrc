@@ -16,8 +16,7 @@
       {
         "globals": ["HTMLElement"]
       }
-    ],
-    "transform-runtime"
+    ]
   ],
   "ignore": ["dist/*.js"]
 }
