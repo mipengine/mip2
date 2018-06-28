@@ -1,5 +1,5 @@
 /**
- * @file rollup alias config
+ * @file rollup build script file
  * @author mj(zoumiaojiang@gmail.com)
  */
 
