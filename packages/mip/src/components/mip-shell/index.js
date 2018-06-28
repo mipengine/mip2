@@ -202,6 +202,7 @@ class MipShell extends CustomElement {
 
     let moreFlag = Array.isArray(buttonGroup) && buttonGroup.length > 0
     let closeFlag = !window.MIP.standalone && this.showHeaderCloseButton()
+
     if (moreFlag && closeFlag) {
       // more & close
       headerHTML += `
