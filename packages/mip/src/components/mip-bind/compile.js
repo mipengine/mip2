@@ -179,7 +179,9 @@ class Compile {
     try {
       let fn = this.getWithResult(exp)
       value = fn.call(this.data)
-      value !== '' && node.removeAttribute(attrName)
+      if (value !== '' && typeof value !== 'undefined') {
+        node.removeAttribute(attrName)
+      }
     } catch (e) {
       // console.error(e)
     }
@@ -188,11 +190,13 @@ class Compile {
 
   /* eslint-disable */
   getWithResult (exp) {
-    return new Function((`with(this){try {return ${exp}} catch(e) {throw e}}`))
+    exp = util.namespaced(exp)
+    return new Function(`with(this){try {return ${exp}} catch(e) {throw e}}`)
   }
 
   setWithResult (exp, value) {
-    return new Function((`with(this){try {${exp} = "${value}"} catch (e) {throw e}}`))
+    exp = util.namespaced(exp)
+    return new Function(`with(this){try {${exp} = "${value}"} catch (e) {throw e}}`)
   }
   /* eslint-enable */
 }

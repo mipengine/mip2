@@ -29,8 +29,9 @@ class Watcher {
   }
 
   getWithResult (exp) {
+    exp = util.namespaced(exp)
     /* eslint-disable */
-    return new Function((`with(this){try {return ${exp}} catch(e) {}}`))
+    return new Function(`with(this){try {return ${exp}} catch(e) {}}`)
     /* eslint-enable */
   }
 
