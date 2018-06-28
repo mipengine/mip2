@@ -1,10 +1,15 @@
+/**
+ * @file rollup alias config
+ * @author mj(zoumiaojiang@gmail.com)
+ */
+
 const path = require('path')
 const buble = require('rollup-plugin-buble')
 const alias = require('rollup-plugin-alias')
 const replace = require('rollup-plugin-replace')
-const less = require('rollup-plugin-less')
 const node = require('rollup-plugin-node-resolve')
 const cjs = require('rollup-plugin-commonjs')
+const postcss = require('rollup-plugin-postcss2')
 const version = process.env.VERSION || require('../package.json').version
 
 const aliases = require('./alias')
@@ -35,10 +40,14 @@ function genConfig (name) {
       replace({
         __VERSION__: version
       }),
-      alias(Object.assign({}, aliases, opts.alias)),
-      less({
-        output: resolve('dist/mip.css')
+      postcss({
+        extract: resolve('dist/mip.css'),
+        inject: false,
+        minimize: true,
+        extensions: ['.less', '.css'],
+        config: true
       }),
+      alias(Object.assign({}, aliases, opts.alias)),
       node(),
       cjs(
         {
