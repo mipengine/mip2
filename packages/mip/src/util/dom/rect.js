@@ -3,6 +3,8 @@
  * @author sekiyika(pengxing@baidu.com)
  */
 
+import platform from '../platform'
+
 'use strict'
 
 // Save the native object or method.
@@ -11,14 +13,55 @@ let docElem = document.documentElement
 let round = Math.round
 
 /**
+ * When page in IOS-IFRAME, scroll and rect have some bugs.
+ * So we need add some elements to solve this problem.
+ * https://medium.com/@dvoytenko/amp-ios-scrolling-and-position-fixed-b854a5a0d451
+ *
+ * @inner
+ * @param {boolean} isEnd Create a ending element or not.
+ * @return {?HTMLElement}
+ */
+function patchForIOS (isEnd) {
+  if (platform.needSpecialScroll && window !== top) {
+    let element = document.createElement('div')
+    element.style.cssText = isEnd
+      ? 'position:absolute;width:0;height:0;visibility:hidden;'
+      : 'position:absolute;top:0;left:0;width:0;height:0;visibility:hidden;'
+    docBody.appendChild(element)
+    return element
+  }
+  return null
+}
+
+/**
+ * Element for getting scroll values.
+ *
+ * @inner
+ * @type {HTMLElement}
+ */
+let getterElement = patchForIOS()
+
+/**
+ * Element for setting scroll values.
+ *
+ * @inner
+ * @type {HTMLElement}
+ */
+let setterElement = patchForIOS()
+
+/**
+ * Element for get page height.
+ *
+ * @inner
+ * @type {HTMLElement}
+ */
+let endElement = patchForIOS(true)
+
+/**
  * Browsers have some bugs in frame of IOS, the native getBoundingClientRect() also needs to recalculate,
  * so increase the "this" module.
  */
 export default {
-
-  setScroller (scroller) {
-    this.scroller = scroller
-  },
 
   get (left, top, width, height) {
     left = round(left)
@@ -34,6 +77,14 @@ export default {
       bottom: top + height
     }
   },
+
+  /**
+   * The scrollingElement
+   * @type {HTMLElement}
+   */
+  scrollingElement: document.scrollingElement ||
+    (platform.isWebkit() && docBody) ||
+    docElem,
 
   /**
    * Get an element's rect.
@@ -69,8 +120,9 @@ export default {
    * @return {number}
    */
   getScrollLeft () {
-    return round(this.scroller === window ? (docBody.scrollLeft || docElem.scrollLeft)
-      : this.scroller.scrollLeft)
+    return round(
+      (getterElement && -getterElement.getBoundingClientRect().left) ||
+      this.scrollingElement.scrollLeft || window.pageXOffset || 0)
   },
 
   /**
@@ -79,8 +131,9 @@ export default {
    * @return {number}
    */
   getScrollTop () {
-    return round(this.scroller === window ? (docBody.scrollTop || docElem.scrollTop)
-      : (this.scroller.scrollTop === 1 ? 0 : this.scroller.scrollTop))
+    return round(
+      (getterElement && -getterElement.getBoundingClientRect().top) ||
+      this.scrollingElement.scrollTop || window.pageYOffset || 0)
   },
 
   /**
@@ -89,12 +142,11 @@ export default {
    * @param {number} top top
    */
   setScrollTop (top) {
-    if (this.scroller === window) {
-      window.scrollTo(0, top)
+    if (setterElement) {
+      setterElement.style.top = top + 'px'
+      setterElement.scrollIntoView(true)
     } else {
-      // scroll top is 0, it's set to 1 to avoid scroll-freeze issue
-      // https://github.com/ampproject/amphtml/issues/330
-      this.scroller.scrollTop = top || 1
+      this.scrollingElement.scrollTop = top
     }
   },
 
@@ -104,8 +156,10 @@ export default {
    * @return {number}
    */
   getScrollHeight () {
-    return round(this.scroller === window ? (docBody.scrollHeight || docElem.scrollHeight)
-      : this.scroller.scrollHeight)
+    if (endElement && endElement !== docBody.lastElementChild) {
+      docBody.appendChild(endElement)
+    }
+    return round(endElement ? endElement.offsetTop : this.scrollingElement.scrollHeight)
   },
 
   /**

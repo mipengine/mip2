@@ -83,8 +83,6 @@ window.MIP = mip
 
 // init viewport
 viewport.init()
-// init resource
-viewport.resources = new Resources(viewport)
 
 // install mip1 polyfill
 mip1PolyfillInstall(mip)

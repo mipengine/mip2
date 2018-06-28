@@ -99,7 +99,7 @@ class Bind {
         })
       }
     } else {
-      console.error('setData method must accept an object!')
+      console.error('setData method MUST accept an object!')
     }
   }
 
@@ -177,6 +177,9 @@ class Bind {
     let pageData = {}
 
     Object.keys(data).forEach(k => {
+      if (typeof data[k] === 'function') {
+        throw 'setData method MUST NOT accept object that contains functions' // eslint-disable-line no-throw-literal
+      }
       if (/^#/.test(k)) {
         globalData[k.substr(1)] = data[k]
       } else {
