@@ -418,11 +418,7 @@ class MipShell extends CustomElement {
     let {show: showHeader} = this.currentPageMeta.header
     // Set `padding-top` on scroller
     if (showHeader) {
-      if (viewport.scroller === window) {
-        document.body.classList.add('with-header')
-      } else {
-        viewport.scroller.classList.add('with-header')
-      }
+      document.body.classList.add('with-header')
     }
   }
 
