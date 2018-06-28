@@ -1,5 +1,5 @@
 /**
- * @file rollup alias config
+ * @file rollup config file
  * @author mj(zoumiaojiang@gmail.com)
  */
 
@@ -43,7 +43,9 @@ function genConfig (name) {
       postcss({
         extract: resolve('dist/mip.css'),
         inject: false,
-        minimize: true,
+        minimize: {
+          safe: true
+        },
         extensions: ['.less', '.css'],
         config: true
       }),

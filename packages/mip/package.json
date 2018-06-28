@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "dev": "node examples/server.js",
-    "build": "node build/build.js",
+    "build": "node build/build.rollup.js",
     "uploadjs": "baidubce bos --put-object dist/mip.js bos://assets/mip/projects/mip.js",
     "uploadcss": "baidubce bos --put-object dist/mip.css bos://assets/mip/projects/mip.css",
     "deploy:dev": "npm run build && npm run uploadjs && npm run uploadcss",
