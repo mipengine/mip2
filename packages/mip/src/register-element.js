@@ -6,7 +6,7 @@
 /* global HTMLElement */
 /* eslint-disable no-proto */
 
-import viewport from './viewport'
+import resources from './resources'
 import layout from './layout'
 import performance from './performance'
 import customElementsStore from './custom-element-store'
@@ -118,7 +118,7 @@ let BaseElement = _fixBabelExtend(function (_HTMLElement) {
      * @private
      * @type {Object}
      */
-    _this._resources = viewport.resources
+    _this._resources = resources
 
     _this.__innerHTML = _this.innerHTML
 

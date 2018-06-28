@@ -6,26 +6,30 @@
 const path = require('path')
 const WrapperPlugin = require('wrapper-webpack-plugin')
 
-let mode
-let asset
+// let mode
+// let asset
 
 function isComponentFile (filename) {
   return /(mip-[\w-]+)\/\1\.js$/.test(filename)
 }
 
-function customElementHeader (filename) {
-  if (!isComponentFile(filename)) {
-    return ''
+function customElementHeader (asset) {
+  return function (filename) {
+    if (!isComponentFile(filename)) {
+      return ''
+    }
+
+    let mipComponentsWebpackHelperUrl = asset.replace(/\/$/, '') + '/mip-components-webpack-helpers'
+
+    // let mipComponentsWebpackHelperUrl = (mode === 'development')
+    //   ? '/mip-components-webpack-helpers'
+    //   : asset.replace(/\/$/, '') + '/mip-components-webpack-helpers'
+
+    return `(function() {
+      require.config({paths: {'mipComponentsWepackHelpers': '${mipComponentsWebpackHelperUrl}'}});
+      require(['mipComponentsWepackHelpers'], function (__mipComponentsWepackHelpers__) {
+        var __mip_component__ = `
   }
-
-  let mipComponentsWebpackHelperUrl = (mode === 'development')
-    ? '/mip-components-webpack-helpers'
-    : asset.replace(/\/$/, '') + '/mip-components-webpack-helpers'
-
-  return `(function() {
-    require.config({paths: {'mipComponentsWepackHelpers': '${mipComponentsWebpackHelperUrl}'}});
-    require(['mipComponentsWepackHelpers'], function (__mipComponentsWepackHelpers__) {
-      var __mip_component__ = `
 }
 
 function customElementFooter (filename) {
@@ -45,11 +49,8 @@ function customElementFooter (filename) {
 }
 
 module.exports = function (options) {
-  asset = options.asset || '/'
-  mode = options.mode || 'production'
-
   return new WrapperPlugin({
-    header: customElementHeader,
+    header: customElementHeader(options.asset),
     footer: customElementFooter
   })
 }

@@ -69,12 +69,15 @@ module.exports = class WebpackBuilder {
     // globPify('mip-*/mip-*.vue', globOpts)
     //   .then(arr => arr.filter(name => /(mip-[\w-]+)\/\1\.vue$/.test(name)))
 
-    return components.reduce((entries, pathname) => {
+    let entries = components.reduce((entries, pathname) => {
       let basename = path.basename(pathname, path.extname(pathname))
-      entries[basename] = path.resolve(this.componentDir, pathname)
+      entries[`${basename}/${basename}`] = path.resolve(this.componentDir, pathname)
       return entries
     }, {})
 
+    // entries['mip-components-webpack-helpers'] = resolveModule('mip-components-webpack-helpers/dist/mip-components-webpack-helpers.js')
+
+    return entries
     // let [singleComponents, complexComponents] = await Promise.all([
     //     globPify('mip-*.vue', globOpts),
     //     globPify('mip-*/mip-*.vue', globOpts)

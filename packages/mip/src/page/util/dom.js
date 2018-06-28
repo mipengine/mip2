@@ -4,7 +4,7 @@
  */
 
 import css from '../../util/dom/css'
-// import viewport from '../../viewport'
+import platform from '../../util/platform'
 
 import {MIP_IFRAME_CONTAINER} from '../const/index'
 import {raf, transitionEndEvent, animationEndEvent} from './feature-detect'
@@ -37,7 +37,7 @@ export function createIFrame (fullpath, pageId, {onLoad, onError} = {}) {
    */
   // container.style.height = `${viewport.getHeight()}px`
   container.setAttribute('width', '100%')
-  container.setAttribute('scrolling', 'no')
+  container.setAttribute('scrolling', platform.isIos() ? 'no' : 'yes')
 
   container.setAttribute('data-page-id', pageId)
   container.setAttribute('sandbox', 'allow-top-navigation allow-popups allow-scripts allow-forms allow-pointer-lock allow-popups-to-escape-sandbox allow-same-origin allow-modals')
@@ -89,7 +89,7 @@ export function createLoading (pageMeta) {
         <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M769.405 977.483a68.544 68.544 0 0 1-98.121 0L254.693 553.679c-27.173-27.568-27.173-72.231 0-99.899L671.185 29.976c13.537-13.734 31.324-20.652 49.109-20.652s35.572 6.917 49.109 20.652c27.173 27.568 27.173 72.331 0 99.899L401.921 503.681l367.482 373.904c27.074 27.568 27.074 72.231 0 99.899z"/></svg>
       </span>
       <div class="mip-shell-header-logo-title">
-        <img class="mip-shell-header-logo" src="${pageMeta.header.logo}">
+        ${pageMeta ? `<img class="mip-shell-header-logo" src="${pageMeta.header.logo}">` : ''}
         <span class="mip-shell-header-title"></span>
       </div>
     </div>
@@ -109,6 +109,11 @@ export function createLoading (pageMeta) {
  */
 function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
   let loading = document.querySelector('#mip-page-loading-wrapper')
+  if (!loading) {
+    createLoading(targetMeta)
+    loading = document.querySelector('#mip-page-loading-wrapper')
+  }
+
   if (!targetMeta) {
     return loading
   }
@@ -179,6 +184,11 @@ export function createFadeHeader (pageMeta) {
  */
 function getFadeHeader (targetMeta) {
   let fadeHeader = document.querySelector('#mip-page-fade-header-wrapper')
+  if (!fadeHeader) {
+    createFadeHeader(targetMeta)
+    fadeHeader = document.querySelector('#mip-page-fade-header-wrapper')
+  }
+
   if (!targetMeta) {
     return fadeHeader
   }

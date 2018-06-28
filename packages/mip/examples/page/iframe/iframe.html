@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
     <style>
         html,body {
+            height: 100%;
             margin: 0;
             cursor: pointer;
         }
@@ -20,36 +21,38 @@
             right: 0;
             opacity: 0.9;
             border: 0;
+            height: 100%;
             width: 1px;
             min-width: 100%;
             background: #fff;
             z-index: 10000;
+            overflow-x: hidden;
         }
     </style>
     <script>
         window.onload = function () {
             let $iframe = document.querySelector('iframe')
-            $iframe.style.height = window.innerHeight + 'px'
+            // $iframe.style.height = window.innerHeight + 'px'
 
-            let $scroller = $iframe.contentWindow.document.querySelector('.mip-html-wrapper')
+            // let $scroller = $iframe.contentWindow.document.querySelector('.mip-html-wrapper')
 
-            function removeIOSRubberEffect( element ) {
+            // function removeIOSRubberEffect( element ) {
 
-                element.addEventListener( "touchstart", function () {
+            //     element.addEventListener( "touchstart", function () {
 
-                    var top = element.scrollTop, totalScroll = element.scrollHeight, currentScroll = top + element.offsetHeight;
+            //         var top = element.scrollTop, totalScroll = element.scrollHeight, currentScroll = top + element.offsetHeight;
 
-                    if ( top === 0 ) {
-                        element.scrollTop = 1;
-                    } else if ( currentScroll === totalScroll ) {
-                        element.scrollTop = top - 1;
-                    }
+            //         if ( top === 0 ) {
+            //             element.scrollTop = 1;
+            //         } else if ( currentScroll === totalScroll ) {
+            //             element.scrollTop = top - 1;
+            //         }
 
-                } );
+            //     } );
 
-            }
+            // }
 
-            removeIOSRubberEffect($scroller);
+            // removeIOSRubberEffect($scroller);
         }
     </script>
 </head>
