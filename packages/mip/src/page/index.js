@@ -299,6 +299,14 @@ class Page {
   }
 
   start () {
+    if (platform.isIos()) {
+      let iosVersion = platform.getOsVersion()
+      iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
+      if (iosVersion !== '8' && iosVersion !== '7') {
+        document.documentElement.classList.add('mip-i-ios-scroll')
+      }
+    }
+
     // Don't let browser restore scroll position.
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual'
@@ -327,6 +335,9 @@ class Page {
 
     // Job complete!
     document.body.setAttribute('mip-ready', '')
+
+    // trigger layout
+    window.innerHeight
 
     // scroll to current hash if exists
     this.scrollToHash(window.location.hash)
