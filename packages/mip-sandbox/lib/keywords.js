@@ -83,12 +83,13 @@ var ORIGINAL = [
   'setInterval',
   'setTimeout',
   'undefined',
-  'unescape'
+  'unescape',
+  // mip1 polyfill
+  'fetchJsonp'
 ]
 
 var RESERVED = [
   'arguments',
-  // 'MIP',
   'require',
   'module',
   'exports',
