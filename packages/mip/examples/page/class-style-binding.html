@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+    <meta charset="utf-8">
+    <title>MIP Data Page</title>
+    <meta name="keywords" content="vue,mip,store">
+    <meta name="description" content="mip-store">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <style mip-custom>
+        body {
+            padding: 30px;
+        }
+    .main-content .link {
+        text-align: center;
+        margin-top: 20px;
+        display: block;
+    }
+    .main-content p,
+    .main-content .button {
+        width: 150px;
+        display: inline-block;
+        margin: 20px 0 0 20px;
+    }
+    .click-btn {
+        color: white;
+        background: #ff8e3d;
+        padding: 3px;
+        display: inline-block;
+        margin-top:8px;
+    }
+    p {
+      margin-top: 20px;
+    }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      right: -70%;
+      background: white;
+      width: 60%;
+      text-align: center;
+      box-shadow: -5px 0 40px #000;
+      transition: right 0.4s;
+    }
+    .sidebar.open {
+      right: 0;
+    }
+    .sidebar h1 {
+      line-height: 60px;
+      border-bottom: 1px solid black;
+    }
+    .sidebar div {
+      line-height: 80px;
+      font-size: 20px;
+    }
+    </style>
+</head>
+
+<body>
+    <mip-data>
+        <script type="application/json">
+            {
+              "loading": false,
+              "danger": true,
+              "loadingClass": "m-loading",
+              "errorClass": "",
+              "classObject": {
+                "warning-class": true,
+                "active-class": false
+              },
+              "styleObject": {
+                "color": "red",
+                "fontSize": "13px"
+              },
+              "baseStyles": {
+                "display": "flex",
+                "margin-after": "10px"
+              },
+              "activeColor": "blue",
+              "fontSize": 12,
+              "open": false
+            }
+        </script>
+    </mip-data>
+
+    <p on="tap:MIP.setData({loading:true})" class="click-btn">click me to change class</p>
+    <br />
+    <p on="tap:MIP.setData({baseStyles:{display:'block'}})" class="click-btn">click me to change style</p>
+    <p on="tap:MIP.setData({open:true})" class="click-btn">click me to open sidebar</p>
+    <br />
+
+    <p>打开 Chrome-Elements 面板查看 class/style 变化情况</p>
+
+    <!-- class example -->
+    <div class="static" m-bind:class="{loading: loading, 'text-danger': danger }"></div>
+    <br />
+    <div m-bind:class="classObject"></div>
+    <br />
+    <div m-bind:class="[loadingClass, errorClass]"></div>
+    <br />
+    <div m-bind:class="[loading ? loadingClass : '', errorClass]"></div>
+    <br />
+    <div m-bind:class="[{ loading: loading }, errorClass]"></div>
+    <br />
+
+    <!-- style example -->
+    <div m-bind:style="{color: activeColor, fontSize: fontSize + 'px'}"></div>
+    <br />
+    <div m-bind:style="styleObject" style="width:100px"></div>
+    <br />
+    <div m-bind:style="[baseStyles, styleObject]"></div>
+    <br />
+    <div m-bind:style="{ display: ['-webkit-box', '-ms-flexbox', 'flex'] }" style="width:100px"></div>
+    <br />
+
+    <div class="sidebar" m-bind:class="{open: open}">
+      <h1>I am sidebar</h1>
+      <div>
+        <p on="tap:MIP.setData({open:false})" class="click-btn">click me to hide sidebar</p>
+      </div>
+    </div>
+    
+    <script src="../../dist/mip.js"></script>
+
+</body>

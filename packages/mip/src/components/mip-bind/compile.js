@@ -16,6 +16,9 @@ class Compile {
   }
 
   start (data, win) {
+    if (!data || !util.objNotEmpty(data)) {
+      return
+    }
     this.data = data
     this._compileElement(win.document.documentElement)
     // this._fragment = this._cloneNode();
