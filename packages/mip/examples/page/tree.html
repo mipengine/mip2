@@ -62,38 +62,64 @@
 <body>
     <mip-shell>
         <script type="application/json">
-        {
-            "routes": [
-                {
-                    "pattern": "*",
-                    "meta": {
-                        "header": {
-                            "show": true,
-                            "title": "蓝犀牛",
-                            "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
-                            "buttonGroup": [
-                                {
-                                    "name": "subscribe",
-                                    "text": "关注",
-                                    "link": "/examples/page/tree.html"
-                                },
-                                {
-                                    "name": "chat",
-                                    "text": "发消息"
-                                },
-                                {
-                                    "name": "cancel",
-                                    "text": "取消"
-                                }
-                            ]
-                        },
-                        "view": {
-                            "isIndex": false
+            {
+                "routes": [
+                    {
+                        "pattern": "./tree.html",
+                        "meta": {
+                            "header": {
+                                "show": true,
+                                "buttonGroup": [
+                                    {
+                                        "name": "subscribe",
+                                        "text": "关注",
+                                        "link": "/examples/page/tree.html"
+                                    },
+                                    {
+                                        "name": "chat",
+                                        "text": "发消息"
+                                    },
+                                    {
+                                        "name": "cancel",
+                                        "text": "取消"
+                                    }
+                                ]
+                            },
+                            "view": {
+                                "isIndex": false
+                            }
+                        }
+                    },
+                    {
+                        "pattern": "*",
+                        "meta": {
+                            "header": {
+                                "show": true,
+                                "title": "MIP",
+                                "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
+                                "buttonGroup": [
+                                    {
+                                        "name": "subscribe",
+                                        "text": "关注",
+                                        "link": "/examples/page/tree.html"
+                                    },
+                                    {
+                                        "name": "chat",
+                                        "text": "发消息"
+                                    },
+                                    {
+                                        "name": "cancel",
+                                        "text": "取消"
+                                    }
+                                ]
+                            },
+                            "view": {
+                                "isIndex": false
+                            }
                         }
                     }
-                }
-            ]
-        }
+                ]
+            }
         </script>
     </mip-shell>
 

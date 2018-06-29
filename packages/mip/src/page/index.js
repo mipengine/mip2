@@ -299,14 +299,6 @@ class Page {
   }
 
   start () {
-    if (platform.isIos()) {
-      let iosVersion = platform.getOsVersion()
-      iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
-      if (iosVersion !== '8' && iosVersion !== '7') {
-        document.documentElement.classList.add('mip-i-ios-scroll')
-      }
-    }
-
     // Don't let browser restore scroll position.
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual'
@@ -336,11 +328,21 @@ class Page {
     // Job complete!
     document.body.setAttribute('mip-ready', '')
 
-    // trigger layout
+    // ========================= Some HACKs =========================
+
+    // prevent bouncy scroll in iOS 7 & 8
+    if (platform.isIos()) {
+      let iosVersion = platform.getOsVersion()
+      iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
+      if (iosVersion !== '8' && iosVersion !== '7') {
+        document.documentElement.classList.add('mip-i-ios-scroll')
+      }
+    }
+
+    // trigger layout to solve a strange bug in Android Superframe, which will make page unscrollable
     /* eslint-disable no-unused-expressions */
     window.innerHeight
     /* eslint-enable no-unused-expressions */
-
     setTimeout(() => {
       document.documentElement.classList.add('trigger-layout')
       document.body.classList.add('trigger-layout')

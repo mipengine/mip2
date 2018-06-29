@@ -22,7 +22,7 @@ let round = Math.round
  * @return {?HTMLElement}
  */
 function patchForIOS (isEnd) {
-  if (platform.needSpecialScroll && window !== top) {
+  if (platform.needSpecialScroll && window !== window.top) {
     let element = document.createElement('div')
     element.style.cssText = isEnd
       ? 'position:absolute;width:0;height:0;visibility:hidden;'
