@@ -1,5 +1,9 @@
 # MIP Shell 的使用方法
 
+> wangyisheng (wangyisheng@outlook.com)
+>
+> panyuqi (panyuqi@baidu.com)
+
 在实际项目中，我们很可能会有一些独立于页面内容之外的相对固定的部分，我们称之为外壳 (Shell)。在页面切换时，Shell 部分一般不跟随页面内容进行过场动画。如果用 Vue 来描述的话，Shell 就是位于 `<router-view>` 之外的部分。
 
 一个最典型的 Shell 的例子就是头部标题栏：
@@ -272,6 +276,10 @@ export default class MipShellExample extends window.MIP.builtinComponents.MipShe
 
 类名使用驼峰命名，组件平台会自动把驼峰转化为符合 HTML 规范的短划线连接形式，如 `<mip-shell-example>`。
 
+个性化 Shell 的编写规范和普通组件相同，同样在 mip2-extensions 项目中编写，如下：
+
+![MIP Shell Folder](http://boscdn.bpc.baidu.com/assets/mip/page/mip-shell-folder.PNG)
+
 ### 使用个性化 Shell
 
 个性化 Shell 的使用和内置的 MIP Shell 基本类似。唯一的区别是为标签增加一个属性 `mip-shell`，例子如下：
@@ -362,16 +370,561 @@ MIP Shell 的头部标题栏上所有的按钮（如默认的后退，关闭，�
 ```javascript
 handleShellCustomButton (buttonName) {
   if (buttonName === 'back') {
-    // Default header contains a button named 'back'
+    // 默认头部已经包含 name 为 back 的按钮，并已有默认处理（路由后退）
+    // 如果需要，这里可以再进行一些额外的处理
     console.log('click on back')
-    // Do more things besides default operations
   } else if (buttonName === 'about') {
-    // Assume you have configured a button named 'about'
+    // 假设 HTML 中配置了 name 为 about 的按钮，这里定义它的响应
     console.log('click on about')
+    // 实际上跳转页面可以通过在 buttonGroup 中的 link 属性进行配置。这里仅仅是做一个示例
     window.MIP.viewer.open('./about.html')
-    // Just for demo. Actually you should use 'link' in 'buttonGroup' to jump pages
   }
 }
 ```
 
 特别地，在 MIP Shell 基类逻辑中还定义了一个名为 `cancel` 的按钮的点击响应，作用是关闭更多按钮的浮层。因此如果开发者在 `buttonGroup` 中配置了名为 `cancel` 的按钮，可以不必自行实现关闭浮层的响应即可获得相同的效果。
+
+#### processShellConfig
+
+* __参数__：`shellConfig`, __Object__, 经过处理的 Shell 配置对象。
+* __返回值__：无。
+
+Shell 子类通过这个方法对 MIP Shell 初步处理后的配置对象进行修改，再进行后续的渲染和绑定，从而可以对 HTML 中的配置进行统一的操作。
+
+MIP Shell 进行的所谓“初步处理”包括：
+
+1. 读取 HTML 中对应标签内的 JSON，并通过 `JSON.parse()` 进行转义。
+2. 遍历 `routes` 数组的每个元素，进行如下操作：
+    1. 获取 `meta` 值，和默认 `meta` 进行合并并写会。HTML 中的 `meta` 优先级更高。
+    2. 获取 `pattern` 值，将字符串转化为正则表达式（采用 `new RegExp()` 进行转化）。特别的，`'*'` 被转化为 `/.*/` 以匹配任意字符
+    3. 如果无法获取到 `route.meta.header.title` 的值，则从当前页面的 `<title>` 标签获取。
+
+在这些操作之后，MIP Shell 将 __整个 JSON 对象__ 当做参数传递给开发者（不单单是 `routes` 数组）。开发者可以在 `processShellConfig` 方法内对参数进行修改，不必返回。这里还分为同步和异步两种情况。
+
+* 同步修改
+
+  即方法内容不涉及异步操作，直接对参数进行修改即可。示例如下：
+
+  ```javascript
+  processShellConfig(shellConfig) {
+    // 强制清空 HTML 中的按钮配置
+    shellConfig.routes.forEach(route => route.buttonGroup = [])
+  }
+  ```
+
+* 异步修改
+
+  即方法中还包含异步操作。这时通常需要先给 `shellConfig` 设置一个默认值（也可以以 HTML 中的配置当做默认值，则跳过此步），然后进行异步操作（例如发送请求）。在操作获取到结果之后，修改 `shellConfig` 之后调用 `this.updateShellConfig()` 和 `this.refreshShell()` 分别更新缓存和页面 DOM。如下示例会使用到之前配置过的 `exampleUserId`：
+
+  ```javascript
+  processShellConfig (shellConfig) {
+    // 设置默认值
+    shellConfig.routes.forEach(routeConfig => {
+      routeConfig.meta.header.title = '极速服务'
+      routeConfig.meta.header.logo = 'https://www.baidu.com/favicon.ico'
+    })
+
+    // 获取 HTML 配置好的 exampleUserId
+    let isId = shellConfig.exampleUserId
+    // 使用 setTimeout 模拟异步发送请求
+    setTimeout(() => {
+      // 通过 exampleUserId 获取到目标用户的标题和 LOGO，并固定按钮
+      shellConfig.routes[0].meta.header.title = '蓝犀牛搬家'
+      shellConfig.routes[0].meta.header.logo = 'http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png'
+      shellConfig.routes[0].meta.header.buttonGroup = [
+        {
+          name: 'share',
+          text: '分享'
+        },
+        {
+          name: 'indexPage',
+          text: '首页'
+        },
+        {
+          name: 'about',
+          text: '关于蓝犀牛'
+        },
+        {
+          name: 'cancel',
+          text: '取消'
+        }
+      ]
+      shellConfig.routes[1].meta.header.title = '红犀牛搬家'
+
+      // 异步操作，需要更新 Shell 配置缓存
+      this.updateShellConfig(shellConfig)
+
+      // 异步操作，需要更新页面上的 Shell DOM
+      // window.MIP.viewer.page.pageId 表示当前页面的 pageId，由 MIP Shell 负责更新
+      this.refreshShell({pageId: window.MIP.viewer.page.pageId})
+    }, 1000)
+  }
+
+  ```
+
+#### renderOtherParts
+
+* __参数__：无。
+* __返回值__：无。
+
+默认的 MIP Shell 只渲染头部标题栏。如果开发者希望渲染其他部分（如底部菜单栏），可以通过继承 `renderOtherParts` 方法来实现。
+
+这个方法没有参数，但可以通过获取 `this.currentPageMeta` 来获取当前页面的 `meta` 信息（即 MIP Shell 所有配置中匹配当前页面的 `meta`，其中包括当前页面的标题，LOGO，按钮等所有信息）。
+
+需要注意的是，如果需要创建 `position: fixed` 的 DOM 元素（如底部菜单栏），应当使用 `<mip-fixed>` 作为标签名，而非其他如 `<div>` 等 HTML 标准标签。这主要是为了解决 iOS 的 iframe 中 fixed 元素滚动抖动的 BUG。
+
+```javascript
+renderOtherParts () {
+  this.$footerWrapper = document.createElement('mip-fixed')
+  this.$footerWrapper.setAttribute('type', 'bottom')
+  this.$footerWrapper.classList.add('mip-shell-footer-wrapper')
+
+  this.$footer = document.createElement('div')
+  this.$footer.classList.add('mip-shell-footer', 'mip-border', 'mip-border-top')
+  this.$footer.innerHTML = this.renderFooter()
+
+  this.$footerWrapper.appendChild(this.$footer)
+  document.body.appendChild(this.$footerWrapper)
+}
+
+renderFooter() {
+  let pageMeta = this.currentPageMeta
+  return 'hello ${pageMeta.header.title}!'
+}
+```
+
+建议把 `this.renderFooter()` 抽象成一个单独的方法，因为这个方法也会在后面 update 时被调用。
+
+#### updateOtherParts
+
+* __参数__：无。
+* __返回值__：无。
+
+MIP 页面首次进入时会调用 `renderOtherParts()` 方法进行初始渲染。而后续切换页面时，MIP Page 会将目标页面的 `meta` 信息设置为 `this.currentPageMeta` 并调用 `updateOtherParts()` 方法以更新自定义部件。
+
+在 `updateOtherParts()` 方法中，开发者仅需要更新 HTML 即可，不需要像 `renderOtherParts()` 那样创建 DOM 并插入到页面中。也因此，将 `renderFooter()` 独立出来有利于这里继续调用。示例如下：
+
+```javascript
+updateOtherParts() {
+    this.$footer.innerHTML = this.renderFooter()
+}
+```
+
+### 个性化 Shell 实例
+
+这里列出两个个性化 Shell 的实例（均为实际线上代码，但隐去了敏感信息和复杂的业务逻辑）
+
+#### 极速服务 Shell
+
+命名为 `<mip-shell-is>`，主要工作有：
+
+1. 增加额外的 `isId` 配置项
+2. 根据 `isId` 通过接口 __异步__ 获取站点的标题，LOGO 和按钮配置
+3. 为添加的按钮增加点击响应
+4. 因为涉及异步获取站点 `meta` 信息，因此首屏请求之后不再重复获取信息
+
+* mip-shell-is.js
+
+    ```javascript
+    export default class MipShellIS extends window.MIP.builtinComponents.MipShell {
+      constructor (...args) {
+        super(...args)
+
+        this.alwaysReadConfigOnLoad = false
+        this.transitionContainsHeader = false
+      }
+
+      processShellConfig (shellConfig) {
+        // 设置默认属性
+        shellConfig.routes.forEach(routeConfig => {
+          routeConfig.meta.header.title = '极速服务'
+          routeConfig.meta.header.logo = 'https://www.baidu.com/favicon.ico'
+          routeConfig.meta.header.bouncy = false
+        })
+
+        let isId = shellConfig.isId
+        console.log('Simulate async request with isId:', isId)
+        setTimeout(() => {
+          shellConfig.routes[0].meta.header.title = '蓝犀牛搬家'
+          shellConfig.routes[0].meta.header.logo = 'http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png'
+          shellConfig.routes[0].meta.header.buttonGroup = [
+            {
+              name: 'share',
+              text: '分享'
+            },
+            {
+              name: 'indexPage',
+              text: '首页'
+            },
+            {
+              name: 'about',
+              text: '关于蓝犀牛'
+            },
+            {
+              name: 'cancel',
+              text: '取消'
+            }
+          ]
+          shellConfig.routes[1].meta.header.title = '红犀牛搬家'
+
+          this.updateShellConfig(shellConfig)
+
+          this.refreshShell({pageId: window.MIP.viewer.page.pageId})
+        }, 1000)
+      }
+
+      handleShellCustomButton (buttonName) {
+        if (buttonName === 'share') {
+          console.log('click on share')
+          this.toggleDropdown(false)
+        } else if (buttonName === 'indexPage') {
+          console.log('click on indexPage')
+          this.toggleDropdown(false)
+        } else if (buttonName === 'about') {
+          console.log('click on about')
+          this.toggleDropdown(false)
+        }
+      }
+    }
+    ```
+
+* mip-shell-is.html
+
+    只列出 `<body>` 部分。
+
+    ```html
+    <body>
+        <mip-shell-is mip-shell>
+            <script type="application/json">
+            {
+                "routes": [
+                    {
+                        "pattern": "*",
+                        "meta": {
+                            "header": {
+                                "show": true
+                            }
+                        }
+                    }
+                ],
+                "isId": 123
+            }
+            </script>
+        </mip-shell-is>
+
+        <p>This is MIP SHELL IS</p>
+
+        <a class="link" href="./mip-shell-is-2.html" mip-link>Go to MIP SHELL IS 2</a>
+        <div id="button">By viewer.open</div>
+
+        <script src="../../dist/mip.js"></script>
+        <script src="./components/mip-shell-is.js"></script>
+    </body>
+    ```
+
+#### 百度小说 Shell
+
+命名为 `<mip-shell-novel>`，主要工作有：
+
+1. 增加额外的 `catalog` 配置项用以记录小说目录
+2. 额外渲染底部菜单栏
+3. 为底部菜单栏绑定点击事件，并提供解绑函数
+4. 每个页面都包含目录信息，为性能考虑，只读取第一个页面的信息。
+
+* mip-shell-novel.js
+
+    ```javascript
+    class MipShellNovel extends window.MIP.builtinComponents.MipShell {
+      constructor (...args) {
+        super(...args)
+
+        this.alwaysReadConfigOnLoad = false
+        this.transitionContainsHeader = false
+      }
+
+      processShellConfig (shellConfig) {
+        this.catalog = shellConfig.catalog
+      }
+
+      renderOtherParts () {
+        this.$footerWrapper = document.createElement('mip-fixed')
+        this.$footerWrapper.setAttribute('type', 'bottom')
+        this.$footerWrapper.classList.add('mip-shell-footer-wrapper')
+
+        this.$footer = document.createElement('div')
+        this.$footer.classList.add('mip-shell-footer', 'mip-border', 'mip-border-top')
+        this.$footer.innerHTML = this.renderFooter()
+        this.$footerWrapper.appendChild(this.$footer)
+
+        document.body.appendChild(this.$footerWrapper)
+      }
+
+      updateOtherParts () {
+        this.$footer.innerHTML = this.renderFooter()
+      }
+
+      renderFooter () {
+        let pageMeta = this.currentPageMeta
+        let {buttonGroup} = pageMeta.footer
+        let renderFooterButtonGroup = buttonGroup => buttonGroup.map(buttonConfig => `
+          <div class="button" mip-footer-btn data-button-name="${buttonConfig.name}">${buttonConfig.text}</div>
+        `).join('')
+
+        let footerHTML = `
+          <div class="upper mip-border mip-border-bottom">
+            <div class="switch switch-left" mip-footer-btn data-button-name="previous">&lt;上一章</div>
+            <div class="switch switch-right" mip-footer-btn data-button-name="next">下一章&gt;</div>
+          </div>
+          <div class="button-wrapper">
+            ${renderFooterButtonGroup(buttonGroup)}
+          </div>
+        `
+
+        return footerHTML
+      }
+
+      bindHeaderEvents () {
+        super.bindHeaderEvents()
+
+        let me = this
+        let event = window.MIP.util.event
+
+        // 代理底部菜单栏的点击事件
+        this.footEventHandler = event.delegate(this.$footerWrapper, '[mip-footer-btn]', 'click', function (e) {
+          let buttonName = this.dataset.buttonName
+          me.handleFooterButton(buttonName)
+        })
+
+        if (this.$buttonMask) {
+          this.$buttonMask.onclick = () => {
+            this.toggleDropdown(false)
+            this.toggleDOM(this.$footerWrapper, false, {transitionName: 'slide'})
+          }
+        }
+      }
+
+      unbindHeaderEvents () {
+        super.unbindHeaderEvents()
+
+        if (this.footEventHandler) {
+          this.footEventHandler()
+          this.footEventHandler = undefined
+        }
+      }
+
+      handleShellCustomButton (buttonName) {
+        if (buttonName === 'share') {
+          console.log('share')
+          this.toggleDropdown(false)
+        } else if (buttonName === 'setting') {
+          this.toggleDOM(this.$buttonWrapper, false, {transitionName: 'slide'})
+          this.toggleDOM(this.$footerWrapper, true, {transitionName: 'slide'})
+        }
+      }
+
+      handleFooterButton (buttonName) {
+        console.log('click on footer:', buttonName)
+        this.toggleDOM(this.$buttonMask, false)
+        this.toggleDOM(this.$footerWrapper, false, {transitionName: 'slide'})
+      }
+    }
+    ```
+
+* mip-shell-novel.html
+
+    只列出 `<body>` 部分。
+
+    ```html
+    <body>
+        <h2>第1章  灵魂重生</h2>
+
+        <p>“贱人，你竟敢背叛我！”</p>
+
+        <p>“宋凌云，你这个畜生，我视你如手足，当你如兄弟，是我亲手把你培育成无双战神，可你竟然与那贱人勾搭成奸，还要置我于死路，我做鬼都不会放过你。” </p>
+
+        <p>陆宇猛然睁开眼睛，一下子坐起，双眼之中充满了愤怒与杀气，拳头握得死紧！ </p>
+
+        <p>“不对，这是哪里？我明明在黑狱中灰飞烟灭，怎么可能还未死？” </p>
+
+        <p>“难道说，我重生了？” </p>
+
+        <p>陌生的环境让陆宇迅速清醒，过往的记忆逐一呈现在脑海里。 </p>
+
+        <p>陆宇原本是神武天域的圣魂天师，开创了史无前例的武魂进化之术，将一个不起眼的辅助职业魂天师推到了巅峰极境，成为了神武天域有史以来第一个圣帝级魂天师，简称圣魂天师！ </p>
+
+        <p>那是至高荣誉，堪称魂天师领域的万古第一人。 </p>
+
+        <p>然而就在陆宇最风光，最得意，站在人生巅峰之际，一场背叛彻底将他摧毁。 </p>
+
+        <p>陆宇这一生有三大引以为傲的事情，貌美无双的娇妻，神勇无敌的兄弟，功成名就的事业，那是无数人都梦寐以求的东西，他都得到了，可他却没有猜到结局。 </p>
+
+        <p>陆宇的成长并不顺利，但是开创武魂进化之术改变了他的一生，让他娶到了神武天域十大美女之一的马灵月为妻，曾羡煞无数人。 </p>
+
+        <p>后来，陆宇又结识了宋凌云，两人肝胆相照，成为了好兄弟。 </p>
+
+        <p>身为魂天师，陆宇致力于研究武魂进化之术，并在娇妻与兄弟身上耗费了半生精力。 </p>
+
+        <p>原本，马灵月和宋凌云的武魂都只是地级三品以下，注定成就有限。 </p>
+
+        <p>但是陆宇却利用自己独创的武魂进化之术，让两人的武魂等级从地级三品提升到了天级八品，一跃成为了神武天域的至强者。 </p>
+
+        <p>宋凌云获得了无双战神的称号，马灵月荣获天月仙子的美誉。 </p>
+
+        <p>为了娇妻与兄弟，陆宇耗尽心血，一心想完善武魂进化之术，将两人的武魂提升到天级九品的至高领域。 </p>
+
+        <p>然而让陆宇万万没有想到的是，就在他付出沉重代价，研制成功的那一刻，马灵月与宋凌云却突然背叛的他，掠夺了他毕生的研究成果，将他关押在黑狱之内。 </p>
+
+        <p>陆宇从巅峰跌入谷底，他简直不敢相信。 </p>
+
+        <p>一个是自己最爱的妻子，一个是自己最信任的兄弟，他们竟然勾搭成奸，背叛自己。 </p>
+
+        <p>“马灵月，宋凌云，我一定会让你们后悔莫及！” </p>
+
+        <p>陆宇咬牙切齿，五官扭曲，每每想到这，他就无法平静。 </p>
+
+        <p>当初，马灵月嫁给陆宇，曾轰动神武天域，被称之为最具传奇色彩的吊丝逆袭。 </p>
+
+        <p>然而陆宇哪里知道，马灵月看中的是武魂进化之术，并不是他这个人。 </p>
+
+        <p>后来证明，马灵月眼光独到，借助武魂进化之术，一跃成为了至强者。 </p>
+
+        <p>而宋凌云本是马灵月的师兄，彼此早有私情，联手蒙骗了陆宇，和他称兄道弟。 </p>
+
+        <p>在陆宇将武魂进化之术彻底完善之际，马灵月和宋凌云突然翻脸，囚禁了陆宇。 </p>
+
+        <p>随后依照陆宇研究的成果，将自身的武魂从天级八品提升到了天级九品的至高等级。 </p>
+
+        <p>那一刻，马灵月和宋凌云才彻底放心，将囚禁在黑狱之中的陆宇连同黑狱一并摧毁。 </p>
+
+        <p>从此，陆宇灰飞烟灭，马宋二人联手称帝，横扫神武天域，这就是他们完美无缺的计策。 </p>
+
+        <p>然而人算不如天算，陆宇竟然死而重生，这是马宋二人怎么也想不到的事情。 </p>
+
+        <p>“苍天既然让我重生，我就一定会让你们后悔！” </p>
+
+        <mip-shell-novel mip-shell>
+            <script type="application/json">
+            {
+                "routes": [
+                    {
+                        "pattern": "/novel-\\d",
+                        "meta": {
+                            "header": {
+                            "show": true,
+                            "title": "神武天帝",
+                            "buttonGroup": [{
+                                "name": "share",
+                                "text": "分享"
+                            },{
+                                "name": "setting",
+                                "text": "设置"
+                            },{
+                                "name": "cancel",
+                                "text": "取消"
+                            }]
+                            },
+                            "footer": {
+                                "buttonGroup": [{
+                                    "name": "catalog",
+                                    "text": "目录"
+                                },{
+                                    "name": "night",
+                                    "text": "夜间模式"
+                                },{
+                                    "name": "setting",
+                                    "text": "设置"
+                                }]
+                            }
+                        }
+                    }
+                ],
+                "catalog": [
+                {
+                    "name": "第1章 灵魂重生",
+                    "link":"novel-1.html"
+                },
+                {
+                    "name": "第2章 武魂提升",
+                    "link":"novel-2.html"
+                },
+                {
+                    "name": "第3章 牛刀小试",
+                    "link":"novel-3.html"
+                },
+                {
+                    "name": "第4章 笑里藏刀",
+                    "link":"novel-4.html"
+                },
+                {
+                    "name": "第5章 云月儿",
+                    "link":"novel-5.html"
+                },
+                {
+                    "name": "第6章 情断玉碎",
+                    "link":"novel-6.html"
+                },
+                {
+                    "name": "第7章 击败陈松",
+                    "link":"novel-7.html"
+                },
+                {
+                    "name": "第8章 催化武魂",
+                    "link":"novel-8.html"
+                },
+                {
+                    "name": "第9章 开脉四重",
+                    "link":"novel-9.html"
+                },
+                {
+                    "name": "第10章 黄级四品",
+                    "link":"novel-10.html"
+                },
+                {
+                    "name": "第11章 针锋相对",
+                    "link":"novel-11.html"
+                },
+                {
+                    "name": "第12章 暴血狼魂",
+                    "link":"novel-12.html"
+                },
+                {
+                    "name": "第13章 武魂妙用",
+                    "link":"novel-13.html"
+                },
+                {
+                    "name": "第14章 击败钟真",
+                    "link":"novel-14.html"
+                },
+                {
+                    "name": "第15章 旧爱成恨",
+                    "link":"novel-15.html"
+                },
+                {
+                    "name": "第16章 丹宗林枫",
+                    "link":"novel-16.html"
+                },
+                {
+                    "name": "第17章 丹房传艺",
+                    "link":"novel-17.html"
+                },
+                {
+                    "name": "第18章 林枫武魂",
+                    "link":"novel-18.html"
+                },
+                {
+                    "name": "第19章 一场好戏",
+                    "link":"novel-19.html"
+                },
+                {
+                    "name": "第20章 连升三级",
+                    "link":"novel-20.html"
+                }
+                ]
+            }
+            </script>
+        </mip-shell-novel>
+
+        <script src="../../dist/mip.js"></script>
+        <script src="./components/mip-shell-novel.js"></script>
+    </body>
+    ```

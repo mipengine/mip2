@@ -337,7 +337,10 @@ class Page {
     document.body.setAttribute('mip-ready', '')
 
     // trigger layout
+    /* eslint-disable no-unused-expressions */
     window.innerHeight
+    /* eslint-enable no-unused-expressions */
+
     setTimeout(() => {
       document.documentElement.classList.add('trigger-layout')
       document.body.classList.add('trigger-layout')

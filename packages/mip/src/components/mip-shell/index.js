@@ -105,7 +105,7 @@ class MipShell extends CustomElement {
               config.meta.header.title = (document.querySelector('title') || {}).innerHTML || ''
             }
 
-            this.processShellConfig([config.meta])
+            // this.processShellConfig([config.meta])
             pageMeta = window.MIP_PAGE_META_CACHE[pageId] = config.meta
             break
           }
@@ -461,7 +461,7 @@ class MipShell extends CustomElement {
   }
 
   // ===================== Interfaces =====================
-  processShellConfig (routeConfig) {
+  processShellConfig (shellConfig) {
     // Change shell config
     // E.g. `routeConfig.header.buttonGroup = []` forces empty buttons
   }
