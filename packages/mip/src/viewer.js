@@ -212,6 +212,14 @@ let viewer = {
     }
   },
 
+  /**
+   *
+   * @param {string} to Target url
+   * @param {Object} options
+   * @param {boolean} options.isMipLink Whether targetUrl is a MIP page. If not, use `top.location.href`. Defaults to `true`
+   * @param {boolean} options.replace If true, use `history.replace` instead of `history.push`. Defaults to `false`
+   * @param {Object} options.state Target page info
+   */
   open (to, {isMipLink = true, replace = false, state} = {}) {
     let {router, isRootPage} = this.page
     let notifyRootPage = this.page.notifyRootPage.bind(this.page)

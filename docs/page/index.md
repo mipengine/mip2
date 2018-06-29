@@ -192,3 +192,9 @@ window.MIP.viewer.page.toggleDropdown(true)
 在通过 MIP Page 将多个 MIP 页面融合到一起之后，在不同页面之间跳转可以获得如单页应用的效果。但在实际项目中，还可能有一些元素是游离于每个页面之外的（或者说每个页面都包含的内容）。这些元素包括头部标题栏，底部菜单，侧边栏等等。
 
 如果让这些共有元素跟随页面一起进行切换动画显然不太恰当，因此最佳的做法是把他们提取到 iframe 之外独立渲染和更新。MIP Shell 就是用来解决这些共有元素的问题的。如果您对这块内容感兴趣，欢迎继续阅读 MIP Shell 的[相关文档](./shell.md)。
+
+## viewer
+
+MIP Page 对象是通过 `window.MIP.viewer.page` 来获取的。实际上除了 `page` 对象之外，`viewer` 还包含其他一些方法，可供开发者调用。
+
+关于 `viewer` 的详情，可以参阅[这篇文档](./viewer.md)。
