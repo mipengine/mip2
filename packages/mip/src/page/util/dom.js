@@ -362,7 +362,8 @@ export function frameMoveOut (pageId,
     targetPageId,
     targetPageMeta,
     transitionContainsHeader,
-    onComplete
+    onComplete,
+    rootPageScrollPosition = 0
   } = {}) {
   let iframe = getIFrame(pageId)
 
@@ -404,15 +405,18 @@ export function frameMoveOut (pageId,
       fadeHeader.classList.add('fade-enter', 'fade-enter-active')
     }
 
-    // trigger layout
+    // trigger layout and move current iframe to correct position
     /* eslint-disable no-unused-expressions */
-    iframe.offsetWidth
+    css(iframe, {
+      top: rootPageScrollPosition + 'px'
+    })
     /* eslint-enable no-unused-expressions */
 
     whenTransitionEnds(iframe, 'transition', () => {
       css(iframe, {
         display: 'none',
-        'z-index': 10000
+        'z-index': 10000,
+        top: 0
       })
       // css(loading, 'display', 'none')
       iframe.classList.remove('slide-leave-to', 'slide-leave-active')

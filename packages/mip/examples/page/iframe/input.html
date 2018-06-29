@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <title>测试 IOS iframe 中的输入框 软键盘</title>
+    <style>
+        html {
+            position: relative;
+        }
+        html, body, iframe {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+        }
+        iframe {
+            opacity: 0.9;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+        }
+        button {
+            width: 49%;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+<iframe frameborder="0"></iframe>
+XXXXXXXX
+<script>
+var iframe = document.querySelector('iframe');
+
+iframe.src = [
+    // 测试滚动页面
+    location.origin + '/examples/page/iframe/input-iframed.html',
+    // 线上手百页面
+    // 'https://m.baidu.com/feed/data/landingpage?nid=3627066851061108990&amp;n_type=0&amp;p_from=2#viewportType=virtual&amp;paddingTop=54&amp;pageType=&amp;pageInfo=',
+    // AMP 页面
+    // location.origin + '/examples/page/iframe/amp-img.html',
+    // eleme H5 页面
+    // 'https://h5.ele.me/msite/'
+][0]
+</script>
+</body>
+</html>

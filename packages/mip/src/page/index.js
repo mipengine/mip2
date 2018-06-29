@@ -502,6 +502,9 @@ class Page {
         backwardOpitons.targetPageMeta = this.currentPageMeta
       }
 
+      // move current iframe to correct position
+      backwardOpitons.rootPageScrollPosition = this.rootPageScrollPosition
+
       document.documentElement.classList.remove('mip-no-scroll')
       Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
       frameMoveOut(this.currentPageId, backwardOpitons)
