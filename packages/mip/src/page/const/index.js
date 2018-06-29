@@ -36,9 +36,9 @@ export const MESSAGE_UPDATE_MIP_SHELL_CONFIG = 'update-mip-shell-config'
 export const MESSAGE_SYNC_PAGE_CONFIG = 'sync-page-config'
 
 export const NON_EXISTS_PAGE_ID = 'non-exists-page-id'
-export const SCROLL_TO_ANCHOR_CUSTOM_EVENT = 'scroll-to-anchor'
-export const SHOW_PAGE_CUSTOM_EVENT = 'show-page'
-export const HIDE_PAGE_CUSTOM_EVENT = 'hide-page'
+export const CUSTOM_EVENT_SCROLL_TO_ANCHOR = 'scroll-to-anchor'
+export const CUSTOM_EVENT_SHOW_PAGE = 'show-page'
+export const CUSTOM_EVENT_HIDE_PAGE = 'hide-page'
 
 export const BUILT_IN_COMPONENTS = [
   'mip-data',
@@ -49,3 +49,5 @@ export const BUILT_IN_COMPONENTS = [
   'mip-video',
   'mip-shell'
 ]
+
+export const MAX_PAGE_NUM = 6
