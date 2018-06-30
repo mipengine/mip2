@@ -16,7 +16,7 @@ import {
   disableBouncyScrolling
 } from './util/dom'
 import Debouncer from './util/debounce'
-// import {supportsPassive} from './util/feature-detect'
+import {supportsPassive} from './util/feature-detect'
 import {scrollTo} from './util/ease-scroll'
 import {
   MAX_PAGE_NUM,
@@ -49,8 +49,8 @@ import '../styles/mip.less'
  * use passive event listeners if supported
  * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
  */
-// const eventListenerOptions = supportsPassive ? {passive: true} : false
-const eventListenerOptions = false
+const eventListenerOptions = supportsPassive ? {passive: true} : false
+// const eventListenerOptions = false
 
 class Page {
   constructor () {
