@@ -205,6 +205,7 @@ class Page {
    */
   scrollToHash (hash) {
     if (hash) {
+      console.log('scrol.....')
       try {
         let $hash = document.querySelector(decodeURIComponent(hash))
         if ($hash) {
@@ -340,14 +341,20 @@ class Page {
       }
     }
 
-    // trigger layout to solve a strange bug in Android Superframe, which will make page unscrollable
-    /* eslint-disable no-unused-expressions */
-    window.innerHeight
-    /* eslint-enable no-unused-expressions */
-    setTimeout(() => {
+    // adjust scroll position in iOS, see viewer._lockBodyScroll()
+    if (window.MIP.viewer.isIframed && platform.isIos()) {
       document.documentElement.classList.add('trigger-layout')
       document.body.classList.add('trigger-layout')
-    })
+      viewport.setScrollTop(1)
+    }
+
+    // trigger layout to solve a strange bug in Android Superframe, which will make page unscrollable
+    if (platform.isAndroid()) {
+      setTimeout(() => {
+        document.documentElement.classList.add('trigger-layout')
+        document.body.classList.add('trigger-layout')
+      })
+    }
 
     // fix a UC/shoubai bug https://github.com/mipengine/mip2/issues/19
     window.addEventListener(CUSTOM_EVENT_SHOW_PAGE, (e) => {

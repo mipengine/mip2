@@ -56,6 +56,11 @@
         .mip-page-loading.only-header::after {
             display: none;
         }
+
+        .input input {
+            width: 200px;
+            height: 90px;
+        }
     </style>
 </head>
 
@@ -136,7 +141,15 @@
     <a class="link" href="./index.html" mip-link>Back to Index</a>
     <a class="link" href="./data.html" mip-link>Go to Data</a>
 
-    <input type="text">
+    <p class="input">
+        <input type="text">
+    </p>
+    <p class="input">
+        <input type="text">
+    </p>
+    <p class="input">
+        <input type="text">
+    </p>
     <p m-text="city"></p>
     <div on="tap:MIP.setData({'city':'深圳'})" class="button">click change city</div>
 
