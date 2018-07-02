@@ -4,7 +4,7 @@
  */
 
 import {getPropsData, reactiveProps} from './props'
-import {getSlots} from './slots'
+import {getNodeSlots} from './slots'
 import {customEmit} from './custom-event'
 import viewer from '../../viewer'
 
@@ -32,6 +32,8 @@ export default function createVueInstance (
 
   // let elementOriginalChildren = [].slice.call(element.childNodes).map(node => node.cloneNode(true)); // clone hack due to IE compatibility
 
+  let nodeSlots = getNodeSlots(element)
+
   element.innerHTML = '<div></div>'
 
   let rootElement = {
@@ -54,7 +56,7 @@ export default function createVueInstance (
         {
           props: this.reactiveProps
         },
-        getSlots(element.__innerHTML, createElement, this._v.bind(this))
+        nodeSlots
       )
     }
   }

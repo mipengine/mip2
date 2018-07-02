@@ -15,6 +15,17 @@ export function resolveSlots (
     return slots
   }
 
+  return children[0] instanceof Node
+    ? resolveNodeSlots(children, context)
+    : resolveVNodeSlots(children, context)
+}
+
+function resolveVNodeSlots (
+  children,
+  context
+) {
+  const slots = {}
+
   const defaultSlot = []
   for (let i = 0, l = children.length; i < l; i++) {
     const child = children[i]
@@ -44,6 +55,36 @@ export function resolveSlots (
   if (!defaultSlot.every(isWhitespace)) {
     slots.default = defaultSlot
   }
+
+  return slots
+}
+
+// mip patch: 支持传入 Node 节点
+function resolveNodeSlots (
+  children,
+  context
+) {
+  const slots = {}
+
+  const defaultSlot = []
+  for (let i = 0, l = children.length; i < l; i++) {
+    const child = children[i]
+    const name = child.getAttribute && child.getAttribute('slot')
+
+    if (name) {
+      const slot = (slots[name] || (slots[name] = []))
+      if (child.tagName === 'TEMPLATE') {
+        slot.push.apply(slot, child.content.childNodes)
+      } else {
+        slot.push(child)
+      }
+      child.removeAttribute('slot')
+    } else {
+      defaultSlot.push(child)
+    }
+  }
+
+  slots.default = defaultSlot
 
   return slots
 }

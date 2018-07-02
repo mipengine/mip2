@@ -109,7 +109,8 @@ export function createComponent (
   data,
   context,
   children,
-  tag
+  tag,
+  childNodes
 ) {
   if (isUndef(Ctor)) {
     return
@@ -197,7 +198,7 @@ export function createComponent (
   const vnode = new VNode(
     `vue-component-${Ctor.cid}${name ? `-${name}` : ''}`,
     data, undefined, undefined, undefined, context,
-    {Ctor, propsData, listeners, tag, children},
+    {Ctor, propsData, listeners, tag, children, childNodes},
     asyncFactory
   )
   return vnode
@@ -210,20 +211,18 @@ export function createComponentInstanceForVnode (
   refElm
 ) {
   const vnodeComponentOptions = vnode.componentOptions
-  /* eslint-disable */
-    const options = {
-        _isComponent: true,
-        parent,
-        propsData: vnodeComponentOptions.propsData,
-        _componentTag: vnodeComponentOptions.tag,
-        _parentVnode: vnode,
-        _parentListeners: vnodeComponentOptions.listeners,
-        _renderChildren: vnodeComponentOptions.children,
-        _parentElm: parentElm || null,
-        _refElm: refElm || null
-    };
-    /* eslint-enable */
-    // check inline-template render functions
+  const options = {
+      _isComponent: true,
+      parent,
+      propsData: vnodeComponentOptions.propsData,
+      _componentTag: vnodeComponentOptions.tag,
+      _parentVnode: vnode,
+      _parentListeners: vnodeComponentOptions.listeners,
+      _renderChildren: vnodeComponentOptions.children,
+      _parentElm: parentElm || null,
+      _refElm: refElm || null
+  }
+  // check inline-template render functions
   const inlineTemplate = vnode.data.inlineTemplate
   if (isDef(inlineTemplate)) {
     options.render = inlineTemplate.render

@@ -17,24 +17,6 @@ export function getAttributes (children) {
 }
 
 /**
- * Get childNodes of an element
- * @param {HTMLElement} element
- * @returns {NodeList}
- */
-export function getChildNodes (element) {
-  if (element.childNodes.length) return element.childNodes
-  if (element.content && element.content.childNodes && element.content.childNodes.length) {
-    return element.content.childNodes
-  }
-
-  const placeholder = document.createElement('div')
-
-  placeholder.innerHTML = element.innerHTML
-
-  return placeholder.childNodes
-}
-
-/**
  * Get Vue element representing a template for use with slots
  * @param {Function} createElement - createElement function from vm
  * @param {HTMLElement} element - template element
@@ -94,4 +76,14 @@ export function getSlots (innerHTML, createElement, createText) {
     }
   })
   return slots
+}
+
+export function getNodeSlots (element) {
+  let nodeSlots = toArray(element.childNodes)
+    .map(node => {
+      element.removeChild(node)
+      return node
+    })
+
+  return nodeSlots
 }
