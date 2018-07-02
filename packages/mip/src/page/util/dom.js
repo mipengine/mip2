@@ -65,7 +65,10 @@ function hideAllIFrames () {
   let iframes = document.querySelectorAll(`.${MIP_IFRAME_CONTAINER}`)
   if (iframes) {
     for (let i = 0; i < iframes.length; i++) {
-      css(iframes[i], 'display', 'none')
+      css(iframes[i], {
+        display: 'none',
+        opacity: 0
+      })
     }
   }
 }
@@ -104,7 +107,7 @@ export function createLoading (pageMeta) {
  * @param {Object} targetMeta Page meta of target page
  * @param {Object} options
  * @param {boolean} options.onlyHeader Moving out only needs header, not loading body
- * @param {boolean} options.transitionContainsHeader whether transition contains header
+ * @param {boolean} options.transitionContainsHeader Whether transition contains header
  * @returns {HTMLElement}
  */
 function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
@@ -118,10 +121,10 @@ function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
     return loading
   }
 
-  // Transition only need header (frameMovingOut) but doesn't contains header (extended from child mip-shell-xxx)
+  // Transition only need header (frameMoveOut) but doesn't contains header (extended from child mip-shell-xxx)
   // Means doesn't need loading
   if (!transitionContainsHeader && onlyHeader) {
-    css(loading, 'display', 'none')
+    loading.classList.remove('show')
     return loading
   }
 
@@ -150,6 +153,33 @@ function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
 
   css(loading.querySelector('.back-button'), 'display', targetMeta.view.isIndex ? 'none' : 'flex')
 
+  if (transitionContainsHeader && targetMeta.header.show) {
+    // Set color & borderColor & backgroundColor
+    let {
+      color = '#000000',
+      borderColor,
+      backgroundColor = '#ffffff'
+    } = targetMeta.header
+    let loadingContainer = loading.querySelector('.mip-shell-header')
+
+    css(loadingContainer, 'background-color', backgroundColor)
+    css(loading.querySelectorAll('svg'), 'fill', color)
+    css(loading.querySelector('.mip-shell-header-title'), 'color', color)
+    if (!borderColor) {
+      loadingContainer.classList.add('mip-border', 'mip-border-bottom')
+      css(loadingContainer, 'border-bottom', '0')
+      css(loadingContainer, 'box-sizing', 'content-box')
+      borderColor = '#e1e1e1'
+    } else {
+      loadingContainer.classList.remove('mip-border', 'mip-border-bottom')
+      css(loadingContainer, 'border-bottom', `1px solid ${borderColor}`)
+      css(loadingContainer, 'box-sizing', 'border-box')
+    }
+    css(loading.querySelector('.mip-shell-header-logo'), 'border-color', borderColor)
+    css(loading.querySelector('.mip-shell-header-button-group'), 'border-color', borderColor)
+    css(loading.querySelector('.mip-shell-header-button-group .split'), 'background-color', borderColor)
+  }
+
   return loading
 }
 
@@ -176,8 +206,8 @@ export function createFadeHeader (pageMeta) {
 }
 
 /**
- * Change loading according to targetMeta
- * Return loading div
+ * Change fade header according to targetMeta
+ * Return fade header div
  *
  * @param {Object} targetMeta Page meta of target page
  * @returns {HTMLElement}
@@ -206,6 +236,31 @@ function getFadeHeader (targetMeta) {
   }
 
   css(fadeHeader.querySelector('.back-button'), 'display', targetMeta.view.isIndex ? 'none' : 'flex')
+
+  // Set color & borderColor & backgroundColor
+  let {
+    color = '#000000',
+    borderColor,
+    backgroundColor = '#ffffff'
+  } = targetMeta.header
+  let fadeHeaderContainer = fadeHeader.querySelector('.mip-shell-header')
+
+  css(fadeHeaderContainer, 'background-color', backgroundColor)
+  css(fadeHeader.querySelectorAll('svg'), 'fill', color)
+  css(fadeHeader.querySelector('.mip-shell-header-title'), 'color', color)
+  if (!borderColor) {
+    fadeHeaderContainer.classList.add('mip-border', 'mip-border-bottom')
+    css(fadeHeaderContainer, 'border-bottom', '0')
+    css(fadeHeaderContainer, 'box-sizing', 'content-box')
+    borderColor = '#e1e1e1'
+  } else {
+    fadeHeaderContainer.classList.remove('mip-border', 'mip-border-bottom')
+    css(fadeHeaderContainer, 'border-bottom', `1px solid ${borderColor}`)
+    css(fadeHeaderContainer, 'box-sizing', 'border-box')
+  }
+  css(fadeHeader.querySelector('.mip-shell-header-logo'), 'border-color', borderColor)
+  css(fadeHeader.querySelector('.mip-shell-header-button-group'), 'border-color', borderColor)
+  css(fadeHeader.querySelector('.mip-shell-header-button-group .split'), 'background-color', borderColor)
 
   return fadeHeader
 }
@@ -259,7 +314,14 @@ export function whenTransitionEnds (el, type, cb) {
  * @param {boolean} options.transitionContainsHeader whether transition contains header
  * @param {Function} options.onComplete callback on complete
  */
-export function frameMoveIn (pageId, {transition, targetMeta, newPage, transitionContainsHeader, onComplete} = {}) {
+export function frameMoveIn (pageId,
+  {
+    transition,
+    targetMeta,
+    newPage,
+    transitionContainsHeader,
+    onComplete
+  } = {}) {
   let iframe = getIFrame(pageId)
 
   if (!iframe) {
@@ -268,8 +330,7 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, transitio
 
   if (transition) {
     let loading = getLoading(targetMeta, {transitionContainsHeader})
-    css(loading, 'display', 'block')
-    loading.classList.add('slide-enter', 'slide-enter-active')
+    loading.classList.add('slide-enter', 'slide-enter-active', 'show')
 
     let headerLogoTitle
     let fadeHeader
@@ -277,23 +338,26 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, transitio
       headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
       headerLogoTitle && headerLogoTitle.classList.add('fade-out')
       fadeHeader = getFadeHeader(targetMeta)
-      css(fadeHeader, 'display', 'block')
       fadeHeader.classList.add('fade-enter', 'fade-enter-active')
+      css(fadeHeader, 'display', 'block')
     }
 
     // trigger layout
     /* eslint-disable no-unused-expressions */
+    css(iframe, {
+      display: 'block'
+    })
     loading.offsetWidth
     /* eslint-enable no-unused-expressions */
 
     let done = () => {
       hideAllIFrames()
-      css(loading, 'display', 'none')
-
       css(iframe, {
-        'z-index': activeZIndex++,
-        display: 'block'
+        display: 'block',
+        opacity: 1,
+        'z-index': activeZIndex++
       })
+      loading.classList.remove('show')
 
       onComplete && onComplete()
     }
@@ -310,19 +374,22 @@ export function frameMoveIn (pageId, {transition, targetMeta, newPage, transitio
       }
     })
 
-    nextFrame(() => {
-      loading.classList.add('slide-enter-to')
-      loading.classList.remove('slide-enter')
-      if (!transitionContainsHeader) {
-        fadeHeader.classList.add('fade-enter-to')
-        fadeHeader.classList.remove('fade-enter')
-      }
-    })
+    setTimeout(() => {
+      nextFrame(() => {
+        loading.classList.add('slide-enter-to')
+        loading.classList.remove('slide-enter')
+        if (!transitionContainsHeader) {
+          fadeHeader.classList.add('fade-enter-to')
+          fadeHeader.classList.remove('fade-enter')
+        }
+      })
+    }, 0)
   } else {
     hideAllIFrames()
     css(iframe, {
       'z-index': activeZIndex++,
-      display: 'block'
+      display: 'block',
+      opacity: 1
     })
     onComplete && onComplete()
   }
@@ -347,7 +414,8 @@ export function frameMoveOut (pageId,
     targetPageId,
     targetPageMeta,
     transitionContainsHeader,
-    onComplete
+    onComplete,
+    rootPageScrollPosition = 0
   } = {}) {
   let iframe = getIFrame(pageId)
 
@@ -355,6 +423,7 @@ export function frameMoveOut (pageId,
     let targetIFrame = getIFrame(targetPageId)
     activeZIndex -= 2
     css(targetIFrame, {
+      opacity: 1,
       display: 'block',
       'z-index': activeZIndex++
     })
@@ -373,7 +442,7 @@ export function frameMoveOut (pageId,
     let fadeHeader
 
     if (transitionContainsHeader) {
-      css(loading, 'display', 'block')
+      loading.classList.add('show')
     } else {
       headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
       headerLogoTitle && headerLogoTitle.classList.add('fade-out')
@@ -388,20 +457,23 @@ export function frameMoveOut (pageId,
       fadeHeader.classList.add('fade-enter', 'fade-enter-active')
     }
 
-    // trigger layout
+    // trigger layout and move current iframe to correct position
     /* eslint-disable no-unused-expressions */
-    iframe.offsetWidth
+    css(iframe, {
+      opacity: 1,
+      top: rootPageScrollPosition + 'px'
+    })
     /* eslint-enable no-unused-expressions */
 
     whenTransitionEnds(iframe, 'transition', () => {
       css(iframe, {
         display: 'none',
-        'z-index': 10000
+        'z-index': 10000,
+        top: 0
       })
-      css(loading, 'display', 'none')
       iframe.classList.remove('slide-leave-to', 'slide-leave-active')
       if (transitionContainsHeader) {
-        loading.classList.remove('slide-leave-to', 'slide-leave-active')
+        loading.classList.remove('slide-leave-to', 'slide-leave-active', 'show')
       } else {
         fadeHeader.classList.remove('fade-enter-to', 'fade-enter')
       }
@@ -421,6 +493,7 @@ export function frameMoveOut (pageId,
     })
   } else {
     css(iframe, {
+      opacity: 0,
       display: 'none',
       'z-index': 10000
     })

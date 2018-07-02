@@ -39,11 +39,18 @@ let scrollHandle = function (event) {
 
 /**
  * 窗口改变事件回调
+ * https://stackoverflow.com/questions/8898412/iphone-ipad-triggering-unexpected-resize-events
  *
  * @param {Object} event 事件对象
  */
+let savedWindowWidth = win.innerWidth || docElem.clientWidth
+let currentWindowWidth
 let resizeEvent = fn.throttle(function (event) {
-  this.trigger('resize', event)
+  currentWindowWidth = this.getWidth()
+  if (currentWindowWidth !== savedWindowWidth) {
+    this.trigger('resize', event)
+    savedWindowWidth = currentWindowWidth
+  }
 }, 200)
 
 /**
@@ -89,7 +96,7 @@ let viewport = {
    * @param {number} top The target scrollTop
    */
   setScrollTop (top) {
-    rect.setScrollTop(top)
+    rect.setScrollTop(top || 1)
   },
 
   /**

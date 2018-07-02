@@ -1,3 +1,8 @@
+/**
+ * @file rollup build script file
+ * @author mj(zoumiaojiang@gmail.com)
+ */
+
 const fs = require('fs')
 const path = require('path')
 const zlib = require('zlib')

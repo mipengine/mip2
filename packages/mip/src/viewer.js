@@ -212,6 +212,14 @@ let viewer = {
     }
   },
 
+  /**
+   *
+   * @param {string} to Target url
+   * @param {Object} options
+   * @param {boolean} options.isMipLink Whether targetUrl is a MIP page. If not, use `top.location.href`. Defaults to `true`
+   * @param {boolean} options.replace If true, use `history.replace` instead of `history.push`. Defaults to `false`
+   * @param {Object} options.state Target page info
+   */
   open (to, {isMipLink = true, replace = false, state} = {}) {
     let {router, isRootPage} = this.page
     let notifyRootPage = this.page.notifyRootPage.bind(this.page)
@@ -415,15 +423,10 @@ let viewer = {
    * http://blog.christoffer.online/2015-06-10-six-things-i-learnt-about-ios-rubberband-overflow-scrolling/
    */
   _lockBodyScroll () {
-    let wrapper = viewport.scroller
-    wrapper.addEventListener('touchstart', e => {
-      let viewportHeight = viewport.getHeight()
+    viewport.on('scroll', () => {
       let scrollTop = viewport.getScrollTop()
-      let scrollHeight = viewport.getScrollHeight()
       if (scrollTop === 0) {
         viewport.setScrollTop(1)
-      } else if (scrollHeight - scrollTop <= viewportHeight) {
-        viewport.setScrollTop(scrollTop - 1)
       }
     }, eventListenerOptions)
   }

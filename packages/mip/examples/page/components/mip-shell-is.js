@@ -22,7 +22,7 @@ class MipShellIS extends window.MIP.builtinComponents.MipShell {
     let isId = shellConfig.isId
     console.log('Simulate async request with isId:', isId)
     setTimeout(() => {
-      shellConfig.routes[0].meta.header.title = '蓝犀牛'
+      shellConfig.routes[0].meta.header.title = '蓝犀牛搬家'
       shellConfig.routes[0].meta.header.logo = 'http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png'
       shellConfig.routes[0].meta.header.buttonGroup = [
         {
@@ -42,10 +42,11 @@ class MipShellIS extends window.MIP.builtinComponents.MipShell {
           text: '取消'
         }
       ]
+      shellConfig.routes[1].meta.header.title = '红犀牛搬家'
 
       this.updateShellConfig(shellConfig)
 
-      this.refreshShell({pageId: window.MIP.viewer.page.pageId})
+      this.refreshShell({pageId: window.MIP.viewer.page.pageId, asyncRefresh: true})
     }, 1000)
   }
 

@@ -15,7 +15,7 @@
 
 <script>
 export default {
-    // component options
+  // component options
 }
 </script>
 ```
@@ -28,8 +28,8 @@ export default {
 
 // 注册自定义组件
 MIP.registerVueCustomElement(
-    'mip-example',
-    componentDefinition // component options
+  'mip-example',
+  componentDefinition // component options
 );
 ```
 
@@ -106,7 +106,6 @@ mip 组件是基于[Web Component](https://developer.mozilla.org/en-US/docs/Web/
 - 详细：
 
     自定义元素的生命周期钩子，元素从 DOM 上移除之后执行。
-
 
 ### 生命周期图示
 

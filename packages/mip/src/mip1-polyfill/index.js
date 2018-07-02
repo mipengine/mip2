@@ -3,10 +3,7 @@
  * @author sekiyika(pengxing@baidu.com)
  */
 
-/* eslint-disable import/no-webpack-loader-syntax */
 import 'deps/esl.js'
-/* eslint-enable import/no-webpack-loader-syntax */
-
 import util from '../util/index'
 import hash from '../util/hash'
 import viewer from '../viewer'

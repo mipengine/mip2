@@ -48,11 +48,13 @@ body.with-header {
 }
 
 .mip-page__iframe {
-    // opacity: 0.9;
-    position: fixed;
+    opacity: 0;
+    // position: fixed;
+    position: absolute;
     left: 0;
     top: 0;
     right: 0;
+    bottom: 0;
     border: 0;
     width: 1px;
     min-width: 100%;
@@ -82,6 +84,10 @@ body.with-header {
     &.transition-without-header {
         top: @shell-header-height
     }
+
+    &.show {
+        display: block;
+    }
 }
 
 .mip-page-loading-wrapper,
@@ -94,7 +100,7 @@ body.with-header {
 
     &.slide-enter-active,
     &.slide-leave-active {
-        transition: all 0.35s ease;
+        transition: transform 0.35s ease;
     }
 
     &.slide-enter-to,
@@ -106,7 +112,7 @@ body.with-header {
 .mip-page-fade-header-wrapper {
     top: 0;
     left: 0;
-    right: 36px;
+    right: 95px;
     height: @shell-header-height;
     background: #fff;
     z-index: 20001!important;
@@ -125,10 +131,7 @@ body.with-header {
     }
 
     .mip-shell-header {
-        padding-left: 42px;
-
-        .back-button {
-            left: 6px
-        }
+        padding-left: 95px;
+        padding-right: 0;
     }
 }

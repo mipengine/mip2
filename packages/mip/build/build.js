@@ -3,8 +3,6 @@
  * @author wangyisheng@baidu.com (wangyisheng)
  */
 
-'use strict'
-
 process.env.NODE_ENV = 'production'
 
 const ora = require('ora')

@@ -2,10 +2,12 @@
 
 操作元素的 class 列表和内联样式是数据绑定的一个常见需求。因为它们都是属性，所以我们可以用 `m-bind` 处理它们：只需要通过表达式计算出字符串结果即可。不过，字符串拼接麻烦且易错。因此，在将 `m-bind` 用于 `class` 和 `style` 时，MIP2 做了专门的增强。表达式结果的类型除了字符串之外，还可以是对象或数组。
 
-### 绑定 HTML Class
+## 绑定 HTML Class
 
-#### 对象语法
+### 对象语法
+
 我们可以传给 `m-bind:class` 一个对象，以动态地切换 class：
+
 ```html
 <mip-data>
   <script type="application/json">
@@ -61,7 +63,8 @@
 
 渲染的结果和上面一样。
 
-#### 数组语法
+### 数组语法
+
 我们可以把一个数组传给 `m-bind:class`，以应用一个 class 列表：
 
 ```html
@@ -113,13 +116,13 @@
 <div m-bind:class="[{ active: isActive }, errorClass]"></div>
 ```
 
-#### 用在组件上
+### 用在组件上
 
 与 Vue 不同的是，当在一个自定义组件上使用 class 属性或 `m-bind:class` 绑定 class 属性时，这些类将 **不会** 被添加到该组件的根元素上面，只会被添加到自定义标签上。
 
-### 绑定内联样式
+## 绑定内联样式
 
-#### 对象语法
+### 对象语法
 
 `m-bind:style` 的对象语法十分直观——看着非常像 CSS，但其实是一个 JavaScript 对象。CSS 属性名可以用驼峰式 (camelCase) 或短横线分隔 (kebab-case，记得用单引号括起来) 来命名：
 
@@ -157,7 +160,7 @@
 <div style="color:red;font-size:13px;"></div>
 ```
 
-#### 数组语法
+### 数组语法
 
 `m-bind:style` 的数组语法可以将多个样式对象应用到同一个元素上：
 

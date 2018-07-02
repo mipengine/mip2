@@ -26,7 +26,6 @@ import registerCustomElement from './register-element'
 import sleepWakeModule from './sleepWakeModule'
 import performance from './performance'
 import mip1PolyfillInstall from './mip1-polyfill/index'
-import componentHelpers from './component-helpers'
 
 import './log/monitor'
 
@@ -73,7 +72,6 @@ let mip = {
   css: {},
   push,
   prerenderElement: Resources.prerenderElement,
-  componentHelpers,
   builtinComponents: {
     MipShell
   }

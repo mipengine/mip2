@@ -12,11 +12,9 @@ mip-cli 的组件编译模块使用 webpack4 实现，内置了以下 loader：
 
 4. less-loader：默认支持 `.vue` 单文件组件的 style 标签使用 `lang="less"`；
 
-5. stylus-loader：默认支持 `.vue` 单文件组件的 style 标签使用 `lang="stylus"`；
+5. postcss-loader：默认支持 css autoprefixer
 
-6. postcss-loader：默认支持 css autoprefixer
-
-7. url-loader：默认支持 `.png|.jpg|.jpeg|.gif` 等图片资源和 `.otf|.ttf|eot|svg|woff|woff2` 等字体文件资源的引用，默认小于 1000b 的资源直接生成 base64 字符串。
+6. url-loader：默认支持 `.png|.jpg|.jpeg|.gif` 等图片资源和 `.otf|.ttf|eot|svg|woff|woff2` 等字体文件资源的引用，默认小于 1000b 的资源直接生成 base64 字符串。
 
 ## 资源引用
 
@@ -34,7 +32,7 @@ mip-cli 允许开发者引入 npm 包，通过在项目根目录 `npm install --
 
 对于样式文件里的本地资源引用建议使用绝对路径，默认提供了 `@` 别名指向工程目录，假设项目目录结构为：
 
-```
+```bash
 test-proj
 ... components/
 ....... mip-example/
@@ -48,9 +46,9 @@ test-proj
 
 ```html
 <style scoped>
-    .class-name {
-        background: url(~@/static/mip.png);
-    }
+  .class-name {
+    background: url(~@/static/mip.png);
+  }
 </style>
 ```
 
@@ -60,10 +58,10 @@ test-proj
 
 ```javascript
 export default {
-    async mounted() {
-        let etpl = await import('etpl/src/main')
-        console.log(etpl.version)
-    }
+  async mounted() {
+    let etpl = await import('etpl/src/main')
+    console.log(etpl.version)
+  }
 }
 ```
 

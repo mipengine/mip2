@@ -20,16 +20,24 @@ body {
     }
 }
 html, body {
-    height: 100% !important;
+    // height: 100% !important;
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
     position: relative;
+
+    &.trigger-layout {
+        height: 100% !important;
+    }
+}
+html.mip-i-ios-scroll,
+html.mip-i-ios-scroll > body[mip-ready] {
+    -webkit-overflow-scrolling: touch;
 }
 html.mip-i-android-scroll,
 body.mip-i-android-scroll {
     height: auto !important;
     overflow-y: visible;
     position: static;
+    -webkit-overflow-scrolling: auto!important;
 }
 html.mip-no-scroll,
 html.mip-no-scroll > body {
