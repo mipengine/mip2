@@ -11,13 +11,13 @@
 
 打开终端输入
 
-```
+```bash
 $ npm install -g mip2
 ```
 
 ### 2. 项目初始化
 
-```
+```bash
 $ mip2 init
 ```
 
@@ -31,29 +31,29 @@ $ mip2 init
 <!DOCTYPE html>
 <html mip>
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-    <title>MIP page</title>
-    <link rel="canonical" href="对应的原页面地址">
-    <link rel="stylesheet" href="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.css">
-    <style mip-custom>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP page</title>
+  <link rel="canonical" href="对应的原页面地址">
+  <link rel="stylesheet" href="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.css">
+  <style mip-custom>
     /* 自定义样式 */
-        .wrapper {
-            padding: 20px;
-        }
-        p {
-            line-height: 24px;
-            padding: 10px 0;
-        }
-    </style>
+    .wrapper {
+      padding: 20px;
+    }
+    p {
+      line-height: 24px;
+      padding: 10px 0;
+    }
+  </style>
 </head>
 <body>
-    <div class="wrapper">
-        <h2>Hello World</h2>
-        <p>This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.</p>
-        <mip-img popup src="https://i3.meishichina.com/attachment/recipe/2014/10/27/c640_20141027211913820385989.jpg@!c640"></mip-img>
-    </div>
-    <script src="http://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script>
+  <div class="wrapper">
+    <h2>Hello World</h2>
+    <p>This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.</p>
+    <mip-img popup src="https://i3.meishichina.com/attachment/recipe/2014/10/27/c640_20141027211913820385989.jpg@!c640"></mip-img>
+  </div>
+  <script src="http://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script>
 </body>
 </html>
 ```
@@ -62,12 +62,11 @@ $ mip2 init
 
 在项目根目录运行
 
-```
+```bash
 $ mip2 dev
 ```
 
 服务启动后，打开浏览器访问 `http://127.0.0.1:8111/example`，就能看到上面我们编写的页面的效果了。
-
 
 ## 编写 MIP 组件
 
@@ -91,7 +90,7 @@ $ mip2 add mip-hello-world -f
 
 可以在 `components` 目录下看到，新增组件结构如下：
 
-```
+```bash
 ── mip-hello-world
     ├── mip-hello-world.md
     ├── mip-hello-world.vue
@@ -103,26 +102,26 @@ $ mip2 add mip-hello-world -f
 
 ```html
 <template>
-    <div class="wrapper">
-        <h1>MIP 2.0 component example</h1>
-        <h3>This is my first custom component !</h3>
-    </div>
+  <div class="wrapper">
+    <h1>MIP 2.0 component example</h1>
+    <h3>This is my first custom component !</h3>
+  </div>
 </template>
 
 <style scoped>
-    .wrapper {
-        margin: 0 auto;
-        text-align: center;
-        color: red;
-    }
+  .wrapper {
+    margin: 0 auto;
+    text-align: center;
+    color: red;
+  }
 </style>
 
 <script>
-    export default {
-        mounted() {
-            console.log('This is my first custom component !');
-        }
+  export default {
+    mounted() {
+      console.log('This is my first custom component !');
     }
+  }
 </script>
 
 ```
@@ -145,14 +144,12 @@ $ mip2 add mip-hello-world -f
 ...
 ```
 
-### 4. 启动调试服务器预览
+### 4. 启动服务器预览
 
 在项目根目录运行
 
-```
+```bash
 $ mip2 dev
 ```
 
 服务启动后，打开浏览器访问 `http://127.0.0.1:8111/example`，可以看到，刚才编写的组件已经运行在页面中。开发工作完成后，可以根据组件类型，选择将组件提交至第三方组件仓库(TODO)或[官方组件仓库](./contribute-to-official-repo.md)。
-
-

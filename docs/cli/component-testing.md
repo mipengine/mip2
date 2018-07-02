@@ -50,9 +50,9 @@ module.exports = {
 }
 ```
 
-
 默认配置、mip.config.js、命令行参数的优先级为：
-```
+
+```bash
 默认配置 < mip.config.js < 命令行参数
 ```
 
@@ -60,7 +60,7 @@ module.exports = {
 
 假设通过 mip-cli init 出来的项目结构如下：
 
-```
+```bash
 test-proj/
 ... components/
 ....... mip-example/
@@ -143,4 +143,3 @@ mip2 dev
 此时会自动打开 `http://127.0.0.1:8222/example/index.html`，页面显示如下：
 
 ![mip-example.jpg](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/docs/mip-example-a6d1f6f5.jpg)
-

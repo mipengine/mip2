@@ -2,7 +2,6 @@
 
 mip2 CLI 是官方提供的命令行工具，它提供了脚手架、调试、预览、校验、构建等功能，方便开发者快速开发 MIP 页面及自定义组件。
 
-
 ## 1. 依赖环境
 
 mip2 CLI 使用 NPM 安装，依赖 Node 环境，推荐
@@ -10,7 +9,6 @@ mip2 CLI 使用 NPM 安装，依赖 Node 环境，推荐
 - [Node.js](https://nodejs.org/) (>=8.x)
 
 - [Git](https://git-scm.com/)
-
 
 ## 2. 安装 mip2 CLI
 
@@ -22,7 +20,6 @@ $ npm install -g mip2
 
 输入 `mip2 -V`，若能正常显示版本号，说明已经安装成功。
 
-
 ## 3. mip2 CLI 使用
 
 ### 创建项目脚手架
@@ -33,7 +30,7 @@ $ mip2 init
 
 根据提示输入项目名 `myproject`，生成项目结构如下
 
-```
+```bash
 myproject
     ├── common                          // 组件公用代码，如 utils 等
     ├── components                      // 组件目录，编写组件代码
@@ -127,15 +124,15 @@ $ mip2 sw
 
 ``` javascript
 module.exports = {
-    dev: {/*...*/},
-    serviceWorker: {
-        cacheId: 'mipuser',
-        skipWaiting: true,
-        clientsClaim: true,
-        runtimeCaching: [],
-        globPatterns: [],
-        globIgnores: []
-    }
+  dev: {/*...*/},
+  serviceWorker: {
+    cacheId: 'mipuser',
+    skipWaiting: true,
+    clientsClaim: true,
+    runtimeCaching: [],
+    globPatterns: [],
+    globIgnores: []
+  }
 }
 ```
 
