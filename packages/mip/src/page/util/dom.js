@@ -65,7 +65,10 @@ function hideAllIFrames () {
   let iframes = document.querySelectorAll(`.${MIP_IFRAME_CONTAINER}`)
   if (iframes) {
     for (let i = 0; i < iframes.length; i++) {
-      css(iframes[i], 'display', 'none')
+      css(iframes[i], {
+        display: 'none',
+        opacity: 0
+      })
     }
   }
 }
@@ -294,14 +297,18 @@ export function frameMoveIn (pageId,
 
     // trigger layout
     /* eslint-disable no-unused-expressions */
+    css(iframe, {
+      display: 'block'
+    })
     loading.offsetWidth
     /* eslint-enable no-unused-expressions */
 
     let done = () => {
       hideAllIFrames()
       css(iframe, {
-        'z-index': activeZIndex++,
-        display: 'block'
+        display: 'block',
+        opacity: 1,
+        'z-index': activeZIndex++
       })
       // css(loading, 'display', 'none')
       loading.classList.remove('show')
@@ -337,7 +344,8 @@ export function frameMoveIn (pageId,
     hideAllIFrames()
     css(iframe, {
       'z-index': activeZIndex++,
-      display: 'block'
+      display: 'block',
+      opacity: 1
     })
     onComplete && onComplete()
   }
@@ -371,6 +379,7 @@ export function frameMoveOut (pageId,
     let targetIFrame = getIFrame(targetPageId)
     activeZIndex -= 2
     css(targetIFrame, {
+      opacity: 1,
       display: 'block',
       'z-index': activeZIndex++
     })
@@ -408,6 +417,7 @@ export function frameMoveOut (pageId,
     // trigger layout and move current iframe to correct position
     /* eslint-disable no-unused-expressions */
     css(iframe, {
+      opacity: 1,
       top: rootPageScrollPosition + 'px'
     })
     /* eslint-enable no-unused-expressions */
@@ -441,6 +451,7 @@ export function frameMoveOut (pageId,
     })
   } else {
     css(iframe, {
+      opacity: 0,
       display: 'none',
       'z-index': 10000
     })

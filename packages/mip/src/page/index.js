@@ -16,7 +16,7 @@ import {
   disableBouncyScrolling
 } from './util/dom'
 import Debouncer from './util/debounce'
-// import {supportsPassive} from './util/feature-detect'
+import {supportsPassive} from './util/feature-detect'
 import {scrollTo} from './util/ease-scroll'
 import {
   MAX_PAGE_NUM,
@@ -49,8 +49,8 @@ import '../styles/mip.less'
  * use passive event listeners if supported
  * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
  */
-// const eventListenerOptions = supportsPassive ? {passive: true} : false
-const eventListenerOptions = false
+const eventListenerOptions = supportsPassive ? {passive: true} : false
+// const eventListenerOptions = false
 
 class Page {
   constructor () {
@@ -205,6 +205,7 @@ class Page {
    */
   scrollToHash (hash) {
     if (hash) {
+      console.log('scrol.....')
       try {
         let $hash = document.querySelector(decodeURIComponent(hash))
         if ($hash) {
@@ -340,14 +341,20 @@ class Page {
       }
     }
 
-    // trigger layout to solve a strange bug in Android Superframe, which will make page unscrollable
-    /* eslint-disable no-unused-expressions */
-    window.innerHeight
-    /* eslint-enable no-unused-expressions */
-    setTimeout(() => {
+    // adjust scroll position in iOS, see viewer._lockBodyScroll()
+    if (window.MIP.viewer.isIframed && platform.isIos()) {
       document.documentElement.classList.add('trigger-layout')
       document.body.classList.add('trigger-layout')
-    })
+      viewport.setScrollTop(1)
+    }
+
+    // trigger layout to solve a strange bug in Android Superframe, which will make page unscrollable
+    if (platform.isAndroid()) {
+      setTimeout(() => {
+        document.documentElement.classList.add('trigger-layout')
+        document.body.classList.add('trigger-layout')
+      })
+    }
 
     // fix a UC/shoubai bug https://github.com/mipengine/mip2/issues/19
     window.addEventListener(CUSTOM_EVENT_SHOW_PAGE, (e) => {
@@ -510,10 +517,12 @@ class Page {
       }
 
       // move current iframe to correct position
-      backwardOpitons.rootPageScrollPosition = this.rootPageScrollPosition
-
-      document.documentElement.classList.remove('mip-no-scroll')
-      Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
+      backwardOpitons.rootPageScrollPosition = 0
+      if (targetPageId === this.pageId) {
+        backwardOpitons.rootPageScrollPosition = this.rootPageScrollPosition
+        document.documentElement.classList.remove('mip-no-scroll')
+        Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
+      }
       frameMoveOut(this.currentPageId, backwardOpitons)
 
       this.direction = null
