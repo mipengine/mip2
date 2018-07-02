@@ -12,6 +12,7 @@ import {
   convertPatternToRegexp,
   createMoreButtonWrapper,
   createPageMask,
+  // getFadeHeader,
   toggleInner
 } from './util'
 
@@ -243,21 +244,23 @@ class MipShell extends CustomElement {
 
     container.innerHTML = headerHTML
 
+    // Set color & borderColor & backgroundColor
     css(container, 'background-color', backgroundColor)
     css(container.querySelectorAll('svg'), 'fill', color)
     css(container.querySelector('.mip-shell-header-title'), 'color', color)
-    if (borderColor) {
-      container.classList.remove('mip-border', 'mip-border-bottom')
-      css(container, 'border-bottom', `1px solid ${borderColor}`)
-      css(container, 'box-sizing', 'border-box')
-      css(container.querySelector('.mip-shell-header-logo'), 'border-color', borderColor)
-      css(container.querySelector('.mip-shell-header-button-group'), 'border-color', borderColor)
-      css(container.querySelector('.mip-shell-header-button-group .split'), 'background-color', borderColor)
-    } else {
+    if (!borderColor) {
       container.classList.add('mip-border', 'mip-border-bottom')
       css(container, 'border-bottom', '0')
       css(container, 'box-sizing', 'content-box')
+      borderColor = '#e1e1e1'
+    } else {
+      container.classList.remove('mip-border', 'mip-border-bottom')
+      css(container, 'border-bottom', `1px solid ${borderColor}`)
+      css(container, 'box-sizing', 'border-box')
     }
+    css(container.querySelector('.mip-shell-header-logo'), 'border-color', borderColor)
+    css(container.querySelector('.mip-shell-header-button-group'), 'border-color', borderColor)
+    css(container.querySelector('.mip-shell-header-button-group .split'), 'background-color', borderColor)
   }
 
   bindRootEvents () {
@@ -360,6 +363,11 @@ class MipShell extends CustomElement {
 
     // Refresh header
     this.slideHeader('down')
+    // if (asyncRefresh) {
+    //   let fadeHeader = getFadeHeader(pageMeta)
+    //   css(fadeHeader, 'display', 'block')
+    //   // TODO HERE
+    // }
     this.renderHeader(this.$el)
 
     this.updateOtherParts()

@@ -46,7 +46,7 @@ class MipShellIS extends window.MIP.builtinComponents.MipShell {
 
       this.updateShellConfig(shellConfig)
 
-      this.refreshShell({pageId: window.MIP.viewer.page.pageId})
+      this.refreshShell({pageId: window.MIP.viewer.page.pageId, asyncRefresh: true})
     }, 1000)
   }
 
