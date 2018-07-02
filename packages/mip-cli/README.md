@@ -105,6 +105,10 @@ module.exports = {
 
 ## changelog
 
+- 1.1.4
+    1. mip2 build 产生的组件公用 js 直接指向线上
+    2. mip.config.js 新增 `build` 配置项
+
 - 1.1.2
     1. 调整组件公用部分的引入机制
 

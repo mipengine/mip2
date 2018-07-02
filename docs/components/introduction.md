@@ -52,9 +52,9 @@ mip.registerVueCustomElement('component-c', { /* ... */ });
 
 ```html
 <div id="app">
-    <component-a></component-a>
-    <component-b></component-b>
-    <component-c></component-c>
+  <component-a></component-a>
+  <component-b></component-b>
+  <component-c></component-c>
 </div>
 ```
 
@@ -85,20 +85,20 @@ MIP 支持在 MIP-HTML 文档中使用 customElement 标签，customElement 标�
 
 ```js
 mip.registerVueCustomElement(
-    'mip-hello-world',
-    /**
-     * 这里传入的对象就是 Vue 的实例对象（先不要蒙，后面我们会讲为什么会是一个 Vue 的实例）。
-     * 但 MIP 中组件是独立以 Vue 单文件开发发布的，所以注册这一步在 mip-cli 中已经自动完成
-     */
-    {
-        // 由于 Mip 种的 Vue 不带 compiler，所以其实不支持 template 写法，只支持 render 方法，此处为示意代码
-        template: `
-            <div class="hello-world-wrap">
-                {{ attr1 }}, {{ attr2 }}
-            </div>
-        `,
-        props: ['attr1', 'attr2']
-    }
+  'mip-hello-world',
+  /**
+    * 这里传入的对象就是 Vue 的实例对象（先不要蒙，后面我们会讲为什么会是一个 Vue 的实例）。
+    * 但 MIP 中组件是独立以 Vue 单文件开发发布的，所以注册这一步在 mip-cli 中已经自动完成
+    */
+  {
+    // 由于 Mip 种的 Vue 不带 compiler，所以其实不支持 template 写法，只支持 render 方法，此处为示意代码
+    template: `
+      <div class="hello-world-wrap">
+        {{ attr1 }}, {{ attr2 }}
+      </div>
+    `,
+    props: ['attr1', 'attr2']
+  }
 );
 ```
 
@@ -106,9 +106,9 @@ mip.registerVueCustomElement(
 
 ```html
 <mip-hello-world>
-    <div class="hello-world-wrap">
-        hello, world
-    </div>
+  <div class="hello-world-wrap">
+    hello, world
+  </div>
 </mip-hello-world>
 ```
 

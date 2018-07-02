@@ -2,12 +2,14 @@
 
 const cli = require('../lib/cli')
 const build = require('../lib/build')
+const path = require('path')
+const fs = require('fs')
 
 cli.setup({
   noArgs: true,
   options: [
     ['-a, --asset <value>', '静态资源 publicPath'],
-    ['-d, --dir <value>', '组件文件夹路径'],
+    ['-d, --dir <value>', '项目文件夹路径'],
     ['-o, --output <value>', '编译代码输出路径'],
     ['-c, --clean', '构建前先清空输出目录'],
     ['-i, --ignore', '忽略沙盒注入']
@@ -20,4 +22,11 @@ cli.setup({
   ].join('\n')
 })
 
-build(cli.program)
+let configPath = path.resolve(process.cwd(), cli.program.config || 'mip.config.js')
+let defaultConfig = {}
+
+if (fs.existsSync(configPath)) {
+  defaultConfig = require(configPath)
+}
+
+build(Object.assign(defaultConfig.build || {}, cli.program))

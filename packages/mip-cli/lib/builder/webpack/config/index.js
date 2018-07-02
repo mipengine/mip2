@@ -16,7 +16,7 @@ const componentExternals = require('./component-externals')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = function (options) {
-  return {
+  let config = {
     entry: options.entry,
     output: {
       path: options.outputPath,
@@ -90,7 +90,12 @@ module.exports = function (options) {
     },
     plugins: [
       new VueLoaderPlugin(),
-      new CustomElementPlugin(options),
+      new CustomElementPlugin(options)
+    ]
+  }
+
+  if (options.mode === 'development') {
+    config.plugins.push(
       new CopyWebpackPlugin([
         {
           from: resolveModule('mip-components-webpack-helpers/dist/mip-components-webpack-helpers.js'),
@@ -98,6 +103,8 @@ module.exports = function (options) {
           toType: 'file'
         }
       ], {debug: 'error'})
-    ]
+    )
   }
+
+  return config
 }

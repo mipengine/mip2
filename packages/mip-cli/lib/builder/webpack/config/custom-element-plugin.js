@@ -13,13 +13,16 @@ function isComponentFile (filename) {
   return /(mip-[\w-]+)\/\1\.js$/.test(filename)
 }
 
-function customElementHeader (asset) {
+function customElementHeader (options) {
   return function (filename) {
     if (!isComponentFile(filename)) {
       return ''
     }
 
-    let mipComponentsWebpackHelperUrl = asset.replace(/\/$/, '') + '/mip-components-webpack-helpers'
+    let mipComponentsWebpackHelperUrl = options.mode === 'development'
+      ? '/mip-components-webpack-helpers'
+      // 线上 helpers 地址
+      : 'https://c.mipcdn.com/static/v2/mip-components-webpack-helpers'
 
     // let mipComponentsWebpackHelperUrl = (mode === 'development')
     //   ? '/mip-components-webpack-helpers'
@@ -50,7 +53,7 @@ function customElementFooter (filename) {
 
 module.exports = function (options) {
   return new WrapperPlugin({
-    header: customElementHeader(options.asset),
+    header: customElementHeader(options),
     footer: customElementFooter
   })
 }
