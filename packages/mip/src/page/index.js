@@ -357,15 +357,15 @@ class Page {
     }
 
     // fix a UC/shoubai bug https://github.com/mipengine/mip2/issues/19
+    let isBuggy = platform.isIos() &&
+      !platform.isSafari() && !platform.isChrome()
     window.addEventListener(CUSTOM_EVENT_SHOW_PAGE, (e) => {
-      if (platform.isIos() &&
-        (platform.isUc() || platform.isBaidu() || platform.isBaiduApp())) {
+      if (isBuggy) {
         enableBouncyScrolling()
       }
     })
     window.addEventListener(CUSTOM_EVENT_HIDE_PAGE, (e) => {
-      if (platform.isIos() &&
-        (platform.isUc() || platform.isBaidu() || platform.isBaiduApp())) {
+      if (isBuggy) {
         disableBouncyScrolling()
       }
     })
@@ -579,7 +579,9 @@ class Page {
       // remove from children list
       let firstChildPage = this.children.splice(0, 1)[0]
       let firstIframe = getIFrame(firstChildPage.pageId)
-      firstIframe.parentNode.removeChild(firstIframe)
+      if (firstIframe && firstIframe.parentNode) {
+        firstIframe.parentNode.removeChild(firstIframe)
+      }
     }
   }
 
