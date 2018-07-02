@@ -48,11 +48,13 @@ body.with-header {
 }
 
 .mip-page__iframe {
-    // opacity: 0.9;
-    position: fixed;
+    opacity: 0;
+    // position: fixed;
+    position: absolute;
     left: 0;
     top: 0;
     right: 0;
+    bottom: 0;
     border: 0;
     width: 1px;
     min-width: 100%;
@@ -98,7 +100,7 @@ body.with-header {
 
     &.slide-enter-active,
     &.slide-leave-active {
-        transition: all 0.35s ease;
+        transition: transform 0.35s ease;
     }
 
     &.slide-enter-to,

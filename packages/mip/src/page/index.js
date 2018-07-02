@@ -16,13 +16,14 @@ import {
   disableBouncyScrolling
 } from './util/dom'
 import Debouncer from './util/debounce'
-// import {supportsPassive} from './util/feature-detect'
+import {supportsPassive} from './util/feature-detect'
 import {scrollTo} from './util/ease-scroll'
 import {
+  MAX_PAGE_NUM,
   NON_EXISTS_PAGE_ID,
-  SCROLL_TO_ANCHOR_CUSTOM_EVENT,
-  SHOW_PAGE_CUSTOM_EVENT,
-  HIDE_PAGE_CUSTOM_EVENT,
+  CUSTOM_EVENT_SCROLL_TO_ANCHOR,
+  CUSTOM_EVENT_SHOW_PAGE,
+  CUSTOM_EVENT_HIDE_PAGE,
   DEFAULT_SHELL_CONFIG,
   MESSAGE_APPSHELL_EVENT,
   MESSAGE_ROUTER_PUSH,
@@ -48,8 +49,8 @@ import '../styles/mip.less'
  * use passive event listeners if supported
  * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
  */
-// const eventListenerOptions = supportsPassive ? {passive: true} : false
-const eventListenerOptions = false
+const eventListenerOptions = supportsPassive ? {passive: true} : false
+// const eventListenerOptions = false
 
 class Page {
   constructor () {
@@ -204,6 +205,7 @@ class Page {
    */
   scrollToHash (hash) {
     if (hash) {
+      console.log('scrol.....')
       try {
         let $hash = document.querySelector(decodeURIComponent(hash))
         if ($hash) {
@@ -299,14 +301,6 @@ class Page {
   }
 
   start () {
-    if (platform.isIos()) {
-      let iosVersion = platform.getOsVersion()
-      iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
-      if (iosVersion !== '8' && iosVersion !== '7') {
-        document.documentElement.classList.add('mip-i-ios-scroll')
-      }
-    }
-
     // Don't let browser restore scroll position.
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual'
@@ -336,37 +330,54 @@ class Page {
     // Job complete!
     document.body.setAttribute('mip-ready', '')
 
-    // trigger layout
-    /* eslint-disable no-unused-expressions */
-    window.innerHeight
-    /* eslint-enable no-unused-expressions */
+    // ========================= Some HACKs =========================
 
-    setTimeout(() => {
+    // prevent bouncy scroll in iOS 7 & 8
+    if (platform.isIos()) {
+      let iosVersion = platform.getOsVersion()
+      iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
+      if (iosVersion !== '8' && iosVersion !== '7') {
+        document.documentElement.classList.add('mip-i-ios-scroll')
+      }
+    }
+
+    // adjust scroll position in iOS, see viewer._lockBodyScroll()
+    if (window.MIP.viewer.isIframed && platform.isIos()) {
       document.documentElement.classList.add('trigger-layout')
       document.body.classList.add('trigger-layout')
-    })
+      viewport.setScrollTop(1)
+    }
 
-    // scroll to current hash if exists
-    this.scrollToHash(window.location.hash)
-    window.addEventListener(SCROLL_TO_ANCHOR_CUSTOM_EVENT, (e) => {
-      this.scrollToHash(e.detail[0])
-    })
+    // trigger layout to solve a strange bug in Android Superframe, which will make page unscrollable
+    if (platform.isAndroid()) {
+      setTimeout(() => {
+        document.documentElement.classList.add('trigger-layout')
+        document.body.classList.add('trigger-layout')
+      })
+    }
 
     // fix a UC/shoubai bug https://github.com/mipengine/mip2/issues/19
-    window.addEventListener(SHOW_PAGE_CUSTOM_EVENT, (e) => {
+    window.addEventListener(CUSTOM_EVENT_SHOW_PAGE, (e) => {
       if (platform.isIos() &&
         (platform.isUc() || platform.isBaidu() || platform.isBaiduApp())) {
         enableBouncyScrolling()
       }
     })
-    window.addEventListener(HIDE_PAGE_CUSTOM_EVENT, (e) => {
+    window.addEventListener(CUSTOM_EVENT_HIDE_PAGE, (e) => {
       if (platform.isIos() &&
         (platform.isUc() || platform.isBaidu() || platform.isBaiduApp())) {
         disableBouncyScrolling()
       }
     })
 
-    this.emitEventInCurrentPage({name: SHOW_PAGE_CUSTOM_EVENT})
+    // scroll to current hash if exists
+    this.scrollToHash(window.location.hash)
+    window.addEventListener(CUSTOM_EVENT_SCROLL_TO_ANCHOR, (e) => {
+      this.scrollToHash(e.detail[0])
+    })
+
+    // trigger show page custom event
+    this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
   }
 
   // ========================= Util functions for developers =========================
@@ -505,8 +516,13 @@ class Page {
         backwardOpitons.targetPageMeta = this.currentPageMeta
       }
 
-      document.documentElement.classList.remove('mip-no-scroll')
-      Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
+      // move current iframe to correct position
+      backwardOpitons.rootPageScrollPosition = 0
+      if (targetPageId === this.pageId) {
+        backwardOpitons.rootPageScrollPosition = this.rootPageScrollPosition
+        document.documentElement.classList.remove('mip-no-scroll')
+        Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
+      }
       frameMoveOut(this.currentPageId, backwardOpitons)
 
       this.direction = null
@@ -551,6 +567,19 @@ class Page {
   addChild (page) {
     if (this.isRootPage) {
       this.children.push(page)
+    }
+  }
+
+  /**
+   * check if children.length exceeds MAX_PAGE_NUM
+   * if so, remove the first child
+   */
+  checkIfExceedsMaxPageNum () {
+    if (this.children.length >= MAX_PAGE_NUM) {
+      // remove from children list
+      let firstChildPage = this.children.splice(0, 1)[0]
+      let firstIframe = getIFrame(firstChildPage.pageId)
+      firstIframe.parentNode.removeChild(firstIframe)
     }
   }
 
@@ -600,7 +629,7 @@ class Page {
      */
     if (isSameRoute(from, to, true)) {
       this.emitEventInCurrentPage({
-        name: SCROLL_TO_ANCHOR_CUSTOM_EVENT,
+        name: CUSTOM_EVENT_SCROLL_TO_ANCHOR,
         data: to.hash
       })
       return
@@ -649,6 +678,9 @@ class Page {
         // TODO: delete DOM & trigger disconnectedCallback in root page
         Array.prototype.slice.call(this.getElementsInRootPage()).forEach(el => el.parentNode && el.parentNode.removeChild(el))
       }
+
+      this.checkIfExceedsMaxPageNum()
+
       // Create a new iframe
       createIFrame(targetFullPath, targetPageId)
       this.applyTransition(targetPageId, to.meta, {newPage: true})
@@ -666,9 +698,9 @@ class Page {
       window.MIP.$recompile()
     }
 
-    this.emitEventInCurrentPage({name: HIDE_PAGE_CUSTOM_EVENT})
+    this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
     this.currentPageId = targetPageId
-    this.emitEventInCurrentPage({name: SHOW_PAGE_CUSTOM_EVENT})
+    this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
   }
 }
 

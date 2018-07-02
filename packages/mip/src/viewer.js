@@ -423,15 +423,10 @@ let viewer = {
    * http://blog.christoffer.online/2015-06-10-six-things-i-learnt-about-ios-rubberband-overflow-scrolling/
    */
   _lockBodyScroll () {
-    let wrapper = viewport.scroller
-    wrapper.addEventListener('touchstart', e => {
-      let viewportHeight = viewport.getHeight()
+    viewport.on('scroll', () => {
       let scrollTop = viewport.getScrollTop()
-      let scrollHeight = viewport.getScrollHeight()
       if (scrollTop === 0) {
         viewport.setScrollTop(1)
-      } else if (scrollHeight - scrollTop <= viewportHeight) {
-        viewport.setScrollTop(scrollTop - 1)
       }
     }, eventListenerOptions)
   }

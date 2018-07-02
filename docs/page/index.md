@@ -187,6 +187,23 @@ window.MIP.viewer.page.togglePageMask(true, {skipTransition: true})
 window.MIP.viewer.page.toggleDropdown(true)
 ```
 
+### 页面切换事件
+
+在页面切换，也就是 `<iframe>` 展现/隐藏时，会在页面中触发切换事件，各个自定义组件可以监听这两个事件：
+* `show-page` 页面展示
+* `hide-page` 页面隐藏
+
+由于触发的是 CustomEvent 自定义事件，监听方法如下：
+```javascript
+mounted() {
+    window.addEventListener('show-page', () => {})
+    window.addEventListener('hide-page', () => {})
+}
+```
+
+有一点需要注意，添加了监听处理之后，页面第一次展示时是不会触发 `show-page` 事件的。
+如果要针对首次展现编写处理逻辑，应该放在 `mounted()` 生命周期中执行。
+
 ## MIP Shell
 
 在通过 MIP Page 将多个 MIP 页面融合到一起之后，在不同页面之间跳转可以获得如单页应用的效果。但在实际项目中，还可能有一些元素是游离于每个页面之外的（或者说每个页面都包含的内容）。这些元素包括头部标题栏，底部菜单，侧边栏等等。

@@ -56,46 +56,79 @@
         .mip-page-loading.only-header::after {
             display: none;
         }
+
+        .input input {
+            width: 200px;
+            height: 90px;
+        }
     </style>
 </head>
 
 <body>
     <mip-shell>
         <script type="application/json">
-        {
-            "routes": [
-                {
-                    "pattern": "*",
-                    "meta": {
-                        "header": {
-                            "show": true,
-                            "title": "蓝犀牛",
-                            "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
-                            "buttonGroup": [
-                                {
-                                    "name": "subscribe",
-                                    "text": "关注",
-                                    "link": "/examples/page/tree.html"
-                                },
-                                {
-                                    "name": "chat",
-                                    "text": "发消息"
-                                },
-                                {
-                                    "name": "cancel",
-                                    "text": "取消"
-                                }
-                            ]
-                        },
-                        "view": {
-                            "isIndex": false
+            {
+                "routes": [
+                    {
+                        "pattern": "./tree.html",
+                        "meta": {
+                            "header": {
+                                "show": true,
+                                "buttonGroup": [
+                                    {
+                                        "name": "subscribe",
+                                        "text": "关注",
+                                        "link": "/examples/page/tree.html"
+                                    },
+                                    {
+                                        "name": "chat",
+                                        "text": "发消息"
+                                    },
+                                    {
+                                        "name": "cancel",
+                                        "text": "取消"
+                                    }
+                                ]
+                            },
+                            "view": {
+                                "isIndex": false
+                            }
+                        }
+                    },
+                    {
+                        "pattern": "*",
+                        "meta": {
+                            "header": {
+                                "show": true,
+                                "title": "MIP",
+                                "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
+                                "buttonGroup": [
+                                    {
+                                        "name": "subscribe",
+                                        "text": "关注",
+                                        "link": "/examples/page/tree.html"
+                                    },
+                                    {
+                                        "name": "chat",
+                                        "text": "发消息"
+                                    },
+                                    {
+                                        "name": "cancel",
+                                        "text": "取消"
+                                    }
+                                ]
+                            },
+                            "view": {
+                                "isIndex": false
+                            }
                         }
                     }
-                }
-            ]
-        }
+                ]
+            }
         </script>
     </mip-shell>
+
+    <mip-page-tree></mip-page-tree>
 
     <p>This is Page#2, using different component (mip-tree)</p>
 
@@ -108,7 +141,15 @@
     <a class="link" href="./index.html" mip-link>Back to Index</a>
     <a class="link" href="./data.html" mip-link>Go to Data</a>
 
-    <input type="text">
+    <p class="input">
+        <input type="text">
+    </p>
+    <p class="input">
+        <input type="text">
+    </p>
+    <p class="input">
+        <input type="text">
+    </p>
     <p m-text="city"></p>
     <div on="tap:MIP.setData({'city':'深圳'})" class="button">click change city</div>
 
@@ -124,6 +165,7 @@
 
     <script src="../../dist/mip.js"></script>
     <script src="./components/mip-tree.js"></script>
+    <script src="./components/mip-page-tree.js"></script>
 </body>
 
 </html>
