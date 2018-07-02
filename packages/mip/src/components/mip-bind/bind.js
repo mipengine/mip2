@@ -13,7 +13,6 @@ import {isObject, objNotEmpty} from './util'
 
 class Bind {
   constructor () {
-    let me = this
     this._win = window
     this._watcherIds = []
     this._win.pgStates = new Set()
@@ -22,18 +21,18 @@ class Bind {
     this._observer = new Observer()
     // from=0 called by html attributes
     // from=1 refers the method called by mip.js
-    MIP.setData = function (action, from) {
-      me._bindTarget(false, action, from)
+    MIP.setData = (action, from) => {
+      this._bindTarget(false, action, from)
     }
-    MIP.$set = function (action, from, cancel, win) {
-      me._bindTarget(true, action, from, cancel, win)
+    MIP.$set = (action, from, cancel, win) => {
+      this._bindTarget(true, action, from, cancel, win)
     }
-    MIP.$recompile = function () {
-      me._observer.start(me._win.m)
-      me._compile.start(me._win.m, me._win)
+    MIP.$recompile = () => {
+      this._observer.start(this._win.m)
+      this._compile.start(this._win.m, this._win)
     }
-    MIP.watch = function (target, cb) {
-      me._bindWatch(target, cb)
+    MIP.watch = (target, cb) => {
+      this._bindWatch(target, cb)
     }
 
     window.m = window.m || {}
@@ -43,13 +42,8 @@ class Bind {
 
   /*
    * broadcast: to recompile because shared data updated
-   * @param {Object} data data
    */
-  _postMessage (data) {
-    if (!objNotEmpty(data)) {
-      return
-    }
-
+  _postMessage () {
     let win = window.MIP.MIP_ROOT_PAGE ? window : window.parent
     MIP.$set({}, 0, true, win)
 
@@ -85,7 +79,7 @@ class Bind {
         if (classified.globalData && objNotEmpty(classified.globalData)) {
           let g = window.MIP.MIP_ROOT_PAGE ? window.g : window.parent.g
           assign(g, classified.globalData)
-          !cancel && this._postMessage(classified.globalData)
+          !cancel && this._postMessage()
         }
         data = classified.pageData
         Object.keys(data).forEach(field => {
@@ -140,10 +134,10 @@ class Bind {
     }
     if (win.g && win.g.hasOwnProperty(key)) {
       assign(win.g, data)
-      !cancel && this._postMessage(data)
+      !cancel && this._postMessage()
     } else if (!win.MIP.MIP_ROOT_PAGE && win.parent.g && win.parent.g.hasOwnProperty(key)) {
       assign(win.parent.g, data)
-      !cancel && this._postMessage(data)
+      !cancel && this._postMessage()
     } else {
       Object.assign(win.m, data)
     }
@@ -156,7 +150,7 @@ class Bind {
     } else {
       win.parent.g = win.parent.g || {}
       Object.assign(win.parent.g, data)
-      !cancel && this._postMessage(data)
+      !cancel && this._postMessage()
     }
   }
 
@@ -166,7 +160,9 @@ class Bind {
     !cancel && Object.keys(data).forEach(k => win.pgStates.add(k))
     Object.keys(g).forEach(key => {
       if (!win.pgStates.has(key) && win.m.hasOwnProperty(key)) {
-        win.m[key] = g[key]
+        try {
+          win.m[key] = g[key]
+        } catch (e) {}
       }
     })
     win.m.__proto__ = win.MIP.MIP_ROOT_PAGE ? win.g : win.parent.g // eslint-disable-line no-proto
