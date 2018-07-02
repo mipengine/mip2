@@ -6,7 +6,7 @@
 
 MIP 2.0 的站长组件托管在 [Github 站长组件仓库](https://github.com/mipengine/mip2-extensions-platform)，项目结构大致如下：
 
-```
+```bash
 ├──sites
     ├── test.a.com
     │   ├── common
@@ -54,15 +54,16 @@ https://c.mipcdn.com/extensions/platform/v2/test.a.com/mip-example/mip-example.j
 
 我们进入 `sites` 目录，如果是第一次提交一个站点的组件，运行命令
 
-```
+```bash
 $ mip2 init
 ```
 
 按照提示输入项目名称，如 `cafe.com`，新增了一个站点项目。
 
-```
+```bash
 $ cd cafe.com
 ```
+
 切换到站点项目目录即可快速进行组件开发工作了：
 
 - [新增组件](./start-writing-first-mip.md#2-新建一个自定义组件)
@@ -83,5 +84,3 @@ $ cd cafe.com
 // 页面中引用
 <script src="https://c.mipcdn.com/extensions/platform/v2/{站点项目名}/{组件名}/{组件名}.js"></script>
 ```
-
-

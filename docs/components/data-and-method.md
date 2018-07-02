@@ -12,8 +12,8 @@
 
 我们这个章节就是介绍如何设置和在整站范围内使用这个共享数据。
 
-
 ### 概念
+
 在讲解如何设置和使用共享数据之前，我们首先来明晰一些概念
 
 1. 站的概念：
@@ -23,9 +23,7 @@
 3. 共享数据：站内多页面可用
 4. 页面可用数据/全局数据：页面数据 + 共享数据
 
-
 下面将以递进的方式提供例子，每一步都以前一步的输出为输入，请留意。
-
 
 ## 设置共享数据
 
@@ -34,6 +32,7 @@
 在数据字段前添加 `#` 标识为共享数据（仅检测数据第一层），否则仅为页面数据。
 
 如：
+
 ```html
 <!-- a.html -->
 <mip-data>
@@ -49,7 +48,9 @@
     </script>
 </mip-data>
 ```
+
 此时 a 页面可用的数据源为
+
 ```json
 {
     "global": 1,
@@ -60,7 +61,9 @@
     "name": "a"
 }
 ```
+
 此时共享数据源为：
+
 ```json
 {
     "global": 1,
@@ -73,8 +76,8 @@
 ### 数据继承
 
 使用数据时，优先从页面数据源中查找，当在页面数据源中不存在时，MIP2 将再向上查找共享数据源
-    
 如（a 页打开 b 页）：
+
 ```html
 <!-- b.html -->
 <mip-data>
@@ -86,7 +89,9 @@
     </script>
 </mip-data>
 ```
+
 此时 b 页面可用的数据源为
+
 ```json
 {
     "global": 1,
@@ -95,14 +100,16 @@
     "age": 1
 }
 ```
+
 此时共享数据源为：
+
 ```json
 {
     "global": 1,
     "global2": 2
 }
 ```
-    
+
 ### 数据冲突
 
 当页面数据存在与共享数据冲突的字段时：
@@ -124,7 +131,9 @@
     </script>
 </mip-data>
 ```
+
 此时 c 页面可用的数据源为
+
 ```json
 {
     "global": 3,
@@ -132,7 +141,9 @@
     "name": "c"
 }
 ```
+
 此时共享数据源为：
+
 ```json
 {
     "global": 3,
@@ -141,10 +152,11 @@
 ```
 
 ## 修改共享数据
+
 调用 `MIP.setData` 方法修改数据时
 
 1. 如果指定 ***必须*** 修改共享数据，则在数据前添加 `#` 标识，如：
-    
+
     在 c 页面调用 `MIP.setData({'#global2': 4})`
 
     此时 c 页面可用的数据源为
@@ -164,13 +176,12 @@
         "global2": 4
     }
 
-
 2. 其余情况，MIP2 会自行判断该数据是共享数据还是当前页面的数据，该修改哪个数据源；
-    
+
     ① 如果要修改的数据字段既存在于共享数据源也存在于页面数据源，将优先修改页面的数据源
 
     如：
-    
+
     在 c 页面调用 `MIP.setData({'global2': 2444})`
 
     此时 c 页面可用的数据源为
@@ -190,7 +201,7 @@
     ```
 
     ② 如果要修改的数据字段仅为页面数据，将不影响共享数据
-    
+
     在 c 页面调用 `MIP.setData({'name': 'name-c'})`
 
     此时 c 页面可用的数据源为
@@ -203,12 +214,12 @@
     ```
     此时共享数据源不变（同样的，修改的是 c 页面的页面数据）
 
-
     ③ 如果要修改的数据字段为共享数据，将直接修改共享数据
-    
+
     如：在 c 页面调用 `MIP.setData({' global': '5'})`
 
     此时 c 页面可用的数据源为
+
     ```json
     {
         "global": 5,
@@ -217,6 +228,7 @@
     }
     ```
     此时共享数据源为：
+
     ```json
     {
         "global": 5,
@@ -232,8 +244,8 @@
 
 ### 在组件中
 
+#### [规范]
 
-**[规范]** 
 1. 仅允许在 HTML 页面使用 `m-bind` 来绑定数据，以 `props` 的形式向组件传递数据。
 2. 组件内部 ***不允许*** 使用 `m-bind` 语法来绑定全局数据，也无法直接读取到全局数据 `m`，仅允许绑定通过 props 获得的数据。
 3. 组件内部需要使用 props 预定义所需数据，并且显式指定数据类型。
@@ -247,57 +259,57 @@ index.html：
 
 ```html
 <mip-data>
-    <script type="application/json">
-        {
-            "userInfo": {
-                "name": "baidu"
-            },
-            "list": [1, 2, 3],
-            "num": 2,
-            "msg": "info",
-            "loading": false
-        }
-    </script>
+  <script type="application/json">
+    {
+      "userInfo": {
+        "name": "baidu"
+      },
+      "list": [1, 2, 3],
+      "num": 2,
+      "msg": "info",
+      "loading": false
+    }
+  </script>
 </mip-data>
 <mip-a m-bind:userinfo="userInfo"
-    m-bind:list="list"
-    m-bind:num="num"
-    m-bind:msg="msg"
-    m-bind:loading="loading"></mip-a>
+  m-bind:list="list"
+  m-bind:num="num"
+  m-bind:msg="msg"
+  m-bind:loading="loading"></mip-a>
 ```
 
 mip-a 组件内部：
 
 ```javascript
 template: `
-    <div>
-        <mip-b :userinfo="userinfo"></mip-b>
-        <p @click="changeData"></p>
-        <p v-if="loading">{{msg}}</p>
-    </div>
+  <div>
+    <mip-b :userinfo="userinfo"></mip-b>
+    <p @click="changeData"></p>
+    <p v-if="loading">{{msg}}</p>
+  </div>
 `,
 props: {
-    userinfo: {
-        type: Object,
-        default () {
-            return {}
-        }
-    },
-    list: {
-        type: Array
-    },
-    num: Number,
-    loading: Boolean,
-    msg: String
+  userinfo: {
+    type: Object,
+    default () {
+      return {}
+    }
+  },
+  list: {
+    type: Array
+  },
+  num: Number,
+  loading: Boolean,
+  msg: String
 },
 methods: {
-    changeData() {
-        MIP.setData({
-            userInfo: {
-                name: 'baidu2'
-            }
-        });
-    }
+  changeData() {
+    MIP.setData({
+      userInfo: {
+        name: 'baidu2'
+      }
+    });
+  }
 }
 ```
 
