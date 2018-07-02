@@ -9,7 +9,7 @@ cli.setup({
   noArgs: true,
   options: [
     ['-p, --port <n>', '启动端口号', parseInt],
-    ['-d, --dir <value>', '组件文件夹路径'],
+    ['-d, --dir <value>', '项目文件夹路径'],
     ['-l, --livereload', '启用调试自动刷新'],
     ['-a, --autoopen <value>', '自动打开网页'],
     ['-i, --ignore', '忽略沙盒注入'],
