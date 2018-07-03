@@ -107,7 +107,7 @@ export function createLoading (pageMeta) {
  * @param {Object} targetMeta Page meta of target page
  * @param {Object} options
  * @param {boolean} options.onlyHeader Moving out only needs header, not loading body
- * @param {boolean} options.transitionContainsHeader whether transition contains header
+ * @param {boolean} options.transitionContainsHeader Whether transition contains header
  * @returns {HTMLElement}
  */
 function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
@@ -121,10 +121,9 @@ function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
     return loading
   }
 
-  // Transition only need header (frameMovingOut) but doesn't contains header (extended from child mip-shell-xxx)
+  // Transition only need header (frameMoveOut) but doesn't contains header (extended from child mip-shell-xxx)
   // Means doesn't need loading
   if (!transitionContainsHeader && onlyHeader) {
-    // css(loading, 'display', 'none')
     loading.classList.remove('show')
     return loading
   }
@@ -154,6 +153,33 @@ function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
 
   css(loading.querySelector('.back-button'), 'display', targetMeta.view.isIndex ? 'none' : 'flex')
 
+  if (transitionContainsHeader && targetMeta.header.show) {
+    // Set color & borderColor & backgroundColor
+    let {
+      color = '#000000',
+      borderColor,
+      backgroundColor = '#ffffff'
+    } = targetMeta.header
+    let loadingContainer = loading.querySelector('.mip-shell-header')
+
+    css(loadingContainer, 'background-color', backgroundColor)
+    css(loading.querySelectorAll('svg'), 'fill', color)
+    css(loading.querySelector('.mip-shell-header-title'), 'color', color)
+    if (!borderColor) {
+      loadingContainer.classList.add('mip-border', 'mip-border-bottom')
+      css(loadingContainer, 'border-bottom', '0')
+      css(loadingContainer, 'box-sizing', 'content-box')
+      borderColor = '#e1e1e1'
+    } else {
+      loadingContainer.classList.remove('mip-border', 'mip-border-bottom')
+      css(loadingContainer, 'border-bottom', `1px solid ${borderColor}`)
+      css(loadingContainer, 'box-sizing', 'border-box')
+    }
+    css(loading.querySelector('.mip-shell-header-logo'), 'border-color', borderColor)
+    css(loading.querySelector('.mip-shell-header-button-group'), 'border-color', borderColor)
+    css(loading.querySelector('.mip-shell-header-button-group .split'), 'background-color', borderColor)
+  }
+
   return loading
 }
 
@@ -180,8 +206,8 @@ export function createFadeHeader (pageMeta) {
 }
 
 /**
- * Change loading according to targetMeta
- * Return loading div
+ * Change fade header according to targetMeta
+ * Return fade header div
  *
  * @param {Object} targetMeta Page meta of target page
  * @returns {HTMLElement}
@@ -210,6 +236,31 @@ function getFadeHeader (targetMeta) {
   }
 
   css(fadeHeader.querySelector('.back-button'), 'display', targetMeta.view.isIndex ? 'none' : 'flex')
+
+  // Set color & borderColor & backgroundColor
+  let {
+    color = '#000000',
+    borderColor,
+    backgroundColor = '#ffffff'
+  } = targetMeta.header
+  let fadeHeaderContainer = fadeHeader.querySelector('.mip-shell-header')
+
+  css(fadeHeaderContainer, 'background-color', backgroundColor)
+  css(fadeHeader.querySelectorAll('svg'), 'fill', color)
+  css(fadeHeader.querySelector('.mip-shell-header-title'), 'color', color)
+  if (!borderColor) {
+    fadeHeaderContainer.classList.add('mip-border', 'mip-border-bottom')
+    css(fadeHeaderContainer, 'border-bottom', '0')
+    css(fadeHeaderContainer, 'box-sizing', 'content-box')
+    borderColor = '#e1e1e1'
+  } else {
+    fadeHeaderContainer.classList.remove('mip-border', 'mip-border-bottom')
+    css(fadeHeaderContainer, 'border-bottom', `1px solid ${borderColor}`)
+    css(fadeHeaderContainer, 'box-sizing', 'border-box')
+  }
+  css(fadeHeader.querySelector('.mip-shell-header-logo'), 'border-color', borderColor)
+  css(fadeHeader.querySelector('.mip-shell-header-button-group'), 'border-color', borderColor)
+  css(fadeHeader.querySelector('.mip-shell-header-button-group .split'), 'background-color', borderColor)
 
   return fadeHeader
 }
@@ -280,10 +331,6 @@ export function frameMoveIn (pageId,
   if (transition) {
     let loading = getLoading(targetMeta, {transitionContainsHeader})
     loading.classList.add('slide-enter', 'slide-enter-active', 'show')
-    // setTimeout(() => {
-    //   css(loading, 'display', 'block')
-    //   console.log('loading display block')
-    // }, 0)
 
     let headerLogoTitle
     let fadeHeader
@@ -310,7 +357,6 @@ export function frameMoveIn (pageId,
         opacity: 1,
         'z-index': activeZIndex++
       })
-      // css(loading, 'display', 'none')
       loading.classList.remove('show')
 
       onComplete && onComplete()
@@ -330,8 +376,6 @@ export function frameMoveIn (pageId,
 
     setTimeout(() => {
       nextFrame(() => {
-        // css(loading, 'display', 'block')
-        // console.log('loading display block')
         loading.classList.add('slide-enter-to')
         loading.classList.remove('slide-enter')
         if (!transitionContainsHeader) {
@@ -398,7 +442,6 @@ export function frameMoveOut (pageId,
     let fadeHeader
 
     if (transitionContainsHeader) {
-      // css(loading, 'display', 'block')
       loading.classList.add('show')
     } else {
       headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
@@ -428,7 +471,6 @@ export function frameMoveOut (pageId,
         'z-index': 10000,
         top: 0
       })
-      // css(loading, 'display', 'none')
       iframe.classList.remove('slide-leave-to', 'slide-leave-active')
       if (transitionContainsHeader) {
         loading.classList.remove('slide-leave-to', 'slide-leave-active', 'show')

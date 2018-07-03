@@ -30,15 +30,19 @@ module.exports = async function (source, map, meta) {
   }
 
   let imports = components.map(component => {
-    let extname = path.extname(component)
     let basename = path.basename(component, path.extname(component))
     let name = `__mip_child_component_${basename.replace(/-/g, '_')}`
-    let registerFunc = extname === '.vue' ? 'registerVueCustomElement' : 'registerCustomElement'
 
-    return [
-      `import ${name} from './${basename}'`,
-      `MIP.${registerFunc}('${basename}', ${name})`
-    ].join('\n')
+    // 由于在初始渲染的时候子组件先渲染父组件后渲染可能会导致数据丢失，因此需要先注册父组件再注册子组件
+    return `
+    import ${name} from './${basename}'
+    setTimeout(() => {
+      MIP[typeof ${name} === 'function' ? 'registerCustomElement' : 'registerVueCustomElement'](
+        '${basename}',
+        ${name}
+      )
+    })
+    `
   }).join('\n')
 
   let {code: newCode, map: newMap} = await sourceMap.prepend(

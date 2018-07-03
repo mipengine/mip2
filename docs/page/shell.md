@@ -104,6 +104,21 @@
 
     ![MIP Shell header logo](http://boscdn.bpc.baidu.com/assets/mip2/mip-logo-2.png)
 
+* header.color
+    __string__, 默认值：'#000000'
+
+    配置头部几个 svg 按钮和标题的字体颜色。必须是一个符合 RGB 格式的字符串。
+
+* header.borderColor
+    __string__, 默认值：'#e1e1e1'
+
+    配置头部底部的边框，LOGO 的圆形边框和右侧按钮胶囊（如果显示的话）的边框颜色。必须是一个符合 RGB 格式的字符串。
+
+* header.backgroundColor
+    __string__, 默认值：'#ffffff'
+
+    配置头部背景色。必须是一个符合 RGB 格式的字符串。
+
 * header.buttonGroup
     __Array__, 默认值：`[]`
 
