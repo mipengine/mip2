@@ -215,8 +215,8 @@ class Recognizer {
   /**
    * Conflict a and b.
    *
-   * @param {Function} a a
-   * @param {Function} b b
+   * @param {Function|string} a a
+   * @param {Function|string} b b
    */
   static conflict (a, b) {
     if (typeof a === 'string') {
@@ -602,8 +602,10 @@ class SwipeRecognizer extends Recognizer {
   }
 }
 
-Recognizer.register(TapRecognizer, 'tap')
+// doubletap 和 tap 的注册顺序不能换，得先子类，再父类
+// 否则 conflictList 都指向 tap 的 conflictList，就有问题了
 Recognizer.register(DoubleTapRecognizer, 'doubletap')
+Recognizer.register(TapRecognizer, 'tap')
 Recognizer.register(SwipeRecognizer, 'swipe')
 
 Recognizer.conflict(DoubleTapRecognizer, TapRecognizer)

@@ -1,4 +1,11 @@
-import mip from '../src/index.js' // eslint-disable-line
+/**
+ * @file index spec file
+ * @author huanghuiquan(huanghuiquan@baidu.com)
+ */
+
+/* globals describe, it, expect */
+
+import MIP from 'src/index'
 
 describe('MIP', function () {
   it('should expose MIP.registerVueCustomElement', function () {
@@ -35,9 +42,5 @@ describe('MIP', function () {
 
   it('should expose MIP.prerenderElement', function () {
     expect(MIP.prerenderElement).to.be.a('function')
-  })
-
-  it('should expose MIP.componentHelpers', function () {
-    expect(MIP.componentHelpers).to.be.a('object')
   })
 })
