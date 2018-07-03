@@ -38,6 +38,7 @@ import {
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
 import fn from '../util/fn'
+import {makeCacheUrl} from '../util'
 import viewport from '../viewport'
 import Router from './router/index'
 // import AppShell from './appshell'
@@ -126,7 +127,7 @@ class Page {
 
       // handle events emitted by BaiduResult page
       window.MIP.viewer.onMessage('changeState', ({url}) => {
-        router.replace(url)
+        router.replace(makeCacheUrl(url))
       })
     } else {
       // inside iframe

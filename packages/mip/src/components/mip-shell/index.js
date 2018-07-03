@@ -12,7 +12,6 @@ import {
   convertPatternToRegexp,
   createMoreButtonWrapper,
   createPageMask,
-  // getFadeHeader,
   toggleInner
 } from './util'
 
@@ -330,8 +329,9 @@ class MipShell extends CustomElement {
       // SF can help to navigate by 'changeState' when standalone = false
       if (window.MIP.standalone) {
         window.MIP_ROUTER.go(-1)
+      } else {
+        window.MIP.viewer.sendMessage('historyNavigate', {step: -1})
       }
-      window.MIP.viewer.sendMessage('historyNavigate', {step: -1})
     } else if (buttonName === 'more') {
       this.toggleDropdown(true)
     } else if (buttonName === 'close') {
