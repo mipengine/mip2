@@ -43,7 +43,11 @@ class Bind {
   /*
    * broadcast: to recompile because shared data updated
    */
-  _postMessage () {
+  _postMessage (data) {
+    if (!objNotEmpty(data)) {
+      return
+    }
+
     let win = window.MIP.MIP_ROOT_PAGE ? window : window.parent
     MIP.$set({}, 0, true, win)
 
@@ -79,7 +83,7 @@ class Bind {
         if (classified.globalData && objNotEmpty(classified.globalData)) {
           let g = window.MIP.MIP_ROOT_PAGE ? window.g : window.parent.g
           assign(g, classified.globalData)
-          !cancel && this._postMessage()
+          !cancel && this._postMessage(classified.globalData)
         }
         data = classified.pageData
         Object.keys(data).forEach(field => {
@@ -134,10 +138,10 @@ class Bind {
     }
     if (win.g && win.g.hasOwnProperty(key)) {
       assign(win.g, data)
-      !cancel && this._postMessage()
+      !cancel && this._postMessage(data)
     } else if (!win.MIP.MIP_ROOT_PAGE && win.parent.g && win.parent.g.hasOwnProperty(key)) {
       assign(win.parent.g, data)
-      !cancel && this._postMessage()
+      !cancel && this._postMessage(data)
     } else {
       Object.assign(win.m, data)
     }
@@ -150,7 +154,7 @@ class Bind {
     } else {
       win.parent.g = win.parent.g || {}
       Object.assign(win.parent.g, data)
-      !cancel && this._postMessage()
+      !cancel && this._postMessage(data)
     }
   }
 
