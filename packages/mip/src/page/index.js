@@ -12,6 +12,7 @@ import {
   frameMoveOut,
   createLoading,
   createFadeHeader,
+  toggleFadeHeader,
   enableBouncyScrolling,
   disableBouncyScrolling
 } from './util/dom'
@@ -402,6 +403,10 @@ class Page {
         toggle
       }
     })
+  }
+
+  toggleFadeHeader (toggle, pageMeta) {
+    toggleFadeHeader(toggle, pageMeta)
   }
 
   // =============================== Root Page methods ===============================
