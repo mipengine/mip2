@@ -681,7 +681,15 @@ class Page {
 
       // Create a new iframe
       createIFrame(targetFullPath, targetPageId)
-      this.applyTransition(targetPageId, to.meta, {newPage: true})
+      this.applyTransition(targetPageId, to.meta, {
+        newPage: true,
+        onComplete: () => {
+          let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
+          if (shellDOM) {
+            window.MIP.viewer.eventAction.execute('ready', shellDOM, {})
+          }
+        }
+      })
     } else {
       this.applyTransition(targetPageId, to.meta, {
         onComplete: () => {
@@ -691,6 +699,11 @@ class Page {
             type: 'updateShell',
             data: {pageMeta}
           })
+
+          let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
+          if (shellDOM) {
+            window.MIP.viewer.eventAction.execute('ready', shellDOM, {})
+          }
         }
       })
       window.MIP.$recompile()

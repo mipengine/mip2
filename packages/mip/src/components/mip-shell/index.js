@@ -12,7 +12,6 @@ import {
   convertPatternToRegexp,
   createMoreButtonWrapper,
   createPageMask,
-  // getFadeHeader,
   toggleInner
 } from './util'
 
@@ -61,6 +60,7 @@ class MipShell extends CustomElement {
     if (!ele) {
       return
     }
+
     let tmpShellConfig
     try {
       tmpShellConfig = JSON.parse(ele.textContent.toString()) || {}
@@ -76,7 +76,7 @@ class MipShell extends CustomElement {
         route.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, route.meta || {})
         route.regexp = convertPatternToRegexp(route.pattern || '*')
 
-        // get title from <title> tag
+        // Get title from <title> tag
         if (!route.meta.header.title) {
           route.meta.header.title = (document.querySelector('title') || {}).innerHTML || ''
         }
@@ -91,6 +91,13 @@ class MipShell extends CustomElement {
           shellConfig: tmpShellConfig.routes
         }
       })
+
+      // Append other DOM
+      let children = this.element.children
+      let otherDOM = [].slice.call(children).slice(1, children.length)
+      if (otherDOM.length > 0) {
+        otherDOM.forEach(dom => document.body.appendChild(dom))
+      }
     } else {
       let pageId = page.pageId
       let pageMeta
