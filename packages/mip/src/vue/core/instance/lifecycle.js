@@ -280,7 +280,7 @@ export function updateChildComponent (
   // mip-patch:
   // 如果 renderChildren 的元素是 Node 表明是 mip 组件的 slot，
   // 不需要重新更新 slot, vue 的 renderChildren 元素是 VNode
-  if (hasChildren && !(renderChildren[0] instanceof Node)) {
+  if (hasChildren && !(renderChildren && renderChildren[0] instanceof Node)) {
     vm.$slots = resolveSlots(renderChildren, parentVnode.context)
     vm.$forceUpdate()
   }
