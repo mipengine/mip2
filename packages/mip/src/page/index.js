@@ -26,7 +26,6 @@ import {
   CUSTOM_EVENT_SHOW_PAGE,
   CUSTOM_EVENT_HIDE_PAGE,
   DEFAULT_SHELL_CONFIG,
-  MESSAGE_APPSHELL_EVENT,
   MESSAGE_ROUTER_PUSH,
   MESSAGE_ROUTER_REPLACE,
   MESSAGE_SET_MIP_SHELL_CONFIG,
@@ -38,7 +37,7 @@ import {
 } from './const/index'
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
-import util from '../util/index'
+import fn from '../util/fn'
 import viewport from '../viewport'
 import Router from './router/index'
 // import AppShell from './appshell'
@@ -184,12 +183,6 @@ class Page {
       //   })
       // })
     } else {
-      this.messageHandlers.push((type, event) => {
-        if (type === MESSAGE_APPSHELL_EVENT) {
-          customEmit(window, event.name, event.data)
-        }
-      })
-
       let parentPage = window.parent.MIP.viewer.page
       let currentPageMeta = parentPage.findMetaByPageId(this.pageId)
 
@@ -206,7 +199,6 @@ class Page {
    */
   scrollToHash (hash) {
     if (hash) {
-      console.log('scrol.....')
       try {
         let $hash = document.querySelector(decodeURIComponent(hash))
         if ($hash) {
@@ -422,10 +414,9 @@ class Page {
     if (this.currentPageId !== this.pageId) {
       // notify current iframe
       let $iframe = getIFrame(this.currentPageId)
-      $iframe && $iframe.contentWindow.postMessage({
-        type: MESSAGE_APPSHELL_EVENT,
-        data: {name, data}
-      }, window.location.origin)
+      if ($iframe && $iframe.contentWindow) {
+        customEmit($iframe.contentWindow, name, data)
+      }
     } else {
       // emit CustomEvent in root page
       customEmit(window, name, data)
@@ -486,7 +477,7 @@ class Page {
      * 3. <a mip-link></a> innerText
      */
     let innerTitle = {title: targetMeta.defaultTitle || undefined}
-    let finalMeta = util.fn.extend(true, innerTitle, localMeta, targetMeta)
+    let finalMeta = fn.extend(true, innerTitle, localMeta, targetMeta)
 
     customEmit(window, 'mipShellEvents', {
       type: 'toggleTransition',
