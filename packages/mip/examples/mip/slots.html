@@ -19,6 +19,10 @@
     <template slot="footer">
       <h4>Template Footer Slot</h4>
     </template>
+    <template id="list" type="mip-mustache">
+      <!-- test mustache -->
+      <p>{{name}}</p>
+    </template>
   </demo-slots>
   <script src="../../dist/mip.js"></script>
   <script>
@@ -32,11 +36,38 @@
             <slot>No DEFAULT slot content passed (this is default value)</slot>
 
             <slot name="footer">No FOOTER slot content passed (this is default value)</slot>
+            <mip-a>
+              mip-a-slot
+            </mip-a>
+        </div>`,
+        mounted() {
+            console.log(this.$slots)
+            console.log(this.$element.querySelector('[type=mip-mustache]'))
+        }
+    })
+
+    MIP.registerVueCustomElement('mip-b', {
+      template: `
+        <div>
+            <slot></slot>
+            mip-b-content
         </div>`,
         mounted() {
             console.log(this.$slots)
         }
-    });
+    })
+
+    MIP.registerVueCustomElement('mip-a', {
+      template: `
+        <div>
+            <slot></slot>
+            <mip-b> mip-b-slot </mip-b>
+        </div>`,
+        mounted() {
+            console.log(this.$slots)
+        }
+    })
+
   </script>
 </body>
 

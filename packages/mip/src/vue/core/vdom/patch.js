@@ -431,6 +431,12 @@ export function createPatchFunction (backend) {
         oldStartVnode = oldCh[++oldStartIdx] // Vnode has been moved left
       } else if (isUndef(oldEndVnode)) {
         oldEndVnode = oldCh[--oldEndIdx]
+      } else if (newStartVnode instanceof Node && oldStartVnode instanceof VNode) {
+        newCh[newStartIdx++] = oldStartVnode
+        oldStartVnode = oldCh[oldStartIdx++]
+      } else if (oldEndVnode instanceof Node && newEndVnode instanceof VNode) {
+        newCh[newEndIdx--] = oldEndVnode
+        oldEndVnode = oldCh[oldEndIdx--]
       } else if (sameVnode(oldStartVnode, newStartVnode)) {
         patchVnode(oldStartVnode, newStartVnode, insertedVnodeQueue)
         oldStartVnode = oldCh[++oldStartIdx]
