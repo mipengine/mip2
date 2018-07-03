@@ -1,5 +1,7 @@
-import registerElement from '../src/register-element.js'
-import CustomElement from '../src/custom-element.js'
+import registerElement from '../../src/register-element.js'
+import CustomElement from '../../src/custom-element.js'
+
+/* globals describe, before, it, expect */
 
 describe('Custom element', function () {
   let ele
