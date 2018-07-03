@@ -1,6 +1,12 @@
+/**
+ * @file register-element spec file
+ * @author huanghuiquan(huanghuiquan@baidu.com)
+ */
 
-import registerElement from '../src/register-element.js'
-import CustomElement from '../src/custom-element.js'
+/* globals describe, before, it, expect */
+
+import registerElement from 'src/register-element.js'
+import CustomElement from 'src/custom-element.js'
 
 describe('Register element', function () {
   let ele
