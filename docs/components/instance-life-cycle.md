@@ -1,8 +1,8 @@
 # MIP 2.0 组件实例的生命周期和回调钩子
 
-## 创建一个简单的 mip 组件
+## 创建一个简单的 mip 组件
 
-为了提升 mip 组件的开发效率，我们允许开发者使用 vue 开发 mip 组件，然后通过 mip-cli 工具编译成 mip 组件，下面是一个用 vue 写的 mip 组件 `mip-example`：
+为了提升 mip 组件的开发效率，我们允许开发者使用 vue 开发 mip 组件，然后通过 mip-cli 工具编译成 mip 组件，下面是一个用 vue 写的 mip 组件 `mip-example`：
 
 ```html
 <template>
@@ -20,7 +20,7 @@ export default {
 </script>
 ```
 
-然后使用 mip-cli 工具编译打包后大概是这样的：
+然后使用 mip-cli 工具编译打包后大概是这样的：
 
 ```js
 // 创建 style 标签，并为 css 加上 scope
@@ -35,7 +35,7 @@ MIP.registerVueCustomElement(
 
 ## mip 和 vue 的关系
 
-mip 组件是基于[Web Component](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements) 规范实现的一种用于创建自定义 HTML 元素。为了方便开发，mip2 支持开发者使用 vue 的方式开发 mip 组件，而隐藏了自定义元素注册和生命周期回调，开发者可以完全专注 vue 组件的开发。下面是 vue 和 mip 之间的关系示意图：
+mip 组件是基于[Web Component](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements) 规范实现的一种用于创建自定义 HTML 元素。为了方便开发，mip2 支持开发者使用 vue 的方式开发 mip 组件，而隐藏了自定义元素注册和生命周期回调，开发者可以完全专注 vue 组件的开发。下面是 vue 和 mip 之间的关系示意图：
 
 ![vue 和 mip 关系示意图](../assets/vue-and-mip-component.png)
 
@@ -66,7 +66,7 @@ mip 组件是基于[Web Component](https://developer.mozilla.org/en-US/docs/Web/
 - Context: Vue 组件实例
 - 详细：
 
-    vue 实例生命周期，在挂载开始之前被调用：相关的 render 函数首次被调用。在自定义元素的 connectedCallback 钩子中执行。
+    vue 实例生命周期，在挂载开始之前被调用：相关的 render 函数首次被调用。在自定义元素的 connectedCallback 钩子中执行。
 
 ### mounted
 
@@ -74,7 +74,7 @@ mip 组件是基于[Web Component](https://developer.mozilla.org/en-US/docs/Web/
 - Context: Vue 组件实例
 - 详细：
 
-    vue 实例生命周期，el 被新创建的 vm.$el 替换，并挂载到实例上去之后调用该钩子。如果 root 实例挂载了一个文档内元素，当 mounted 被调用时 vm.$el 也在文档内。在自定义元素的 connectedCallback 钩子中执行，connectedCallback 可能会因为元素从 DOM 结构上移动而触发多次执行，但是 mounted 只会执行一次。
+    vue 实例生命周期，el 被新创建的 vm.$el 替换，并挂载到实例上去之后调用该钩子。如果 root 实例挂载了一个文档内元素，当 mounted 被调用时 vm.$el 也在文档内。在自定义元素的 connectedCallback 钩子中执行，connectedCallback 可能会因为元素从 DOM 结构上移动而触发多次执行，但是 mounted 只会执行一次。
 
 ### beforeUpdate
 
