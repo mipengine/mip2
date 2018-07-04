@@ -52,7 +52,7 @@ this.$on('eventName', function (event, str))
  * 触发事件
  * @param {string} eventName 事件名称
  * @param {HTMLElement} element 触发的目标元素，注意：事件往递归的向上传播找到匹配 `on="eventName:xxx.xx` 并执行
- * @param {Object} event 事件对象，原生的 Event 对象，如果没有事件对象可以为 {} ，支持透传自定义参数，如：{userinfo: {}}
+ * @param {Object=} event 事件对象，原生的 Event 对象，如果没有事件对象可以为 {} 或不传 ，支持透传自定义参数，如：{userinfo: {}}
  */
 MIP.viewer.eventAction.execute(eventName, element, event)
 ```

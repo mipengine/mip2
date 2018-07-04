@@ -61,7 +61,7 @@ class Bind {
 
   _bindTarget (compile, action, from, cancel, win = this._win) {
     let data = from ? action.arg : action
-    let evt = from ? action.event.target : {}
+    let evt = from && action.event ? action.event.target : {}
     if (typeof data === 'string') {
       data = (new Function('DOM', 'return ' + data))(evt)
     }
