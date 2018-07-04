@@ -54,13 +54,65 @@ test-proj
 
 ### 异步加载
 
-`mip-cli@1.0.13` 以上版本支持组件异步加载，可通过 `import()` 或 `require.ensure()` 实现，这两个方法返回 Promise 对象，函数的具体说明可以查看 [webpack dynamic import](https://webpack.js.org/guides/code-splitting/#dynamic-imports)，在使用的时候可如下所示：
+`mip-cli@1.0.13` 以上版本支持模块异步加载，可通过 `import()` 或 `require.ensure()` 实现，这两个方法返回 Promise 对象，函数的具体说明可以查看 [webpack dynamic import](https://webpack.js.org/guides/code-splitting/#dynamic-imports)。
+
+以 `import()` 举个例子，假设项目中需要用到 `mustache`，那么可以首先通过 npm 安装：
+
+```shell
+npm install --save mustache
+```
+
+然后在编写组件代码时可以通过以下方式异步加载：
 
 ```javascript
+import('mustache').then(function (mustache) {
+  // 搞点事情
+})
+```
+
+对于项目组件需要使用到的一些非 npm 模块，建议放在 `common/` 目录下，这样也可以通过相对路径的形式引入该模块。假设项目目录结构为：
+
+```bash
+test-proj
+... common/
+....... utils.js
+... components/
+....... mip-example/
+........... mip-example.vue
+... static/
+....... mip.png
+... mip.config.js
+```
+
+假如需要在 mip-example.vue 中异步加载 utils.js，那么可以这么写：
+
+```javascript
+import('../../common/utils').then(function (utils) {
+  // 搞点事情
+})
+```
+
+需要注意的是，模块异步加载应该在组件的生命周期或者方法里调用，而不应该阻塞组件定义。举个例子，假设需要在 mip-example.vue 中异步加载 mustache，那么对应的 js 可以这么写：
+
+```javascript
+// 变量缓存
+let mustache
+// 加载 mustache 的方法
+async function getMustache () {
+  if (mustache) {
+    return mustache
+  }
+
+  mustache = await import('mustache')
+  return mustache
+}
+
 export default {
-  async mounted() {
-    let etpl = await import('etpl/src/main')
-    console.log(etpl.version)
+  // ...
+  mounted() {
+    getMustache().then(function (mustache) {
+      // 搞点事情
+    })
   }
 }
 ```
