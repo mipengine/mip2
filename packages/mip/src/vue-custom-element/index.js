@@ -54,11 +54,11 @@ function install (Vue) {
       }
 
       connectedCallback () {
-        callLifeCycle(this.vm, 'connectedCallback', this.element)
+        callLifeCycle(this, 'connectedCallback', this.element)
       }
 
       disconnectedCallback () {
-        callLifeCycle(this.vm, 'disconnectedCallback', this.element)
+        callLifeCycle(this, 'disconnectedCallback', this.element)
       }
 
       firstInviewCallback () {

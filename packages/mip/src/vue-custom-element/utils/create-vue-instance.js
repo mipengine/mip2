@@ -22,10 +22,15 @@ export default function createVueInstance (
     // 将 element 挂到 vue 下方便使用
     this.$element = element
 
-    this.$emit = function emit (...args) {
-      customEmit(element, ...args)
-      viewer.eventAction.execute(args[0], element, args[1])
-      this.__proto__ && this.__proto__.$emit.call(this, ...args) // eslint-disable-line no-proto
+    this.$emit = function emit (eventName, ...args) {
+      customEmit(element, eventName, ...args)
+      viewer.eventAction.execute(eventName, element, ...args)
+      this.__proto__ && this.__proto__.$emit.call(this, eventName, ...args) // eslint-disable-line no-proto
+    }
+
+    this.$on = function on (eventName, callback) {
+      this.__proto__ && this.__proto__.$on.call(this, eventName, callback) // eslint-disable-line no-proto
+      element.customElement.addEventAction(eventName, callback)
     }
   }
   ComponentDefinition.beforeCreate = [].concat(ComponentDefinition.beforeCreate || [], beforeCreate)
