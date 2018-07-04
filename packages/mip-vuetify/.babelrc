@@ -1,0 +1,23 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "modules": false
+      }
+    ],
+    "vue"
+  ],
+  "plugins": [
+    "syntax-dynamic-import",
+    "transform-object-rest-spread",
+    [
+      "transform-builtin-classes",
+      {
+        "globals": ["HTMLElement"]
+      }
+    ],
+    "transform-runtime"
+  ],
+  "ignore": ["dist/*.js"]
+}
