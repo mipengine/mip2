@@ -32,8 +32,6 @@ import {
   MESSAGE_UPDATE_MIP_SHELL_CONFIG,
   MESSAGE_SYNC_PAGE_CONFIG,
   MESSAGE_REGISTER_GLOBAL_COMPONENT
-  // MESSAGE_APPSHELL_HEADER_SLIDE_UP,
-  // MESSAGE_APPSHELL_HEADER_SLIDE_DOWN,
 } from './const/index'
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
@@ -41,7 +39,6 @@ import fn from '../util/fn'
 import {makeCacheUrl} from '../util'
 import viewport from '../viewport'
 import Router from './router/index'
-// import AppShell from './appshell'
 import GlobalComponent from './appshell/globalComponent'
 import platform from '../util/platform'
 import '../styles/mip.less'

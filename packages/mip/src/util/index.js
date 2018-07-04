@@ -86,9 +86,12 @@ export function parseCacheUrl (url) {
  *
  * @return {string} 原 mip 页 URL
  */
-export function getOriginalUrl () {
-  let parsedUrl = parseCacheUrl(window.location.href)
-  if (parsedUrl === window.location.href) {
+export function getOriginalUrl (url) {
+  if (!url) {
+    url = window.location.href
+  }
+  let parsedUrl = parseCacheUrl(url)
+  if (parsedUrl === url) {
     // 直接打开 MIP 页
     return parsedUrl
   }
