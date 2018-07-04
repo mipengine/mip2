@@ -123,13 +123,6 @@ let BaseElement = _fixBabelExtend(function (_HTMLElement) {
     _this.__innerHTML = _this.innerHTML
 
     /**
-     * Mip templates nodelist
-     *
-     * @type {NodeList}
-     */
-    _this.templates = _this.querySelectorAll('template[type^=mip-]')
-
-    /**
      * Instantiated the custom element.
      * @type {Object}
      * @public

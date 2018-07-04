@@ -4,9 +4,24 @@
  */
 
 import {getPropsData, reactiveProps} from './props'
-import {getSlots} from './slots'
+import {toArray} from './helpers'
 import {customEmit} from './custom-event'
 import viewer from '../../viewer'
+
+/**
+ * 获取 element 的 slot content，并将 slot content element 从父元素中移除
+ * @param {HTMLElement} element slot content 的父元素
+ * @param {[Node]>}  Node 数组
+ */
+function getNodeSlots (element) {
+  let nodeSlots = toArray(element.childNodes)
+    .map(node => {
+      element.removeChild(node)
+      return node
+    })
+
+  return nodeSlots
+}
 
 export default function createVueInstance (
   element,
@@ -35,7 +50,7 @@ export default function createVueInstance (
   }
   ComponentDefinition.beforeCreate = [].concat(ComponentDefinition.beforeCreate || [], beforeCreate)
 
-  // let elementOriginalChildren = [].slice.call(element.childNodes).map(node => node.cloneNode(true)); // clone hack due to IE compatibility
+  let nodeSlots = getNodeSlots(element)
 
   element.innerHTML = '<div></div>'
 
@@ -59,7 +74,7 @@ export default function createVueInstance (
         {
           props: this.reactiveProps
         },
-        getSlots(element.__innerHTML, createElement, this._v.bind(this))
+        nodeSlots
       )
     }
   }
