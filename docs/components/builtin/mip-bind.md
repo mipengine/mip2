@@ -207,26 +207,6 @@ on="事件:MIP.setData({}) 事件:MIP.setData({}) 事件:MIP.setData({})"
 
         该方法会将新增数据加入到数据源中，重复数据会进行覆盖。
 
-    - 变量赋值
-
-        数据源中所有数据，都可以通过 `m.` 的形式获取到，可直接在组件中通过 JS 来进行操作，如：
-
-        ```
-        <mip-data>
-            <script type="application/json">
-            {
-                "name": "张三",
-                "age": 25
-            }
-            </script>
-        </mip-data>
-
-        // 以下为组件中使用的示例代码
-        <script type="text/javascript">
-            // 打印 “张三”
-            console.log(m.name);
-        </script>
-        ```
 - 数据源
 
     设置的数据按照层级被合并到总的数据源中，后设置的数据会覆盖前者（支持多层级的复杂对象的deep数据源覆盖），如：
