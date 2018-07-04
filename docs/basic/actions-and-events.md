@@ -11,7 +11,7 @@ eventName:targetId[.actionName[(args)]]
 详细的语法描述如下：
 
 - `eventName`: 必须， element 暴露的事件名
-- `targetId`: 必须， event 被触发后将要作用的对象标识。targetId 可以是 id 选择器或者[特定对象](#special-target), 如果是 id 选择器, 将执行指定的 mip 组件暴露的 action；如果特定对象，将触发特定对象的 action。
+- `targetId`: 必须， event 被触发后将要作用的对象标识。targetId 可以是 id 选择器或者[特定对象](#特定对象), 如果是 id 选择器, 将执行指定的 mip 组件暴露的 action；如果特定对象，将触发特定对象的 action。
 - `actionName`: 必须，event 被触发后将要执行的组件对象暴露的 action 名，或者特定对象的方法
 - `args`: 可选，触发 event 附带的参数，所有参数必须是字符串
 
@@ -166,3 +166,7 @@ MIP 在所有 HTML 元素（包括 MIP 元素）暴露了 `tap` 事件， 所以
 ### 组件可被触发的行为（action）
 
 组件可被触发的行为是指 mip 组件事件触发后触发执行的行为
+
+### 特定对象
+
+事件作用的行为对象不仅只有 mip 组件，还可以使 MIP 全局对象，语法 `on="eventName:targetId[.actionName[(args)]]"` 中的 targetId 可是 `MIP` 对象，针对 `MIP` 对象支持的行为有 `setData` 和 `$set`，关于这两个行为的用法可参考[mip-bind](../components/builtin/mip-bind.md)
