@@ -42,7 +42,7 @@ this.$element.customElement.addEventAction('eventName', function (event, str) {}
 - 简写 (推荐使用)
 
 ```js
-this.$emit('eventName', function (event, str))
+this.$on('eventName', function (event, str))
 ```
 
 ### 组件内触发事件（event）
@@ -59,7 +59,7 @@ MIP.viewer.eventAction.execute(eventName, element, event)
 
 - 简写 (推荐使用)
 ```js
-this.$on(eventName, event)
+this.$emit(eventName, event)
 ```
 
 ### 例子
@@ -93,6 +93,8 @@ export {
     // this.$element.customElement.addEventAction('add', function (event, num) {
     //   vm.add(parseInt(num, 10))
     // })
+
+    // 添加 add 行为
     this.$on('add', function (event, num) {
       vm.add(parseInt(num, 10))
     })
@@ -130,6 +132,8 @@ export {
     onClick() {
       this.show = !this.show
       // MIP.viewer.eventAction.execute(this.show ? 'show' : 'close', this.$element, {})
+
+      // 触发 show 事件
       this.$emit(this.show ? 'show' : 'close', {})
     }
   }
