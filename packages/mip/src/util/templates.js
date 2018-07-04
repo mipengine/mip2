@@ -114,12 +114,7 @@ class Templates {
   }
 
   inheritTemplate () {
-    function inheritor () {
-      Template.apply(this, arguments)
-    }
-    inheritor.prototype = Object.create(Template.prototype)
-    inheritor.constructor = inheritor
-    return inheritor
+    return class Inheritor extends Template {}
   }
 }
 
