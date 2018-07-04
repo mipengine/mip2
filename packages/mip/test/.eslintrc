@@ -1,0 +1,14 @@
+{
+  "env": {
+    "mocha": true
+  },
+  "globals": {
+    "MIP": true,
+    "should": true,
+    "expect": true,
+    "describe": true,
+    "it": true,
+    "before": true,
+    "sinon": true
+  }
+}

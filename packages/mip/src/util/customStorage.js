@@ -539,16 +539,12 @@ function getError (code, mess) {
 function customStorage (type) {
   switch (type) {
     case storageType.ASYNCSTORAGE:
-      this.storage = new AsyncStorage()
-      break
+      return new AsyncStorage()
     case storageType.LOCALSTORAGE:
-      this.storage = new LocalStorage()
-      break
+      return new LocalStorage()
     case storageType.COOKIESTORAGE:
-      this.storage = new CookieStorage()
-      break
+      return new CookieStorage()
   }
-  return this.storage
 }
 
 export default customStorage

@@ -27,7 +27,7 @@ import jsonParse from './json-parse'
  * @param {string} type The url type.
  * @return {string} Cache url.
  */
-function makeCacheUrl (url, type) {
+export function makeCacheUrl (url, type) {
   if (!fn.isCacheUrl(location.href) ||
     (url && url.length < 8) ||
     !(url.indexOf('http') === 0 || url.indexOf('//') === 0)
@@ -57,7 +57,7 @@ function makeCacheUrl (url, type) {
  * @param {string} url Source url.
  * @return {string} origin url.
  */
-function parseCacheUrl (url) {
+export function parseCacheUrl (url) {
   if (!url) {
     return url
   }
@@ -86,9 +86,12 @@ function parseCacheUrl (url) {
  *
  * @return {string} 原 mip 页 URL
  */
-function getOriginalUrl () {
-  let parsedUrl = parseCacheUrl(window.location.href)
-  if (parsedUrl === window.location.href) {
+export function getOriginalUrl (url) {
+  if (!url) {
+    url = window.location.href
+  }
+  let parsedUrl = parseCacheUrl(url)
+  if (parsedUrl === url) {
     // 直接打开 MIP 页
     return parsedUrl
   }

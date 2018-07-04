@@ -12,7 +12,6 @@ import {
   convertPatternToRegexp,
   createMoreButtonWrapper,
   createPageMask,
-  // getFadeHeader,
   toggleInner
 } from './util'
 
@@ -330,8 +329,9 @@ class MipShell extends CustomElement {
       // SF can help to navigate by 'changeState' when standalone = false
       if (window.MIP.standalone) {
         window.MIP_ROUTER.go(-1)
+      } else {
+        window.MIP.viewer.sendMessage('historyNavigate', {step: -1})
       }
-      window.MIP.viewer.sendMessage('historyNavigate', {step: -1})
     } else if (buttonName === 'more') {
       this.toggleDropdown(true)
     } else if (buttonName === 'close') {
@@ -347,7 +347,14 @@ class MipShell extends CustomElement {
     })
   }
 
-  refreshShell ({pageMeta, pageId} = {}) {
+  /**
+   *
+   * @param {Object} options
+   * @param {Object} pageMeta Updated pageMeta
+   * @param {string} pageId Current pageId. If `pageMeta` is not provided, `pageId` will be used to find pageMeta
+   * @param {boolean} asyncRefresh `true` when `refreshShell` invoked in `processShellConfig` in async mode
+   */
+  refreshShell ({pageMeta, pageId, asyncRefresh} = {}) {
     // Unbind header events
     this.unbindHeaderEvents()
 
@@ -363,12 +370,29 @@ class MipShell extends CustomElement {
 
     // Refresh header
     this.slideHeader('down')
-    // if (asyncRefresh) {
-    //   let fadeHeader = getFadeHeader(pageMeta)
-    //   css(fadeHeader, 'display', 'block')
-    //   // TODO HERE
-    // }
-    this.renderHeader(this.$el)
+    if (asyncRefresh) {
+      // In async mode: (Invoked from `processShellConfig` by user)
+      // 1. Render fade header with updated pageMeta
+      // 2. Show fade header with trnasition (fade)
+      // 3. Wait for transition ending
+      // 4. Update real header (along with otherParts, buttonWrapper, buttonMask)
+      // 5. Hide fade header
+      // 6. Bind header events
+      page.toggleFadeHeader(true, pageMeta)
+      setTimeout(() => {
+        this.renderHeader(this.$el)
+        page.toggleFadeHeader(false)
+        // Rebind header events
+        this.bindHeaderEvents()
+      }, 350)
+    } else {
+      // In sync mode: (Invoked from event 'updateShell' by MIP Page)
+      // 1. Update real header (along with otherParts, buttonWrapper, buttonMask)
+      // 2. Bind header events
+      // 3. Wait for transition ending
+      // 4. Hide fade header (Fade header was shown in MIP Page)
+      this.renderHeader(this.$el)
+    }
 
     this.updateOtherParts()
 
@@ -379,17 +403,21 @@ class MipShell extends CustomElement {
     this.$buttonWrapper = buttonWrapper
 
     this.$wrapper.classList.remove('hide')
-    if (!this.transitionContainsHeader) {
-      let headerLogoTitle = this.$el.querySelector('.mip-shell-header-logo-title')
-      headerLogoTitle && headerLogoTitle.classList.remove('fade-out')
+
+    if (!asyncRefresh) {
+      if (!this.transitionContainsHeader) {
+        let headerLogoTitle = this.$el.querySelector('.mip-shell-header-logo-title')
+        headerLogoTitle && headerLogoTitle.classList.remove('fade-out')
+      }
+
+      setTimeout(() => {
+        page.toggleFadeHeader(false)
+        // css(document.querySelector('.mip-page-fade-header-wrapper'), 'display', 'none')
+      }, 350)
+
+      // Rebind header events
+      this.bindHeaderEvents()
     }
-
-    setTimeout(() => {
-      css(document.querySelector('.mip-page-fade-header-wrapper'), 'display', 'none')
-    }, 350)
-
-    // Rebind header events
-    this.bindHeaderEvents()
   }
 
   slideHeader (direction) {

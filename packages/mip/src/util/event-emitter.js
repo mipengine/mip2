@@ -220,18 +220,4 @@ function multiArgs (obj, fn, name, args) {
   return false
 }
 
-// 这种写法就应该去掉，提供 on off once trigger 一套就行了
-// 为什么要提供这么多，让代码越来越乱，越来越难读？
-// [
-//     'on bind',
-//     'off unbind',
-//     'once one',
-//     'trigger fire emit'
-// ].forEach(value => {
-//     value = value.split(' ');
-//     for (let i = 1; i < value.length; i++) {
-//         proto[value[i]] = proto[value[0]];
-//     }
-// });
-
 export default EventEmitter

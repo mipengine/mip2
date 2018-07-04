@@ -83,6 +83,7 @@ export function createLoading (pageMeta) {
     return
   }
 
+  let logo = pageMeta ? (pageMeta.header.logo || '') : ''
   let loading = document.createElement('mip-fixed')
   loading.id = 'mip-page-loading-wrapper'
   loading.setAttribute('class', 'mip-page-loading-wrapper')
@@ -92,7 +93,7 @@ export function createLoading (pageMeta) {
         <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M769.405 977.483a68.544 68.544 0 0 1-98.121 0L254.693 553.679c-27.173-27.568-27.173-72.231 0-99.899L671.185 29.976c13.537-13.734 31.324-20.652 49.109-20.652s35.572 6.917 49.109 20.652c27.173 27.568 27.173 72.331 0 99.899L401.921 503.681l367.482 373.904c27.074 27.568 27.074 72.231 0 99.899z"/></svg>
       </span>
       <div class="mip-shell-header-logo-title">
-        ${pageMeta ? `<img class="mip-shell-header-logo" src="${pageMeta.header.logo}">` : ''}
+        <img class="mip-shell-header-logo" src="${logo}">
         <span class="mip-shell-header-title"></span>
       </div>
     </div>
@@ -113,7 +114,7 @@ export function createLoading (pageMeta) {
 function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
   let loading = document.querySelector('#mip-page-loading-wrapper')
   if (!loading) {
-    createLoading(targetMeta)
+    createLoading()
     loading = document.querySelector('#mip-page-loading-wrapper')
   }
 
@@ -188,6 +189,7 @@ export function createFadeHeader (pageMeta) {
     return
   }
 
+  let logo = pageMeta ? (pageMeta.header.logo || '') : ''
   let fadeHeader = document.createElement('mip-fixed')
   fadeHeader.id = 'mip-page-fade-header-wrapper'
   fadeHeader.setAttribute('class', 'mip-page-fade-header-wrapper')
@@ -197,7 +199,7 @@ export function createFadeHeader (pageMeta) {
         <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M769.405 977.483a68.544 68.544 0 0 1-98.121 0L254.693 553.679c-27.173-27.568-27.173-72.231 0-99.899L671.185 29.976c13.537-13.734 31.324-20.652 49.109-20.652s35.572 6.917 49.109 20.652c27.173 27.568 27.173 72.331 0 99.899L401.921 503.681l367.482 373.904c27.074 27.568 27.074 72.231 0 99.899z"/></svg>
       </span>
       <div class="mip-shell-header-logo-title">
-        <img class="mip-shell-header-logo" src="${pageMeta.header.logo}">
+        <img class="mip-shell-header-logo" src="${logo}">
         <span class="mip-shell-header-title"></span>
       </div>
     </div>
@@ -215,7 +217,7 @@ export function createFadeHeader (pageMeta) {
 function getFadeHeader (targetMeta) {
   let fadeHeader = document.querySelector('#mip-page-fade-header-wrapper')
   if (!fadeHeader) {
-    createFadeHeader(targetMeta)
+    createFadeHeader()
     fadeHeader = document.querySelector('#mip-page-fade-header-wrapper')
   }
 
@@ -263,6 +265,39 @@ function getFadeHeader (targetMeta) {
   css(fadeHeader.querySelector('.mip-shell-header-button-group .split'), 'background-color', borderColor)
 
   return fadeHeader
+}
+
+/**
+ * Toggle fade header
+ * Invoked by `refreshShell` in MIP Shell with `asyncRefresh` is `true`
+ *
+ * @param {boolean} toggle Show/Hide fade header
+ * @param {Object} pageMeta pageMeta of current page. `undefined` when `toggle` is `false`
+ */
+export function toggleFadeHeader (toggle, pageMeta) {
+  let fadeHeader = getFadeHeader(pageMeta)
+
+  if (!toggle) {
+    css(fadeHeader, 'display', 'none')
+    return
+  }
+
+  css(fadeHeader, 'display', 'block')
+  fadeHeader.classList.add('fade-enter', 'fade-enter-active')
+
+  // trigger layout
+  /* eslint-disable no-unused-expressions */
+  fadeHeader.offsetWidth
+  /* eslint-enable no-unused-expressions */
+
+  whenTransitionEnds(fadeHeader, 'transition', () => {
+    fadeHeader.classList.remove('fade-enter-to', 'fade-enter')
+  })
+
+  nextFrame(() => {
+    fadeHeader.classList.add('fade-enter-to')
+    fadeHeader.classList.remove('fade-enter')
+  })
 }
 
 /**

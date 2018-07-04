@@ -91,37 +91,6 @@ export function createPageMask () {
 }
 
 /**
- * Change fade header according to targetMeta
- * Return fade header div
- *
- * @param {Object} targetMeta Page meta of target page
- * @returns {HTMLElement}
- */
-export function getFadeHeader (targetMeta) {
-  let fadeHeader = document.querySelector('#mip-page-fade-header-wrapper')
-
-  if (!fadeHeader) {
-    return
-  }
-
-  let $logo = fadeHeader.querySelector('.mip-shell-header-logo')
-  if (targetMeta.header.logo) {
-    $logo.setAttribute('src', targetMeta.header.logo)
-    css($logo, 'display', 'block')
-  } else {
-    css($logo, 'display', 'none')
-  }
-
-  if (targetMeta.header.title) {
-    fadeHeader.querySelector('.mip-shell-header-title').innerHTML = targetMeta.header.title
-  }
-
-  css(fadeHeader.querySelector('.back-button'), 'display', targetMeta.view.isIndex ? 'none' : 'flex')
-
-  return fadeHeader
-}
-
-/**
  * Toggle something
  *
  * @param {HTMLElement} element

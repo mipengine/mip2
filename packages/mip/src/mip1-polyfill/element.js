@@ -36,7 +36,7 @@ function createBaseElementProto () {
    */
   proto.createdCallback = function () {
     // get mip1 clazz from custom elements store
-    let CustomElement = customElementsStore.get(this.tagName.toLowerCase(), 'mip1')
+    let CustomElement = customElementsStore.get(this.tagName, 'mip1')
 
     this.classList.add('mip-element')
 
@@ -81,7 +81,7 @@ function createBaseElementProto () {
    */
   proto.attachedCallback = function () {
     if (this.tagName === 'MIP-DATA') {
-      console.log('attachedCallback')
+      // console.log('attachedCallback')
     }
 
     // Apply layout for this.

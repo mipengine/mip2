@@ -1,31 +1,77 @@
 <!DOCTYPE html>
 <html mip>
-
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-    <title>MIP Event</title>
-    <link rel="canonical">
-    <style mip-custom>
-
-
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP Event</title>
+  <link rel="canonical">
+  <style mip-custom>
+    button {
+      padding: 10px;
+    }
+  </style>
 </head>
-
 <body>
+  <h1> 监听事件 </h1>
+  <mip-a id="counter"></mip-a>
+  <button on="tap:counter.add(2)"> 点击 +2 </button>
+  <hr>
+  <mip-b on="show:counter.add(1)"></mip-b>
+  <script src="../../dist/mip.js"></script>
+  <script>
+    MIP.registerVueCustomElement('mip-a', {
+      data() {
+        return {
+          count: 0
+        }
+      },
+      template: `
+          <div >
+              counter: {{count}}
+          </div>
+      `,
+      mounted() {
+        let vm = this
+        // this.$element.customElement.addEventAction('add', function (event, num) {
+        //   vm.add(parseInt(num, 10))
+        // })
+        this.$on('add', function (event, num) {
+          vm.add(parseInt(num, 10))
+        })
+      },
+      methods: {
+        add(num) {
+          this.count += num
+        }
+      }
+    })
 
-    <h1>event</h1>
-
-    <mip-a id="test"></mip-a>
-
-    <div on="tap:test.custom_event1">不带参数</div>
-    <div on="tap:test.custom_event1(test_button)">带参数</div>
-    <div on="tap:test.custom_event1(test_button) tap:test.custom_event2(test_button1)">多个事件</div>
-
-    <script src="../../dist/mip.js"></script>
-    <script src="./mip-a.js"></script>
-    <script src="./mip-b.js"></script>
+    MIP.registerVueCustomElement('mip-b', {
+      data() {
+        return {
+          show: false
+        }
+      },
+      template: `
+          <div >
+              <div @click="onClick">
+                <span v-if="show">点击隐藏内容</span>
+                <span v-else>点击显示内容</span>
+              </div>
+              <div v-if="show">
+                MIP 提供了强大的组件DOM通信，组件间通信功能，以解决在MIP组件开发中遇到的组件交互问题。可以通过 DOM 属性来触发某个 MIP 元素的自定义事件。
+              </div>
+          </div>
+      `,
+      methods: {
+        onClick() {
+          this.show = !this.show
+          // MIP.viewer.eventAction.execute(this.show ? 'show' : 'close', this.$element, {})
+          this.$emit(this.show ? 'show' : 'close', {})
+        }
+      }
+    })
+  </script>
 </body>
 
 </html>
-
