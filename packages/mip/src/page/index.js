@@ -291,7 +291,6 @@ class Page {
   }
 
   start () {
-    // document.domain = 'baidu.com'
     // Don't let browser restore scroll position.
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual'
