@@ -84,7 +84,7 @@ let viewer = {
     fixedElement.init()
 
     // Only send at first time
-    if (win.MIP.MIP_ROOT_PAGE) {
+    if (win.MIP.viewer.page.isRootPage) {
       this.sendMessage('mippageload', {
         time: Date.now(),
         title: encodeURIComponent(document.title)
@@ -259,7 +259,7 @@ let viewer = {
       if (isMipLink) {
         // show transition only in portrait mode
         if (isPortrait()) {
-          router.rootPage.allowTransition = true
+          this.page.allowTransition = true
         }
 
         // reload page even if it's already existed
