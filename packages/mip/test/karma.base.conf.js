@@ -3,6 +3,7 @@ const alias = require('../build/alias')
 const version = process.env.VERSION || require('../package.json').version
 
 const webpackConfig = {
+  mode: 'development',
   resolve: {
     alias
   },
@@ -48,7 +49,7 @@ module.exports = {
     'index.js'
   ],
 
-  frameworks: ['mocha', 'chai'],
+  frameworks: ['mocha', 'chai-sinon', 'chai'],
 
   preprocessors: {
     'index.js': ['webpack']
@@ -63,7 +64,9 @@ module.exports = {
     'karma-mocha',
     'karma-chai',
     'karma-mocha-reporter',
-    'karma-sourcemap-loader'
+    'karma-sourcemap-loader',
+    'karma-chai-sinon'
+    // 'karma-chai-as-promised'
   ],
   browsers: ['Chrome'],
   concurrency: Infinity

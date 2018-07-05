@@ -9,14 +9,15 @@ import event from './util/dom/event'
 import css from './util/dom/css'
 import Gesture from './util/gesture/index'
 import platform from './util/platform'
-import viewport from './viewport'
 import EventAction from './util/event-action'
 import EventEmitter from './util/event-emitter'
 import fn from './util/fn'
+import {getOriginalUrl} from './util'
+import {supportsPassive, isPortrait} from './page/util/feature-detect'
+import viewport from './viewport'
 import Page from './page/index'
 import {MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE} from './page/const/index'
 import Messager from './messager'
-import {supportsPassive, isPortrait} from './page/util/feature-detect'
 import fixedElement from './fixed-element'
 
 /**
@@ -249,7 +250,7 @@ let viewer = {
 
       // send statics message to BaiduResult page
       let pushMessage = {
-        url: to,
+        url: getOriginalUrl(to),
         state
       }
 

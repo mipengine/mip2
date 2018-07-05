@@ -23,6 +23,7 @@ export default {
    * @return {MIPElement}
    */
   get (name, type) {
+    name = name.toLowerCase()
     switch (type) {
       case 'mip1':
         return store.mip1[name]
@@ -45,6 +46,6 @@ export default {
       throw new Error(`type: ${type} must be mip1 or mip2`)
     }
 
-    store[type][name] = clazz
+    store[type][name.toLowerCase()] = clazz
   }
 }

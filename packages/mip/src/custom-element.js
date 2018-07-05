@@ -110,7 +110,7 @@ class CustomElement {
    * @param {string} name event name
    * @param {Function} handler event handler
    */
-  addEventAction () {
+  addEventAction (/* name, handler */) {
     let evt = this._actionEvent
     if (!evt) {
       evt = this._actionEvent = new EventEmitter()

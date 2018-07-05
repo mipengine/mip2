@@ -12,6 +12,7 @@ import {
   frameMoveOut,
   createLoading,
   createFadeHeader,
+  toggleFadeHeader,
   enableBouncyScrolling,
   disableBouncyScrolling
 } from './util/dom'
@@ -31,15 +32,13 @@ import {
   MESSAGE_UPDATE_MIP_SHELL_CONFIG,
   MESSAGE_SYNC_PAGE_CONFIG,
   MESSAGE_REGISTER_GLOBAL_COMPONENT
-  // MESSAGE_APPSHELL_HEADER_SLIDE_UP,
-  // MESSAGE_APPSHELL_HEADER_SLIDE_DOWN,
 } from './const/index'
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
 import fn from '../util/fn'
+import {makeCacheUrl} from '../util'
 import viewport from '../viewport'
 import Router from './router/index'
-// import AppShell from './appshell'
 import GlobalComponent from './appshell/globalComponent'
 import platform from '../util/platform'
 import '../styles/mip.less'
@@ -125,7 +124,7 @@ class Page {
 
       // handle events emitted by BaiduResult page
       window.MIP.viewer.onMessage('changeState', ({url}) => {
-        router.replace(url)
+        router.replace(makeCacheUrl(url))
       })
     } else {
       // inside iframe
@@ -293,6 +292,7 @@ class Page {
   }
 
   start () {
+    // document.domain = 'baidu.com'
     // Don't let browser restore scroll position.
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual'
@@ -394,6 +394,10 @@ class Page {
         toggle
       }
     })
+  }
+
+  toggleFadeHeader (toggle, pageMeta) {
+    toggleFadeHeader(toggle, pageMeta)
   }
 
   // =============================== Root Page methods ===============================
@@ -583,8 +587,15 @@ class Page {
    * @return {Page} page
    */
   getPageById (pageId) {
-    return (!pageId || pageId === this.pageId)
-      ? this : this.children.find(child => child.pageId === pageId)
+    if (!pageId || pageId === this.pageId) {
+      return this
+    }
+
+    for (let i = 0; i < this.children.length; i++) {
+      if (this.children[i].pageId === pageId) {
+        return this.children[i]
+      }
+    }
   }
 
   /**
@@ -690,7 +701,6 @@ class Page {
       })
       window.MIP.$recompile()
     }
-
     this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
     this.currentPageId = targetPageId
     this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})

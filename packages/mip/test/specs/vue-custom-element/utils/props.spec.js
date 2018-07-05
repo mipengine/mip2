@@ -1,8 +1,15 @@
+/**
+ * @file vue-custom-element props spec file
+ * @author huanghuiquan(huanghuiquan@baidu.com)
+ */
+
+/* globals describe, before, it, expect */
+
 import {
   getProps,
   getPropsData,
   convertAttributeValue
-} from '../../../src/vue-custom-element/utils/props.js'
+} from 'src/vue-custom-element/utils/props.js'
 
 describe('props#getProps', function () {
   it('basic types', function () {

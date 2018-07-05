@@ -42,13 +42,6 @@ class BaseElement extends HTMLElement {
     this.__innerHTML = this.innerHTML
 
     /**
-     * Mip templates nodelist
-     *
-     * @type {NodeList}
-     */
-    this.templates = this.querySelectorAll('template[type^=mip-]')
-
-    /**
      * Instantiated the custom element.
      * @type {Object}
      * @public

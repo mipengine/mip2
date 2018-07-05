@@ -27,14 +27,27 @@ class Gesture extends EventEmitter {
     super()
 
     /**
+     * Default options.
+     *
+     * @private
+     * @type {Object}
+     */
+    this._opt = {
+      preventDefault: false,
+      stopPropagation: false,
+      preventX: true,
+      preventY: false
+    }
+
+    opt && (this._opt = fn.extend({}, this._opt, opt))
+
+    /**
      * The events' context.
      *
      * @private
      * @type {?Object}
      */
     this.__eventContext = this._element = element
-
-    opt && (this._opt = fn.extend({}, this._opt, opt))
 
     /**
      * Touch handler.
@@ -53,19 +66,6 @@ class Gesture extends EventEmitter {
      * @type {Object}
      */
     this._recognizers = {}
-
-    /**
-     * Default options.
-     *
-     * @private
-     * @type {Object}
-     */
-    this._opt = {
-      preventDefault: false,
-      stopPropagation: false,
-      preventX: true,
-      preventY: false
-    }
   }
 
   /**
