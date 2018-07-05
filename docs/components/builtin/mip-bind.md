@@ -216,20 +216,19 @@ on="事件:MIP.setData({}) 事件:MIP.setData({}) 事件:MIP.setData({})"
         <script type="application/json">
         {
             "name": "张三",
-            "age": 25,
-            "user": {
-                "info": {
-                    "name": "李四",
-                    "age": 24
-                }
-            }
+            "age": 25
         }
         </script>
     </mip-data>
     <mip-data>
         <script type="application/json">
         {
-            "home": "北京"
+            "detail": {
+                "home": {
+                    "province": "北京",
+                    "city": "北京"
+                }
+            }
         }
         </script>
     </mip-data>
@@ -241,11 +240,10 @@ on="事件:MIP.setData({}) 事件:MIP.setData({}) 事件:MIP.setData({})"
     {
         "name": "张三",
         "age": 25,
-        "home": "北京",
-        "user": {
-            "info": {
-                "name": "李四",
-                "age": 24
+        "detail": {
+            "home": {
+                "province": "广东",
+                "city": "深圳"
             }
         }
     }
@@ -254,7 +252,7 @@ on="事件:MIP.setData({}) 事件:MIP.setData({}) 事件:MIP.setData({})"
     如果此时在进行数据的设置：
 
     ```
-    <div on="tap:MIP.setData({job:'互联网从业者', home: '上海'})"></div>
+    <div on="tap:MIP.setData({job:'互联网从业者',age:26})"></div>
 
     ```
 
@@ -263,8 +261,13 @@ on="事件:MIP.setData({}) 事件:MIP.setData({}) 事件:MIP.setData({})"
     ```json
     {
         "name": "张三",
-        "age": 25,
-        "home": "上海",
+        "age": 26,
+        "detail": {
+            "home": {
+                "province": "广东",
+                "city": "深圳"
+            }
+        },
         "job": "互联网从业者"
     }
     ```
@@ -272,7 +275,7 @@ on="事件:MIP.setData({}) 事件:MIP.setData({}) 事件:MIP.setData({})"
     如果此时在进行数据的设置：
 
     ```
-    <div on="tap:MIP.setData({user:{info:{name:'李五'}}})"></div>
+    <div on="tap:MIP.setData({detail:{home:{city:'广州'}}})"></div>
 
     ```
 
@@ -280,13 +283,15 @@ on="事件:MIP.setData({}) 事件:MIP.setData({}) 事件:MIP.setData({})"
 
     ```json
     {
-        ...
-        "user": {
-            "info": {
-                "name": "李五",
-                "age": 24
+        "name": "张三",
+        "age": 26,
+        "detail": {
+            "home": {
+                "province": "广东",
+                "city": "广州"
             }
-        }
+        },
+        "job": "互联网从业者"
     }
     ```
 
@@ -303,7 +308,6 @@ on="事件:MIP.setData({}) 事件:MIP.setData({}) 事件:MIP.setData({})"
         }
         </script>
     </mip-data>
-    <div></div>
     <div m-text="price"></div>
     <button on="tap:MIP.setData({price:'30'})">30</button>
     <button on="tap:MIP.setData({price:30*m.count})">30*m.count</button>
@@ -335,32 +339,40 @@ on="事件:MIP.setData({}) 事件:MIP.setData({}) 事件:MIP.setData({})"
 提供 `MIP.watch(value, cb)` 全局方法注册观察行为。
 
 其中 `value` 为数据源中的属性名，多层数据可以以 `.` 连接，允许是单个字符串或字符串数组。
-`cb` 为当被观察的属性 value 发生数据变化时要执行的回调函数，接收一个参数，为 `newVal`。
+`cb` 为当被观察的属性 value 发生数据变化时要执行的回调函数，接收一个参数，为 `newValue`。
 
 #### 示例：
 
-通过调用 `watch` 方法，监听 price 的数据变化，并在其变化时改变 title 的值
+通过调用 `watch` 方法，监听 num 和 img.first 的数据变化，并在 num 变化时改变 img.first 的值，从而触发 title 的数据变化。
 
 ```html
 <mip-data>
     <script type="application/json">
     {
-        "price": 20,
-        "title": "Initial price = 20"
+        "num": 1,
+        "title": "Initial num = 1",
+        "img": {
+            "first": ""
+        }
     }
     </script>
 </mip-data>
 <p m-text="title"></p>
 <div>
-    DOM.value*m.price = <span m-text="price"></span>
+    num = DOM.value = <span m-text="num"></span>
 </div>
-<mip-form url="https://www.mipengine.org/">
-    <input type='text' on="change:MIP.setData({price:DOM.value*m.price})">
-</mip-form>
+<input type='text' on="change:MIP.setData({num:DOM.value})">
 <mip-script >
-    MIP.watch('price', newVal => {
+    MIP.watch('num', newValue => {
         MIP.setData({
-            title: 'price changed to ' + newVal
+            img: {
+                first: 'img.first changed due to num changed to' + newValue
+            }
+        })
+    })
+    MIP.watch('img.first', newVal => {
+        MIP.setData({
+            title: newVal
         })
     })
 </mip-script>

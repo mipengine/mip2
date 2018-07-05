@@ -48,7 +48,7 @@ class Bind {
       return
     }
 
-    let win = window.MIP.MIP_ROOT_PAGE ? window : window.parent
+    let win = window.MIP.viewer.page.isRootPage ? window : window.parent
     MIP.$set({}, 0, true, win)
 
     for (let i = 0, frames = win.document.getElementsByTagName('iframe'); i < frames.length; i++) {
@@ -81,7 +81,7 @@ class Bind {
         this._compile.start(win.m, win)
       } else {
         if (classified.globalData && objNotEmpty(classified.globalData)) {
-          let g = window.MIP.MIP_ROOT_PAGE ? window.g : window.parent.g
+          let g = window.MIP.viewer.page.isRootPage ? window.g : window.parent.g
           assign(g, classified.globalData)
           !cancel && this._postMessage(classified.globalData)
         }
@@ -139,7 +139,7 @@ class Bind {
     if (win.g && win.g.hasOwnProperty(key)) {
       assign(win.g, data)
       !cancel && this._postMessage(data)
-    } else if (!win.MIP.MIP_ROOT_PAGE && win.parent.g && win.parent.g.hasOwnProperty(key)) {
+    } else if (!win.MIP.viewer.page.isRootPage && win.parent.g && win.parent.g.hasOwnProperty(key)) {
       assign(win.parent.g, data)
       !cancel && this._postMessage(data)
     } else {
@@ -148,7 +148,7 @@ class Bind {
   }
 
   _setGlobalState (data, cancel, win = this._win) {
-    if (win.MIP.MIP_ROOT_PAGE) {
+    if (win.MIP.viewer.page.isRootPage) {
       win.g = win.g || {}
       Object.assign(win.g, data)
     } else {
@@ -159,7 +159,7 @@ class Bind {
   }
 
   _setPageState (data, cancel, win = this._win) {
-    let g = win.MIP.MIP_ROOT_PAGE ? win.g : win.parent.g
+    let g = win.MIP.viewer.page.isRootPage ? win.g : win.parent.g
     Object.assign(win.m, data)
     !cancel && Object.keys(data).forEach(k => win.pgStates.add(k))
     Object.keys(g).forEach(key => {
@@ -169,7 +169,7 @@ class Bind {
         } catch (e) {}
       }
     })
-    win.m.__proto__ = win.MIP.MIP_ROOT_PAGE ? win.g : win.parent.g // eslint-disable-line no-proto
+    win.m.__proto__ = win.MIP.viewer.page.isRootPage ? win.g : win.parent.g // eslint-disable-line no-proto
   }
 
   _normalize (data) {
