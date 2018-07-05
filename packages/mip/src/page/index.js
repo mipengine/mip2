@@ -36,7 +36,7 @@ import {
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
 import fn from '../util/fn'
-import {makeCacheUrl, parseCacheUrl} from '../util'
+import {makeCacheUrl} from '../util'
 import viewport from '../viewport'
 import Router from './router/index'
 import GlobalComponent from './appshell/globalComponent'

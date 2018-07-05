@@ -515,7 +515,13 @@ class MipShell extends CustomElement {
    * @return {Object} meta object
    */
   findMetaByPageId (pageId) {
-    let target = window.MIP.viewer.page.isRootPage ? window : window.parent
+    let target
+    if (!page.isRootPage && !page.isCrossOrigin) {
+      target = window.parent
+    } else {
+      target = window
+    }
+
     if (target.MIP_PAGE_META_CACHE[pageId]) {
       return target.MIP_PAGE_META_CACHE[pageId]
     } else {
