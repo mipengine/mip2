@@ -292,6 +292,7 @@ class Page {
   }
 
   start () {
+    // document.domain = 'baidu.com'
     // Don't let browser restore scroll position.
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual'
@@ -586,8 +587,15 @@ class Page {
    * @return {Page} page
    */
   getPageById (pageId) {
-    return (!pageId || pageId === this.pageId)
-      ? this : this.children.find(child => child.pageId === pageId)
+    if (!pageId || pageId === this.pageId) {
+      return this
+    }
+
+    for (let i = 0; i < this.children.length; i++) {
+      if (this.children[i].pageId === pageId) {
+        return this.children[i]
+      }
+    }
   }
 
   /**
@@ -693,7 +701,6 @@ class Page {
       })
       window.MIP.$recompile()
     }
-
     this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
     this.currentPageId = targetPageId
     this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})

@@ -4,7 +4,7 @@
  */
 
 const path = require('path')
-const buble = require('rollup-plugin-buble')
+const babel = require('rollup-plugin-babel')
 const alias = require('rollup-plugin-alias')
 const replace = require('rollup-plugin-replace')
 const node = require('rollup-plugin-node-resolve')
@@ -56,7 +56,9 @@ function genConfig (name) {
           include: 'node_modules/**'
         }
       ),
-      buble()
+      babel({
+        plugins: ['external-helpers']
+      })
     ].concat(opts.plugins || []),
     output: {
       file: opts.dest,

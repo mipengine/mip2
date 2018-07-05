@@ -33,6 +33,7 @@ export function pushState (url, replace) {
       history.pushState({key: _key}, '', url)
     }
   } catch (e) {
+    // console.log(e, 'from push-state.js')
     window.location[replace ? 'replace' : 'assign'](url)
   }
 }
