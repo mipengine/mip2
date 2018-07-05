@@ -70,7 +70,7 @@ class MipShell extends CustomElement {
       tmpShellConfig = {routes: []}
     }
 
-    if (page.isRootPage) {
+    let readAllConfig = () => {
       tmpShellConfig.routes.forEach(route => {
         route.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, route.meta || {})
         route.regexp = convertPatternToRegexp(route.pattern || '*')
@@ -80,7 +80,10 @@ class MipShell extends CustomElement {
           route.meta.header.title = (document.querySelector('title') || {}).innerHTML || ''
         }
       })
+    }
 
+    if (page.isRootPage) {
+      readAllConfig()
       this.processShellConfig(tmpShellConfig)
 
       window.MIP_SHELL_CONFIG = tmpShellConfig.routes
@@ -93,7 +96,16 @@ class MipShell extends CustomElement {
     } else {
       let pageId = page.pageId
       let pageMeta
-      if (this.alwaysReadConfigOnLoad) {
+
+      if (page.isCrossOrigin) {
+        // If this iframe is a cross origin one
+        // Read all config and save it in window.
+        // Avoid find page meta from `window.parent`
+        readAllConfig()
+        window.MIP_SHELL_CONFIG = tmpShellConfig.routes
+      } else if (this.alwaysReadConfigOnLoad) {
+        // If `alwaysReadConfigOnLoad` equals `true`
+        // Read config in leaf pages and pick up the matched one. Send it to page for updating.
         pageMeta = DEFAULT_SHELL_CONFIG
         for (let i = 0; i < tmpShellConfig.routes.length; i++) {
           let config = tmpShellConfig.routes[i]

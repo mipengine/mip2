@@ -36,7 +36,7 @@ import {
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
 import fn from '../util/fn'
-import {makeCacheUrl} from '../util'
+import {makeCacheUrl, parseCacheUrl} from '../util'
 import viewport from '../viewport'
 import Router from './router/index'
 import GlobalComponent from './appshell/globalComponent'
@@ -292,7 +292,6 @@ class Page {
   }
 
   start () {
-    // document.domain = 'baidu.com'
     // Don't let browser restore scroll position.
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual'

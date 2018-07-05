@@ -66,7 +66,7 @@ export function parseCacheUrl (url) {
   ) {
     return url
   }
-  let reg = new RegExp('^(http[s]:)?(//([^/]+))?/[ic](/s)?/(.*)$', 'g')
+  let reg = new RegExp('^(http(?:s?):)?(//([^/]+))?/[ic](/s)?/(.*)$', 'g')
   let result = reg.exec(url)
   if (!result) {
     return url
