@@ -46,13 +46,28 @@ function registerVueCustomElement (tag, component) {
   Vue.customElement(tag, component)
 }
 
+// pass meta through `window.name` in cross-origin scene
+let pageMeta
+try {
+  pageMeta = JSON.parse(window.name)
+} catch (e) {
+  pageMeta = {
+    standalone: false,
+    isRootPage: true,
+    isCrossOrigin: false
+  }
+}
+
 // 当前是否是独立站
 let standalone
 try {
-  standalone = !viewer.isIframed || typeof window.top.MIP !== 'undefined'
+  standalone = pageMeta.standalone ||
+    !viewer.isIframed ||
+    typeof window.top.MIP !== 'undefined'
 } catch (e) {
   standalone = false
 }
+pageMeta.standalone = standalone
 let extensions = window.MIP || []
 
 function push (extension) {
@@ -92,6 +107,7 @@ util.dom.waitDocumentReady(() => {
   sleepWakeModule.init()
 
   // Initialize viewer
+  viewer.pageMeta = pageMeta
   viewer.init()
 
   // Find the default-hidden elements.

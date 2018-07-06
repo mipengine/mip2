@@ -8,10 +8,11 @@ import platform from '../../util/platform'
 
 import {MIP_IFRAME_CONTAINER} from '../const/index'
 import {raf, transitionEndEvent, animationEndEvent} from './feature-detect'
+import {normalizeLocation} from './route'
 
 let activeZIndex = 10000
 
-export function createIFrame (fullpath, pageId, {onLoad, onError} = {}) {
+export function createIFrame ({fullpath, pageId}, {onLoad, onError} = {}) {
   let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${pageId}"]`)
 
   // if exists, delete it first
@@ -27,7 +28,14 @@ export function createIFrame (fullpath, pageId, {onLoad, onError} = {}) {
     typeof onError === 'function' && onError()
   }
   // TODO: use XHR to load iframe so that we can get httpRequest.status 404
-  container.setAttribute('name', pageId)
+  let targetOrigin = normalizeLocation(pageId).origin
+  let pageMeta = JSON.stringify({
+    standalone: window.MIP.standalone,
+    isRootPage: false,
+    isCrossOrigin: targetOrigin !== window.location.origin
+  })
+  container.setAttribute('name', pageMeta)
+
   container.setAttribute('src', fullpath)
   container.setAttribute('class', MIP_IFRAME_CONTAINER)
 
