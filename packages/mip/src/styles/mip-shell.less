@@ -90,7 +90,7 @@
         border: 1px solid #e6e6e6;
         border-radius: 16px;
         position: absolute;
-        top: 5px;
+        top: 6px;
         right: 3px;
         overflow: hidden;
         display: flex;
@@ -103,15 +103,24 @@
             align-items: center;
             height: 30px;
             width: 40px;
+            position: relative;
             & > svg {
                 width: 16px;
                 height: 16px;
+            }
+
+            &.more {
+                left: 3px;
+            }
+
+            &.close {
+                left: -3px;
             }
         }
 
         .split {
             width: 1px;
-            height: 15px;
+            height: 10px;
             background: #e6e6e6;
         }
     }

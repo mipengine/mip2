@@ -189,4 +189,9 @@ Fast - Respond quickly to user interactions with silky smooth animations and no 
 
     <script src="../../dist/mip.js"></script>
     <script src="./components/mip-page-index.js"></script>
+    <script>
+        window.addEventListener('myEvent', e => {
+            console.log('receive myEvent in index.html', e)
+        })
+    </script>
 </body>

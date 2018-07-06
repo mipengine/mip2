@@ -32,7 +32,8 @@ import {
   MESSAGE_UPDATE_MIP_SHELL_CONFIG,
   MESSAGE_SYNC_PAGE_CONFIG,
   MESSAGE_REGISTER_GLOBAL_COMPONENT,
-  MESSAGE_CROSS_ORIGIN
+  MESSAGE_CROSS_ORIGIN,
+  MESSAGE_BROADCAST_EVENT
 } from './const/index'
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
@@ -153,8 +154,11 @@ class Page {
         } else if (type === MESSAGE_SYNC_PAGE_CONFIG) {
           // Sync config from mip-shell
           this.transitionContainsHeader = data.transitionContainsHeader
+        } else if (type === MESSAGE_BROADCAST_EVENT) {
+          // Broadcast Event
+          this.broadcastCustomEvent(data)
         } else if (type === MESSAGE_REGISTER_GLOBAL_COMPONENT) {
-          // Register global component
+          // Register global component (Not finished)
           console.log('register global component')
           // this.globalComponent.register(data)
         }
@@ -401,11 +405,29 @@ class Page {
   emitCustomEvent (targetWindow, isCrossOrigin, event) {
     if (isCrossOrigin) {
       targetWindow.postMessage({
-        name: MESSAGE_CROSS_ORIGIN,
+        type: MESSAGE_CROSS_ORIGIN,
         data: event
       }, '*')
     } else {
       customEmit(targetWindow, event.name, event.data)
+    }
+  }
+
+  broadcastCustomEvent (event) {
+    if (this.isRootPage) {
+      customEmit(window, event.name, event.data)
+
+      this.children.forEach(pageMeta => {
+        pageMeta.targetWindow.postMessage({
+          type: MESSAGE_CROSS_ORIGIN,
+          data: event
+        }, '*')
+      })
+    } else {
+      window.parent.postMessage({
+        type: MESSAGE_BROADCAST_EVENT,
+        data: event
+      }, '*')
     }
   }
 

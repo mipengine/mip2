@@ -136,6 +136,7 @@
     <a class="link" href="http://eason.baidu.com:8080/examples/page/index.html" mip-link>Back to Index (Cross Origin)</a>
     <a class="link" href="./index.html" mip-link>Back to Index</a>
     <a class="link" href="./data.html" mip-link>Go to Data</a>
+    <div id="broadcast" class="link">Broadcast</div>
 
     <p class="input">
         <input type="text">
@@ -152,6 +153,20 @@
     <script src="../../dist/mip.js"></script>
     <script src="./components/mip-tree.js"></script>
     <script src="./components/mip-page-tree.js"></script>
+    <script>
+        window.addEventListener('myEvent', e => {
+            console.log('receive myEvent in tree.html', e)
+        })
+
+        document.querySelector('#broadcast').addEventListener('click', () => {
+            window.MIP.viewer.page.broadcastCustomEvent({
+                name: 'myEvent',
+                data: {
+                    'message': 'hello everyone!'
+                }
+            })
+        })
+    </script>
 </body>
 
 </html>
