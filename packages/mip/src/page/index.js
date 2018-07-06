@@ -394,7 +394,7 @@ class Page {
   }
 
   /**
-   * emit a custom event in current page
+   * Emit a custom event in current page
    *
    * @param {Object} event event
    */
