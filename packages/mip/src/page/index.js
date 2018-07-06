@@ -366,11 +366,14 @@ class Page {
   togglePageMask (toggle, options) {
     // Only show page mask in root page
     if (!this.isRootPage) {
-      customEmit(window.parent, 'mipShellEvents', {
-        type: 'togglePageMask',
+      this.emitCustomEvent(window.parent, true, {
+        name: 'mipShellEvents',
         data: {
-          toggle,
-          options
+          type: 'togglePageMask',
+          data: {
+            toggle,
+            options
+          }
         }
       })
     }
