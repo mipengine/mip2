@@ -166,7 +166,7 @@ class Bind {
       if (!win.pgStates.has(key) && win.m.hasOwnProperty(key)) {
         try {
           win.m[key] = g[key]
-        } catch (e) {}
+        } catch (e) {window.alert('old problem');window.alert(e.stack);window.alert(e.message)}
       }
     })
     win.m.__proto__ = win.MIP.viewer.page.isRootPage ? win.g : win.parent.g // eslint-disable-line no-proto
@@ -201,7 +201,9 @@ function assign (oldData, newData) {
       let obj = JSON.parse(JSON.stringify({
         [k]: oldData[k]
       }))
+      try {
       Object.assign(oldData, obj)
+      } catch (e) {console.error('setdata problem2');console.error(e.stack);console.error(e.message)}
     } else {
       oldData[k] = newData[k]
     }

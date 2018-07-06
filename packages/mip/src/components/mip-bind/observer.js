@@ -17,15 +17,17 @@ class Observer {
   }
 
   _define (data, key, value, depMap) {
+    // if (typeof Object === 'undefined') {
+    //   return
+    // }
     if (typeof depMap[key] === 'undefined') {
       return
     }
 
-    // if value is object, define it's value
     let me = this
-    let deep = false
-    if (value && typeof value === 'object') {
-      deep = true
+    let deep = value && typeof value === 'object'
+    // if value is object, define it's value
+    if (deep) {
       this._walk(value, depMap[key])
     }
 
@@ -36,6 +38,7 @@ class Observer {
     let getter = property && property.get
     let setter = property && property.set
 
+    // save or reset deps
     let deps
     if (!deep && depMap[key] && depMap[key].isDep) {
       deps = depMap[key]
@@ -50,6 +53,7 @@ class Observer {
       }
     }
 
+    // observe
     Object.defineProperty(data, key, {
       enumerable: true,
       configurable: true,
@@ -70,6 +74,7 @@ class Observer {
         } else {
           value = newVal
         }
+        // let test = Object.assign({test:1}, {}) // eslint-disable-line
         me._walk(newVal, depMap[key])
         if (depMap[key]._deps && typeof newVal !== 'object') {
           depMap[key] = depMap[key]._deps
