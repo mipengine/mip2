@@ -166,13 +166,6 @@ class Page {
       //     $el.style.height = `${viewport.getHeight()}px`
       //   })
       // })
-    } else {
-      let parentPage = window.parent.MIP.viewer.page
-      let currentPageMeta = parentPage.findMetaByPageId(this.pageId)
-
-      if (currentPageMeta.header.bouncy) {
-        this.setupBouncyHeader()
-      }
     }
 
     // cross origin
@@ -207,6 +200,10 @@ class Page {
    *
    */
   setupBouncyHeader () {
+    if (this.bouncyHeaderSetup) {
+      return
+    }
+    this.bouncyHeaderSetup = true
     const THRESHOLD = 10
     let scrollTop
     let lastScrollTop = 0
@@ -235,7 +232,7 @@ class Page {
         if (lastScrollDirection !== 'up') {
           lastScrollDirection = 'up'
           let target = this.isRootPage ? window : window.parent
-          this.emitCustomEvent(target, {
+          this.emitCustomEvent(target, this.isCrossOrigin, {
             name: 'mipShellEvents',
             data: {
               type: 'slide',
@@ -249,7 +246,7 @@ class Page {
         if (lastScrollDirection !== 'down') {
           lastScrollDirection = 'down'
           let target = this.isRootPage ? window : window.parent
-          this.emitCustomEvent(target, {
+          this.emitCustomEvent(target, this.isCrossOrigin, {
             name: 'mipShellEvents',
             data: {
               type: 'slide',
@@ -278,7 +275,7 @@ class Page {
     if (this.isRootPage) {
       window.postMessage(data, window.location.origin)
     } else {
-      window.parent.postMessage(data, window.location.origin)
+      window.parent.postMessage(data, this.isCrossOrigin ? '*' : window.location.origin)
     }
   }
 
@@ -303,11 +300,9 @@ class Page {
     // Listen message from inner iframes
     window.addEventListener('message', (e) => {
       try {
-        if (e.source.location.origin === window.location.origin) {
-          this.messageHandlers.forEach(handler => {
-            handler.call(this, e.data.type, e.data.data || {})
-          })
-        }
+        this.messageHandlers.forEach(handler => {
+          handler.call(this, e.data.type, e.data.data || {})
+        })
       } catch (e) {
         // Message sent from SF will cause cross domain error when reading e.source.location
         // Just ignore these messages.
@@ -371,11 +366,14 @@ class Page {
   togglePageMask (toggle, options) {
     // Only show page mask in root page
     if (!this.isRootPage) {
-      customEmit(window.parent, 'mipShellEvents', {
-        type: 'togglePageMask',
+      this.emitCustomEvent(window.parent, true, {
+        name: 'mipShellEvents',
         data: {
-          toggle,
-          options
+          type: 'togglePageMask',
+          data: {
+            toggle,
+            options
+          }
         }
       })
     }
@@ -400,19 +398,14 @@ class Page {
    *
    * @param {Object} event event
    */
-  emitCustomEvent (targetWindow, event) {
-    if (this.isRootPage) {
-      // emit CustomEvent in root page
-      customEmit(targetWindow, event.name, event.data)
+  emitCustomEvent (targetWindow, isCrossOrigin, event) {
+    if (isCrossOrigin) {
+      targetWindow.postMessage({
+        name: MESSAGE_CROSS_ORIGIN,
+        data: event
+      }, '*')
     } else {
-      // notify current iframe
-      if (targetWindow) {
-        if (this.isCrossOrigin) {
-          targetWindow.postMessage(MESSAGE_CROSS_ORIGIN, event)
-        } else {
-          customEmit(targetWindow, event.name, event.data)
-        }
-      }
+      customEmit(targetWindow, event.name, event.data)
     }
   }
 
@@ -422,12 +415,10 @@ class Page {
    * emit a custom event in current page
    *
    * @param {Object} event event
-   * @param {string} event.name event name
-   * @param {Object} event.data event data
    */
   emitEventInCurrentPage (event) {
     let currentPage = this.getPageById(this.currentPageId)
-    this.emitCustomEvent(currentPage.targetWindow, event)
+    this.emitCustomEvent(currentPage.targetWindow, currentPage.isCrossOrigin, event)
   }
 
   /**
