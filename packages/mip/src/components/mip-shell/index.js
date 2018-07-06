@@ -131,6 +131,10 @@ class MipShell extends CustomElement {
           pageMeta
         }
       })
+
+      if (pageMeta.header.bouncy) {
+        page.setupBouncyHeader()
+      }
     }
   }
 
