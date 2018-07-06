@@ -51,8 +51,8 @@ export default class HTML5History {
 
   transitionTo (location, onComplete) {
     const route = normalizeLocation(location, this.current)
-    this.updateRoute(route)
     onComplete && onComplete(route)
+    this.updateRoute(route)
   }
 
   updateRoute (route) {
