@@ -30,8 +30,8 @@
         }
     </style>
     <script>
-        window.onload = function () {
-            let $iframe = document.querySelector('iframe')
+        // window.onload = function () {
+        //     let $iframe = document.querySelector('iframe')
             // $iframe.style.height = window.innerHeight + 'px'
 
             // let $scroller = $iframe.contentWindow.document.querySelector('.mip-html-wrapper')
@@ -53,7 +53,8 @@
             // }
 
             // removeIOSRubberEffect($scroller);
-        }
+        // }
+        window.addEventListener('message', e => console.log('receive message:', e.data))
     </script>
 </head>
 <body>

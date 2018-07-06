@@ -70,20 +70,16 @@ class MipShell extends CustomElement {
       tmpShellConfig = {routes: []}
     }
 
-    let readAllConfig = () => {
+    if (page.isRootPage) {
       tmpShellConfig.routes.forEach(route => {
         route.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, route.meta || {})
         route.regexp = convertPatternToRegexp(route.pattern || '*')
 
-        // get title from <title> tag
+        // Get title from <title> tag
         if (!route.meta.header.title) {
           route.meta.header.title = (document.querySelector('title') || {}).innerHTML || ''
         }
       })
-    }
-
-    if (page.isRootPage) {
-      readAllConfig()
       this.processShellConfig(tmpShellConfig)
 
       window.MIP_SHELL_CONFIG = tmpShellConfig.routes
@@ -101,7 +97,21 @@ class MipShell extends CustomElement {
         // If this iframe is a cross origin one
         // Read all config and save it in window.
         // Avoid find page meta from `window.parent`
-        readAllConfig()
+        tmpShellConfig.routes.forEach(route => {
+          route.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, route.meta || {})
+          route.regexp = convertPatternToRegexp(route.pattern || '*')
+
+          // Get title from <title> tag
+          if (!route.meta.header.title) {
+            route.meta.header.title = (document.querySelector('title') || {}).innerHTML || ''
+          }
+
+          // Find current page meta
+          if (route.regexp.test(pageId)) {
+            pageMeta = window.MIP_PAGE_META_CACHE[pageId] = route.meta
+          }
+        })
+
         window.MIP_SHELL_CONFIG = tmpShellConfig.routes
       } else if (this.alwaysReadConfigOnLoad) {
         // If `alwaysReadConfigOnLoad` equals `true`
@@ -110,6 +120,8 @@ class MipShell extends CustomElement {
         for (let i = 0; i < tmpShellConfig.routes.length; i++) {
           let config = tmpShellConfig.routes[i]
           config.regexp = convertPatternToRegexp(config.pattern || '*')
+
+          // Only process matched page meta
           if (config.regexp.test(pageId)) {
             config.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, config.meta || {})
             // get title from <title> tag
@@ -132,7 +144,7 @@ class MipShell extends CustomElement {
         }
       })
 
-      if (pageMeta.header.bouncy) {
+      if (pageMeta && pageMeta.header.bouncy) {
         page.setupBouncyHeader()
       }
     }
