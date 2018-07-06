@@ -191,7 +191,7 @@ class MipShell extends CustomElement {
 
     // Header
     this.$el = document.createElement('div')
-    this.$el.classList.add('mip-shell-header', 'mip-border', 'mip-border-bottom', 'transition')
+    this.$el.classList.add('mip-shell-header', 'transition')
     this.renderHeader(this.$el)
     this.$wrapper.insertBefore(this.$el, this.$wrapper.firstChild)
 
@@ -297,16 +297,6 @@ class MipShell extends CustomElement {
     css(container, 'background-color', backgroundColor)
     css(container.querySelectorAll('svg'), 'fill', color)
     css(container.querySelector('.mip-shell-header-title'), 'color', color)
-    if (!borderColor) {
-      container.classList.add('mip-border', 'mip-border-bottom')
-      css(container, 'border-bottom', '0')
-      css(container, 'box-sizing', 'content-box')
-      borderColor = '#e1e1e1'
-    } else {
-      container.classList.remove('mip-border', 'mip-border-bottom')
-      css(container, 'border-bottom', `1px solid ${borderColor}`)
-      css(container, 'box-sizing', 'border-box')
-    }
     css(container.querySelector('.mip-shell-header-logo'), 'border-color', borderColor)
     css(container.querySelector('.mip-shell-header-button-group'), 'border-color', borderColor)
     css(container.querySelector('.mip-shell-header-button-group .split'), 'background-color', borderColor)
