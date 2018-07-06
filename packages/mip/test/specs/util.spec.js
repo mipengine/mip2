@@ -102,6 +102,10 @@ describe('util', function () {
       expect(
         util.parseCacheUrl('/c/s/www.mipengine.org/static/index.html')
       ).to.equal('https://www.mipengine.org/static/index.html')
+
+      expect(
+        util.parseCacheUrl('http://www-lanxiniu-com.mipcdn.com/c/s/www.lanxiniu.com/BaiduMip/mapout')
+      ).to.equal('https://www.lanxiniu.com/BaiduMip/mapout')
     })
   })
 

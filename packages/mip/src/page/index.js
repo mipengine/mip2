@@ -559,9 +559,13 @@ class Page {
    * @param {Page} page page
    */
   addChild (page) {
-    if (this.isRootPage) {
-      this.children.push(page)
+    for (let i = 0; i < this.children.length; i++) {
+      if (this.children[i].pageId === page.pageId) {
+        this.children.splice(i, 1)
+        break
+      }
     }
+    this.children.push(page)
   }
 
   /**
@@ -595,6 +599,8 @@ class Page {
         return this.children[i]
       }
     }
+
+    return null
   }
 
   /**
