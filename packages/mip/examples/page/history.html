@@ -28,19 +28,24 @@
             document.querySelector('#result').innerHTML = target
         }
 
+        let container
+
         document.querySelector('#go').addEventListener('click', () => {
             let target = './page2.html'
             transitionTo(target)
 
-            let container = document.createElement('iframe')
+            window.history.pushState({key:'1'},'',target)
+
+            container = document.createElement('iframe')
             container.setAttribute('src', window.location.origin + '/examples/builtin/mip-img.html')
             document.body.appendChild(container)
 
-            window.history.pushState({key:'1'},'',target)
+            
         })
 
         document.querySelector('#back').addEventListener('click', () => {
-            window.history.go(-1)
+            container.contentWindow.history.go(-1)
+            // window.history.go(-1)
         })
 
         window.addEventListener('popstate', () => {
