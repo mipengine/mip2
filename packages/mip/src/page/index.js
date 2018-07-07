@@ -523,7 +523,7 @@ class Page {
     if (targetPageId === this.pageId || this.direction === 'back') {
       // backward
       let backwardOpitons = {
-        transition: this.allowTransition,
+        transition: targetMeta.allowTransition || this.allowTransition,
         sourceMeta: this.currentPageMeta,
         transitionContainsHeader: this.transitionContainsHeader,
         onComplete: () => {
@@ -563,7 +563,7 @@ class Page {
     } else {
       // forward
       frameMoveIn(targetPageId, {
-        transition: this.allowTransition,
+        transition: targetMeta.allowTransition || this.allowTransition,
         targetMeta: finalMeta,
         newPage: options.newPage,
         transitionContainsHeader: this.transitionContainsHeader,

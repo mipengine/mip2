@@ -257,14 +257,10 @@ let viewer = {
       this.sendMessage('pushState', pushMessage)
 
       if (isMipLink) {
-        // show transition only in portrait mode
-        if (isPortrait()) {
-          this.page.allowTransition = true
-        }
-
         // reload page even if it's already existed
         targetRoute.meta = {
           reload: true,
+          allowTransition: isPortrait(), // show transition only in portrait mode
           header: {
             title: pushMessage.state.title,
             defaultTitle: pushMessage.state.defaultTitle
