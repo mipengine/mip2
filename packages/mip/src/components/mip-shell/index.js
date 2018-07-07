@@ -64,10 +64,18 @@ class MipShell extends CustomElement {
     try {
       tmpShellConfig = JSON.parse(ele.textContent.toString()) || {}
       if (!tmpShellConfig.routes) {
-        tmpShellConfig.routes = []
+        tmpShellConfig.routes = [{
+          pattern: '*',
+          meta: DEFAULT_SHELL_CONFIG
+        }]
       }
     } catch (e) {
-      tmpShellConfig = {routes: []}
+      tmpShellConfig = {
+        routes: [{
+          pattern: '*',
+          meta: DEFAULT_SHELL_CONFIG
+        }]
+      }
     }
 
     if (page.isRootPage) {
