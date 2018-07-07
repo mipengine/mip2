@@ -343,7 +343,8 @@ class MipShell extends CustomElement {
     })
 
     if (this.$buttonMask) {
-      this.$buttonMask.onclick = () => this.toggleDropdown(false)
+      this.$buttonMask.addEventListener('click', () => this.toggleDropdown(false))
+      this.$buttonMask.addEventListener('touchmove', e => e.preventDefault())
     }
   }
 
