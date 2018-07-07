@@ -96,7 +96,7 @@ export function createLoading (pageMeta) {
   loading.id = 'mip-page-loading-wrapper'
   loading.setAttribute('class', 'mip-page-loading-wrapper')
   loading.innerHTML = `
-    <div class="mip-shell-header mip-border mip-border-bottom">
+    <div class="mip-shell-header">
       <span mip-header-btn class="back-button">
         <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M769.405 977.483a68.544 68.544 0 0 1-98.121 0L254.693 553.679c-27.173-27.568-27.173-72.231 0-99.899L671.185 29.976c13.537-13.734 31.324-20.652 49.109-20.652s35.572 6.917 49.109 20.652c27.173 27.568 27.173 72.331 0 99.899L401.921 503.681l367.482 373.904c27.074 27.568 27.074 72.231 0 99.899z"/></svg>
       </span>
@@ -174,16 +174,6 @@ function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
     css(loadingContainer, 'background-color', backgroundColor)
     css(loading.querySelectorAll('svg'), 'fill', color)
     css(loading.querySelector('.mip-shell-header-title'), 'color', color)
-    if (!borderColor) {
-      loadingContainer.classList.add('mip-border', 'mip-border-bottom')
-      css(loadingContainer, 'border-bottom', '0')
-      css(loadingContainer, 'box-sizing', 'content-box')
-      borderColor = '#e1e1e1'
-    } else {
-      loadingContainer.classList.remove('mip-border', 'mip-border-bottom')
-      css(loadingContainer, 'border-bottom', `1px solid ${borderColor}`)
-      css(loadingContainer, 'box-sizing', 'border-box')
-    }
     css(loading.querySelector('.mip-shell-header-logo'), 'border-color', borderColor)
     css(loading.querySelector('.mip-shell-header-button-group'), 'border-color', borderColor)
     css(loading.querySelector('.mip-shell-header-button-group .split'), 'background-color', borderColor)
@@ -202,7 +192,7 @@ export function createFadeHeader (pageMeta) {
   fadeHeader.id = 'mip-page-fade-header-wrapper'
   fadeHeader.setAttribute('class', 'mip-page-fade-header-wrapper')
   fadeHeader.innerHTML = `
-    <div class="mip-shell-header mip-border mip-border-bottom">
+    <div class="mip-shell-header">
       <span class="back-button">
         <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M769.405 977.483a68.544 68.544 0 0 1-98.121 0L254.693 553.679c-27.173-27.568-27.173-72.231 0-99.899L671.185 29.976c13.537-13.734 31.324-20.652 49.109-20.652s35.572 6.917 49.109 20.652c27.173 27.568 27.173 72.331 0 99.899L401.921 503.681l367.482 373.904c27.074 27.568 27.074 72.231 0 99.899z"/></svg>
       </span>
@@ -258,16 +248,6 @@ function getFadeHeader (targetMeta) {
   css(fadeHeaderContainer, 'background-color', backgroundColor)
   css(fadeHeader.querySelectorAll('svg'), 'fill', color)
   css(fadeHeader.querySelector('.mip-shell-header-title'), 'color', color)
-  if (!borderColor) {
-    fadeHeaderContainer.classList.add('mip-border', 'mip-border-bottom')
-    css(fadeHeaderContainer, 'border-bottom', '0')
-    css(fadeHeaderContainer, 'box-sizing', 'content-box')
-    borderColor = '#e1e1e1'
-  } else {
-    fadeHeaderContainer.classList.remove('mip-border', 'mip-border-bottom')
-    css(fadeHeaderContainer, 'border-bottom', `1px solid ${borderColor}`)
-    css(fadeHeaderContainer, 'box-sizing', 'border-box')
-  }
   css(fadeHeader.querySelector('.mip-shell-header-logo'), 'border-color', borderColor)
   css(fadeHeader.querySelector('.mip-shell-header-button-group'), 'border-color', borderColor)
   css(fadeHeader.querySelector('.mip-shell-header-button-group .split'), 'background-color', borderColor)
