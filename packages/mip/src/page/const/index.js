@@ -27,6 +27,8 @@ export const DEFAULT_SHELL_CONFIG = {
 
 export const MESSAGE_ROUTER_PUSH = 'router-push'
 export const MESSAGE_ROUTER_REPLACE = 'router-replace'
+export const MESSAGE_ROUTER_BACK = 'router-back'
+export const MESSAGE_ROUTER_FORWARD = 'router-forward'
 export const MESSAGE_APPSHELL_HEADER_SLIDE_UP = 'appshell-header-slide-up'
 export const MESSAGE_APPSHELL_HEADER_SLIDE_DOWN = 'appshell-header-slide-down'
 export const MESSAGE_REGISTER_GLOBAL_COMPONENT = 'register-global-component'

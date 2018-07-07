@@ -28,6 +28,8 @@ import {
   DEFAULT_SHELL_CONFIG,
   MESSAGE_ROUTER_PUSH,
   MESSAGE_ROUTER_REPLACE,
+  MESSAGE_ROUTER_BACK,
+  MESSAGE_ROUTER_FORWARD,
   MESSAGE_SET_MIP_SHELL_CONFIG,
   MESSAGE_UPDATE_MIP_SHELL_CONFIG,
   MESSAGE_SYNC_PAGE_CONFIG,
@@ -110,6 +112,10 @@ class Page {
           router.push(data.route)
         } else if (type === MESSAGE_ROUTER_REPLACE) {
           router.replace(data.route)
+        } else if (type === MESSAGE_ROUTER_BACK) {
+          router.back()
+        } else if (type === MESSAGE_ROUTER_FORWARD) {
+          router.forward()
         }
       })
 
@@ -429,6 +435,14 @@ class Page {
         data: event
       }, '*')
     }
+  }
+
+  back () {
+    this.notifyRootPage({type: MESSAGE_ROUTER_BACK})
+  }
+
+  forward () {
+    this.notifyRootPage({type: MESSAGE_ROUTER_FORWARD})
   }
 
   // =============================== Root Page methods ===============================
