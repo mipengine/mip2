@@ -409,6 +409,7 @@ class MipShell extends CustomElement {
 
     if (!(pageMeta.header && pageMeta.header.show)) {
       this.$wrapper.classList.add('hide')
+      page.toggleFadeHeader(false)
       return
     }
 
@@ -456,7 +457,6 @@ class MipShell extends CustomElement {
 
       setTimeout(() => {
         page.toggleFadeHeader(false)
-        // css(document.querySelector('.mip-page-fade-header-wrapper'), 'display', 'none')
       }, 350)
 
       // Rebind header events

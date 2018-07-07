@@ -121,7 +121,7 @@ class Page {
 
       // handle events emitted by BaiduResult page
       window.MIP.viewer.onMessage('changeState', ({url}) => {
-        router.replace(makeCacheUrl(url))
+        router.replace(makeCacheUrl(url, 'url', true))
       })
     }
 
