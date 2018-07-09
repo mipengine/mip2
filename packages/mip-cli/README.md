@@ -105,6 +105,9 @@ module.exports = {
 
 ## changelog
 
+- 1.1.5
+    1. 支持 process.env.NODE_ENV， mip2 dev 的值为 'development'，mip2 build 的值为 'production'
+
 - 1.1.4
     1. mip2 build 产生的组件公用 js 直接指向线上
     2. mip.config.js 新增 `build` 配置项
