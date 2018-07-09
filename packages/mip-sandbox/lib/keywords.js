@@ -94,7 +94,9 @@ var RESERVED = [
   'module',
   'exports',
   'define',
-  'import'
+  'import',
+  // process.env.NODE_ENV
+  'process'
 ]
 
 var SANDBOX_STRICT = {
