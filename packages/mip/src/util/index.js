@@ -25,9 +25,10 @@ import jsonParse from './json-parse'
  *
  * @param {string} url Source url.
  * @param {string} type The url type.
+ * @param {boolean} containsHost The url type.
  * @return {string} Cache url.
  */
-export function makeCacheUrl (url, type) {
+export function makeCacheUrl (url, type, containsHost) {
   if (!fn.isCacheUrl(location.href) ||
     (url && url.length < 8) ||
     !(url.indexOf('http') === 0 || url.indexOf('//') === 0)
@@ -40,8 +41,15 @@ export function makeCacheUrl (url, type) {
   }
   let urlParas = url.split('//')
   urlParas.shift()
+  let host = urlParas[0].substring(0, urlParas[0].indexOf('/'))
   url = urlParas.join('//')
-  return prefix + url
+
+  let result = prefix + url
+  if (containsHost) {
+    result = location.protocol + '//' + host.replace(/-/g, '--').replace(/\./g, '-') + '.mipcdn.com' + result
+  }
+
+  return result
 }
 
 /**

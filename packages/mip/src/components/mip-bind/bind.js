@@ -81,7 +81,7 @@ class Bind {
 
     let loc = window.location
     let domain = loc.protocol + '//' + loc.host
-    let win = window.MIP.viewer.page.isRootPage ? window : window.parent
+    let win = isSelfParent(window) ? window : window.parent
     win.postMessage({
       type: 'update',
       m: data,
@@ -162,7 +162,7 @@ class Bind {
     }
     if (win.g && win.g.hasOwnProperty(key)) {
       !cancel && this._postMessage(data)
-    } else if (!win.MIP.viewer.page.isRootPage && win.parent.g && win.parent.g.hasOwnProperty(key)) {
+    } else if (!isSelfParent(win) && win.parent.g && win.parent.g.hasOwnProperty(key)) {
       !cancel && this._postMessage(data)
     } else {
       Object.assign(win.m, data)
@@ -170,7 +170,7 @@ class Bind {
   }
 
   _setGlobalState (data, cancel, win = this._win) {
-    if (win.MIP.viewer.page.isRootPage) {
+    if (isSelfParent(win)) {
       win.g = win.g || {}
       assign(win.g, data)
     } else {
@@ -195,7 +195,7 @@ class Bind {
       }
     })
 
-    setProto(win.m, win.MIP.viewer.page.isRootPage ? win.g : win.parent.g)
+    setProto(win.m, getGlobalData(win))
   }
 
   _normalize (data) {
@@ -240,6 +240,15 @@ function setProto (oldObj, newObj) {
       oldObj[key] = JSON.parse(JSON.stringify(newObj[key]))
     }
   })
+}
+
+function isSelfParent (win) {
+  let page = win.MIP.viewer.page
+  return page.isRootPage || page.isCrossOrigin
+}
+
+function getGlobalData (win) {
+  return isSelfParent(win) ? win.g : win.parent.g
 }
 
 export default Bind

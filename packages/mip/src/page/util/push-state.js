@@ -34,7 +34,11 @@ export function pushState (url, replace) {
     }
   } catch (e) {
     // console.log(e, 'from push-state.js')
-    window.location[replace ? 'replace' : 'assign'](url)
+    if (window.MIP.standalone) {
+      window.location[replace ? 'replace' : 'assign'](url)
+    } else {
+      // TODO: postMessage to SF
+    }
   }
 }
 

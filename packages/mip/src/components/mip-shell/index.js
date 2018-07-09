@@ -64,10 +64,18 @@ class MipShell extends CustomElement {
     try {
       tmpShellConfig = JSON.parse(ele.textContent.toString()) || {}
       if (!tmpShellConfig.routes) {
-        tmpShellConfig.routes = []
+        tmpShellConfig.routes = [{
+          pattern: '*',
+          meta: DEFAULT_SHELL_CONFIG
+        }]
       }
     } catch (e) {
-      tmpShellConfig = {routes: []}
+      tmpShellConfig = {
+        routes: [{
+          pattern: '*',
+          meta: DEFAULT_SHELL_CONFIG
+        }]
+      }
     }
 
     if (page.isRootPage) {
@@ -75,12 +83,11 @@ class MipShell extends CustomElement {
         route.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, route.meta || {})
         route.regexp = convertPatternToRegexp(route.pattern || '*')
 
-        // get title from <title> tag
+        // Get title from <title> tag
         if (!route.meta.header.title) {
           route.meta.header.title = (document.querySelector('title') || {}).innerHTML || ''
         }
       })
-
       this.processShellConfig(tmpShellConfig)
 
       window.MIP_SHELL_CONFIG = tmpShellConfig.routes
@@ -93,11 +100,36 @@ class MipShell extends CustomElement {
     } else {
       let pageId = page.pageId
       let pageMeta
-      if (this.alwaysReadConfigOnLoad) {
+
+      if (page.isCrossOrigin) {
+        // If this iframe is a cross origin one
+        // Read all config and save it in window.
+        // Avoid find page meta from `window.parent`
+        tmpShellConfig.routes.forEach(route => {
+          route.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, route.meta || {})
+          route.regexp = convertPatternToRegexp(route.pattern || '*')
+
+          // Get title from <title> tag
+          if (!route.meta.header.title) {
+            route.meta.header.title = (document.querySelector('title') || {}).innerHTML || ''
+          }
+
+          // Find current page meta
+          if (route.regexp.test(pageId)) {
+            pageMeta = window.MIP_PAGE_META_CACHE[pageId] = route.meta
+          }
+        })
+
+        window.MIP_SHELL_CONFIG = tmpShellConfig.routes
+      } else if (this.alwaysReadConfigOnLoad) {
+        // If `alwaysReadConfigOnLoad` equals `true`
+        // Read config in leaf pages and pick up the matched one. Send it to page for updating.
         pageMeta = DEFAULT_SHELL_CONFIG
         for (let i = 0; i < tmpShellConfig.routes.length; i++) {
           let config = tmpShellConfig.routes[i]
           config.regexp = convertPatternToRegexp(config.pattern || '*')
+
+          // Only process matched page meta
           if (config.regexp.test(pageId)) {
             config.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, config.meta || {})
             // get title from <title> tag
@@ -119,6 +151,10 @@ class MipShell extends CustomElement {
           pageMeta
         }
       })
+
+      if (pageMeta && pageMeta.header.bouncy) {
+        page.setupBouncyHeader()
+      }
     }
   }
 
@@ -163,7 +199,7 @@ class MipShell extends CustomElement {
 
     // Header
     this.$el = document.createElement('div')
-    this.$el.classList.add('mip-shell-header', 'mip-border', 'mip-border-bottom', 'transition')
+    this.$el.classList.add('mip-shell-header', 'transition')
     this.renderHeader(this.$el)
     this.$wrapper.insertBefore(this.$el, this.$wrapper.firstChild)
 
@@ -199,7 +235,11 @@ class MipShell extends CustomElement {
     let headerHTML = `
       ${showBackIcon ? `<span class="back-button" mip-header-btn
         data-button-name="back">
-        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M769.405 977.483a68.544 68.544 0 0 1-98.121 0L254.693 553.679c-27.173-27.568-27.173-72.231 0-99.899L671.185 29.976c13.537-13.734 31.324-20.652 49.109-20.652s35.572 6.917 49.109 20.652c27.173 27.568 27.173 72.331 0 99.899L401.921 503.681l367.482 373.904c27.074 27.568 27.074 72.231 0 99.899z"/></svg>
+        <svg t="1530857979993" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3173"
+          xmlns:xlink="http://www.w3.org/1999/xlink">
+          <path  fill="currentColor" d="M348.949333 511.829333L774.250667 105.728C783.978667 96 789.333333 83.712 789.333333 71.104c0-12.629333-5.354667-24.917333-15.082666-34.645333-9.728-9.728-22.037333-15.082667-34.645334-15.082667-12.586667 0-24.917333 5.333333-34.624 15.082667L249.557333 471.616A62.570667 62.570667 0 0 0 234.666667 512c0 10.410667 1.130667 25.408 14.890666 40.042667l455.424 435.605333c9.706667 9.728 22.016 15.082667 34.624 15.082667s24.917333-5.354667 34.645334-15.082667c9.728-9.728 15.082667-22.037333 15.082666-34.645333 0-12.608-5.354667-24.917333-15.082666-34.645334L348.949333 511.829333z"
+            p-id="3174"></path>
+        </svg>
       </span>` : ''}
       <div class="mip-shell-header-logo-title">
         ${logo ? `<img class="mip-shell-header-logo" src="${logo}">` : ''}
@@ -213,29 +253,47 @@ class MipShell extends CustomElement {
     if (moreFlag && closeFlag) {
       // more & close
       headerHTML += `
-       <div class="mip-shell-header-button-group">
-         <div class="button more" mip-header-btn data-button-name="more">
-           <svg t="1529487280740" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6294" xmlns:xlink="http://www.w3.org/1999/xlink" width="17" height="17"><path d="M64 512a85.333333 85.333333 0 1 1 170.666667 0 85.333333 85.333333 0 0 1-170.666667 0zM512 597.333333a85.333333 85.333333 0 1 1 0-170.666666 85.333333 85.333333 0 0 1 0 170.666666zM789.333333 512a85.333333 85.333333 0 1 1 170.666667 0 85.333333 85.333333 0 0 1-170.666667 0z" p-id="6295"></path></svg>
-         </div>
-         <div class="split"></div>
-         <div class="button close" mip-header-btn data-button-name="close">
-           <svg t="1529487311635" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6410" xmlns:xlink="http://www.w3.org/1999/xlink" width="17" height="17"><path d="M557.482667 512L822.613333 246.869333a32.149333 32.149333 0 0 0-45.44-45.44L512 466.517333 246.890667 201.408a32.149333 32.149333 0 1 0-45.44 45.44L466.56 512 201.429333 777.130667a32.149333 32.149333 0 0 0 45.461334 45.44l265.130666-265.109334L777.173333 822.592a32.149333 32.149333 0 1 0 45.461334-45.44L557.482667 512z" p-id="6411"></path></svg>
-         </div>
-       </div>
+        <div class="mip-shell-header-button-group">
+          <div class="button more" mip-header-btn data-button-name="more">
+            <svg t="1530857985972" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3393"
+              xmlns:xlink="http://www.w3.org/1999/xlink">
+              <path d="M128 512m-128 0a128 128 0 1 0 256 0 128 128 0 1 0-256 0Z" p-id="3394" fill="currentColor"></path>
+              <path d="M512 512m-128 0a128 128 0 1 0 256 0 128 128 0 1 0-256 0Z" p-id="3395" fill="currentColor"></path>
+              <path d="M896 512m-128 0a128 128 0 1 0 256 0 128 128 0 1 0-256 0Z" p-id="3396" fill="currentColor"></path>
+            </svg>
+          </div>
+          <div class="split"></div>
+          <div class="button close" mip-header-btn data-button-name="close">
+            <svg t="1530857971603" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2953"
+              xmlns:xlink="http://www.w3.org/1999/xlink">
+              <path  fill="currentColor" d="M586.026667 533.248l208.789333-208.576c9.856-8.874667 15.488-21.248 15.850667-34.858667a53.717333 53.717333 0 0 0-15.829334-39.146666 48.042667 48.042667 0 0 0-36.224-15.872c-14.165333 0-27.584 5.632-37.802666 15.850666L512 459.221333l-208.789333-208.576a48.042667 48.042667 0 0 0-36.245334-15.850666c-14.144 0-27.562667 5.632-37.781333 15.850666A48.085333 48.085333 0 0 0 213.333333 285.504a53.717333 53.717333 0 0 0 15.850667 39.168l208.789333 208.576-208.576 208.853333a48.085333 48.085333 0 0 0-15.850666 34.88 53.717333 53.717333 0 0 0 15.850666 39.146667c9.194667 10.24 22.058667 15.872 36.224 15.872 14.144 0 27.562667-5.632 37.802667-15.850667L512 607.274667l208.597333 208.853333c9.216 10.24 22.08 15.872 36.224 15.872s27.584-5.632 37.802667-15.850667c9.856-8.874667 15.488-21.269333 15.850667-34.88a53.717333 53.717333 0 0 0-15.850667-39.146666l-208.597333-208.853334z"
+                p-id="2954"></path>
+            </svg>
+          </div>
+        </div>
      `
     } else if (moreFlag && !closeFlag) {
       // only more
       headerHTML += `
-       <div class="mip-shell-header-button-group-standalone more" mip-header-btn data-button-name="more">
-         <svg t="1529487280740" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6294" xmlns:xlink="http://www.w3.org/1999/xlink" width="17" height="17"><path d="M64 512a85.333333 85.333333 0 1 1 170.666667 0 85.333333 85.333333 0 0 1-170.666667 0zM512 597.333333a85.333333 85.333333 0 1 1 0-170.666666 85.333333 85.333333 0 0 1 0 170.666666zM789.333333 512a85.333333 85.333333 0 1 1 170.666667 0 85.333333 85.333333 0 0 1-170.666667 0z" p-id="6295"></path></svg>
-       </div>
+        <div class="mip-shell-header-button-group-standalone more" mip-header-btn data-button-name="more">
+          <svg t="1530857985972" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3393"
+            xmlns:xlink="http://www.w3.org/1999/xlink">
+            <path d="M128 512m-128 0a128 128 0 1 0 256 0 128 128 0 1 0-256 0Z" p-id="3394" fill="currentColor"></path>
+            <path d="M512 512m-128 0a128 128 0 1 0 256 0 128 128 0 1 0-256 0Z" p-id="3395" fill="currentColor"></path>
+            <path d="M896 512m-128 0a128 128 0 1 0 256 0 128 128 0 1 0-256 0Z" p-id="3396" fill="currentColor"></path>
+          </svg>
+        </div>
      `
     } else if (!moreFlag && closeFlag) {
       // only close
       headerHTML += `
         <div class="mip-shell-header-button-group-standalone">
           <div class="button close" mip-header-btn data-button-name="close">
-            <svg t="1529487311635" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6410" xmlns:xlink="http://www.w3.org/1999/xlink" width="17" height="17"><path d="M557.482667 512L822.613333 246.869333a32.149333 32.149333 0 0 0-45.44-45.44L512 466.517333 246.890667 201.408a32.149333 32.149333 0 1 0-45.44 45.44L466.56 512 201.429333 777.130667a32.149333 32.149333 0 0 0 45.461334 45.44l265.130666-265.109334L777.173333 822.592a32.149333 32.149333 0 1 0 45.461334-45.44L557.482667 512z" p-id="6411"></path></svg>
+            <svg t="1530857971603" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2953"
+              xmlns:xlink="http://www.w3.org/1999/xlink">
+              <path  fill="currentColor" d="M586.026667 533.248l208.789333-208.576c9.856-8.874667 15.488-21.248 15.850667-34.858667a53.717333 53.717333 0 0 0-15.829334-39.146666 48.042667 48.042667 0 0 0-36.224-15.872c-14.165333 0-27.584 5.632-37.802666 15.850666L512 459.221333l-208.789333-208.576a48.042667 48.042667 0 0 0-36.245334-15.850666c-14.144 0-27.562667 5.632-37.781333 15.850666A48.085333 48.085333 0 0 0 213.333333 285.504a53.717333 53.717333 0 0 0 15.850667 39.168l208.789333 208.576-208.576 208.853333a48.085333 48.085333 0 0 0-15.850666 34.88 53.717333 53.717333 0 0 0 15.850666 39.146667c9.194667 10.24 22.058667 15.872 36.224 15.872 14.144 0 27.562667-5.632 37.802667-15.850667L512 607.274667l208.597333 208.853333c9.216 10.24 22.08 15.872 36.224 15.872s27.584-5.632 37.802667-15.850667c9.856-8.874667 15.488-21.269333 15.850667-34.88a53.717333 53.717333 0 0 0-15.850667-39.146666l-208.597333-208.853334z"
+                p-id="2954"></path>
+            </svg>
           </div>
         </div>
       `
@@ -247,16 +305,6 @@ class MipShell extends CustomElement {
     css(container, 'background-color', backgroundColor)
     css(container.querySelectorAll('svg'), 'fill', color)
     css(container.querySelector('.mip-shell-header-title'), 'color', color)
-    if (!borderColor) {
-      container.classList.add('mip-border', 'mip-border-bottom')
-      css(container, 'border-bottom', '0')
-      css(container, 'box-sizing', 'content-box')
-      borderColor = '#e1e1e1'
-    } else {
-      container.classList.remove('mip-border', 'mip-border-bottom')
-      css(container, 'border-bottom', `1px solid ${borderColor}`)
-      css(container, 'box-sizing', 'border-box')
-    }
     css(container.querySelector('.mip-shell-header-logo'), 'border-color', borderColor)
     css(container.querySelector('.mip-shell-header-button-group'), 'border-color', borderColor)
     css(container.querySelector('.mip-shell-header-button-group .split'), 'background-color', borderColor)
@@ -303,7 +351,8 @@ class MipShell extends CustomElement {
     })
 
     if (this.$buttonMask) {
-      this.$buttonMask.onclick = () => this.toggleDropdown(false)
+      this.$buttonMask.addEventListener('click', () => this.toggleDropdown(false))
+      this.$buttonMask.addEventListener('touchmove', e => e.preventDefault())
     }
   }
 
@@ -326,12 +375,7 @@ class MipShell extends CustomElement {
         page.allowTransition = true
       }
       page.direction = 'back'
-      // SF can help to navigate by 'changeState' when standalone = false
-      if (window.MIP.standalone) {
-        window.MIP_ROUTER.go(-1)
-      } else {
-        window.MIP.viewer.sendMessage('historyNavigate', {step: -1})
-      }
+      page.router.back()
     } else if (buttonName === 'more') {
       this.toggleDropdown(true)
     } else if (buttonName === 'close') {
@@ -365,6 +409,7 @@ class MipShell extends CustomElement {
 
     if (!(pageMeta.header && pageMeta.header.show)) {
       this.$wrapper.classList.add('hide')
+      page.toggleFadeHeader(false)
       return
     }
 
@@ -412,7 +457,6 @@ class MipShell extends CustomElement {
 
       setTimeout(() => {
         page.toggleFadeHeader(false)
-        // css(document.querySelector('.mip-page-fade-header-wrapper'), 'display', 'none')
       }, 350)
 
       // Rebind header events
@@ -503,7 +547,13 @@ class MipShell extends CustomElement {
    * @return {Object} meta object
    */
   findMetaByPageId (pageId) {
-    let target = window.MIP.viewer.page.isRootPage ? window : window.parent
+    let target
+    if (!page.isRootPage && !page.isCrossOrigin) {
+      target = window.parent
+    } else {
+      target = window
+    }
+
     if (target.MIP_PAGE_META_CACHE[pageId]) {
       return target.MIP_PAGE_META_CACHE[pageId]
     } else {

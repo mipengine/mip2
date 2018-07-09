@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <style>
+        html,body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        button {
+            width: 150px;
+            height: 40px;
+        }
+    </style>
+</head>
+<body>
+    <button id="go">Go</button>
+    <button id="back">Back</button>
+    <div id="result"></div>
+
+    <script>
+        function transitionTo(target) {
+            document.querySelector('#result').innerHTML = target
+        }
+
+        let container
+
+        document.querySelector('#go').addEventListener('click', () => {
+            let target = './page2.html'
+            transitionTo(target)
+
+            window.history.pushState({key:'1'},'',target)
+
+            container = document.createElement('iframe')
+            container.setAttribute('src', window.location.origin + '/examples/builtin/mip-img.html')
+            document.body.appendChild(container)
+
+            
+        })
+
+        document.querySelector('#back').addEventListener('click', () => {
+            container.contentWindow.history.go(-1)
+            // window.history.go(-1)
+        })
+
+        window.addEventListener('popstate', () => {
+            alert('in popstate')
+            transitionTo(window.location.href)
+        })
+    </script>
+</body>
+</html>
