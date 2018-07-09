@@ -35,7 +35,8 @@ import {
   MESSAGE_SYNC_PAGE_CONFIG,
   MESSAGE_REGISTER_GLOBAL_COMPONENT,
   MESSAGE_CROSS_ORIGIN,
-  MESSAGE_BROADCAST_EVENT
+  MESSAGE_BROADCAST_EVENT,
+  MESSAGE_PAGE_RESIZE
 } from './const/index'
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
@@ -167,6 +168,10 @@ class Page {
           // Register global component (Not finished)
           console.log('register global component')
           // this.globalComponent.register(data)
+        } else if (type === MESSAGE_PAGE_RESIZE) {
+          Array.prototype.slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
+            $el.style.height = `${data.height}px`
+          })
         }
       })
 
@@ -324,11 +329,12 @@ class Page {
 
     // ========================= Some HACKs =========================
 
-    // prevent bouncy scroll in iOS 7 & 8
+    // prevent bouncy scroll in iOS 7 & 8 & (Shoubai iOS 9,10)
     if (platform.isIos()) {
       let iosVersion = platform.getOsVersion()
       iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
-      if (iosVersion !== '8' && iosVersion !== '7') {
+      if (!(iosVersion === '8' || iosVersion === '7' ||
+        (platform.isBaidu && (iosVersion === '9' || iosVersion === '10')))) {
         document.documentElement.classList.add('mip-i-ios-scroll')
       }
     }

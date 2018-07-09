@@ -16,7 +16,7 @@ import {getOriginalUrl} from './util'
 import {supportsPassive, isPortrait} from './page/util/feature-detect'
 import viewport from './viewport'
 import Page from './page/index'
-import {MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE} from './page/const/index'
+import {MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE, MESSAGE_PAGE_RESIZE} from './page/const/index'
 import Messager from './messager'
 import fixedElement from './fixed-element'
 
@@ -90,6 +90,15 @@ let viewer = {
         title: encodeURIComponent(document.title)
       })
     }
+
+    event.delegate(document, 'input', 'blur', event => {
+      this.page.notifyRootPage({
+        type: MESSAGE_PAGE_RESIZE,
+        data: {
+          height: viewport.getHeight()
+        }
+      })
+    }, true)
 
     // proxy <a mip-link>
     this._proxyLink(this.page)
