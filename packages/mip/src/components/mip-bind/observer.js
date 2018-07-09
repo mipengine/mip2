@@ -17,9 +17,6 @@ class Observer {
   }
 
   _define (data, key, value, depMap) {
-    // if (typeof Object === 'undefined') {
-    //   return
-    // }
     if (typeof depMap[key] === 'undefined') {
       return
     }
@@ -65,6 +62,9 @@ class Observer {
         return value
       },
       set (newVal) {
+        if (typeof Object === 'undefined') {
+          return
+        }
         value = getter ? getter.call(data) : value
         if (newVal === value) {
           return
@@ -74,7 +74,6 @@ class Observer {
         } else {
           value = newVal
         }
-        // let test = Object.assign({test:1}, {}) // eslint-disable-line
         me._walk(newVal, depMap[key])
         if (depMap[key]._deps && typeof newVal !== 'object') {
           depMap[key] = depMap[key]._deps

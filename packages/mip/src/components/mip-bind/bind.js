@@ -164,12 +164,10 @@ class Bind {
     !cancel && Object.keys(data).forEach(k => win.pgStates.add(k))
     Object.keys(g).forEach(key => {
       if (!win.pgStates.has(key) && win.m.hasOwnProperty(key)) {
-        try {
-          win.m[key] = g[key]
-        } catch (e) {window.alert('old problem');window.alert(e.stack);window.alert(e.message)}
+        win.m[key] = g[key]
       }
     })
-    win.m.__proto__ = win.MIP.viewer.page.isRootPage ? win.g : win.parent.g // eslint-disable-line no-proto
+    win.m.__proto__ = g // eslint-disable-line no-proto
   }
 
   _normalize (data) {
@@ -201,9 +199,7 @@ function assign (oldData, newData) {
       let obj = JSON.parse(JSON.stringify({
         [k]: oldData[k]
       }))
-      try {
       Object.assign(oldData, obj)
-      } catch (e) {console.error('setdata problem2');console.error(e.stack);console.error(e.message)}
     } else {
       oldData[k] = newData[k]
     }
