@@ -131,6 +131,7 @@ class Page {
 
   initAppShell () {
     if (this.isRootPage) {
+      this.currentViewportHeight = viewport.getHeight()
       this.globalComponent = new GlobalComponent()
       this.messageHandlers.push((type, data) => {
         if (type === MESSAGE_SET_MIP_SHELL_CONFIG) {
@@ -169,10 +170,14 @@ class Page {
           console.log('register global component')
           // this.globalComponent.register(data)
         } else if (type === MESSAGE_PAGE_RESIZE) {
-          Array.prototype.slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
-            $el.style.height = `${data.height}px`
-          })
+          this.resizeAllPages()
         }
+      })
+
+      // update every iframe's height when viewport resizing
+      viewport.on('resize', () => {
+        this.currentViewportHeight = viewport.getHeight()
+        this.resizeAllPages()
       })
 
       // Set iframe height when resizing
@@ -541,6 +546,10 @@ class Page {
               toggle: true
             }
           })
+          if (this.direction === 'back') {
+            document.documentElement.classList.add('mip-no-scroll')
+            Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
+          }
           options.onComplete && options.onComplete()
         }
       }
@@ -665,6 +674,12 @@ class Page {
     ]
     let notInWhitelistSelector = whitelist.map(selector => `:not(${selector})`).join('')
     return document.body.querySelectorAll(`body > ${notInWhitelistSelector}`)
+  }
+
+  resizeAllPages () {
+    Array.prototype.slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
+      $el.style.height = `${this.currentViewportHeight}px`
+    })
   }
 
   /**

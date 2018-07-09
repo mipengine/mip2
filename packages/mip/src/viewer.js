@@ -93,10 +93,7 @@ let viewer = {
 
     event.delegate(document, 'input', 'blur', event => {
       this.page.notifyRootPage({
-        type: MESSAGE_PAGE_RESIZE,
-        data: {
-          height: viewport.getHeight()
-        }
+        type: MESSAGE_PAGE_RESIZE
       })
     }, true)
 
