@@ -12,7 +12,9 @@ class Observer {
     }
 
     for (let key in data) {
-      this._define(data, key, data[key], depMap)
+      if (data.hasOwnProperty(key)) {
+        this._define(data, key, data[key], depMap)
+      }
     }
   }
 
@@ -62,9 +64,6 @@ class Observer {
         return value
       },
       set (newVal) {
-        if (typeof Object === 'undefined') {
-          return
-        }
         value = getter ? getter.call(data) : value
         if (newVal === value) {
           return
