@@ -105,6 +105,9 @@ module.exports = {
 
 ## changelog
 
+- 1.1.6
+    1. mip2 dev 模式将 --autoopen 的简写改为 -o，新增 --asset 参数指定 public path，简写为 -a 与 build 保持一致。-a 默认为 '/'
+
 - 1.1.5
     1. 支持 process.env.NODE_ENV， mip2 dev 的值为 'development'，mip2 build 的值为 'production'
 
