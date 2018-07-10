@@ -340,12 +340,11 @@ class Page {
 
     // ========================= Some HACKs =========================
 
-    // prevent bouncy scroll in iOS 7 & 8 & (Shoubai iOS 9,10)
+    // prevent bouncy scroll in iOS 7 & 8
     if (platform.isIos()) {
       let iosVersion = platform.getOsVersion()
       iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
-      if (!(iosVersion === '8' || iosVersion === '7' ||
-        ((platform.isBaiduApp || platform.isBaidu) && (iosVersion === '9' || iosVersion === '10')))) {
+      if (!(iosVersion === '8' || iosVersion === '7')) {
         document.documentElement.classList.add('mip-i-ios-scroll')
       }
     }
@@ -377,6 +376,9 @@ class Page {
       if (isBuggy) {
         disableBouncyScrolling()
       }
+      Array.prototype.slice.call(document.querySelectorAll('input')).forEach($el => {
+        $el.blur && $el.blur()
+      })
     })
 
     if (this.isRootPage) {

@@ -1,7 +1,7 @@
 import {START, normalizeLocation} from '../util/route'
 import {pushState, replaceState} from '../util/push-state'
 import {getLocation} from '../util/path'
-import platform from '../../util/platform';
+import platform from '../../util/platform'
 
 export default class HTML5History {
   constructor (router) {
