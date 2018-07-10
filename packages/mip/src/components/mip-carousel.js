@@ -8,7 +8,7 @@
 // import resources from '../resources'
 import CustomElement from '../custom-element'
 import Resources from '../resources'
-
+import viewer from '../viewer'
 let prerenderElement = Resources.prerenderElement
 
 let carouselParas = {
@@ -407,6 +407,11 @@ class MipCarousel extends CustomElement {
       }
       btnLock.stop = 1
       indicatorChange(imgIndex)
+      viewer.eventAction.execute('switchCompleted', ele, {
+        currIndex: imgIndex,
+        currCarouselItem: childNodes[imgIndex],
+        carouselChildrenLength: childNum
+      })
     }
 
     // 处理圆点型指示器
