@@ -42,13 +42,41 @@
 3. `<mip-shell>` 内部只允许存在一个 `<script>` 节点，并且 `type` 必须设置为 `application/json`。
 4. `<script>`内部是一个合法的 JSON 对象。
 
-### 配置项
+下面列出一些常见的错误配置示例，供开发者参考：
 
-`<mip-shell>` 支持包含一个 **基于路由** 的，**全局性** 的配置对象。其中的 `routes` 存放了各个页面及其对应的配置对象，对应关系通过 `pattern` 描述。在各个页面切换时，会通过正则匹配页面 URL 和 `pattern`，应用对应的 App Shell 配置。
+```html
+<!-- 常见错误1：直接在mip-shell 标签中写 JSON -->
+<body>
+    <mip-shell>{key: value}</mip-shell>
+</body>
+
+<!-- 常见错误2：没有给 script 标签设置 type -->
+<body>
+    <mip-shell>
+        <script>{key: value}</script>
+    </mip-shell>
+</body>
+
+<!-- 常见错误3：mip-shell 嵌套在其他标签内部 -->
+<body>
+    <div class=”wrapper”>
+        <mip-shell>
+            <script type=”application/json”>{key: value}</script>
+        </mip-shell>
+    </div>
+</body>
+
+```
+
+### 详细配置项
+
+`<mip-shell>` 支持包含一个 **基于路由** 的，**全局性** 的配置对象。其中的 `routes` 存放了各个页面及其对应的配置对象，对应关系通过 `pattern` 描述。在各个页面切换时，会通过正则匹配页面 URL 和 `pattern`，应用对应的 Shell 配置。
 
 > __为什么要在每个页面配置站点全局数据？__
 >
 > 主要是为了让页面切换的效果更佳顺畅。如果每个页面只配置当前页面的信息，那么在加载下一个页面时，因为下一个页面的 Shell 配置信息 （如头部是否显示，头部标题文字，LOGO 图片等等）都需要在 loading 结束之后才能获取。那么在 loading 结束切换到真实目标页面时可能会出现闪动，不太友好。
+
+Shell 最基本的配置中必须包含 routes 数组。其中的每个元素以正则和配置两部分组成。URL 的正则匹配以从上到下的顺序，因此应当把匹配范围越大的正则写在越后面。
 
 ```json
 {
@@ -273,7 +301,7 @@ MIP 页面总共有 4 处可以配置头部标题，它们的生效顺序依次�
 
 * 除了头部，还有底部栏或者侧边栏需要额外渲染和绑定事件。例如下图：
 
-    ![Bottom Shell](http://boscdn.bpc.baidu.com/assets/mip2/page/bottom-shell.png)
+    ![Bottom Shell](http://boscdn.bpc.baidu.com/assets/mip2/page/bottom-shell-2.png)
 
 * 开发者需要控制站点的 Shell 配置，修改/禁用/忽略某些选项。
 

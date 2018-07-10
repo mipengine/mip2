@@ -108,7 +108,7 @@ export {
 <script>
 ```
 
-- Extensions `mip-a`
+- Extensions `mip-b`
 ```html
 <tempalte>
   <div >

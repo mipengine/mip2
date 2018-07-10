@@ -12,7 +12,10 @@ class Watcher {
     this._dir = dir
     this._exp = exp
     let specPrefix
-    if ((specPrefix = exp.slice(0, 6)) === 'Class:' || specPrefix === 'Style:') {
+    if ((specPrefix = exp.slice(0, 6)) === 'Class:' ||
+      specPrefix === 'Style:' ||
+      specPrefix === 'Watch:'
+    ) {
       this._specWatcher = specPrefix.slice(0, 5)
       this._exp = exp = exp.slice(6)
     }
@@ -53,7 +56,9 @@ class Watcher {
     Deps.target = this
     if (this._getter) {
       value = this._getter.call(this._data, this._data)
-      this._specWatcher && (value = util['parse' + this._specWatcher](value))
+      if (this._specWatcher && this._specWatcher !== 'Watch') {
+        value = util['parse' + this._specWatcher](value)
+      }
     }
     Deps.target = null
     return value

@@ -35,7 +35,8 @@ import {
   MESSAGE_SYNC_PAGE_CONFIG,
   MESSAGE_REGISTER_GLOBAL_COMPONENT,
   MESSAGE_CROSS_ORIGIN,
-  MESSAGE_BROADCAST_EVENT
+  MESSAGE_BROADCAST_EVENT,
+  MESSAGE_PAGE_RESIZE
 } from './const/index'
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
@@ -113,8 +114,10 @@ class Page {
         } else if (type === MESSAGE_ROUTER_REPLACE) {
           router.replace(data.route)
         } else if (type === MESSAGE_ROUTER_BACK) {
+          this.allowTransition = true
           router.back()
         } else if (type === MESSAGE_ROUTER_FORWARD) {
+          this.allowTransition = true
           router.forward()
         }
       })
@@ -130,6 +133,8 @@ class Page {
 
   initAppShell () {
     if (this.isRootPage) {
+      this.currentViewportHeight = viewport.getHeight()
+      this.currentViewportWidth = viewport.getWidth()
       this.globalComponent = new GlobalComponent()
       this.messageHandlers.push((type, data) => {
         if (type === MESSAGE_SET_MIP_SHELL_CONFIG) {
@@ -167,6 +172,19 @@ class Page {
           // Register global component (Not finished)
           console.log('register global component')
           // this.globalComponent.register(data)
+        } else if (type === MESSAGE_PAGE_RESIZE) {
+          this.resizeAllPages()
+        }
+      })
+
+      // update every iframe's height when viewport resizing
+      viewport.on('resize', () => {
+        // only when screen gets spinned
+        let currentViewportWidth = viewport.getWidth()
+        if (this.currentViewportWidth !== currentViewportWidth) {
+          this.currentViewportHeight = viewport.getHeight()
+          this.currentViewportWidth = currentViewportWidth
+          this.resizeAllPages()
         }
       })
 
@@ -324,11 +342,12 @@ class Page {
 
     // ========================= Some HACKs =========================
 
-    // prevent bouncy scroll in iOS 7 & 8
+    // prevent bouncy scroll in iOS 7 & 8 & (Shoubai iOS 9,10)
     if (platform.isIos()) {
       let iosVersion = platform.getOsVersion()
       iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
-      if (iosVersion !== '8' && iosVersion !== '7') {
+      if (!(iosVersion === '8' || iosVersion === '7' ||
+        ((platform.isBaiduApp || platform.isBaidu) && (iosVersion === '9' || iosVersion === '10')))) {
         document.documentElement.classList.add('mip-i-ios-scroll')
       }
     }
@@ -535,6 +554,10 @@ class Page {
               toggle: true
             }
           })
+          if (this.direction === 'back') {
+            document.documentElement.classList.add('mip-no-scroll')
+            Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
+          }
           options.onComplete && options.onComplete()
         }
       }
@@ -659,6 +682,13 @@ class Page {
     ]
     let notInWhitelistSelector = whitelist.map(selector => `:not(${selector})`).join('')
     return document.body.querySelectorAll(`body > ${notInWhitelistSelector}`)
+  }
+
+  resizeAllPages () {
+    Array.prototype.slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
+      $el.style.height = `${this.currentViewportHeight}px`
+    })
+    window.MIP.viewer.sendMessage('resizeContainer', {height: this.currentViewportHeight})
   }
 
   /**
