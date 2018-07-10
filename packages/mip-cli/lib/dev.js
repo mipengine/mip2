@@ -12,7 +12,7 @@ module.exports = function ({
   dir = process.cwd(),
   port = 8111,
   livereload = false,
-  asset = '/',
+  asset,
   autoopen,
   ignore
 }) {

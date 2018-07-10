@@ -16,23 +16,32 @@ $ mip2 dev
 <script src="http://127.0.0.1:8111/组件名/组件名.js"></script>
 ```
 
-您可以在自己的项目里通过引入 script 标签的方式去查看组件的实际使用效果。
-
 同时，mip-cli 的 `dev` 命令也提供了一个静态服务器，允许开发者在 `test/` 目录和 `components/组件名/test/` 目录下写 `.html` 文件去进行组件调试。
 
 比如文件路径为 `test/mip-example.html` 的页面，可以通过 `http://127.0.0.1:8111/example/mip-example.html` 进行访问，而 `components/mip-example/example/test-property.html` 则通过 `http://127.0.0.1:8111/components/mip-example/example/test-property.html` 进行访问。
 
 在这种调试模式下，mip-cli 会自动注入 `livereload` 的脚本，让页面在开发时能够自动刷新网页。
 
+**需要注意的是**
+
+mip-cli 默认调试模式均在本地进行，假设 mip-cli 在 dev 模式下编译产生的 js 文件需要供远端服务器调用进行联调，那么在启动 dev 的时候需要指定 --asset 参数或者使用简写 -a，比如：
+
+```shell
+mip2 dev --asset http://192.168.0.10
+```
+
+这样通过 `<script src="http://192.168.0.10:8111/mip-example/mip-example.js"></script>` 引入 js 才不会报错。
+
 ## 参数说明
 
 `mip2 dev` 可以传入以下参数去修改默认配置：
 
 1. `-p --port`: 静态服务器的监听的端口号，默认为 8111；
-2. `-d --dir`: 项目根目录，默认为 `process.cwd()`；
-3. `-l --livereload`: 是否启动自动刷新，默认为 false；
-4. `-a --auto`: 静态服务器启动后默认打开的网页，默认为空，即不打开任何页面；
-5. `-c --config`: 读取 mip-cli 配置文件，默认为 `process.cwd()/mip.config.js`;
+2. `-a --asset`: 静态资源 publicPath，默认为 http://127.0.0.1:${port}；
+3. `-d --dir`: 项目根目录，默认为 `process.cwd()`；
+4. `-l --livereload`: 是否启动自动刷新，默认为 false；
+5. `-o --autoopen`: 静态服务器启动后默认打开的网页，默认为空，即不打开任何页面；
+6. `-c --config`: 读取 mip-cli 配置文件，默认为 `process.cwd()/mip.config.js`;
 
 mip-cli 允许通过配置 `mip.config.js` 去修改默认配置，比如：
 

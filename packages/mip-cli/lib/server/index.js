@@ -17,9 +17,15 @@ module.exports = class Server {
     port = 8111,
     dir,
     livereload,
-    asset = '/',
+    asset,
     ignore
   }) {
+    if (!asset) {
+      asset = 'http://127.0.0.1:' + port
+    } else {
+      asset = asset.replace(/\/$/, '').replace(/:\d+/, '') + port
+    }
+
     this.port = port
     this.dir = dir
     this.livereload = livereload
