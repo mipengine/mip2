@@ -91,6 +91,12 @@ let viewer = {
       })
     }
 
+    event.delegate(document, 'input', 'focus', event => {
+      this.page.notifyRootPage({
+        type: MESSAGE_PAGE_RESIZE
+      })
+    }, true)
+
     event.delegate(document, 'input', 'blur', event => {
       this.page.notifyRootPage({
         type: MESSAGE_PAGE_RESIZE

@@ -133,8 +133,6 @@ class Page {
 
   initAppShell () {
     if (this.isRootPage) {
-      this.currentViewportHeight = viewport.getHeight()
-      this.currentViewportWidth = viewport.getWidth()
       this.globalComponent = new GlobalComponent()
       this.messageHandlers.push((type, data) => {
         if (type === MESSAGE_SET_MIP_SHELL_CONFIG) {
@@ -380,6 +378,11 @@ class Page {
         disableBouncyScrolling()
       }
     })
+
+    if (this.isRootPage) {
+      this.currentViewportHeight = viewport.getHeight()
+      this.currentViewportWidth = viewport.getWidth()
+    }
 
     // scroll to current hash if exists
     this.scrollToHash(window.location.hash)
