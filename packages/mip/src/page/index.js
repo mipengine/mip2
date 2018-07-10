@@ -114,8 +114,10 @@ class Page {
         } else if (type === MESSAGE_ROUTER_REPLACE) {
           router.replace(data.route)
         } else if (type === MESSAGE_ROUTER_BACK) {
+          this.allowTransition = true
           router.back()
         } else if (type === MESSAGE_ROUTER_FORWARD) {
+          this.allowTransition = true
           router.forward()
         }
       })
