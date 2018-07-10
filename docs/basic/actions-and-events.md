@@ -42,7 +42,7 @@ this.$element.customElement.addEventAction('actionName', function (event, str) {
 - 简写 (推荐使用)
 
 ```js
-this.$on('eventName', function (event, str))
+this.$on('actionName', function (event, str))
 ```
 
 ### 组件内触发事件（event）
