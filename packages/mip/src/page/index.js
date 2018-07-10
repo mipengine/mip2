@@ -339,7 +339,7 @@ class Page {
       let iosVersion = platform.getOsVersion()
       iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
       if (!(iosVersion === '8' || iosVersion === '7' ||
-        (platform.isBaidu && (iosVersion === '9' || iosVersion === '10')))) {
+        ((platform.isBaiduApp || platform.isBaidu) && (iosVersion === '9' || iosVersion === '10')))) {
         document.documentElement.classList.add('mip-i-ios-scroll')
       }
     }
