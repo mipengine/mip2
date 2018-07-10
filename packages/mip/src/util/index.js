@@ -29,7 +29,8 @@ import jsonParse from './json-parse'
  * @return {string} Cache url.
  */
 export function makeCacheUrl (url, type, containsHost) {
-  if (!fn.isCacheUrl(location.href) ||
+  if (fn.isCacheUrl(url) ||
+    !fn.isCacheUrl(location.href) ||
     (url && url.length < 8) ||
     !(url.indexOf('http') === 0 || url.indexOf('//') === 0)
   ) {
