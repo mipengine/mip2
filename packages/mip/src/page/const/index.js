@@ -37,6 +37,7 @@ export const MESSAGE_UPDATE_MIP_SHELL_CONFIG = 'update-mip-shell-config'
 export const MESSAGE_SYNC_PAGE_CONFIG = 'sync-page-config'
 export const MESSAGE_CROSS_ORIGIN = 'page-cross-origin'
 export const MESSAGE_BROADCAST_EVENT = 'page-broadcast-event'
+export const MESSAGE_PAGE_RESIZE = 'page-resize'
 
 export const NON_EXISTS_PAGE_ID = 'non-exists-page-id'
 export const CUSTOM_EVENT_SCROLL_TO_ANCHOR = 'scroll-to-anchor'

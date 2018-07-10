@@ -194,5 +194,9 @@ Fast - Respond quickly to user interactions with silky smooth animations and no 
         window.addEventListener('myEvent', e => {
             console.log('receive myEvent in index.html', e)
         })
+        // iOS 下滚动页面居然会触发 resize 事件
+        // window.addEventListener('resize', () => {
+        //     window.alert(window.MIP.viewport.getHeight())
+        // })
     </script>
 </body>

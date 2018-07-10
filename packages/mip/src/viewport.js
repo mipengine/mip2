@@ -66,7 +66,6 @@ let viewport = {
   init () {
     this.scroller = platform.needSpecialScroll ? document.body : win
 
-    // fixedElement.init()
     this.scroller.addEventListener('scroll', scrollHandle.bind(this), false)
 
     win.addEventListener('resize', resizeEvent.bind(this))
