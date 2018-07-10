@@ -23,7 +23,7 @@ module.exports = class Server {
     if (!asset) {
       asset = 'http://127.0.0.1:' + port
     } else {
-      asset = asset.replace(/\/$/, '').replace(/:\d+/, '') + port
+      asset = asset.replace(/\/$/, '').replace(/:\d+/, '') + ':' + port
     }
 
     this.port = port
