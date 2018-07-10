@@ -12,7 +12,7 @@ import platform from './util/platform'
 import EventAction from './util/event-action'
 import EventEmitter from './util/event-emitter'
 import fn from './util/fn'
-import {getOriginalUrl} from './util'
+import {makeCacheUrl, getOriginalUrl} from './util'
 import {supportsPassive, isPortrait} from './page/util/feature-detect'
 import viewport from './viewport'
 import Page from './page/index'
@@ -246,33 +246,34 @@ let viewer = {
     }
     let isHashInCurrentPage = hash && to.indexOf(window.location.origin + window.location.pathname) > -1
 
-    // invalid <a>, ignore it
+    // Invalid <a>, ignore it
     if (!to) {
       return
     }
 
     /**
-     * we handle two scenario:
+     * We handle two scenario:
      * 1. <mip-link>
      * 2. anchor in same page, scroll to current hash with an ease transition
      */
     if (isMipLink || isHashInCurrentPage) {
-      // create target route
-      let targetRoute = {path: to}
-
-      // send statics message to BaiduResult page
+      // Send statics message to BaiduResult page
       let pushMessage = {
         url: getOriginalUrl(to),
         state
       }
-
       this.sendMessage('pushState', pushMessage)
 
+      // Create target route
+      let targetRoute = {
+        path: window.MIP.standalone ? to : makeCacheUrl(to)
+      }
+
       if (isMipLink) {
-        // reload page even if it's already existed
+        // Reload page even if it's already existed
         targetRoute.meta = {
           reload: true,
-          allowTransition: isPortrait(), // show transition only in portrait mode
+          allowTransition: isPortrait(), // Show transition only in portrait mode
           header: {
             title: pushMessage.state.title,
             defaultTitle: pushMessage.state.defaultTitle
@@ -280,7 +281,7 @@ let viewer = {
         }
       }
 
-      // handle <a mip-link replace> & hash
+      // Handle <a mip-link replace> & hash
       if (isHashInCurrentPage || replace) {
         if (isRootPage) {
           router.replace(targetRoute)
@@ -299,7 +300,7 @@ let viewer = {
         })
       }
     } else {
-      // jump in top window directly
+      // Jump in top window directly
       top.location.href = to
     }
   },
