@@ -11,7 +11,8 @@ cli.setup({
     ['-p, --port <n>', '启动端口号', parseInt],
     ['-d, --dir <value>', '项目文件夹路径'],
     ['-l, --livereload', '启用调试自动刷新'],
-    ['-a, --autoopen <value>', '自动打开网页'],
+    ['-a, --asset <value>', '静态资源 publicPath'],
+    ['-o, --autoopen <value>', '自动打开网页'],
     ['-i, --ignore', '忽略沙盒注入'],
     ['-c, --config <value>', 'mip-cli 配置文件路径']
   ],

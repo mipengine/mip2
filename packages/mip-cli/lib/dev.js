@@ -12,10 +12,11 @@ module.exports = function ({
   dir = process.cwd(),
   port = 8111,
   livereload = false,
+  asset,
   autoopen,
   ignore
 }) {
-  const server = new Server({port, dir, livereload, ignore})
+  const server = new Server({port, dir, livereload, ignore, asset})
 
   try {
     server.run()
