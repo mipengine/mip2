@@ -134,6 +134,7 @@ class Page {
   initAppShell () {
     if (this.isRootPage) {
       this.currentViewportHeight = viewport.getHeight()
+      this.currentViewportWidth = viewport.getWidth()
       this.globalComponent = new GlobalComponent()
       this.messageHandlers.push((type, data) => {
         if (type === MESSAGE_SET_MIP_SHELL_CONFIG) {
@@ -178,8 +179,13 @@ class Page {
 
       // update every iframe's height when viewport resizing
       viewport.on('resize', () => {
-        this.currentViewportHeight = viewport.getHeight()
-        this.resizeAllPages()
+        // only when screen gets spinned
+        let currentViewportWidth = viewport.getWidth()
+        if (this.currentViewportWidth !== currentViewportWidth) {
+          this.currentViewportHeight = viewport.getHeight()
+          this.currentViewportWidth = currentViewportWidth
+          this.resizeAllPages()
+        }
       })
 
       // Set iframe height when resizing
@@ -682,6 +688,7 @@ class Page {
     Array.prototype.slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
       $el.style.height = `${this.currentViewportHeight}px`
     })
+    window.MIP.viewer.sendMessage('resizeContainer', {height: this.currentViewportHeight})
   }
 
   /**
