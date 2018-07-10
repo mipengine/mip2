@@ -85,7 +85,7 @@ class Observer {
   }
 
   start (data) {
-    this._depMap = {}
+    this._depMap = this._depMap || {}
     for (let key in data) {
       this._depMap[key] = JSON.parse(JSON.stringify(data[key]))
     }

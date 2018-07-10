@@ -43,29 +43,39 @@ class Bind {
 
   // Bind event for post message when broadcast global data
   _bindEvent () {
-    let me = this
-
     window.addEventListener('message', function (event) {
-      let loc = me._win.location
+      let loc = window.location
       let domain = loc.protocol + '//' + loc.host
 
       if (event.origin !== domain ||
-        event.data.type !== 'update' ||
         !event.source || !event.data
       ) {
         return
       }
 
-      MIP.$set(event.data.m, 0, true)
+      if (event.data.type === 'bind') {
+        MIP.$set(event.data.m, 0, true)
+      }
 
-      for (let i = 0, frames = document.getElementsByTagName('iframe'); i < frames.length; i++) {
-        if (frames[i].classList.contains('mip-page__iframe') &&
-            frames[i].getAttribute('data-page-id')
-        ) {
-          let subwin = frames[i].contentWindow
-          MIP.$set(event.data.m, 0, true, subwin)
+      if (event.data.type === 'update') {
+        MIP.$set(event.data.m, 0, true)
+
+        for (let i = 0, frames = document.getElementsByTagName('iframe'); i < frames.length; i++) {
+          if (frames[i].classList.contains('mip-page__iframe') &&
+              frames[i].getAttribute('data-page-id')
+          ) {
+            let subwin = frames[i].contentWindow
+            // MIP.$set(event.data.m, 0, true, subwin)
+            subwin.postMessage({
+              type: 'bind',
+              m: event.data.m,
+              cancel: true,
+              event: 'stateBind'
+            }, subwin.location.protocol + '//' + subwin.location.host)
+          }
         }
       }
+      
     })
   }
 
@@ -174,7 +184,6 @@ class Bind {
       win.g = win.g || {}
       assign(win.g, data)
     } else {
-      win.parent.g = win.parent.g || {}
       !cancel && this._postMessage(data)
     }
   }
