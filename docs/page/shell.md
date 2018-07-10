@@ -301,7 +301,7 @@ MIP 页面总共有 4 处可以配置头部标题，它们的生效顺序依次�
 
 * 除了头部，还有底部栏或者侧边栏需要额外渲染和绑定事件。例如下图：
 
-    ![Bottom Shell](http://boscdn.bpc.baidu.com/assets/mip2/page/bottom-shell.png)
+    ![Bottom Shell](http://boscdn.bpc.baidu.com/assets/mip2/page/bottom-shell-2.png)
 
 * 开发者需要控制站点的 Shell 配置，修改/禁用/忽略某些选项。
 
