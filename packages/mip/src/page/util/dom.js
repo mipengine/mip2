@@ -499,7 +499,7 @@ export function frameMoveOut (pageId,
       iframe.classList.remove('slide-leave-to', 'slide-leave-active')
       if (transitionContainsHeader) {
         loading.classList.remove('slide-leave-to', 'slide-leave-active')
-        css(loading, 'display', 'block')
+        css(loading, 'display', 'none')
       } else {
         fadeHeader.classList.remove('fade-enter-to', 'fade-enter')
       }
