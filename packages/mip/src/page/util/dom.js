@@ -346,78 +346,84 @@ export function frameMoveIn (pageId,
     transitionContainsHeader,
     onComplete
   } = {}) {
-  let iframe = getIFrame(pageId)
+  let iframe
+  if (!newPage) {
+    iframe = getIFrame(pageId)
+    if (!iframe) {
+      return
+    }
+  }
 
-  if (!iframe) {
+  let done = () => {
+    hideAllIFrames()
+    onComplete && onComplete()
+
+    if (newPage) {
+      iframe = getIFrame(pageId)
+      if (!iframe) {
+        return
+      }
+    }
+
+    css(iframe, {
+      display: 'block',
+      opacity: 1,
+      'z-index': activeZIndex++
+    })
+  }
+
+  if (!transition) {
+    done()
     return
   }
 
-  if (transition) {
-    let loading = getLoading(targetMeta, {transitionContainsHeader})
-    loading.classList.add('slide-enter', 'slide-enter-active')
-    css(loading, 'display', 'block')
+  let loading = getLoading(targetMeta, {transitionContainsHeader})
+  loading.classList.add('slide-enter', 'slide-enter-active')
+  css(loading, 'display', 'block')
 
-    let headerLogoTitle
-    let fadeHeader
-    if (!transitionContainsHeader) {
-      headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
-      headerLogoTitle && headerLogoTitle.classList.add('fade-out')
-      fadeHeader = getFadeHeader(targetMeta)
-      fadeHeader.classList.add('fade-enter', 'fade-enter-active')
-      css(fadeHeader, 'display', 'block')
-    }
-
-    // trigger layout
-    /* eslint-disable no-unused-expressions */
-    css(iframe, {
-      display: 'block'
-    })
-    loading.offsetWidth
-    /* eslint-enable no-unused-expressions */
-
-    let done = () => {
-      hideAllIFrames()
-      css(iframe, {
-        display: 'block',
-        opacity: 1,
-        'z-index': activeZIndex++
-      })
-      css(loading, 'display', 'none')
-
-      onComplete && onComplete()
-    }
-    whenTransitionEnds(loading, 'transition', () => {
-      loading.classList.remove('slide-enter-to', 'slide-enter-active')
-      if (!transitionContainsHeader) {
-        fadeHeader.classList.remove('fade-enter-to', 'fade-enter-active')
-      }
-
-      if (newPage) {
-        setTimeout(done, 100)
-      } else {
-        done()
-      }
-    })
-
-    setTimeout(() => {
-      nextFrame(() => {
-        loading.classList.add('slide-enter-to')
-        loading.classList.remove('slide-enter')
-        if (!transitionContainsHeader) {
-          fadeHeader.classList.add('fade-enter-to')
-          fadeHeader.classList.remove('fade-enter')
-        }
-      })
-    }, 0)
-  } else {
-    hideAllIFrames()
-    css(iframe, {
-      'z-index': activeZIndex++,
-      display: 'block',
-      opacity: 1
-    })
-    onComplete && onComplete()
+  let headerLogoTitle
+  let fadeHeader
+  if (!transitionContainsHeader) {
+    headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
+    headerLogoTitle && headerLogoTitle.classList.add('fade-out')
+    fadeHeader = getFadeHeader(targetMeta)
+    fadeHeader.classList.add('fade-enter', 'fade-enter-active')
+    css(fadeHeader, 'display', 'block')
   }
+
+  // trigger layout
+  /* eslint-disable no-unused-expressions */
+  // css(iframe, {
+  //   display: 'block'
+  // })
+  loading.offsetWidth
+  /* eslint-enable no-unused-expressions */
+
+  whenTransitionEnds(loading, 'transition', () => {
+    loading.classList.remove('slide-enter-to', 'slide-enter-active')
+    if (!transitionContainsHeader) {
+      fadeHeader.classList.remove('fade-enter-to', 'fade-enter-active')
+    }
+
+    // if (newPage) {
+    //   setTimeout(() => {
+    //     done()
+    //     css(loading, 'display', 'none')
+    //   }, 100)
+    // } else {
+    done()
+    css(loading, 'display', 'none')
+    // }
+  })
+
+  nextFrame(() => {
+    loading.classList.add('slide-enter-to')
+    loading.classList.remove('slide-enter')
+    if (!transitionContainsHeader) {
+      fadeHeader.classList.add('fade-enter-to')
+      fadeHeader.classList.remove('fade-enter')
+    }
+  })
 }
 
 /**
@@ -499,7 +505,7 @@ export function frameMoveOut (pageId,
       iframe.classList.remove('slide-leave-to', 'slide-leave-active')
       if (transitionContainsHeader) {
         loading.classList.remove('slide-leave-to', 'slide-leave-active')
-        css(loading, 'display', 'block')
+        css(loading, 'display', 'none')
       } else {
         fadeHeader.classList.remove('fade-enter-to', 'fade-enter')
       }

@@ -744,6 +744,7 @@ class Page {
      * reload iframe when <a mip-link> clicked even if it's already existed.
      * NOTE: forwarding or going back with browser history won't do
      */
+    let needEmitPageEvent = true
     if (!targetPage || (to.meta && to.meta.reload)) {
       // when reloading root page...
       if (this.pageId === targetPageId) {
@@ -768,8 +769,17 @@ class Page {
       this.addChild(targetPageMeta)
 
       // Create a new iframe
-      targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
-      this.applyTransition(targetPageId, to.meta, {newPage: true})
+      // targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
+      needEmitPageEvent = false
+      this.applyTransition(targetPageId, to.meta, {
+        newPage: true,
+        onComplete: () => {
+          targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
+          this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
+          this.currentPageId = targetPageId
+          this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+        }
+      })
     } else {
       this.applyTransition(targetPageId, to.meta, {
         onComplete: () => {
@@ -783,9 +793,12 @@ class Page {
       })
       window.MIP.$recompile()
     }
-    this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
-    this.currentPageId = targetPageId
-    this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+
+    if (needEmitPageEvent) {
+      this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
+      this.currentPageId = targetPageId
+      this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+    }
   }
 }
 
