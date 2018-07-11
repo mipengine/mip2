@@ -35,7 +35,6 @@ export function pushState (url, replace) {
   } catch (e) {
     // console.log(e, 'from push-state.js')
     if (window.MIP.standalone) {
-      alert('window.location.assign')
       if (replace) {
         window.location.replace(url)
       } else {
