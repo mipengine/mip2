@@ -434,8 +434,11 @@ let viewer = {
   _lockBodyScroll () {
     viewport.on('scroll', () => {
       let scrollTop = viewport.getScrollTop()
+      let totalScroll = viewport.getScrollHeight()
       if (scrollTop === 0) {
         viewport.setScrollTop(1)
+      } else if (scrollTop === totalScroll) {
+        viewport.setScrollTop(scrollTop - 1)
       }
     }, eventListenerOptions)
   },

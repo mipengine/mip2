@@ -556,7 +556,7 @@ class Page {
               toggle: true
             }
           })
-          if (this.direction === 'back') {
+          if (this.direction === 'back' && targetPageId !== this.pageId) {
             document.documentElement.classList.add('mip-no-scroll')
             Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
           }
