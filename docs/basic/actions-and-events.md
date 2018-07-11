@@ -36,13 +36,13 @@ eventName:targetId[.actionName[(args)]]
  * @param  {Object} event 触发时透传的 event 对象
  * @param  {string} str   在 HTML `on` 属性中透传的参数，如：on="tap:id.click(test)"
  */
-this.$element.customElement.addEventAction('eventName', function (event, str) {})
+this.$element.customElement.addEventAction('actionName', function (event, str) {})
 ```
 
 - 简写 (推荐使用)
 
 ```js
-this.$on('eventName', function (event, str))
+this.$on('actionName', function (event, str))
 ```
 
 ### 组件内触发事件（event）
