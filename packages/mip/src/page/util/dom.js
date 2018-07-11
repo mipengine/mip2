@@ -134,7 +134,7 @@ function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
   // Transition only need header (frameMoveOut) but doesn't contains header (extended from child mip-shell-xxx)
   // Means doesn't need loading
   if (!transitionContainsHeader && onlyHeader) {
-    loading.classList.remove('show')
+    css(loading, 'display', 'none')
     return loading
   }
 
@@ -354,7 +354,8 @@ export function frameMoveIn (pageId,
 
   if (transition) {
     let loading = getLoading(targetMeta, {transitionContainsHeader})
-    loading.classList.add('slide-enter', 'slide-enter-active', 'show')
+    loading.classList.add('slide-enter', 'slide-enter-active')
+    css(loading, 'display', 'block')
 
     let headerLogoTitle
     let fadeHeader
@@ -381,7 +382,7 @@ export function frameMoveIn (pageId,
         opacity: 1,
         'z-index': activeZIndex++
       })
-      loading.classList.remove('show')
+      css(loading, 'display', 'none')
 
       onComplete && onComplete()
     }
@@ -466,7 +467,7 @@ export function frameMoveOut (pageId,
     let fadeHeader
 
     if (transitionContainsHeader) {
-      loading.classList.add('show')
+      css(loading, 'display', 'block')
     } else {
       headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
       headerLogoTitle && headerLogoTitle.classList.add('fade-out')
@@ -497,7 +498,8 @@ export function frameMoveOut (pageId,
       })
       iframe.classList.remove('slide-leave-to', 'slide-leave-active')
       if (transitionContainsHeader) {
-        loading.classList.remove('slide-leave-to', 'slide-leave-active', 'show')
+        loading.classList.remove('slide-leave-to', 'slide-leave-active')
+        css(loading, 'display', 'block')
       } else {
         fadeHeader.classList.remove('fade-enter-to', 'fade-enter')
       }
