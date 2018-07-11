@@ -376,9 +376,6 @@ class Page {
       if (isBuggy) {
         disableBouncyScrolling()
       }
-      Array.prototype.slice.call(document.querySelectorAll('input')).forEach($el => {
-        $el.blur && $el.blur()
-      })
     })
 
     if (this.isRootPage) {
