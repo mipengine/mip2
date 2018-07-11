@@ -20,7 +20,7 @@ function customElementHeader (options) {
     }
 
     let mipComponentsWebpackHelperUrl = options.mode === 'development'
-      ? '/mip-components-webpack-helpers'
+      ? options.asset.replace(/\/$/, '') + '/mip-components-webpack-helpers'
       // 线上 helpers 地址
       : 'https://c.mipcdn.com/static/v2/mip-components-webpack-helpers'
 

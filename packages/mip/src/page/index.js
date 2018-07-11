@@ -133,8 +133,6 @@ class Page {
 
   initAppShell () {
     if (this.isRootPage) {
-      this.currentViewportHeight = viewport.getHeight()
-      this.currentViewportWidth = viewport.getWidth()
       this.globalComponent = new GlobalComponent()
       this.messageHandlers.push((type, data) => {
         if (type === MESSAGE_SET_MIP_SHELL_CONFIG) {
@@ -342,12 +340,11 @@ class Page {
 
     // ========================= Some HACKs =========================
 
-    // prevent bouncy scroll in iOS 7 & 8 & (Shoubai iOS 9,10)
+    // prevent bouncy scroll in iOS 7 & 8
     if (platform.isIos()) {
       let iosVersion = platform.getOsVersion()
       iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
-      if (!(iosVersion === '8' || iosVersion === '7' ||
-        ((platform.isBaiduApp || platform.isBaidu) && (iosVersion === '9' || iosVersion === '10')))) {
+      if (!(iosVersion === '8' || iosVersion === '7')) {
         document.documentElement.classList.add('mip-i-ios-scroll')
       }
     }
@@ -380,6 +377,11 @@ class Page {
         disableBouncyScrolling()
       }
     })
+
+    if (this.isRootPage) {
+      this.currentViewportHeight = viewport.getHeight()
+      this.currentViewportWidth = viewport.getWidth()
+    }
 
     // scroll to current hash if exists
     this.scrollToHash(window.location.hash)
