@@ -393,9 +393,6 @@ export function frameMoveIn (pageId,
 
   // trigger layout
   /* eslint-disable no-unused-expressions */
-  // css(iframe, {
-  //   display: 'block'
-  // })
   loading.offsetWidth
   /* eslint-enable no-unused-expressions */
 
@@ -405,15 +402,8 @@ export function frameMoveIn (pageId,
       fadeHeader.classList.remove('fade-enter-to', 'fade-enter-active')
     }
 
-    // if (newPage) {
-    //   setTimeout(() => {
-    //     done()
-    //     css(loading, 'display', 'none')
-    //   }, 100)
-    // } else {
     done()
-    css(loading, 'display', 'none')
-    // }
+    // css(loading, 'display', 'none')
   })
 
   nextFrame(() => {
