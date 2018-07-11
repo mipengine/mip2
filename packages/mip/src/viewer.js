@@ -256,7 +256,7 @@ let viewer = {
         url: getOriginalUrl(to),
         state
       }
-      this.sendMessage('pushState', pushMessage)
+      this.sendMessage(replace ? 'replaceState' : 'pushState', pushMessage)
 
       // Create target route
       let targetRoute = {
