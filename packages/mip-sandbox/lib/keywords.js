@@ -85,7 +85,9 @@ var ORIGINAL = [
   'undefined',
   'unescape',
   // mip1 polyfill
-  'fetchJsonp'
+  'fetchJsonp',
+  // mip-data ready status
+  'mipDataPromises'
 ]
 
 var RESERVED = [

@@ -105,6 +105,9 @@ module.exports = {
 
 ## changelog
 
+- 1.1.8
+    1. 升级 mip-sandbox 依赖，添加 `mipDataPromises` 入白名单
+
 - 1.1.6
     1. mip2 dev 模式将 --autoopen 的简写改为 -o，新增 --asset 参数指定 public path，简写为 -a 与 build 保持一致。-a 默认为 '/'
 
