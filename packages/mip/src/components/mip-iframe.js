@@ -10,7 +10,9 @@ import viewport from '../viewport'
 let attrList = ['allowfullscreen', 'allowtransparency', 'sandbox']
 
 class MipIframe extends CustomElement {
+
   build () {
+    this.setIframeHeight = this.setIframeHeight.bind(this)
     let element = this.element
     let src = element.getAttribute('src')
     let srcdoc = element.getAttribute('srcdoc')
@@ -30,7 +32,7 @@ class MipIframe extends CustomElement {
     iframe.scrolling = 'no'
     util.css(iframe, {
       width,
-      height: height === '100%' ? viewport.getHeight() : height
+      height
     })
 
     this.applyFillContent(iframe)
@@ -38,6 +40,30 @@ class MipIframe extends CustomElement {
 
     this.expendAttr(attrList, iframe)
     element.appendChild(iframe)
+
+    this.iframe = iframe
+
+    let timer = setInterval(() => {
+      let viewportHeight = viewport.getHeight()
+      if (viewportHeight !== 0) {
+        this.setIframeHeight(viewportHeight)
+        clearInterval(timer)
+      }
+    }, 500)
+  }
+
+  firstInviewCallback () {
+    window.addEventListener('resize-mip-iframe', this.setIframeHeight)
+  }
+
+  disconnectedCallback () {
+    window.removeEventListener('resize-mip-iframe', this.setIframeHeight)
+  }
+
+  setIframeHeight (height) {
+    util.css(this.iframe, {
+      height
+    })
   }
 }
 

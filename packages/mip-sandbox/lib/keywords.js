@@ -47,6 +47,8 @@ var ORIGINAL = [
   'Uint32Array',
   'Uint8Array',
   'Uint8ClampedArray',
+  // 1.0.17 新增 WebSocket
+  'WebSocket',
   'WritableStream',
   'clearInterval',
   'clearTimeout',
