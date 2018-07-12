@@ -105,6 +105,9 @@ module.exports = {
 
 ## changelog
 
+- 1.1.9
+    1. 升级 mip-sandbox 依赖，添加 `WebSocket` 入白名单
+
 - 1.1.8
     1. 升级 mip-sandbox 依赖，添加 `mipDataPromises` 入白名单
 

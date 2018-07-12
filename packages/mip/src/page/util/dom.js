@@ -403,8 +403,15 @@ export function frameMoveIn (pageId,
       fadeHeader.classList.remove('fade-enter-to', 'fade-enter-active')
     }
 
-    done()
-    css(loading, 'display', 'none')
+    if (newPage) {
+      setTimeout(() => {
+        done()
+        css(loading, 'display', 'none')
+      }, 100)
+    } else {
+      done()
+      css(loading, 'display', 'none')
+    }
   })
 
   nextFrame(() => {
