@@ -5,6 +5,7 @@
 
 import util from '../util/index'
 import CustomElement from '../custom-element'
+import viewport from '../viewport'
 
 let attrList = ['allowfullscreen', 'allowtransparency', 'sandbox']
 
@@ -29,7 +30,7 @@ class MipIframe extends CustomElement {
     iframe.scrolling = 'no'
     util.css(iframe, {
       width,
-      height
+      height: height === '100%' ? viewport.getHeight() : height
     })
 
     this.applyFillContent(iframe)

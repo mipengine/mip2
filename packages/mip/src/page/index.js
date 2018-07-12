@@ -700,6 +700,7 @@ class Page {
    * @param {Route} to route
    */
   render (from, to) {
+    this.resizeAllPages()
     /**
      * if `to` route is the same with `from` route in path & query,
      * scroll in current page
