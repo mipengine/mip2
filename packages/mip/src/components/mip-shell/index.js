@@ -437,7 +437,8 @@ class MipShell extends CustomElement {
       // 3. Wait for transition ending
       // 4. Hide fade header (Fade header was shown in MIP Page)
       this.renderHeader(this.$el)
-      // css(document.querySelector('.mip-page-loading-wrapper'), 'display', 'none')
+      alert(document.querySelector('.mip-page-loading-wrapper'))
+      css(document.querySelector('.mip-page-loading-wrapper'), 'display', 'none')
     }
 
     this.updateOtherParts()

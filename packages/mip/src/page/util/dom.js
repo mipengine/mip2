@@ -346,25 +346,25 @@ export function frameMoveIn (pageId,
     transitionContainsHeader,
     onComplete
   } = {}) {
-  // let iframe
-  // if (!newPage) {
-  //   iframe = getIFrame(pageId)
-  //   if (!iframe) {
-  //     return
-  //   }
-  // }
-  let iframe = getIFrame(pageId)
+  let iframe
+  if (!newPage) {
+    iframe = getIFrame(pageId)
+    if (!iframe) {
+      return
+    }
+  }
+  // let iframe = getIFrame(pageId)
 
   let done = () => {
     hideAllIFrames()
     onComplete && onComplete()
 
-    // if (newPage) {
-    //   iframe = getIFrame(pageId)
-    //   if (!iframe) {
-    //     return
-    //   }
-    // }
+    if (newPage) {
+      iframe = getIFrame(pageId)
+      if (!iframe) {
+        return
+      }
+    }
 
     css(iframe, {
       display: 'block',
@@ -404,7 +404,7 @@ export function frameMoveIn (pageId,
     }
 
     done()
-    css(loading, 'display', 'none')
+    // css(loading, 'display', 'none')
   })
 
   nextFrame(() => {
