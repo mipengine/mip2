@@ -120,6 +120,32 @@
 
 与 Vue 不同的是，当在一个自定义组件上使用 class 属性或 `m-bind:class` 绑定 class 属性时，这些类将 **不会** 被添加到该组件的根元素上面，只会被添加到自定义标签上。
 
+假如开发者有一个自定义组件 mip-a，如：
+```javascript
+<template>
+  <div class="mip-a-root"></div>
+</template>
+```
+
+然后在使用它时添加一些 class 或通过 m-bind 绑定了 class，如:
+```html
+<mip-data>
+    <script type="application/json">
+        {
+            "isActive": true
+        }
+    </script>
+</mip-data>
+<mip-a class="mip-a-outer" m-bind:class="{active: isActive}"></mip-a>
+```
+
+HTML 的渲染结果将如:
+```html
+<mip-a class="mip-a-outer active">
+    <div class="mip-a-root"></div>
+</mip-a>
+```
+
 ## 绑定内联样式
 
 ### 对象语法

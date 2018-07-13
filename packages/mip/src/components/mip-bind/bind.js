@@ -19,7 +19,6 @@ class Bind {
     // require mip data extension runtime
     this._compile = new Compile()
     this._observer = new Observer()
-    // this._bindEvent()
     // from=0 called by html attributes
     // from=1 refers the method called by mip.js
     MIP.setData = (action, from) => {
@@ -44,43 +43,6 @@ class Bind {
     MIP.$set(window.m)
   }
 
-  // // Bind event for post message when broadcast global data
-  // _bindEvent () {
-  //   window.addEventListener('message', function (event) {
-  //     let loc = window.location
-  //     let domain = loc.protocol + '//' + loc.host
-
-  //     if (event.origin !== domain ||
-  //       !event.source || !event.data
-  //     ) {
-  //       return
-  //     }
-
-  //     if (event.data.type === 'bind') {
-  //       MIP.$set(event.data.m, 0, true)
-  //     }
-
-  //     if (event.data.type === 'update') {
-  //       MIP.$set(event.data.m, 0, true)
-
-  //       for (let i = 0, frames = document.getElementsByTagName('iframe'); i < frames.length; i++) {
-  //         if (frames[i].classList.contains('mip-page__iframe') &&
-  //             frames[i].getAttribute('data-page-id')
-  //         ) {
-  //           let subwin = frames[i].contentWindow
-  //           // MIP.$set(event.data.m, 0, true, subwin)
-  //           subwin.postMessage({
-  //             type: 'bind',
-  //             m: event.data.m,
-  //             cancel: true,
-  //             event: 'stateBind'
-  //           }, subwin.location.protocol + '//' + subwin.location.host)
-  //         }
-  //       }
-  //     }
-  //   })
-  // }
-
   _postMessage (data) {
     if (!objNotEmpty(data)) {
       return
@@ -93,14 +55,6 @@ class Bind {
 
     let win = isSelfParent(window) ? window : window.parent
     win.MIP.$update(data, win)
-    // let loc = window.location
-    // let domain = loc.protocol + '//' + loc.host
-    // let win = isSelfParent(window) ? window : window.parent
-    // win.postMessage({
-    //   type: 'update',
-    //   m: data,
-    //   event: 'stateUpdate'
-    // }, domain)
   }
 
   _update (data, win) {
