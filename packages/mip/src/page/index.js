@@ -146,11 +146,6 @@ class Page {
           if (!this.transitionContainsHeader) {
             createFadeHeader(this.currentPageMeta)
           }
-
-          // Set bouncy header
-          if (!data.update && this.currentPageMeta.header.bouncy) {
-            this.setupBouncyHeader()
-          }
         } else if (type === MESSAGE_UPDATE_MIP_SHELL_CONFIG) {
           if (data.pageMeta) {
             this.appshellCache[data.pageId] = data.pageMeta
@@ -230,14 +225,12 @@ class Page {
     if (this.bouncyHeaderSetup) {
       return
     }
-    this.bouncyHeaderSetup = true
     const THRESHOLD = 10
     let scrollTop
     let lastScrollTop = 0
     let scrollDistance
     let scrollHeight = viewport.getScrollHeight()
     let viewportHeight = viewport.getHeight()
-    let lastScrollDirection
 
     // viewportHeight = 0 before frameMoveIn animation ends
     // Wait a minute
@@ -246,6 +239,7 @@ class Page {
       return
     }
 
+    this.bouncyHeaderSetup = true
     this.debouncer = new Debouncer(() => {
       scrollTop = viewport.getScrollTop()
       scrollDistance = Math.abs(scrollTop - lastScrollTop)
@@ -256,33 +250,27 @@ class Page {
       }
 
       if (lastScrollTop < scrollTop && scrollDistance >= THRESHOLD) {
-        if (lastScrollDirection !== 'up') {
-          lastScrollDirection = 'up'
-          let target = this.isRootPage ? window : window.parent
-          this.emitCustomEvent(target, this.isCrossOrigin, {
-            name: 'mipShellEvents',
+        let target = this.isRootPage ? window : window.parent
+        this.emitCustomEvent(target, this.isCrossOrigin, {
+          name: 'mipShellEvents',
+          data: {
+            type: 'slide',
             data: {
-              type: 'slide',
-              data: {
-                direction: 'up'
-              }
+              direction: 'up'
             }
-          })
-        }
+          }
+        })
       } else if (lastScrollTop > scrollTop && scrollDistance >= THRESHOLD) {
-        if (lastScrollDirection !== 'down') {
-          lastScrollDirection = 'down'
-          let target = this.isRootPage ? window : window.parent
-          this.emitCustomEvent(target, this.isCrossOrigin, {
-            name: 'mipShellEvents',
+        let target = this.isRootPage ? window : window.parent
+        this.emitCustomEvent(target, this.isCrossOrigin, {
+          name: 'mipShellEvents',
+          data: {
+            type: 'slide',
             data: {
-              type: 'slide',
-              data: {
-                direction: 'down'
-              }
+              direction: 'down'
             }
-          })
-        }
+          }
+        })
       }
 
       lastScrollTop = scrollTop
@@ -783,16 +771,16 @@ class Page {
       this.addChild(targetPageMeta)
 
       // Create a new iframe
-      targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
-      // needEmitPageEvent = false
+      // targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
+      needEmitPageEvent = false
       this.applyTransition(targetPageId, to.meta, {
-        newPage: true
-        // onComplete: () => {
-        //   targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
-        //   this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
-        //   this.currentPageId = targetPageId
-        //   this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
-        // }
+        newPage: true,
+        onComplete: () => {
+          targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
+          this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
+          this.currentPageId = targetPageId
+          this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+        }
       })
     } else {
       this.applyTransition(targetPageId, to.meta, {

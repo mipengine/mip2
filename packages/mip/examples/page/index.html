@@ -110,7 +110,6 @@ Fast - Respond quickly to user interactions with silky smooth animations and no 
     <a class="link" href="../builtin/mip-iframe.html" mip-link>Login</a>
     <a class="link" href="./test.html" mip-link>Go to Test</a>
     <a class="link" onclick="window.MIP.viewer.open('./tree.html', {isMipLink:true})">Go to Tree (viewer.open)</a>
-    <a class="link" onclick="window.MIP.viewer.open('http://test.baidu.com:8080/examples/page/tree.html', {isMipLink: false})">Go to Tree(Cross Origin & viewer.open)</a>
     <a class="link" href="http://test.baidu.com:8080/examples/page/tree.html" mip-link>Go to Tree(Cross Origin)</a>
     <a class="link" href="./tree.html" mip-link>Go to Tree</a>
     <a class="link" href="./data.html" mip-link>Go to Data</a>
@@ -193,9 +192,6 @@ Fast - Respond quickly to user interactions with silky smooth animations and no 
     <script src="../../dist/mip.js"></script>
     <script src="./components/mip-page-index.js"></script>
     <script>
-        window.addEventListener('myEvent', e => {
-            console.log('receive myEvent in index.html', e)
-        })
         // iOS 下滚动页面居然会触发 resize 事件
         // window.addEventListener('resize', () => {
         //     window.alert(window.MIP.viewport.getHeight())

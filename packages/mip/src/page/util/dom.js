@@ -99,7 +99,11 @@ export function createLoading (pageMeta) {
   loading.innerHTML = `
     <div class="mip-shell-header">
       <span mip-header-btn class="back-button">
-        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M769.405 977.483a68.544 68.544 0 0 1-98.121 0L254.693 553.679c-27.173-27.568-27.173-72.231 0-99.899L671.185 29.976c13.537-13.734 31.324-20.652 49.109-20.652s35.572 6.917 49.109 20.652c27.173 27.568 27.173 72.331 0 99.899L401.921 503.681l367.482 373.904c27.074 27.568 27.074 72.231 0 99.899z"/></svg>
+        <svg t="1530857979993" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3173"
+          xmlns:xlink="http://www.w3.org/1999/xlink">
+          <path  fill="currentColor" d="M348.949333 511.829333L774.250667 105.728C783.978667 96 789.333333 83.712 789.333333 71.104c0-12.629333-5.354667-24.917333-15.082666-34.645333-9.728-9.728-22.037333-15.082667-34.645334-15.082667-12.586667 0-24.917333 5.333333-34.624 15.082667L249.557333 471.616A62.570667 62.570667 0 0 0 234.666667 512c0 10.410667 1.130667 25.408 14.890666 40.042667l455.424 435.605333c9.706667 9.728 22.016 15.082667 34.624 15.082667s24.917333-5.354667 34.645334-15.082667c9.728-9.728 15.082667-22.037333 15.082666-34.645333 0-12.608-5.354667-24.917333-15.082666-34.645334L348.949333 511.829333z"
+            p-id="3174"></path>
+        </svg>
       </span>
       <div class="mip-shell-header-logo-title">
         <img class="mip-shell-header-logo" src="${logo}">
@@ -195,7 +199,11 @@ export function createFadeHeader (pageMeta) {
   fadeHeader.innerHTML = `
     <div class="mip-shell-header">
       <span class="back-button">
-        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M769.405 977.483a68.544 68.544 0 0 1-98.121 0L254.693 553.679c-27.173-27.568-27.173-72.231 0-99.899L671.185 29.976c13.537-13.734 31.324-20.652 49.109-20.652s35.572 6.917 49.109 20.652c27.173 27.568 27.173 72.331 0 99.899L401.921 503.681l367.482 373.904c27.074 27.568 27.074 72.231 0 99.899z"/></svg>
+        <svg t="1530857979993" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3173"
+          xmlns:xlink="http://www.w3.org/1999/xlink">
+          <path  fill="currentColor" d="M348.949333 511.829333L774.250667 105.728C783.978667 96 789.333333 83.712 789.333333 71.104c0-12.629333-5.354667-24.917333-15.082666-34.645333-9.728-9.728-22.037333-15.082667-34.645334-15.082667-12.586667 0-24.917333 5.333333-34.624 15.082667L249.557333 471.616A62.570667 62.570667 0 0 0 234.666667 512c0 10.410667 1.130667 25.408 14.890666 40.042667l455.424 435.605333c9.706667 9.728 22.016 15.082667 34.624 15.082667s24.917333-5.354667 34.645334-15.082667c9.728-9.728 15.082667-22.037333 15.082666-34.645333 0-12.608-5.354667-24.917333-15.082666-34.645334L348.949333 511.829333z"
+            p-id="3174"></path>
+        </svg>
       </span>
       <div class="mip-shell-header-logo-title">
         <img class="mip-shell-header-logo" src="${logo}">
@@ -346,25 +354,25 @@ export function frameMoveIn (pageId,
     transitionContainsHeader,
     onComplete
   } = {}) {
-  // let iframe
-  // if (!newPage) {
-  //   iframe = getIFrame(pageId)
-  //   if (!iframe) {
-  //     return
-  //   }
-  // }
-  let iframe = getIFrame(pageId)
+  let iframe
+  if (!newPage) {
+    iframe = getIFrame(pageId)
+    if (!iframe) {
+      return
+    }
+  }
+  // let iframe = getIFrame(pageId)
 
   let done = () => {
     hideAllIFrames()
     onComplete && onComplete()
 
-    // if (newPage) {
-    //   iframe = getIFrame(pageId)
-    //   if (!iframe) {
-    //     return
-    //   }
-    // }
+    if (newPage) {
+      iframe = getIFrame(pageId)
+      if (!iframe) {
+        return
+      }
+    }
 
     css(iframe, {
       display: 'block',
@@ -403,15 +411,16 @@ export function frameMoveIn (pageId,
       fadeHeader.classList.remove('fade-enter-to', 'fade-enter-active')
     }
 
-    if (newPage) {
-      setTimeout(() => {
-        done()
-        css(loading, 'display', 'none')
-      }, 100)
-    } else {
-      done()
-      css(loading, 'display', 'none')
-    }
+    done()
+    // if (newPage) {
+    //   setTimeout(() => {
+    //     done()
+    //     css(loading, 'display', 'none')
+    //   }, 100)
+    // } else {
+    //   done()
+    //   css(loading, 'display', 'none')
+    // }
   })
 
   nextFrame(() => {
