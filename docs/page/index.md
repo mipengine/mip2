@@ -43,7 +43,7 @@
         <a href="https://somesite.com/mip/anotherMIPPage.html" mip-link>xxx</a>
         <a href="https://somesite.com/mip/anotherMIPPage.html" data-type="mip">xxx</a>
         ```
-        1. `href` 指向当前域名的页面，暂时不允许跨域
+        1. `href` 指向当前域名的页面
         2. 不允许使用 `target` 属性
 
     2. 如果跳转到其他页面 ，不添加 `mip-link` 属性或者 `data-type="mip"`，进行普通跳转：
@@ -187,6 +187,70 @@ window.MIP.viewer.page.togglePageMask(true, {skipTransition: true})
 window.MIP.viewer.page.toggleDropdown(true)
 ```
 
+### forward/back (方法)
+
+前进/后退路由操作。由于路由信息只保存在首个页面的 Page 对象中，因此调用路由操作需要获取首个页面的 Page 对象。为了避免开发者进行判断和获取时的繁琐，Page 包装了快速 API 供开发者调用。示例代码：
+
+```javascript
+window.MIP.viewer.page.forward()
+window.MIP.viewer.page.back()
+```
+
+### emitCustomEvent (方法)
+
+向指定页面发送自定义事件，__此方法可跨域__。常用于页面向 Shell 通讯时使用，参数如下：
+
+* targetWindow: __Object__, 需要发送的页面的 `window` 对象。通常情况取值为 `window` （向当前页面发送）或者 `window.parent` （向首个页面发送）
+* isCrossOrigin: __boolean__, 是否跨域。跨域模式下使用 `postMessage` 进行通讯，否则使用 `dispatch`
+* event: __Object__, 需要发送的信息（事件）对象。包含两个属性：`name` 用于描述信息名称；`data` 记录信息本身
+
+示例代码如下
+
+```javascript
+// 非跨域情况和 MIP Shell 进行通讯
+let page = window.MIP.viewer.page
+let target = page.isRootPage ? window : window.parent
+page.emitCustomEvent(target, false, {
+    name: 'myShellEvent',
+    data: {
+        message: 'Hello MIP Shell'
+    }
+})
+
+// MIP Shell 接受消息，可以实现在 MIP Shell 的继承子类中
+window.addEventListener('myShellEvent', e => {
+    let data = e.detail[0]
+    console.log(data.message) // Hello MIP Shell
+})
+```
+
+### broadcastCustomEvent (方法)
+
+向所有页面广播自定义事件，__此方法可跨域__。常用于 Shell 向所有广播信息时使用，参数如下：
+
+* event: __Object__, 需要发送的信息（事件）对象。包含两个属性：`name` 用于描述信息名称；`data` 记录信息本身
+
+示例代码如下
+
+```javascript
+// MIP Shell 向所有页面广播信息，如点击打开“夜间模式”
+let page = window.MIP.viewer.page
+page.broadcastCustomEvent({
+    name: 'myShellEvent',
+    data: {
+        nightMode: true
+    }
+})
+
+// 页面组件接受消息
+window.addEventListener('myShellEvent', e => {
+    let data = e.detail[0]
+    if (data.nightMode) {
+        // 添加某些 class 到容器中，实现夜间模式
+    }
+})
+```
+
 ### 页面切换事件
 
 在页面切换，也就是 `<iframe>` 展现/隐藏时，会在页面中触发切换事件，各个自定义组件可以监听这两个事件：
@@ -215,3 +279,11 @@ mounted() {
 MIP Page 对象是通过 `window.MIP.viewer.page` 来获取的。实际上除了 `page` 对象之外，`viewer` 还包含其他一些方法，可供开发者调用。
 
 关于 `viewer` 的详情，可以参阅[这篇文档](./viewer.md)。
+
+## 基础样式
+
+MIP 为所有组件提供了一些常用的样式，避免开发者在编写组件时重复实现。目前包含的有：
+
+* 1 像素边框
+
+详细使用方式可以参阅[这篇文档](./style.md)

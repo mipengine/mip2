@@ -49,8 +49,8 @@ MIP.registerVueCustomElement('mip-complevel1', {
   methods: {
     changeData () {
       MIP.setData({
-        userInfo: {
-          name: 'ckkk'
+        '#userInfo': {
+          name: 'a'
         }
       })
     },

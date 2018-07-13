@@ -19,9 +19,9 @@ class Deps {
 
   notify (key) {
     this.subs.forEach(function (sub) {
-      if (sub._specWatcher && sub._exp.match(key)) {
+      if (sub._specWatcher === 'Watch' && sub._exp.match(new RegExp(`.?${key}\\[?\\d*\\]?$`))) {
         sub.update()
-      } else if (sub._exp.match(new RegExp(`.?${key}\\[?\\d*\\]?$`))) {
+      } else if (sub._specWatcher !== 'Watch') {
         sub.update()
       }
     })

@@ -1,6 +1,7 @@
 import {START, normalizeLocation} from '../util/route'
 import {pushState, replaceState} from '../util/push-state'
 import {getLocation} from '../util/path'
+import platform from '../../util/platform'
 
 export default class HTML5History {
   constructor (router) {
@@ -51,8 +52,13 @@ export default class HTML5History {
 
   transitionTo (location, onComplete) {
     const route = normalizeLocation(location, this.current)
-    this.updateRoute(route)
-    onComplete && onComplete(route)
+    if (platform.isAndroid() && (platform.isQQ || platform.isQQApp)) {
+      onComplete && onComplete(route)
+      this.updateRoute(route)
+    } else {
+      this.updateRoute(route)
+      onComplete && onComplete(route)
+    }
   }
 
   updateRoute (route) {

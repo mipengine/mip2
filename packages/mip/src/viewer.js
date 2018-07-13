@@ -9,14 +9,15 @@ import event from './util/dom/event'
 import css from './util/dom/css'
 import Gesture from './util/gesture/index'
 import platform from './util/platform'
-import viewport from './viewport'
 import EventAction from './util/event-action'
 import EventEmitter from './util/event-emitter'
 import fn from './util/fn'
-import Page from './page/index'
-import {MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE} from './page/const/index'
-import Messager from './messager'
+import {makeCacheUrl, getOriginalUrl} from './util'
 import {supportsPassive, isPortrait} from './page/util/feature-detect'
+import viewport from './viewport'
+import Page from './page/index'
+import {MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE, MESSAGE_PAGE_RESIZE} from './page/const/index'
+import Messager from './messager'
 import fixedElement from './fixed-element'
 
 /**
@@ -83,12 +84,24 @@ let viewer = {
     fixedElement.init()
 
     // Only send at first time
-    if (win.MIP.MIP_ROOT_PAGE) {
+    if (win.MIP.viewer.page.isRootPage) {
       this.sendMessage('mippageload', {
         time: Date.now(),
         title: encodeURIComponent(document.title)
       })
     }
+
+    event.delegate(document, 'input', 'focus', event => {
+      this.page.notifyRootPage({
+        type: MESSAGE_PAGE_RESIZE
+      })
+    }, true)
+
+    event.delegate(document, 'input', 'blur', event => {
+      this.page.notifyRootPage({
+        type: MESSAGE_PAGE_RESIZE
+      })
+    }, true)
 
     // proxy <a mip-link>
     this._proxyLink(this.page)
@@ -233,65 +246,61 @@ let viewer = {
     }
     let isHashInCurrentPage = hash && to.indexOf(window.location.origin + window.location.pathname) > -1
 
-    // invalid <a>, ignore it
+    // Invalid <a>, ignore it
     if (!to) {
       return
     }
 
-    /**
-     * we handle two scenario:
-     * 1. <mip-link>
-     * 2. anchor in same page, scroll to current hash with an ease transition
-     */
-    if (isMipLink || isHashInCurrentPage) {
-      // create target route
-      let targetRoute = {path: to}
+    // Jump in top window directly
+    // 1. Cross origin and NOT in SF
+    // 2. Not MIP page and not only hash change
+    if ((this._isCrossOrigin(to) && window.MIP.standalone) ||
+      (!isMipLink && !isHashInCurrentPage)) {
+      top.location.href = to
+      return
+    }
 
-      // send statics message to BaiduResult page
-      let pushMessage = {
-        url: to,
-        state
+    // Send statics message to BaiduResult page
+    let pushMessage = {
+      url: getOriginalUrl(to),
+      state
+    }
+    this.sendMessage(replace ? 'replaceState' : 'pushState', pushMessage)
+
+    // Create target route
+    let targetRoute = {
+      path: window.MIP.standalone ? to : makeCacheUrl(to)
+    }
+
+    if (isMipLink) {
+      // Reload page even if it's already existed
+      targetRoute.meta = {
+        reload: true,
+        allowTransition: isPortrait(), // Show transition only in portrait mode
+        header: {
+          title: pushMessage.state.title,
+          defaultTitle: pushMessage.state.defaultTitle
+        }
       }
+    }
 
-      this.sendMessage('pushState', pushMessage)
-
-      if (isMipLink) {
-        // show transition only in portrait mode
-        if (isPortrait()) {
-          router.rootPage.allowTransition = true
-        }
-
-        // reload page even if it's already existed
-        targetRoute.meta = {
-          reload: true,
-          header: {
-            title: pushMessage.state.title,
-            defaultTitle: pushMessage.state.defaultTitle
-          }
-        }
-      }
-
-      // handle <a mip-link replace> & hash
-      if (isHashInCurrentPage || replace) {
-        if (isRootPage) {
-          router.replace(targetRoute)
-        } else {
-          notifyRootPage({
-            type: MESSAGE_ROUTER_REPLACE,
-            data: {route: targetRoute}
-          })
-        }
-      } else if (isRootPage) {
-        router.push(targetRoute)
+    // Handle <a mip-link replace> & hash
+    if (isHashInCurrentPage || replace) {
+      if (isRootPage) {
+        router.replace(targetRoute)
       } else {
         notifyRootPage({
-          type: MESSAGE_ROUTER_PUSH,
+          type: MESSAGE_ROUTER_REPLACE,
           data: {route: targetRoute}
         })
       }
+    } else if (isRootPage) {
+      router.push(targetRoute)
     } else {
-      // jump in top window directly
-      top.location.href = to
+      notifyRootPage({
+        type: MESSAGE_ROUTER_PUSH,
+        data: {route: targetRoute}
+      })
     }
   },
 
@@ -360,7 +369,7 @@ let viewer = {
    *
    * @private
    */
-  _proxyLink (page = {}) {
+  _proxyLink () {
     let self = this
     let httpRegexp = /^http/
     let telRegexp = /^tel:/
@@ -425,10 +434,51 @@ let viewer = {
   _lockBodyScroll () {
     viewport.on('scroll', () => {
       let scrollTop = viewport.getScrollTop()
+      let totalScroll = viewport.getScrollHeight()
       if (scrollTop === 0) {
         viewport.setScrollTop(1)
+      } else if (scrollTop === totalScroll) {
+        viewport.setScrollTop(scrollTop - 1)
       }
     }, eventListenerOptions)
+  },
+
+  /**
+   * Whether target url is a cross origin one
+   * @param {string} to targetUrl
+   */
+  _isCrossOrigin (to) {
+    let target = to
+
+    // Below 3 conditions are NOT cross origin
+    // 1. '/'
+    // 2. Absolute path ('/absolute/path')
+    // 3. Relative path ('./relative/path' or '../parent/path')
+    if (target.length === 1 ||
+      (target.charAt(0) === '/' && target.charAt(1) !== '/') ||
+      target.charAt(0) === '.') {
+      return false
+    }
+
+    // Check protocol
+    if (/^http(s?):\/\//i.test(target)) {
+      // Starts with 'http://' or 'https://'
+      if (!(new RegExp('^' + location.protocol, 'i')).test(target)) {
+        return true
+      }
+
+      target = target.replace(/^http(s?):\/\//i, '')
+    } else if (/^\/\//.test(target)) {
+      // Starts with '//'
+      target = target.substring(2, target.length)
+    }
+
+    let hostAndPort = target.split('/')[0]
+    if (location.host !== hostAndPort) {
+      return true
+    }
+
+    return false
   }
 }
 

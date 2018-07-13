@@ -25,10 +25,12 @@ import jsonParse from './json-parse'
  *
  * @param {string} url Source url.
  * @param {string} type The url type.
+ * @param {boolean} containsHost The url type.
  * @return {string} Cache url.
  */
-function makeCacheUrl (url, type) {
-  if (!fn.isCacheUrl(location.href) ||
+export function makeCacheUrl (url, type, containsHost) {
+  if (fn.isCacheUrl(url) ||
+    !fn.isCacheUrl(location.href) ||
     (url && url.length < 8) ||
     !(url.indexOf('http') === 0 || url.indexOf('//') === 0)
   ) {
@@ -40,8 +42,15 @@ function makeCacheUrl (url, type) {
   }
   let urlParas = url.split('//')
   urlParas.shift()
+  let host = urlParas[0].substring(0, urlParas[0].indexOf('/'))
   url = urlParas.join('//')
-  return prefix + url
+
+  let result = prefix + url
+  if (containsHost) {
+    result = location.protocol + '//' + host.replace(/-/g, '--').replace(/\./g, '-') + '.mipcdn.com' + result
+  }
+
+  return result
 }
 
 /**
@@ -57,7 +66,7 @@ function makeCacheUrl (url, type) {
  * @param {string} url Source url.
  * @return {string} origin url.
  */
-function parseCacheUrl (url) {
+export function parseCacheUrl (url) {
   if (!url) {
     return url
   }
@@ -66,7 +75,7 @@ function parseCacheUrl (url) {
   ) {
     return url
   }
-  let reg = new RegExp('^(http[s]:)?(//([^/]+))?/[ic](/s)?/(.*)$', 'g')
+  let reg = new RegExp('^(http(?:s?):)?(//([^/]+))?/[ic](/s)?/(.*)$', 'g')
   let result = reg.exec(url)
   if (!result) {
     return url
@@ -86,9 +95,12 @@ function parseCacheUrl (url) {
  *
  * @return {string} 原 mip 页 URL
  */
-function getOriginalUrl () {
-  let parsedUrl = parseCacheUrl(window.location.href)
-  if (parsedUrl === window.location.href) {
+export function getOriginalUrl (url) {
+  if (!url) {
+    url = window.location.href
+  }
+  let parsedUrl = parseCacheUrl(url)
+  if (parsedUrl === url) {
     // 直接打开 MIP 页
     return parsedUrl
   }

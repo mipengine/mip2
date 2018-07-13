@@ -30,7 +30,12 @@ export default class Router {
   }
 
   go (n) {
-    this.history.go(n)
+    if (window.MIP.standalone) {
+      this.history.go(n)
+    } else {
+      // SF can help to navigate by 'changeState' when standalone = false
+      window.MIP.viewer.sendMessage('historyNavigate', {step: n})
+    }
   }
 
   back () {

@@ -30,8 +30,8 @@
         }
     </style>
     <script>
-        window.onload = function () {
-            let $iframe = document.querySelector('iframe')
+        // window.onload = function () {
+        //     let $iframe = document.querySelector('iframe')
             // $iframe.style.height = window.innerHeight + 'px'
 
             // let $scroller = $iframe.contentWindow.document.querySelector('.mip-html-wrapper')
@@ -53,11 +53,12 @@
             // }
 
             // removeIOSRubberEffect($scroller);
-        }
+        // }
+        window.addEventListener('message', e => console.log('receive message:', e.data))
     </script>
 </head>
 <body>
-    <iframe scrolling="no" src="/examples/builtin/mip-img.html" class="topFrame"></iframe>
+    <iframe scrolling="no" src="/examples/page/index.html" class="topFrame"></iframe>
     <h1>xxxxxxxxxx</h1>
     <h1>xxxxxxxxxx</h1>
 </body>

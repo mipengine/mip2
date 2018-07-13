@@ -191,6 +191,9 @@
         <p m-text="num"></p>
         <div on="tap:MIP.setData({num:2})" class="button">click change num</div>
 
+        <p m-text="lxndata.moveInAddress.location"></p>
+        <div on="tap:MIP.setData({lxndata:{moveInAddress:{location:12}}})" class="button">lxndata</div>
+
         <p m-text="sp.three"></p>
         <div on="tap:MIP.setData({sp:{three:'¥0'}})" class="button">click change sp.three</div>
 
@@ -269,8 +272,7 @@
                         "header": {
                             "show": true,
                             "title": "蓝犀牛数据",
-                            "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
-                            "xiongzhang": true
+                            "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png"
                         }
                     }
                 },
@@ -331,9 +333,10 @@
         </script>
     </mip-shell>
 
-    <!-- <mip-script src="http://172.18.182.73:8848/test-script.js"></mip-script> -->
+    <mip-script src="http://127.0.0.1:8848/test-script.js"></mip-script>
 
     <mip-script>
+        console.log('watched')
         MIP.watch('lxndata.moveInAddress.location', function () {
             console.log('lxndata.moveInAddress.location')
         });
@@ -352,6 +355,12 @@
         MIP.watch('num', function () {
             console.log('num changed')
         });
+        MIP.watch('city', function () {
+            console.log('city changed')
+        });
+        MIP.watch('city1', function () {
+            console.log('city1 changed')
+        });
     </mip-script>
 
     <script src="../../dist/mip.js"></script>
@@ -361,6 +370,6 @@
     <script src="https://c.mipcdn.com/static/v1/mip-form/mip-form.js"></script>
     <script src="./components/mip-global.js"></script>
     <script src="./components/mip-shell-is.js"></script>
-    <script src="http://127.0.0.1:8111/mip-script/mip-script.js"></script>
+    <script src="https://deploy-preview-63--mip2-deploy-preview.netlify.com/mip-script/mip-script.js"></script>
 
 </body>

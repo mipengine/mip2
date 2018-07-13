@@ -200,6 +200,33 @@
     </mip-img>
 </mip-carousel>
 ```
+### 自定义处理翻页事件
+
+每次翻页时，mip-carousel 会对外暴露 switchCompleted 事件，事件被触发时，在你自己的组件内处理对应的逻辑即可。可以通过[Events 事件绑定](../../basic/actions-and-events.md)章节了解更多事件通信的处理细节。
+
+```html
+<mip-carousel
+    autoplay
+    defer="1000"
+    layout="responsive"
+    width="600"
+    height="400"
+    on="switchCompleted:mip-test.hanlde"
+    >
+    <mip-img
+        src="https://www.mipengine.org/static/img/sample_01.jpg">
+    </mip-img>
+    <a target="_blank" href="http://wenda.tianya.cn/m/question/1almfj0foas94gc7vtoq6ejbfbmdk3e78ehaa">
+        <mip-img
+            src="https://www.mipengine.org/static/img/sample_02.jpg" width="600" height="400">
+        </mip-img>
+    </a>
+    <mip-img
+        src="https://www.mipengine.org/static/img/sample_03.jpg">
+    </mip-img>
+</mip-carousel>
+<mip-element id="mip-test"></mip-element>
+```
 
 ## 属性
 
@@ -243,3 +270,17 @@
 类型：字符串  
 单位：无  
 默认值：无
+
+## 事件
+
+### switchCompleted
+
+说明：当每一页切换完成之后，会触发该事件，事件参数会返回当前展示的dom节点，carousel 子元素的总数，当前展示的carousel item的索引值。
+一个返回参数示例如下：
+``` json
+  {
+    currIndex: 2,  // 当前子元素的显示索引值
+    currCarouselItem: childNodes[imgIndex], // 当前子元素的dom节点
+    carouselChildrenLength: childNum // 当前 carousel 下的子节点个数
+  }
+

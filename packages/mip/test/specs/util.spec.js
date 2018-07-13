@@ -102,6 +102,10 @@ describe('util', function () {
       expect(
         util.parseCacheUrl('/c/s/www.mipengine.org/static/index.html')
       ).to.equal('https://www.mipengine.org/static/index.html')
+
+      expect(
+        util.parseCacheUrl('http://www-lanxiniu-com.mipcdn.com/c/s/www.lanxiniu.com/BaiduMip/mapout')
+      ).to.equal('https://www.lanxiniu.com/BaiduMip/mapout')
     })
   })
 
@@ -110,8 +114,14 @@ describe('util', function () {
 
     // mock cache url
     beforeEach(function () {
-      spy = sinon.stub(util.fn, 'isCacheUrl')
-      spy.returns(true)
+      spy = sinon.stub(util.fn, 'isCacheUrl').callsFake(function (url) {
+        if (url.indexOf('localhost') !== -1) {
+          // Makes `isCacheUrl(location.href)` return true
+          return true
+        } else {
+          return false
+        }
+      })
     })
 
     afterEach(function () {
@@ -121,7 +131,9 @@ describe('util', function () {
     })
 
     it('not cache url', function () {
-      spy.returns(false)
+      spy = sinon.stub(util.fn, 'isCacheUrl').callsFake(function (url) {
+        return false
+      })
       expect(util.makeCacheUrl('https://www.mipengine.com')).to.equal('https://www.mipengine.com')
     })
 

@@ -8,10 +8,12 @@ import platform from '../../util/platform'
 
 import {MIP_IFRAME_CONTAINER} from '../const/index'
 import {raf, transitionEndEvent, animationEndEvent} from './feature-detect'
+import {normalizeLocation} from './route'
+import viewport from '../../viewport'
 
 let activeZIndex = 10000
 
-export function createIFrame (fullpath, pageId, {onLoad, onError} = {}) {
+export function createIFrame ({fullpath, pageId}, {onLoad, onError} = {}) {
   let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${pageId}"]`)
 
   // if exists, delete it first
@@ -27,7 +29,14 @@ export function createIFrame (fullpath, pageId, {onLoad, onError} = {}) {
     typeof onError === 'function' && onError()
   }
   // TODO: use XHR to load iframe so that we can get httpRequest.status 404
-  container.setAttribute('name', pageId)
+  let targetOrigin = normalizeLocation(pageId).origin
+  let pageMeta = JSON.stringify({
+    standalone: window.MIP.standalone,
+    isRootPage: false,
+    isCrossOrigin: targetOrigin !== window.location.origin
+  })
+  container.setAttribute('name', pageMeta)
+
   container.setAttribute('src', fullpath)
   container.setAttribute('class', MIP_IFRAME_CONTAINER)
 
@@ -35,7 +44,7 @@ export function createIFrame (fullpath, pageId, {onLoad, onError} = {}) {
    * Fix an iOS iframe width bug, see examples/mip1/test.html
    * https://stackoverflow.com/questions/23083462/how-to-get-an-iframe-to-be-responsive-in-ios-safari
    */
-  // container.style.height = `${viewport.getHeight()}px`
+  container.style.height = `${viewport.getHeight()}px`
   container.setAttribute('width', '100%')
   container.setAttribute('scrolling', platform.isIos() ? 'no' : 'yes')
 
@@ -88,9 +97,13 @@ export function createLoading (pageMeta) {
   loading.id = 'mip-page-loading-wrapper'
   loading.setAttribute('class', 'mip-page-loading-wrapper')
   loading.innerHTML = `
-    <div class="mip-shell-header mip-border mip-border-bottom">
+    <div class="mip-shell-header">
       <span mip-header-btn class="back-button">
-        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M769.405 977.483a68.544 68.544 0 0 1-98.121 0L254.693 553.679c-27.173-27.568-27.173-72.231 0-99.899L671.185 29.976c13.537-13.734 31.324-20.652 49.109-20.652s35.572 6.917 49.109 20.652c27.173 27.568 27.173 72.331 0 99.899L401.921 503.681l367.482 373.904c27.074 27.568 27.074 72.231 0 99.899z"/></svg>
+        <svg t="1530857979993" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3173"
+          xmlns:xlink="http://www.w3.org/1999/xlink">
+          <path  fill="currentColor" d="M348.949333 511.829333L774.250667 105.728C783.978667 96 789.333333 83.712 789.333333 71.104c0-12.629333-5.354667-24.917333-15.082666-34.645333-9.728-9.728-22.037333-15.082667-34.645334-15.082667-12.586667 0-24.917333 5.333333-34.624 15.082667L249.557333 471.616A62.570667 62.570667 0 0 0 234.666667 512c0 10.410667 1.130667 25.408 14.890666 40.042667l455.424 435.605333c9.706667 9.728 22.016 15.082667 34.624 15.082667s24.917333-5.354667 34.645334-15.082667c9.728-9.728 15.082667-22.037333 15.082666-34.645333 0-12.608-5.354667-24.917333-15.082666-34.645334L348.949333 511.829333z"
+            p-id="3174"></path>
+        </svg>
       </span>
       <div class="mip-shell-header-logo-title">
         <img class="mip-shell-header-logo" src="${logo}">
@@ -125,7 +138,7 @@ function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
   // Transition only need header (frameMoveOut) but doesn't contains header (extended from child mip-shell-xxx)
   // Means doesn't need loading
   if (!transitionContainsHeader && onlyHeader) {
-    loading.classList.remove('show')
+    css(loading, 'display', 'none')
     return loading
   }
 
@@ -166,16 +179,6 @@ function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
     css(loadingContainer, 'background-color', backgroundColor)
     css(loading.querySelectorAll('svg'), 'fill', color)
     css(loading.querySelector('.mip-shell-header-title'), 'color', color)
-    if (!borderColor) {
-      loadingContainer.classList.add('mip-border', 'mip-border-bottom')
-      css(loadingContainer, 'border-bottom', '0')
-      css(loadingContainer, 'box-sizing', 'content-box')
-      borderColor = '#e1e1e1'
-    } else {
-      loadingContainer.classList.remove('mip-border', 'mip-border-bottom')
-      css(loadingContainer, 'border-bottom', `1px solid ${borderColor}`)
-      css(loadingContainer, 'box-sizing', 'border-box')
-    }
     css(loading.querySelector('.mip-shell-header-logo'), 'border-color', borderColor)
     css(loading.querySelector('.mip-shell-header-button-group'), 'border-color', borderColor)
     css(loading.querySelector('.mip-shell-header-button-group .split'), 'background-color', borderColor)
@@ -194,9 +197,13 @@ export function createFadeHeader (pageMeta) {
   fadeHeader.id = 'mip-page-fade-header-wrapper'
   fadeHeader.setAttribute('class', 'mip-page-fade-header-wrapper')
   fadeHeader.innerHTML = `
-    <div class="mip-shell-header mip-border mip-border-bottom">
+    <div class="mip-shell-header">
       <span class="back-button">
-        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M769.405 977.483a68.544 68.544 0 0 1-98.121 0L254.693 553.679c-27.173-27.568-27.173-72.231 0-99.899L671.185 29.976c13.537-13.734 31.324-20.652 49.109-20.652s35.572 6.917 49.109 20.652c27.173 27.568 27.173 72.331 0 99.899L401.921 503.681l367.482 373.904c27.074 27.568 27.074 72.231 0 99.899z"/></svg>
+        <svg t="1530857979993" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3173"
+          xmlns:xlink="http://www.w3.org/1999/xlink">
+          <path  fill="currentColor" d="M348.949333 511.829333L774.250667 105.728C783.978667 96 789.333333 83.712 789.333333 71.104c0-12.629333-5.354667-24.917333-15.082666-34.645333-9.728-9.728-22.037333-15.082667-34.645334-15.082667-12.586667 0-24.917333 5.333333-34.624 15.082667L249.557333 471.616A62.570667 62.570667 0 0 0 234.666667 512c0 10.410667 1.130667 25.408 14.890666 40.042667l455.424 435.605333c9.706667 9.728 22.016 15.082667 34.624 15.082667s24.917333-5.354667 34.645334-15.082667c9.728-9.728 15.082667-22.037333 15.082666-34.645333 0-12.608-5.354667-24.917333-15.082666-34.645334L348.949333 511.829333z"
+            p-id="3174"></path>
+        </svg>
       </span>
       <div class="mip-shell-header-logo-title">
         <img class="mip-shell-header-logo" src="${logo}">
@@ -250,16 +257,6 @@ function getFadeHeader (targetMeta) {
   css(fadeHeaderContainer, 'background-color', backgroundColor)
   css(fadeHeader.querySelectorAll('svg'), 'fill', color)
   css(fadeHeader.querySelector('.mip-shell-header-title'), 'color', color)
-  if (!borderColor) {
-    fadeHeaderContainer.classList.add('mip-border', 'mip-border-bottom')
-    css(fadeHeaderContainer, 'border-bottom', '0')
-    css(fadeHeaderContainer, 'box-sizing', 'content-box')
-    borderColor = '#e1e1e1'
-  } else {
-    fadeHeaderContainer.classList.remove('mip-border', 'mip-border-bottom')
-    css(fadeHeaderContainer, 'border-bottom', `1px solid ${borderColor}`)
-    css(fadeHeaderContainer, 'box-sizing', 'border-box')
-  }
   css(fadeHeader.querySelector('.mip-shell-header-logo'), 'border-color', borderColor)
   css(fadeHeader.querySelector('.mip-shell-header-button-group'), 'border-color', borderColor)
   css(fadeHeader.querySelector('.mip-shell-header-button-group .split'), 'background-color', borderColor)
@@ -357,77 +354,83 @@ export function frameMoveIn (pageId,
     transitionContainsHeader,
     onComplete
   } = {}) {
-  let iframe = getIFrame(pageId)
+  let iframe
+  if (!newPage) {
+    iframe = getIFrame(pageId)
+    if (!iframe) {
+      return
+    }
+  }
+  // let iframe = getIFrame(pageId)
 
-  if (!iframe) {
+  let done = () => {
+    hideAllIFrames()
+    onComplete && onComplete()
+
+    if (newPage) {
+      iframe = getIFrame(pageId)
+      if (!iframe) {
+        return
+      }
+    }
+
+    css(iframe, {
+      display: 'block',
+      opacity: 1,
+      'z-index': activeZIndex++
+    })
+  }
+
+  if (!transition) {
+    done()
     return
   }
 
-  if (transition) {
-    let loading = getLoading(targetMeta, {transitionContainsHeader})
-    loading.classList.add('slide-enter', 'slide-enter-active', 'show')
+  let loading = getLoading(targetMeta, {transitionContainsHeader})
+  loading.classList.add('slide-enter', 'slide-enter-active')
+  css(loading, 'display', 'block')
 
-    let headerLogoTitle
-    let fadeHeader
-    if (!transitionContainsHeader) {
-      headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
-      headerLogoTitle && headerLogoTitle.classList.add('fade-out')
-      fadeHeader = getFadeHeader(targetMeta)
-      fadeHeader.classList.add('fade-enter', 'fade-enter-active')
-      css(fadeHeader, 'display', 'block')
-    }
-
-    // trigger layout
-    /* eslint-disable no-unused-expressions */
-    css(iframe, {
-      display: 'block'
-    })
-    loading.offsetWidth
-    /* eslint-enable no-unused-expressions */
-
-    let done = () => {
-      hideAllIFrames()
-      css(iframe, {
-        display: 'block',
-        opacity: 1,
-        'z-index': activeZIndex++
-      })
-      loading.classList.remove('show')
-
-      onComplete && onComplete()
-    }
-    whenTransitionEnds(loading, 'transition', () => {
-      loading.classList.remove('slide-enter-to', 'slide-enter-active')
-      if (!transitionContainsHeader) {
-        fadeHeader.classList.remove('fade-enter-to', 'fade-enter-active')
-      }
-
-      if (newPage) {
-        setTimeout(done, 100)
-      } else {
-        done()
-      }
-    })
-
-    setTimeout(() => {
-      nextFrame(() => {
-        loading.classList.add('slide-enter-to')
-        loading.classList.remove('slide-enter')
-        if (!transitionContainsHeader) {
-          fadeHeader.classList.add('fade-enter-to')
-          fadeHeader.classList.remove('fade-enter')
-        }
-      })
-    }, 0)
-  } else {
-    hideAllIFrames()
-    css(iframe, {
-      'z-index': activeZIndex++,
-      display: 'block',
-      opacity: 1
-    })
-    onComplete && onComplete()
+  let headerLogoTitle
+  let fadeHeader
+  if (!transitionContainsHeader) {
+    headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
+    headerLogoTitle && headerLogoTitle.classList.add('fade-out')
+    fadeHeader = getFadeHeader(targetMeta)
+    fadeHeader.classList.add('fade-enter', 'fade-enter-active')
+    css(fadeHeader, 'display', 'block')
   }
+
+  // trigger layout
+  /* eslint-disable no-unused-expressions */
+  loading.offsetWidth
+  /* eslint-enable no-unused-expressions */
+
+  whenTransitionEnds(loading, 'transition', () => {
+    loading.classList.remove('slide-enter-to', 'slide-enter-active')
+    if (!transitionContainsHeader) {
+      fadeHeader.classList.remove('fade-enter-to', 'fade-enter-active')
+    }
+
+    done()
+    // if (newPage) {
+    //   setTimeout(() => {
+    //     done()
+    //     css(loading, 'display', 'none')
+    //   }, 100)
+    // } else {
+    //   done()
+    //   css(loading, 'display', 'none')
+    // }
+  })
+
+  nextFrame(() => {
+    loading.classList.add('slide-enter-to')
+    loading.classList.remove('slide-enter')
+    if (!transitionContainsHeader) {
+      fadeHeader.classList.add('fade-enter-to')
+      fadeHeader.classList.remove('fade-enter')
+    }
+  })
 }
 
 /**
@@ -477,7 +480,7 @@ export function frameMoveOut (pageId,
     let fadeHeader
 
     if (transitionContainsHeader) {
-      loading.classList.add('show')
+      css(loading, 'display', 'block')
     } else {
       headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
       headerLogoTitle && headerLogoTitle.classList.add('fade-out')
@@ -508,7 +511,8 @@ export function frameMoveOut (pageId,
       })
       iframe.classList.remove('slide-leave-to', 'slide-leave-active')
       if (transitionContainsHeader) {
-        loading.classList.remove('slide-leave-to', 'slide-leave-active', 'show')
+        loading.classList.remove('slide-leave-to', 'slide-leave-active')
+        css(loading, 'display', 'none')
       } else {
         fadeHeader.classList.remove('fade-enter-to', 'fade-enter')
       }

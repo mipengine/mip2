@@ -54,6 +54,11 @@ export function $createElement (
   children,
   normalizationType
 ) {
+  let childNodes
+  if (Array.isArray(children) && children[0] instanceof Node) {
+    childNodes = children
+  }
+
   if (isDef(data) && isDef((data).__ob__)) {
     process.env.NODE_ENV !== 'production' && warn(
       `Avoid using observed data object as vnode data: ${JSON.stringify(data)}\n` +
@@ -112,7 +117,7 @@ export function $createElement (
       )
     } else if (isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
       // component
-      vnode = createComponent(Ctor, data, context, children, tag)
+      vnode = createComponent(Ctor, data, context, children, tag, childNodes)
     } else {
       // unknown or unlisted namespaced elements
       // check at runtime because it may get assigned a namespace when its
@@ -124,7 +129,7 @@ export function $createElement (
     }
   } else {
     // direct component options / constructor
-    vnode = createComponent(tag, data, context, children)
+    vnode = createComponent(tag, data, context, children, undefined, childNodes)
   }
   if (isDef(vnode)) {
     if (ns) {

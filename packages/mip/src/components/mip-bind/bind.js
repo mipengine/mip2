@@ -19,6 +19,7 @@ class Bind {
     // require mip data extension runtime
     this._compile = new Compile()
     this._observer = new Observer()
+    // this._bindEvent()
     // from=0 called by html attributes
     // from=1 refers the method called by mip.js
     MIP.setData = (action, from) => {
@@ -31,6 +32,9 @@ class Bind {
       this._observer.start(this._win.m)
       this._compile.start(this._win.m, this._win)
     }
+    MIP.$update = (data, win) => {
+      this._update(data, win)
+    }
     MIP.watch = (target, cb) => {
       this._bindWatch(target, cb)
     }
@@ -40,28 +44,81 @@ class Bind {
     MIP.$set(window.m)
   }
 
-  /*
-   * broadcast: to recompile because shared data updated
-   */
-  _postMessage () {
-    let win = window.MIP.MIP_ROOT_PAGE ? window : window.parent
-    MIP.$set({}, 0, true, win)
+  // // Bind event for post message when broadcast global data
+  // _bindEvent () {
+  //   window.addEventListener('message', function (event) {
+  //     let loc = window.location
+  //     let domain = loc.protocol + '//' + loc.host
+
+  //     if (event.origin !== domain ||
+  //       !event.source || !event.data
+  //     ) {
+  //       return
+  //     }
+
+  //     if (event.data.type === 'bind') {
+  //       MIP.$set(event.data.m, 0, true)
+  //     }
+
+  //     if (event.data.type === 'update') {
+  //       MIP.$set(event.data.m, 0, true)
+
+  //       for (let i = 0, frames = document.getElementsByTagName('iframe'); i < frames.length; i++) {
+  //         if (frames[i].classList.contains('mip-page__iframe') &&
+  //             frames[i].getAttribute('data-page-id')
+  //         ) {
+  //           let subwin = frames[i].contentWindow
+  //           // MIP.$set(event.data.m, 0, true, subwin)
+  //           subwin.postMessage({
+  //             type: 'bind',
+  //             m: event.data.m,
+  //             cancel: true,
+  //             event: 'stateBind'
+  //           }, subwin.location.protocol + '//' + subwin.location.host)
+  //         }
+  //       }
+  //     }
+  //   })
+  // }
+
+  _postMessage (data) {
+    if (!objNotEmpty(data)) {
+      return
+    }
+
+    for (let k of Object.keys(data)) {
+      data[`#${k}`] = data[k]
+      delete data[k]
+    }
+
+    let win = isSelfParent(window) ? window : window.parent
+    win.MIP.$update(data, win)
+    // let loc = window.location
+    // let domain = loc.protocol + '//' + loc.host
+    // let win = isSelfParent(window) ? window : window.parent
+    // win.postMessage({
+    //   type: 'update',
+    //   m: data,
+    //   event: 'stateUpdate'
+    // }, domain)
+  }
+
+  _update (data, win) {
+    win.MIP.$set(data, 0, true)
 
     for (let i = 0, frames = win.document.getElementsByTagName('iframe'); i < frames.length; i++) {
       if (frames[i].classList.contains('mip-page__iframe') &&
-          frames[i].getAttribute('name') &&
-          frames[i].getAttribute('data-page-id') &&
-          frames[i].getAttribute('name') === frames[i].getAttribute('data-page-id')
+          frames[i].getAttribute('data-page-id')
       ) {
         let subwin = frames[i].contentWindow
-        MIP.$set({}, 0, true, subwin)
+        subwin.MIP.$set(data, 0, true)
       }
     }
   }
 
   _bindTarget (compile, action, from, cancel, win = this._win) {
     let data = from ? action.arg : action
-    let evt = from ? action.event.target : {}
+    let evt = from && action.event ? action.event.target : {}
     if (typeof data === 'string') {
       data = (new Function('DOM', 'return ' + data))(evt)
     }
@@ -72,14 +129,12 @@ class Bind {
       let classified = this._normalize(data)
       if (compile) {
         this._setGlobalState(classified.globalData, cancel, win)
-        this._setPageState(classified.pageData, cancel, win)
+        this._setPageState(classified, cancel, win)
         this._observer.start(win.m)
         this._compile.start(win.m, win)
       } else {
         if (classified.globalData && objNotEmpty(classified.globalData)) {
-          let g = window.MIP.MIP_ROOT_PAGE ? window.g : window.parent.g
-          assign(g, classified.globalData)
-          !cancel && this._postMessage()
+          !cancel && this._postMessage(classified.globalData)
         }
         data = classified.pageData
         Object.keys(data).forEach(field => {
@@ -125,7 +180,7 @@ class Bind {
     }
 
     this._watcherIds.push(watcherId)
-    new Watcher(null, this._win.m, '', target, cb) // eslint-disable-line no-new
+    new Watcher(null, this._win.m, '', `Watch:${target}`, cb) // eslint-disable-line no-new
   }
 
   _dispatch (key, val, cancel, win = this._win) {
@@ -133,39 +188,40 @@ class Bind {
       [key]: val
     }
     if (win.g && win.g.hasOwnProperty(key)) {
-      assign(win.g, data)
-      !cancel && this._postMessage()
-    } else if (!win.MIP.MIP_ROOT_PAGE && win.parent.g && win.parent.g.hasOwnProperty(key)) {
-      assign(win.parent.g, data)
-      !cancel && this._postMessage()
+      !cancel && this._postMessage(data)
+    } else if (!isSelfParent(win) && win.parent.g && win.parent.g.hasOwnProperty(key)) {
+      !cancel && this._postMessage(data)
     } else {
       Object.assign(win.m, data)
     }
   }
 
   _setGlobalState (data, cancel, win = this._win) {
-    if (win.MIP.MIP_ROOT_PAGE) {
+    if (isSelfParent(win)) {
       win.g = win.g || {}
-      Object.assign(win.g, data)
+      assign(win.g, data)
     } else {
-      win.parent.g = win.parent.g || {}
-      Object.assign(win.parent.g, data)
-      !cancel && this._postMessage()
+      !cancel && this._postMessage(data)
     }
   }
 
   _setPageState (data, cancel, win = this._win) {
-    let g = win.MIP.MIP_ROOT_PAGE ? win.g : win.parent.g
-    Object.assign(win.m, data)
-    !cancel && Object.keys(data).forEach(k => win.pgStates.add(k))
-    Object.keys(g).forEach(key => {
+    Object.assign(win.m, data.pageData)
+    !cancel && Object.keys(data.pageData).forEach(k => win.pgStates.add(k))
+
+    let globalData = data.globalData
+    Object.keys(globalData).forEach(key => {
       if (!win.pgStates.has(key) && win.m.hasOwnProperty(key)) {
-        try {
-          win.m[key] = g[key]
-        } catch (e) {}
+        if (isObject(globalData[key]) && win.m[key] && isObject(win.m[key])) {
+          assign(win.m[key], globalData[key])
+          win.m[key] = JSON.parse(JSON.stringify(win.m[key]))
+        } else {
+          win.m[key] = globalData[key]
+        }
       }
     })
-    win.m.__proto__ = win.MIP.MIP_ROOT_PAGE ? win.g : win.parent.g // eslint-disable-line no-proto
+
+    setProto(win.m, getGlobalData(win))
   }
 
   _normalize (data) {
@@ -202,6 +258,23 @@ function assign (oldData, newData) {
       oldData[k] = newData[k]
     }
   })
+}
+
+function setProto (oldObj, newObj) {
+  Object.keys(newObj).forEach(key => {
+    if (!oldObj[key]) {
+      oldObj[key] = JSON.parse(JSON.stringify(newObj[key]))
+    }
+  })
+}
+
+function isSelfParent (win) {
+  let page = win.MIP.viewer.page
+  return page.isRootPage || page.isCrossOrigin
+}
+
+function getGlobalData (win) {
+  return isSelfParent(win) ? win.g : win.parent.g
 }
 
 export default Bind

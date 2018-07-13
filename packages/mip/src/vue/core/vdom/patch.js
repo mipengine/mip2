@@ -121,6 +121,12 @@ export function createPatchFunction (backend) {
 
   let inPre = 0
   function createElm (vnode, insertedVnodeQueue, parentElm, refElm, nested) {
+    // mip patch: 如果是渲染好的 Node 节点，直接插入
+    if (vnode instanceof Node) {
+      nodeOps.insertBefore(parentElm, vnode, refElm)
+      return
+    }
+
     vnode.isRootInsert = !nested // for transition enter check
     if (createComponent(vnode, insertedVnodeQueue, parentElm, refElm)) {
       return
@@ -163,38 +169,18 @@ export function createPatchFunction (backend) {
         : nodeOps.createElement(tag, vnode)
       setScope(vnode)
 
-      /* istanbul ignore if */
-      /* eslint-disable */
-            if (false) {
-            /* eslint-enable */
-        // in Weex, the default insertion order is parent-first.
-        // List items can be optimized to use children-first insertion
-        // with append="tree".
-        const appendAsTree = isDef(data) && isTrue(data.appendAsTree)
-        if (!appendAsTree) {
-          if (isDef(data)) {
-            invokeCreateHooks(vnode, insertedVnodeQueue)
-          }
+      createChildren(vnode, children, insertedVnodeQueue)
 
-          insert(parentElm, vnode.elm, refElm)
-        }
-
-        createChildren(vnode, children, insertedVnodeQueue)
-        if (appendAsTree) {
-          if (isDef(data)) {
-            invokeCreateHooks(vnode, insertedVnodeQueue)
-          }
-
-          insert(parentElm, vnode.elm, refElm)
-        }
-      } else {
-        createChildren(vnode, children, insertedVnodeQueue)
-        if (isDef(data)) {
-          invokeCreateHooks(vnode, insertedVnodeQueue)
-        }
-
-        insert(parentElm, vnode.elm, refElm)
+      // mip patch: 将 CustomElement 传进来的 slot dom 插入到 element 子节点中
+      if (vnode.childrenElm) {
+        vnode.elm.appendChild(vnode.childrenElm)
       }
+
+      if (isDef(data)) {
+        invokeCreateHooks(vnode, insertedVnodeQueue)
+      }
+
+      insert(parentElm, vnode.elm, refElm)
 
       if (process.env.NODE_ENV !== 'production' && data && data.pre) {
         inPre--
@@ -445,6 +431,12 @@ export function createPatchFunction (backend) {
         oldStartVnode = oldCh[++oldStartIdx] // Vnode has been moved left
       } else if (isUndef(oldEndVnode)) {
         oldEndVnode = oldCh[--oldEndIdx]
+      } else if (newStartVnode instanceof Node && oldStartVnode instanceof VNode) {
+        newCh[newStartIdx++] = oldStartVnode
+        oldStartVnode = oldCh[oldStartIdx++]
+      } else if (oldEndVnode instanceof Node && newEndVnode instanceof VNode) {
+        newCh[newEndIdx--] = oldEndVnode
+        oldEndVnode = oldCh[oldEndIdx--]
       } else if (sameVnode(oldStartVnode, newStartVnode)) {
         patchVnode(oldStartVnode, newStartVnode, insertedVnodeQueue)
         oldStartVnode = oldCh[++oldStartIdx]
