@@ -151,10 +151,6 @@ class MipShell extends CustomElement {
           pageMeta
         }
       })
-
-      if (pageMeta && pageMeta.header.bouncy) {
-        page.setupBouncyHeader()
-      }
     }
   }
 
@@ -410,6 +406,7 @@ class MipShell extends CustomElement {
     if (!(pageMeta.header && pageMeta.header.show)) {
       this.$wrapper.classList.add('hide')
       page.toggleFadeHeader(false)
+      css(document.querySelector('.mip-page-loading-wrapper'), 'display', 'none')
       return
     }
 
@@ -437,7 +434,6 @@ class MipShell extends CustomElement {
       // 3. Wait for transition ending
       // 4. Hide fade header (Fade header was shown in MIP Page)
       this.renderHeader(this.$el)
-      alert(document.querySelector('.mip-page-loading-wrapper'))
       css(document.querySelector('.mip-page-loading-wrapper'), 'display', 'none')
     }
 
@@ -521,10 +517,14 @@ class MipShell extends CustomElement {
 
   // ===================== All Page Functions =====================
   bindAllEvents () {
-    let {show: showHeader} = this.currentPageMeta.header
+    let {show: showHeader, bouncy} = this.currentPageMeta.header
     // Set `padding-top` on scroller
     if (showHeader) {
       document.body.classList.add('with-header')
+    }
+
+    if (bouncy) {
+      page.setupBouncyHeader()
     }
   }
 
