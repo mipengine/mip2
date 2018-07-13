@@ -412,7 +412,15 @@ export function frameMoveIn (pageId,
     }
 
     done()
-    // css(loading, 'display', 'none')
+    // if (newPage) {
+    //   setTimeout(() => {
+    //     done()
+    //     css(loading, 'display', 'none')
+    //   }, 100)
+    // } else {
+    //   done()
+    //   css(loading, 'display', 'none')
+    // }
   })
 
   nextFrame(() => {

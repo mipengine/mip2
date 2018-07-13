@@ -76,7 +76,7 @@ this.$emit(eventName, event)
 
 - Extensions `mip-a`
 ```html
-<tempalte>
+<template>
   <div >
     counter: {{count}}
   </div>
@@ -110,7 +110,7 @@ export {
 
 - Extensions `mip-b`
 ```html
-<tempalte>
+<template>
   <div >
     <div @click="onClick">
       <span v-if="show">点击隐藏内容</span>

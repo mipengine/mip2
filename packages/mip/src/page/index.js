@@ -36,7 +36,8 @@ import {
   MESSAGE_REGISTER_GLOBAL_COMPONENT,
   MESSAGE_CROSS_ORIGIN,
   MESSAGE_BROADCAST_EVENT,
-  MESSAGE_PAGE_RESIZE
+  MESSAGE_PAGE_RESIZE,
+  CUSTOM_EVENT_RESIZE_PAGE
 } from './const/index'
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
@@ -674,10 +675,22 @@ class Page {
     return document.body.querySelectorAll(`body > ${notInWhitelistSelector}`)
   }
 
+  /**
+   * handle resize event
+   */
   resizeAllPages () {
+    // 1.set every page's iframe
     Array.prototype.slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
       $el.style.height = `${this.currentViewportHeight}px`
     })
+    // 2.notify <mip-iframe> in every page
+    this.broadcastCustomEvent({
+      name: CUSTOM_EVENT_RESIZE_PAGE,
+      data: {
+        height: this.currentViewportHeight
+      }
+    })
+    // 3.notify SF to set the iframe outside
     window.MIP.viewer.sendMessage('resizeContainer', {height: this.currentViewportHeight})
   }
 
@@ -688,6 +701,7 @@ class Page {
    * @param {Route} to route
    */
   render (from, to) {
+    this.resizeAllPages()
     /**
      * if `to` route is the same with `from` route in path & query,
      * scroll in current page
