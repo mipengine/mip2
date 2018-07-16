@@ -42,13 +42,41 @@
 3. `<mip-shell>` 内部只允许存在一个 `<script>` 节点，并且 `type` 必须设置为 `application/json`。
 4. `<script>`内部是一个合法的 JSON 对象。
 
-### 配置项
+下面列出一些常见的错误配置示例，供开发者参考：
 
-`<mip-shell>` 支持包含一个 **基于路由** 的，**全局性** 的配置对象。其中的 `routes` 存放了各个页面及其对应的配置对象，对应关系通过 `pattern` 描述。在各个页面切换时，会通过正则匹配页面 URL 和 `pattern`，应用对应的 App Shell 配置。
+```html
+<!-- 常见错误1：直接在mip-shell 标签中写 JSON -->
+<body>
+    <mip-shell>{key: value}</mip-shell>
+</body>
+
+<!-- 常见错误2：没有给 script 标签设置 type -->
+<body>
+    <mip-shell>
+        <script>{key: value}</script>
+    </mip-shell>
+</body>
+
+<!-- 常见错误3：mip-shell 嵌套在其他标签内部 -->
+<body>
+    <div class=”wrapper”>
+        <mip-shell>
+            <script type=”application/json”>{key: value}</script>
+        </mip-shell>
+    </div>
+</body>
+
+```
+
+### 详细配置项
+
+`<mip-shell>` 支持包含一个 **基于路由** 的，**全局性** 的配置对象。其中的 `routes` 存放了各个页面及其对应的配置对象，对应关系通过 `pattern` 描述。在各个页面切换时，会通过正则匹配页面 URL 和 `pattern`，应用对应的 Shell 配置。
 
 > __为什么要在每个页面配置站点全局数据？__
 >
 > 主要是为了让页面切换的效果更佳顺畅。如果每个页面只配置当前页面的信息，那么在加载下一个页面时，因为下一个页面的 Shell 配置信息 （如头部是否显示，头部标题文字，LOGO 图片等等）都需要在 loading 结束之后才能获取。那么在 loading 结束切换到真实目标页面时可能会出现闪动，不太友好。
+
+Shell 最基本的配置中必须包含 routes 数组。其中的每个元素以正则和配置两部分组成。URL 的正则匹配以从上到下的顺序，因此应当把匹配范围越大的正则写在越后面。
 
 ```json
 {
@@ -130,7 +158,7 @@
 
     点开“更多”按钮，会出现浮层展现 `buttonGroup` 中配置的按钮，效果如下：
 
-    ![Drop Down](http://boscdn.bpc.baidu.com/assets/mip2/page/dropdown.png)
+    ![Drop Down](http://boscdn.bpc.baidu.com/assets/mip2/page/dropdown-2.png)
 
     每一个配置对象由 3 个属性构成，分别是 `name`, `text` 和 `link`。这三个配置项均 __没有__ 默认值，如果缺少某个则被认为非法配置，__会被跳过而不进行渲染__。
 
@@ -273,7 +301,7 @@ MIP 页面总共有 4 处可以配置头部标题，它们的生效顺序依次�
 
 * 除了头部，还有底部栏或者侧边栏需要额外渲染和绑定事件。例如下图：
 
-    ![Bottom Shell](http://boscdn.bpc.baidu.com/assets/mip2/page/bottom-shell.png)
+    ![Bottom Shell](http://boscdn.bpc.baidu.com/assets/mip2/page/bottom-shell-2.png)
 
 * 开发者需要控制站点的 Shell 配置，修改/禁用/忽略某些选项。
 
@@ -649,7 +677,7 @@ updateOtherParts() {
 * mip-shell-novel.js
 
     ```javascript
-    class MipShellNovel extends window.MIP.builtinComponents.MipShell {
+    export default class MipShellNovel extends window.MIP.builtinComponents.MipShell {
       constructor (...args) {
         super(...args)
 
@@ -783,40 +811,6 @@ updateOtherParts() {
 
         <p>但是陆宇却利用自己独创的武魂进化之术，让两人的武魂等级从地级三品提升到了天级八品，一跃成为了神武天域的至强者。 </p>
 
-        <p>宋凌云获得了无双战神的称号，马灵月荣获天月仙子的美誉。 </p>
-
-        <p>为了娇妻与兄弟，陆宇耗尽心血，一心想完善武魂进化之术，将两人的武魂提升到天级九品的至高领域。 </p>
-
-        <p>然而让陆宇万万没有想到的是，就在他付出沉重代价，研制成功的那一刻，马灵月与宋凌云却突然背叛的他，掠夺了他毕生的研究成果，将他关押在黑狱之内。 </p>
-
-        <p>陆宇从巅峰跌入谷底，他简直不敢相信。 </p>
-
-        <p>一个是自己最爱的妻子，一个是自己最信任的兄弟，他们竟然勾搭成奸，背叛自己。 </p>
-
-        <p>“马灵月，宋凌云，我一定会让你们后悔莫及！” </p>
-
-        <p>陆宇咬牙切齿，五官扭曲，每每想到这，他就无法平静。 </p>
-
-        <p>当初，马灵月嫁给陆宇，曾轰动神武天域，被称之为最具传奇色彩的吊丝逆袭。 </p>
-
-        <p>然而陆宇哪里知道，马灵月看中的是武魂进化之术，并不是他这个人。 </p>
-
-        <p>后来证明，马灵月眼光独到，借助武魂进化之术，一跃成为了至强者。 </p>
-
-        <p>而宋凌云本是马灵月的师兄，彼此早有私情，联手蒙骗了陆宇，和他称兄道弟。 </p>
-
-        <p>在陆宇将武魂进化之术彻底完善之际，马灵月和宋凌云突然翻脸，囚禁了陆宇。 </p>
-
-        <p>随后依照陆宇研究的成果，将自身的武魂从天级八品提升到了天级九品的至高等级。 </p>
-
-        <p>那一刻，马灵月和宋凌云才彻底放心，将囚禁在黑狱之中的陆宇连同黑狱一并摧毁。 </p>
-
-        <p>从此，陆宇灰飞烟灭，马宋二人联手称帝，横扫神武天域，这就是他们完美无缺的计策。 </p>
-
-        <p>然而人算不如天算，陆宇竟然死而重生，这是马宋二人怎么也想不到的事情。 </p>
-
-        <p>“苍天既然让我重生，我就一定会让你们后悔！” </p>
-
         <mip-shell-novel mip-shell>
             <script type="application/json">
             {
@@ -854,86 +848,26 @@ updateOtherParts() {
                     }
                 ],
                 "catalog": [
-                {
-                    "name": "第1章 灵魂重生",
-                    "link":"novel-1.html"
-                },
-                {
-                    "name": "第2章 武魂提升",
-                    "link":"novel-2.html"
-                },
-                {
-                    "name": "第3章 牛刀小试",
-                    "link":"novel-3.html"
-                },
-                {
-                    "name": "第4章 笑里藏刀",
-                    "link":"novel-4.html"
-                },
-                {
-                    "name": "第5章 云月儿",
-                    "link":"novel-5.html"
-                },
-                {
-                    "name": "第6章 情断玉碎",
-                    "link":"novel-6.html"
-                },
-                {
-                    "name": "第7章 击败陈松",
-                    "link":"novel-7.html"
-                },
-                {
-                    "name": "第8章 催化武魂",
-                    "link":"novel-8.html"
-                },
-                {
-                    "name": "第9章 开脉四重",
-                    "link":"novel-9.html"
-                },
-                {
-                    "name": "第10章 黄级四品",
-                    "link":"novel-10.html"
-                },
-                {
-                    "name": "第11章 针锋相对",
-                    "link":"novel-11.html"
-                },
-                {
-                    "name": "第12章 暴血狼魂",
-                    "link":"novel-12.html"
-                },
-                {
-                    "name": "第13章 武魂妙用",
-                    "link":"novel-13.html"
-                },
-                {
-                    "name": "第14章 击败钟真",
-                    "link":"novel-14.html"
-                },
-                {
-                    "name": "第15章 旧爱成恨",
-                    "link":"novel-15.html"
-                },
-                {
-                    "name": "第16章 丹宗林枫",
-                    "link":"novel-16.html"
-                },
-                {
-                    "name": "第17章 丹房传艺",
-                    "link":"novel-17.html"
-                },
-                {
-                    "name": "第18章 林枫武魂",
-                    "link":"novel-18.html"
-                },
-                {
-                    "name": "第19章 一场好戏",
-                    "link":"novel-19.html"
-                },
-                {
-                    "name": "第20章 连升三级",
-                    "link":"novel-20.html"
-                }
+                    {
+                        "name": "第1章 灵魂重生",
+                        "link":"novel-1.html"
+                    },
+                    {
+                        "name": "第2章 武魂提升",
+                        "link":"novel-2.html"
+                    },
+                    {
+                        "name": "第3章 牛刀小试",
+                        "link":"novel-3.html"
+                    },
+                    {
+                        "name": "第4章 笑里藏刀",
+                        "link":"novel-4.html"
+                    },
+                    {
+                        "name": "第5章 云月儿",
+                        "link":"novel-5.html"
+                    }
                 ]
             }
             </script>

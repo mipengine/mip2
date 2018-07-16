@@ -205,6 +205,7 @@ class Messenger {
       let requestData = {
         name: messenger.name,
         event: eventName,
+        sender: 'mip/2',
         data
       }
       let sessionId = getSessionId()

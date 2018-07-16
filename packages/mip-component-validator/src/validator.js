@@ -22,11 +22,17 @@ exports.validate = function (dirPath, options) {
     for (let index = 0; index < rules.length; index++) {
       const ruleProcess = createRuleProcess(rules[index])
       const content = fs.readFileSync(pathname, 'utf-8')
-      ruleProcess.exec({
+      const options = {
         name: fileName,
         path: pathname,
         content: content
-      }, reporter)
+      }
+
+      try {
+        ruleProcess.exec(options, reporter)
+      } catch (e) {
+        reporter.error('', e.message)
+      }
     }
   })
   return reporter.getReport()

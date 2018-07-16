@@ -65,7 +65,7 @@
 </head>
 
 <body>
-    <mip-shell-invalid>
+    <mip-shell>
         <script type="application/json">
             {
                 "routes": [
@@ -74,6 +74,7 @@
                         "meta": {
                             "header": {
                                 "show": true,
+                                "title": "MIP Tree",
                                 "buttonGroup": [
                                     {
                                         "name": "subscribe",
@@ -127,6 +128,9 @@
             }
         </script>
     </mip-shell>
+    <p class="input">
+        <input type="text">
+    </p>
 
     <mip-page-tree></mip-page-tree>
 
@@ -137,16 +141,6 @@
     <a class="link" href="./index.html" mip-link>Back to Index</a>
     <a class="link" href="./data.html" mip-link>Go to Data</a>
     <div id="broadcast" class="link">Broadcast</div>
-
-    <p class="input">
-        <input type="text">
-    </p>
-    <p class="input">
-        <input type="text">
-    </p>
-    <p class="input">
-        <input type="text">
-    </p>
 
 
 

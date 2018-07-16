@@ -104,6 +104,11 @@ export function toggleInner (element, toggle, {skipTransition, transitionName = 
     css(element, 'display', toggle ? 'block' : 'none')
     return
   }
+  let display = element.style.display
+  if ((toggle && display === 'block') ||
+    (!toggle && display === 'none')) {
+    return
+  }
 
   let direction = toggle ? 'enter' : 'leave'
   element.classList.add(`${transitionName}-${direction}`, `${transitionName}-${direction}-active`)

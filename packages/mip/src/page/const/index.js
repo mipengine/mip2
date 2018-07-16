@@ -40,6 +40,7 @@ export const MESSAGE_BROADCAST_EVENT = 'page-broadcast-event'
 export const MESSAGE_PAGE_RESIZE = 'page-resize'
 
 export const NON_EXISTS_PAGE_ID = 'non-exists-page-id'
+export const CUSTOM_EVENT_RESIZE_PAGE = 'resize-page'
 export const CUSTOM_EVENT_SCROLL_TO_ANCHOR = 'scroll-to-anchor'
 export const CUSTOM_EVENT_SHOW_PAGE = 'show-page'
 export const CUSTOM_EVENT_HIDE_PAGE = 'hide-page'

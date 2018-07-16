@@ -36,7 +36,8 @@ import {
   MESSAGE_REGISTER_GLOBAL_COMPONENT,
   MESSAGE_CROSS_ORIGIN,
   MESSAGE_BROADCAST_EVENT,
-  MESSAGE_PAGE_RESIZE
+  MESSAGE_PAGE_RESIZE,
+  CUSTOM_EVENT_RESIZE_PAGE
 } from './const/index'
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
@@ -114,8 +115,10 @@ class Page {
         } else if (type === MESSAGE_ROUTER_REPLACE) {
           router.replace(data.route)
         } else if (type === MESSAGE_ROUTER_BACK) {
+          this.allowTransition = true
           router.back()
         } else if (type === MESSAGE_ROUTER_FORWARD) {
+          this.allowTransition = true
           router.forward()
         }
       })
@@ -131,7 +134,6 @@ class Page {
 
   initAppShell () {
     if (this.isRootPage) {
-      this.currentViewportHeight = viewport.getHeight()
       this.globalComponent = new GlobalComponent()
       this.messageHandlers.push((type, data) => {
         if (type === MESSAGE_SET_MIP_SHELL_CONFIG) {
@@ -143,11 +145,6 @@ class Page {
 
           if (!this.transitionContainsHeader) {
             createFadeHeader(this.currentPageMeta)
-          }
-
-          // Set bouncy header
-          if (!data.update && this.currentPageMeta.header.bouncy) {
-            this.setupBouncyHeader()
           }
         } else if (type === MESSAGE_UPDATE_MIP_SHELL_CONFIG) {
           if (data.pageMeta) {
@@ -176,8 +173,13 @@ class Page {
 
       // update every iframe's height when viewport resizing
       viewport.on('resize', () => {
-        this.currentViewportHeight = viewport.getHeight()
-        this.resizeAllPages()
+        // only when screen gets spinned
+        let currentViewportWidth = viewport.getWidth()
+        if (this.currentViewportWidth !== currentViewportWidth) {
+          this.currentViewportHeight = viewport.getHeight()
+          this.currentViewportWidth = currentViewportWidth
+          this.resizeAllPages()
+        }
       })
 
       // Set iframe height when resizing
@@ -223,14 +225,12 @@ class Page {
     if (this.bouncyHeaderSetup) {
       return
     }
-    this.bouncyHeaderSetup = true
     const THRESHOLD = 10
     let scrollTop
     let lastScrollTop = 0
     let scrollDistance
     let scrollHeight = viewport.getScrollHeight()
     let viewportHeight = viewport.getHeight()
-    let lastScrollDirection
 
     // viewportHeight = 0 before frameMoveIn animation ends
     // Wait a minute
@@ -239,6 +239,7 @@ class Page {
       return
     }
 
+    this.bouncyHeaderSetup = true
     this.debouncer = new Debouncer(() => {
       scrollTop = viewport.getScrollTop()
       scrollDistance = Math.abs(scrollTop - lastScrollTop)
@@ -249,33 +250,27 @@ class Page {
       }
 
       if (lastScrollTop < scrollTop && scrollDistance >= THRESHOLD) {
-        if (lastScrollDirection !== 'up') {
-          lastScrollDirection = 'up'
-          let target = this.isRootPage ? window : window.parent
-          this.emitCustomEvent(target, this.isCrossOrigin, {
-            name: 'mipShellEvents',
+        let target = this.isRootPage ? window : window.parent
+        this.emitCustomEvent(target, this.isCrossOrigin, {
+          name: 'mipShellEvents',
+          data: {
+            type: 'slide',
             data: {
-              type: 'slide',
-              data: {
-                direction: 'up'
-              }
+              direction: 'up'
             }
-          })
-        }
+          }
+        })
       } else if (lastScrollTop > scrollTop && scrollDistance >= THRESHOLD) {
-        if (lastScrollDirection !== 'down') {
-          lastScrollDirection = 'down'
-          let target = this.isRootPage ? window : window.parent
-          this.emitCustomEvent(target, this.isCrossOrigin, {
-            name: 'mipShellEvents',
+        let target = this.isRootPage ? window : window.parent
+        this.emitCustomEvent(target, this.isCrossOrigin, {
+          name: 'mipShellEvents',
+          data: {
+            type: 'slide',
             data: {
-              type: 'slide',
-              data: {
-                direction: 'down'
-              }
+              direction: 'down'
             }
-          })
-        }
+          }
+        })
       }
 
       lastScrollTop = scrollTop
@@ -334,12 +329,11 @@ class Page {
 
     // ========================= Some HACKs =========================
 
-    // prevent bouncy scroll in iOS 7 & 8 & (Shoubai iOS 9,10)
+    // prevent bouncy scroll in iOS 7 & 8
     if (platform.isIos()) {
       let iosVersion = platform.getOsVersion()
       iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
-      if (!(iosVersion === '8' || iosVersion === '7' ||
-        ((platform.isBaiduApp || platform.isBaidu) && (iosVersion === '9' || iosVersion === '10')))) {
+      if (!(iosVersion === '8' || iosVersion === '7')) {
         document.documentElement.classList.add('mip-i-ios-scroll')
       }
     }
@@ -372,6 +366,11 @@ class Page {
         disableBouncyScrolling()
       }
     })
+
+    if (this.isRootPage) {
+      this.currentViewportHeight = viewport.getHeight()
+      this.currentViewportWidth = viewport.getWidth()
+    }
 
     // scroll to current hash if exists
     this.scrollToHash(window.location.hash)
@@ -546,7 +545,7 @@ class Page {
               toggle: true
             }
           })
-          if (this.direction === 'back') {
+          if (this.direction === 'back' && targetPageId !== this.pageId) {
             document.documentElement.classList.add('mip-no-scroll')
             Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
           }
@@ -676,10 +675,23 @@ class Page {
     return document.body.querySelectorAll(`body > ${notInWhitelistSelector}`)
   }
 
+  /**
+   * handle resize event
+   */
   resizeAllPages () {
+    // 1.set every page's iframe
     Array.prototype.slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
       $el.style.height = `${this.currentViewportHeight}px`
     })
+    // 2.notify <mip-iframe> in every page
+    this.broadcastCustomEvent({
+      name: CUSTOM_EVENT_RESIZE_PAGE,
+      data: {
+        height: this.currentViewportHeight
+      }
+    })
+    // 3.notify SF to set the iframe outside
+    window.MIP.viewer.sendMessage('resizeContainer', {height: this.currentViewportHeight})
   }
 
   /**
@@ -689,6 +701,7 @@ class Page {
    * @param {Route} to route
    */
   render (from, to) {
+    this.resizeAllPages()
     /**
      * if `to` route is the same with `from` route in path & query,
      * scroll in current page
@@ -733,6 +746,7 @@ class Page {
      * reload iframe when <a mip-link> clicked even if it's already existed.
      * NOTE: forwarding or going back with browser history won't do
      */
+    let needEmitPageEvent = true
     if (!targetPage || (to.meta && to.meta.reload)) {
       // when reloading root page...
       if (this.pageId === targetPageId) {
@@ -757,8 +771,17 @@ class Page {
       this.addChild(targetPageMeta)
 
       // Create a new iframe
-      targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
-      this.applyTransition(targetPageId, to.meta, {newPage: true})
+      // targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
+      needEmitPageEvent = false
+      this.applyTransition(targetPageId, to.meta, {
+        newPage: true,
+        onComplete: () => {
+          targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
+          this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
+          this.currentPageId = targetPageId
+          this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+        }
+      })
     } else {
       this.applyTransition(targetPageId, to.meta, {
         onComplete: () => {
@@ -772,9 +795,12 @@ class Page {
       })
       window.MIP.$recompile()
     }
-    this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
-    this.currentPageId = targetPageId
-    this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+
+    if (needEmitPageEvent) {
+      this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
+      this.currentPageId = targetPageId
+      this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+    }
   }
 }
 

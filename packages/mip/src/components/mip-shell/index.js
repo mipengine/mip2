@@ -151,10 +151,6 @@ class MipShell extends CustomElement {
           pageMeta
         }
       })
-
-      if (pageMeta && pageMeta.header.bouncy) {
-        page.setupBouncyHeader()
-      }
     }
   }
 
@@ -233,14 +229,14 @@ class MipShell extends CustomElement {
     let showBackIcon = !pageMeta.view.isIndex
 
     let headerHTML = `
-      ${showBackIcon ? `<span class="back-button" mip-header-btn
+      ${showBackIcon ? `<a href="javascript:void(0)" class="back-button" mip-header-btn
         data-button-name="back">
         <svg t="1530857979993" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3173"
           xmlns:xlink="http://www.w3.org/1999/xlink">
           <path  fill="currentColor" d="M348.949333 511.829333L774.250667 105.728C783.978667 96 789.333333 83.712 789.333333 71.104c0-12.629333-5.354667-24.917333-15.082666-34.645333-9.728-9.728-22.037333-15.082667-34.645334-15.082667-12.586667 0-24.917333 5.333333-34.624 15.082667L249.557333 471.616A62.570667 62.570667 0 0 0 234.666667 512c0 10.410667 1.130667 25.408 14.890666 40.042667l455.424 435.605333c9.706667 9.728 22.016 15.082667 34.624 15.082667s24.917333-5.354667 34.645334-15.082667c9.728-9.728 15.082667-22.037333 15.082666-34.645333 0-12.608-5.354667-24.917333-15.082666-34.645334L348.949333 511.829333z"
             p-id="3174"></path>
         </svg>
-      </span>` : ''}
+      </a>` : ''}
       <div class="mip-shell-header-logo-title">
         ${logo ? `<img class="mip-shell-header-logo" src="${logo}">` : ''}
         <span class="mip-shell-header-title">${title}</span>
@@ -410,6 +406,8 @@ class MipShell extends CustomElement {
     if (!(pageMeta.header && pageMeta.header.show)) {
       this.$wrapper.classList.add('hide')
       page.toggleFadeHeader(false)
+      let loading = document.querySelector('.mip-page-loading-wrapper')
+      loading && css(loading, 'display', 'none')
       return
     }
 
@@ -437,6 +435,8 @@ class MipShell extends CustomElement {
       // 3. Wait for transition ending
       // 4. Hide fade header (Fade header was shown in MIP Page)
       this.renderHeader(this.$el)
+      let loading = document.querySelector('.mip-page-loading-wrapper')
+      loading && css(loading, 'display', 'none')
     }
 
     this.updateOtherParts()
@@ -519,10 +519,14 @@ class MipShell extends CustomElement {
 
   // ===================== All Page Functions =====================
   bindAllEvents () {
-    let {show: showHeader} = this.currentPageMeta.header
+    let {show: showHeader, bouncy} = this.currentPageMeta.header
     // Set `padding-top` on scroller
     if (showHeader) {
       document.body.classList.add('with-header')
+    }
+
+    if (bouncy) {
+      page.setupBouncyHeader()
     }
   }
 
