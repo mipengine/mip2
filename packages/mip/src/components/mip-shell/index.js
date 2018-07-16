@@ -20,6 +20,8 @@ import {getCleanPageId} from '../../page/util/path'
 import Router from '../../page/router/index'
 import {
   DEFAULT_SHELL_CONFIG,
+  MAX_PAGE_NUM,
+  NON_EXISTS_PAGE_ID,
   CUSTOM_EVENT_SCROLL_TO_ANCHOR,
   CUSTOM_EVENT_RESIZE_PAGE,
   CUSTOM_EVENT_SHOW_PAGE,
@@ -445,44 +447,30 @@ class MipShell extends CustomElement {
     let targetPageId = getCleanPageId(targetFullPath)
     let targetPage = page.getPageById(targetPageId)
 
-    if (this.currentPageId === this.pageId) {
-      // TODO HERE
+    if (page.currentPageId === page.pageId) {
       this.saveScrollPosition()
     }
 
     // Hide page mask and skip transition
-    customEmit(window, 'mipShellEvents', {
-      type: 'togglePageMask',
-      data: {
-        toggle: false,
-        options: {
-          skipTransition: true
-        }
-      }
-    })
+    this.togglePageMask(false, {skipTransition: true})
 
     // Show header
-    customEmit(window, 'mipShellEvents', {
-      type: 'slide',
-      data: {
-        direction: 'down'
-      }
-    })
+    this.slideHeader('down')
 
     /**
-     * reload iframe when <a mip-link> clicked even if it's already existed.
+     * Reload iframe when <a mip-link> clicked even if it's already existed.
      * NOTE: forwarding or going back with browser history won't do
      */
     let needEmitPageEvent = true
     if (!targetPage || (to.meta && to.meta.reload)) {
-      // when reloading root page...
-      if (this.pageId === targetPageId) {
-        this.pageId = NON_EXISTS_PAGE_ID
-        // destroy root page first
+      // When reloading root page...
+      if (page.pageId === targetPageId) {
+        page.pageId = NON_EXISTS_PAGE_ID
+        // Destroy root page first
         if (targetPage) {
           targetPage.destroy()
         }
-        // TODO: delete DOM & trigger disconnectedCallback in root page
+        // Delete DOM & trigger disconnectedCallback in root page
         Array.prototype.slice.call(this.getElementsInRootPage()).forEach(el => el.parentNode && el.parentNode.removeChild(el))
       }
 
@@ -498,15 +486,15 @@ class MipShell extends CustomElement {
       page.addChild(targetPageMeta)
 
       // Create a new iframe
-      // targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
       needEmitPageEvent = false
+      // TODO applyTransition
       this.applyTransition(targetPageId, to.meta, {
         newPage: true,
         onComplete: () => {
           targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
-          this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
-          this.currentPageId = targetPageId
-          this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+          page.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
+          page.currentPageId = targetPageId
+          page.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
         }
       })
     } else {
@@ -514,19 +502,45 @@ class MipShell extends CustomElement {
         onComplete: () => {
           // Update shell if new iframe has not been created
           let pageMeta = this.findMetaByPageId(targetPageId)
-          customEmit(window, 'mipShellEvents', {
-            type: 'updateShell',
-            data: {pageMeta}
-          })
+          this.refreshShell({pageMeta})
         }
       })
       window.MIP.$recompile()
     }
 
     if (needEmitPageEvent) {
-      this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
-      this.currentPageId = targetPageId
-      this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+      page.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
+      page.currentPageId = targetPageId
+      page.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+    }
+  }
+
+  /**
+   * save scroll position in root page
+   */
+  saveScrollPosition () {
+    this.rootPageScrollPosition = viewport.getScrollTop()
+  }
+
+  /**
+   * restore scroll position in root page
+   */
+  restoreScrollPosition () {
+    viewport.setScrollTop(this.rootPageScrollPosition)
+  }
+
+  /**
+   * check if children.length exceeds MAX_PAGE_NUM
+   * if so, remove the first child
+   */
+  checkIfExceedsMaxPageNum () {
+    if (this.children.length >= MAX_PAGE_NUM) {
+      // remove from children list
+      let firstChildPage = this.children.splice(0, 1)[0]
+      let firstIframe = getIFrame(firstChildPage.pageId)
+      if (firstIframe && firstIframe.parentNode) {
+        firstIframe.parentNode.removeChild(firstIframe)
+      }
     }
   }
 

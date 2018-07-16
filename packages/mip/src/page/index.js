@@ -82,17 +82,6 @@ class Page {
     this.allowTransition = false
   }
 
-  /**
-   * clean pageId
-   *
-   * @param {string} pageId pageId
-   * @return {string} cleaned pageId
-   */
-  cleanPageId (pageId) {
-    let hashReg = /#.*$/
-    return pageId && pageId.replace(hashReg, '')
-  }
-
   initRouter () {
     // let router
 
