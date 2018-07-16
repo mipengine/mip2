@@ -62,7 +62,6 @@ class Page {
     this.pageId = undefined
 
     // root page
-    // this.appshell = undefined
     this.children = []
     this.currentPageId = undefined
     this.messageHandlers = []

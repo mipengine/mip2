@@ -177,6 +177,7 @@ class MipShell extends CustomElement {
 
     if (page.isRootPage) {
       this.initShell()
+      this.initRouter()
       this.bindRootEvents()
     }
 
@@ -320,31 +321,48 @@ class MipShell extends CustomElement {
     css(container.querySelector('.mip-shell-header-button-group .split'), 'background-color', borderColor)
   }
 
-  bindRootEvents () {
+  initRouter () {
     // Init router
     let router = new Router()
     router.init()
     router.listen(this.render.bind(this))
+    this.router = router
+
+    // Handle events emitted by SF
+    viewer.onMessage('changeState', ({url}) => {
+      router.replace(makeCacheUrl(url, 'url', true))
+    })
 
     // 看看是否还需要？
     // window.MIP_ROUTER = router
 
-    // Handle events emitted by child iframe
-    // TODO 可能不需要再接message，直接接event即可
-    // this.messageHandlers.push((type, data) => {
-    //   if (type === MESSAGE_ROUTER_PUSH) {
-    //     router.push(data.route)
-    //   } else if (type === MESSAGE_ROUTER_REPLACE) {
-    //     router.replace(data.route)
-    //   } else if (type === MESSAGE_ROUTER_BACK) {
-    //     this.allowTransition = true
-    //     router.back()
-    //   } else if (type === MESSAGE_ROUTER_FORWARD) {
-    //     this.allowTransition = true
-    //     router.forward()
-    //   }
-    // })
+    window.addEventListener('message', e => {
+      let type
+      let data
+      try {
+        type = e.data.type
+        data = e.data.data
+      } catch (e) {
+        // Ignore other messages
+        return
+      }
 
+      // Deal message and operate router
+      if (type === MESSAGE_ROUTER_PUSH) {
+        router.push(data.route)
+      } else if (type === MESSAGE_ROUTER_REPLACE) {
+        router.replace(data.route)
+      } else if (type === MESSAGE_ROUTER_BACK) {
+        this.allowTransition = true
+        router.back()
+      } else if (type === MESSAGE_ROUTER_FORWARD) {
+        this.allowTransition = true
+        router.forward()
+      }
+    }, false)
+  }
+
+  bindRootEvents () {
     // 转发消息相关
     // this.messageHandlers.push((type, data) => {
     //   if (type === MESSAGE_SET_MIP_SHELL_CONFIG) {
@@ -391,11 +409,6 @@ class MipShell extends CustomElement {
         this.currentViewportWidth = currentViewportWidth
         this.resizeAllPages()
       }
-    })
-
-    // Handle events emitted by SF
-    viewer.onMessage('changeState', ({url}) => {
-      router.replace(makeCacheUrl(url, 'url', true))
     })
 
     // Listen events from page
@@ -579,9 +592,9 @@ class MipShell extends CustomElement {
           this.allowTransition = false
           this.currentPageMeta = finalMeta
           this.toggleTransition(true)
-          if (this.direction === 'back' && targetPageId !== this.pageId) {
+          if (this.direction === 'back' && targetPageId !== page.pageId) {
             document.documentElement.classList.add('mip-no-scroll')
-            Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
+            Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
           }
           options.onComplete && options.onComplete()
         }
@@ -689,6 +702,7 @@ class MipShell extends CustomElement {
         page.allowTransition = true
       }
       page.direction = 'back'
+      // TODO back 以后不用page.router了
       page.router.back()
     } else if (buttonName === 'more') {
       this.toggleDropdown(true)
