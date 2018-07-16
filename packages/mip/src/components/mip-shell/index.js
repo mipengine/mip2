@@ -56,25 +56,31 @@ class MipShell extends CustomElement {
 
     // Read config
     let ele = this.element.querySelector('script[type="application/json"]')
+    let tmpShellConfig
 
     if (!ele) {
-      return
-    }
-    let tmpShellConfig
-    try {
-      tmpShellConfig = JSON.parse(ele.textContent.toString()) || {}
-      if (!tmpShellConfig.routes) {
-        tmpShellConfig.routes = [{
-          pattern: '*',
-          meta: DEFAULT_SHELL_CONFIG
-        }]
-      }
-    } catch (e) {
       tmpShellConfig = {
         routes: [{
           pattern: '*',
           meta: DEFAULT_SHELL_CONFIG
         }]
+      }
+    } else {
+      try {
+        tmpShellConfig = JSON.parse(ele.textContent.toString()) || {}
+        if (!tmpShellConfig.routes) {
+          tmpShellConfig.routes = [{
+            pattern: '*',
+            meta: DEFAULT_SHELL_CONFIG
+          }]
+        }
+      } catch (e) {
+        tmpShellConfig = {
+          routes: [{
+            pattern: '*',
+            meta: DEFAULT_SHELL_CONFIG
+          }]
+        }
       }
     }
 
