@@ -795,12 +795,6 @@ class Page {
             type: 'updateShell',
             data: {pageMeta}
           })
-
-          // Get <mip-shell> from root page
-          let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
-          if (shellDOM) {
-            window.MIP.viewer.eventAction.execute('ready', shellDOM, {})
-          }
         }
       })
       window.MIP.$recompile()
