@@ -4,25 +4,17 @@
  */
 
 export const MIP_IFRAME_CONTAINER = 'mip-page__iframe'
-// delete me
 export const DEFAULT_SHELL_CONFIG = {
   header: {
     title: '',
     logo: '',
-    xiongzhang: false,
     buttonGroup: [],
     show: false,
     bouncy: true
   },
   view: {
-    isIndex: false,
-    transition: {
-      mode: 'slide',
-      effect: 'slide-left',
-      alwaysBackPages: []
-    }
-  },
-  footer: {}
+    isIndex: false
+  }
 }
 
 export const MESSAGE_ROUTER_PUSH = 'router-push'

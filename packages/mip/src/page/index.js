@@ -94,42 +94,43 @@ class Page {
   }
 
   initRouter () {
-    let router
+    // let router
 
     // generate pageId
     this.pageId = this.cleanPageId(window.location.href)
     this.currentPageId = this.pageId
 
-    if (this.isRootPage) {
-      // outside iframe
-      router = new Router()
-      router.init()
-      router.listen(this.render.bind(this))
+    // DELETE ME
+    // if (this.isRootPage) {
+    //   // outside iframe
+    //   router = new Router()
+    //   router.init()
+    //   router.listen(this.render.bind(this))
 
-      window.MIP_ROUTER = router
+    //   window.MIP_ROUTER = router
 
-      // handle events emitted by child iframe
-      this.messageHandlers.push((type, data) => {
-        if (type === MESSAGE_ROUTER_PUSH) {
-          router.push(data.route)
-        } else if (type === MESSAGE_ROUTER_REPLACE) {
-          router.replace(data.route)
-        } else if (type === MESSAGE_ROUTER_BACK) {
-          this.allowTransition = true
-          router.back()
-        } else if (type === MESSAGE_ROUTER_FORWARD) {
-          this.allowTransition = true
-          router.forward()
-        }
-      })
+    //   // handle events emitted by child iframe
+    //   this.messageHandlers.push((type, data) => {
+    //     if (type === MESSAGE_ROUTER_PUSH) {
+    //       router.push(data.route)
+    //     } else if (type === MESSAGE_ROUTER_REPLACE) {
+    //       router.replace(data.route)
+    //     } else if (type === MESSAGE_ROUTER_BACK) {
+    //       this.allowTransition = true
+    //       router.back()
+    //     } else if (type === MESSAGE_ROUTER_FORWARD) {
+    //       this.allowTransition = true
+    //       router.forward()
+    //     }
+    //   })
 
-      // handle events emitted by BaiduResult page
-      window.MIP.viewer.onMessage('changeState', ({url}) => {
-        router.replace(makeCacheUrl(url, 'url', true))
-      })
-    }
+    //   // handle events emitted by BaiduResult page
+    //   window.MIP.viewer.onMessage('changeState', ({url}) => {
+    //     router.replace(makeCacheUrl(url, 'url', true))
+    //   })
+    // }
 
-    this.router = router
+    // this.router = router
   }
 
   initAppShell () {
@@ -171,16 +172,16 @@ class Page {
         }
       })
 
-      // update every iframe's height when viewport resizing
-      viewport.on('resize', () => {
-        // only when screen gets spinned
-        let currentViewportWidth = viewport.getWidth()
-        if (this.currentViewportWidth !== currentViewportWidth) {
-          this.currentViewportHeight = viewport.getHeight()
-          this.currentViewportWidth = currentViewportWidth
-          this.resizeAllPages()
-        }
-      })
+      // // update every iframe's height when viewport resizing
+      // viewport.on('resize', () => {
+      //   // only when screen gets spinned
+      //   let currentViewportWidth = viewport.getWidth()
+      //   if (this.currentViewportWidth !== currentViewportWidth) {
+      //     this.currentViewportHeight = viewport.getHeight()
+      //     this.currentViewportWidth = currentViewportWidth
+      //     this.resizeAllPages()
+      //   }
+      // })
 
       // Set iframe height when resizing
       // viewport.on('resize', () => {
@@ -303,11 +304,6 @@ class Page {
   }
 
   start () {
-    // Don't let browser restore scroll position.
-    if ('scrollRestoration' in window.history) {
-      window.history.scrollRestoration = 'manual'
-    }
-
     ensureMIPShell()
     this.initRouter()
     this.initAppShell()

@@ -3,31 +3,35 @@
  * @author wangyisheng@baidu.com (wangyisheng)
  */
 
-import css from '../../util/dom/css'
-import CustomElement from '../../custom-element'
-import fn from '../../util/fn'
-import event from '../../util/dom/event'
-import {isPortrait} from '../../page/util/feature-detect'
 import {
   convertPatternToRegexp,
   createMoreButtonWrapper,
   createPageMask,
   toggleInner
 } from './util'
+import {makeCacheUrl} from '../../util'
+import css from '../../util/dom/css'
+import fn from '../../util/fn'
+import event from '../../util/dom/event'
+import CustomElement from '../../custom-element'
+import {isPortrait} from '../../page/util/feature-detect'
+import {isSameRoute, getFullPath} from '../../page/util/route'
+import {getCleanPageId} from '../../page/util/path'
+import Router from '../../page/router/index'
+import {
+  DEFAULT_SHELL_CONFIG,
+  CUSTOM_EVENT_SCROLL_TO_ANCHOR,
+  CUSTOM_EVENT_RESIZE_PAGE,
+  CUSTOM_EVENT_SHOW_PAGE,
+  CUSTOM_EVENT_HIDE_PAGE,
+  MESSAGE_ROUTER_PUSH,
+  MESSAGE_ROUTER_REPLACE,
+  MESSAGE_ROUTER_BACK,
+  MESSAGE_ROUTER_FORWARD
+} from '../../page/const/index'
+import viewport from '../../viewport'
 
-const DEFAULT_SHELL_CONFIG = {
-  header: {
-    title: '',
-    logo: '',
-    buttonGroup: [],
-    show: false,
-    bouncy: true
-  },
-  view: {
-    isIndex: false
-  }
-}
-
+let viewer = null
 let page = null
 window.MIP_PAGE_META_CACHE = Object.create(null)
 window.MIP_SHELL_CONFIG = null
@@ -45,8 +49,10 @@ class MipShell extends CustomElement {
   }
 
   build () {
-    page = window.MIP.viewer.page
+    viewer = window.MIP.viewer
+    page = viewer.page
 
+    // DELETE ME
     page.notifyRootPage({
       type: 'sync-page-config',
       data: {
@@ -91,6 +97,7 @@ class MipShell extends CustomElement {
       this.processShellConfig(tmpShellConfig)
 
       window.MIP_SHELL_CONFIG = tmpShellConfig.routes
+      // DELETE ME
       page.notifyRootPage({
         type: 'set-mip-shell-config',
         data: {
@@ -144,6 +151,7 @@ class MipShell extends CustomElement {
         }
       }
 
+      // DELETE ME
       page.notifyRootPage({
         type: 'update-mip-shell-config',
         data: {
@@ -307,6 +315,84 @@ class MipShell extends CustomElement {
   }
 
   bindRootEvents () {
+    // Init router
+    let router = new Router()
+    router.init()
+    router.listen(this.render.bind(this))
+
+    // 看看是否还需要？
+    // window.MIP_ROUTER = router
+
+    // Handle events emitted by child iframe
+    // TODO 可能不需要再接message，直接接event即可
+    // this.messageHandlers.push((type, data) => {
+    //   if (type === MESSAGE_ROUTER_PUSH) {
+    //     router.push(data.route)
+    //   } else if (type === MESSAGE_ROUTER_REPLACE) {
+    //     router.replace(data.route)
+    //   } else if (type === MESSAGE_ROUTER_BACK) {
+    //     this.allowTransition = true
+    //     router.back()
+    //   } else if (type === MESSAGE_ROUTER_FORWARD) {
+    //     this.allowTransition = true
+    //     router.forward()
+    //   }
+    // })
+
+    // 转发消息相关
+    // this.messageHandlers.push((type, data) => {
+    //   if (type === MESSAGE_SET_MIP_SHELL_CONFIG) {
+    //     // Set mip shell config in root page
+    //     this.appshellRoutes = data.shellConfig
+    //     this.appshellCache = Object.create(null)
+    //     this.currentPageMeta = this.findMetaByPageId(this.pageId)
+    //     createLoading(this.currentPageMeta)
+
+    //     if (!this.transitionContainsHeader) {
+    //       createFadeHeader(this.currentPageMeta)
+    //     }
+    //   } else if (type === MESSAGE_UPDATE_MIP_SHELL_CONFIG) {
+    //     if (data.pageMeta) {
+    //       this.appshellCache[data.pageId] = data.pageMeta
+    //     } else {
+    //       data.pageMeta = this.findMetaByPageId(data.pageId)
+    //     }
+    //     customEmit(window, 'mipShellEvents', {
+    //       type: 'updateShell',
+    //       data
+    //     })
+    //   } else if (type === MESSAGE_SYNC_PAGE_CONFIG) {
+    //     // Sync config from mip-shell
+    //     this.transitionContainsHeader = data.transitionContainsHeader
+    //   } else if (type === MESSAGE_BROADCAST_EVENT) {
+    //     // Broadcast Event
+    //     this.broadcastCustomEvent(data)
+    //   } else if (type === MESSAGE_REGISTER_GLOBAL_COMPONENT) {
+    //     // Register global component (Not finished)
+    //     console.log('register global component')
+    //     // this.globalComponent.register(data)
+    //   } else if (type === MESSAGE_PAGE_RESIZE) {
+    //     this.resizeAllPages()
+    //   }
+    // })
+
+    // update every iframe's height when viewport resizing
+    viewport.on('resize', () => {
+      // only when screen gets spinned
+      let currentViewportWidth = viewport.getWidth()
+      if (this.currentViewportWidth !== currentViewportWidth) {
+        this.currentViewportHeight = viewport.getHeight()
+        this.currentViewportWidth = currentViewportWidth
+        this.resizeAllPages()
+      }
+    })
+
+    // Handle events emitted by SF
+    viewer.onMessage('changeState', ({url}) => {
+      router.replace(makeCacheUrl(url, 'url', true))
+    })
+
+    // Listen events from page
     window.addEventListener('mipShellEvents', e => {
       let {type, data} = e.detail[0]
 
@@ -329,7 +415,138 @@ class MipShell extends CustomElement {
       }
     })
 
+    // Bind DOM events
     this.bindHeaderEvents()
+  }
+
+  /**
+   * render with current route
+   *
+   * @param {Route} from route
+   * @param {Route} to route
+   */
+  render (from, to) {
+    this.resizeAllPages()
+    /**
+     * if `to` route is the same with `from` route in path & query,
+     * scroll in current page
+     */
+    if (isSameRoute(from, to, true)) {
+      // Emit event to current active page
+      page.emitEventInCurrentPage({
+        name: CUSTOM_EVENT_SCROLL_TO_ANCHOR,
+        data: to.hash
+      })
+      return
+    }
+
+    // Render target page
+    let targetFullPath = getFullPath(to)
+    let targetPageId = getCleanPageId(targetFullPath)
+    let targetPage = page.getPageById(targetPageId)
+
+    if (this.currentPageId === this.pageId) {
+      // TODO HERE
+      this.saveScrollPosition()
+    }
+
+    // Hide page mask and skip transition
+    customEmit(window, 'mipShellEvents', {
+      type: 'togglePageMask',
+      data: {
+        toggle: false,
+        options: {
+          skipTransition: true
+        }
+      }
+    })
+
+    // Show header
+    customEmit(window, 'mipShellEvents', {
+      type: 'slide',
+      data: {
+        direction: 'down'
+      }
+    })
+
+    /**
+     * reload iframe when <a mip-link> clicked even if it's already existed.
+     * NOTE: forwarding or going back with browser history won't do
+     */
+    let needEmitPageEvent = true
+    if (!targetPage || (to.meta && to.meta.reload)) {
+      // when reloading root page...
+      if (this.pageId === targetPageId) {
+        this.pageId = NON_EXISTS_PAGE_ID
+        // destroy root page first
+        if (targetPage) {
+          targetPage.destroy()
+        }
+        // TODO: delete DOM & trigger disconnectedCallback in root page
+        Array.prototype.slice.call(this.getElementsInRootPage()).forEach(el => el.parentNode && el.parentNode.removeChild(el))
+      }
+
+      this.checkIfExceedsMaxPageNum()
+
+      let targetPageMeta = {
+        pageId: targetPageId,
+        fullpath: targetFullPath,
+        standalone: window.MIP.standalone,
+        isRootPage: false,
+        isCrossOrigin: to.origin !== window.location.origin
+      }
+      page.addChild(targetPageMeta)
+
+      // Create a new iframe
+      // targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
+      needEmitPageEvent = false
+      this.applyTransition(targetPageId, to.meta, {
+        newPage: true,
+        onComplete: () => {
+          targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
+          this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
+          this.currentPageId = targetPageId
+          this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+        }
+      })
+    } else {
+      this.applyTransition(targetPageId, to.meta, {
+        onComplete: () => {
+          // Update shell if new iframe has not been created
+          let pageMeta = this.findMetaByPageId(targetPageId)
+          customEmit(window, 'mipShellEvents', {
+            type: 'updateShell',
+            data: {pageMeta}
+          })
+        }
+      })
+      window.MIP.$recompile()
+    }
+
+    if (needEmitPageEvent) {
+      this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
+      this.currentPageId = targetPageId
+      this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+    }
+  }
+
+  /**
+   * handle resize event
+   */
+  resizeAllPages () {
+    // 1.set every page's iframe
+    Array.prototype.slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
+      $el.style.height = `${this.currentViewportHeight}px`
+    })
+    // 2.notify <mip-iframe> in every page
+    this.broadcastCustomEvent({
+      name: CUSTOM_EVENT_RESIZE_PAGE,
+      data: {
+        height: this.currentViewportHeight
+      }
+    })
+    // 3.notify SF to set the iframe outside
+    viewer.sendMessage('resizeContainer', {height: this.currentViewportHeight})
   }
 
   bindHeaderEvents () {
@@ -519,6 +736,11 @@ class MipShell extends CustomElement {
 
   // ===================== All Page Functions =====================
   bindAllEvents () {
+    // Don't let browser restore scroll position.
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual'
+    }
+
     let {show: showHeader, bouncy} = this.currentPageMeta.header
     // Set `padding-top` on scroller
     if (showHeader) {
@@ -528,6 +750,13 @@ class MipShell extends CustomElement {
     if (bouncy) {
       page.setupBouncyHeader()
     }
+
+    // Cross origin
+    // this.messageHandlers.push((type, data) => {
+    //   if (type === MESSAGE_CROSS_ORIGIN) {
+    //     customEmit(window, data.name, data.data)
+    //   }
+    // })
   }
 
   updateShellConfig (newShellConfig) {

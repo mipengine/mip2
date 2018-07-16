@@ -68,3 +68,14 @@ export function parsePath (path) {
 export function getLocation () {
   return window.location.href
 }
+
+/**
+ * clean pageId
+ *
+ * @param {string} pageId pageId
+ * @return {string} cleaned pageId
+ */
+export function getCleanPageId (pageId) {
+  let hashReg = /#.*$/
+  return pageId && pageId.replace(hashReg, '')
+}
