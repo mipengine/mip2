@@ -344,6 +344,8 @@ class MipShell extends CustomElement {
     })
 
     this.bindHeaderEvents()
+
+    window.MIP.viewer.eventAction.execute('ready', this.element, {})
   }
 
   bindHeaderEvents () {

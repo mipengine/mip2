@@ -776,8 +776,8 @@ class Page {
         newPage: true,
         onComplete: () => {
           targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
-          let iframeDoc = targetPageMeta.targetWindow.document
-          let shellDOM = iframeDoc.querySelector('mip-shell') || iframeDoc.querySelector('[mip-shell]')
+          // Get <mip-shell> from root page
+          let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
           if (shellDOM) {
             window.MIP.viewer.eventAction.execute('ready', shellDOM, {})
           }
@@ -796,6 +796,7 @@ class Page {
             data: {pageMeta}
           })
 
+          // Get <mip-shell> from root page
           let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
           if (shellDOM) {
             window.MIP.viewer.eventAction.execute('ready', shellDOM, {})
