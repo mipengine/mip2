@@ -16,6 +16,10 @@ import event from '../../util/dom/event'
 import CustomElement from '../../custom-element'
 import {isPortrait} from '../../page/util/feature-detect'
 import {isSameRoute, getFullPath} from '../../page/util/route'
+import {
+  createIFrame,
+  getIFrame
+} from '../../page/util/dom'
 import {getCleanPageId} from '../../page/util/path'
 import Router from '../../page/router/index'
 import {
@@ -487,7 +491,6 @@ class MipShell extends CustomElement {
 
       // Create a new iframe
       needEmitPageEvent = false
-      // TODO applyTransition
       this.applyTransition(targetPageId, to.meta, {
         newPage: true,
         onComplete: () => {
@@ -541,6 +544,90 @@ class MipShell extends CustomElement {
       if (firstIframe && firstIframe.parentNode) {
         firstIframe.parentNode.removeChild(firstIframe)
       }
+    }
+  }
+
+  /**
+   * apply transition effect to relative two pages
+   *
+   * @param {string} targetPageId targetPageId
+   * @param {Object} targetMeta metainfo of targetPage
+   * @param {Object} options
+   * @param {Object} options.newPage if just created a new page
+   * @param {Function} options.onComplete if just created a new page
+   */
+  applyTransition (targetPageId, targetMeta, options = {}) {
+    let localMeta = this.findMetaByPageId(targetPageId)
+    /**
+     * priority of header.title:
+     * 1. <a mip-link data-title>
+     * 2. <mip-shell> route.meta.header.title
+     * 3. <a mip-link></a> innerText
+     */
+    let innerTitle = {title: targetMeta.defaultTitle || undefined}
+    let finalMeta = fn.extend(true, innerTitle, localMeta, targetMeta)
+
+    this.toggleTransition(false)
+
+    if (targetPageId === this.pageId || this.direction === 'back') {
+      // backward
+      let backwardOpitons = {
+        transition: targetMeta.allowTransition || this.allowTransition,
+        sourceMeta: this.currentPageMeta,
+        transitionContainsHeader: this.transitionContainsHeader,
+        onComplete: () => {
+          this.allowTransition = false
+          this.currentPageMeta = finalMeta
+          this.toggleTransition(true)
+          if (this.direction === 'back' && targetPageId !== this.pageId) {
+            document.documentElement.classList.add('mip-no-scroll')
+            Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
+          }
+          options.onComplete && options.onComplete()
+        }
+      }
+
+      if (this.direction === 'back') {
+        backwardOpitons.targetPageId = targetPageId
+        backwardOpitons.targetPageMeta = this.findMetaByPageId(targetPageId)
+      } else {
+        backwardOpitons.targetPageMeta = this.currentPageMeta
+      }
+
+      // move current iframe to correct position
+      backwardOpitons.rootPageScrollPosition = 0
+      if (targetPageId === this.pageId) {
+        backwardOpitons.rootPageScrollPosition = this.rootPageScrollPosition
+        document.documentElement.classList.remove('mip-no-scroll')
+        Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
+      }
+      frameMoveOut(this.currentPageId, backwardOpitons)
+
+      this.direction = null
+      // restore scroll position in root page
+      if (targetPageId === this.pageId) {
+        this.restoreScrollPosition()
+      }
+    } else {
+      // forward
+      frameMoveIn(targetPageId, {
+        transition: targetMeta.allowTransition || this.allowTransition,
+        targetMeta: finalMeta,
+        newPage: options.newPage,
+        transitionContainsHeader: this.transitionContainsHeader,
+        onComplete: () => {
+          this.allowTransition = false
+          this.currentPageMeta = finalMeta
+          this.toggleTransition(true)
+          /**
+           * Disable scrolling of root page when covered by an iframe
+           * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
+           */
+          document.documentElement.classList.add('mip-no-scroll')
+          Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
+          options.onComplete && options.onComplete()
+        }
+      })
     }
   }
 
