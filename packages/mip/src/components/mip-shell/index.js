@@ -64,6 +64,12 @@ class MipShell extends CustomElement {
     let tmpShellConfig
     try {
       tmpShellConfig = JSON.parse(ele.textContent.toString()) || {}
+      if (tmpShellConfig.alwaysReadConfigOnLoad !== undefined) {
+        this.alwaysReadConfigOnLoad = tmpShellConfig.alwaysReadConfigOnLoad
+      }
+      if (tmpShellConfig.transitionContainsHeader !== undefined) {
+        this.transitionContainsHeader = tmpShellConfig.transitionContainsHeader
+      }
       if (!tmpShellConfig.routes) {
         tmpShellConfig.routes = [{
           pattern: '*',
