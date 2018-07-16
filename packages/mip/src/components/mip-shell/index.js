@@ -18,7 +18,9 @@ import {isPortrait} from '../../page/util/feature-detect'
 import {isSameRoute, getFullPath} from '../../page/util/route'
 import {
   createIFrame,
-  getIFrame
+  getIFrame,
+  frameMoveIn,
+  frameMoveOut
 } from '../../page/util/dom'
 import {getCleanPageId} from '../../page/util/path'
 import Router from '../../page/router/index'
@@ -333,8 +335,11 @@ class MipShell extends CustomElement {
       router.replace(makeCacheUrl(url, 'url', true))
     })
 
-    // 看看是否还需要？
-    // window.MIP_ROUTER = router
+    // 配置项移动到这里来
+    window.MIP_SHELL_OPTION = {
+      allowTransition: false,
+      direction: 'back'
+    }
 
     window.addEventListener('message', e => {
       let type
@@ -582,7 +587,7 @@ class MipShell extends CustomElement {
 
     this.toggleTransition(false)
 
-    if (targetPageId === this.pageId || this.direction === 'back') {
+    if (targetPageId === page.pageId || this.direction === 'back') {
       // backward
       let backwardOpitons = {
         transition: targetMeta.allowTransition || this.allowTransition,
@@ -609,7 +614,7 @@ class MipShell extends CustomElement {
 
       // move current iframe to correct position
       backwardOpitons.rootPageScrollPosition = 0
-      if (targetPageId === this.pageId) {
+      if (targetPageId === page.pageId) {
         backwardOpitons.rootPageScrollPosition = this.rootPageScrollPosition
         document.documentElement.classList.remove('mip-no-scroll')
         Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
@@ -618,7 +623,7 @@ class MipShell extends CustomElement {
 
       this.direction = null
       // restore scroll position in root page
-      if (targetPageId === this.pageId) {
+      if (targetPageId === page.pageId) {
         this.restoreScrollPosition()
       }
     } else {
@@ -733,6 +738,7 @@ class MipShell extends CustomElement {
     if (pageId) {
       pageMeta = this.findMetaByPageId(pageId)
     }
+    // 可能和applyTransition里面的onComplete重复？
     this.currentPageMeta = pageMeta
 
     if (!(pageMeta.header && pageMeta.header.show)) {
