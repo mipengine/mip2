@@ -768,15 +768,15 @@ class Page {
         isRootPage: false,
         isCrossOrigin: to.origin !== window.location.origin
       }
-      this.addChild(targetPageMeta)
-
       // Create a new iframe
-      // targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
+      targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
+
+      this.addChild(targetPageMeta)
       needEmitPageEvent = false
       this.applyTransition(targetPageId, to.meta, {
         newPage: true,
         onComplete: () => {
-          targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
+          // targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
           this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
           this.currentPageId = targetPageId
           this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})

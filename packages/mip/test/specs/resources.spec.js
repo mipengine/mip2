@@ -188,8 +188,8 @@ describe('resources', function () {
       sinon.stub(app, 'getResources').callsFake(function () {
         return {
           MIP: {
-            prerenderAllowed (offset, viewportRect) {
-              expect(offset).to.be.a('object').and.not.empty
+            prerenderAllowed (viewportRect) {
+              // expect(offset).to.be.a('object').and.not.empty
               expect(viewportRect).to.be.a('object').and.not.empty
               return true
             },

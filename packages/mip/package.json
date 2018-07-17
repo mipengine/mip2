@@ -12,8 +12,9 @@
     "uploadjs": "baidubce bos --put-object dist/mip.js bos://assets/mip/projects/mip.js",
     "uploadcss": "baidubce bos --put-object dist/mip.css bos://assets/mip/projects/mip.css",
     "deploy:dev": "npm run build && npm run uploadjs && npm run uploadcss",
-    "test:dev": "cross-env NODE_ENV=test karma start test/karma.dev.conf.js",
-    "test:cover": "cross-env NODE_ENV=test karma start test/karma.cover.conf.js"
+    "test:dev": "cross-env NODE_ENV=test karma start test/karma.dev.conf.js --single-run",
+    "test:cover": "cross-env NODE_ENV=test karma start test/karma.cover.conf.js",
+    "e2e": "node test/e2e/runner.js"
   },
   "devDependencies": {
     "autoprefixer": "^8.6.4",
@@ -29,6 +30,7 @@
     "babel-runtime": "^6.26.0",
     "chai": "^4.1.2",
     "chalk": "^2.4.1",
+    "chromedriver": "^2.40.0",
     "cross-env": "^5.2.0",
     "css-loader": "^0.28.11",
     "es6-promise": "^4.2.4",
@@ -52,6 +54,7 @@
     "less-loader": "^4.1.0",
     "mini-css-extract-plugin": "^0.4.0",
     "mocha": "^5.2.0",
+    "nightwatch": "^0.9.21",
     "ora": "^2.1.0",
     "path-to-regexp": "^1.7.0",
     "postcss-csso": "^3.0.0",
@@ -65,6 +68,7 @@
     "rollup-plugin-postcss2": "^1.0.0",
     "rollup-plugin-replace": "^2.0.0",
     "script-loader": "^0.7.2",
+    "selenium-server": "^3.13.0",
     "serve-index": "^1.9.1",
     "sinon": "^6.0.1",
     "sinon-chai": "^3.2.0",
