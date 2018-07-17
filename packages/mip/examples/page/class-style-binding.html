@@ -114,6 +114,7 @@
     <br />
 
     <!-- style example -->
+    <div m-bind:style="{fontSize: (Math.round(fontSize) > 12 ? fontSize : (fontSize - 1)) + 'px'}"></div>
     <div m-bind:style="{color: activeColor, fontSize: fontSize + 'px'}"></div>
     <br />
     <div m-bind:style="styleObject" style="width:100px"></div>
