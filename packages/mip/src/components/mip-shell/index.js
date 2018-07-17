@@ -14,7 +14,7 @@ import css from '../../util/dom/css'
 import fn from '../../util/fn'
 import event from '../../util/dom/event'
 import CustomElement from '../../custom-element'
-import {isPortrait} from '../../page/util/feature-detect'
+import {isPortrait, supportsPassive} from '../../page/util/feature-detect'
 import {isSameRoute, getFullPath} from '../../page/util/route'
 import {
   createIFrame,
@@ -36,9 +36,13 @@ import {
   MESSAGE_ROUTER_PUSH,
   MESSAGE_ROUTER_REPLACE,
   MESSAGE_ROUTER_BACK,
-  MESSAGE_ROUTER_FORWARD
+  MESSAGE_ROUTER_FORWARD,
+  MESSAGE_CROSS_ORIGIN,
+  MESSAGE_BROADCAST_EVENT,
+  MESSAGE_PAGE_RESIZE
 } from '../../page/const/index'
 import viewport from '../../viewport'
+import {customEmit} from '../../vue-custom-element/utils/custom-event'
 
 let viewer = null
 let page = null
@@ -49,6 +53,8 @@ class MipShell extends CustomElement {
   // ===================== CustomElement LifeCycle =====================
   constructor (...args) {
     super(...args)
+
+    this.messageHandlers = []
 
     // If true, always load configures from `<mip-shell>` and overwrite shellConfig when opening new page
     this.alwaysReadConfigOnLoad = true
@@ -148,7 +154,14 @@ class MipShell extends CustomElement {
       if (!pageMeta) {
         pageMeta = this.findMetaByPageId(pageId)
       }
-      this.refreshShell({pageMeta})
+
+      page.emitCustomEvent(window.parent, page.isCrossOrigin, {
+        name: 'mipShellEvents',
+        data: {
+          type: 'updateShell',
+          data: {pageMeta}
+        }
+      })
     }
   }
 
@@ -357,42 +370,15 @@ class MipShell extends CustomElement {
   }
 
   bindRootEvents () {
-    // 转发消息相关
-    // this.messageHandlers.push((type, data) => {
-    //   if (type === MESSAGE_SET_MIP_SHELL_CONFIG) {
-    //     // Set mip shell config in root page
-    //     this.appshellRoutes = data.shellConfig
-    //     this.appshellCache = Object.create(null)
-    //     this.currentPageMeta = this.findMetaByPageId(this.pageId)
-    //     createLoading(this.currentPageMeta)
-
-    //     if (!this.transitionContainsHeader) {
-    //       createFadeHeader(this.currentPageMeta)
-    //     }
-    //   } else if (type === MESSAGE_UPDATE_MIP_SHELL_CONFIG) {
-    //     if (data.pageMeta) {
-    //       this.appshellCache[data.pageId] = data.pageMeta
-    //     } else {
-    //       data.pageMeta = this.findMetaByPageId(data.pageId)
-    //     }
-    //     customEmit(window, 'mipShellEvents', {
-    //       type: 'updateShell',
-    //       data
-    //     })
-    //   } else if (type === MESSAGE_SYNC_PAGE_CONFIG) {
-    //     // Sync config from mip-shell
-    //     this.transitionContainsHeader = data.transitionContainsHeader
-    //   } else if (type === MESSAGE_BROADCAST_EVENT) {
-    //     // Broadcast Event
-    //     this.broadcastCustomEvent(data)
-    //   } else if (type === MESSAGE_REGISTER_GLOBAL_COMPONENT) {
-    //     // Register global component (Not finished)
-    //     console.log('register global component')
-    //     // this.globalComponent.register(data)
-    //   } else if (type === MESSAGE_PAGE_RESIZE) {
-    //     this.resizeAllPages()
-    //   }
-    // })
+    // Receive and resend message
+    this.messageHandlers.push((type, data) => {
+      if (type === MESSAGE_BROADCAST_EVENT) {
+        // Broadcast Event
+        page.broadcastCustomEvent(data)
+      } else if (type === MESSAGE_PAGE_RESIZE) {
+        this.resizeAllPages()
+      }
+    })
 
     // update every iframe's height when viewport resizing
     viewport.on('resize', () => {
@@ -405,14 +391,14 @@ class MipShell extends CustomElement {
       }
     })
 
-    // Listen events from page
+    // Listen events
     window.addEventListener('mipShellEvents', e => {
       let {type, data} = e.detail[0]
 
       switch (type) {
-        // case 'updateShell':
-        //   this.refreshShell({pageMeta: data.pageMeta})
-        //   break
+        case 'updateShell':
+          this.refreshShell({pageMeta: data.pageMeta})
+          break
         case 'slide':
           this.slideHeader(data.direction)
           break
@@ -658,7 +644,9 @@ class MipShell extends CustomElement {
 
     if (this.$buttonMask) {
       this.$buttonMask.addEventListener('click', () => this.toggleDropdown(false))
-      this.$buttonMask.addEventListener('touchmove', e => e.preventDefault())
+      this.$buttonMask.addEventListener('touchmove',
+        e => e.preventDefault(),
+        supportsPassive ? {passive: false} : false)
     }
   }
 
@@ -681,13 +669,12 @@ class MipShell extends CustomElement {
         window.MIP_SHELL_OPTION.allowTransition = true
       }
       window.MIP_SHELL_OPTION.direction = 'back'
-      // TODO back 以后不用page.router了
       page.back()
     } else if (buttonName === 'more') {
       this.toggleDropdown(true)
     } else if (buttonName === 'close') {
       window.MIP.viewer.sendMessage('close')
-    } else if (buttonName === 'cancel') {
+    } else {
       this.toggleDropdown(false)
     }
 
@@ -845,11 +832,22 @@ class MipShell extends CustomElement {
     }
 
     // Cross origin
-    // this.messageHandlers.push((type, data) => {
-    //   if (type === MESSAGE_CROSS_ORIGIN) {
-    //     customEmit(window, data.name, data.data)
-    //   }
-    // })
+    this.messageHandlers.push((type, data) => {
+      if (type === MESSAGE_CROSS_ORIGIN) {
+        customEmit(window, data.name, data.data)
+      }
+    })
+
+    window.addEventListener('message', e => {
+      try {
+        this.messageHandlers.forEach(handler => {
+          handler.call(this, e.data.type, e.data.data || {})
+        })
+      } catch (e) {
+        // Message sent from SF will cause cross domain error when reading e.source.location
+        // Just ignore these messages.
+      }
+    }, false)
   }
 
   updateShellConfig (newShellConfig) {

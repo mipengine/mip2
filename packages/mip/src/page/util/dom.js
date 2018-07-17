@@ -88,12 +88,13 @@ function hideAllIFrames () {
  * @param {Object} pageMeta Page meta info
  */
 export function createLoading (pageMeta) {
-  if (document.querySelector('#mip-page-loading-wrapper')) {
-    return
+  let loading = document.querySelector('#mip-page-loading-wrapper')
+  if (loading) {
+    return loading
   }
 
   let logo = pageMeta ? (pageMeta.header.logo || '') : ''
-  let loading = document.createElement('mip-fixed')
+  loading = document.createElement('mip-fixed')
   loading.id = 'mip-page-loading-wrapper'
   loading.setAttribute('class', 'mip-page-loading-wrapper')
   loading.innerHTML = `
@@ -112,6 +113,7 @@ export function createLoading (pageMeta) {
     </div>
   `
   document.body.appendChild(loading)
+  return loading
 }
 
 /**
@@ -188,12 +190,13 @@ function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
 }
 
 export function createFadeHeader (pageMeta) {
-  if (document.querySelector('#mip-page-fade-header-wrapper')) {
-    return
+  let fadeHeader = document.querySelector('#mip-page-fade-header-wrapper')
+  if (fadeHeader) {
+    return fadeHeader
   }
 
   let logo = pageMeta ? (pageMeta.header.logo || '') : ''
-  let fadeHeader = document.createElement('mip-fixed')
+  fadeHeader = document.createElement('mip-fixed')
   fadeHeader.id = 'mip-page-fade-header-wrapper'
   fadeHeader.setAttribute('class', 'mip-page-fade-header-wrapper')
   fadeHeader.innerHTML = `
@@ -212,6 +215,7 @@ export function createFadeHeader (pageMeta) {
     </div>
   `
   document.body.appendChild(fadeHeader)
+  return fadeHeader
 }
 
 /**
