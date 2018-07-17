@@ -56,32 +56,37 @@ class MipShell extends CustomElement {
 
     // Read config
     let ele = this.element.querySelector('script[type="application/json"]')
+    let tmpShellConfig
 
     if (!ele) {
-      return
-    }
-
-    let tmpShellConfig
-    try {
-      tmpShellConfig = JSON.parse(ele.textContent.toString()) || {}
-      if (tmpShellConfig.alwaysReadConfigOnLoad !== undefined) {
-        this.alwaysReadConfigOnLoad = tmpShellConfig.alwaysReadConfigOnLoad
-      }
-      if (tmpShellConfig.transitionContainsHeader !== undefined) {
-        this.transitionContainsHeader = tmpShellConfig.transitionContainsHeader
-      }
-      if (!tmpShellConfig.routes) {
-        tmpShellConfig.routes = [{
-          pattern: '*',
-          meta: DEFAULT_SHELL_CONFIG
-        }]
-      }
-    } catch (e) {
       tmpShellConfig = {
         routes: [{
           pattern: '*',
           meta: DEFAULT_SHELL_CONFIG
         }]
+      }
+    } else {
+      try {
+        tmpShellConfig = JSON.parse(ele.textContent.toString()) || {}
+        if (tmpShellConfig.alwaysReadConfigOnLoad !== undefined) {
+          this.alwaysReadConfigOnLoad = tmpShellConfig.alwaysReadConfigOnLoad
+        }
+        if (tmpShellConfig.transitionContainsHeader !== undefined) {
+          this.transitionContainsHeader = tmpShellConfig.transitionContainsHeader
+        }
+        if (!tmpShellConfig.routes) {
+          tmpShellConfig.routes = [{
+            pattern: '*',
+            meta: DEFAULT_SHELL_CONFIG
+          }]
+        }
+      } catch (e) {
+        tmpShellConfig = {
+          routes: [{
+            pattern: '*',
+            meta: DEFAULT_SHELL_CONFIG
+          }]
+        }
       }
     }
 
@@ -109,7 +114,10 @@ class MipShell extends CustomElement {
       let children = this.element.children
       let otherDOM = [].slice.call(children).slice(1, children.length)
       if (otherDOM.length > 0) {
-        otherDOM.forEach(dom => document.body.appendChild(dom))
+        otherDOM.forEach(dom => {
+          dom.setAttribute('mip-shell-inner', '')
+          document.body.appendChild(dom)
+        })
       }
     } else {
       let pageId = page.pageId
@@ -345,7 +353,7 @@ class MipShell extends CustomElement {
 
     this.bindHeaderEvents()
 
-    window.MIP.viewer.eventAction.execute('ready', this.element, {})
+    window.MIP.viewer.eventAction.execute('active', this.element, {})
   }
 
   bindHeaderEvents () {
@@ -361,6 +369,19 @@ class MipShell extends CustomElement {
       let buttonName = this.dataset.buttonName
       me.handleClickHeaderButton(buttonName)
     })
+
+    let fadeHeader = document.querySelector('#mip-page-fade-header-wrapper')
+    if (fadeHeader) {
+      this.fadeHeaderEventHandler = event.delegate(fadeHeader, '[mip-header-btn]', 'click', function (e) {
+        if (this.dataset.buttonName === 'back') {
+          if (isPortrait()) {
+            page.allowTransition = true
+          }
+          page.direction = 'back'
+          page.back()
+        }
+      })
+    }
 
     if (this.$buttonMask) {
       this.$buttonMask.addEventListener('click', () => this.toggleDropdown(false))
@@ -378,6 +399,11 @@ class MipShell extends CustomElement {
       this.buttonEventHandler()
       this.buttonEventHandler = undefined
     }
+
+    if (this.fadeHeaderEventHandler) {
+      this.fadeHeaderEventHandler()
+      this.fadeHeaderEventHandler = undefined
+    }
   }
 
   handleClickHeaderButton (buttonName) {
@@ -387,7 +413,7 @@ class MipShell extends CustomElement {
         page.allowTransition = true
       }
       page.direction = 'back'
-      page.router.back()
+      page.back()
     } else if (buttonName === 'more') {
       this.toggleDropdown(true)
     } else if (buttonName === 'close') {
@@ -470,10 +496,7 @@ class MipShell extends CustomElement {
         let headerLogoTitle = this.$el.querySelector('.mip-shell-header-logo-title')
         headerLogoTitle && headerLogoTitle.classList.remove('fade-out')
       }
-
-      setTimeout(() => {
-        page.toggleFadeHeader(false)
-      }, 350)
+      page.toggleFadeHeader(false)
 
       // Rebind header events
       this.bindHeaderEvents()

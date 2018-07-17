@@ -114,7 +114,8 @@ describe('util', function () {
 
     // mock cache url
     beforeEach(function () {
-      spy = sinon.stub(util.fn, 'isCacheUrl').callsFake(function (url) {
+      spy = sinon.stub(util.fn, 'isCacheUrl')
+      spy.callsFake(function (url) {
         if (url.indexOf('localhost') !== -1) {
           // Makes `isCacheUrl(location.href)` return true
           return true
@@ -131,7 +132,8 @@ describe('util', function () {
     })
 
     it('not cache url', function () {
-      spy = sinon.stub(util.fn, 'isCacheUrl').callsFake(function (url) {
+      spy.restore()
+      spy.callsFake(function (url) {
         return false
       })
       expect(util.makeCacheUrl('https://www.mipengine.com')).to.equal('https://www.mipengine.com')

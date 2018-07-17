@@ -665,6 +665,7 @@ class Page {
       '.mip-page-fade-header-wrapper',
       'mip-shell',
       '[mip-shell]',
+      '[mip-shell-inner]',
       '.mip-shell-header-wrapper',
       '.mip-shell-more-button-mask',
       '.mip-shell-more-button-wrapper',
@@ -779,7 +780,7 @@ class Page {
           // Get <mip-shell> from root page
           let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
           if (shellDOM) {
-            window.MIP.viewer.eventAction.execute('ready', shellDOM, {})
+            window.MIP.viewer.eventAction.execute('active', shellDOM, {})
           }
           this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
           this.currentPageId = targetPageId
@@ -795,6 +796,10 @@ class Page {
             type: 'updateShell',
             data: {pageMeta}
           })
+          let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
+          if (shellDOM) {
+            window.MIP.viewer.eventAction.execute('active', shellDOM, {})
+          }
         }
       })
       window.MIP.$recompile()
