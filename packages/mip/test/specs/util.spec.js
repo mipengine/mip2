@@ -177,8 +177,37 @@ describe('util', function () {
   })
 
   describe('.getOriginalUrl', function () {
-    // 由于getOriginalUrl 直接获取window.location,不能 sinon.stub, 跳过
-    // 由于 hash.get 取的是 window.location 而不是传入的 url，mip-cache+hash情况单测跳过
+    it('getOriginalUrl', function () {
+      expect(
+        util.getOriginalUrl('https://www.baidu.com/c/s/lavas.baidu.com/mip/guide')
+      ).to.equal('https://lavas.baidu.com/mip/guide')
+    })
+
+    it('getOriginalUrl not mip url', function () {
+      expect(
+        util.getOriginalUrl('https://www.baidu.com/')
+      ).to.equal('https://www.baidu.com/')
+    })
+
+    describe('.getOriginalUrl hash related', function () {
+      let spy
+
+      beforeEach(function () {
+        spy = sinon.stub(util.hash, 'get').callsFake(function (key) {
+          return key
+        })
+      })
+
+      afterEach(function () {
+        spy.restore()
+      })
+
+      it('getOriginalUrl with hash', function () {
+        expect(
+          util.getOriginalUrl('https://www.baidu.com/c/s/lavas.baidu.com/mip/guide#mipanchor=1221')
+        ).to.equal('https://lavas.baidu.com/mip/guide#mipanchor')
+      })
+    })
   })
 })
 
