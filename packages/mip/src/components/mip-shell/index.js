@@ -646,6 +646,12 @@ class MipShell extends CustomElement {
     this.buttonEventHandler = event.delegate(this.$buttonWrapper, '[mip-header-btn]', 'click', function (e) {
       let buttonName = this.dataset.buttonName
       me.handleClickHeaderButton(buttonName)
+
+      // Fix buttonGroup with 'link' config
+      let children = this.children && this.children[0]
+      if (children && children.tagName.toLowerCase() === 'a' && children.hasAttribute('mip-link')) {
+        me.toggleDropdown(false)
+      }
     })
 
     let fadeHeader = document.querySelector('#mip-page-fade-header-wrapper')
@@ -692,17 +698,13 @@ class MipShell extends CustomElement {
       if (isPortrait()) {
         window.MIP_SHELL_OPTION.allowTransition = true
       }
-<<<<<<< HEAD
       window.MIP_SHELL_OPTION.direction = 'back'
-=======
-      page.direction = 'back'
->>>>>>> 0acf05f16222fa72e7eb74b8f8f32fb2044ab74e
       page.back()
     } else if (buttonName === 'more') {
       this.toggleDropdown(true)
     } else if (buttonName === 'close') {
       window.MIP.viewer.sendMessage('close')
-    } else {
+    } else if (buttonName === 'cancel') {
       this.toggleDropdown(false)
     }
 
@@ -727,8 +729,6 @@ class MipShell extends CustomElement {
     if (pageId) {
       pageMeta = this.findMetaByPageId(pageId)
     }
-    // 可能和applyTransition里面的onComplete重复？
-    // this.currentPageMeta = pageMeta
 
     if (!(pageMeta.header && pageMeta.header.show)) {
       this.$wrapper.classList.add('hide')
@@ -779,14 +779,7 @@ class MipShell extends CustomElement {
         let headerLogoTitle = this.$el.querySelector('.mip-shell-header-logo-title')
         headerLogoTitle && headerLogoTitle.classList.remove('fade-out')
       }
-<<<<<<< HEAD
-
-      setTimeout(() => {
-        toggleFadeHeader(false)
-      }, 350)
-=======
-      page.toggleFadeHeader(false)
->>>>>>> 0acf05f16222fa72e7eb74b8f8f32fb2044ab74e
+      toggleFadeHeader(false)
 
       // Rebind header events
       this.bindHeaderEvents()
