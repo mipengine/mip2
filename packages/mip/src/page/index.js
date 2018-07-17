@@ -385,6 +385,7 @@ class Page {
       '.mip-page-fade-header-wrapper',
       'mip-shell',
       '[mip-shell]',
+      '[mip-shell-inner]',
       '.mip-shell-header-wrapper',
       '.mip-shell-more-button-mask',
       '.mip-shell-more-button-wrapper',

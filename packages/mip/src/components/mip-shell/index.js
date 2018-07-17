@@ -81,6 +81,12 @@ class MipShell extends CustomElement {
     } else {
       try {
         tmpShellConfig = JSON.parse(ele.textContent.toString()) || {}
+        if (tmpShellConfig.alwaysReadConfigOnLoad !== undefined) {
+          this.alwaysReadConfigOnLoad = tmpShellConfig.alwaysReadConfigOnLoad
+        }
+        if (tmpShellConfig.transitionContainsHeader !== undefined) {
+          this.transitionContainsHeader = tmpShellConfig.transitionContainsHeader
+        }
         if (!tmpShellConfig.routes) {
           tmpShellConfig.routes = [{
             pattern: '*',
@@ -110,6 +116,15 @@ class MipShell extends CustomElement {
       this.processShellConfig(tmpShellConfig)
 
       window.MIP_SHELL_CONFIG = tmpShellConfig.routes
+      // Append other DOM
+      let children = this.element.children
+      let otherDOM = [].slice.call(children).slice(1, children.length)
+      if (otherDOM.length > 0) {
+        otherDOM.forEach(dom => {
+          dom.setAttribute('mip-shell-inner', '')
+          document.body.appendChild(dom)
+        })
+      }
     } else {
       let pageId = page.pageId
       let pageMeta
@@ -422,6 +437,8 @@ class MipShell extends CustomElement {
 
     // Bind DOM events
     this.bindHeaderEvents()
+
+    window.MIP.viewer.eventAction.execute('active', this.element, {})
   }
 
   /**
@@ -494,6 +511,11 @@ class MipShell extends CustomElement {
         newPage: true,
         onComplete: () => {
           targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
+          // Get <mip-shell> from root page
+          let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
+          if (shellDOM) {
+            viewer.eventAction.execute('active', shellDOM, {})
+          }
           page.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
           page.currentPageId = targetPageId
           page.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
@@ -505,6 +527,11 @@ class MipShell extends CustomElement {
           // Update shell if new iframe has not been created
           let pageMeta = this.findMetaByPageId(targetPageId)
           this.refreshShell({pageMeta})
+          // Get <mip-shell> from root page
+          let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
+          if (shellDOM) {
+            viewer.eventAction.execute('active', shellDOM, {})
+          }
         }
       })
       window.MIP.$recompile()
