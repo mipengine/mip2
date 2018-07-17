@@ -234,8 +234,6 @@ let viewer = {
    * @param {Object} options.state Target page info
    */
   open (to, {isMipLink = true, replace = false, state} = {}) {
-    let {router, isRootPage} = this.page
-    let notifyRootPage = this.page.notifyRootPage.bind(this.page)
     if (!state) {
       state = {click: undefined, title: undefined, defaultTitle: undefined}
     }
@@ -286,21 +284,9 @@ let viewer = {
 
     // Handle <a mip-link replace> & hash
     if (isHashInCurrentPage || replace) {
-      if (isRootPage) {
-        router.replace(targetRoute)
-      } else {
-        notifyRootPage({
-          type: MESSAGE_ROUTER_REPLACE,
-          data: {route: targetRoute}
-        })
-      }
-    } else if (isRootPage) {
-      router.push(targetRoute)
+      this.page.replace(targetRoute)
     } else {
-      notifyRootPage({
-        type: MESSAGE_ROUTER_PUSH,
-        data: {route: targetRoute}
-      })
+      this.page.push(targetRoute)
     }
   },
 

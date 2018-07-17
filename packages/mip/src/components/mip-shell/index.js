@@ -18,9 +18,10 @@ import {isPortrait} from '../../page/util/feature-detect'
 import {isSameRoute, getFullPath} from '../../page/util/route'
 import {
   createIFrame,
-  getIFrame,
   frameMoveIn,
-  frameMoveOut
+  frameMoveOut,
+  createLoading,
+  createFadeHeader
 } from '../../page/util/dom'
 import {getCleanPageId} from '../../page/util/path'
 import Router from '../../page/router/index'
@@ -61,12 +62,12 @@ class MipShell extends CustomElement {
     page = viewer.page
 
     // DELETE ME
-    page.notifyRootPage({
-      type: 'sync-page-config',
-      data: {
-        transitionContainsHeader: this.transitionContainsHeader
-      }
-    })
+    // page.notifyRootPage({
+    //   type: 'sync-page-config',
+    //   data: {
+    //     transitionContainsHeader: this.transitionContainsHeader
+    //   }
+    // })
 
     // Read config
     let ele = this.element.querySelector('script[type="application/json"]')
@@ -106,12 +107,12 @@ class MipShell extends CustomElement {
 
       window.MIP_SHELL_CONFIG = tmpShellConfig.routes
       // DELETE ME
-      page.notifyRootPage({
-        type: 'set-mip-shell-config',
-        data: {
-          shellConfig: tmpShellConfig.routes
-        }
-      })
+      // page.notifyRootPage({
+      //   type: 'set-mip-shell-config',
+      //   data: {
+      //     shellConfig: tmpShellConfig.routes
+      //   }
+      // })
     } else {
       let pageId = page.pageId
       let pageMeta
@@ -227,6 +228,14 @@ class MipShell extends CustomElement {
     // Page mask
     this.$pageMask = createPageMask()
 
+    // Loading
+    this.$loading = createLoading(this.currentPageMeta)
+
+    // Fade header
+    if (!this.transitionContainsHeader) {
+      this.$fadeHeader = createFadeHeader(this.currentPageMeta)
+    }
+
     // Other parts
     this.renderOtherParts()
 
@@ -335,7 +344,6 @@ class MipShell extends CustomElement {
       router.replace(makeCacheUrl(url, 'url', true))
     })
 
-    // 切换页面的配置项移动到这里来
     window.MIP_SHELL_OPTION = {
       allowTransition: false,
       direction: null
@@ -496,7 +504,7 @@ class MipShell extends CustomElement {
         Array.prototype.slice.call(this.getElementsInRootPage()).forEach(el => el.parentNode && el.parentNode.removeChild(el))
       }
 
-      this.checkIfExceedsMaxPageNum()
+      page.checkIfExceedsMaxPageNum()
 
       let targetPageMeta = {
         pageId: targetPageId,
@@ -551,21 +559,6 @@ class MipShell extends CustomElement {
   }
 
   /**
-   * check if children.length exceeds MAX_PAGE_NUM
-   * if so, remove the first child
-   */
-  checkIfExceedsMaxPageNum () {
-    if (this.children.length >= MAX_PAGE_NUM) {
-      // remove from children list
-      let firstChildPage = this.children.splice(0, 1)[0]
-      let firstIframe = getIFrame(firstChildPage.pageId)
-      if (firstIframe && firstIframe.parentNode) {
-        firstIframe.parentNode.removeChild(firstIframe)
-      }
-    }
-  }
-
-  /**
    * apply transition effect to relative two pages
    *
    * @param {string} targetPageId targetPageId
@@ -587,7 +580,7 @@ class MipShell extends CustomElement {
 
     this.toggleTransition(false)
 
-    if (targetPageId === page.pageId || this.direction === 'back') {
+    if (targetPageId === page.pageId || window.MIP_SHELL_OPTION.direction === 'back') {
       // backward
       let backwardOpitons = {
         transition: targetMeta.allowTransition || window.MIP_SHELL_OPTION.allowTransition,
@@ -617,9 +610,9 @@ class MipShell extends CustomElement {
       if (targetPageId === page.pageId) {
         backwardOpitons.rootPageScrollPosition = this.rootPageScrollPosition
         document.documentElement.classList.remove('mip-no-scroll')
-        Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
+        Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
       }
-      frameMoveOut(this.currentPageId, backwardOpitons)
+      frameMoveOut(page.currentPageId, backwardOpitons)
 
       window.MIP_SHELL_OPTION.direction = null
       // restore scroll position in root page
@@ -642,7 +635,7 @@ class MipShell extends CustomElement {
            * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
            */
           document.documentElement.classList.add('mip-no-scroll')
-          Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
+          Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
           options.onComplete && options.onComplete()
         }
       })
@@ -658,7 +651,7 @@ class MipShell extends CustomElement {
       $el.style.height = `${this.currentViewportHeight}px`
     })
     // 2.notify <mip-iframe> in every page
-    this.broadcastCustomEvent({
+    page.broadcastCustomEvent({
       name: CUSTOM_EVENT_RESIZE_PAGE,
       data: {
         height: this.currentViewportHeight

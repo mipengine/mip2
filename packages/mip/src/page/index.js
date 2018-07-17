@@ -16,6 +16,7 @@ import {
   enableBouncyScrolling,
   disableBouncyScrolling
 } from './util/dom'
+import {getCleanPageId} from './util/path'
 import Debouncer from './util/debounce'
 import {supportsPassive} from './util/feature-detect'
 import {scrollTo} from './util/ease-scroll'
@@ -64,11 +65,11 @@ class Page {
     // root page
     this.children = []
     this.currentPageId = undefined
-    this.messageHandlers = []
-    this.currentPageMeta = {}
-    this.direction = undefined
-    this.appshellRoutes = []
-    this.appshellCache = Object.create(null)
+    // this.messageHandlers = []
+    // this.currentPageMeta = {}
+    // this.direction = undefined
+    // this.appshellRoutes = []
+    // this.appshellCache = Object.create(null)
     this.targetWindow = window
 
     // sync from mip-shell
@@ -85,7 +86,7 @@ class Page {
     // let router
 
     // generate pageId
-    this.pageId = this.cleanPageId(window.location.href)
+    this.pageId = getCleanPageId(window.location.href)
     this.currentPageId = this.pageId
 
     // DELETE ME
@@ -121,71 +122,71 @@ class Page {
     // this.router = router
   }
 
-  initAppShell () {
-    if (this.isRootPage) {
-      this.globalComponent = new GlobalComponent()
-      this.messageHandlers.push((type, data) => {
-        if (type === MESSAGE_SET_MIP_SHELL_CONFIG) {
-          // Set mip shell config in root page
-          this.appshellRoutes = data.shellConfig
-          this.appshellCache = Object.create(null)
-          this.currentPageMeta = this.findMetaByPageId(this.pageId)
-          createLoading(this.currentPageMeta)
+  // initAppShell () {
+  //   if (this.isRootPage) {
+  //     this.globalComponent = new GlobalComponent()
+  //     this.messageHandlers.push((type, data) => {
+  //       if (type === MESSAGE_SET_MIP_SHELL_CONFIG) {
+  //         // Set mip shell config in root page
+  //         this.appshellRoutes = data.shellConfig
+  //         this.appshellCache = Object.create(null)
+  //         this.currentPageMeta = this.findMetaByPageId(this.pageId)
+  //         createLoading(this.currentPageMeta)
 
-          if (!this.transitionContainsHeader) {
-            createFadeHeader(this.currentPageMeta)
-          }
-        } else if (type === MESSAGE_UPDATE_MIP_SHELL_CONFIG) {
-          if (data.pageMeta) {
-            this.appshellCache[data.pageId] = data.pageMeta
-          } else {
-            data.pageMeta = this.findMetaByPageId(data.pageId)
-          }
-          customEmit(window, 'mipShellEvents', {
-            type: 'updateShell',
-            data
-          })
-        } else if (type === MESSAGE_SYNC_PAGE_CONFIG) {
-          // Sync config from mip-shell
-          this.transitionContainsHeader = data.transitionContainsHeader
-        } else if (type === MESSAGE_BROADCAST_EVENT) {
-          // Broadcast Event
-          this.broadcastCustomEvent(data)
-        } else if (type === MESSAGE_REGISTER_GLOBAL_COMPONENT) {
-          // Register global component (Not finished)
-          console.log('register global component')
-          // this.globalComponent.register(data)
-        } else if (type === MESSAGE_PAGE_RESIZE) {
-          this.resizeAllPages()
-        }
-      })
+  //         if (!this.transitionContainsHeader) {
+  //           createFadeHeader(this.currentPageMeta)
+  //         }
+  //       } else if (type === MESSAGE_UPDATE_MIP_SHELL_CONFIG) {
+  //         if (data.pageMeta) {
+  //           this.appshellCache[data.pageId] = data.pageMeta
+  //         } else {
+  //           data.pageMeta = this.findMetaByPageId(data.pageId)
+  //         }
+  //         customEmit(window, 'mipShellEvents', {
+  //           type: 'updateShell',
+  //           data
+  //         })
+  //       } else if (type === MESSAGE_SYNC_PAGE_CONFIG) {
+  //         // Sync config from mip-shell
+  //         this.transitionContainsHeader = data.transitionContainsHeader
+  //       } else if (type === MESSAGE_BROADCAST_EVENT) {
+  //         // Broadcast Event
+  //         this.broadcastCustomEvent(data)
+  //       } else if (type === MESSAGE_REGISTER_GLOBAL_COMPONENT) {
+  //         // Register global component (Not finished)
+  //         console.log('register global component')
+  //         // this.globalComponent.register(data)
+  //       } else if (type === MESSAGE_PAGE_RESIZE) {
+  //         this.resizeAllPages()
+  //       }
+  //     })
 
-      // // update every iframe's height when viewport resizing
-      // viewport.on('resize', () => {
-      //   // only when screen gets spinned
-      //   let currentViewportWidth = viewport.getWidth()
-      //   if (this.currentViewportWidth !== currentViewportWidth) {
-      //     this.currentViewportHeight = viewport.getHeight()
-      //     this.currentViewportWidth = currentViewportWidth
-      //     this.resizeAllPages()
-      //   }
-      // })
+  //     // // update every iframe's height when viewport resizing
+  //     // viewport.on('resize', () => {
+  //     //   // only when screen gets spinned
+  //     //   let currentViewportWidth = viewport.getWidth()
+  //     //   if (this.currentViewportWidth !== currentViewportWidth) {
+  //     //     this.currentViewportHeight = viewport.getHeight()
+  //     //     this.currentViewportWidth = currentViewportWidth
+  //     //     this.resizeAllPages()
+  //     //   }
+  //     // })
 
-      // Set iframe height when resizing
-      // viewport.on('resize', () => {
-      //   [].slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
-      //     $el.style.height = `${viewport.getHeight()}px`
-      //   })
-      // })
-    }
+  //     // Set iframe height when resizing
+  //     // viewport.on('resize', () => {
+  //     //   [].slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
+  //     //     $el.style.height = `${viewport.getHeight()}px`
+  //     //   })
+  //     // })
+  //   }
 
-    // cross origin
-    this.messageHandlers.push((type, data) => {
-      if (type === MESSAGE_CROSS_ORIGIN) {
-        customEmit(window, data.name, data.data)
-      }
-    })
-  }
+  //   // cross origin
+  //   this.messageHandlers.push((type, data) => {
+  //     if (type === MESSAGE_CROSS_ORIGIN) {
+  //       customEmit(window, data.name, data.data)
+  //     }
+  //   })
+  // }
 
   /**
    * scroll to hash with ease transition
@@ -294,19 +295,19 @@ class Page {
   start () {
     ensureMIPShell()
     this.initRouter()
-    this.initAppShell()
+    // this.initAppShell()
 
     // Listen message from inner iframes
-    window.addEventListener('message', (e) => {
-      try {
-        this.messageHandlers.forEach(handler => {
-          handler.call(this, e.data.type, e.data.data || {})
-        })
-      } catch (e) {
-        // Message sent from SF will cause cross domain error when reading e.source.location
-        // Just ignore these messages.
-      }
-    }, false)
+    // window.addEventListener('message', (e) => {
+    //   try {
+    //     this.messageHandlers.forEach(handler => {
+    //       handler.call(this, e.data.type, e.data.data || {})
+    //     })
+    //   } catch (e) {
+    //     // Message sent from SF will cause cross domain error when reading e.source.location
+    //     // Just ignore these messages.
+    //   }
+    // }, false)
 
     // Job complete!
     document.body.setAttribute('mip-ready', '')
@@ -432,13 +433,25 @@ class Page {
   }
 
   back () {
-    // MODIFY ME
     this.notifyRootPage({type: MESSAGE_ROUTER_BACK})
   }
 
   forward () {
-    // MODIFY ME
     this.notifyRootPage({type: MESSAGE_ROUTER_FORWARD})
+  }
+
+  push (route) {
+    this.notifyRootPage({
+      type: MESSAGE_ROUTER_PUSH,
+      data: {route}
+    })
+  }
+
+  replace (route) {
+    this.notifyRootPage({
+      type: MESSAGE_ROUTER_REPLACE,
+      data: {route}
+    })
   }
 
   // =============================== Root Page methods ===============================
@@ -594,30 +607,30 @@ class Page {
    *
    * @param {Page} page page
    */
-  // addChild (page) {
-  //   for (let i = 0; i < this.children.length; i++) {
-  //     if (this.children[i].pageId === page.pageId) {
-  //       this.children.splice(i, 1)
-  //       break
-  //     }
-  //   }
-  //   this.children.push(page)
-  // }
+  addChild (page) {
+    for (let i = 0; i < this.children.length; i++) {
+      if (this.children[i].pageId === page.pageId) {
+        this.children.splice(i, 1)
+        break
+      }
+    }
+    this.children.push(page)
+  }
 
   /**
    * check if children.length exceeds MAX_PAGE_NUM
    * if so, remove the first child
    */
-  // checkIfExceedsMaxPageNum () {
-  //   if (this.children.length >= MAX_PAGE_NUM) {
-  //     // remove from children list
-  //     let firstChildPage = this.children.splice(0, 1)[0]
-  //     let firstIframe = getIFrame(firstChildPage.pageId)
-  //     if (firstIframe && firstIframe.parentNode) {
-  //       firstIframe.parentNode.removeChild(firstIframe)
-  //     }
-  //   }
-  // }
+  checkIfExceedsMaxPageNum () {
+    if (this.children.length >= MAX_PAGE_NUM) {
+      // remove from children list
+      let firstChildPage = this.children.splice(0, 1)[0]
+      let firstIframe = getIFrame(firstChildPage.pageId)
+      if (firstIframe && firstIframe.parentNode) {
+        firstIframe.parentNode.removeChild(firstIframe)
+      }
+    }
+  }
 
   /**
    * get page by pageId
@@ -625,19 +638,19 @@ class Page {
    * @param {string} pageId pageId
    * @return {Page} page
    */
-  // getPageById (pageId) {
-  //   if (!pageId || pageId === this.pageId) {
-  //     return this
-  //   }
+  getPageById (pageId) {
+    if (!pageId || pageId === this.pageId) {
+      return this
+    }
 
-  //   for (let i = 0; i < this.children.length; i++) {
-  //     if (this.children[i].pageId === pageId) {
-  //       return this.children[i]
-  //     }
-  //   }
+    for (let i = 0; i < this.children.length; i++) {
+      if (this.children[i].pageId === pageId) {
+        return this.children[i]
+      }
+    }
 
-  //   return null
-  // }
+    return null
+  }
 
   /**
    * get elements in root page, except some shared by all the pages
