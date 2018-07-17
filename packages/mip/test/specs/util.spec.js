@@ -131,6 +131,7 @@ describe('util', function () {
     })
 
     it('not cache url', function () {
+      spy.restore()
       spy = sinon.stub(util.fn, 'isCacheUrl').callsFake(function (url) {
         return false
       })
