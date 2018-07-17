@@ -352,6 +352,19 @@ class MipShell extends CustomElement {
       me.handleClickHeaderButton(buttonName)
     })
 
+    let fadeHeader = document.querySelector('#mip-page-fade-header-wrapper')
+    if (fadeHeader) {
+      this.fadeHeaderEventHandler = event.delegate(fadeHeader, '[mip-header-btn]', 'click', function (e) {
+        if (this.dataset.buttonName === 'back') {
+          if (isPortrait()) {
+            page.allowTransition = true
+          }
+          page.direction = 'back'
+          page.back()
+        }
+      })
+    }
+
     if (this.$buttonMask) {
       this.$buttonMask.addEventListener('click', () => this.toggleDropdown(false))
       this.$buttonMask.addEventListener('touchmove', e => e.preventDefault())
@@ -368,6 +381,11 @@ class MipShell extends CustomElement {
       this.buttonEventHandler()
       this.buttonEventHandler = undefined
     }
+
+    if (this.fadeHeaderEventHandler) {
+      this.fadeHeaderEventHandler()
+      this.fadeHeaderEventHandler = undefined
+    }
   }
 
   handleClickHeaderButton (buttonName) {
@@ -377,7 +395,7 @@ class MipShell extends CustomElement {
         page.allowTransition = true
       }
       page.direction = 'back'
-      page.router.back()
+      page.back()
     } else if (buttonName === 'more') {
       this.toggleDropdown(true)
     } else if (buttonName === 'close') {
@@ -460,10 +478,7 @@ class MipShell extends CustomElement {
         let headerLogoTitle = this.$el.querySelector('.mip-shell-header-logo-title')
         headerLogoTitle && headerLogoTitle.classList.remove('fade-out')
       }
-
-      setTimeout(() => {
-        page.toggleFadeHeader(false)
-      }, 350)
+      page.toggleFadeHeader(false)
 
       // Rebind header events
       this.bindHeaderEvents()
