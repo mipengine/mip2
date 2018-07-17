@@ -19,21 +19,20 @@ class Bind {
     // require mip data extension runtime
     this._compile = new Compile()
     this._observer = new Observer()
-    // this._bindEvent()
     // from=0 called by html attributes
     // from=1 refers the method called by mip.js
     MIP.setData = (action, from) => {
       this._bindTarget(false, action, from)
     }
-    MIP.$set = (action, from, cancel, win) => {
-      this._bindTarget(true, action, from, cancel, win)
+    MIP.$set = (action, from, cancel) => {
+      this._bindTarget(true, action, from, cancel)
     }
     MIP.$recompile = () => {
       this._observer.start(this._win.m)
-      this._compile.start(this._win.m, this._win)
+      this._compile.start(this._win.m)
     }
-    MIP.$update = (data, win) => {
-      this._update(data, win)
+    MIP.$update = (data) => {
+      this._update(data)
     }
     MIP.watch = (target, cb) => {
       this._bindWatch(target, cb)
@@ -43,43 +42,6 @@ class Bind {
     window.mipDataPromises = window.mipDataPromises || []
     MIP.$set(window.m)
   }
-
-  // // Bind event for post message when broadcast global data
-  // _bindEvent () {
-  //   window.addEventListener('message', function (event) {
-  //     let loc = window.location
-  //     let domain = loc.protocol + '//' + loc.host
-
-  //     if (event.origin !== domain ||
-  //       !event.source || !event.data
-  //     ) {
-  //       return
-  //     }
-
-  //     if (event.data.type === 'bind') {
-  //       MIP.$set(event.data.m, 0, true)
-  //     }
-
-  //     if (event.data.type === 'update') {
-  //       MIP.$set(event.data.m, 0, true)
-
-  //       for (let i = 0, frames = document.getElementsByTagName('iframe'); i < frames.length; i++) {
-  //         if (frames[i].classList.contains('mip-page__iframe') &&
-  //             frames[i].getAttribute('data-page-id')
-  //         ) {
-  //           let subwin = frames[i].contentWindow
-  //           // MIP.$set(event.data.m, 0, true, subwin)
-  //           subwin.postMessage({
-  //             type: 'bind',
-  //             m: event.data.m,
-  //             cancel: true,
-  //             event: 'stateBind'
-  //           }, subwin.location.protocol + '//' + subwin.location.host)
-  //         }
-  //       }
-  //     }
-  //   })
-  // }
 
   _postMessage (data) {
     if (!objNotEmpty(data)) {
@@ -92,18 +54,11 @@ class Bind {
     }
 
     let win = isSelfParent(window) ? window : window.parent
-    win.MIP.$update(data, win)
-    // let loc = window.location
-    // let domain = loc.protocol + '//' + loc.host
-    // let win = isSelfParent(window) ? window : window.parent
-    // win.postMessage({
-    //   type: 'update',
-    //   m: data,
-    //   event: 'stateUpdate'
-    // }, domain)
+    win.MIP.$update(data)
   }
 
-  _update (data, win) {
+  _update (data) {
+    let win = this._win
     win.MIP.$set(data, 0, true)
 
     for (let i = 0, frames = win.document.getElementsByTagName('iframe'); i < frames.length; i++) {
@@ -116,7 +71,8 @@ class Bind {
     }
   }
 
-  _bindTarget (compile, action, from, cancel, win = this._win) {
+  _bindTarget (compile, action, from, cancel) {
+    let win = this._win
     let data = from ? action.arg : action
     let evt = from && action.event ? action.event.target : {}
     if (typeof data === 'string') {
@@ -128,10 +84,10 @@ class Bind {
       this._compile.upadteData(JSON.parse(origin))
       let classified = this._normalize(data)
       if (compile) {
-        this._setGlobalState(classified.globalData, cancel, win)
-        this._setPageState(classified, cancel, win)
+        this._setGlobalState(classified.globalData, cancel)
+        this._setPageState(classified, cancel)
         this._observer.start(win.m)
-        this._compile.start(win.m, win)
+        this._compile.start(win.m)
       } else {
         if (classified.globalData && objNotEmpty(classified.globalData)) {
           !cancel && this._postMessage(classified.globalData)
@@ -143,7 +99,7 @@ class Bind {
               [field]: data[field]
             })
           } else {
-            this._dispatch(field, data[field], cancel, win)
+            this._dispatch(field, data[field], cancel)
           }
         })
       }
@@ -183,7 +139,8 @@ class Bind {
     new Watcher(null, this._win.m, '', `Watch:${target}`, cb) // eslint-disable-line no-new
   }
 
-  _dispatch (key, val, cancel, win = this._win) {
+  _dispatch (key, val, cancel) {
+    let win = this._win
     let data = {
       [key]: val
     }
@@ -196,7 +153,8 @@ class Bind {
     }
   }
 
-  _setGlobalState (data, cancel, win = this._win) {
+  _setGlobalState (data, cancel) {
+    let win = this._win
     if (isSelfParent(win)) {
       win.g = win.g || {}
       assign(win.g, data)
@@ -205,7 +163,8 @@ class Bind {
     }
   }
 
-  _setPageState (data, cancel, win = this._win) {
+  _setPageState (data, cancel) {
+    let win = this._win
     Object.assign(win.m, data.pageData)
     !cancel && Object.keys(data.pageData).forEach(k => win.pgStates.add(k))
 
@@ -222,6 +181,7 @@ class Bind {
     })
 
     setProto(win.m, getGlobalData(win))
+    // win.m.__proto__ = getGlobalData(win) // eslint-disable-line no-proto
   }
 
   _normalize (data) {

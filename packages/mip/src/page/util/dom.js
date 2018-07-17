@@ -223,9 +223,10 @@ export function createFadeHeader (pageMeta) {
  * Return fade header div
  *
  * @param {Object} targetMeta Page meta of target page
+ * @param {Object} sourceMeta Page meta of source page (undefined when frameMoveIn, NOT undefined when frameMoveOut)
  * @returns {HTMLElement}
  */
-function getFadeHeader (targetMeta) {
+function getFadeHeader (targetMeta, sourceMeta) {
   let fadeHeader = document.querySelector('#mip-page-fade-header-wrapper')
   if (!fadeHeader) {
     createFadeHeader()
@@ -251,11 +252,12 @@ function getFadeHeader (targetMeta) {
   css(fadeHeader.querySelector('.back-button'), 'display', targetMeta.view.isIndex ? 'none' : 'flex')
 
   // Set color & borderColor & backgroundColor
+  let colorConfig = sourceMeta ? sourceMeta.header : {}
   let {
     color = '#000000',
-    borderColor,
+    borderColor = '#e1e1e1',
     backgroundColor = '#ffffff'
-  } = targetMeta.header
+  } = colorConfig
   let fadeHeaderContainer = fadeHeader.querySelector('.mip-shell-header')
 
   css(fadeHeaderContainer, 'background-color', backgroundColor)
@@ -488,7 +490,7 @@ export function frameMoveOut (pageId,
     } else {
       headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
       headerLogoTitle && headerLogoTitle.classList.add('fade-out')
-      fadeHeader = getFadeHeader(targetPageMeta)
+      fadeHeader = getFadeHeader(targetPageMeta, sourceMeta)
       css(fadeHeader, 'display', 'block')
     }
 

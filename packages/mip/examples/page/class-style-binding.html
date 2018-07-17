@@ -72,6 +72,7 @@
                 "warning-class": true,
                 "active-class": false
               },
+              "classText": "class-text",
               "styleObject": {
                 "color": "red",
                 "fontSize": "13px"
@@ -106,6 +107,8 @@
     <br />
     <div m-bind:class="classObject"></div>
     <br />
+    <div m-bind:class="classText"></div>
+    <br />
     <div m-bind:class="[loadingClass, errorClass]"></div>
     <br />
     <div m-bind:class="[loading ? loadingClass : '', errorClass]"></div>
@@ -114,6 +117,7 @@
     <br />
 
     <!-- style example -->
+    <div m-bind:style="{fontSize: (Math.round(fontSize) > 12 ? fontSize : (fontSize - 1)) + 'px'}"></div>
     <div m-bind:style="{color: activeColor, fontSize: fontSize + 'px'}"></div>
     <br />
     <div m-bind:style="styleObject" style="width:100px"></div>

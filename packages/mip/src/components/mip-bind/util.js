@@ -7,6 +7,7 @@ const regVar = /[\w\d-._]+/gmi
 const regTplLike = /`[^`]+`/gmi
 const regTpl = /(\${)([^}]+)(}.*)/gmi
 const vendorNames = ['Webkit', 'Moz', 'ms']
+const RESERVED = ['Math', 'Number', 'String', 'Object', 'window']
 let emptyStyle
 
 export function isObject (obj) {
@@ -34,6 +35,11 @@ export function arrayToObject (arr) {
 }
 
 export function parseClass (classSpecs) {
+  if (typeof classSpecs === 'string') {
+    return {
+      [classSpecs]: true
+    }
+  }
   if (isArray(classSpecs)) {
     classSpecs = arrayToObject(classSpecs)
   }
@@ -153,8 +159,12 @@ export function namespaced (str) {
       newExp += tpls[+match[0].substr(11)]
       continue
     }
-    // skip number or memberExpression that was left behind
-    if (!isNaN(match[0]) || /^\./.test(match[0])) {
+    // skip special cases
+    if (!isNaN(match[0]) ||
+        /^\./.test(match[0]) ||
+        !match[0].replace(/[-._]/g, '').length ||
+        RESERVED.indexOf(match[0].split('.')[0]) !== -1
+    ) {
       newExp += match[0]
       continue
     }

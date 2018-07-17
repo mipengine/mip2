@@ -69,25 +69,31 @@ class MipShell extends CustomElement {
 
     // Read config
     let ele = this.element.querySelector('script[type="application/json"]')
+    let tmpShellConfig
 
     if (!ele) {
-      return
-    }
-    let tmpShellConfig
-    try {
-      tmpShellConfig = JSON.parse(ele.textContent.toString()) || {}
-      if (!tmpShellConfig.routes) {
-        tmpShellConfig.routes = [{
-          pattern: '*',
-          meta: DEFAULT_SHELL_CONFIG
-        }]
-      }
-    } catch (e) {
       tmpShellConfig = {
         routes: [{
           pattern: '*',
           meta: DEFAULT_SHELL_CONFIG
         }]
+      }
+    } else {
+      try {
+        tmpShellConfig = JSON.parse(ele.textContent.toString()) || {}
+        if (!tmpShellConfig.routes) {
+          tmpShellConfig.routes = [{
+            pattern: '*',
+            meta: DEFAULT_SHELL_CONFIG
+          }]
+        }
+      } catch (e) {
+        tmpShellConfig = {
+          routes: [{
+            pattern: '*',
+            meta: DEFAULT_SHELL_CONFIG
+          }]
+        }
       }
     }
 
@@ -642,6 +648,19 @@ class MipShell extends CustomElement {
       me.handleClickHeaderButton(buttonName)
     })
 
+    let fadeHeader = document.querySelector('#mip-page-fade-header-wrapper')
+    if (fadeHeader) {
+      this.fadeHeaderEventHandler = event.delegate(fadeHeader, '[mip-header-btn]', 'click', function (e) {
+        if (this.dataset.buttonName === 'back') {
+          if (isPortrait()) {
+            page.allowTransition = true
+          }
+          page.direction = 'back'
+          page.back()
+        }
+      })
+    }
+
     if (this.$buttonMask) {
       this.$buttonMask.addEventListener('click', () => this.toggleDropdown(false))
       this.$buttonMask.addEventListener('touchmove',
@@ -660,6 +679,11 @@ class MipShell extends CustomElement {
       this.buttonEventHandler()
       this.buttonEventHandler = undefined
     }
+
+    if (this.fadeHeaderEventHandler) {
+      this.fadeHeaderEventHandler()
+      this.fadeHeaderEventHandler = undefined
+    }
   }
 
   handleClickHeaderButton (buttonName) {
@@ -668,7 +692,11 @@ class MipShell extends CustomElement {
       if (isPortrait()) {
         window.MIP_SHELL_OPTION.allowTransition = true
       }
+<<<<<<< HEAD
       window.MIP_SHELL_OPTION.direction = 'back'
+=======
+      page.direction = 'back'
+>>>>>>> 0acf05f16222fa72e7eb74b8f8f32fb2044ab74e
       page.back()
     } else if (buttonName === 'more') {
       this.toggleDropdown(true)
@@ -751,10 +779,14 @@ class MipShell extends CustomElement {
         let headerLogoTitle = this.$el.querySelector('.mip-shell-header-logo-title')
         headerLogoTitle && headerLogoTitle.classList.remove('fade-out')
       }
+<<<<<<< HEAD
 
       setTimeout(() => {
         toggleFadeHeader(false)
       }, 350)
+=======
+      page.toggleFadeHeader(false)
+>>>>>>> 0acf05f16222fa72e7eb74b8f8f32fb2044ab74e
 
       // Rebind header events
       this.bindHeaderEvents()

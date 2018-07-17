@@ -15,12 +15,12 @@ class Compile {
     this._el = document.documentElement
   }
 
-  start (data, win) {
+  start (data) {
     if (!data || !util.objNotEmpty(data)) {
       return
     }
     this.data = data
-    this._compileElement(win.document.documentElement)
+    this._compileElement(this._el)
     // this._fragment = this._cloneNode();
     // this._compileElement(this._fragment);
     // this._el.appendChild(this._fragment);

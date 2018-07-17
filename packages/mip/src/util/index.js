@@ -93,9 +93,11 @@ export function parseCacheUrl (url) {
  * 获取页面原 mip url，可以将页面 mip-cache url 处理为原页面
  * 由于 cache-url 可能会被改写，需要还原
  *
+ * @param {string} url 传入的 URL
  * @return {string} 原 mip 页 URL
  */
 export function getOriginalUrl (url) {
+  /* istanbul ignore if */
   if (!url) {
     url = window.location.href
   }
