@@ -16,7 +16,7 @@ import {makeCacheUrl, getOriginalUrl} from './util'
 import {supportsPassive, isPortrait} from './page/util/feature-detect'
 import viewport from './viewport'
 import Page from './page/index'
-import {MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE, MESSAGE_PAGE_RESIZE} from './page/const/index'
+import {MESSAGE_PAGE_RESIZE} from './page/const/index'
 import Messager from './messager'
 import fixedElement from './fixed-element'
 
