@@ -72,6 +72,7 @@
                 "warning-class": true,
                 "active-class": false
               },
+              "classText": "class-text",
               "styleObject": {
                 "color": "red",
                 "fontSize": "13px"
@@ -105,6 +106,8 @@
     <div class="static" m-bind:class="{loading: loading, 'text-danger': danger }"></div>
     <br />
     <div m-bind:class="classObject"></div>
+    <br />
+    <div m-bind:class="classText"></div>
     <br />
     <div m-bind:class="[loadingClass, errorClass]"></div>
     <br />

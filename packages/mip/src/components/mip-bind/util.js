@@ -35,6 +35,11 @@ export function arrayToObject (arr) {
 }
 
 export function parseClass (classSpecs) {
+  if (typeof classSpecs === 'string') {
+    return {
+      [classSpecs]: true
+    }
+  }
   if (isArray(classSpecs)) {
     classSpecs = arrayToObject(classSpecs)
   }
