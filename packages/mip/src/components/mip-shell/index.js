@@ -21,13 +21,13 @@ import {
   frameMoveIn,
   frameMoveOut,
   createLoading,
-  createFadeHeader
+  createFadeHeader,
+  toggleFadeHeader
 } from '../../page/util/dom'
 import {getCleanPageId} from '../../page/util/path'
 import Router from '../../page/router/index'
 import {
   DEFAULT_SHELL_CONFIG,
-  MAX_PAGE_NUM,
   NON_EXISTS_PAGE_ID,
   CUSTOM_EVENT_SCROLL_TO_ANCHOR,
   CUSTOM_EVENT_RESIZE_PAGE,
@@ -60,14 +60,6 @@ class MipShell extends CustomElement {
   build () {
     viewer = window.MIP.viewer
     page = viewer.page
-
-    // DELETE ME
-    // page.notifyRootPage({
-    //   type: 'sync-page-config',
-    //   data: {
-    //     transitionContainsHeader: this.transitionContainsHeader
-    //   }
-    // })
 
     // Read config
     let ele = this.element.querySelector('script[type="application/json"]')
@@ -106,13 +98,6 @@ class MipShell extends CustomElement {
       this.processShellConfig(tmpShellConfig)
 
       window.MIP_SHELL_CONFIG = tmpShellConfig.routes
-      // DELETE ME
-      // page.notifyRootPage({
-      //   type: 'set-mip-shell-config',
-      //   data: {
-      //     shellConfig: tmpShellConfig.routes
-      //   }
-      // })
     } else {
       let pageId = page.pageId
       let pageMeta
@@ -137,6 +122,7 @@ class MipShell extends CustomElement {
         })
 
         window.MIP_SHELL_CONFIG = tmpShellConfig.routes
+        window.MIP_PAGE_META_CACHE = Object.create(null)
       } else if (this.alwaysReadConfigOnLoad) {
         // If `alwaysReadConfigOnLoad` equals `true`
         // Read config in leaf pages and pick up the matched one. Send it to page for updating.
@@ -153,21 +139,16 @@ class MipShell extends CustomElement {
               config.meta.header.title = (document.querySelector('title') || {}).innerHTML || ''
             }
 
-            // this.processShellConfig([config.meta])
             pageMeta = window.MIP_PAGE_META_CACHE[pageId] = config.meta
             break
           }
         }
       }
 
-      // DELETE ME
-      page.notifyRootPage({
-        type: 'update-mip-shell-config',
-        data: {
-          pageId,
-          pageMeta
-        }
-      })
+      if (!pageMeta) {
+        pageMeta = this.findMetaByPageId(pageId)
+      }
+      this.refreshShell({pageMeta})
     }
   }
 
@@ -429,9 +410,9 @@ class MipShell extends CustomElement {
       let {type, data} = e.detail[0]
 
       switch (type) {
-        case 'updateShell':
-          this.refreshShell({pageMeta: data.pageMeta})
-          break
+        // case 'updateShell':
+        //   this.refreshShell({pageMeta: data.pageMeta})
+        //   break
         case 'slide':
           this.slideHeader(data.direction)
           break
@@ -732,11 +713,11 @@ class MipShell extends CustomElement {
       pageMeta = this.findMetaByPageId(pageId)
     }
     // 可能和applyTransition里面的onComplete重复？
-    this.currentPageMeta = pageMeta
+    // this.currentPageMeta = pageMeta
 
     if (!(pageMeta.header && pageMeta.header.show)) {
       this.$wrapper.classList.add('hide')
-      page.toggleFadeHeader(false)
+      toggleFadeHeader(false)
       css(this.$loading, 'display', 'none')
       return
     }
@@ -751,10 +732,10 @@ class MipShell extends CustomElement {
       // 4. Update real header (along with otherParts, buttonWrapper, buttonMask)
       // 5. Hide fade header
       // 6. Bind header events
-      page.toggleFadeHeader(true, pageMeta)
+      toggleFadeHeader(true, pageMeta)
       setTimeout(() => {
         this.renderHeader(this.$el)
-        page.toggleFadeHeader(false)
+        toggleFadeHeader(false)
         // Rebind header events
         this.bindHeaderEvents()
       }, 350)
@@ -785,7 +766,7 @@ class MipShell extends CustomElement {
       }
 
       setTimeout(() => {
-        page.toggleFadeHeader(false)
+        toggleFadeHeader(false)
       }, 350)
 
       // Rebind header events
