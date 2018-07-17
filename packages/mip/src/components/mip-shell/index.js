@@ -335,10 +335,10 @@ class MipShell extends CustomElement {
       router.replace(makeCacheUrl(url, 'url', true))
     })
 
-    // 配置项移动到这里来
+    // 切换页面的配置项移动到这里来
     window.MIP_SHELL_OPTION = {
       allowTransition: false,
-      direction: 'back'
+      direction: null
     }
 
     window.addEventListener('message', e => {
@@ -358,10 +358,10 @@ class MipShell extends CustomElement {
       } else if (type === MESSAGE_ROUTER_REPLACE) {
         router.replace(data.route)
       } else if (type === MESSAGE_ROUTER_BACK) {
-        this.allowTransition = true
+        window.MIP_SHELL_OPTION.allowTransition = true
         router.back()
       } else if (type === MESSAGE_ROUTER_FORWARD) {
-        this.allowTransition = true
+        window.MIP_SHELL_OPTION.allowTransition = true
         router.forward()
       }
     }, false)
@@ -590,14 +590,14 @@ class MipShell extends CustomElement {
     if (targetPageId === page.pageId || this.direction === 'back') {
       // backward
       let backwardOpitons = {
-        transition: targetMeta.allowTransition || this.allowTransition,
+        transition: targetMeta.allowTransition || window.MIP_SHELL_OPTION.allowTransition,
         sourceMeta: this.currentPageMeta,
         transitionContainsHeader: this.transitionContainsHeader,
         onComplete: () => {
-          this.allowTransition = false
+          window.MIP_SHELL_OPTION.allowTransition = false
           this.currentPageMeta = finalMeta
           this.toggleTransition(true)
-          if (this.direction === 'back' && targetPageId !== page.pageId) {
+          if (window.MIP_SHELL_OPTION.direction === 'back' && targetPageId !== page.pageId) {
             document.documentElement.classList.add('mip-no-scroll')
             Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
           }
@@ -605,7 +605,7 @@ class MipShell extends CustomElement {
         }
       }
 
-      if (this.direction === 'back') {
+      if (window.MIP_SHELL_OPTION.direction === 'back') {
         backwardOpitons.targetPageId = targetPageId
         backwardOpitons.targetPageMeta = this.findMetaByPageId(targetPageId)
       } else {
@@ -621,7 +621,7 @@ class MipShell extends CustomElement {
       }
       frameMoveOut(this.currentPageId, backwardOpitons)
 
-      this.direction = null
+      window.MIP_SHELL_OPTION.direction = null
       // restore scroll position in root page
       if (targetPageId === page.pageId) {
         this.restoreScrollPosition()
@@ -629,12 +629,12 @@ class MipShell extends CustomElement {
     } else {
       // forward
       frameMoveIn(targetPageId, {
-        transition: targetMeta.allowTransition || this.allowTransition,
+        transition: targetMeta.allowTransition || window.MIP_SHELL_OPTION.allowTransition,
         targetMeta: finalMeta,
         newPage: options.newPage,
         transitionContainsHeader: this.transitionContainsHeader,
         onComplete: () => {
-          this.allowTransition = false
+          window.MIP_SHELL_OPTION.allowTransition = false
           this.currentPageMeta = finalMeta
           this.toggleTransition(true)
           /**
@@ -704,11 +704,11 @@ class MipShell extends CustomElement {
     if (buttonName === 'back') {
       // **Important** only allow transition happens when Back btn & <a> clicked
       if (isPortrait()) {
-        page.allowTransition = true
+        window.MIP_SHELL_OPTION.allowTransition = true
       }
-      page.direction = 'back'
+      window.MIP_SHELL_OPTION.direction = 'back'
       // TODO back 以后不用page.router了
-      page.router.back()
+      page.back()
     } else if (buttonName === 'more') {
       this.toggleDropdown(true)
     } else if (buttonName === 'close') {

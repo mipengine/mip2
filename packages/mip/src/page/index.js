@@ -78,7 +78,7 @@ class Page {
      * transition will be executed only when `Back` button clicked,
      * due to a bug when going back with gesture in mobile Safari.
      */
-    this.allowTransition = false
+    // this.allowTransition = false
   }
 
   initRouter () {
@@ -432,10 +432,12 @@ class Page {
   }
 
   back () {
+    // MODIFY ME
     this.notifyRootPage({type: MESSAGE_ROUTER_BACK})
   }
 
   forward () {
+    // MODIFY ME
     this.notifyRootPage({type: MESSAGE_ROUTER_FORWARD})
   }
 
@@ -456,36 +458,36 @@ class Page {
    * @param {string} pageId pageId
    * @return {Object} meta object
    */
-  findMetaByPageId (pageId) {
-    if (this.appshellCache[pageId]) {
-      return this.appshellCache[pageId]
-    } else {
-      let route
-      for (let i = 0; i < this.appshellRoutes.length; i++) {
-        route = this.appshellRoutes[i]
-        if (route.regexp.test(pageId)) {
-          this.appshellCache[pageId] = route.meta
-          return route.meta
-        }
-      }
-    }
+  // findMetaByPageId (pageId) {
+  //   if (this.appshellCache[pageId]) {
+  //     return this.appshellCache[pageId]
+  //   } else {
+  //     let route
+  //     for (let i = 0; i < this.appshellRoutes.length; i++) {
+  //       route = this.appshellRoutes[i]
+  //       if (route.regexp.test(pageId)) {
+  //         this.appshellCache[pageId] = route.meta
+  //         return route.meta
+  //       }
+  //     }
+  //   }
 
-    return Object.assign({}, DEFAULT_SHELL_CONFIG)
-  }
+  //   return Object.assign({}, DEFAULT_SHELL_CONFIG)
+  // }
 
-  /**
-   * save scroll position in root page
-   */
-  saveScrollPosition () {
-    this.rootPageScrollPosition = viewport.getScrollTop()
-  }
+  // /**
+  //  * save scroll position in root page
+  //  */
+  // saveScrollPosition () {
+  //   this.rootPageScrollPosition = viewport.getScrollTop()
+  // }
 
-  /**
-   * restore scroll position in root page
-   */
-  restoreScrollPosition () {
-    viewport.setScrollTop(this.rootPageScrollPosition)
-  }
+  // /**
+  //  * restore scroll position in root page
+  //  */
+  // restoreScrollPosition () {
+  //   viewport.setScrollTop(this.rootPageScrollPosition)
+  // }
 
   /**
    * apply transition effect to relative two pages
@@ -496,126 +498,126 @@ class Page {
    * @param {Object} options.newPage if just created a new page
    * @param {Function} options.onComplete if just created a new page
    */
-  applyTransition (targetPageId, targetMeta, options = {}) {
-    let localMeta = this.findMetaByPageId(targetPageId)
-    /**
-     * priority of header.title:
-     * 1. <a mip-link data-title>
-     * 2. <mip-shell> route.meta.header.title
-     * 3. <a mip-link></a> innerText
-     */
-    let innerTitle = {title: targetMeta.defaultTitle || undefined}
-    let finalMeta = fn.extend(true, innerTitle, localMeta, targetMeta)
+  // applyTransition (targetPageId, targetMeta, options = {}) {
+  //   let localMeta = this.findMetaByPageId(targetPageId)
+  //   /**
+  //    * priority of header.title:
+  //    * 1. <a mip-link data-title>
+  //    * 2. <mip-shell> route.meta.header.title
+  //    * 3. <a mip-link></a> innerText
+  //    */
+  //   let innerTitle = {title: targetMeta.defaultTitle || undefined}
+  //   let finalMeta = fn.extend(true, innerTitle, localMeta, targetMeta)
 
-    customEmit(window, 'mipShellEvents', {
-      type: 'toggleTransition',
-      data: {
-        toggle: false
-      }
-    })
+  //   customEmit(window, 'mipShellEvents', {
+  //     type: 'toggleTransition',
+  //     data: {
+  //       toggle: false
+  //     }
+  //   })
 
-    if (targetPageId === this.pageId || this.direction === 'back') {
-      // backward
-      let backwardOpitons = {
-        transition: targetMeta.allowTransition || this.allowTransition,
-        sourceMeta: this.currentPageMeta,
-        transitionContainsHeader: this.transitionContainsHeader,
-        onComplete: () => {
-          this.allowTransition = false
-          this.currentPageMeta = finalMeta
-          customEmit(window, 'mipShellEvents', {
-            type: 'toggleTransition',
-            data: {
-              toggle: true
-            }
-          })
-          if (this.direction === 'back' && targetPageId !== this.pageId) {
-            document.documentElement.classList.add('mip-no-scroll')
-            Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
-          }
-          options.onComplete && options.onComplete()
-        }
-      }
+  //   if (targetPageId === this.pageId || this.direction === 'back') {
+  //     // backward
+  //     let backwardOpitons = {
+  //       transition: targetMeta.allowTransition || this.allowTransition,
+  //       sourceMeta: this.currentPageMeta,
+  //       transitionContainsHeader: this.transitionContainsHeader,
+  //       onComplete: () => {
+  //         this.allowTransition = false
+  //         this.currentPageMeta = finalMeta
+  //         customEmit(window, 'mipShellEvents', {
+  //           type: 'toggleTransition',
+  //           data: {
+  //             toggle: true
+  //           }
+  //         })
+  //         if (this.direction === 'back' && targetPageId !== this.pageId) {
+  //           document.documentElement.classList.add('mip-no-scroll')
+  //           Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
+  //         }
+  //         options.onComplete && options.onComplete()
+  //       }
+  //     }
 
-      if (this.direction === 'back') {
-        backwardOpitons.targetPageId = targetPageId
-        backwardOpitons.targetPageMeta = this.findMetaByPageId(targetPageId)
-      } else {
-        backwardOpitons.targetPageMeta = this.currentPageMeta
-      }
+  //     if (this.direction === 'back') {
+  //       backwardOpitons.targetPageId = targetPageId
+  //       backwardOpitons.targetPageMeta = this.findMetaByPageId(targetPageId)
+  //     } else {
+  //       backwardOpitons.targetPageMeta = this.currentPageMeta
+  //     }
 
-      // move current iframe to correct position
-      backwardOpitons.rootPageScrollPosition = 0
-      if (targetPageId === this.pageId) {
-        backwardOpitons.rootPageScrollPosition = this.rootPageScrollPosition
-        document.documentElement.classList.remove('mip-no-scroll')
-        Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
-      }
-      frameMoveOut(this.currentPageId, backwardOpitons)
+  //     // move current iframe to correct position
+  //     backwardOpitons.rootPageScrollPosition = 0
+  //     if (targetPageId === this.pageId) {
+  //       backwardOpitons.rootPageScrollPosition = this.rootPageScrollPosition
+  //       document.documentElement.classList.remove('mip-no-scroll')
+  //       Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
+  //     }
+  //     frameMoveOut(this.currentPageId, backwardOpitons)
 
-      this.direction = null
-      // restore scroll position in root page
-      if (targetPageId === this.pageId) {
-        this.restoreScrollPosition()
-      }
-    } else {
-      // forward
-      frameMoveIn(targetPageId, {
-        transition: targetMeta.allowTransition || this.allowTransition,
-        targetMeta: finalMeta,
-        newPage: options.newPage,
-        transitionContainsHeader: this.transitionContainsHeader,
-        onComplete: () => {
-          this.allowTransition = false
-          this.currentPageMeta = finalMeta
-          // TODO: Prevent transition on first view in some cases
-          customEmit(window, 'mipShellEvents', {
-            type: 'toggleTransition',
-            data: {
-              toggle: true
-            }
-          })
-          /**
-           * Disable scrolling of root page when covered by an iframe
-           * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
-           */
-          document.documentElement.classList.add('mip-no-scroll')
-          Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
-          options.onComplete && options.onComplete()
-        }
-      })
-    }
-  }
+  //     this.direction = null
+  //     // restore scroll position in root page
+  //     if (targetPageId === this.pageId) {
+  //       this.restoreScrollPosition()
+  //     }
+  //   } else {
+  //     // forward
+  //     frameMoveIn(targetPageId, {
+  //       transition: targetMeta.allowTransition || this.allowTransition,
+  //       targetMeta: finalMeta,
+  //       newPage: options.newPage,
+  //       transitionContainsHeader: this.transitionContainsHeader,
+  //       onComplete: () => {
+  //         this.allowTransition = false
+  //         this.currentPageMeta = finalMeta
+  //         // TODO: Prevent transition on first view in some cases
+  //         customEmit(window, 'mipShellEvents', {
+  //           type: 'toggleTransition',
+  //           data: {
+  //             toggle: true
+  //           }
+  //         })
+  //         /**
+  //          * Disable scrolling of root page when covered by an iframe
+  //          * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
+  //          */
+  //         document.documentElement.classList.add('mip-no-scroll')
+  //         Array.prototype.slice.call(this.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
+  //         options.onComplete && options.onComplete()
+  //       }
+  //     })
+  //   }
+  // }
 
   /**
    * add page to `children`
    *
    * @param {Page} page page
    */
-  addChild (page) {
-    for (let i = 0; i < this.children.length; i++) {
-      if (this.children[i].pageId === page.pageId) {
-        this.children.splice(i, 1)
-        break
-      }
-    }
-    this.children.push(page)
-  }
+  // addChild (page) {
+  //   for (let i = 0; i < this.children.length; i++) {
+  //     if (this.children[i].pageId === page.pageId) {
+  //       this.children.splice(i, 1)
+  //       break
+  //     }
+  //   }
+  //   this.children.push(page)
+  // }
 
   /**
    * check if children.length exceeds MAX_PAGE_NUM
    * if so, remove the first child
    */
-  checkIfExceedsMaxPageNum () {
-    if (this.children.length >= MAX_PAGE_NUM) {
-      // remove from children list
-      let firstChildPage = this.children.splice(0, 1)[0]
-      let firstIframe = getIFrame(firstChildPage.pageId)
-      if (firstIframe && firstIframe.parentNode) {
-        firstIframe.parentNode.removeChild(firstIframe)
-      }
-    }
-  }
+  // checkIfExceedsMaxPageNum () {
+  //   if (this.children.length >= MAX_PAGE_NUM) {
+  //     // remove from children list
+  //     let firstChildPage = this.children.splice(0, 1)[0]
+  //     let firstIframe = getIFrame(firstChildPage.pageId)
+  //     if (firstIframe && firstIframe.parentNode) {
+  //       firstIframe.parentNode.removeChild(firstIframe)
+  //     }
+  //   }
+  // }
 
   /**
    * get page by pageId
@@ -623,19 +625,19 @@ class Page {
    * @param {string} pageId pageId
    * @return {Page} page
    */
-  getPageById (pageId) {
-    if (!pageId || pageId === this.pageId) {
-      return this
-    }
+  // getPageById (pageId) {
+  //   if (!pageId || pageId === this.pageId) {
+  //     return this
+  //   }
 
-    for (let i = 0; i < this.children.length; i++) {
-      if (this.children[i].pageId === pageId) {
-        return this.children[i]
-      }
-    }
+  //   for (let i = 0; i < this.children.length; i++) {
+  //     if (this.children[i].pageId === pageId) {
+  //       return this.children[i]
+  //     }
+  //   }
 
-    return null
-  }
+  //   return null
+  // }
 
   /**
    * get elements in root page, except some shared by all the pages
@@ -662,21 +664,21 @@ class Page {
   /**
    * handle resize event
    */
-  resizeAllPages () {
-    // 1.set every page's iframe
-    Array.prototype.slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
-      $el.style.height = `${this.currentViewportHeight}px`
-    })
-    // 2.notify <mip-iframe> in every page
-    this.broadcastCustomEvent({
-      name: CUSTOM_EVENT_RESIZE_PAGE,
-      data: {
-        height: this.currentViewportHeight
-      }
-    })
-    // 3.notify SF to set the iframe outside
-    window.MIP.viewer.sendMessage('resizeContainer', {height: this.currentViewportHeight})
-  }
+  // resizeAllPages () {
+  //   // 1.set every page's iframe
+  //   Array.prototype.slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
+  //     $el.style.height = `${this.currentViewportHeight}px`
+  //   })
+  //   // 2.notify <mip-iframe> in every page
+  //   this.broadcastCustomEvent({
+  //     name: CUSTOM_EVENT_RESIZE_PAGE,
+  //     data: {
+  //       height: this.currentViewportHeight
+  //     }
+  //   })
+  //   // 3.notify SF to set the iframe outside
+  //   window.MIP.viewer.sendMessage('resizeContainer', {height: this.currentViewportHeight})
+  // }
 
   /**
    * render with current route
@@ -684,108 +686,108 @@ class Page {
    * @param {Route} from route
    * @param {Route} to route
    */
-  render (from, to) {
-    this.resizeAllPages()
-    /**
-     * if `to` route is the same with `from` route in path & query,
-     * scroll in current page
-     */
-    if (isSameRoute(from, to, true)) {
-      this.emitEventInCurrentPage({
-        name: CUSTOM_EVENT_SCROLL_TO_ANCHOR,
-        data: to.hash
-      })
-      return
-    }
+  // render (from, to) {
+  //   this.resizeAllPages()
+  //   /**
+  //    * if `to` route is the same with `from` route in path & query,
+  //    * scroll in current page
+  //    */
+  //   if (isSameRoute(from, to, true)) {
+  //     this.emitEventInCurrentPage({
+  //       name: CUSTOM_EVENT_SCROLL_TO_ANCHOR,
+  //       data: to.hash
+  //     })
+  //     return
+  //   }
 
-    // otherwise, render target page
-    let targetFullPath = getFullPath(to)
-    let targetPageId = this.cleanPageId(targetFullPath)
-    let targetPage = this.getPageById(targetPageId)
+  //   // otherwise, render target page
+  //   let targetFullPath = getFullPath(to)
+  //   let targetPageId = this.cleanPageId(targetFullPath)
+  //   let targetPage = this.getPageById(targetPageId)
 
-    if (this.currentPageId === this.pageId) {
-      this.saveScrollPosition()
-    }
+  //   if (this.currentPageId === this.pageId) {
+  //     this.saveScrollPosition()
+  //   }
 
-    // Hide page mask and skip transition
-    customEmit(window, 'mipShellEvents', {
-      type: 'togglePageMask',
-      data: {
-        toggle: false,
-        options: {
-          skipTransition: true
-        }
-      }
-    })
+  //   // Hide page mask and skip transition
+  //   customEmit(window, 'mipShellEvents', {
+  //     type: 'togglePageMask',
+  //     data: {
+  //       toggle: false,
+  //       options: {
+  //         skipTransition: true
+  //       }
+  //     }
+  //   })
 
-    // Show header
-    customEmit(window, 'mipShellEvents', {
-      type: 'slide',
-      data: {
-        direction: 'down'
-      }
-    })
+  //   // Show header
+  //   customEmit(window, 'mipShellEvents', {
+  //     type: 'slide',
+  //     data: {
+  //       direction: 'down'
+  //     }
+  //   })
 
-    /**
-     * reload iframe when <a mip-link> clicked even if it's already existed.
-     * NOTE: forwarding or going back with browser history won't do
-     */
-    let needEmitPageEvent = true
-    if (!targetPage || (to.meta && to.meta.reload)) {
-      // when reloading root page...
-      if (this.pageId === targetPageId) {
-        this.pageId = NON_EXISTS_PAGE_ID
-        // destroy root page first
-        if (targetPage) {
-          targetPage.destroy()
-        }
-        // TODO: delete DOM & trigger disconnectedCallback in root page
-        Array.prototype.slice.call(this.getElementsInRootPage()).forEach(el => el.parentNode && el.parentNode.removeChild(el))
-      }
+  //   /**
+  //    * reload iframe when <a mip-link> clicked even if it's already existed.
+  //    * NOTE: forwarding or going back with browser history won't do
+  //    */
+  //   let needEmitPageEvent = true
+  //   if (!targetPage || (to.meta && to.meta.reload)) {
+  //     // when reloading root page...
+  //     if (this.pageId === targetPageId) {
+  //       this.pageId = NON_EXISTS_PAGE_ID
+  //       // destroy root page first
+  //       if (targetPage) {
+  //         targetPage.destroy()
+  //       }
+  //       // TODO: delete DOM & trigger disconnectedCallback in root page
+  //       Array.prototype.slice.call(this.getElementsInRootPage()).forEach(el => el.parentNode && el.parentNode.removeChild(el))
+  //     }
 
-      this.checkIfExceedsMaxPageNum()
+  //     this.checkIfExceedsMaxPageNum()
 
-      let targetPageMeta = {
-        pageId: targetPageId,
-        fullpath: targetFullPath,
-        standalone: window.MIP.standalone,
-        isRootPage: false,
-        isCrossOrigin: to.origin !== window.location.origin
-      }
-      this.addChild(targetPageMeta)
+  //     let targetPageMeta = {
+  //       pageId: targetPageId,
+  //       fullpath: targetFullPath,
+  //       standalone: window.MIP.standalone,
+  //       isRootPage: false,
+  //       isCrossOrigin: to.origin !== window.location.origin
+  //     }
+  //     this.addChild(targetPageMeta)
 
-      // Create a new iframe
-      // targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
-      needEmitPageEvent = false
-      this.applyTransition(targetPageId, to.meta, {
-        newPage: true,
-        onComplete: () => {
-          targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
-          this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
-          this.currentPageId = targetPageId
-          this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
-        }
-      })
-    } else {
-      this.applyTransition(targetPageId, to.meta, {
-        onComplete: () => {
-          // Update shell if new iframe has not been created
-          let pageMeta = this.findMetaByPageId(targetPageId)
-          customEmit(window, 'mipShellEvents', {
-            type: 'updateShell',
-            data: {pageMeta}
-          })
-        }
-      })
-      window.MIP.$recompile()
-    }
+  //     // Create a new iframe
+  //     // targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
+  //     needEmitPageEvent = false
+  //     this.applyTransition(targetPageId, to.meta, {
+  //       newPage: true,
+  //       onComplete: () => {
+  //         targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
+  //         this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
+  //         this.currentPageId = targetPageId
+  //         this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+  //       }
+  //     })
+  //   } else {
+  //     this.applyTransition(targetPageId, to.meta, {
+  //       onComplete: () => {
+  //         // Update shell if new iframe has not been created
+  //         let pageMeta = this.findMetaByPageId(targetPageId)
+  //         customEmit(window, 'mipShellEvents', {
+  //           type: 'updateShell',
+  //           data: {pageMeta}
+  //         })
+  //       }
+  //     })
+  //     window.MIP.$recompile()
+  //   }
 
-    if (needEmitPageEvent) {
-      this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
-      this.currentPageId = targetPageId
-      this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
-    }
-  }
+  //   if (needEmitPageEvent) {
+  //     this.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
+  //     this.currentPageId = targetPageId
+  //     this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+  //   }
+  // }
 }
 
 export default Page
