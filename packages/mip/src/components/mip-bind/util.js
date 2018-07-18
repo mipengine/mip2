@@ -36,7 +36,10 @@ export function arrayToObject (arr) {
 
 export function parseClass (classSpecs, oldSpecs = {}) {
   if (typeof classSpecs === 'string') {
-    return Object.assign(oldSpecs, {
+    Object.keys(oldSpecs).forEach(k => {
+      oldSpecs[k] = false
+    })
+    return Object.assign({}, oldSpecs, {
       [classSpecs]: true
     })
   }
