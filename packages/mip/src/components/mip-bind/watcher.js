@@ -39,8 +39,8 @@ class Watcher {
   }
 
   update () {
-    let newVal = this._get()
     let oldVal = this._value
+    let newVal = this._get(oldVal)
     if (newVal !== oldVal) {
       this._value = newVal
       if (this._dir) {
@@ -51,13 +51,13 @@ class Watcher {
     }
   }
 
-  _get () {
+  _get (oldVal) {
     let value
     Deps.target = this
     if (this._getter) {
       value = this._getter.call(this._data, this._data)
       if (this._specWatcher && this._specWatcher !== 'Watch') {
-        value = util['parse' + this._specWatcher](value)
+        value = util['parse' + this._specWatcher](value, oldVal)
       }
     }
     Deps.target = null

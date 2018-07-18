@@ -34,11 +34,14 @@ export function arrayToObject (arr) {
   return obj
 }
 
-export function parseClass (classSpecs) {
+export function parseClass (classSpecs, oldSpecs = {}) {
   if (typeof classSpecs === 'string') {
-    return {
+    Object.keys(oldSpecs).forEach(k => {
+      oldSpecs[k] = false
+    })
+    return Object.assign({}, oldSpecs, {
       [classSpecs]: true
-    }
+    })
   }
   if (isArray(classSpecs)) {
     classSpecs = arrayToObject(classSpecs)
