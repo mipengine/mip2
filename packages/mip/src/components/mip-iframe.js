@@ -11,7 +11,6 @@ import {CUSTOM_EVENT_RESIZE_PAGE} from '../page/const'
 let attrList = ['allowfullscreen', 'allowtransparency', 'sandbox']
 
 class MipIframe extends CustomElement {
-
   build () {
     this.setIframeHeight = this.setIframeHeight.bind(this)
     let element = this.element
