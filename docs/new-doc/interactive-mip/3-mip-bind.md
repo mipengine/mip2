@@ -204,3 +204,41 @@ export default {
 }
 </script>
 ```
+
+#### 在 `mip-script` 组件中
+`mip-script` 组件允许开发者编写自定义的 JavaScript 代码，作用类似于 script 标签。其具体用法和规范开发者将在后面的小节了解到。此处我们将借这个组件来向开发者介绍一个读取数据的 API：`MIP.getData(value)`。`value` 为数据源中的属性名，多层数据可以以` . `连接。注意，`getData` 方法在组件中并不开放使用，请开发者遵循前面的在组件中使用数据的规范。
+
+在使用 mip-script 自定义 JS 代码时，如有数据操作的需要，开发者可以通过 `getData` 方法读取和使用数据。下面的例子实现了一个简单的多选功能，最终输出选中的目录序号。例子中使用到的 setData 设置数据方法、watch 监控数据方法均在后面的小节会详细讲解。如:
+
+```html
+<mip-data>
+  <script type="application/json">
+    {
+      "i": 0,
+      "selectedStr": "",
+      "selected": []
+    }
+  </script>
+</mip-data>
+<ul>
+  <li on="tap:MIP.setData({i:1})">目录1</li>
+  <li on="tap:MIP.setData({i:2})">目录2</li>
+  <li on="tap:MIP.setData({i:3})">目录3</li>
+</ul>
+<p>selected: <span m-text="selectedStr"></span></p>
+
+<mip-script>
+  MIP.watch('i', function (newVal) {
+    let selected = MIP.getData('selected')
+    let index = selected.indexOf(newVal)
+
+    if (index) {
+      selected.splice(index, 1)
+    } else {
+      selected.push(index)
+    }
+
+    MIP.setData('selectedStr', selected.join(','))
+  })
+</mip-script>
+```
