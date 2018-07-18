@@ -28,7 +28,7 @@ module.exports = {
     browser
       .waitForElementVisible('.tree-link', 3000)
       // open tree.html
-      .click('.tree-link')
+      .waitForClick('.tree-link')
 
       // URL changed
       .assert.urlEquals(TREE_PAGE_URL)
@@ -103,7 +103,7 @@ module.exports = {
     const INDEX_PAGE_URL = `${browser.globals.devServerURL}/examples/page/index.html`
 
     browser
-      .click('.back-button')
+      .waitForClick('.back-button')
       // URL changed
       .assert.urlEquals(INDEX_PAGE_URL)
       .assert.containsText('.mip-shell-header-title', 'MIP')

@@ -29,7 +29,7 @@ module.exports = {
     browser
       .waitForElementVisible('.tree-link', 3000)
       // open tree.html
-      .click('.tree-link')
+      .waitForClick('.tree-link')
 
       // URL changed
       .assert.urlEquals(TREE_PAGE_URL)
@@ -68,7 +68,7 @@ module.exports = {
           browser
             .waitForElementVisible('mip-page-tree', 3000)
             .waitForElementVisible('a[href="./data.html"]', 3000)
-            .click('a[href="./data.html"]')
+            .waitForClick('a[href="./data.html"]')
         })
       })
       .frame(null)
@@ -108,7 +108,7 @@ module.exports = {
     const DATA_PAGE_URL = `${browser.globals.devServerURL}/examples/page/data.html`
 
     browser
-      .click('.back-button')
+      .waitForClick('.back-button')
       .pause(2000)
       // URL changed
       .assert.urlEquals(INDEX_PAGE_URL)
@@ -130,7 +130,7 @@ module.exports = {
     browser
       .waitForElementVisible('.tree-link', 3000)
       // open tree.html
-      .click('.tree-link')
+      .waitForClick('.tree-link')
 
       // URL changed
       .assert.urlEquals(TREE_PAGE_URL)
@@ -160,7 +160,7 @@ module.exports = {
         // enter iframe[src='tree.html'] and check
         browser.frame({ ELEMENT: frame.value.ELEMENT }, () => {
           browser
-            .click('a[href="./index.html"]')
+            .waitForClick('a[href="./index.html"]')
         })
       })
       .frame(null)
