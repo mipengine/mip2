@@ -367,7 +367,6 @@ export function frameMoveIn (pageId,
       return
     }
   }
-  // let iframe = getIFrame(pageId)
 
   let done = () => {
     hideAllIFrames()
@@ -375,16 +374,9 @@ export function frameMoveIn (pageId,
 
     if (newPage) {
       iframe = getIFrame(pageId)
-      if (!iframe) {
-        return
-      }
     }
 
-    css(iframe, {
-      display: 'block',
-      opacity: 1,
-      'z-index': activeZIndex++
-    })
+    css(iframe, 'z-index', activeZIndex++)
   }
 
   if (!transition) {
@@ -418,15 +410,6 @@ export function frameMoveIn (pageId,
     }
 
     done()
-    // if (newPage) {
-    //   setTimeout(() => {
-    //     done()
-    //     css(loading, 'display', 'none')
-    //   }, 100)
-    // } else {
-    //   done()
-    //   css(loading, 'display', 'none')
-    // }
   })
 
   nextFrame(() => {

@@ -491,7 +491,7 @@ class MipShell extends CustomElement {
           targetPage.destroy()
         }
         // Delete DOM & trigger disconnectedCallback in root page
-        Array.prototype.slice.call(this.getElementsInRootPage()).forEach(el => el.parentNode && el.parentNode.removeChild(el))
+        Array.prototype.slice.call(page.getElementsInRootPage()).forEach(el => el.parentNode && el.parentNode.removeChild(el))
       }
 
       page.checkIfExceedsMaxPageNum()
@@ -503,14 +503,19 @@ class MipShell extends CustomElement {
         isRootPage: false,
         isCrossOrigin: to.origin !== window.location.origin
       }
-      page.addChild(targetPageMeta)
 
       // Create a new iframe
+      page.addChild(targetPageMeta)
       needEmitPageEvent = false
       this.applyTransition(targetPageId, to.meta, {
         newPage: true,
         onComplete: () => {
-          targetPageMeta.targetWindow = createIFrame(targetPageMeta).contentWindow
+          let targetIFrame = createIFrame(targetPageMeta)
+          targetPageMeta.targetWindow = targetIFrame.contentWindow
+          css(targetIFrame, {
+            display: 'block',
+            opacity: 1
+          })
           // Get <mip-shell> from root page
           let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
           if (shellDOM) {
