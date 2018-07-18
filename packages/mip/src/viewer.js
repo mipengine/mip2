@@ -19,6 +19,7 @@ import Page from './page/index'
 import {MESSAGE_PAGE_RESIZE} from './page/const/index'
 import Messager from './messager'
 import fixedElement from './fixed-element'
+import {CUSTOM_EVENT_SHOW_PAGE, CUSTOM_EVENT_HIDE_PAGE} from './page/const'
 
 /**
  * Save window.
@@ -61,23 +62,9 @@ let viewer = {
     // handle preregistered  extensions
     this.handlePreregisteredExtensions()
 
-    // add normal scroll class to body. except ios in iframe.
-    // Patch for ios+iframe is default in mip.css
-    if (!platform.needSpecialScroll) {
-      document.documentElement.classList.add('mip-i-android-scroll')
-      document.body.classList.add('mip-i-android-scroll')
-    }
-
-    if (this.isIframed) {
-      this.patchForIframe()
-      this._viewportScroll()
-      if (platform.isIos()) {
-        this._lockBodyScroll()
-      }
-    }
+    this.handleBrowserQuirks()
 
     this.page = new Page()
-
     this.page.start()
 
     this.fixedElement = fixedElement
@@ -91,18 +78,6 @@ let viewer = {
       })
     }
 
-    event.delegate(document, 'input', 'focus', event => {
-      this.page.notifyRootPage({
-        type: MESSAGE_PAGE_RESIZE
-      })
-    }, true)
-
-    event.delegate(document, 'input', 'blur', event => {
-      this.page.notifyRootPage({
-        type: MESSAGE_PAGE_RESIZE
-      })
-    }, true)
-
     // proxy <a mip-link>
     this._proxyLink(this.page)
   },
@@ -115,29 +90,6 @@ let viewer = {
    * @public
    */
   isIframed: win !== top,
-
-  /**
-   * Patch for iframe
-   */
-  patchForIframe () {
-    // Fix iphone 5s UC and ios 9 safari bug.
-    // While the back button is clicked,
-    // the cached page has some problems.
-    // So we are forced to load the page in iphone 5s UC
-    // and iOS 9 safari.
-    let iosVersion = platform.getOsVersion()
-    iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
-    let needBackReload = (iosVersion === '8' && platform.isUc() && screen.width === 320) ||
-            (iosVersion === '9' && platform.isSafari())
-    if (needBackReload) {
-      window.addEventListener('pageshow', e => {
-        if (e.persisted) {
-          document.body.style.display = 'none'
-          location.reload()
-        }
-      })
-    }
-  },
 
   /**
    * Show contents of page. The contents will not be displayed until the components are registered.
@@ -309,7 +261,7 @@ let viewer = {
    *
    * @private
    */
-  _viewportScroll () {
+  viewportScroll () {
     let self = this
     let dist = 0
     let direct = 0
@@ -411,13 +363,113 @@ let viewer = {
     }
   },
 
+  handleBrowserQuirks () {
+    // add normal scroll class to body. except ios in iframe.
+    // Patch for ios+iframe is default in mip.css
+    if (!platform.needSpecialScroll) {
+      document.documentElement.classList.add('mip-i-android-scroll')
+      document.body.classList.add('mip-i-android-scroll')
+    }
+
+    // prevent bouncy scroll in iOS 7 & 8
+    if (platform.isIos()) {
+      let iosVersion = platform.getOsVersion()
+      iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
+      if (!(iosVersion === '8' || iosVersion === '7')) {
+        document.documentElement.classList.add('mip-i-ios-scroll')
+      }
+
+      this.fixIOSPageFreeze()
+
+      if (this.isIframed) {
+        this.lockBodyScroll()
+
+        // Fix iphone 5s UC and ios 9 safari bug.
+        // While the back button is clicked,
+        // the cached page has some problems.
+        // So we are forced to load the page in iphone 5s UC
+        // and iOS 9 safari.
+        let needBackReload = (iosVersion === '8' && platform.isUc() && screen.width === 320) ||
+          (iosVersion === '9' && platform.isSafari())
+        if (needBackReload) {
+          window.addEventListener('pageshow', e => {
+            if (e.persisted) {
+              document.body.style.display = 'none'
+              location.reload()
+            }
+          })
+        }
+      }
+    }
+
+    /**
+     * trigger layout to solve a strange bug in Android Superframe,
+     * which will make page unscrollable
+     */
+    if (platform.isAndroid()) {
+      setTimeout(() => {
+        document.documentElement.classList.add('trigger-layout')
+        document.body.classList.add('trigger-layout')
+      })
+    }
+
+    if (this.isIframed) {
+      this.viewportScroll()
+    }
+
+    this.fixSoftKeyboard()
+  },
+
+  /**
+   * fix a iOS UC/Shoubai bug when hiding current iframe,
+   * which will cause the whole page freeze
+   *
+   * https://github.com/mipengine/mip2/issues/19
+   */
+  fixIOSPageFreeze () {
+    let $style = document.createElement('style')
+    let $head = document.head || document.getElementsByTagName('head')[0]
+    $style.setAttribute('mip-bouncy-scrolling', '')
+    $style.textContent = '* {-webkit-overflow-scrolling: auto!important;}'
+
+    if (!platform.isSafari() && !platform.isChrome()) {
+      window.addEventListener(CUSTOM_EVENT_SHOW_PAGE, (e) => {
+        try {
+          $head.removeChild($style)
+        } catch (e) {}
+      })
+      window.addEventListener(CUSTOM_EVENT_HIDE_PAGE, (e) => {
+        $head.appendChild($style)
+      })
+    }
+  },
+
+  /**
+   * fix soft keyboard bug
+   *
+   * https://github.com/mipengine/mip2/issues/38
+   */
+  fixSoftKeyboard () {
+    // reset iframe's height when input focus/blur
+    event.delegate(document, 'input', 'focus', event => {
+      this.page.notifyRootPage({
+        type: MESSAGE_PAGE_RESIZE
+      })
+    }, true)
+    event.delegate(document, 'input', 'blur', event => {
+      this.page.notifyRootPage({
+        type: MESSAGE_PAGE_RESIZE
+      })
+    }, true)
+  },
+
   /**
    * lock body scroll in iOS
    *
    * https://medium.com/jsdownunder/locking-body-scroll-for-all-devices-22def9615177
    * http://blog.christoffer.online/2015-06-10-six-things-i-learnt-about-ios-rubberband-overflow-scrolling/
    */
-  _lockBodyScroll () {
+  lockBodyScroll () {
     viewport.on('scroll', () => {
       let scrollTop = viewport.getScrollTop()
       let totalScroll = viewport.getScrollHeight()
@@ -427,6 +479,11 @@ let viewer = {
         viewport.setScrollTop(scrollTop - 1)
       }
     }, eventListenerOptions)
+
+    // scroll 1px
+    document.documentElement.classList.add('trigger-layout')
+    document.body.classList.add('trigger-layout')
+    viewport.setScrollTop(1)
   },
 
   /**

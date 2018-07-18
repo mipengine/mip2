@@ -541,20 +541,3 @@ export function appendScript (src) {
     document.body.appendChild(script)
   })
 }
-
-/**
- * Fix a UC/Shoubai bug when hiding current iframe
- * https://github.com/mipengine/mip2/issues/19
- */
-let $style = document.createElement('style')
-let $head = document.head || document.getElementsByTagName('head')[0]
-$style.setAttribute('mip-bouncy-scrolling', '')
-$style.textContent = '* {-webkit-overflow-scrolling: auto!important;}'
-export function disableBouncyScrolling () {
-  $head.appendChild($style)
-}
-export function enableBouncyScrolling () {
-  try {
-    $head.removeChild($style)
-  } catch (e) {}
-}
