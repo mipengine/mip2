@@ -952,6 +952,7 @@ class MipShell extends CustomElement {
       }
     }
 
+    console.warn('Cannot find MIP Shell Config for current page. Use default instead.')
     return Object.assign({}, DEFAULT_SHELL_CONFIG)
   }
 

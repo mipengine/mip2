@@ -33,14 +33,8 @@ export function pushState (url, replace) {
       history.pushState({key: _key}, '', url)
     }
   } catch (e) {
-    // console.log(e, 'from push-state.js')
     if (window.MIP.standalone) {
-      if (replace) {
-        window.location.replace(url)
-      } else {
-        window.location.href = url
-      }
-      // window.location[replace ? 'replace' : 'assign'](url)
+      window.location[replace ? 'replace' : 'assign'](url)
     }
   }
 }
