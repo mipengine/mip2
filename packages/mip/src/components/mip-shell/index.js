@@ -18,6 +18,7 @@ import {isPortrait, supportsPassive} from '../../page/util/feature-detect'
 import {isSameRoute, getFullPath} from '../../page/util/route'
 import {
   createIFrame,
+  getIFrame,
   frameMoveIn,
   frameMoveOut,
   createLoading,
@@ -529,6 +530,10 @@ class MipShell extends CustomElement {
     } else {
       this.applyTransition(targetPageId, to.meta, {
         onComplete: () => {
+          css(getIFrame(targetPageId), {
+            display: 'block',
+            opacity: 1
+          })
           // Update shell if new iframe has not been created
           let pageMeta = this.findMetaByPageId(targetPageId)
           this.refreshShell({pageMeta})
