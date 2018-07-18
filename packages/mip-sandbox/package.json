@@ -1,6 +1,6 @@
 {
   "name": "mip-sandbox",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "sandbox tools for MIP project",
   "main": "lib/sandbox.js",
   "scripts": {
