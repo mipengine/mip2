@@ -34,11 +34,11 @@ export function arrayToObject (arr) {
   return obj
 }
 
-export function parseClass (classSpecs) {
+export function parseClass (classSpecs, oldSpecs = {}) {
   if (typeof classSpecs === 'string') {
-    return {
+    return Object.assign(oldSpecs, {
       [classSpecs]: true
-    }
+    })
   }
   if (isArray(classSpecs)) {
     classSpecs = arrayToObject(classSpecs)
