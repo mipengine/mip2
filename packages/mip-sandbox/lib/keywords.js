@@ -139,6 +139,7 @@ var SANDBOX_STRICT = {
       properties: [
         'watch',
         'setData',
+        'getData',
         'viewport',
         'util',
         'sandbox',

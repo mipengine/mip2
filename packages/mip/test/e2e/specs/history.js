@@ -12,22 +12,26 @@
 
 module.exports = {
   'open first page': function (browser) {
+    const INDEX_PAGE_URL = `${browser.globals.devServerURL}/examples/page/index.html`
+
     browser
       // open index.html
-      .url(`${browser.globals.devServerURL}/examples/page/index.html`)
+      .url(INDEX_PAGE_URL)
 
       // show mip-shell
       .waitForElementVisible('.mip-shell-header-title', 3000)
       .assert.containsText('.mip-shell-header-title', 'MIP')
   },
   'click a <mip-link>': function (browser) {
+    const TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
+
     browser
       .waitForElementVisible('.tree-link', 3000)
       // open tree.html
       .click('.tree-link')
 
       // URL changed
-      .assert.urlEquals(`${browser.globals.devServerURL}/examples/page/tree.html`)
+      .assert.urlEquals(TREE_PAGE_URL)
 
       // mip header's title changed
       .assert.containsText('.mip-shell-header-title', 'MIP Tree')
@@ -36,9 +40,16 @@ module.exports = {
       .assert.elementPresent('iframe')
       .assert.elementCount('iframe', 1)
       .assert.visible('iframe')
-      .assert.attributeContains('iframe', 'data-page-id', `${browser.globals.devServerURL}/examples/page/tree.html`)
-      .assert.attributeContains('iframe', 'src', `${browser.globals.devServerURL}/examples/page/tree.html`)
+      .assert.attributeContains('iframe', 'data-page-id', TREE_PAGE_URL)
+      .assert.attributeContains('iframe', 'src', TREE_PAGE_URL)
       .assert.attributeContains('iframe', 'name', '{"standalone":true,"isRootPage":false,"isCrossOrigin":false}')
+      .element('css selector', `iframe[data-page-id*="${TREE_PAGE_URL}"]`, function (frame) {
+        // enter iframe[src='tree.html'] and check
+        browser.frame({ELEMENT: frame.value.ELEMENT}, () => {
+          browser.waitForElementVisible('mip-page-tree', 3000)
+        })
+      })
+      .frame(null)
 
       // hide elements in root page
       .assert.hidden('.tree-link')
@@ -59,14 +70,22 @@ module.exports = {
       .assert.visible('.main-image')
   },
   'history forward': function (browser) {
+    const TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
     browser
       .forward()
       // URL changed
-      .assert.urlEquals(`${browser.globals.devServerURL}/examples/page/tree.html`)
+      .assert.urlEquals(TREE_PAGE_URL)
       .assert.containsText('.mip-shell-header-title', 'MIP Tree')
 
       // show iframe
-      .assert.visible('iframe')
+      .waitForElementVisible('iframe', 3000)
+      .element('css selector', `iframe[data-page-id*="${TREE_PAGE_URL}"]`, function (frame) {
+        // enter iframe[src='tree.html'] and check
+        browser.frame({ELEMENT: frame.value.ELEMENT}, () => {
+          browser.waitForElementVisible('mip-page-tree', 3000)
+        })
+      })
+      .frame(null)
 
       // hide root page
       .assert.hidden('.tree-link')
@@ -81,17 +100,26 @@ module.exports = {
       .assert.elementNotPresent('iframe')
   },
   'go back by clicking the `Back` button in mip header': function (browser) {
+    const INDEX_PAGE_URL = `${browser.globals.devServerURL}/examples/page/index.html`
+
     browser
       .click('.back-button')
       // URL changed
-      .assert.urlEquals(`${browser.globals.devServerURL}/examples/page/index.html`)
+      .assert.urlEquals(INDEX_PAGE_URL)
       .assert.containsText('.mip-shell-header-title', 'MIP')
 
       // open an iframe which contains index.html
       .waitForElementVisible('iframe', 3000)
-      .assert.attributeContains('iframe', 'data-page-id', `${browser.globals.devServerURL}/examples/page/index.html`)
-      .assert.attributeContains('iframe', 'src', `${browser.globals.devServerURL}/examples/page/index.html`)
+      .assert.attributeContains('iframe', 'data-page-id', INDEX_PAGE_URL)
+      .assert.attributeContains('iframe', 'src', INDEX_PAGE_URL)
       .assert.attributeContains('iframe', 'name', '{"standalone":true,"isRootPage":false,"isCrossOrigin":false}')
+      .element('css selector', `iframe[data-page-id*="${INDEX_PAGE_URL}"]`, function (frame) {
+        // enter iframe[src='index.html'] and check
+        browser.frame({ELEMENT: frame.value.ELEMENT}, () => {
+          browser.waitForElementVisible('.main-image', 3000)
+        })
+      })
+      .frame(null)
 
       // hide root page(tree.html)
       .assert.hidden('mip-page-tree')
