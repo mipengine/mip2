@@ -24,6 +24,16 @@ class Bind {
     MIP.setData = (action, from) => {
       this._bindTarget(false, action, from)
     }
+    MIP.getData = key => {
+      let ks = key.split('.')
+      let res = this._win.m[ks[0]]
+      let i = 1
+      while (isObject(res) && i < ks.length) {
+        res = res[ks[i]]
+        i++
+      }
+      return res
+    }
     MIP.$set = (action, from, cancel) => {
       this._bindTarget(true, action, from, cancel)
     }
