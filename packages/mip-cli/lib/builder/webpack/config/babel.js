@@ -5,7 +5,7 @@
 
 const {resolveModule, pathFormat} = require('../../../utils/helper')
 const path = require('path')
-const prefix = '__mipComponentsWepackHelpers__'
+const prefix = '__mipComponentsWebpackHelpers__'
 
 module.exports = {
   babelLoader: {

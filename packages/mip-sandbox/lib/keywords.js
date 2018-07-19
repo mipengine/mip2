@@ -50,6 +50,8 @@ var ORIGINAL = [
   // 1.0.17 新增 WebSocket
   'WebSocket',
   'WritableStream',
+  // issue https://github.com/mipengine/mip2/issues/62
+  'crypto',
   'clearInterval',
   'clearTimeout',
   'console',
