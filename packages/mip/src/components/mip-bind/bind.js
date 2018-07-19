@@ -59,7 +59,7 @@ class Bind {
       delete data[k]
     }
 
-    let win = isSelfParent(window) ? window : window.parent
+    let win = isSelfParent(window) ? window : /* istanbul ignore next */ window.parent
     win.MIP.$update(data)
   }
 
@@ -68,6 +68,7 @@ class Bind {
     win.MIP.$set(data, 0, true)
 
     for (let i = 0, frames = win.document.getElementsByTagName('iframe'); i < frames.length; i++) {
+      /* istanbul ignore if */
       if (frames[i].classList.contains('mip-page__iframe') &&
           frames[i].getAttribute('data-page-id')
       ) {
@@ -119,7 +120,7 @@ class Bind {
       target.forEach(key => MIP.watch(key, cb))
       return
     }
-    if (typeof target !== 'string') {
+    if (typeof target !== 'string' || !target) {
       return
     }
     if (!cb || typeof cb !== 'function') {
@@ -152,15 +153,22 @@ class Bind {
     }
     if (win.g && win.g.hasOwnProperty(key)) {
       !cancel && this._postMessage(data)
-    } else if (!isSelfParent(win) && win.parent.g && win.parent.g.hasOwnProperty(key)) {
-      !cancel && this._postMessage(data)
     } else {
-      Object.assign(win.m, data)
+      /* istanbul ignore if */
+      if (!isSelfParent(win) &&
+      /* istanbul ignore next */ win.parent.g &&
+      /* istanbul ignore next */ win.parent.g.hasOwnProperty(key)
+      ) {
+        !cancel && this._postMessage(data)
+      } else {
+        Object.assign(win.m, data)
+      }
     }
   }
 
   _setGlobalState (data, cancel) {
     let win = this._win
+    /* istanbul ignore else */
     if (isSelfParent(win)) {
       win.g = win.g || {}
       assign(win.g, data)
@@ -240,7 +248,7 @@ function isSelfParent (win) {
 }
 
 function getGlobalData (win) {
-  return isSelfParent(win) ? win.g : win.parent.g
+  return isSelfParent(win) ? win.g : /* istanbul ignore next */ win.parent.g
 }
 
 export default Bind

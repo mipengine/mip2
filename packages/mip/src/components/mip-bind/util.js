@@ -119,7 +119,6 @@ export function styleToObject (style) {
   let styleObj = {}
   for (let i = 0, len = styles.length; i < len; i++) {
     let item = styles[i]
-    /* istanbul ignore if */
     if (!item) {
       continue
     }
@@ -130,11 +129,6 @@ export function styleToObject (style) {
 }
 
 export function objectToStyle (obj) {
-  /* istanbul ignore if */
-  if (!isObject(obj)) {
-    return ''
-  }
-
   let styles = ''
   // etc: {fontSize: '12px'} => font-size:12px;
   Object.keys(obj).forEach(k => {
@@ -144,7 +138,6 @@ export function objectToStyle (obj) {
 }
 
 export function namespaced (str) {
-  /* istanbul ignore if */
   if (!str) {
     return
   }

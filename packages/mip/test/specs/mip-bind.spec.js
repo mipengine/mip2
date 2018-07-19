@@ -121,9 +121,12 @@ describe('mip-bind', function () {
     dumbDiv.innerHTML = `
       <div class="inner-wrapper" disabled>
         <body>dup body</body>
-        <h1>title</h1>
-        <p>test:<span>1</span></p>
+        <h1 m-text=""></h1>
+        <p style="color:red;;;" m-bind:style="{fontSize: fontSize + 'px'}">test:<span>1</span></p>
         <mip-data></mip-data>
+        <mip-data>
+          <script type="application/json">{}</script>
+        </mip-data>
       </div>
     `
 

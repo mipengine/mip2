@@ -16,7 +16,6 @@ class Compile {
   }
 
   start (data) {
-    /* istanbul ignore if */
     if (!data || !util.objNotEmpty(data)) {
       return
     }
