@@ -60,7 +60,6 @@ describe('page.util', function () {
       spy.returns(true)
 
       scrollTo(200, { duration: 500, scrollTop: 500 }).then(() => {
-        // expect(spy).to.have.been.called()
         done()
       })
     })

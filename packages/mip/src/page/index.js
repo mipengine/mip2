@@ -63,6 +63,7 @@ class Page {
     if (hash) {
       try {
         let $hash = document.querySelector(decodeURIComponent(hash))
+        /* istanbul ignore next */
         if ($hash) {
           // scroll to current hash
           scrollTo($hash.offsetTop, {
@@ -90,6 +91,7 @@ class Page {
 
     // viewportHeight = 0 before frameMoveIn animation ends
     // Wait a minute
+    /* istanbul ignore next */
     if (viewportHeight === 0) {
       setTimeout(this.setupBouncyHeader.bind(this), 100)
       return
@@ -101,10 +103,12 @@ class Page {
       scrollDistance = Math.abs(scrollTop - lastScrollTop)
 
       // ignore bouncy scrolling in iOS
+      /* istanbul ignore next */
       if (scrollTop < 0 || scrollTop + viewportHeight > scrollHeight) {
         return
       }
 
+      /* istanbul ignore next */
       if (lastScrollTop < scrollTop && scrollDistance >= THRESHOLD) {
         let target = this.isRootPage ? window : window.parent
         this.emitCustomEvent(target, this.isCrossOrigin, {
@@ -116,7 +120,7 @@ class Page {
             }
           }
         })
-      } else if (lastScrollTop > scrollTop && scrollDistance >= THRESHOLD) {
+      }/* istanbul ignore next */ else if (lastScrollTop > scrollTop && scrollDistance >= THRESHOLD) {
         let target = this.isRootPage ? window : window.parent
         this.emitCustomEvent(target, this.isCrossOrigin, {
           name: 'mipShellEvents',
@@ -143,6 +147,7 @@ class Page {
    * @param {Object} data eventdata
    */
   notifyRootPage (data) {
+    /* istanbul ignore else */
     if (this.isRootPage) {
       window.postMessage(data, window.location.origin)
     } else {
@@ -155,6 +160,7 @@ class Page {
    *
    */
   destroy () {
+    /* istanbul ignore next */
     viewport.scroller.removeEventListener('scroll', this.debouncer, false)
   }
 
@@ -201,7 +207,7 @@ class Page {
       }
     })
   }
-
+  /* istanbul ignore next */
   toggleFadeHeader (toggle, pageMeta) {
     toggleFadeHeader(toggle, pageMeta)
   }
@@ -293,6 +299,7 @@ class Page {
    * check if children.length exceeds MAX_PAGE_NUM
    * if so, remove the first child
    */
+  /* istanbul ignore next */
   checkIfExceedsMaxPageNum () {
     if (this.children.length >= MAX_PAGE_NUM) {
       // remove from children list

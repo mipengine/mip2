@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 /**
  * @file define dom functions
  * @author wangyisheng@baidu.com (wangyisheng)
