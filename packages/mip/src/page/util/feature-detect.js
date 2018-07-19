@@ -20,10 +20,12 @@ export const supportsPassive = supportsPassiveFlag
 let transitionEndEventName = 'transitionend'
 let animationEndEventName = 'animationend'
 
+/* istanbul ignore next */
 if (window.ontransitionend === undefined &&
     window.onwebkittransitionend !== undefined) {
   transitionEndEventName = 'webkitTransitionEnd'
 }
+/* istanbul ignore next */
 if (window.onanimationend === undefined &&
     window.onwebkitanimationend !== undefined) {
   animationEndEventName = 'webkitAnimationEnd'
@@ -36,7 +38,7 @@ export const animationEndEvent = animationEndEventName
  */
 export const raf = window.requestAnimationFrame
   ? window.requestAnimationFrame.bind(window)
-  : setTimeout
+  : /* istanbul ignore next */setTimeout
 
 export function isPortrait () {
   return window.innerHeight > window.innerWidth

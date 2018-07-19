@@ -31,6 +31,7 @@ export const MESSAGE_SYNC_PAGE_CONFIG = 'sync-page-config'
 export const MESSAGE_CROSS_ORIGIN = 'page-cross-origin'
 export const MESSAGE_BROADCAST_EVENT = 'page-broadcast-event'
 export const MESSAGE_PAGE_RESIZE = 'page-resize'
+export const MESSAGE_MIPIFRAME_RESIZE = 'mip-iframe-resize'
 
 export const NON_EXISTS_PAGE_ID = 'non-exists-page-id'
 export const CUSTOM_EVENT_RESIZE_PAGE = 'resize-page'

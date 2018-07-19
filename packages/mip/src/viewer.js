@@ -16,10 +16,9 @@ import {makeCacheUrl, getOriginalUrl} from './util'
 import {supportsPassive, isPortrait} from './page/util/feature-detect'
 import viewport from './viewport'
 import Page from './page/index'
-import {MESSAGE_PAGE_RESIZE} from './page/const/index'
+import {MESSAGE_PAGE_RESIZE, CUSTOM_EVENT_SHOW_PAGE, CUSTOM_EVENT_HIDE_PAGE} from './page/const'
 import Messager from './messager'
 import fixedElement from './fixed-element'
-import {CUSTOM_EVENT_SHOW_PAGE, CUSTOM_EVENT_HIDE_PAGE} from './page/const'
 
 /**
  * Save window.
@@ -262,6 +261,7 @@ let viewer = {
    * @private
    */
   viewportScroll () {
+    /* istanbul ignore next */
     let self = this
     let dist = 0
     let direct = 0
@@ -279,6 +279,7 @@ let viewer = {
     function pagemove (e) {
       scrollTop = viewport.getScrollTop()
       scrollHeight = viewport.getScrollHeight()
+      /* istanbul ignore next */
       if (scrollTop > 0 && scrollTop < scrollHeight) {
         if (lastScrollTop < scrollTop) {
           // down
@@ -366,12 +367,14 @@ let viewer = {
   handleBrowserQuirks () {
     // add normal scroll class to body. except ios in iframe.
     // Patch for ios+iframe is default in mip.css
+    /* istanbul ignore next */
     if (!platform.needSpecialScroll) {
       document.documentElement.classList.add('mip-i-android-scroll')
       document.body.classList.add('mip-i-android-scroll')
     }
 
     // prevent bouncy scroll in iOS 7 & 8
+    /* istanbul ignore next */
     if (platform.isIos()) {
       let iosVersion = platform.getOsVersion()
       iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
@@ -406,6 +409,7 @@ let viewer = {
      * trigger layout to solve a strange bug in Android Superframe,
      * which will make page unscrollable
      */
+    /* istanbul ignore next */
     if (platform.isAndroid()) {
       setTimeout(() => {
         document.documentElement.classList.add('trigger-layout')
@@ -413,10 +417,12 @@ let viewer = {
       })
     }
 
+    /* istanbul ignore next */
     if (this.isIframed) {
       this.viewportScroll()
     }
 
+    /* istanbul ignore next */
     this.fixSoftKeyboard()
   },
 
@@ -427,11 +433,16 @@ let viewer = {
    * https://github.com/mipengine/mip2/issues/19
    */
   fixIOSPageFreeze () {
+    /* istanbul ignore next */
     let $style = document.createElement('style')
+    /* istanbul ignore next */
     let $head = document.head || document.getElementsByTagName('head')[0]
+    /* istanbul ignore next */
     $style.setAttribute('mip-bouncy-scrolling', '')
+    /* istanbul ignore next */
     $style.textContent = '* {-webkit-overflow-scrolling: auto!important;}'
 
+    /* istanbul ignore next */
     if (!platform.isSafari() && !platform.isChrome()) {
       window.addEventListener(CUSTOM_EVENT_SHOW_PAGE, (e) => {
         try {
@@ -450,12 +461,14 @@ let viewer = {
    * https://github.com/mipengine/mip2/issues/38
    */
   fixSoftKeyboard () {
+    /* istanbul ignore next */
     // reset iframe's height when input focus/blur
     event.delegate(document, 'input', 'focus', event => {
       this.page.notifyRootPage({
         type: MESSAGE_PAGE_RESIZE
       })
     }, true)
+    /* istanbul ignore next */
     event.delegate(document, 'input', 'blur', event => {
       this.page.notifyRootPage({
         type: MESSAGE_PAGE_RESIZE
@@ -470,6 +483,7 @@ let viewer = {
    * http://blog.christoffer.online/2015-06-10-six-things-i-learnt-about-ios-rubberband-overflow-scrolling/
    */
   lockBodyScroll () {
+    /* istanbul ignore next */
     viewport.on('scroll', () => {
       let scrollTop = viewport.getScrollTop()
       let totalScroll = viewport.getScrollHeight()
@@ -481,8 +495,11 @@ let viewer = {
     }, eventListenerOptions)
 
     // scroll 1px
+    /* istanbul ignore next */
     document.documentElement.classList.add('trigger-layout')
+    /* istanbul ignore next */
     document.body.classList.add('trigger-layout')
+    /* istanbul ignore next */
     viewport.setScrollTop(1)
   },
 

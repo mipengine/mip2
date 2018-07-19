@@ -32,7 +32,7 @@ import '../styles/mip.less'
  * use passive event listeners if supported
  * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
  */
-const eventListenerOptions = supportsPassive ? {passive: true} : false
+const eventListenerOptions = supportsPassive ? {passive: true} : /* istanbul ignore next */false
 
 class Page {
   constructor () {
