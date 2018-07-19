@@ -122,8 +122,7 @@ util.dom.waitDocumentReady(() => {
 
   // register buildin components
   builtinComponents.register()
-
-  performance.start(Date.now())
+  performance.start(window._mipStartTiming)
 
   // send performance data until the data collection is completed
   performance.on('update', timing => {
