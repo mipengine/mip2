@@ -4,8 +4,8 @@
  * @author schoeu
  */
 
-import ls from './logSend'
-import coreTags from './coreTags'
+import ls from './log-send'
+import coreTags from './core-tags'
 
 const RATE = 0.1
 let tags
