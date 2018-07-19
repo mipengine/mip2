@@ -36,6 +36,7 @@ export function createIFrame ({fullpath, pageId}, {onLoad, onError} = {}) {
     isRootPage: false,
     isCrossOrigin: targetOrigin !== window.location.origin
   })
+  // alert('create iframe with name: ' + pageMeta)
   container.setAttribute('name', pageMeta)
 
   container.setAttribute('src', fullpath)

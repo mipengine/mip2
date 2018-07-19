@@ -49,8 +49,11 @@ function registerVueCustomElement (tag, component) {
 
 // pass meta through `window.name` in cross-origin scene
 let pageMeta
+let pageMetaConfirmed = false
+// alert('window.name is ' + window.name)
 try {
   pageMeta = JSON.parse(window.name)
+  pageMetaConfirmed = true
 } catch (e) {
   pageMeta = {
     standalone: false,
@@ -61,14 +64,24 @@ try {
 
 // 当前是否是独立站
 let standalone
-try {
-  standalone = pageMeta.standalone ||
-    !viewer.isIframed ||
-    typeof window.top.MIP !== 'undefined'
-} catch (e) {
-  standalone = false
+if (pageMetaConfirmed) {
+  standalone = pageMeta.standalone
 }
-pageMeta.standalone = standalone
+else {
+  try {
+    // alert('pageMeta.standalone ' + pageMeta.standalone)
+    // alert('viewer.isIframed ' + viewer.isIframed)
+    // alert('typeof window.top.MIP ' + typeof window.top.MIP)
+    standalone = pageMeta.standalone ||
+      !viewer.isIframed ||
+      typeof window.top.MIP !== 'undefined'
+  } catch (e) {
+    // alert('catch error, standalone = false')
+    // alert(e.stack)
+    standalone = false
+  }
+  pageMeta.standalone = standalone
+}
 let extensions = window.MIP || []
 
 function push (extension) {

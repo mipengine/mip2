@@ -167,7 +167,7 @@ class MipShell extends CustomElement {
               config.meta.header.title = (document.querySelector('title') || {}).innerHTML || ''
             }
 
-            pageMeta = window.MIP_PAGE_META_CACHE[pageId] = config.meta
+            pageMeta = window.parent.MIP_PAGE_META_CACHE[pageId] = config.meta
             break
           }
         }
