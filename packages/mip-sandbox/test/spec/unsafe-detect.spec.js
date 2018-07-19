@@ -4,10 +4,10 @@
  */
 
 /* globals describe, it */
-var chai = require('chai')
+// var chai = require('chai')
 var detect = require('../../lib/unsafe-detect')
 var keywords = require('../../lib/keywords')
-var expect = chai.expect
+// var expect = chai.expect
 
 function printNames (nodes) {
   return nodes.map(function (node) {

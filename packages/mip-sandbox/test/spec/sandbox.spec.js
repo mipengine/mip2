@@ -5,8 +5,8 @@
 
 /* globals describe, it */
 
-var chai = require('chai')
-var expect = chai.expect
+// var chai = require('chai')
+// var expect = chai.expect
 var sandbox = require('../../lib/sandbox')
 
 // 假定 MIP 在 sandbox 后定义
@@ -43,6 +43,9 @@ describe('sandbox', function () {
 
   it('WHITELIST', function () {
     expect(sandbox.WHITELIST).to.not.be.equal(sandbox.strict.WHITELIST)
+    expect(sandbox.WHITELIST_STRICT).to.not.be.equal(sandbox.strict.WHITELIST_STRICT)
+    expect(sandbox.WHITELIST_RESERVED).to.not.be.equal(sandbox.strict.WHITELIST_RESERVED)
+    expect(sandbox.WHITELIST_STRICT_RESERVED).to.not.be.equal(sandbox.strict.WHITELIST_STRICT_RESERVED)
   })
 
   it('sandbox.watch', function () {

@@ -3,5 +3,5 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-var files = require.context('./', true, /\.spec\.js$/)
+var files = require.context('./spec', true, /\.spec\.js$/)
 files.keys().forEach(files)

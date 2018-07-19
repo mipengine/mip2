@@ -5,8 +5,8 @@
 
 /* globals describe, it */
 
-var chai = require('chai')
-var expect = chai.expect
+// var chai = require('chai')
+// var expect = chai.expect
 var generateFull = require('../../lib/generate')
 var generateLite = require('../../lib/generate-lite')
 var keywords = require('../../lib/keywords')
