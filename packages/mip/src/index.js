@@ -10,6 +10,7 @@ import 'script-loader!deps/fetch-jsonp'
 import 'script-loader!document-register-element/build/document-register-element'
 import 'deps/promise'
 import 'deps/object-assign'
+import 'deps/mip-components-webpack-helpers'
 /* eslint-enable import/no-webpack-loader-syntax */
 
 import Vue from 'vue'
