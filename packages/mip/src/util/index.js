@@ -17,7 +17,7 @@ import platform from './platform'
 import naboo from './naboo'
 import EventEmitter from './event-emitter'
 import Gesture from './gesture/index'
-import customStorage from './customStorage'
+import customStorage from './custom-storage'
 import jsonParse from './json-parse'
 
 /**

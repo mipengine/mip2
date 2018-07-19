@@ -1,5 +1,5 @@
 /**
- * @file karma.dev.conf.js
+ * @file karma.cover.conf.js
  * @author huanghuiquan (huanghuiquan@baidu.com)
  */
 

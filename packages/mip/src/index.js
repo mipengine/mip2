@@ -23,7 +23,7 @@ import Resources from './resources'
 import builtinComponents from './components/index'
 import MipShell from './components/mip-shell/index'
 import registerCustomElement from './register-element'
-import sleepWakeModule from './sleepWakeModule'
+import sleepWakeModule from './sleep-wake-module'
 import performance from './performance'
 import mip1PolyfillInstall from './mip1-polyfill/index'
 
