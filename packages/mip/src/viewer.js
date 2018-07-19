@@ -14,6 +14,7 @@ import EventEmitter from './util/event-emitter'
 import fn from './util/fn'
 import {makeCacheUrl, getOriginalUrl} from './util'
 import {supportsPassive, isPortrait} from './page/util/feature-detect'
+import {resolvePath} from './page/util/path'
 import viewport from './viewport'
 import Page from './page/index'
 import {MESSAGE_PAGE_RESIZE, CUSTOM_EVENT_SHOW_PAGE, CUSTOM_EVENT_HIDE_PAGE} from './page/const'
@@ -195,7 +196,7 @@ let viewer = {
     }
     let isHashInCurrentPage = hash && to.indexOf(window.location.origin + window.location.pathname) > -1
 
-    // Invalid <a>, ignore it
+    // Invalid target, ignore it
     if (!to) {
       return
     }
@@ -209,9 +210,17 @@ let viewer = {
       return
     }
 
+    let completeUrl
+    if (/^\/\//.test(to)) {
+      completeUrl = location.protocol + to
+    } else if (to.charAt(0) === '/' || to.charAt(0) === '.') {
+      completeUrl = location.origin + resolvePath(to, location.pathname)
+    } else {
+      completeUrl = to
+    }
     // Send statics message to BaiduResult page
     let pushMessage = {
-      url: getOriginalUrl(to),
+      url: getOriginalUrl(completeUrl),
       state
     }
     this.sendMessage(replace ? 'replaceState' : 'pushState', pushMessage)
