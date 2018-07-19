@@ -3,7 +3,7 @@
  * @author sfe-sy(sfe-sy@baidu.com)
  */
 
-import {def} from '../util/index'
+import {def} from '../util/lang'
 
 const arrayProto = Array.prototype
 export const arrayMethods = Object.create(arrayProto)
