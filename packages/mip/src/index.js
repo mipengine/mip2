@@ -5,11 +5,12 @@
 
 /* eslint-disable import/no-webpack-loader-syntax */
 // add polyfills
-import 'script-loader!deps/fetch.js'
-import 'script-loader!deps/fetch-jsonp.js'
+import 'script-loader!deps/fetch'
+import 'script-loader!deps/fetch-jsonp'
 import 'script-loader!document-register-element/build/document-register-element'
-import 'deps/promise.js'
-import 'deps/object-assign.js'
+import 'deps/promise'
+import 'deps/object-assign'
+import 'deps/mip-components-webpack-helpers'
 /* eslint-enable import/no-webpack-loader-syntax */
 
 import Vue from 'vue'
@@ -23,7 +24,7 @@ import Resources from './resources'
 import builtinComponents from './components/index'
 import MipShell from './components/mip-shell/index'
 import registerCustomElement from './register-element'
-import sleepWakeModule from './sleepWakeModule'
+import sleepWakeModule from './sleep-wake-module'
 import performance from './performance'
 import mip1PolyfillInstall from './mip1-polyfill/index'
 

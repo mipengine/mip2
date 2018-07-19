@@ -392,6 +392,9 @@ class MipShell extends CustomElement {
   }
 
   bindRootEvents () {
+    this.currentViewportHeight = viewport.getHeight()
+    this.currentViewportWidth = viewport.getWidth()
+
     // Receive and resend message
     this.messageHandlers.push((type, data) => {
       if (type === MESSAGE_BROADCAST_EVENT) {

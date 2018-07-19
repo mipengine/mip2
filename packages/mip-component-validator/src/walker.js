@@ -9,6 +9,9 @@ const path = require('path')
 
 module.exports = {
   walk (dirPath, callback) {
+    if (!fs.statSync(dirPath).isDirectory()) {
+      return callback(dirPath)
+    }
     fs.readdirSync(dirPath).forEach(file => {
       const pathname = path.join(dirPath, file)
       const stats = fs.statSync(pathname)

@@ -6,9 +6,7 @@
 import {
   ensureMIPShell,
   getIFrame,
-  toggleFadeHeader,
-  enableBouncyScrolling,
-  disableBouncyScrolling
+  toggleFadeHeader
 } from './util/dom'
 import {getCleanPageId} from './util/path'
 import Debouncer from './util/debounce'
@@ -18,7 +16,6 @@ import {
   MAX_PAGE_NUM,
   CUSTOM_EVENT_SCROLL_TO_ANCHOR,
   CUSTOM_EVENT_SHOW_PAGE,
-  CUSTOM_EVENT_HIDE_PAGE,
   MESSAGE_ROUTER_PUSH,
   MESSAGE_ROUTER_REPLACE,
   MESSAGE_ROUTER_BACK,
@@ -29,7 +26,6 @@ import {
 
 import {customEmit} from '../vue-custom-element/utils/custom-event'
 import viewport from '../viewport'
-import platform from '../util/platform'
 import '../styles/mip.less'
 
 /**
@@ -165,51 +161,6 @@ class Page {
   start () {
     ensureMIPShell()
     this.initPageId()
-
-    // ========================= Some HACKs =========================
-
-    // prevent bouncy scroll in iOS 7 & 8
-    if (platform.isIos()) {
-      let iosVersion = platform.getOsVersion()
-      iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
-      if (!(iosVersion === '8' || iosVersion === '7')) {
-        document.documentElement.classList.add('mip-i-ios-scroll')
-      }
-    }
-
-    // adjust scroll position in iOS, see viewer._lockBodyScroll()
-    if (window.MIP.viewer.isIframed && platform.isIos()) {
-      document.documentElement.classList.add('trigger-layout')
-      document.body.classList.add('trigger-layout')
-      viewport.setScrollTop(1)
-    }
-
-    // trigger layout to solve a strange bug in Android Superframe, which will make page unscrollable
-    if (platform.isAndroid()) {
-      setTimeout(() => {
-        document.documentElement.classList.add('trigger-layout')
-        document.body.classList.add('trigger-layout')
-      })
-    }
-
-    // fix a UC/shoubai bug https://github.com/mipengine/mip2/issues/19
-    let isBuggy = platform.isIos() &&
-      !platform.isSafari() && !platform.isChrome()
-    window.addEventListener(CUSTOM_EVENT_SHOW_PAGE, (e) => {
-      if (isBuggy) {
-        enableBouncyScrolling()
-      }
-    })
-    window.addEventListener(CUSTOM_EVENT_HIDE_PAGE, (e) => {
-      if (isBuggy) {
-        disableBouncyScrolling()
-      }
-    })
-
-    if (this.isRootPage) {
-      this.currentViewportHeight = viewport.getHeight()
-      this.currentViewportWidth = viewport.getWidth()
-    }
 
     // scroll to current hash if exists
     this.scrollToHash(window.location.hash)

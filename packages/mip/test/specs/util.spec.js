@@ -163,6 +163,12 @@ describe('util', function () {
       expect(util.makeCacheUrl('//www.mipengine.com', 'img')).to.equal('/i/s/www.mipengine.com')
     })
 
+    it('containsHost', function () {
+      let url = 'http://www.mipengine.com/docs/index.html'
+      let cacheUrl = util.makeCacheUrl(url, 'url', true)
+      expect(cacheUrl).to.equal('http://www-mipengine-com.mipcdn.com/c/www.mipengine.com/docs/index.html')
+    })
+
     it('parseCacheUrl https', function () {
       let url = 'https://www.mipengine.com/docs/index.html'
       let cacheUrl = util.makeCacheUrl(url)

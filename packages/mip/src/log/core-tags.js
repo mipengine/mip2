@@ -1,5 +1,5 @@
 /**
- * @file coreTags.js
+ * @file core-tags.js
  * @description 官方组件list, 之后有编译自动维护
  * @author schoeu
  */
