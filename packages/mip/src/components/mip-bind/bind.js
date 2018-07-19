@@ -54,10 +54,6 @@ class Bind {
   }
 
   _postMessage (data) {
-    if (!objNotEmpty(data)) {
-      return
-    }
-
     for (let k of Object.keys(data)) {
       data[`#${k}`] = data[k]
       delete data[k]
@@ -90,7 +86,7 @@ class Bind {
     }
 
     if (typeof data === 'object') {
-      let origin = JSON.stringify(win.m || {})
+      let origin = JSON.stringify(win.m)
       this._compile.upadteData(JSON.parse(origin))
       let classified = this._normalize(data)
       if (compile) {
@@ -169,7 +165,7 @@ class Bind {
       win.g = win.g || {}
       assign(win.g, data)
     } else {
-      !cancel && this._postMessage(data)
+      !cancel && objNotEmpty(data) && this._postMessage(data)
     }
   }
 
@@ -211,7 +207,7 @@ class Bind {
 
     return {
       globalData,
-      pageData: pageData || {}
+      pageData
     }
   }
 }
@@ -240,7 +236,7 @@ function setProto (oldObj, newObj) {
 
 function isSelfParent (win) {
   let page = win.MIP.viewer.page
-  return page.isRootPage || page.isCrossOrigin
+  return page.isRootPage || /* istanbul ignore next */ page.isCrossOrigin
 }
 
 function getGlobalData (win) {

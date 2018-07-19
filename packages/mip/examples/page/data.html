@@ -206,7 +206,8 @@
         <mip-data>
             <script type="application/json">
             {
-                "price": 20
+                "price": 20,
+                "value": 1
             }
             </script>
         </mip-data>
@@ -217,6 +218,8 @@
         <mip-form url="https://www.mipengine.org/" class="button">
             <input type='text' on="change:MIP.setData({price:DOM.value*m.price})" style="width:150px;">
         </mip-form>
+
+        <input type='text' m-bind:value="value" style="width:150px;">
 
         <mip-data>
             <script type="application/json">

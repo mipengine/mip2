@@ -11,11 +11,7 @@ class Observer {
       return
     }
 
-    for (let key in data) {
-      if (data.hasOwnProperty(key)) {
-        this._define(data, key, data[key], depMap)
-      }
-    }
+    Object.keys(data).forEach(key => this._define(data, key, data[key], depMap))
   }
 
   _define (data, key, value, depMap) {
@@ -31,6 +27,7 @@ class Observer {
     }
 
     let property = Object.getOwnPropertyDescriptor(data, key)
+    /* istanbul ignore if */
     if (property && property.configurable === false) {
       return
     }

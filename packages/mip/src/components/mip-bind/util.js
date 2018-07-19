@@ -71,6 +71,10 @@ export function parseStyle (styleSpecs) {
 
   Object.keys(styleSpecs).forEach(k => {
     let normalizedName = normalize(k)
+    if (!normalizedName) {
+      return
+    }
+
     let newKey = normalizedName.replace(/[A-Z]/g, match => '-' + match.toLowerCase())
     let val = styleSpecs[k]
     if (isArray(val)) {
@@ -89,7 +93,7 @@ export function parseStyle (styleSpecs) {
 // autoprefixer
 export function normalize (prop) {
   emptyStyle = emptyStyle || document.createElement('div').style
-  prop = prop.replace(/-(\w)/g, (_, c) => (c ? c.toUpperCase() : ''))
+  prop = prop.replace(/-(\w)/g, (_, c) => (c ? c.toUpperCase() : /* istanbul ignore next */ ''))
 
   if (prop !== 'filter' && (prop in emptyStyle)) {
     return prop
@@ -102,6 +106,7 @@ export function normalize (prop) {
       return name
     }
   }
+  return ''
 }
 
 export function styleToObject (style) {
@@ -114,6 +119,7 @@ export function styleToObject (style) {
   let styleObj = {}
   for (let i = 0, len = styles.length; i < len; i++) {
     let item = styles[i]
+    /* istanbul ignore if */
     if (!item) {
       continue
     }
@@ -124,6 +130,7 @@ export function styleToObject (style) {
 }
 
 export function objectToStyle (obj) {
+  /* istanbul ignore if */
   if (!isObject(obj)) {
     return ''
   }
@@ -137,6 +144,10 @@ export function objectToStyle (obj) {
 }
 
 export function namespaced (str) {
+  /* istanbul ignore if */
+  if (!str) {
+    return
+  }
   let newExp = ''
   let match = null
   let pointer = 0
