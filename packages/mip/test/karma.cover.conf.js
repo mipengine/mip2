@@ -15,7 +15,7 @@ module.exports = function (config) {
       }
     },
     enforce: 'post',
-    exclude: /node_modules|deps|test|\.spec\.js$/
+    exclude: /node_modules|deps|test|src\/vue|\.spec\.js$/
   })
 
   config.set(Object.assign(base, {
