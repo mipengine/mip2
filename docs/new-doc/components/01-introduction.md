@@ -1,4 +1,4 @@
-# MIP 2.0 组件化介绍
+# MIP 组件化介绍
 
 ## customElement 自定义标签
 
