@@ -9,7 +9,7 @@
 function createEle (tag, props, key) {
   let ele = document.createElement(tag)
   if (key === 'bind') {
-    ele.setAttribute(`m-bind:${props[0]}`, props[1])
+    ele.setAttribute(`m-bind${props[0] ? ':' + props[0] : ''}`, props[1])
   } else if (key === 'text') {
     ele.setAttribute(`m-text`, props)
   } else if (key === 'else') {
@@ -29,7 +29,7 @@ function createEle (tag, props, key) {
       <p m-text="global.data.name"></p>
     `
     ele.classList.add('mip-page__iframe')
-    // ele.setAttribute('data-page-id', 'test-link')
+    ele.setAttribute('data-page-id', 'test-link')
   }
   document.body.appendChild(ele)
   return ele
@@ -67,6 +67,7 @@ describe('mip-bind', function () {
     eles.push(createEle('p', ['data', 'global.data'], 'bind'))
     // some abnormal bindings
     eles.push(createEle('p', ['num', ''], 'bind'))
+    eles.push(createEle('p', ['', 'num'], 'bind'))
     eles.push(createEle('p', ['style', 'fontSize'], 'bind'))
     eles.push(createEle('p', ['style', '{}'], 'bind'))
     eles.push(createEle('p', ['class', 'fontSize'], 'bind'))
@@ -111,6 +112,7 @@ describe('mip-bind', function () {
             }
           },
           "num": 1,
+          "num2": 1,
           "list": ['a', 'b', {"item": 2}]
         }
       </script>
@@ -174,6 +176,7 @@ describe('mip-bind', function () {
       },
       list: ['a', 'b', {item: 2}],
       num: 1,
+      num2: 1,
       title: 'test case'
     })
 
@@ -237,6 +240,7 @@ describe('mip-bind', function () {
   })
 
   describe('setData', function () {
+    let ct = 0
     before(function () {
       // normal watch
       MIP.watch('global.isGlobal', function () {
@@ -251,21 +255,11 @@ describe('mip-bind', function () {
       // not-exist-data
       MIP.watch('data-not-exist', function () {})
       // array / number
-      MIP.watch(['num', 1], function () {
-        MIP.setData({title: 'num was changed'})
-      })
+      MIP.watch(['num2', 1], () => ct++)
+      // // dup watch
+      // MIP.watch('num2', () => ct++)
       // no cb
       MIP.watch('data-not-exist')
-      // dup watch
-      MIP.watch('global.isGlobal', function () {
-        MIP.setData({
-          global: {
-            data: {
-              age: 2
-            }
-          }
-        })
-      })
     })
 
     it('should change global data correctly', function () {
@@ -294,6 +288,11 @@ describe('mip-bind', function () {
 
     it('should have watched the change of isGlobal and do cb', function () {
       expect(window.m.global.data.age).to.equal(2)
+    })
+
+    it.skip('should not register duplicate watcher', function () {
+      MIP.setData({num2: 2})
+      expect(ct).to.equal(1)
     })
 
     it('should change page data correctly', function () {

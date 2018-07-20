@@ -41,8 +41,8 @@ class Bind {
       this._observer.start(this._win.m)
       this._compile.start(this._win.m)
     }
-    MIP.$update = (data) => {
-      this._update(data)
+    MIP.$update = (data, pageId) => {
+      this._update(data, pageId)
     }
     MIP.watch = (target, cb) => {
       this._bindWatch(target, cb)
@@ -59,21 +59,35 @@ class Bind {
       delete data[k]
     }
 
-    let win = isSelfParent(window) ? window : /* istanbul ignore next */ window.parent
-    win.MIP.$update(data)
+    let win = this._win
+    let targetWin = win
+    /* istanbul ignore if */
+    if (!isSelfParent(win)) {
+      targetWin = win.parent
+      // parent update
+      targetWin.MIP.$set(data, 0, true)
+    }
+    // self update
+    win.MIP.$set(data, 0, true)
+
+    let pageId = win.location.href.replace(win.location.hash, '')
+    // defer
+    setTimeout(() => {
+      targetWin.MIP.$update(data, pageId)
+    }, 10)
   }
 
-  _update (data) {
+  _update (data, pageId) {
     let win = this._win
-    win.MIP.$set(data, 0, true)
 
     for (let i = 0, frames = win.document.getElementsByTagName('iframe'); i < frames.length; i++) {
       /* istanbul ignore if */
       if (frames[i].classList.contains('mip-page__iframe') &&
-          frames[i].getAttribute('data-page-id')
+          frames[i].getAttribute('data-page-id') &&
+          pageId !== frames[i].getAttribute('data-page-id')
       ) {
         let subwin = frames[i].contentWindow
-        subwin.MIP.$set(data, 0, true)
+        subwin && subwin.MIP && subwin.MIP.$set(data, 0, true)
       }
     }
   }
@@ -138,6 +152,7 @@ class Bind {
     }
 
     let watcherId = `${target}${cb.toString()}`.replace(/[\n\t\s]/g, '')
+    /* istanbul ignore if */
     if (this._watcherIds.indexOf(watcherId) !== -1) {
       return
     }

@@ -131,6 +131,9 @@ class Compile {
   bind (node, directive, newVal) {
     let reg = /bind:(.*)/
     let result = reg.exec(directive)
+    if (!result) {
+      return
+    }
     let attr = result[1]
     /* istanbul ignore if */
     if (attr !== 'disabled' && node.disabled) {
