@@ -773,6 +773,7 @@ class MipShell extends CustomElement {
     if (pageId) {
       pageMeta = this.findMetaByPageId(pageId)
     }
+    this.currentPageMeta = pageMeta
 
     if (!(pageMeta.header && pageMeta.header.show)) {
       this.$wrapper.classList.add('hide')
