@@ -479,12 +479,8 @@ class MipShell extends CustomElement {
     this.togglePageMask(false, {skipTransition: true})
 
     // Show header
-    // this.toggleTransition(false)
-    // window.innerHeight
     this.slideHeader('down')
-    // window.innerHeight
-    // this.toggleTransition(true)
-
+    this.pauseBouncyHeader = true
     /**
      * Reload iframe when <a mip-link> clicked even if it's already existed.
      * NOTE: forwarding or going back with browser history won't do
@@ -607,6 +603,7 @@ class MipShell extends CustomElement {
           window.MIP_SHELL_OPTION.allowTransition = false
           this.currentPageMeta = finalMeta
           this.toggleTransition(true)
+          this.pauseBouncyHeader = false
           if (window.MIP_SHELL_OPTION.direction === 'back' && targetPageId !== page.pageId) {
             document.documentElement.classList.add('mip-no-scroll')
             Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
@@ -647,6 +644,7 @@ class MipShell extends CustomElement {
           window.MIP_SHELL_OPTION.allowTransition = false
           this.currentPageMeta = finalMeta
           this.toggleTransition(true)
+          this.pauseBouncyHeader = false
           /**
            * Disable scrolling of root page when covered by an iframe
            * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
@@ -783,11 +781,13 @@ class MipShell extends CustomElement {
     }
 
     // Refresh header
-    // this.toggleTransition(false)
-    // window.innerHeight
+    this.toggleTransition(false)
+    /* eslint-disable no-unused-expressions */
+    window.innerHeight
     this.slideHeader('down')
-    // window.innerHeight
-    // this.toggleTransition(true)
+    window.innerHeight
+    /* eslint-enable no-unused-expressions */
+    this.toggleTransition(true)
     if (asyncRefresh) {
       // In async mode: (Invoked from `processShellConfig` by user)
       // 1. Render fade header with updated pageMeta
@@ -836,6 +836,9 @@ class MipShell extends CustomElement {
   }
 
   slideHeader (direction) {
+    if (this.pauseBouncyHeader) {
+      return
+    }
     if (direction === 'up') {
       this.$el.classList.add('slide-up')
     } else {
