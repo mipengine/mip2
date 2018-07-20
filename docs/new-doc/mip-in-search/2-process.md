@@ -27,7 +27,7 @@
 
 MIP URL 的生效进度，在百度搜索资源平台 ([https://ziyuan.baidu.com/mip/index](https://ziyuan.baidu.com/mip/index)) 数据提交中可以看到，如下图所示。
 
-![资源平台截图](./image/mip-data.png)
+![资源平台截图](./images/mip-data.png)
 
 ### 2．MIP在百度生效的常见问题分析
 
@@ -46,7 +46,7 @@ MIP URL 的生效进度，在百度搜索资源平台 ([https://ziyuan.baidu.com
 
 原因：MIP URL 页面前端代码不符合 MIP 规则，不能通过校验。
 解决方案：根据 `百度资源平台` -> `MIP 引入` 的报错信息(如下图所示)，使用 MIP 校验工具修改页面代码，等待再次抓取即可。
-  
+
 ![mip校验](./images/mip-validate.png)
 
 #### 进入索引链接量低
