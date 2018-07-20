@@ -35,7 +35,7 @@ myproject
     ├── common                          // 组件公用代码，如 utils 等
     ├── components                      // 组件目录，编写组件代码
     │   └── mip-example
-    │       ├── mip-example.md          // 组件功能、属性说明
+    │       ├── README.md               // 组件功能、属性说明
     │       ├── mip-example.vue         // 组件本身
     │       └── example
     │           └── mip-example.html    // 单个组件测试、预览
