@@ -1,69 +1,44 @@
 # 组件调试
 
-## 命令
-
-mip-cli 提供了 `dev` 命令进行组件调试。
+开发过程中，我们可以依赖 mip-cli 进行组件调试和功能预览：
 
 ```shell
-$ mip2 dev
+$ mip dev [--port PORTNAME] [--asset ASSET-PUBLIC-PATH] [--livereload] [--autoopen]
 ```
-
-## 引用方式
-
-该命令会自动将当前目录下的 `components/` 下的 mip 组件进行编译并且进行改动监听，同时启动 node 服务器，默认端口为 `8111`，这样就可以通过以下方式去使用编译好的组件啦：
-
-```html
-<script src="http://127.0.0.1:8111/组件名/组件名.js"></script>
-```
-
-同时，mip-cli 的 `dev` 命令也提供了一个静态服务器，允许开发者在 `test/` 目录和 `components/组件名/test/` 目录下写 `.html` 文件去进行组件调试。
-
-比如文件路径为 `test/mip-example.html` 的页面，可以通过 `http://127.0.0.1:8111/example/mip-example.html` 进行访问，而 `components/mip-example/example/test-property.html` 则通过 `http://127.0.0.1:8111/components/mip-example/example/test-property.html` 进行访问。
-
-在这种调试模式下，mip-cli 会自动注入 `livereload` 的脚本，让页面在开发时能够自动刷新网页。
-
-**需要注意的是**
-
-mip-cli 默认调试模式均在本地进行，假设 mip-cli 在 dev 模式下编译产生的 js 文件需要供远端服务器调用进行联调，那么在启动 dev 的时候需要指定 --asset 参数或者使用简写 -a，比如：
-
-```shell
-mip2 dev --asset http://192.168.0.10
-```
-
-这样通过 `<script src="http://192.168.0.10:8111/mip-example/mip-example.js"></script>` 引入 js 才不会报错。
 
 ## 参数说明
 
-`mip2 dev` 可以传入以下参数去修改默认配置：
+mip dev命令可以指定以下参数：
 
-1. `-p --port`: 静态服务器的监听的端口号，默认为 8111；
-2. `-a --asset`: 静态资源 publicPath，默认为 http://127.0.0.1:${port}；
-3. `-d --dir`: 项目根目录，默认为 `process.cwd()`；
-4. `-l --livereload`: 是否启动自动刷新，默认为 false；
-5. `-o --autoopen`: 静态服务器启动后默认打开的网页，默认为空，即不打开任何页面；
-6. `-c --config`: 读取 mip-cli 配置文件，默认为 `process.cwd()/mip.config.js`;
+1. --port，简写为-p，指定测试服务器的端口号，默认端口为8111。假设需要将端口号修改为8080，则启动命令为:
 
-mip-cli 允许通过配置 `mip.config.js` 去修改默认配置，比如：
+```shell
+$ mip dev --port 8080
+```
+
+2. --asset，简写为 -a，指定编译好的静态资源上线后的公共路径，这个值将会透传到 webpack 的 output.publicPath 配置项中。默认为 `http://127.0.0.1:${PORTNAME}`。
+3. --livereload，简写为 -l，是否开启页面自动刷新，默认为不开启。这个功能只有在写组件使用示例的 HTML 文件时生效，测试服务器会在接收到HTML资源请求时，动态注入livereload.js的代码，这样在开发过程中，组件代码或者 HTML 存在改动的时候，页面都会自动刷新；
+4. --autoopen，简写为 -o，是否在启动 dev 服务器的时候自动打开某个网址，默认为空，即不打开任何页面。比如希望启动 dev 服务器的时候自动打开`http://127.0.0.1:8111/example/index.html`，则启动命令为
+
+```shell
+$ mip dev --autoopen http://127.0.0.1:8111/example/index.html
+```
+
+这些参数都可以通过 mip.config.js 传入，省去每次启动时都需要敲一长串的参数：
 
 ```javascript
-// mip.config.js
-const path = require('path');
-
 module.exports = {
-    // dev 命令配置
-    dev: {
-        port: 8222, // 默认端口从 8111 变更为 8222
-        livereload: true, // 启动自动刷新
-        autoopen: '/example/index.html' // 默认打开 http://127.0.0.1:8222/test/index.html
-    }
+  dev: {
+    port: 8080,
+    asset: 'http://127.0.0.1'，
+    autoopen: '',
+    livereload: true
+  }
 }
 ```
-
 默认配置、mip.config.js、命令行参数的优先级为：
 
-```bash
-默认配置 < mip.config.js < 命令行参数
-```
+**默认配置 < mip.config.js < 命令行参数**
 
 ## 例子
 
@@ -85,12 +60,12 @@ test-proj/
 
 ```javascript
 module.exports = {
-    dev: {
-        port: 8222,
-        dir: './components',
-        livereload: true,
-        autoopen: '/example/index.html'
-    }
+  dev: {
+    port: 8222,
+    dir: './components',
+    livereload: true,
+    autoopen: '/example/index.html'
+  }
 };
 ```
 
@@ -99,22 +74,22 @@ module.exports = {
 ```html
 <!DOCTYPE>
 <html mip>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-        <title>MIP page</title>
-        <link rel="canonical" href="对应的原页面地址">
-        <!-- 引入默认 mip 样式 -->
-        <link rel="stylesheet" href="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.css">
-    </head>
-    <body>
-        <!-- 使用 mip-example 标签 -->
-        <mip-example></mip-example>
-        <!-- 引入 mip 脚本 -->
-        <script src="http://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script>
-        <!-- 引入 mip-example 脚本 -->
-        <script src="http://127.0.0.1:8222/mip-example/mip-example.js"></script>
-    </body>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>MIP page</title>
+    <link rel="canonical" href="对应的原页面地址">
+    <!-- 引入默认 mip 样式 -->
+    <link rel="stylesheet" href="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.css">
+  </head>
+  <body>
+    <!-- 使用 mip-example 标签 -->
+    <mip-example></mip-example>
+    <!-- 引入 mip 脚本 -->
+    <script src="http://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script>
+    <!-- 引入 mip-example 脚本 -->
+    <script src="http://127.0.0.1:8222/mip-example/mip-example.js"></script>
+  </body>
 </html>
 ```
 
@@ -122,23 +97,23 @@ module.exports = {
 
 ```html
 <template>
-    <div class="mip-example">{{ word }}</div>
+  <div class="mip-example">{{ word }}</div>
 </template>
 
 <style scoped>
-    .mip-example {
-        color: red;
-    }
+  .mip-example {
+      color: red;
+  }
 </style>
 
 <script>
-    export default {
-        data() {
-            return {
-                word: 'this is my first mip component!'
-            };
-        }
-    };
+  export default {
+    data() {
+      return {
+        word: 'this is my first mip component!'
+      }
+    }
+  }
 </script>
 
 ```

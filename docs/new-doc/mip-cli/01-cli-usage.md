@@ -2,7 +2,7 @@
 
 mip2 CLI 是官方提供的命令行工具，它提供了脚手架、调试、预览、校验、构建等功能，方便开发者快速开发 MIP 页面及自定义组件。
 
-## 1. 依赖环境
+## 依赖环境
 
 mip2 CLI 使用 NPM 安装，依赖 Node 环境，推荐
 
@@ -10,7 +10,7 @@ mip2 CLI 使用 NPM 安装，依赖 Node 环境，推荐
 
 - [Git](https://git-scm.com/)
 
-## 2. 安装 mip2 CLI
+## 安装 mip2 CLI
 
 打开命令行工具，输入：
 
@@ -20,7 +20,7 @@ $ npm install -g mip2
 
 输入 `mip2 -V`，若能正常显示版本号，说明已经安装成功。
 
-## 3. mip2 CLI 使用
+## mip2 CLI 使用
 
 ### `mip2 init` 创建项目脚手架
 
@@ -63,10 +63,10 @@ myproject
 
 ```bash
 # 快速添加名为 mip-new 的组件
-$ mip2 add mip-new
+$ mip2 add mip-hello-world
 
 # 使用 -f 或 --force 参数强制覆盖同名组件
-$ mip2 add mip-new -f
+$ mip2 add mip-hello-world -f
 ```
 
 可选参数：
@@ -75,15 +75,47 @@ $ mip2 add mip-new -f
   -f, --force  是否覆盖
 ```
 
+可以在 `components` 目录下看到，新增组件结构如下：
+
+```bash
+── mip-hello-world
+    ├── README.md
+    ├── mip-hello-world.vue
+    └── example
+        └── mip-hello-world.html
+```
+
+初始化的组件目录包含三块主要部分：
+
+1. 组件入口文件
+
+mip-cli 默认生成了 mip-hello-world.vue 作为入口文件，开发者需要对其进行修改补充以实现具体的组件功能。
+
+2. 组件说明文档
+
+该文件内容必须是UTF-8 编码格式，用于对当前 MIP 扩展组件进行详细说明：
+
+① 组件描述、属性说明与示例对使用者有指导作用，可直接阅读；
+
+② 组件描述、属性说明将被提取，进行自文档化；
+
+③ 组件示例将被开发调试工具自动解析，生成调试页面。
+
+README.md 文件必须符合 MIP 扩展组件 README.md 规范。手写README.md 可能比较麻烦，默认提供的 README.md 文件给出了要求编写的段落格式，我们还可以通过模仿或复制 README.md 样例来创建 README.md。
+
+3. 组件使用示例
+
+mip-cli 默认生成了 example 文件夹，并默认生成了 mip-sample.html 文件。在通过 `mip dev` 命令启动调试服务器时，可以通过`http://127.0.0.1:8111/components/mip-hello-world/example/mip-hello-world.html`直接访问到 example 里的 html 文件，开发者在进行组件开发时，可以利用这一功能进行组件调试。建议 example 里的使用示例最好能涵盖组件的全部功能，在组件提交审核的时候，这些示例将作为组件审核的重要考察点之一。
+
 ### `mip2 dev` 启动调试服务器
 
-命令行工具内置了简单的调试服务器，方便开发者调试组件和页面。在项目根目录运行
+开发好的 MIP 组件需要经过编译之后才可以正常使用。命令行工具内置了编译器和简单的调试服务器，方便开发者调试组件和页面。在项目根目录运行：
 
-``` bash
+```bash
 $ mip2 dev
 ```
 
-默认会在 `8111` 端口启动服务器，并自动调起浏览器打开 `example/index.html` ，实现预览和调试。在修改组件和页面的代码时，无需手动重启和刷新，服务器内部已经帮我们实现了这一功能。
+默认会将 components 目录下的组件编译好，同时在 `8111` 端口启动服务器，并自动调起浏览器打开 `example/index.html` ，实现预览和调试。在修改组件和页面的代码时，无需手动重启和刷新，服务器内部已经帮我们实现了这一功能。
 
 可选参数：
 
@@ -97,13 +129,13 @@ $ mip2 dev
   -c, --config <value>    mip-cli 配置文件路径
 ```
 
-了解详细用法：[调试组件](./05-component-testing.md)
+了解详细用法：[组件开发](./04-component-development.md)，[调试组件](./05-component-testing.md)
 
 ### `mip2 validate` 组件和页面校验
 
 MIP 组件和页面都需要遵循特定的开发规范，开发者提交站点 url 和组件代码时，系统会进行审核和校验。命令行工具提供了校验功能，方便我们在开发阶段就能按照相关规范进行开发和调整。
 
-``` bash
+```bash
 # 校验 mip 组件，输入组件目录
 $ mip2 validate -c ./components
 
@@ -126,7 +158,7 @@ $ mip2 validate -p page.html
 
 在项目根目录运行
 
-``` bash
+```bash
 $ mip2 build
 ```
 
