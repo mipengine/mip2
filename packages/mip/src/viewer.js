@@ -206,7 +206,7 @@ let viewer = {
     // 2. Not MIP page and not only hash change
     if ((this._isCrossOrigin(to) && window.MIP.standalone) ||
       (!isMipLink && !isHashInCurrentPage)) {
-      window.top.location[replace ? 'replace' : 'assign'](to)
+      window.top.location.href = to
       return
     }
 
