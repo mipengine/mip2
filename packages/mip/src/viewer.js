@@ -206,9 +206,7 @@ let viewer = {
     // 2. Not MIP page and not only hash change
     if ((this._isCrossOrigin(to) && window.MIP.standalone) ||
       (!isMipLink && !isHashInCurrentPage)) {
-      if (window.MIP.standalone) {
-        top.location[replace ? 'replace' : 'assign'](to)
-      }
+      window.top.location.href = to
       return
     }
 
@@ -355,9 +353,7 @@ let viewer = {
 
       self.open(to, {isMipLink, replace, state})
 
-      if (isMipLink) {
-        event.preventDefault()
-      }
+      event.preventDefault()
     }, false)
   },
 
