@@ -24,8 +24,13 @@ $ npm install -g mip2
 
 ### 创建项目脚手架
 
-``` bash
+```shell
 $ mip2 init
+
+? 项目名称（mip-project）my-project
+? 项目描述 (A MIP project)
+? 作者信息 (username (username@your-email.com))
+INFO generate MIP project successfully!
 ```
 
 根据提示输入项目名 `myproject`，生成项目结构如下

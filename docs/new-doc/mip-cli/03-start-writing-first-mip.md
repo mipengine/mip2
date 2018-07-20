@@ -72,11 +72,11 @@ $ mip2 dev
 
 下面的步骤将带我们使用 [mip2 CLI](./01-cli-usage.md) 来快速创建一个 MIP 自定义组件
 
-### 1. 初始化项目
+### 初始化项目
 
-同上面的步骤类似，安装 `mip2 CLI` 工具后，我们运行 `mip2 init`，并创建一个名为 `myProject` 的项目
+同上面的步骤类似，安装 `mip2 CLI` 工具后，我们运行 `mip2 init`，并创建一个名为 `my-project` 的项目。
 
-### 2. 新建一个自定义组件
+### 新建一个自定义组件
 
 在项目根目录运行 `mip2 add` 命令，即可快速添加一个新组件
 
@@ -97,6 +97,28 @@ $ mip2 add mip-hello-world -f
     └── example
         └── mip-hello-world.html
 ```
+
+初始化的组件目录包含三块主要部分：
+
+1. 组件入口文件
+
+mip-cli 默认生成了 mip-hello-world.vue 作为入口文件，开发者需要对其进行修改补充以实现具体的组件功能。
+
+2. 组件说明文档
+
+该文件内容必须是UTF-8 编码格式，用于对当前 MIP 扩展组件进行详细说明：
+
+① 组件描述、属性说明与示例对使用者有指导作用，可直接阅读；
+
+② 组件描述、属性说明将被提取，进行自文档化；
+
+③ 组件示例将被开发调试工具自动解析，生成调试页面。
+
+README.md 文件必须符合 MIP 扩展组件 README.md 规范。手写README.md 可能比较麻烦，默认提供的 README.md 文件给出了要求编写的段落格式，我们还可以通过模仿或复制 README.md 样例来创建 README.md。
+
+3. 组件使用示例
+
+mip-cli默认生成了example文件夹，并默认生成了mip-sample.html文件。在通过`mip dev`命令启动调试服务器时，可以通过`http://127.0.0.1:8111/components/mip-hello-world/example/mip-hello-world.html`直接访问到 example 里的 html 文件，开发者在进行组件开发时，可以利用这一功能进行组件调试。建议 example 里的使用示例最好能涵盖组件的全部功能，在组件提交审核的时候，这些示例将作为组件审核的重要考察点之一。
 
 编辑器打开 `mip-hello-world.vue`，进行一定的修改
 
