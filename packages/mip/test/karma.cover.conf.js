@@ -14,7 +14,8 @@ module.exports = function (config) {
         esModules: true
       }
     },
-    enforce: 'post'
+    enforce: 'post',
+    exclude: /node_modules|deps|test|\.spec\.js$/
   })
 
   config.set(Object.assign(base, {
