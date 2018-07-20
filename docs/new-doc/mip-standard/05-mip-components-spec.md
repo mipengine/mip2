@@ -4,7 +4,7 @@
 
 ## 源文件仓库
 
-MIP 扩展组件的中央仓库是 https://github.com/mipengine/mip2-extensions。中央仓库 master 分支下的代码永远是稳定的。根目录下，每个 mip- 前缀的目录为一个扩展组件。
+MIP 扩展组件的中央仓库是 https://github.com/mipengine/mip2-extensions 。中央仓库 master 分支下的代码永远是稳定的。根目录下，每个 mip- 前缀的目录为一个扩展组件。
 
 ## 开发方式
 
@@ -38,8 +38,6 @@ mip-example
   ├── mip-example.vue
 ```
 
-开发过程中可以通过 [ESLint](https://eslint.org/) 工具检查，在组件校验和审核环节要求所有代码必须通过 ESLint，一般不允许使用 `eslint-disable` 来豁免检测。
-
 <a name="2"></a>
 ### JavaScript 规范
 
@@ -48,13 +46,15 @@ mip-example
 - [SHOULD] 使用 ES6 和 ES Module 模块化组织代码
 - [MUST] 仅允许引入白名单（TODO: 白名单列表）中的第三方 javaScript
 
+开发过程中可以通过 [ESLint](https://eslint.org/) 工具检查，在组件校验和审核环节要求所有代码必须通过 ESLint，一般不允许使用 `eslint-disable` 来豁免检测。
+
 
 <a name="3"></a>
 ### CSS 规范
 
+- [MUST] 组件的样式必须遵循 Stylelint 中 [`stylelint-config-standard`](https://github.com/stylelint/stylelint-config-standard) 中包含的规范，且必须通过 Stylelint 工具审核之后才能提交。
 - [MUST] 组件所有样式必须 scoped
 - [MUST NOT] 组件样式禁止使用 `position: fixed`
-- [MUST] 组件的样式开发必须遵循 Stylelint 中 `stylelint-config-standard` 中的规范，且必须通过 Stylelint 工具审核之后才能提交。
 - [MUST] 所有样式文件必须使用 UTF-8 编码
 - [MUST] 选择器的第一层如果是标签选择器，只允许使用组件自身标签，组件的样式定义应只对组件本身以及组件内部生效。
 
