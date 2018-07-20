@@ -22,7 +22,8 @@ let videoAttributes = [
   'muted',
   'preload',
   'poster',
-  'width'
+  'width',
+  'currenttime'
 ]
 
 /**
@@ -88,7 +89,7 @@ class MipVideo extends CustomElement {
         videoEl.setAttribute(k, this.attributes[k])
       }
     }
-
+    let currentTime = this.attributes['currenttime'] || 0;
     videoEl.setAttribute('playsinline', 'playsinline')
     videoEl.setAttribute('webkit-playsinline', 'webkit-playsinline')
     videoEl.setAttribute('t7-video-player-type', 'inline')
@@ -98,6 +99,11 @@ class MipVideo extends CustomElement {
         return
       }
       videoEl.appendChild(node)
+    })
+    // 如果设置了播放时间点，则直接跳转至播放时间的位置开始播放
+    videoEl.addEventListener('loadedmetadata', function() {
+      console.log(this)
+      this.currentTime = currentTime;
     })
     this.element.appendChild(videoEl)
     return videoEl
