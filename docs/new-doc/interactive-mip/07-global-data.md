@@ -30,16 +30,16 @@ MIP 提供 SPA 的整站沉浸式的体验，如果要打造复杂的业务场�
 ```html
 <!-- a.html -->
 <mip-data>
-    <script type="application/json">
-        {
-            "#global": 1,
-            "#global2": 2,
-            "test": {
-                "#info": 3
-            },
-            "name": "a"
-        }
-    </script>
+  <script type="application/json">
+    {
+      "#global": 1,
+      "#global2": 2,
+      "test": {
+        "#info": 3
+      },
+      "name": "a"
+    }
+  </script>
 </mip-data>
 ```
 
@@ -47,12 +47,12 @@ MIP 提供 SPA 的整站沉浸式的体验，如果要打造复杂的业务场�
 
 ```json
 {
-    "global": 1,
-    "global2": 2,
-    "test": {
-        "#info": 3
-    },
-    "name": "a"
+  "global": 1,
+  "global2": 2,
+  "test": {
+    "#info": 3
+  },
+  "name": "a"
 }
 ```
 
@@ -60,8 +60,8 @@ MIP 提供 SPA 的整站沉浸式的体验，如果要打造复杂的业务场�
 
 ```json
 {
-    "global": 1,
-    "global2": 2
+  "global": 1,
+  "global2": 2
 }
 ```
 
@@ -76,12 +76,12 @@ MIP 提供 SPA 的整站沉浸式的体验，如果要打造复杂的业务场�
 ```html
 <!-- b.html -->
 <mip-data>
-    <script type="application/json">
-        {
-            "name": "b",
-            "age": 1
-        }
-    </script>
+  <script type="application/json">
+    {
+      "name": "b",
+      "age": 1
+    }
+  </script>
 </mip-data>
 ```
 
@@ -89,10 +89,10 @@ MIP 提供 SPA 的整站沉浸式的体验，如果要打造复杂的业务场�
 
 ```json
 {
-    "global": 1,
-    "global2": 2,
-    "name": "b",
-    "age": 1
+  "global": 1,
+  "global2": 2,
+  "name": "b",
+  "age": 1
 }
 ```
 
@@ -100,8 +100,8 @@ MIP 提供 SPA 的整站沉浸式的体验，如果要打造复杂的业务场�
 
 ```json
 {
-    "global": 1,
-    "global2": 2
+  "global": 1,
+  "global2": 2
 }
 ```
 
@@ -118,13 +118,13 @@ MIP 提供 SPA 的整站沉浸式的体验，如果要打造复杂的业务场�
 ```html
 <!-- c.html -->
 <mip-data>
-    <script type="application/json">
-        {
-            "#global": 3,
-            "global2": 2333,
-            "name": "c"
-        }
-    </script>
+  <script type="application/json">
+    {
+      "#global": 3,
+      "global2": 2333,
+      "name": "c"
+    }
+  </script>
 </mip-data>
 ```
 
@@ -132,9 +132,9 @@ MIP 提供 SPA 的整站沉浸式的体验，如果要打造复杂的业务场�
 
 ```json
 {
-    "global": 3,
-    "global2": 2333,
-    "name": "c"
+  "global": 3,
+  "global2": 2333,
+  "name": "c"
 }
 ```
 
@@ -142,8 +142,8 @@ MIP 提供 SPA 的整站沉浸式的体验，如果要打造复杂的业务场�
 
 ```json
 {
-    "global": 3,
-    "global2": 2
+  "global": 3,
+  "global2": 2
 }
 ```
 
@@ -151,7 +151,7 @@ MIP 提供 SPA 的整站沉浸式的体验，如果要打造复杂的业务场�
 
 调用 `MIP.setData` 方法修改数据时，区分以下几种情况：
 
-#### 显式指定
+### 显式指定
 如果指定必须修改共享数据，则需要开发者在数据前添加 `#` 标识显式指定
 
 如果不显式指定需要修改共享数据，当需要修改的数据字段既存在于共享数据又存在于页面数据时，MIP 会自动判别为需要修改页面数据，而非共享数据。
@@ -162,9 +162,9 @@ MIP 提供 SPA 的整站沉浸式的体验，如果要打造复杂的业务场�
 此时 c 页面可用的数据源为
 ```json
 {
-    "global": 3,
-    "global2": 2333,
-    "name": "c"
+  "global": 3,
+  "global2": 2333,
+  "name": "c"
 }
 ```
 
@@ -172,12 +172,12 @@ MIP 提供 SPA 的整站沉浸式的体验，如果要打造复杂的业务场�
 
 ```json
 {
-    "global": 3,
-    "global2": 4
+  "global": 3,
+  "global2": 4
 }
 ```
 
-#### MIP 自动判断
+### MIP 自动判断
 
 没有显式指定的情况下，MIP 会自行判断该数据是共享数据还是当前页面的数据，该修改哪个数据源；
 
@@ -189,16 +189,16 @@ MIP 提供 SPA 的整站沉浸式的体验，如果要打造复杂的业务场�
     此时 c 页面可用的数据源为
     ```json
     {
-        "global": 3,
-        "global2": 2444,
-        "name": "c"
+      "global": 3,
+      "global2": 2444,
+      "name": "c"
     }
     ```
     此时共享数据源不变（因 global2 对 c 页面而言是页面数据，修改不影响共享数据），为：
     ```json
     {
-        "global": 3,
-        "global2": 4
+      "global": 3,
+      "global2": 4
     }
     ```
 
@@ -210,9 +210,9 @@ MIP 提供 SPA 的整站沉浸式的体验，如果要打造复杂的业务场�
     此时 c 页面可用的数据源为
     ```json
     {
-        "global": 3,
-        "global2": 2444,
-        "name": "new-c"
+      "global": 3,
+      "global2": 2444,
+      "name": "new-c"
     }
     ```
     此时共享数据源不变（同样的，修改的是 c 页面的页面数据）
@@ -226,17 +226,17 @@ MIP 提供 SPA 的整站沉浸式的体验，如果要打造复杂的业务场�
 
     ```json
     {
-        "global": 5,
-        "global2": 2444,
-        "name": "new-c"
+      "global": 5,
+      "global2": 2444,
+      "name": "new-c"
     }
     ```
     此时共享数据源为：
 
     ```json
     {
-        "global": 5,
-        "global2": 4
+      "global": 5,
+      "global2": 4
     }
     ```
 
