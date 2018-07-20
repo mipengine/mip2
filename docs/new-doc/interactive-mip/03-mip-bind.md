@@ -130,6 +130,9 @@ index.html：
       "userInfo": {
         "name": "baidu"
       },
+      "anotherObject": {
+        "name": "sfe"
+      },
       "list": [1, 2, 3],
       "num": 2,
       "msg": "info",
@@ -137,7 +140,9 @@ index.html：
     }
   </script>
 </mip-data>
-<mip-a m-bind:userinfo="userInfo"
+<mip-a
+  m-bind:userinfo="userInfo"
+  m-bind:another-object="anotherObject"
   m-bind:list="list"
   m-bind:num="num"
   m-bind:msg="msg"
@@ -159,6 +164,12 @@ mip-a 组件内部：
 export default {
   props: {
     userinfo: {
+      type: Object,
+      default () {
+        return {}
+      }
+    },
+    anotherObject: {
       type: Object,
       default () {
         return {}
@@ -204,6 +215,8 @@ export default {
 }
 </script>
 ```
+>**注：**
+>请留意上面例子中 HTML 与 mip-a 组件实现两段代码里面的 userinfo 和 anotherObject 的绑定示例。由于 m-bind 的基本原理是将动态数据绑定到指定 attribute 上，而我们知道，HTML 标签的 attribute 要求小写（即使写了大写也会转换为小写），因此如果开发者想要在组件里使用驼峰命名变量，请使用短横线的方式指定 attribute。
 
 ### 在 `mip-script` 组件中
 `mip-script` 组件允许开发者编写自定义的 JavaScript 代码，作用类似于 script 标签。其具体用法和规范开发者将在后面的小节了解到。此处我们将借这个组件来向开发者介绍一个读取数据的 API：`MIP.getData(value)`。`value` 为数据源中的属性名，多层数据可以以` . `连接。注意，`getData` 方法在组件中并不开放使用，请开发者遵循前面的在组件中使用数据的规范。
