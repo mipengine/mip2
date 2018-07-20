@@ -9,7 +9,7 @@
 JavaScript 引用原则：
 
 - 目前 MIP 不允许用户自定义 JavaScript ，需要用 MIP 组件的形式引进来，从而确保安全性和性能表现。
-- 可以引用 [`<mip-iframe>组件`](/examples/mip/mip-iframe.html) 来引入实现部分富交互的功能，这样，即使开发时使用最影响性能的 `document.write()` ，也不会影响主页面的渲染。
+- 可以引用 [`<mip-iframe>组件`](../components/builtin/mip-iframe.md) 来引入实现部分富交互的功能，这样，即使开发时使用最影响性能的 `document.write()` ，也不会影响主页面的渲染。
 - MIP 组件是开源的，允许开发者自定义功能组件，项目也将持续提供多样的组件，以适应不同的需求。
 
 ## 所有静态资源需要标明尺寸
@@ -40,7 +40,7 @@ MIP 只允许用 `transforms` 和 `opacity` 来完成动画效果，当动画能
 
 ## MIP 缓存
 
-MIP 另一个重要的意义在于能够帮站长加速网页，[MIP-Cache](/doc/2-tech/3-mip-cache.html) 将会把 MIP 网页缓存到百度 CDN 中。只要符合 MIP 标准，都可以使用 MIP 缓存。
+MIP 另一个重要的意义在于能够帮站长加速网页，[MIP-Cache](../mip-standard/02-mip-cache-spec.md) 将会把 MIP 网页缓存到百度 CDN 中。只要符合 MIP 标准，都可以使用 MIP 缓存。
 
 ## 开放且持续更新
 

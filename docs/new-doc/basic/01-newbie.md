@@ -99,7 +99,7 @@ MIP（Mobile Instant Pages - 移动网页加速器）主要用于移动端页面
 ```
 
 ## 5. 替换禁用 HTML 标签
-[notice]MIP 十分关注页面速度，也因此禁用了一些引起拖慢速度的 HTML 标签（[禁用列表](/doc/2-tech/1-mip-html.html)）。例如，`<img>` 标签会引起浏览器的 repaint 和 reflow，为了避免这些，MIP 提供了替代标签 `<mip-img>` ，详见 [`<mip-img>`使用文档](/examples/mip/mip-img.html) 。
+[notice]MIP 十分关注页面速度，也因此禁用了一些引起拖慢速度的 HTML 标签（[禁用列表](../mip-standard/01-mip-html-spec.md)）。例如，`<img>` 标签会引起浏览器的 repaint 和 reflow，为了避免这些，MIP 提供了替代标签 `<mip-img>` ，详见 [`<mip-img>`使用文档](../components/builtin/mip-img.md) 。
 
 ```html
 <!DOCTYPE html>
@@ -128,9 +128,9 @@ MIP（Mobile Instant Pages - 移动网页加速器）主要用于移动端页面
 ## 6. 使用 MIP 组件
 [warning]出于对代码质量和性能的考虑，MIP 页中不允许自定义 JavaScript 代码。
 
-在一个合法的 MIP 页面中，所有的交互通过引入 MIP 组件实现。MIP 组件可以理解为封装了 JS 的自定义 HTML 标签。上一步中的 `<mip-img>` 也是一个 MIP 组件，[点击这里](/doc/3-widget/10-widgets.html) 查看更多组件。
+在一个合法的 MIP 页面中，所有的交互通过引入 MIP 组件实现。MIP 组件可以理解为封装了 JS 的自定义 HTML 标签。上一步中的 `<mip-img>` 也是一个 MIP 组件，[点击这里](../components/components-list.md) 查看更多组件。
 
-我们以分享组件为例，根据[分享组件文档](/examples/mip-extensions/mip-share.html)，组件对应的 HTML 标签为 `<mip-share>` ，需要依赖 <https://c.mipcdn.com/static/v1/mip-share/mip-share.js> 脚本，用在页面里就是这样：
+我们以分享组件为例，根据[分享组件文档](../components/extentions/mip-share.md)，组件对应的 HTML 标签为 `<mip-share>` ，需要依赖 <https://c.mipcdn.com/static/v2/mip-share/mip-share.js> 脚本，用在页面里就是这样：
 
 ```html
 <!DOCTYPE html>
@@ -153,7 +153,7 @@ MIP（Mobile Instant Pages - 移动网页加速器）主要用于移动端页面
     <mip-img layout="responsive" width="350" height="263" src="https://www.mipengine.org/static/img/mip_logo_3b722d7.png" alt="MIP LOGO"></mip-img>
     <mip-share title="分享：我的第一个 MIP 页面 "></mip-share>
     <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
-    <script src="https://c.mipcdn.com/static/v1/mip-share/mip-share.js"></script>
+    <script src="https://c.mipcdn.com/static/v2/mip-share/mip-share.js"></script>
   </body>
 </html>
 ```
@@ -177,9 +177,11 @@ MIP 页文件可以直接运行，你可以选择如下方式，像预览普通 
 
 进阶的内容，请参考：
 
-- [MIP-HTML 规范](/doc/2-tech/1-mip-html.html)
-- [组件布局](/doc/3-widget/11-widget-layout.html)
-- [MIP 加速原理](/doc/03-principle-of-mip.html)
-- [扩展组件开发规范](/doc/2-tech/4-mip-widget.html)
+- [MIP-HTML 规范](../mip-standard/01-mip-html-spec.md)
+- [MIP 加速原理](./04-principle-of-mip.md)
+- [自定义组件](../components/introduction.md)
+- [组件布局](../components/07-layout.md)
+- [可交互 MIP](../interactive-mip/01-introduction.md)
+- [全站 MIP](../all-sites-mip/01-introduction.md)
 
 [info] MIP 开发系列视频教程：https://bit.baidu.com/course/datalist/column/120.html
