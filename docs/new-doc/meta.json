@@ -5,6 +5,18 @@
       "key": "basic"
     },
     {
+      "name": "MIP 开发",
+      "key": "mip-cli"
+    },
+    {
+      "name": "全站 MIP",
+      "key": "all-sites-mip"
+    },
+    {
+      "name": "可交互 MIP",
+      "key": "interactive-mip"
+    },
+    {
       "name": "开发规范",
       "key": "mip-standard",
       "children": [
