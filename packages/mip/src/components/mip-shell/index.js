@@ -479,7 +479,11 @@ class MipShell extends CustomElement {
     this.togglePageMask(false, {skipTransition: true})
 
     // Show header
+    // this.toggleTransition(false)
+    // window.innerHeight
     this.slideHeader('down')
+    // window.innerHeight
+    // this.toggleTransition(true)
 
     /**
      * Reload iframe when <a mip-link> clicked even if it's already existed.
@@ -769,6 +773,7 @@ class MipShell extends CustomElement {
     if (pageId) {
       pageMeta = this.findMetaByPageId(pageId)
     }
+    this.currentPageMeta = pageMeta
 
     if (!(pageMeta.header && pageMeta.header.show)) {
       this.$wrapper.classList.add('hide')
@@ -778,7 +783,11 @@ class MipShell extends CustomElement {
     }
 
     // Refresh header
+    // this.toggleTransition(false)
+    // window.innerHeight
     this.slideHeader('down')
+    // window.innerHeight
+    // this.toggleTransition(true)
     if (asyncRefresh) {
       // In async mode: (Invoked from `processShellConfig` by user)
       // 1. Render fade header with updated pageMeta

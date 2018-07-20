@@ -32,8 +32,7 @@
     }
   </script>
 </mip-data>
-<div class="static"
-     m-bind:class="{ active: isActive, 'text-danger': hasError }">
+<div class="static" m-bind:class="{ active: isActive, 'text-danger': hasError }">
 </div>
 ```
 
@@ -130,11 +129,11 @@
 然后在使用它时添加一些 class 或通过 m-bind 绑定了 class，如:
 ```html
 <mip-data>
-    <script type="application/json">
-        {
-            "isActive": true
-        }
-    </script>
+  <script type="application/json">
+    {
+      "isActive": true
+    }
+  </script>
 </mip-data>
 <mip-a class="mip-a-outer" m-bind:class="{active: isActive}"></mip-a>
 ```
@@ -142,7 +141,7 @@
 HTML 的渲染结果将如:
 ```html
 <mip-a class="mip-a-outer active">
-    <div class="mip-a-root"></div>
+  <div class="mip-a-root"></div>
 </mip-a>
 ```
 
@@ -213,11 +212,11 @@ HTML 的渲染结果将如:
 <div style="color:blue;font-size:13px;"></div>
 ```
 
-#### 自动添加前缀
+### 自动添加前缀
 
 当 `m-bind:style` 使用需要添加[浏览器引擎前缀](https://developer.mozilla.org/zh-CN/docs/Glossary/Vendor_Prefix)的 CSS 属性时，如 `transform`，MIP2 会自动侦测并添加相应的前缀。
 
-#### 多重值
+### 多重值
 
 你可以为 `style` 绑定中的属性提供一个包含多个值的数组，常用于提供多个带前缀的值，例如：
 

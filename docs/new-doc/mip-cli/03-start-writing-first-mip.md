@@ -35,7 +35,7 @@ $ mip2 init
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
   <title>MIP page</title>
   <link rel="canonical" href="对应的原页面地址">
-  <link rel="stylesheet" href="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.css">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
   <style mip-custom>
     /* 自定义样式 */
     .wrapper {
@@ -53,7 +53,7 @@ $ mip2 init
     <p>This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.</p>
     <mip-img popup src="https://i3.meishichina.com/attachment/recipe/2014/10/27/c640_20141027211913820385989.jpg@!c640"></mip-img>
   </div>
-  <script src="http://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script>
+  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
 </body>
 </html>
 ```
@@ -92,7 +92,7 @@ $ mip2 add mip-hello-world -f
 
 ```bash
 ── mip-hello-world
-    ├── mip-hello-world.md
+    ├── README.md
     ├── mip-hello-world.vue
     └── example
         └── mip-hello-world.html
@@ -159,7 +159,7 @@ mip-cli默认生成了example文件夹，并默认生成了mip-sample.html文件
         <h2>Hello World</h2>
         <mip-hello-world></mip-hello-world>
     </div>
-    <script src="http://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script>
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
     <script src="/mip-hello-world/mip-hello-world.js"></script>
 </body>
 

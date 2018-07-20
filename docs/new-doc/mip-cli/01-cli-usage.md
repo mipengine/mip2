@@ -22,7 +22,7 @@ $ npm install -g mip2
 
 ## 3. mip2 CLI 使用
 
-### 创建项目脚手架
+### `mip2 init` 创建项目脚手架
 
 ```shell
 $ mip2 init
@@ -40,7 +40,7 @@ myproject
     ├── common                          // 组件公用代码，如 utils 等
     ├── components                      // 组件目录，编写组件代码
     │   └── mip-example
-    │       ├── mip-example.md          // 组件功能、属性说明
+    │       ├── README.md               // 组件功能、属性说明
     │       ├── mip-example.vue         // 组件本身
     │       └── example
     │           └── mip-example.html    // 单个组件测试、预览
@@ -57,7 +57,7 @@ myproject
 
 同时，我们也欢迎开发者向官方通用组件库[贡献优秀的组件](./07-contribute-to-official-repo.md)。
 
-### 新增一个组件
+### `mip2 add` 新增一个组件
 
 在项目根目录运行 `mip2 add` 命令，即可快速添加一个新组件
 
@@ -69,7 +69,13 @@ $ mip2 add mip-new
 $ mip2 add mip-new -f
 ```
 
-### 启动调试服务器
+可选参数：
+
+```
+  -f, --force  是否覆盖
+```
+
+### `mip2 dev` 启动调试服务器
 
 命令行工具内置了简单的调试服务器，方便开发者调试组件和页面。在项目根目录运行
 
@@ -79,11 +85,23 @@ $ mip2 dev
 
 默认会在 `8111` 端口启动服务器，并自动调起浏览器打开 `example/index.html` ，实现预览和调试。在修改组件和页面的代码时，无需手动重启和刷新，服务器内部已经帮我们实现了这一功能。
 
+可选参数：
+
+```
+  -p, --port <n>          启动端口号
+  -d, --dir <value>       项目文件夹路径
+  -l, --livereload        启用调试自动刷新
+  -a, --asset <value>     静态资源 publicPath
+  -o, --autoopen <value>  自动打开网页
+  -i, --ignore            忽略沙盒注入
+  -c, --config <value>    mip-cli 配置文件路径
+```
+
 了解详细用法：[调试组件](./05-component-testing.md)
 
-### 组件和页面校验
+### `mip2 validate` 组件和页面校验
 
-MIP 组件和页面都需要遵循特定的[开发规范](../components/rules.md)，开发者提交站点 url 和组件代码时，系统会进行审核和校验。命令行工具提供了校验功能，方便我们在开发阶段就能按照相关规范进行开发和调整。
+MIP 组件和页面都需要遵循特定的开发规范，开发者提交站点 url 和组件代码时，系统会进行审核和校验。命令行工具提供了校验功能，方便我们在开发阶段就能按照相关规范进行开发和调整。
 
 ``` bash
 # 校验 mip 组件，输入组件目录
@@ -95,7 +113,14 @@ $ mip2 validate -p page.html
 
 我们可以根据校验结果，对不符合规范的组件/页面进行相应的改进，校验通过后再进行提交。
 
-### 构建组件
+可选参数：
+
+```
+  -c, --component  校验 mip 组件
+  -p, --page       校验 mip 页面
+```
+
+### `mip2 build` 构建组件
 
 自定义组件开发完成后，可以使用 `mip2 build` 命令将组件代码打包成为对应的 `mip-组件名.js` 文件，供发布使用。
 
@@ -105,9 +130,21 @@ $ mip2 validate -p page.html
 $ mip2 build
 ```
 
-默认将在 /dist 目录产出打包压缩后的组件资源。了解详细用法：[组件构建](./04-component-development.md)
+默认将在 /dist 目录产出打包压缩后的组件资源。
 
-### 生成 Service Worker
+可选参数：
+
+```
+  -a, --asset <value>   静态资源 publicPath
+  -d, --dir <value>     项目文件夹路径
+  -o, --output <value>  编译代码输出路径
+  -c, --clean           构建前先清空输出目录
+  -i, --ignore          忽略沙盒注入
+```
+
+了解详细用法：[组件构建](./06-component-deploy.md)
+
+### `mip2 sw` 生成 Service Worker
 
 mip2 CLI 提供了 `sw` 命令，帮助开发者更简单快速地生成 Service Worker，支持离线可用等特性。
 
@@ -118,11 +155,11 @@ $ mip2 sw
 
 默认情况下，将导出 Service Worker 文件到 `dist/sw.js`，并对静态资源(如 js,css)及 html 文档进行缓存，实现页面的离线可用。
 
-`mip2 sw` 命令提供了选项：
+可选参数：
 
-``` javascript
--o, --output // 指定 sw 导出路径，如 mip2 -o output/service-worker.js
--c, --config // 指定配置文件路径，默认使用项目根目录 mip.config.js
+```
+  -o, --output <value>  Service Worker 导出路径，如 mip2 -o output/service-worker.js
+  -c, --config <value>  mip-cli 配置文件路径，默认使用项目根目录 mip.config.js
 ```
 
 除此之外，我们可以在 `mip.config.js` 中增加 `serviceWorker` 配置项，对 Service Worker 进行进一步的配置，如预缓存列表、动态缓存策略、`skipWaiting`、`clientsClaim` 等。
