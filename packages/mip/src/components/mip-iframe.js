@@ -36,7 +36,7 @@ class MipIframe extends CustomElement {
 
     let iframe = document.createElement('iframe')
     iframe.frameBorder = '0'
-    iframe.scrolling = 'no'
+    iframe.scrolling = util.platform.isIos() ? 'no' : 'yes'
     util.css(iframe, {
       width,
       height
