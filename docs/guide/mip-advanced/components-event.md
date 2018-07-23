@@ -151,7 +151,7 @@ on="eventName:targetId[.actionName[(args)]]"
 
 ```js
 this.$element.customElement.addEventAction(
-  'actionName', 
+  'actionName',
   function (event, str) {}
 )
 

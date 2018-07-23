@@ -29,7 +29,7 @@ MIP 的 hash 通信方案是结合 sessionStorage 来做的。以当前页面 UR
 ```js
 get(key) {
   //在hash对象中获取对应 key的hash 值
-  let hv = this.hashTree[key] 
+  let hv = this.hashTree[key]
   return hv && hv.value ? hv.value : ''
 }
 ```

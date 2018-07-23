@@ -7,7 +7,7 @@ MIP 页面基础模块由 `MIP.viewer` 和 `MIP.viewport` 两部分组成，它�
 在开发自定义组件的过程中，经常会出现获取当前视口信息的需求。例如开发一个向上滑动加载的长列表，需要实时获取当前视口的滚动距离。MIP 的 viewport 模块封装了一系列视口相关的 API 供组件开发者方便地使用，大致可以分成获取视口尺寸和获取、设置滚动位置两类，主要方法如下。
 
 ### 视口尺寸
-  
+
 通过 `MIP.viewport.getWidth()` 和 `MIP.viewport.getHeight()` 获取视口的宽和高，MIP 的 viewport 模块内部实际使用了 `window` 或者 `document.documentElement` 上的宽高属性来计算视口的宽高，如下面代码所示。
 
 ```js
