@@ -40,7 +40,7 @@ MIP 只允许用 `transforms` 和 `opacity` 来完成动画效果，当动画能
 
 ## MIP 缓存
 
-MIP 另一个重要的意义在于能够帮站长加速网页，[MIP-Cache](../mip-standard/02-mip-cache-spec.md) 将会把 MIP 网页缓存到百度 CDN 中。只要符合 MIP 标准，都可以使用 MIP 缓存。
+MIP 另一个重要的意义在于能够帮站长加速网页，[MIP-Cache](../mip-standard/mip-cache-spec.md) 将会把 MIP 网页缓存到百度 CDN 中。只要符合 MIP 标准，都可以使用 MIP 缓存。
 
 ## 开放且持续更新
 

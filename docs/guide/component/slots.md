@@ -10,7 +10,7 @@
 
 ```html
 <mip-link url="/profile">
-    Your Profile.
+  Your Profile.
 <mip-link>
 ```
 
@@ -29,9 +29,9 @@
 
 ```html
 <mip-link url="/profile">
-    <!-- 添加一个 Font Awesome 图标 -->
-    <span class="fa fa-user"></span>
-    Your Profile
+  <!-- 添加一个 Font Awesome 图标 -->
+  <span class="fa fa-user"></span>
+  Your Profile
 </mip-link>
 ```
 

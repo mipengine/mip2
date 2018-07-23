@@ -169,4 +169,4 @@ MIP 在所有 HTML 元素（包括 MIP 元素）暴露了 `tap` 事件， 所以
 
 ### 特定对象
 
-事件作用的行为对象不仅只有 mip 组件，还可以使 MIP 全局对象，语法 `on="eventName:targetId[.actionName[(args)]]"` 中的 targetId 可是 `MIP` 对象，针对 `MIP` 对象支持的行为有 `setData` 和 `$set`，关于这两个行为的用法可参考[mip-bind](../components/builtin/mip-bind.md)
+事件作用的行为对象不仅只有 mip 组件，还可以使 MIP 全局对象，语法 `on="eventName:targetId[.actionName[(args)]]"` 中的 targetId 可是 `MIP` 对象，针对 `MIP` 对象支持的行为有 `setData` 和 `$set`，关于这两个行为的用法可参考[mip-bind](../extensions/builtin/mip-bind.md)
