@@ -126,7 +126,7 @@ mip2 build -a https://www.testcdn.com/static/
 
 ##### ignore
 
-`ignore` 参数是为了忽略 mip 的沙盒规则的参数，默认值为 `false`，当不指定 `ignore` 的时候，组件的代码会有 mip 安全[沙盒限制](../util/sandbox.md)，用来保证组件代码不会对 mip 页面产生负面影响，如果设置了 `ignore` 参数为 `true`，就不会对组件的代码做任何的沙盒安全处理。
+`ignore` 参数是为了忽略 mip 的沙盒规则的参数，默认值为 `false`，当不指定 `ignore` 的时候，组件的代码会有 mip 安全[沙盒限制](../component/sandbox.md)，用来保证组件代码不会对 mip 页面产生负面影响，如果设置了 `ignore` 参数为 `true`，就不会对组件的代码做任何的沙盒安全处理。
 
 > 注意：
 >

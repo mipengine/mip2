@@ -5,7 +5,7 @@
 
 ## 编写 MIP 页面
 
-下面的步骤将带我们使用 [mip2 CLI](./01-cli-usage.md) 来快速创建一个 MIP 页面
+下面的步骤将带我们使用 [mip2 CLI](./cli-usage.md) 来快速创建一个 MIP 页面
 
 ### 1. 安装 mip2 CLI
 
@@ -70,7 +70,7 @@ $ mip2 dev
 
 ## 编写 MIP 组件
 
-下面的步骤将带我们使用 [mip2 CLI](./01-cli-usage.md) 来快速创建一个 MIP 自定义组件
+下面的步骤将带我们使用 [mip2 CLI](./cli-usage.md) 来快速创建一个 MIP 自定义组件
 
 ### 初始化项目
 
@@ -152,4 +152,4 @@ $ mip2 add mip-hello-world -f
 $ mip2 dev
 ```
 
-服务启动后，打开浏览器访问 `http://127.0.0.1:8111/example`，可以看到，刚才编写的组件已经运行在页面中。开发工作完成后，可以根据组件类型，选择将组件提交至第三方组件仓库(TODO)或[官方组件仓库](./07-contribute-to-official-repo.md)。
+服务启动后，打开浏览器访问 `http://127.0.0.1:8111/example`，可以看到，刚才编写的组件已经运行在页面中。开发工作完成后，可以根据组件类型，选择将组件提交至第三方组件仓库(TODO)或[官方组件仓库](./contribute-to-official-repo.md)。
