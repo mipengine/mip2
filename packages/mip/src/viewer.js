@@ -185,6 +185,7 @@ let viewer = {
    * @param {boolean} options.replace If true, use `history.replace` instead of `history.push`. Defaults to `false`
    * @param {Object} options.state Target page info
    */
+  /* istanbul ignore next */
   open (to, {isMipLink = true, replace = false, state} = {}) {
     if (!state) {
       state = {click: undefined, title: undefined, defaultTitle: undefined}

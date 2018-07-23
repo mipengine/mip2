@@ -3,9 +3,6 @@
  * @author panyuqi(panyuqi@baidu.com)
  */
 import {
-  MAX_PAGE_NUM,
-  CUSTOM_EVENT_SCROLL_TO_ANCHOR,
-  CUSTOM_EVENT_SHOW_PAGE,
   MESSAGE_ROUTER_PUSH,
   MESSAGE_ROUTER_REPLACE,
   MESSAGE_ROUTER_BACK,
@@ -15,7 +12,7 @@ import {
 } from 'src/page/const'
 
 /* eslint-disable no-unused-expressions */
-/* globals describe, it, expect, beforeEach, afterEach, sinon */
+/* globals describe, it, expect, afterEach, sinon */
 
 // =============================== Router methods ===============================
 describe('page API #router', function () {
@@ -52,7 +49,7 @@ describe('page API #router', function () {
     page.push('/')
     expect(spy).to.have.been.calledWith({
       type: MESSAGE_ROUTER_PUSH,
-      data: {route: '/'}
+      data: {route: '/', options: {}}
     })
   })
 
@@ -62,7 +59,7 @@ describe('page API #router', function () {
     page.replace('/')
     expect(spy).to.have.been.calledWith({
       type: MESSAGE_ROUTER_REPLACE,
-      data: {route: '/'}
+      data: {route: '/', options: {}}
     })
   })
 })

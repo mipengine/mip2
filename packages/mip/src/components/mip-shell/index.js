@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 /**
  * @file MIP Shell Base
  * @author wangyisheng@baidu.com (wangyisheng)
