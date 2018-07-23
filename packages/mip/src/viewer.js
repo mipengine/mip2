@@ -13,7 +13,7 @@ import EventAction from './util/event-action'
 import EventEmitter from './util/event-emitter'
 import fn from './util/fn'
 import {makeCacheUrl, getOriginalUrl} from './util'
-import {supportsPassive, isPortrait} from './page/util/feature-detect'
+import {supportsPassive} from './page/util/feature-detect'
 import {resolvePath} from './page/util/path'
 import viewport from './viewport'
 import Page from './page/index'
@@ -234,12 +234,12 @@ let viewer = {
       // Reload page even if it's already existed
       targetRoute.meta = {
         reload: true,
-        allowTransition: isPortrait(), // Show transition only in portrait mode
         header: {
           title: pushMessage.state.title,
           defaultTitle: pushMessage.state.defaultTitle
         }
       }
+      window.MIP_SHELL_OPTION.allowTransition = true
     }
 
     // Handle <a mip-link replace> & hash

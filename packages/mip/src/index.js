@@ -50,7 +50,6 @@ function registerVueCustomElement (tag, component) {
 // pass meta through `window.name` in cross-origin scene
 let pageMeta
 let pageMetaConfirmed = false
-// alert('window.name is ' + window.name)
 try {
   pageMeta = JSON.parse(window.name)
   pageMetaConfirmed = true
@@ -66,18 +65,12 @@ try {
 let standalone
 if (pageMetaConfirmed) {
   standalone = pageMeta.standalone
-}
-else {
+} else {
   try {
-    // alert('pageMeta.standalone ' + pageMeta.standalone)
-    // alert('viewer.isIframed ' + viewer.isIframed)
-    // alert('typeof window.top.MIP ' + typeof window.top.MIP)
     standalone = pageMeta.standalone ||
       !viewer.isIframed ||
       typeof window.top.MIP !== 'undefined'
   } catch (e) {
-    // alert('catch error, standalone = false')
-    // alert(e.stack)
     standalone = false
   }
   pageMeta.standalone = standalone

@@ -8,7 +8,7 @@ import css from '../../util/dom/css'
 import platform from '../../util/platform'
 
 import {MIP_IFRAME_CONTAINER} from '../const/index'
-import {raf, transitionEndEvent, animationEndEvent} from './feature-detect'
+import {raf, transitionEndEvent, animationEndEvent, isPortrait} from './feature-detect'
 import {normalizeLocation} from './route'
 import viewport from '../../viewport'
 
@@ -36,7 +36,6 @@ export function createIFrame ({fullpath, pageId}, {onLoad, onError} = {}) {
     isRootPage: false,
     isCrossOrigin: targetOrigin !== window.location.origin
   })
-  // alert('create iframe with name: ' + pageMeta)
   container.setAttribute('name', pageMeta)
 
   container.setAttribute('src', fullpath)
@@ -348,7 +347,6 @@ export function whenTransitionEnds (el, type, cb) {
  *
  * @param {string} pageId targetPageId
  * @param {Object} options
- * @param {boolean} options.transition allowTransition
  * @param {Object} options.targetMeta pageMeta of target page
  * @param {string} options.newPage whether iframe is just created
  * @param {boolean} options.transitionContainsHeader whether transition contains header
@@ -356,12 +354,12 @@ export function whenTransitionEnds (el, type, cb) {
  */
 export function frameMoveIn (pageId,
   {
-    transition,
     targetMeta,
     newPage,
     transitionContainsHeader,
     onComplete
   } = {}) {
+  let transition = isPortrait() && window.MIP_SHELL_OPTION.allowTransition
   let iframe
   if (!newPage) {
     iframe = getIFrame(pageId)
@@ -372,6 +370,8 @@ export function frameMoveIn (pageId,
 
   let done = () => {
     hideAllIFrames()
+    window.MIP_SHELL_OPTION.allowTransition = false
+    window.MIP_SHELL_OPTION.direction = null
     onComplete && onComplete()
 
     if (newPage) {
@@ -429,7 +429,6 @@ export function frameMoveIn (pageId,
  *
  * @param {string} pageId CurrentPageId
  * @param {Object} options
- * @param {boolean} options.transition AllowTransition
  * @param {Object} options.sourceMeta PageMeta of current page
  * @param {string} options.targetPageId Indicating target iframe id when switching between iframes. undefined when switching to init page.
  * @param {string} options.targetPageMeta TargetPageMeta. Always defined.
@@ -438,7 +437,6 @@ export function frameMoveIn (pageId,
  */
 export function frameMoveOut (pageId,
   {
-    transition,
     sourceMeta,
     targetPageId,
     targetPageMeta,
@@ -446,6 +444,7 @@ export function frameMoveOut (pageId,
     onComplete,
     rootPageScrollPosition = 0
   } = {}) {
+  let transition = isPortrait() && window.MIP_SHELL_OPTION.allowTransition
   let iframe = getIFrame(pageId)
 
   if (targetPageId) {
@@ -507,6 +506,9 @@ export function frameMoveOut (pageId,
       } else {
         fadeHeader.classList.remove('fade-enter-to', 'fade-enter')
       }
+
+      window.MIP_SHELL_OPTION.allowTransition = false
+      window.MIP_SHELL_OPTION.direction = null
       onComplete && onComplete()
     })
 
@@ -527,6 +529,9 @@ export function frameMoveOut (pageId,
       display: 'none',
       'z-index': 10000
     })
+
+    window.MIP_SHELL_OPTION.allowTransition = false
+    window.MIP_SHELL_OPTION.direction = null
     onComplete && onComplete()
   }
 }

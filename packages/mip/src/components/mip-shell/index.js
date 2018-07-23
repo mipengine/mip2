@@ -12,9 +12,10 @@ import {
 import {makeCacheUrl} from '../../util'
 import css from '../../util/dom/css'
 import fn from '../../util/fn'
+import platform from '../../util/platform'
 import event from '../../util/dom/event'
 import CustomElement from '../../custom-element'
-import {isPortrait, supportsPassive} from '../../page/util/feature-detect'
+import {supportsPassive} from '../../page/util/feature-detect'
 import {isSameRoute, getFullPath} from '../../page/util/route'
 import {
   createIFrame,
@@ -508,14 +509,25 @@ class MipShell extends CustomElement {
         isCrossOrigin: to.origin !== window.location.origin
       }
 
-      // Create a new iframe
+      let iframeCreated = false
+      let targetIFrame
+      // qqbrowser contains bugs when [pushState] and [create iframe] invoked together
+      // Ensure [create iframe] before [pushState] and eliminate async operations
+      if (platform.isQQ() || platform.isQQApp()) {
+        targetIFrame = createIFrame(targetPageMeta)
+        targetPageMeta.targetWindow = targetIFrame.contentWindow
+        iframeCreated = true
+        window.MIP_SHELL_OPTION.allowTransition = false
+      }
       page.addChild(targetPageMeta)
       needEmitPageEvent = false
       this.applyTransition(targetPageId, to.meta, {
         newPage: true,
         onComplete: () => {
-          let targetIFrame = createIFrame(targetPageMeta)
-          targetPageMeta.targetWindow = targetIFrame.contentWindow
+          if (!iframeCreated) {
+            targetIFrame = createIFrame(targetPageMeta)
+            targetPageMeta.targetWindow = targetIFrame.contentWindow
+          }
           css(targetIFrame, {
             display: 'block',
             opacity: 1
@@ -531,6 +543,9 @@ class MipShell extends CustomElement {
         }
       })
     } else {
+      if (platform.isQQ() || platform.isQQApp()) {
+        window.MIP_SHELL_OPTION.allowTransition = false
+      }
       this.applyTransition(targetPageId, to.meta, {
         onComplete: () => {
           css(getIFrame(targetPageId), {
@@ -596,11 +611,9 @@ class MipShell extends CustomElement {
     if (targetPageId === page.pageId || window.MIP_SHELL_OPTION.direction === 'back') {
       // backward
       let backwardOpitons = {
-        transition: targetMeta.allowTransition || window.MIP_SHELL_OPTION.allowTransition,
         sourceMeta: this.currentPageMeta,
         transitionContainsHeader: this.transitionContainsHeader,
         onComplete: () => {
-          window.MIP_SHELL_OPTION.allowTransition = false
           this.currentPageMeta = finalMeta
           this.toggleTransition(true)
           this.pauseBouncyHeader = false
@@ -636,12 +649,10 @@ class MipShell extends CustomElement {
     } else {
       // forward
       frameMoveIn(targetPageId, {
-        transition: targetMeta.allowTransition || window.MIP_SHELL_OPTION.allowTransition,
         targetMeta: finalMeta,
         newPage: options.newPage,
         transitionContainsHeader: this.transitionContainsHeader,
         onComplete: () => {
-          window.MIP_SHELL_OPTION.allowTransition = false
           this.currentPageMeta = finalMeta
           this.toggleTransition(true)
           this.pauseBouncyHeader = false
@@ -700,9 +711,7 @@ class MipShell extends CustomElement {
     if (fadeHeader) {
       this.fadeHeaderEventHandler = event.delegate(fadeHeader, '[mip-header-btn]', 'click', function (e) {
         if (this.dataset.buttonName === 'back') {
-          if (isPortrait()) {
-            page.allowTransition = true
-          }
+          window.MIP_SHELL_OPTION.allowTransition = true
           page.direction = 'back'
           page.back()
         }
@@ -737,9 +746,7 @@ class MipShell extends CustomElement {
   handleClickHeaderButton (buttonName) {
     if (buttonName === 'back') {
       // **Important** only allow transition happens when Back btn & <a> clicked
-      if (isPortrait()) {
-        window.MIP_SHELL_OPTION.allowTransition = true
-      }
+      window.MIP_SHELL_OPTION.allowTransition = true
       window.MIP_SHELL_OPTION.direction = 'back'
       page.back()
     } else if (buttonName === 'more') {
