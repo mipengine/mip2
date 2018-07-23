@@ -7,7 +7,7 @@ MIP 组件支持的各种布局，可以让图片屏幕自适应、定高等。�
 类别|强制 width|强制 height|详细说明
 ---|---|---|---
 responsive | 是 | 是 | 能够根据 `width`、`height` 的值，算出元素对应的比例，在不同屏幕宽度上做自适应，非常适合图片、视频等需要大小自适应的组件
-fixed-height | 否 | 是 | 元素的高度固定，`width` 缺省或者取值为 `auto` ，比较适合 [mip-carousel](./builtin/mip-carousel.md)
+fixed-height | 否 | 是 | 元素的高度固定，`width` 缺省或者取值为 `auto` ，比较适合 [mip-carousel](../extensions/builtin/mip-carousel.md)
 fixed | 是 | 是 | 元素根据 `width` 和 `height` 固定高宽，不随屏幕宽度变化
 flex-item | 否 | 否 | 元素通过 `flex` 进行布局，需设置父元素为 `display: flex`
 fill | 否 | 否 | 元素的大小根据父节点的大小自动撑开
@@ -56,7 +56,7 @@ MIP 元素添加属性 `layout`，取值参照上面的种类，如：
 ### 2. fixed-height
 
 - 布局介绍：使用 `layout="fixed-height"` 的组件高度固定，不随屏幕大小变化。`width` 缺省或者取值为 `auto` 。
-- 适用场景：高度固定的[广告位](./mip-ad/mip-ad.md)、[音频播放组件](./extensions/mip-audio.md)、[mip-fixed悬浮组件](./extensions/mip-fixed.md)。
+- 适用场景：高度固定的[广告位](../extensions/mip-ad/mip-ad.md)、[音频播放组件](../extensions/extensions/mip-audio.md)、[mip-fixed悬浮组件](../extensions/extensions/mip-fixed.md)。
 - 代码示例：
 
 ```html
@@ -79,7 +79,7 @@ MIP 元素添加属性 `layout`，取值参照上面的种类，如：
 ### 3. fixed
 
 - 布局介绍：使用 `layout="fixed"` 的组件宽高固定，根据 `width` 和 `height` 取值（px）固定宽高，元素尺寸不随屏幕大小变化。
-- 适用场景：头像[图片](./builtin/mip-img.md)、[表情GIF](./extensions/mip-anim.md)、[后退按钮](./extensions/mip-history.md) 等有固定大小的元素。
+- 适用场景：头像[图片](../extensions/builtin/mip-img.md)、[表情GIF](../extensions/extensions/mip-anim.md)、[后退按钮](../extensions/extensions/mip-history.md) 等有固定大小的元素。
 - 代码示例：
 
 ```html
@@ -163,7 +163,7 @@ MIP 元素添加属性 `layout`，取值参照上面的种类，如：
 ### 6. container
 
 - 布局介绍：使用 `layout="container"` 的元素的大小根据子节点的大小自动撑开，相当于 `display: block` 。
-- 适用场景：内容高度不固定的[表单](./extensions/mip-form.md)，[无限滚动](./extensions/mip-infinitescroll.md)组件。
+- 适用场景：内容高度不固定的[表单](../extensions/extensions/mip-form.md)，[无限滚动](../extensions/extensions/mip-infinitescroll.md)组件。
 - 代码示例：
 
 ```html
@@ -185,7 +185,7 @@ MIP 元素添加属性 `layout`，取值参照上面的种类，如：
 ### 7. nodisplay
 
 - 布局介绍：使用 `layout="nodisplay"` 的元素不展现，即 `display: none` 。隐藏元素可由用户点击触发显示，也可以应用于统计组件。
-- 适用场景：不需要显示在页面上的[mip-pix统计](./builtin/mip-pix.md)、[mip-analytics统计](./extensions/mip-analytics.md)、[百度统计](./extensions/mip-stats-baidu.md)组件，由用户点击触发的[mip-lightbox弹框](./extensions/mip-lightbox.md)组件。
+- 适用场景：不需要显示在页面上的[mip-pix统计](../extensions/builtin/mip-pix.md)、[mip-analytics统计](../extensions/extensions/mip-analytics.md)、[百度统计](../extensions/extensions/mip-stats-baidu.md)组件，由用户点击触发的[mip-lightbox弹框](../extensions/extensions/mip-lightbox.md)组件。
 - 代码示例：
 
 ```html
