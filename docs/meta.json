@@ -10,29 +10,7 @@
     },
     {
       "name": "开发规范",
-      "key": "mip-standard",
-      "children": [
-        {
-          "name": "MIP-HTML 规范",
-          "key": "01-mip-html-spec"
-        },
-        {
-          "name": "MIP-Cache 规范",
-          "key": "02-mip-cache-spec"
-        },
-        {
-          "name": "MIP 校验规则",
-          "key": "03-mip-validate"
-        },
-        {
-          "name": "Canonical 使用规范",
-          "key": "04-mip-canonical"
-        },
-        {
-          "name": "组件开发规范",
-          "key": "05-mip-components-spec"
-        }
-      ]
+      "key": "mip-standard"
     },
     {
       "name": "可交互 MIP",
