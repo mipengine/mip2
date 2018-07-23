@@ -1,0 +1,24 @@
+{
+  "menu": [
+    {
+      "name": "新手指南",
+      "key": "newbie"
+    },
+    {
+      "name": "完整的例子",
+      "key": "demo"
+    },
+    {
+      "name": "什么是 MIP",
+      "key": "what-is-mip"
+    },
+    {
+      "name": "MIP 加速原理",
+      "key": "principle-of-mip"
+    },
+    {
+      "name": "MIP 内容声明",
+      "key": "announcement"
+    }
+  ]
+}

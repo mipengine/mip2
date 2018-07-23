@@ -12,6 +12,13 @@
             height: 100%;
             margin: 0;
             cursor: pointer;
+            background: blue;
+        }
+        #board {
+            position: fixed;
+            z-index: 10022222;
+            top: 0;
+            left: 0;
         }
         .topFrame {
             position: fixed;
@@ -30,35 +37,23 @@
         }
     </style>
     <script>
-        // window.onload = function () {
-        //     let $iframe = document.querySelector('iframe')
-            // $iframe.style.height = window.innerHeight + 'px'
-
-            // let $scroller = $iframe.contentWindow.document.querySelector('.mip-html-wrapper')
-
-            // function removeIOSRubberEffect( element ) {
-
-            //     element.addEventListener( "touchstart", function () {
-
-            //         var top = element.scrollTop, totalScroll = element.scrollHeight, currentScroll = top + element.offsetHeight;
-
-            //         if ( top === 0 ) {
-            //             element.scrollTop = 1;
-            //         } else if ( currentScroll === totalScroll ) {
-            //             element.scrollTop = top - 1;
-            //         }
-
-            //     } );
-
-            // }
-
-            // removeIOSRubberEffect($scroller);
-        // }
-        window.addEventListener('message', e => console.log('receive message:', e.data))
+        let $iframe
+        let $board
+        function setIframeHeight () {
+            // let height = window.innerHeight
+            // $iframe.style.height = `${height}px`
+            // $board.innerText = `${height}px`
+        }
+        window.onload = () => {
+            $board = document.querySelector('#board')
+            $iframe = document.querySelector('iframe')
+            setIframeHeight()
+            window.addEventListener('resize', setIframeHeight)
+            window.addEventListener('message', e => console.log('receive message:', e.data))
+        }
     </script>
 </head>
 <body>
-    <iframe scrolling="no" src="/examples/page/index.html" class="topFrame"></iframe>
-    <h1>xxxxxxxxxx</h1>
-    <h1>xxxxxxxxxx</h1>
+    <iframe scrolling="yes" src="/examples/page/index.html" class="topFrame"></iframe>
+    <h1 id="board"></h1>
 </body>

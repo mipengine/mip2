@@ -1,0 +1,28 @@
+{
+  "menu": [
+    {
+      "name": "MIP 组件间通信",
+      "key": "components-event"
+    },
+    {
+      "name": "MIP 中与服务端通信",
+      "key": "data-from-server"
+    },
+    {
+      "name": "Promise 在 MIP 中的使用",
+      "key": "promise"
+    },
+    {
+      "name": "MIP 加速原理",
+      "key": "mip-speed-principle"
+    },
+    {
+      "name": "MIP Access 原理剖析",
+      "key": "access-principle"
+    },
+    {
+      "name": "离线可用在 MIP 中的实现",
+      "key": "mip-offline"
+    }
+  ]
+}
