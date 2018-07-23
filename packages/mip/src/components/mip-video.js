@@ -78,6 +78,10 @@ class MipVideo extends CustomElement {
       this.videoElement = this.renderPlayElsewhere()
     }
 
+    this.addEventAction('seekTo', (e, currentTime) => {
+      this.videoElement.currentTime = currentTime
+    })
+
     this.applyFillContent(this.videoElement, true)
   }
 
@@ -102,7 +106,6 @@ class MipVideo extends CustomElement {
     })
     // 如果设置了播放时间点，则直接跳转至播放时间的位置开始播放
     videoEl.addEventListener('loadedmetadata', function() {
-      console.log(this)
       this.currentTime = currentTime;
     })
     this.element.appendChild(videoEl)

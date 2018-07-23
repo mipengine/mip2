@@ -97,6 +97,27 @@
 取值范围：任何  
 默认值：无
 
+### currentTime
+说明：开始播放时的时间，如果设置 currentTime = 10, 那么视频将会从视频的第10秒开始播放
+必选项：否
+类型：数字
+取值范围：正整数
+默认值：0
+
+
+## api
+### seekTo
+说明：指定当前视频跳转至某个时间点进行播放
+示例：
+```
+<mip-video  id="test" width="1000" height="750" layout="responsive" autoplay controls currenttime=20 poster="http://img.alicdn.com/tfs/TB1I3qqqrGYBuNjy0FoXXciBFXa-1125-807.jpg_970x970Q90s50.jpg_.webp">
+    <source src="https://gss0.bdstatic.com/-b1Caiqa0d9Bmcmop9aC2jh9h2w8e4_h7sED0YQ_t9iCPK/mda-gjkt21pkrsd8ae5y/mda-gjkt21pkrsd8ae5y.mp4" type="video/ogg">
+</mip-video>
+<p on="click:test.seekTo(10)">跳转至第10秒播放</p>
+<p on="click:test.seekTo(15)">跳转至第15秒播放</p>
+```
+
+
 ## 注意事项
 
 1. 为防止视频加载造成页面抖动，指定视频的高度和宽度是一个好习惯。MIP 中，指定宽高是强制的。
