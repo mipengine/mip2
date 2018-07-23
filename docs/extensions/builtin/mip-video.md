@@ -26,7 +26,7 @@
 
 ```html
 <mip-video controls loop muted
-  layout="responsive" width="640" height="360" 
+  layout="responsive" width="640" height="360"
   src="https://mip-doc.bj.bcebos.com/sample_video.mp4">
 </mip-video>
 ```
@@ -97,8 +97,8 @@
 取值范围：任何  
 默认值：无
 
-### currentTime
-说明：开始播放时的时间，如果设置 currentTime = 10, 那么视频将会从视频的第10秒开始播放
+### currenttime
+说明：开始播放时的时间，如果设置 currenttime = 10, 那么视频将会从视频的第10秒开始播放
 必选项：否
 类型：数字
 取值范围：正整数
