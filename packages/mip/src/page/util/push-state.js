@@ -5,7 +5,7 @@ export const supportsPushState = window.history &&
 const Time = window.performance &&
     window.performance.now
   ? window.performance
-  : Date
+  : /* istanbul ignore next */Date
 
 let _key = genKey()
 
@@ -13,13 +13,13 @@ function genKey () {
   return Time.now().toFixed(3)
 }
 
-export function getStateKey () {
-  return _key
-}
+// export function getStateKey () {
+//   return _key
+// }
 
-export function setStateKey (key) {
-  _key = key
-}
+// export function setStateKey (key) {
+//   _key = key
+// }
 
 export function pushState (url, replace) {
   // try...catch the pushState call to get around Safari
@@ -33,14 +33,9 @@ export function pushState (url, replace) {
       history.pushState({key: _key}, '', url)
     }
   } catch (e) {
-    // console.log(e, 'from push-state.js')
+    /* istanbul ignore next */
     if (window.MIP.standalone) {
-      if (replace) {
-        window.location.replace(url)
-      } else {
-        window.location.href = url
-      }
-      // window.location[replace ? 'replace' : 'assign'](url)
+      window.location[replace ? 'replace' : 'assign'](url)
     }
   }
 }

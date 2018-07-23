@@ -1,0 +1,98 @@
+/* border 1px */
+
+.mip-border {
+  border: 0 solid @border-default-color;
+  @media (-webkit-min-device-pixel-ratio: 1.5) {
+    & {
+      position: relative;
+      border: none !important;
+      &::after {
+        content: ' ';
+        display: block;
+        position: aboslute;
+        top: 0;
+        right: -33.33%;
+        bottom: -33.33%;
+        left: 0;
+        border: 0 solid @border-default-color;
+        transform-origin: 0 0;
+        pointer-events: none; // 解决挡住点击事件的问题
+        transform: scale(.75);
+        width: 133.33%;
+        box-sizing: border-box;
+      }
+    }
+  }
+  @media (-webkit-min-device-pixel-ratio: 2) {
+    & {
+      position: relative;
+      border: none !important;
+      &::after {
+        content: ' ';
+        display: block;
+        position: absolute;
+        top: 0;
+        right: -100%;
+        bottom: -100%;
+        left: 0;
+        border: 0 solid @border-default-color;
+        transform-origin: 0 0;
+        pointer-events: none; // 解决挡住点击事件的问题
+        transform: scale(.5);
+        width: 200%;
+        box-sizing: border-box;
+      }
+    }
+  }
+}
+
+.mip-border-top {
+  border-top-width: 1px;
+  &::after {
+    border-top-width: 1px;
+  }
+}
+
+.mip-border-right {
+  border-right-width: 1px;
+  &::after {
+    border-right-width: 1px;
+  }
+}
+
+.mip-border-bottom {
+  border-bottom-width: 1px;
+  &::after {
+    border-bottom-width: 1px;
+  }
+}
+
+.mip-border-left {
+  border-left-width: 1px;
+  &::after {
+    border-left-width: 1px;
+  }
+}
+
+.mip-border-all {
+  border-width: 1px;
+  &::after {
+    border-width: 1px;
+  }
+}
+
+// 设置1px边框的颜色
+.set-border-color(@color) {
+  border-color: @color;
+  &::after {
+    border-color: @color;
+  }
+}
+
+// 设置1px边框的圆角
+.set-border-radius(@radius) {
+  border-radius: @radius;
+  &::after {
+    border-radius: (@radius * 2);
+  }
+}

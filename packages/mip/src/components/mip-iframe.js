@@ -6,14 +6,18 @@
 import util from '../util/index'
 import CustomElement from '../custom-element'
 import viewport from '../viewport'
-import {CUSTOM_EVENT_RESIZE_PAGE} from '../page/const'
+import {
+  CUSTOM_EVENT_RESIZE_PAGE,
+  MESSAGE_MIPIFRAME_RESIZE,
+  MESSAGE_PAGE_RESIZE
+} from '../page/const'
 
 let attrList = ['allowfullscreen', 'allowtransparency', 'sandbox']
 
 class MipIframe extends CustomElement {
-
   build () {
-    this.setIframeHeight = this.setIframeHeight.bind(this)
+    this.handlePageResize = this.handlePageResize.bind(this)
+    this.notifyRootPage = this.notifyRootPage.bind(this)
     let element = this.element
     let src = element.getAttribute('src')
     let srcdoc = element.getAttribute('srcdoc')
@@ -28,9 +32,11 @@ class MipIframe extends CustomElement {
       return
     }
 
+    window.addEventListener('message', this.notifyRootPage)
+
     let iframe = document.createElement('iframe')
     iframe.frameBorder = '0'
-    iframe.scrolling = 'no'
+    iframe.scrolling = util.platform.isIos() ? 'no' : 'yes'
     util.css(iframe, {
       width,
       height
@@ -62,20 +68,33 @@ class MipIframe extends CustomElement {
   }
 
   firstInviewCallback () {
-    window.addEventListener(CUSTOM_EVENT_RESIZE_PAGE, this.setIframeHeight)
+    window.addEventListener(CUSTOM_EVENT_RESIZE_PAGE, this.handlePageResize)
   }
 
   disconnectedCallback () {
-    window.removeEventListener(CUSTOM_EVENT_RESIZE_PAGE, this.setIframeHeight)
+    window.removeEventListener(CUSTOM_EVENT_RESIZE_PAGE, this.handlePageResize)
+    window.removeEventListener('message', this.notifyRootPage)
+  }
+
+  notifyRootPage ({data}) {
+    if (data.type === MESSAGE_MIPIFRAME_RESIZE) {
+      window.MIP.viewer.page.notifyRootPage({
+        type: MESSAGE_PAGE_RESIZE
+      })
+    }
+  }
+
+  handlePageResize (e) {
+    if (e.detail && e.detail.length) {
+      this.setIframeHeight(e.detail[0].height || viewport.getHeight())
+    }
   }
 
   setIframeHeight (height) {
     if (!this.fullscreen) {
       return
     }
-    if (height.detail && height.detail.length) {
-      height = height.detail[0].height || viewport.getHeight()
-    }
+
     if (height !== this.height) {
       util.css(this.iframe, {
         height

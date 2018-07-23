@@ -1,17 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <title>Not MIP</title>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Not MIP</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
 </head>
 
 <body>
-    <h2>This page is not a MIP page!</h2>
-    <p>Rollup is a module bundler for JavaScript which compiles small pieces of code into something larger and more complex, such as a library or application. It uses the new standardized format for code modules included in the ES6 revision of JavaScript, instead of previous idiosyncratic solutions such as CommonJS and AMD. ES6 modules let you freely and seamlessly combine the most useful individual functions from your favorite libraries. This will eventually be possible natively, but Rollup lets you do it today.</p>
+  <h2>This page is not a MIP page!</h2>
+  <input type="text" />
+  <p>Rollup is a module bundler for JavaScript which compiles small pieces of code into something larger and more complex, such
+    as a library or application. It uses the new standardized format for code modules included in the ES6 revision of JavaScript,
+    instead of previous idiosyncratic solutions such as CommonJS and AMD. ES6 modules let you freely and seamlessly combine
+    the most useful individual functions from your favorite libraries. This will eventually be possible natively, but Rollup
+    lets you do it today.</p>
 
-    <a href="./index.html">Back to Index</a>
+  <a href="./index.html">Back to Index</a>
+
+  <script>
+    window.onload = function () {
+      let $input = document.querySelector('input')
+      $input.addEventListener('blur', () => {
+        window.parent && window.parent.postMessage({type: 'mip-iframe-resize'}, '*')
+      })
+    }
+  </script>
 </body>
 
 </html>

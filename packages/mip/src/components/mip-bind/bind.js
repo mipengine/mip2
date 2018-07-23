@@ -24,6 +24,16 @@ class Bind {
     MIP.setData = (action, from) => {
       this._bindTarget(false, action, from)
     }
+    MIP.getData = key => {
+      let ks = key.split('.')
+      let res = this._win.m[ks[0]]
+      let i = 1
+      while (isObject(res) && i < ks.length) {
+        res = res[ks[i]]
+        i++
+      }
+      return res
+    }
     MIP.$set = (action, from, cancel) => {
       this._bindTarget(true, action, from, cancel)
     }
@@ -31,8 +41,8 @@ class Bind {
       this._observer.start(this._win.m)
       this._compile.start(this._win.m)
     }
-    MIP.$update = (data) => {
-      this._update(data)
+    MIP.$update = (data, pageId) => {
+      this._update(data, pageId)
     }
     MIP.watch = (target, cb) => {
       this._bindWatch(target, cb)
@@ -44,29 +54,40 @@ class Bind {
   }
 
   _postMessage (data) {
-    if (!objNotEmpty(data)) {
-      return
-    }
-
     for (let k of Object.keys(data)) {
       data[`#${k}`] = data[k]
       delete data[k]
     }
 
-    let win = isSelfParent(window) ? window : window.parent
-    win.MIP.$update(data)
-  }
-
-  _update (data) {
     let win = this._win
+    let targetWin = win
+    /* istanbul ignore if */
+    if (!isSelfParent(win)) {
+      targetWin = win.parent
+      // parent update
+      targetWin.MIP.$set(data, 0, true)
+    }
+    // self update
     win.MIP.$set(data, 0, true)
 
+    let pageId = win.location.href.replace(win.location.hash, '')
+    // defer
+    setTimeout(() => {
+      targetWin.MIP.$update(data, pageId)
+    }, 10)
+  }
+
+  _update (data, pageId) {
+    let win = this._win
+
     for (let i = 0, frames = win.document.getElementsByTagName('iframe'); i < frames.length; i++) {
+      /* istanbul ignore if */
       if (frames[i].classList.contains('mip-page__iframe') &&
-          frames[i].getAttribute('data-page-id')
+          frames[i].getAttribute('data-page-id') &&
+          pageId !== frames[i].getAttribute('data-page-id')
       ) {
         let subwin = frames[i].contentWindow
-        subwin.MIP.$set(data, 0, true)
+        subwin && subwin.MIP && subwin.MIP.$set(data, 0, true)
       }
     }
   }
@@ -80,7 +101,7 @@ class Bind {
     }
 
     if (typeof data === 'object') {
-      let origin = JSON.stringify(win.m || {})
+      let origin = JSON.stringify(win.m)
       this._compile.upadteData(JSON.parse(origin))
       let classified = this._normalize(data)
       if (compile) {
@@ -113,7 +134,7 @@ class Bind {
       target.forEach(key => MIP.watch(key, cb))
       return
     }
-    if (typeof target !== 'string') {
+    if (typeof target !== 'string' || !target) {
       return
     }
     if (!cb || typeof cb !== 'function') {
@@ -131,6 +152,7 @@ class Bind {
     }
 
     let watcherId = `${target}${cb.toString()}`.replace(/[\n\t\s]/g, '')
+    /* istanbul ignore if */
     if (this._watcherIds.indexOf(watcherId) !== -1) {
       return
     }
@@ -146,20 +168,27 @@ class Bind {
     }
     if (win.g && win.g.hasOwnProperty(key)) {
       !cancel && this._postMessage(data)
-    } else if (!isSelfParent(win) && win.parent.g && win.parent.g.hasOwnProperty(key)) {
-      !cancel && this._postMessage(data)
     } else {
-      Object.assign(win.m, data)
+      /* istanbul ignore if */
+      if (!isSelfParent(win) &&
+      /* istanbul ignore next */ win.parent.g &&
+      /* istanbul ignore next */ win.parent.g.hasOwnProperty(key)
+      ) {
+        !cancel && this._postMessage(data)
+      } else {
+        Object.assign(win.m, data)
+      }
     }
   }
 
   _setGlobalState (data, cancel) {
     let win = this._win
+    /* istanbul ignore else */
     if (isSelfParent(win)) {
       win.g = win.g || {}
       assign(win.g, data)
     } else {
-      !cancel && this._postMessage(data)
+      !cancel && objNotEmpty(data) && this._postMessage(data)
     }
   }
 
@@ -201,7 +230,7 @@ class Bind {
 
     return {
       globalData,
-      pageData: pageData || {}
+      pageData
     }
   }
 }
@@ -230,11 +259,11 @@ function setProto (oldObj, newObj) {
 
 function isSelfParent (win) {
   let page = win.MIP.viewer.page
-  return page.isRootPage || page.isCrossOrigin
+  return page.isRootPage || /* istanbul ignore next */ page.isCrossOrigin
 }
 
 function getGlobalData (win) {
-  return isSelfParent(win) ? win.g : win.parent.g
+  return isSelfParent(win) ? win.g : /* istanbul ignore next */ win.parent.g
 }
 
 export default Bind

@@ -1,5 +1,5 @@
 /**
- * @file karma.dev.conf.js
+ * @file karma.cover.conf.js
  * @author huanghuiquan (huanghuiquan@baidu.com)
  */
 
@@ -15,7 +15,7 @@ module.exports = function (config) {
       }
     },
     enforce: 'post',
-    exclude: /node_modules|\.spec\.js$/
+    exclude: /node_modules|deps|test|src\/vue|\.spec\.js$/
   })
 
   config.set(Object.assign(base, {

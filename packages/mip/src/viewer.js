@@ -14,9 +14,10 @@ import EventEmitter from './util/event-emitter'
 import fn from './util/fn'
 import {makeCacheUrl, getOriginalUrl} from './util'
 import {supportsPassive, isPortrait} from './page/util/feature-detect'
+import {resolvePath} from './page/util/path'
 import viewport from './viewport'
 import Page from './page/index'
-import {MESSAGE_ROUTER_PUSH, MESSAGE_ROUTER_REPLACE, MESSAGE_PAGE_RESIZE} from './page/const/index'
+import {MESSAGE_PAGE_RESIZE, CUSTOM_EVENT_SHOW_PAGE, CUSTOM_EVENT_HIDE_PAGE} from './page/const'
 import Messager from './messager'
 import fixedElement from './fixed-element'
 
@@ -61,23 +62,9 @@ let viewer = {
     // handle preregistered  extensions
     this.handlePreregisteredExtensions()
 
-    // add normal scroll class to body. except ios in iframe.
-    // Patch for ios+iframe is default in mip.css
-    if (!platform.needSpecialScroll) {
-      document.documentElement.classList.add('mip-i-android-scroll')
-      document.body.classList.add('mip-i-android-scroll')
-    }
-
-    if (this.isIframed) {
-      this.patchForIframe()
-      this._viewportScroll()
-      if (platform.isIos()) {
-        this._lockBodyScroll()
-      }
-    }
+    this.handleBrowserQuirks()
 
     this.page = new Page()
-
     this.page.start()
 
     this.fixedElement = fixedElement
@@ -91,18 +78,6 @@ let viewer = {
       })
     }
 
-    event.delegate(document, 'input', 'focus', event => {
-      this.page.notifyRootPage({
-        type: MESSAGE_PAGE_RESIZE
-      })
-    }, true)
-
-    event.delegate(document, 'input', 'blur', event => {
-      this.page.notifyRootPage({
-        type: MESSAGE_PAGE_RESIZE
-      })
-    }, true)
-
     // proxy <a mip-link>
     this._proxyLink(this.page)
   },
@@ -115,29 +90,6 @@ let viewer = {
    * @public
    */
   isIframed: win !== top,
-
-  /**
-   * Patch for iframe
-   */
-  patchForIframe () {
-    // Fix iphone 5s UC and ios 9 safari bug.
-    // While the back button is clicked,
-    // the cached page has some problems.
-    // So we are forced to load the page in iphone 5s UC
-    // and iOS 9 safari.
-    let iosVersion = platform.getOsVersion()
-    iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
-    let needBackReload = (iosVersion === '8' && platform.isUc() && screen.width === 320) ||
-            (iosVersion === '9' && platform.isSafari())
-    if (needBackReload) {
-      window.addEventListener('pageshow', e => {
-        if (e.persisted) {
-          document.body.style.display = 'none'
-          location.reload()
-        }
-      })
-    }
-  },
 
   /**
    * Show contents of page. The contents will not be displayed until the components are registered.
@@ -234,8 +186,6 @@ let viewer = {
    * @param {Object} options.state Target page info
    */
   open (to, {isMipLink = true, replace = false, state} = {}) {
-    let {router, isRootPage} = this.page
-    let notifyRootPage = this.page.notifyRootPage.bind(this.page)
     if (!state) {
       state = {click: undefined, title: undefined, defaultTitle: undefined}
     }
@@ -246,7 +196,7 @@ let viewer = {
     }
     let isHashInCurrentPage = hash && to.indexOf(window.location.origin + window.location.pathname) > -1
 
-    // Invalid <a>, ignore it
+    // Invalid target, ignore it
     if (!to) {
       return
     }
@@ -256,13 +206,21 @@ let viewer = {
     // 2. Not MIP page and not only hash change
     if ((this._isCrossOrigin(to) && window.MIP.standalone) ||
       (!isMipLink && !isHashInCurrentPage)) {
-      top.location.href = to
+      window.top.location.href = to
       return
     }
 
+    let completeUrl
+    if (/^\/\//.test(to)) {
+      completeUrl = location.protocol + to
+    } else if (to.charAt(0) === '/' || to.charAt(0) === '.') {
+      completeUrl = location.origin + resolvePath(to, location.pathname)
+    } else {
+      completeUrl = to
+    }
     // Send statics message to BaiduResult page
     let pushMessage = {
-      url: getOriginalUrl(to),
+      url: getOriginalUrl(completeUrl),
       state
     }
     this.sendMessage(replace ? 'replaceState' : 'pushState', pushMessage)
@@ -286,21 +244,9 @@ let viewer = {
 
     // Handle <a mip-link replace> & hash
     if (isHashInCurrentPage || replace) {
-      if (isRootPage) {
-        router.replace(targetRoute)
-      } else {
-        notifyRootPage({
-          type: MESSAGE_ROUTER_REPLACE,
-          data: {route: targetRoute}
-        })
-      }
-    } else if (isRootPage) {
-      router.push(targetRoute)
+      this.page.replace(targetRoute)
     } else {
-      notifyRootPage({
-        type: MESSAGE_ROUTER_PUSH,
-        data: {route: targetRoute}
-      })
+      this.page.push(targetRoute)
     }
   },
 
@@ -323,7 +269,8 @@ let viewer = {
    *
    * @private
    */
-  _viewportScroll () {
+  viewportScroll () {
+    /* istanbul ignore next */
     let self = this
     let dist = 0
     let direct = 0
@@ -341,6 +288,7 @@ let viewer = {
     function pagemove (e) {
       scrollTop = viewport.getScrollTop()
       scrollHeight = viewport.getScrollHeight()
+      /* istanbul ignore next */
       if (scrollTop > 0 && scrollTop < scrollHeight) {
         if (lastScrollTop < scrollTop) {
           // down
@@ -425,13 +373,126 @@ let viewer = {
     }
   },
 
+  handleBrowserQuirks () {
+    // add normal scroll class to body. except ios in iframe.
+    // Patch for ios+iframe is default in mip.css
+    /* istanbul ignore next */
+    if (!platform.needSpecialScroll) {
+      document.documentElement.classList.add('mip-i-android-scroll')
+      document.body.classList.add('mip-i-android-scroll')
+    }
+
+    // prevent bouncy scroll in iOS 7 & 8
+    /* istanbul ignore next */
+    if (platform.isIos()) {
+      let iosVersion = platform.getOsVersion()
+      iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
+      if (!(iosVersion === '8' || iosVersion === '7')) {
+        document.documentElement.classList.add('mip-i-ios-scroll')
+      }
+
+      this.fixIOSPageFreeze()
+
+      if (this.isIframed) {
+        this.lockBodyScroll()
+
+        // Fix iphone 5s UC and ios 9 safari bug.
+        // While the back button is clicked,
+        // the cached page has some problems.
+        // So we are forced to load the page in iphone 5s UC
+        // and iOS 9 safari.
+        let needBackReload = (iosVersion === '8' && platform.isUc() && screen.width === 320) ||
+          (iosVersion === '9' && platform.isSafari())
+        if (needBackReload) {
+          window.addEventListener('pageshow', e => {
+            if (e.persisted) {
+              document.body.style.display = 'none'
+              location.reload()
+            }
+          })
+        }
+      }
+    }
+
+    /**
+     * trigger layout to solve a strange bug in Android Superframe,
+     * which will make page unscrollable
+     */
+    /* istanbul ignore next */
+    if (platform.isAndroid()) {
+      setTimeout(() => {
+        document.documentElement.classList.add('trigger-layout')
+        document.body.classList.add('trigger-layout')
+      })
+    }
+
+    /* istanbul ignore next */
+    if (this.isIframed) {
+      this.viewportScroll()
+    }
+
+    /* istanbul ignore next */
+    this.fixSoftKeyboard()
+  },
+
+  /**
+   * fix a iOS UC/Shoubai bug when hiding current iframe,
+   * which will cause the whole page freeze
+   *
+   * https://github.com/mipengine/mip2/issues/19
+   */
+  fixIOSPageFreeze () {
+    /* istanbul ignore next */
+    let $style = document.createElement('style')
+    /* istanbul ignore next */
+    let $head = document.head || document.getElementsByTagName('head')[0]
+    /* istanbul ignore next */
+    $style.setAttribute('mip-bouncy-scrolling', '')
+    /* istanbul ignore next */
+    $style.textContent = '* {-webkit-overflow-scrolling: auto!important;}'
+
+    /* istanbul ignore next */
+    if (!platform.isSafari() && !platform.isChrome()) {
+      window.addEventListener(CUSTOM_EVENT_SHOW_PAGE, (e) => {
+        try {
+          $head.removeChild($style)
+        } catch (e) {}
+      })
+      window.addEventListener(CUSTOM_EVENT_HIDE_PAGE, (e) => {
+        $head.appendChild($style)
+      })
+    }
+  },
+
+  /**
+   * fix soft keyboard bug
+   *
+   * https://github.com/mipengine/mip2/issues/38
+   */
+  fixSoftKeyboard () {
+    /* istanbul ignore next */
+    // reset iframe's height when input focus/blur
+    event.delegate(document, 'input', 'focus', event => {
+      this.page.notifyRootPage({
+        type: MESSAGE_PAGE_RESIZE
+      })
+    }, true)
+    /* istanbul ignore next */
+    event.delegate(document, 'input', 'blur', event => {
+      this.page.notifyRootPage({
+        type: MESSAGE_PAGE_RESIZE
+      })
+    }, true)
+  },
+
   /**
    * lock body scroll in iOS
    *
    * https://medium.com/jsdownunder/locking-body-scroll-for-all-devices-22def9615177
    * http://blog.christoffer.online/2015-06-10-six-things-i-learnt-about-ios-rubberband-overflow-scrolling/
    */
-  _lockBodyScroll () {
+  lockBodyScroll () {
+    /* istanbul ignore next */
     viewport.on('scroll', () => {
       let scrollTop = viewport.getScrollTop()
       let totalScroll = viewport.getScrollHeight()
@@ -441,6 +502,14 @@ let viewer = {
         viewport.setScrollTop(scrollTop - 1)
       }
     }, eventListenerOptions)
+
+    // scroll 1px
+    /* istanbul ignore next */
+    document.documentElement.classList.add('trigger-layout')
+    /* istanbul ignore next */
+    document.body.classList.add('trigger-layout')
+    /* istanbul ignore next */
+    viewport.setScrollTop(1)
   },
 
   /**

@@ -105,6 +105,10 @@ module.exports = {
 
 ## changelog
 
+- 1.1.10
+    1. 升级 mip-sandbox 依赖，添加 `crypto` 入白名单
+    2. 将 helpers 改回直接从 window 获取
+
 - 1.1.9
     1. 升级 mip-sandbox 依赖，添加 `WebSocket` 入白名单
 

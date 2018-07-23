@@ -5,11 +5,12 @@
 
 /* eslint-disable import/no-webpack-loader-syntax */
 // add polyfills
-import 'script-loader!deps/fetch.js'
-import 'script-loader!deps/fetch-jsonp.js'
+import 'script-loader!deps/fetch'
+import 'script-loader!deps/fetch-jsonp'
 import 'script-loader!document-register-element/build/document-register-element'
-import 'deps/promise.js'
-import 'deps/object-assign.js'
+import 'deps/promise'
+import 'deps/object-assign'
+import 'deps/mip-components-webpack-helpers'
 /* eslint-enable import/no-webpack-loader-syntax */
 
 import Vue from 'vue'
@@ -23,7 +24,7 @@ import Resources from './resources'
 import builtinComponents from './components/index'
 import MipShell from './components/mip-shell/index'
 import registerCustomElement from './register-element'
-import sleepWakeModule from './sleepWakeModule'
+import sleepWakeModule from './sleep-wake-module'
 import performance from './performance'
 import mip1PolyfillInstall from './mip1-polyfill/index'
 
@@ -48,8 +49,11 @@ function registerVueCustomElement (tag, component) {
 
 // pass meta through `window.name` in cross-origin scene
 let pageMeta
+let pageMetaConfirmed = false
+// alert('window.name is ' + window.name)
 try {
   pageMeta = JSON.parse(window.name)
+  pageMetaConfirmed = true
 } catch (e) {
   pageMeta = {
     standalone: false,
@@ -60,14 +64,24 @@ try {
 
 // 当前是否是独立站
 let standalone
-try {
-  standalone = pageMeta.standalone ||
-    !viewer.isIframed ||
-    typeof window.top.MIP !== 'undefined'
-} catch (e) {
-  standalone = false
+if (pageMetaConfirmed) {
+  standalone = pageMeta.standalone
 }
-pageMeta.standalone = standalone
+else {
+  try {
+    // alert('pageMeta.standalone ' + pageMeta.standalone)
+    // alert('viewer.isIframed ' + viewer.isIframed)
+    // alert('typeof window.top.MIP ' + typeof window.top.MIP)
+    standalone = pageMeta.standalone ||
+      !viewer.isIframed ||
+      typeof window.top.MIP !== 'undefined'
+  } catch (e) {
+    // alert('catch error, standalone = false')
+    // alert(e.stack)
+    standalone = false
+  }
+  pageMeta.standalone = standalone
+}
 let extensions = window.MIP || []
 
 function push (extension) {
@@ -121,8 +135,7 @@ util.dom.waitDocumentReady(() => {
 
   // register buildin components
   builtinComponents.register()
-
-  performance.start(Date.now())
+  performance.start(window._mipStartTiming)
 
   // send performance data until the data collection is completed
   performance.on('update', timing => {

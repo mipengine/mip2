@@ -45,7 +45,7 @@ describe('performance', function () {
     window.performance = {
       timing: {}
     }
-    expect(performance.getTiming()).to.be.a('object');
+    expect(performance.getTiming()).to.be.a('object')
 
     window.performance = {
       timing: {

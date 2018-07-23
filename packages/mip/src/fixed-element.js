@@ -2,7 +2,6 @@
  *
  * @file fixed element
  * @author xx
- * @modify wupeng10@baidu.com 2017-03-27 upgrade mip fixed, The only limitation is ten fixed elements.
  */
 
 import platform from './util/platform'
@@ -23,18 +22,6 @@ class FixedElement {
      * @type {HTMLElement}
      */
     this._fixedLayer = null
-
-    /**
-     * @private
-     * @type {number}
-     */
-    this._maxFixedCount = 10
-
-    /**
-     * @private
-     * @type {number}
-     */
-    this._currentFixedCount = 0
 
     /**
      * @private
@@ -111,9 +98,9 @@ class FixedElement {
       let bottom = layout.parseLength(ele.getAttribute('bottom'))
       let top = layout.parseLength(ele.getAttribute('top'))
       /* eslint-disable */
-      if (fType === 'left' && !top && !bottom || this._currentFixedCount >= this._maxFixedCount ||
-                fType === 'gototop' && ele.firstElementChild.tagName.toLowerCase() !== 'mip-gototop' ||
-                ele.tagName.toLowerCase() !== 'mip-semi-fixed' && ele.tagName.toLowerCase() !== 'mip-fixed') {
+      if (fType === 'left' && !top && !bottom ||
+            fType === 'gototop' && ele.firstElementChild.tagName.toLowerCase() !== 'mip-gototop' ||
+            ele.tagName.toLowerCase() !== 'mip-semi-fixed' && ele.tagName.toLowerCase() !== 'mip-fixed') {
         ele.parentElement.removeChild(ele)
         continue
       }
@@ -139,7 +126,6 @@ class FixedElement {
         })
       }
 
-      this._currentFixedCount++
       this.setFixedElementRule(ele, fType)
       let eleId = 'Fixed' + (this._count)
       fixedEle = {

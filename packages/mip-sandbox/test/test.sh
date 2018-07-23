@@ -1,17 +1,17 @@
-echo "==== mocha test ===="
-echo ""
+# echo "==== mocha test ===="
+# echo ""
 
-mocha test/node/**/*.spec.js
+# mocha test/node/**/*.spec.js
 
-if [ $? -ne 0 ]; then
-  echo "==== error in mocha test ===="
-  exit 1
-fi
+# if [ $? -ne 0 ]; then
+#   echo "==== error in mocha test ===="
+#   exit 1
+# fi
 
 echo "==== karma test ===="
 echo ""
 
-karma start test/browser/karma.config.js
+karma start test/karma.config.js
 
 if [ $? -ne 0 ]; then
   echo "==== error in karma test ===="

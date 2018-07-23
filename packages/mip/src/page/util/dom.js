@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 /**
  * @file define dom functions
  * @author wangyisheng@baidu.com (wangyisheng)
@@ -35,6 +36,7 @@ export function createIFrame ({fullpath, pageId}, {onLoad, onError} = {}) {
     isRootPage: false,
     isCrossOrigin: targetOrigin !== window.location.origin
   })
+  // alert('create iframe with name: ' + pageMeta)
   container.setAttribute('name', pageMeta)
 
   container.setAttribute('src', fullpath)
@@ -88,12 +90,13 @@ function hideAllIFrames () {
  * @param {Object} pageMeta Page meta info
  */
 export function createLoading (pageMeta) {
-  if (document.querySelector('#mip-page-loading-wrapper')) {
-    return
+  let loading = document.querySelector('#mip-page-loading-wrapper')
+  if (loading) {
+    return loading
   }
 
   let logo = pageMeta ? (pageMeta.header.logo || '') : ''
-  let loading = document.createElement('mip-fixed')
+  loading = document.createElement('mip-fixed')
   loading.id = 'mip-page-loading-wrapper'
   loading.setAttribute('class', 'mip-page-loading-wrapper')
   loading.innerHTML = `
@@ -112,6 +115,7 @@ export function createLoading (pageMeta) {
     </div>
   `
   document.body.appendChild(loading)
+  return loading
 }
 
 /**
@@ -188,12 +192,13 @@ function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
 }
 
 export function createFadeHeader (pageMeta) {
-  if (document.querySelector('#mip-page-fade-header-wrapper')) {
-    return
+  let fadeHeader = document.querySelector('#mip-page-fade-header-wrapper')
+  if (fadeHeader) {
+    return fadeHeader
   }
 
   let logo = pageMeta ? (pageMeta.header.logo || '') : ''
-  let fadeHeader = document.createElement('mip-fixed')
+  fadeHeader = document.createElement('mip-fixed')
   fadeHeader.id = 'mip-page-fade-header-wrapper'
   fadeHeader.setAttribute('class', 'mip-page-fade-header-wrapper')
   fadeHeader.innerHTML = `
@@ -212,6 +217,7 @@ export function createFadeHeader (pageMeta) {
     </div>
   `
   document.body.appendChild(fadeHeader)
+  return fadeHeader
 }
 
 /**
@@ -219,9 +225,10 @@ export function createFadeHeader (pageMeta) {
  * Return fade header div
  *
  * @param {Object} targetMeta Page meta of target page
+ * @param {Object} sourceMeta Page meta of source page (undefined when frameMoveIn, NOT undefined when frameMoveOut)
  * @returns {HTMLElement}
  */
-function getFadeHeader (targetMeta) {
+function getFadeHeader (targetMeta, sourceMeta) {
   let fadeHeader = document.querySelector('#mip-page-fade-header-wrapper')
   if (!fadeHeader) {
     createFadeHeader()
@@ -247,11 +254,12 @@ function getFadeHeader (targetMeta) {
   css(fadeHeader.querySelector('.back-button'), 'display', targetMeta.view.isIndex ? 'none' : 'flex')
 
   // Set color & borderColor & backgroundColor
+  let colorConfig = sourceMeta ? sourceMeta.header : {}
   let {
     color = '#000000',
-    borderColor,
+    borderColor = '#e1e1e1',
     backgroundColor = '#ffffff'
-  } = targetMeta.header
+  } = colorConfig
   let fadeHeaderContainer = fadeHeader.querySelector('.mip-shell-header')
 
   css(fadeHeaderContainer, 'background-color', backgroundColor)
@@ -361,7 +369,6 @@ export function frameMoveIn (pageId,
       return
     }
   }
-  // let iframe = getIFrame(pageId)
 
   let done = () => {
     hideAllIFrames()
@@ -369,16 +376,9 @@ export function frameMoveIn (pageId,
 
     if (newPage) {
       iframe = getIFrame(pageId)
-      if (!iframe) {
-        return
-      }
     }
 
-    css(iframe, {
-      display: 'block',
-      opacity: 1,
-      'z-index': activeZIndex++
-    })
+    css(iframe, 'z-index', activeZIndex++)
   }
 
   if (!transition) {
@@ -412,15 +412,6 @@ export function frameMoveIn (pageId,
     }
 
     done()
-    // if (newPage) {
-    //   setTimeout(() => {
-    //     done()
-    //     css(loading, 'display', 'none')
-    //   }, 100)
-    // } else {
-    //   done()
-    //   css(loading, 'display', 'none')
-    // }
   })
 
   nextFrame(() => {
@@ -484,7 +475,7 @@ export function frameMoveOut (pageId,
     } else {
       headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
       headerLogoTitle && headerLogoTitle.classList.add('fade-out')
-      fadeHeader = getFadeHeader(targetPageMeta)
+      fadeHeader = getFadeHeader(targetPageMeta, sourceMeta)
       css(fadeHeader, 'display', 'block')
     }
 
@@ -551,21 +542,4 @@ export function appendScript (src) {
     script.src = src
     document.body.appendChild(script)
   })
-}
-
-/**
- * Fix a UC/Shoubai bug when hiding current iframe
- * https://github.com/mipengine/mip2/issues/19
- */
-let $style = document.createElement('style')
-let $head = document.head || document.getElementsByTagName('head')[0]
-$style.setAttribute('mip-bouncy-scrolling', '')
-$style.textContent = '* {-webkit-overflow-scrolling: auto!important;}'
-export function disableBouncyScrolling () {
-  $head.appendChild($style)
-}
-export function enableBouncyScrolling () {
-  try {
-    $head.removeChild($style)
-  } catch (e) {}
 }

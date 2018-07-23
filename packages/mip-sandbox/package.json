@@ -1,6 +1,6 @@
 {
   "name": "mip-sandbox",
-  "version": "1.0.17",
+  "version": "1.0.19",
   "description": "sandbox tools for MIP project",
   "main": "lib/sandbox.js",
   "scripts": {
@@ -33,8 +33,11 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "istanbul-instrumenter-loader": "^3.0.1",
     "karma": "^2.0.2",
+    "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^2.2.0",
+    "karma-coverage": "^1.1.2",
     "karma-mocha": "^1.3.0",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-spec-reporter": "0.0.32",

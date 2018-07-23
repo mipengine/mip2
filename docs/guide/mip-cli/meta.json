@@ -1,0 +1,26 @@
+
+{
+    "menu": [
+        {
+            "key": "01-cli-usage"
+        },
+        {
+            "key": "03-start-writing-first-mip"
+        },
+        {
+            "key": "04-component-development"
+        },
+        {
+            "key": "05-component-testing"
+        },
+        {
+            "key": "06-component-deploy"
+        },
+        {
+            "key": "07-contribute-to-official-repo"
+        },
+        {
+            "key": "08-contribute-to-site-extensions-repo"
+        }
+    ]
+}

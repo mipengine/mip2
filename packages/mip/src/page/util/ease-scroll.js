@@ -54,7 +54,7 @@ function transition (duration, step, callback) {
 
 function bezier (t, b, c, d) {
   return 1.0042954579734844 * Math.exp(
-      -6.4041738958415664 * Math.exp(-7.2908241330981340 * t / d)
+    -6.4041738958415664 * Math.exp(-7.2908241330981340 * t / d)
   ) * c + b
 }
 

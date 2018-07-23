@@ -26,6 +26,7 @@ class Compile {
     // this._el.appendChild(this._fragment);
   }
 
+  /* istanbul ignore next */
   _cloneNode () {
     let child
     let fragment = document.createDocumentFragment()
@@ -61,6 +62,7 @@ class Compile {
 
   _compileAttributes (node) {
     let me = this
+    /* istanbul ignore if */
     if (!node) {
       return
     }
@@ -79,7 +81,7 @@ class Compile {
     let attrName = directive.name
     let data
 
-    if (/^bind:/.test(fnName)) {
+    if (/^bind:.*/.test(fnName)) {
       let attr = fnName.slice(5)
       if (attr === 'class' || attr === 'style') {
         let attrKey = attr.charAt(0).toUpperCase() + attr.slice(1)
@@ -87,6 +89,7 @@ class Compile {
           let fn = this.getWithResult(expression)
           data = util['parse' + attrKey](fn.call(this.data))
         } catch (e) {
+          // istanbul ignore next
           data = {}
         }
         expression = `${attrKey}:${expression}`
@@ -101,9 +104,7 @@ class Compile {
     this._listenerFormElement(node, directive, expression)
     /* eslint-disable */
     new Watcher(node, me.data, attrName, expression, function (dir, newVal) {
-      if (typeof me[fnName] === 'function') {
-        me[fnName](node, dir, newVal)
-      }
+      me[fnName] && me[fnName](node, dir, newVal)
     })
     /* eslint-enable */
   }
@@ -130,10 +131,11 @@ class Compile {
   bind (node, directive, newVal) {
     let reg = /bind:(.*)/
     let result = reg.exec(directive)
-    if (!result.length) {
+    if (!result) {
       return
     }
     let attr = result[1]
+    /* istanbul ignore if */
     if (attr !== 'disabled' && node.disabled) {
       Object.assign(window.m, this.origin)
       return

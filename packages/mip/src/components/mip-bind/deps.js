@@ -26,10 +26,6 @@ class Deps {
       }
     })
   }
-
-  update (watcher) {
-    watcher && watcher.update && watcher.update()
-  }
 }
 
 export default Deps

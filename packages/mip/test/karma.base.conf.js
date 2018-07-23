@@ -25,8 +25,7 @@ const webpackConfig = {
         },
         'less-loader'
       ]
-    },
-    {
+    }, {
       test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
       loader: 'url-loader',
       options: {
