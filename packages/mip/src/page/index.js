@@ -254,17 +254,17 @@ class Page {
     this.notifyRootPage({type: MESSAGE_ROUTER_FORWARD})
   }
 
-  push (route) {
+  push (route, options = {}) {
     this.notifyRootPage({
       type: MESSAGE_ROUTER_PUSH,
-      data: {route}
+      data: {route, options}
     })
   }
 
-  replace (route) {
+  replace (route, options = {}) {
     this.notifyRootPage({
       type: MESSAGE_ROUTER_REPLACE,
-      data: {route}
+      data: {route, options}
     })
   }
 

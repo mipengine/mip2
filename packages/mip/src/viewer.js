@@ -239,14 +239,13 @@ let viewer = {
           defaultTitle: pushMessage.state.defaultTitle
         }
       }
-      window.MIP_SHELL_OPTION.allowTransition = true
     }
 
     // Handle <a mip-link replace> & hash
     if (isHashInCurrentPage || replace) {
-      this.page.replace(targetRoute)
+      this.page.replace(targetRoute, {allowTransition: true})
     } else {
-      this.page.push(targetRoute)
+      this.page.push(targetRoute, {allowTransition: true})
     }
   },
 
