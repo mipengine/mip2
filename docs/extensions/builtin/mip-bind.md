@@ -6,7 +6,7 @@
 ----|----
 类型|通用
 支持布局|N/S
-所需脚本|https://c.mipcdn.com/static/v1/mip-bind/mip-bind.js
+所需脚本|https://c.mipcdn.com/static/v2/mip-bind/mip-bind.js
 
 ## 使用方法
 
@@ -135,8 +135,8 @@
     <div class="filter">
         <span on="tap:MIP.setData({clickedClass:'first'})">文字</span>
         <span on="tap:MIP.setData({clickedClass:'second'})">图片</span>
-        <span on="tap:MIP.setData({clickedClass:'third'})">视频</span>    
-    </div>    
+        <span on="tap:MIP.setData({clickedClass:'third'})">视频</span>
+    </div>
 </mip-vd-tabs>
 <div id="content" m-bind:class="clickedClass">
     <span>我是文案啦！</span>

@@ -2,29 +2,7 @@
   "menu": [
     {
       "name": "简介",
-      "key": "basic",
-      "children": [
-        {
-          "name": "新手指南",
-          "key": "01-newbie"
-        },
-        {
-          "name": "完整的例子",
-          "key": "02-demo"
-        },
-        {
-          "name": "什么是 MIP",
-          "key": "03-what-is-mip"
-        },
-        {
-          "name": "MIP 加速原理",
-          "key": "04-principle-of-mip"
-        },
-        {
-          "name": "MIP 内容声明",
-          "key": "05-announcement"
-        }
-      ]
+      "key": "basic"
     },
     {
       "name": "MIP 开发",

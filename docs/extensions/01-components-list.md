@@ -11,6 +11,7 @@
 [mip-img](./builtin/mip-img.md) | 图片|mip-img 用来支持在 MIP 中增加图片内容。
 [mip-pix](./builtin/mip-pix.md) | 统计|将 mip-pix 组件直接引入，可发送带有自定义参数的请求，用于统计页面访问情况。这些参数主要包括页面打开时间点、页面标题和当面页面地址。
 [mip-video](./builtin/mip-video.md) | -|mip-video 用来支持在 MIP 中增加视频内容，是 HTML `<video>` 的直接包装。功能和兼容性与 HTML5 `<video>` 一致。
+[mip-bind](./builtin/mip-bind.md) |数据驱动组件|在页面中以数据作为驱动源，做到随着数据变动页面界面也会随之变动的功能。
 
 ## 2. 个性化组件
 
@@ -25,7 +26,6 @@
 [mip-app-banner](./extensions/mip-app-banner.md) |App 调起组件|用于调起 App 。
 [mip-appdl](./extensions/mip-appdl.md) |App 下载|App 下载，可区分安卓和 iOS 。
 [mip-audio](./extensions/mip-audio.md) |音频播放|提供了一个音频播放组件
-[mip-bind](./extensions/mip-bind.md) |数据驱动组件|在页面中以数据作为驱动源，做到随着数据变动页面界面也会随之变动的功能。
 [mip-experiment](./extensions/mip-experiment.md) |前端抽样实验|mip-experiment 组件用于前端抽样实验。可用于按钮，banner，广告等前端可控元素的改版实验，与 mip-pix 可配合使用。
 [mip-filter](./extensions/mip-filter.md) |筛选组件|筛选组件，自适应 PC 端和移动端宽度。 [mipengine.org](https://www.mipengine.org/timeline.html)有引用
 [mip-fixed](./extensions/mip-fixed.md) |悬浮布局|悬浮元素整体使用方案。
