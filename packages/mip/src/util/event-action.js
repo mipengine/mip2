@@ -66,13 +66,31 @@ class EventAction {
     if (!action) {
       return
     }
-    switch (action.handler) {
-      case 'setData':
-        MIP.setData(action, 1)
-        break
-      case '$set':
-        MIP.$set(action, 1)
-        break
+
+    const allowedGlobals = (
+      'Infinity,undefined,NaN,isFinite,isNaN,' +
+      'parseFloat,parseInt,decodeURI,decodeURIComponent,encodeURI,encodeURIComponent,' +
+      'Math,Number,Date,Array,Object,Boolean,String,RegExp,Map,Set,JSON,Intl,' +
+      'm' // MIP global data
+    ).split(',')
+
+    let hasProxy = typeof Proxy !== 'undefined'
+    let proxy = hasProxy ? new Proxy({}, {
+      has (target, key) {
+        let allowed = allowedGlobals.indexOf(key) >= 0
+        return !allowed
+      }
+    }) : {}
+
+    let fn = new Function(`with(this){return ${action.arg}}`) // eslint-disable-line
+    let data = fn.call(proxy)
+
+    if (action.handler === 'setData') {
+      MIP.setData(data)
+    } else if (action.handler === '$set') {
+      MIP.$set(data)
+    } else {
+      throw new Error(`Can not find handler "${action.handler}" from MIP.`)
     }
   }
 
