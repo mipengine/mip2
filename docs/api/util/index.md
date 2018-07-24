@@ -7,7 +7,7 @@ window.MIP.util
 
 ## 描述
 
-`MIP.util` 对象是工具库的入口文件，除了暴露了 `fn` `dom` 等其他的工具库外，本身还提供了 `parseCacheUrl`, `makeCacheUrl` 和 `getOriginalUrl` 函数
+`MIP.util` 对象是工具库的入口文件，除了暴露了 `fn` `dom` 等其他的工具库外，本身还提供了 `parseCacheUrl`, `makeCacheUrl` 和 `getOriginalUrl` 函数
 
 ## 属性
 
@@ -57,7 +57,7 @@ EventEmitter 类，提供了 mixin 函数，参考[EventEmitter](./event-emitter
 **css**
 - 参数：
   - {Array.<HTMLElement>|NodeList|HTMLElement} elements 需要设置的元素或者数组
-  - {Object.<string, string|number>|string} property 属性名，如果是 Object，则为属性和值的键值对 css(element, {left: 0, top: 0})
+  - {Object.<string, string|number>|string} property 属性名，如果是 Object，则为属性和值的键值对 `css(element, {left: 0, top: 0})`
   - {string|number=} value 属性值
 - 返回值：
 
