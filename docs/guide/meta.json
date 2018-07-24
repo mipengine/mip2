@@ -9,6 +9,14 @@
       "key": "mip-cli"
     },
     {
+      "name": "MIP 组件机制",
+      "key": "component"
+    },
+    {
+      "name": "进阶教程",
+      "key": "mip-advanced"
+    },
+    {
       "name": "开发规范",
       "key": "mip-standard"
     },
@@ -19,6 +27,14 @@
     {
       "name": "全站 MIP",
       "key": "all-sites-mip"
+    },
+    {
+      "name": "MIP 搜索生效",
+      "key": "mip-in-search"
+    },
+    {
+      "name": "MIP 源码解析",
+      "key": "mip-source-interpretation"
     }
   ]
 }

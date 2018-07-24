@@ -1,0 +1,16 @@
+{
+  "menu": [
+    {
+      "name": "MIP 组件列表",
+      "key": "index"
+    },
+    {
+      "name": "内置组件",
+      "key": "builtin"
+    },
+    {
+      "name": "扩展组件",
+      "key": "extensions"
+    }
+  ]
+}

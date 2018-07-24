@@ -105,7 +105,7 @@ README.md 文件必须符合 MIP 扩展组件 README.md 规范。手写README.md
 
 3. 组件使用示例
 
-mip-cli 默认生成了 example 文件夹，并默认生成了 mip-sample.html 文件。在通过 `mip dev` 命令启动调试服务器时，可以通过`http://127.0.0.1:8111/components/mip-hello-world/example/mip-hello-world.html`直接访问到 example 里的 html 文件，开发者在进行组件开发时，可以利用这一功能进行组件调试。建议 example 里的使用示例最好能涵盖组件的全部功能，在组件提交审核的时候，这些示例将作为组件审核的重要考察点之一。
+mip-cli 默认生成了 example 文件夹，并默认生成了 mip-hello-world.html 文件。在通过 `mip dev` 命令启动调试服务器时，可以通过`http://127.0.0.1:8111/components/mip-hello-world/example/mip-hello-world.html`直接访问到 example 里的 html 文件，开发者在进行组件开发时，可以利用这一功能进行组件调试。建议 example 里的使用示例最好能涵盖组件的全部功能，在组件提交审核的时候，这些示例将作为组件审核的重要考察点之一。
 
 ### `mip2 dev` 启动调试服务器
 
