@@ -185,6 +185,7 @@ let viewer = {
    * @param {boolean} options.replace If true, use `history.replace` instead of `history.push`. Defaults to `false`
    * @param {Object} options.state Target page info
    */
+  /* istanbul ignore next */
   open (to, {isMipLink = true, replace = false, state} = {}) {
     if (!state) {
       state = {click: undefined, title: undefined, defaultTitle: undefined}
@@ -239,14 +240,13 @@ let viewer = {
           defaultTitle: pushMessage.state.defaultTitle
         }
       }
-      window.MIP_SHELL_OPTION.allowTransition = true
     }
 
     // Handle <a mip-link replace> & hash
     if (isHashInCurrentPage || replace) {
-      this.page.replace(targetRoute)
+      this.page.replace(targetRoute, {allowTransition: true})
     } else {
-      this.page.push(targetRoute)
+      this.page.push(targetRoute, {allowTransition: true})
     }
   },
 

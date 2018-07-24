@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 /**
  * @file MIP Shell Base
  * @author wangyisheng@baidu.com (wangyisheng)
@@ -379,8 +380,14 @@ class MipShell extends CustomElement {
 
       // Deal message and operate router
       if (type === MESSAGE_ROUTER_PUSH) {
+        if (data.options.allowTransition) {
+          window.MIP_SHELL_OPTION.allowTransition = true
+        }
         router.push(data.route)
       } else if (type === MESSAGE_ROUTER_REPLACE) {
+        if (data.options.allowTransition) {
+          window.MIP_SHELL_OPTION.allowTransition = true
+        }
         router.replace(data.route)
       } else if (type === MESSAGE_ROUTER_BACK) {
         window.MIP_SHELL_OPTION.allowTransition = true

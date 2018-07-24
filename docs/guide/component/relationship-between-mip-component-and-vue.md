@@ -8,9 +8,9 @@ MIP 组件化的核心是基于 Custom Elements（自定义元素）来实现的
 
 ```js
 window.customElements.define('custom-drawer', class extends HTMLElement {
-    connectedCallback() {
-        this.innerHTML = '<p>Hello world.</p>'
-    }
+  connectedCallback() {
+    this.innerHTML = '<p>Hello world.</p>'
+  }
 });
 ```
 
@@ -98,7 +98,7 @@ MIP.registerCustomElement = function (name, CustomElementClass, css) {
 }
 ```
 
-由于 MIP 组件有些公共的逻辑要在生命周期钩子中执行，而自定义组件是通过继承的方式扩展的，如果直接继承 BaseElement 很容易造成自定义组件扩展在重载方法时忘记调用父类的方法，导致 MIP 对自定义元素失去控制，所以 MIP 提供了一个给开发者自定义元素的 `CustomElement` 实现类。MIP 的自定义元素基类 `CustomElement` 基类除了提供规范的定义的几个方法外，还提供了 `firstInviewCallback()`、`viewportCallback()` 之类的回调方法，详见 [MIP 生命周期](./04-instance-life-cycle.md)。
+由于 MIP 组件有些公共的逻辑要在生命周期钩子中执行，而自定义组件是通过继承的方式扩展的，如果直接继承 BaseElement 很容易造成自定义组件扩展在重载方法时忘记调用父类的方法，导致 MIP 对自定义元素失去控制，所以 MIP 提供了一个给开发者自定义元素的 `CustomElement` 实现类。MIP 的自定义元素基类 `CustomElement` 基类除了提供规范的定义的几个方法外，还提供了 `firstInviewCallback()`、`viewportCallback()` 之类的回调方法，详见 [MIP 生命周期](./instance-life-cycle.md)。
 
 在引入 MIP 核心代码之后，在 JS 中我们可以通过如下的方式使用 `MIP.registerCustomElement()` 方法进行注册一个 MIP 组件：
 
@@ -245,6 +245,6 @@ Vue.customElement = (tag, componentDefinition) => {
 虽然在 HTML 语法中不支持 vue 语法，但是 MIP 也提供了很多特性使开发者使用起来更加简单：
 
 - Props 属性传递, 通过 HTML 自定义标签的属性和属性值定义，就可以将自定义标签的属性数据传递给 vue 组件，vue 组件通过 props 属性进行接收。
-- [Slots 内容插槽/分发](./06-slots.md) 可以将 HMTL 自定义元素的内容直接分发到 vue 模板内部的 `<slot>` 标签
-- [Events 事件绑定](./09-actions-and-events.md)， 可以通过 $emit 和 $on 方法替代 addEventAction 和 eventAction.execute
-- [数据绑定](../interactive-mip/03-mip-bind.md)，HTML 自定义标签上的属性变化会实时反馈到 vue 内部
+- [Slots 内容插槽/分发](./slots.md) 可以将 HMTL 自定义元素的内容直接分发到 vue 模板内部的 `<slot>` 标签
+- [Events 事件绑定](./actions-and-events.md)， 可以通过 $emit 和 $on 方法替代 addEventAction 和 eventAction.execute
+- [数据绑定](../interactive-mip/mip-bind.md)，HTML 自定义标签上的属性变化会实时反馈到 vue 内部

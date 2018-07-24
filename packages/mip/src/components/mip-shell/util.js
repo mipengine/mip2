@@ -22,7 +22,7 @@ export function convertPatternToRegexp (pattern) {
 }
 
 // =================== DOM related ===================
-
+/* istanbul ignore next */
 function renderMoreButton ({name, text, link} = {}) {
   if (!name || !text) {
     return
@@ -42,7 +42,7 @@ function renderMoreButton ({name, text, link} = {}) {
  * @param {Object} options options
  * @param {boolean} options.update If this is an update operation
  */
-export function createMoreButtonWrapper (buttonGroup, options = {}) {
+export /* istanbul ignore next */ function createMoreButtonWrapper (buttonGroup, options = {}) {
   if (!Array.isArray(buttonGroup)) {
     buttonGroup = []
   }
@@ -82,7 +82,7 @@ export function createMoreButtonWrapper (buttonGroup, options = {}) {
  * Create page mask to cover header
  * Mainly used in dialog within iframes
  */
-export function createPageMask () {
+export /* istanbul ignore next */ function createPageMask () {
   let mask = document.createElement('mip-fixed')
   mask.classList.add('mip-shell-header-mask')
   document.body.appendChild(mask)
@@ -99,7 +99,7 @@ export function createPageMask () {
  * @param {boolean} options.skipTransition Show result without transition
  * @param {boolean} options.transitionName Transition name. Defaults to 'fade'
  */
-export function toggleInner (element, toggle, {skipTransition, transitionName = 'fade'} = {}) {
+export /* istanbul ignore next */ function toggleInner (element, toggle, {skipTransition, transitionName = 'fade'} = {}) {
   if (skipTransition) {
     css(element, 'display', toggle ? 'block' : 'none')
     return

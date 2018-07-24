@@ -43,6 +43,12 @@ const webpackConfig = {
   devtool: '#inline-source-map'
 }
 
+let browsers = ['Chrome']
+// trvis env
+if (process.env.TRAVIS) {
+  browsers = ['Chrome_travis_ci']
+}
+
 module.exports = {
   files: [
     'index.js'
@@ -67,6 +73,13 @@ module.exports = {
     'karma-chai-sinon'
     // 'karma-chai-as-promised'
   ],
-  browsers: ['Chrome'],
+  browsers: browsers,
+  // custom launchers
+  customLaunchers: {
+    Chrome_travis_ci: {
+      base: 'Chrome',
+      flags: ['--no-sandbox']
+    }
+  },
   concurrency: Infinity
 }

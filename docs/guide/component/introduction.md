@@ -34,10 +34,10 @@ mip.registerVueCustomElement('mip-demo', {/* options */});
 
 ### 组件注册
 
-我们用 `mip.registerVueCustomElement` 方法来创建组件：
+我们用 `MIP.registerVueCustomElement` 方法来创建组件：
 
 ```js
-mip.registerVueCustomElement('my-component-name', {
+MIP.registerVueCustomElement('my-component-name', {
     // ... 选项 ...
 });
 ```
@@ -45,9 +45,9 @@ mip.registerVueCustomElement('my-component-name', {
 这些组件是全局注册的。也就是说它们在注册之后在 MIP-HTML 中对应的 customElement 就会初始化一个实例，并开始渲染并执行实例生命周期回调：
 
 ```js
-mip.registerVueCustomElement('component-a', { /* ... */ });
-mip.registerVueCustomElement('component-b', { /* ... */ });
-mip.registerVueCustomElement('component-c', { /* ... */ });
+MIP.registerVueCustomElement('component-a', { /* ... */ });
+MIP.registerVueCustomElement('component-b', { /* ... */ });
+MIP.registerVueCustomElement('component-c', { /* ... */ });
 ```
 
 ```html
@@ -84,7 +84,7 @@ MIP 支持在 MIP-HTML 文档中使用 customElement 标签，customElement 标�
 注册 MIP 组件的方法如下：
 
 ```js
-mip.registerVueCustomElement(
+MIP.registerVueCustomElement(
   'mip-hello-world',
   /**
     * 这里传入的对象就是 Vue 的实例对象（先不要蒙，后面我们会讲为什么会是一个 Vue 的实例）。
@@ -114,4 +114,4 @@ mip.registerVueCustomElement(
 
 开发组件的时候既然是使用 Vue 的方式开发 Vue 组件，那如何和 MIP-HTML 中的 customElement 进行关联上呢？
 
-MIP 会在注册 customElement 的时候约定，当开始渲染 MIP-HTML 中的 customElement 的时候，会创建一个对应的 Vue 实例，customElement 的内容都是通过对应的 Vue 组件的实例渲染出来的，当然由于 customElement 有自身标准的 API, 和 Vue 的生命周期还是有些出入，详见 [MIP 组件生命周期](./04-instance-life-cycle.md)，而 Vue 组件渲染是依赖数据的，customElement 是如何将数据传给组件呢？详见 [MIP 语法](./05-syntax.md)。
+MIP 会在注册 customElement 的时候约定，当开始渲染 MIP-HTML 中的 customElement 的时候，会创建一个对应的 Vue 实例，customElement 的内容都是通过对应的 Vue 组件的实例渲染出来的，当然由于 customElement 有自身标准的 API, 和 Vue 的生命周期还是有些出入，详见 [MIP 组件生命周期](./instance-life-cycle.md)，而 Vue 组件渲染是依赖数据的，customElement 是如何将数据传给组件呢？详见 [MIP 语法](./syntax.md)。
