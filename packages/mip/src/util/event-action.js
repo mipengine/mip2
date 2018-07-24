@@ -16,7 +16,7 @@ import dom from './dom/dom'
  * @inner
  * @type {RegExp}
  */
-const PARSE_REG = /^(\w+):([\w-]+)\.([\w-$]+)(?:\((.+)\))?$/
+const PARSE_REG = /^(\w+):\s*([\w-]+)\.([\w-$]+)(?:\((.+)\))?$/
 
 /**
  * Regular for checking elements.
@@ -186,14 +186,53 @@ class EventAction {
     }
   }
 
-  parse (actionString, type, nativeEvent) {
-    if (typeof actionString !== 'string') {
+  parse (str, type, event) {
+    if (typeof str !== 'string') {
       return []
     }
-    let actions = actionString.trim().split(' ')
+
+    let isQuote = char => char === '"' || char === '\''
+    let isSpace = char => char === ' '
+    let isColon = char => char === ':'
+
+    let pos = 0
+    let actions = []
+    let pstack = []
+    for (let i = 0, slen = str.length; i < slen; i++) {
+      let peek = pstack[pstack.length - 1]
+      let char = str[i]
+
+      if (char === '(' && !isQuote(peek)) {
+        pstack.push(char)
+      } else if (char === ')' && peek === '(') {
+        pstack.pop()
+      } else if (isQuote(char) && str[i - 1] !== '\\') {
+        if (peek === char) {
+          pstack.pop()
+        } else {
+          pstack.push(char)
+        }
+      } else if (isColon(char) && !pstack.length) {
+        pstack.push(char)
+      } else if (isColon(peek) && !isSpace(str[i + 1])) {
+        pstack.pop()
+      } else if (isSpace(char) && !pstack.length) {
+        let act = str.substring(pos, i).trim(' ')
+        act && actions.push(act)
+        pos = i
+      }
+    }
+
+    if (pstack.length) {
+      throw new SyntaxError(`Can not match ${pstack[pstack.length - 1]} in statement: 'on=${str}'`)
+    }
+
+    let act = str.substring(pos, str.length).trim(' ')
+    act && actions.push(act)
+
     let result = []
     for (let i = 0, len = actions.length; i < len; i++) {
-      let action = actions[i]
+      let action = actions[i].replace(/\n/g, '')
       let matchedResult = action.match(PARSE_REG)
       if (matchedResult && matchedResult[1] === type) {
         result.push({
@@ -201,7 +240,7 @@ class EventAction {
           id: matchedResult[2],
           handler: matchedResult[3],
           arg: matchedResult[4],
-          event: nativeEvent
+          event: event
         })
       }
     }
