@@ -1,6 +1,23 @@
+<p align='center'>
+    <a href="https://www.mipengine.org/">
+        <img width="150" src="https://www.mipengine.org/static/img/mip_logo_3b722d7.png" title='MIP' alt='MIP'>
+    </a>
+</p>
+<p align='center'>
+    <a href='https://travis-ci.org/mipengine/mip2'>
+        <img src='https://travis-ci.org/mipengine/mip2.svg?branch=master' title='Build Status' alt='Build Status'>
+    </a>
+    <a href='https://coveralls.io/github/mipengine/mip2'>
+        <img src='https://coveralls.io/repos/github/mipengine/mip2/badge.svg?branch=master' title='Coverage Status' alt='Coverage Status' />
+    </a>
+	<a href='https://opensource.org/licenses/MIT'>
+		<img src='https://img.shields.io/github/license/mipengine/mip2.svg'  title='license' alt='license'>
+	</a>
+</p>
+
 # MIP 2
 
-这个项目包含 mip 核心代码和 mip-cli 的代码，位于 packages 目录下
+这个项目包含 mip 核心、mip-cli、mip-validator、mip-sandbox 代码，位于 packages 目录下
 
 ## 代码规范
 
