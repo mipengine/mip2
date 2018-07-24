@@ -16,16 +16,21 @@ import fn from '../../util/fn'
 import platform from '../../util/platform'
 import event from '../../util/dom/event'
 import CustomElement from '../../custom-element'
-import {supportsPassive} from '../../page/util/feature-detect'
+import {supportsPassive, isPortrait} from '../../page/util/feature-detect'
 import {isSameRoute, getFullPath} from '../../page/util/route'
 import {
   createIFrame,
   getIFrame,
+  hideAllIFrames,
   frameMoveIn,
   frameMoveOut,
   createLoading,
+  getLoading,
   createFadeHeader,
-  toggleFadeHeader
+  getFadeHeader,
+  toggleFadeHeader,
+  nextFrame,
+  whenTransitionEnds
 } from '../../page/util/dom'
 import {getCleanPageId} from '../../page/util/path'
 import Router from '../../page/router/index'
@@ -49,6 +54,7 @@ import {customEmit} from '../../vue-custom-element/utils/custom-event'
 
 let viewer = null
 let page = null
+let activeZIndex = 10000
 window.MIP_PAGE_META_CACHE = Object.create(null)
 window.MIP_SHELL_CONFIG = null
 
@@ -197,6 +203,7 @@ class MipShell extends CustomElement {
     this.currentPageMeta = this.findMetaByPageId(page.pageId)
 
     if (page.isRootPage) {
+      page.pageMeta = this.currentPageMeta
       this.initShell()
       this.initRouter()
       this.bindRootEvents()
@@ -459,6 +466,191 @@ class MipShell extends CustomElement {
    * @param {Route} from route
    * @param {Route} to route
    */
+  render2 (from, to) {
+    this.resizeAllPages()
+
+    // If `to` route is the same with `from` route in path & query, scroll in current page
+    if (isSameRoute(from, to, true)) {
+      // Emit event to current active page
+      page.emitEventInCurrentPage({
+        name: CUSTOM_EVENT_SCROLL_TO_ANCHOR,
+        data: to.hash
+      })
+      return
+    }
+
+    // Render target page
+    let sourcePage = page.getPageById(page.currentPageId)
+    let targetFullPath = getFullPath(to)
+    let targetPageId = getCleanPageId(targetFullPath)
+    let targetPage = page.getPageById(targetPageId)
+
+    /**
+     * priority of header.title:
+     * 1. <a mip-link data-title>
+     * 2. <mip-shell> route.meta.header.title
+     * 3. <a mip-link></a> innerText
+     */
+    let configPageMeta = this.findMetaByPageId(targetPageId)
+    let innerTitle = {title: to.meta.defaultTitle || undefined}
+    let targetPageMeta = fn.extend(true, innerTitle, configPageMeta, to.meta)
+
+    // Transition direction
+    let isForward = window.MIP_SHELL_OPTION.direction !== 'back'
+
+    // Hide page mask and skip transition
+    this.togglePageMask(false, {skipTransition: true})
+
+    // Show header
+    this.toggleTransition(false)
+    this.slideHeader('down')
+    this.pauseBouncyHeader = true
+
+    let params = {
+      targetPageId,
+      targetPageMeta,
+      sourcePageId: page.currentPageId,
+      sourcePageMeta: sourcePage.pageMeta,
+      isForward
+    }
+
+    // Leave from root page, save scroll position
+    if (page.currentPageId === page.pageId) {
+      this.saveScrollPosition()
+    }
+    // Goto root page, resume scroll position (Only appears in backward)
+    if (targetPageId === page.pageId && !isForward) {
+      params.rootPageScrollPosition = this.rootPageScrollPosition
+      this.restoreScrollPosition()
+    }
+
+    if (!targetPage || (to.meta && to.meta.reload)) {
+      // Iframe will be created in following situation:
+      // 1. `!targetPage` means target iframe doesn't exists.
+      // 2. `to.meta && to.meta.reload` means target iframe MUST be recreated even it exists.
+      //    `to.meta.reload` will be set when click `<a mip-link>`
+
+      // If target page is root page
+      if (page.pageId === targetPageId) {
+        // Clear root pageId and destroy root page (Root page will exist in newly created iframe)
+        page.pageId = NON_EXISTS_PAGE_ID
+        if (targetPage) {
+          targetPage.destroy()
+        }
+        // Delete DOM & trigger disconnectedCallback in root page
+        Array.prototype.slice.call(page.getElementsInRootPage()).forEach(el => el.parentNode && el.parentNode.removeChild(el))
+      }
+
+      page.checkIfExceedsMaxPageNum()
+
+      let targetPageInfo = {
+        pageId: targetPageId,
+        pageMeta: targetPageMeta,
+        fullpath: targetFullPath,
+        standalone: window.MIP.standalone,
+        isRootPage: false,
+        isCrossOrigin: to.origin !== window.location.origin
+      }
+
+      let iframeCreated = false
+      let targetIFrame
+      // Bugs appear in QQBrowser when [pushState] and [create iframe] invoked together
+      // Ensure [create iframe] before [pushState] and eliminate async operations can help
+      // Thus, disable transition in QQBrowser
+      if (platform.isQQ() || platform.isQQApp()) {
+        targetIFrame = createIFrame(targetPageInfo)
+        targetPageInfo.targetWindow = targetIFrame.contentWindow
+        iframeCreated = true
+        window.MIP_SHELL_OPTION.allowTransition = false
+      }
+
+      page.addChild(targetPageInfo)
+      params.newPage = true
+
+      this.beforeSwitchPage(params)
+
+      params.onComplete = () => {
+        this.currentPageMeta = targetPageMeta
+        window.MIP_SHELL_OPTION.allowTransition = false
+        window.MIP_SHELL_OPTION.direction = null
+
+        if (!iframeCreated) {
+          targetIFrame = createIFrame(targetPageInfo)
+          targetPageInfo.targetWindow = targetIFrame.contentWindow
+        }
+        css(targetIFrame, {
+          display: 'block',
+          opacity: 1,
+          'z-index': activeZIndex++
+        })
+        this.toggleTransition(true)
+        this.pauseBouncyHeader = false
+
+        // Get <mip-shell> from root page
+        let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
+        if (shellDOM) {
+          viewer.eventAction.execute('active', shellDOM, {})
+        }
+
+        // Emit show/hide event to both pages
+        page.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
+        page.currentPageId = targetPageId
+        page.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+
+        this.afterSwitchPage(params)
+      }
+
+      this.switchPage(params)
+    } else {
+      // Use existing iframe without recreating
+      if (platform.isQQ() || platform.isQQApp()) {
+        window.MIP_SHELL_OPTION.allowTransition = false
+      }
+
+      params.newPage = false
+      this.beforeSwitchPage(params)
+
+      params.onComplete = () => {
+        this.currentPageMeta = targetPageMeta
+        window.MIP_SHELL_OPTION.allowTransition = false
+        window.MIP_SHELL_OPTION.direction = null
+
+        window.MIP.$recompile()
+
+        css(getIFrame(targetPageId), {
+          display: 'block',
+          opacity: 1
+        })
+        this.toggleTransition(true)
+        this.pauseBouncyHeader = false
+
+        // Update shell if new iframe has not been created
+        this.refreshShell({pageMeta: targetPageMeta})
+
+        // Get <mip-shell> from root page
+        let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
+        if (shellDOM) {
+          viewer.eventAction.execute('active', shellDOM, {})
+        }
+
+        // Emit show/hide event to both pages
+        page.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
+        page.currentPageId = targetPageId
+        page.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+
+        this.afterSwitchPage(params)
+      }
+
+      this.switchPage(params)
+    }
+  }
+
+  /**
+   * render with current route
+   *
+   * @param {Route} from route
+   * @param {Route} to route
+   */
   render (from, to) {
     this.resizeAllPages()
     /**
@@ -591,6 +783,203 @@ class MipShell extends CustomElement {
    */
   restoreScrollPosition () {
     viewport.setScrollTop(this.rootPageScrollPosition)
+  }
+
+  /**
+   * Apply transition effect when switching page
+   *
+   * @param {Object} options
+   * @param {string} options.targetPageId targetPageId
+   * @param {Object} options.targetPageMeta pageMeta of target page
+   * @param {string} options.sourcePageId sourcePageId
+   * @param {Object} options.sourcePageMeta pageMeta of source page
+   * @param {boolean} options.newPage whether a new iframe should be created
+   * @param {boolean} options.isForward whether transition direction is forward
+   * @param {Function} options.onComplete complete callback
+   */
+  switchPage (options) {
+    if (isPortrait() && window.MIP_SHELL_OPTION.allowTransition) {
+      // enable transition
+      if (options.newPage) {
+        if (options.isForward) {
+          this.forwardTransitionAndCreate(options)
+        } else {
+          this.backwardTransitionAndCreate(options)
+        }
+      } else {
+        if (options.isFoward) {
+          this.forwardTransition(options)
+        } else {
+          this.backwardTransition(options)
+        }
+      }
+    } else {
+      // disable transition
+      if (options.newPage) {
+        this.skipTransitionAndCreate(options)
+      } else {
+        this.skipTransition(options)
+      }
+    }
+  }
+
+  /**
+   * Forward transition and create new iframe
+   *
+   * @param {Object} options
+   * @param {string} options.targetPageId targetPageId
+   * @param {Object} options.targetPageMeta pageMeta of target page
+   * @param {string} options.sourcePageId sourcePageId
+   * @param {Object} options.sourcePageMeta pageMeta of source page
+   * @param {boolean} options.newPage whether a new iframe should be created (true)
+   * @param {boolean} options.isForward whether transition direction is forward (true)
+   * @param {Function} options.onComplete complete callback
+   */
+  forwardTransitionAndCreate ({targetPageId, targetPageMeta, onComplete}) {
+    let loading = getLoading(targetPageMeta, {transitionContainsHeader: this.transitionContainsHeader})
+    loading.classList.add('slide-enter', 'slide-enter-active')
+    css(loading, 'display', 'block')
+
+    let headerLogoTitle
+    let fadeHeader
+    if (!this.transitionContainsHeader) {
+      headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
+      headerLogoTitle && headerLogoTitle.classList.add('fade-out')
+      fadeHeader = getFadeHeader(targetPageMeta)
+      fadeHeader.classList.add('fade-enter', 'fade-enter-active')
+      css(fadeHeader, 'display', 'block')
+    }
+
+    // trigger layout
+    /* eslint-disable no-unused-expressions */
+    loading.offsetWidth
+    /* eslint-enable no-unused-expressions */
+
+    whenTransitionEnds(loading, 'transition', () => {
+      loading.classList.remove('slide-enter-to', 'slide-enter-active')
+      if (!this.transitionContainsHeader) {
+        fadeHeader.classList.remove('fade-enter-to', 'fade-enter-active')
+      }
+
+      hideAllIFrames()
+      /**
+       * Disable scrolling of root page when covered by an iframe
+       * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
+       */
+      document.documentElement.classList.add('mip-no-scroll')
+      Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
+
+      onComplete && onComplete()
+    })
+
+    nextFrame(() => {
+      loading.classList.add('slide-enter-to')
+      loading.classList.remove('slide-enter')
+      if (!this.transitionContainsHeader) {
+        fadeHeader.classList.add('fade-enter-to')
+        fadeHeader.classList.remove('fade-enter')
+      }
+    })
+  }
+
+  /**
+   * Backward transition and create new iframe
+   *
+   * @param {Object} options
+   * @param {string} options.targetPageId targetPageId
+   * @param {Object} options.targetPageMeta pageMeta of target page
+   * @param {string} options.sourcePageId sourcePageId
+   * @param {Object} options.sourcePageMeta pageMeta of source page
+   * @param {boolean} options.newPage whether a new iframe should be created (true)
+   * @param {boolean} options.isForward whether transition direction is forward (false)
+   * @param {Function} options.onComplete complete callback
+   */
+  backwardTransitionAndCreate ({
+    targetPageId,
+    targetPageMeta,
+    sourcePageId,
+    sourcePageMeta,
+    onComplete,
+    rootPageScrollPosition = 0
+  }) {
+    let iframe = getIFrame(sourcePageId)
+
+    if (targetPageId) {
+      let targetIFrame = getIFrame(targetPageId)
+      activeZIndex -= 2
+      css(targetIFrame, {
+        opacity: 1,
+        display: 'block',
+        'z-index': activeZIndex++
+      })
+    }
+
+    // If source page is root page, skip transition
+    if (!iframe) {
+      onComplete && onComplete()
+      return
+    }
+
+    // Moving out only needs header, not loading body
+    let loading = getLoading(sourcePageMeta, {
+      onlyHeader: true,
+      transitionContainsHeader: this.transitionContainsHeader
+    })
+    let headerLogoTitle
+    let fadeHeader
+
+    if (this.transitionContainsHeader) {
+      css(loading, 'display', 'block')
+    } else {
+      headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
+      headerLogoTitle && headerLogoTitle.classList.add('fade-out')
+      fadeHeader = getFadeHeader(targetPageMeta, sourcePageMeta)
+      css(fadeHeader, 'display', 'block')
+    }
+
+    iframe.classList.add('slide-leave', 'slide-leave-active')
+    if (this.transitionContainsHeader) {
+      loading.classList.add('slide-leave', 'slide-leave-active')
+    } else {
+      fadeHeader.classList.add('fade-enter', 'fade-enter-active')
+    }
+
+    // trigger layout and move current iframe to correct position
+    /* eslint-disable no-unused-expressions */
+    css(iframe, {
+      opacity: 1,
+      top: rootPageScrollPosition + 'px'
+    })
+    /* eslint-enable no-unused-expressions */
+
+    whenTransitionEnds(iframe, 'transition', () => {
+      css(iframe, {
+        display: 'none',
+        'z-index': 10000,
+        top: 0
+      })
+      iframe.classList.remove('slide-leave-to', 'slide-leave-active')
+      if (this.transitionContainsHeader) {
+        loading.classList.remove('slide-leave-to', 'slide-leave-active')
+        css(loading, 'display', 'none')
+      } else {
+        fadeHeader.classList.remove('fade-enter-to', 'fade-enter')
+      }
+
+      onComplete && onComplete()
+    })
+
+    nextFrame(() => {
+      iframe.classList.add('slide-leave-to')
+      iframe.classList.remove('slide-leave')
+      if (this.transitionContainsHeader) {
+        loading.classList.add('slide-leave-to')
+        loading.classList.remove('slide-leave')
+      } else {
+        fadeHeader.classList.add('fade-enter-to')
+        fadeHeader.classList.remove('fade-enter')
+      }
+    })
   }
 
   /**
@@ -1013,6 +1402,28 @@ class MipShell extends CustomElement {
     // Whether show close button in header
     // Only effective when window.MIP.standalone = false
     return true
+  }
+
+  beforeSwitchPage (options) {
+    // Operations before switch page transition
+    // params `options` contains:
+    // targetPageId
+    // targetPageMeta
+    // sourcePageId
+    // sourcePageMeta
+    // newPage, true/false, whether a new frame should be created
+    // isForward, true/false, indicates transition direction
+  }
+
+  afterSwitchPage (options) {
+    // Operations before switch page transition
+    // params `options` contains:
+    // targetPageId
+    // targetPageMeta
+    // sourcePageId
+    // sourcePageMeta
+    // newPage, true/false, whether a new frame should be created
+    // isForward, true/false, indicates transition direction
   }
 }
 

@@ -71,7 +71,7 @@ export function getIFrame (iframe) {
   return iframe
 }
 
-function hideAllIFrames () {
+export function hideAllIFrames () {
   let iframes = document.querySelectorAll(`.${MIP_IFRAME_CONTAINER}`)
   if (iframes) {
     for (let i = 0; i < iframes.length; i++) {
@@ -127,7 +127,7 @@ export function createLoading (pageMeta) {
  * @param {boolean} options.transitionContainsHeader Whether transition contains header
  * @returns {HTMLElement}
  */
-function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
+export function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
   let loading = document.querySelector('#mip-page-loading-wrapper')
   if (!loading) {
     createLoading()
