@@ -15,6 +15,7 @@ import 'deps/mip-components-webpack-helpers'
 
 import Vue from 'vue'
 import vueCustomElement from './vue-custom-element/index'
+import CustomElement from './custom-element'
 import util from './util/index'
 import sandbox from './sandbox'
 import layout from './layout'
@@ -85,6 +86,7 @@ let mip = {
   version: '2',
   registerVueCustomElement,
   registerCustomElement,
+  CustomElement,
   util,
   viewer,
   viewport,
