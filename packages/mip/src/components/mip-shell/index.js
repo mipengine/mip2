@@ -904,16 +904,6 @@ class MipShell extends CustomElement {
   }) {
     let iframe = getIFrame(sourcePageId)
 
-    if (targetPageId) {
-      let targetIFrame = getIFrame(targetPageId)
-      activeZIndex -= 2
-      css(targetIFrame, {
-        opacity: 1,
-        display: 'block',
-        'z-index': activeZIndex++
-      })
-    }
-
     // If source page is root page, skip transition
     if (!iframe) {
       onComplete && onComplete()
