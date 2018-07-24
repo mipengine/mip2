@@ -22,7 +22,7 @@ function createEle (tag, props, key) {
         <script type="application/json">
           {
             "#open": false,
-            "username": "iframe" 
+            "username": "iframe"
           }
         </script>
       </mip-data>

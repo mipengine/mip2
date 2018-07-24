@@ -12,7 +12,7 @@
     "uploadjs": "baidubce bos --put-object dist/mip.js bos://assets/mip/projects/mip.js",
     "uploadcss": "baidubce bos --put-object dist/mip.css bos://assets/mip/projects/mip.css",
     "deploy:dev": "npm run build && npm run uploadjs && npm run uploadcss",
-    "test:dev": "cross-env NODE_ENV=test karma start test/karma.dev.conf.js --single-run",
+    "test:dev": "cross-env NODE_ENV=test karma start test/karma.dev.conf.js",
     "test:cover": "cross-env NODE_ENV=test karma start test/karma.cover.conf.js",
     "test:vue:dev": "cross-env NODE_ENV=test karma start test/vue/karma.dev.config.js",
     "test:vue:cover": "cross-env NODE_ENV=test karma start test/vue/karma.cover.config.js",

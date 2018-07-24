@@ -67,6 +67,8 @@ class EventAction {
       return
     }
 
+    let target = action.event && action.event.target ? action.event.target : {}
+
     const allowedGlobals = (
       'Infinity,undefined,NaN,isFinite,isNaN,' +
       'parseFloat,parseInt,decodeURI,decodeURIComponent,encodeURI,encodeURIComponent,' +
@@ -75,14 +77,16 @@ class EventAction {
     ).split(',')
 
     let hasProxy = typeof Proxy !== 'undefined'
-    let proxy = hasProxy ? new Proxy({}, {
+    let proxy = hasProxy ? new Proxy({
+      DOM: target
+    }, {
       has (target, key) {
         let allowed = allowedGlobals.indexOf(key) >= 0
-        return !allowed
+        return target[key] || !allowed
       }
     }) : {}
 
-    let fn = new Function(`with(this){return ${action.arg}}`) // eslint-disable-line
+    let fn = new Function('DOM', `with(this){return ${action.arg}}`) // eslint-disable-line
     let data = fn.call(proxy)
 
     if (action.handler === 'setData') {
