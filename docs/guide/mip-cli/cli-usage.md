@@ -72,7 +72,7 @@ $ mip2 add mip-hello-world -f
 可选参数：
 
 ```
-  -f, --force  是否覆盖
+-f, --force  是否覆盖
 ```
 
 可以在 `components` 目录下看到，新增组件结构如下：
@@ -120,13 +120,13 @@ $ mip2 dev
 可选参数：
 
 ```
-  -p, --port <n>          启动端口号
-  -d, --dir <value>       项目文件夹路径
-  -l, --livereload        启用调试自动刷新
-  -a, --asset <value>     静态资源 publicPath
-  -o, --autoopen <value>  自动打开网页
-  -i, --ignore            忽略沙盒注入
-  -c, --config <value>    mip-cli 配置文件路径
+-p, --port <n>          启动端口号
+-d, --dir <value>       项目文件夹路径
+-l, --livereload        启用调试自动刷新
+-a, --asset <value>     静态资源 publicPath
+-o, --autoopen <value>  自动打开网页
+-i, --ignore            忽略沙盒注入
+-c, --config <value>    mip-cli 配置文件路径
 ```
 
 了解详细用法：[组件开发](./04-component-development.md)，[调试组件](./05-component-testing.md)
@@ -148,8 +148,8 @@ $ mip2 validate -p page.html
 可选参数：
 
 ```
-  -c, --component  校验 mip 组件
-  -p, --page       校验 mip 页面
+-c, --component  校验 mip 组件
+-p, --page       校验 mip 页面
 ```
 
 ### `mip2 build` 构建组件
@@ -167,11 +167,11 @@ $ mip2 build
 可选参数：
 
 ```
-  -a, --asset <value>   静态资源 publicPath
-  -d, --dir <value>     项目文件夹路径
-  -o, --output <value>  编译代码输出路径
-  -c, --clean           构建前先清空输出目录
-  -i, --ignore          忽略沙盒注入
+-a, --asset <value>   静态资源 publicPath
+-d, --dir <value>     项目文件夹路径
+-o, --output <value>  编译代码输出路径
+-c, --clean           构建前先清空输出目录
+-i, --ignore          忽略沙盒注入
 ```
 
 了解详细用法：[组件构建](./06-component-deploy.md)
@@ -190,8 +190,8 @@ $ mip2 sw
 可选参数：
 
 ```
-  -o, --output <value>  Service Worker 导出路径，如 mip2 -o output/service-worker.js
-  -c, --config <value>  mip-cli 配置文件路径，默认使用项目根目录 mip.config.js
+-o, --output <value>  Service Worker 导出路径，如 mip2 -o output/service-worker.js
+-c, --config <value>  mip-cli 配置文件路径，默认使用项目根目录 mip.config.js
 ```
 
 除此之外，我们可以在 `mip.config.js` 中增加 `serviceWorker` 配置项，对 Service Worker 进行进一步的配置，如预缓存列表、动态缓存策略、`skipWaiting`、`clientsClaim` 等。
