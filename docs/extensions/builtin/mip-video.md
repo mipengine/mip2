@@ -38,8 +38,9 @@
 ```html
 <mip-video controls layout="responsive" width="640" height="360" 
   src="https://mip-doc.bj.bcebos.com/sample_video.mp4">
-  您的浏览器不支持视频播放，可以从
-  <a href="http://www.baidu.com" target="_blank">这里</a> 下载该视频。
+  <div class="mip-video-poster">
+    <span class="mip-video-playbtn"></span>
+  </div>
 </mip-video>
 ```
 

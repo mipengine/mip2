@@ -10,17 +10,19 @@ MIP.registerVueCustomElement('mip-page-index', {
     return true
   },
   template: `
-    <h1>This is Page Index Component</h1>
+    <div>
+      <h1>This is Page Index Component</h1>
+      <mip-fixed type="bottom">
+        <div @click="log">Go to Top</div>
+      </mip-fixed>
+    </div>
   `,
+  methods: {
+    log () {
+      console.log('log...')
+    }
+  },
   mounted () {
-    console.log('page index mounted...')
-
-    window.addEventListener('show-page', () => {
-      console.log('page index show...')
-    })
-
-    window.addEventListener('hide-page', () => {
-      console.log('page index hide...')
-    })
+    MIP.viewer.fixedElement.init()
   }
 })

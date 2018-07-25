@@ -7,7 +7,7 @@ window.MIP
 
 ## 描述
 
-`MIP` 对象是 MIP 对外暴露 API 的唯一方式，以前 AMD 的方式在 MIP2 中已经被废弃，MIP 对象提供了注册自定义组件、工具函数等
+`MIP` 对象是 MIP 对外暴露 API 的唯一方式，以前 AMD 的方式在 MIP2 中已经被废弃，MIP 对象提供了注册自定义组件、工具函数等
 
 ## 属性
 
@@ -76,7 +76,7 @@ hash 相关的工具，参考[hash](./hash.md)
 **registerCustomElement**
 - 参数：
   - {string} tag 自定义标签名
-  - {BaseElement} clazz customElement v2 标准的自定义 Class
+  - {CustomElement} clazz customElement v2 标准的自定义 Class
   - {string} css 自定义组件的 css
 - 用法：
 

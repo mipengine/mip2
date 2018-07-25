@@ -36,7 +36,7 @@ class MipIframe extends CustomElement {
 
     let iframe = document.createElement('iframe')
     iframe.frameBorder = '0'
-    iframe.scrolling = util.platform.isIos() ? 'no' : 'yes'
+    iframe.scrolling = util.platform.isIos() ? /* istanbul ignore next */ 'no' : 'yes'
     util.css(iframe, {
       width,
       height
@@ -91,6 +91,7 @@ class MipIframe extends CustomElement {
   }
 
   setIframeHeight (height) {
+    /* istanbul ignore if */
     if (!this.fullscreen) {
       return
     }

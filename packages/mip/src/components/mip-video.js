@@ -72,7 +72,10 @@ class MipVideo extends CustomElement {
     // page ishttps(else)   + video is http     = renderInView（not mip）
     // page ishttp          + random video      = renderInView
     // page not iframe || video src is https ||  video http + page http
-    if (!windowInIframe || videoProHttps || (windowInIframe && !videoProHttps && !windowProHttps)) {
+    /* istanbul ignore else */
+    if (!windowInIframe || videoProHttps ||
+    /* istanbul ignore next */ (windowInIframe && !videoProHttps && !windowProHttps)
+    ) {
       this.videoElement = this.renderInView()
     } else {
       this.videoElement = this.renderPlayElsewhere()
@@ -112,7 +115,7 @@ class MipVideo extends CustomElement {
     return videoEl
   }
 
-  // Render the `<a>` element with poster and play btn, and append to `this.element`
+  // Render the `<div>` element with poster and play btn, and append to `this.element`
   renderPlayElsewhere () {
     let videoEl = document.createElement('div')
     let urlSrc
@@ -144,6 +147,7 @@ class MipVideo extends CustomElement {
     }
 
     function sendVideoMessage () {
+      /* istanbul ignore if */
       if (windowInIframe) {
         // mip_video_jump is written outside iframe
         viewer.sendMessage('mip_video_jump', {

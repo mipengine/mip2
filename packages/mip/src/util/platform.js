@@ -29,6 +29,7 @@ class Platform {
     this.isSafari = false
     this.isChrome = false
     this.isFireFox = false
+    this.isFirefox = false
     // engine
     this.isTrident = false
     this.isGecko = false
@@ -81,6 +82,7 @@ class Platform {
       this.isChrome = true
     } else if (/(firefox|FxiOS+)\/([0-9.ab]+)/i.test(this._ua())) {
       this.isFireFox = true
+      this.isFirefox = true
     } else if (
       /android/i.test(this._ua()) &&
             /Android[\s_\-/i686]?[\s_\-/](\d+[.\-_]\d+[.\-_]?\d*)/i.test(this._ua())
