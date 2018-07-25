@@ -457,36 +457,36 @@ MIP 提供了全局方法 `MIP.watch(value, cb)` 供开发者注册观察数据�
 
 ```html
 <mip-data>
-    <script type="application/json">
+  <script type="application/json">
     {
-        "num": 1,
-        "title": "Initial num = 1",
-        "img": {
-            "first": ""
-        }
+      "num": 1,
+      "title": "Initial num = 1",
+      "img": {
+        "first": ""
+      }
     }
-    </script>
+  </script>
 </mip-data>
 <p m-text="title"></p>
 <div>
-    num = DOM.value = <span m-text="num"></span>
+  num = DOM.value = <span m-text="num"></span>
 </div>
 <input type='text' on="change:MIP.setData({num:DOM.value})">
 <mip-script >
-    MIP.watch('num', newValue => {
-        MIP.setData({
-            img: {
-                first: 'img.first changed due to num changed to' + newValue
-            }
-        })
+  MIP.watch('num', newValue => {
+    MIP.setData({
+      img: {
+          first: 'img.first changed due to num changed to' + newValue
+        }
+      })
     })
-    MIP.watch('img.first', newVal => {
-        MIP.setData({
-            title: newVal
-        })
+  MIP.watch('img.first', newVal => {
+    MIP.setData({
+      title: newVal
     })
-    MIP.watch(['num', 'img.first'], newVal => {
-        console.log('multiple')
-    })
+  })
+  MIP.watch(['num', 'img.first'], newVal => {
+    console.log('multiple')
+  })
 </mip-script>
 ```

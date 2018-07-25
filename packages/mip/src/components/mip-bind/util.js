@@ -52,8 +52,8 @@ export function parseClass (classSpecs, oldSpecs = {}) {
     Object.keys(classSpecs).forEach(k => {
       typeof classSpecs[k] !== 'undefined' && k && (newClasses[k] = classSpecs[k])
     })
-    return newClasses
   }
+  return newClasses
 }
 
 export function parseStyle (styleSpecs) {
@@ -135,6 +135,30 @@ export function objectToStyle (obj) {
     styles += `${k}:${obj[k]};`
   })
   return styles
+}
+
+export function getWithResult (exp) {
+  exp = namespaced(exp)
+  let func
+  try {
+    func = new Function(`with(this){try {return ${exp}} catch(e) {}}`) // eslint-disable-line
+  } catch (e) {
+    /* istanbul ignore next */
+    func = () => ''
+  }
+  return func
+}
+
+export function setWithResult (exp, value) {
+  exp = namespaced(exp)
+  let func
+  try {
+    func = new Function(`with(this){try {${exp} = "${value}"} catch (e) {}}`) // eslint-disable-line
+  } catch (e) {
+    /* istanbul ignore next */
+    func = () => ''
+  }
+  return func
 }
 
 export function namespaced (str) {

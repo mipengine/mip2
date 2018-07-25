@@ -91,6 +91,7 @@ class MipIframe extends CustomElement {
   }
 
   setIframeHeight (height) {
+    /* istanbul ignore if */
     if (!this.fullscreen) {
       return
     }

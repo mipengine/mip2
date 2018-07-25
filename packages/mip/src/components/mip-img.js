@@ -177,6 +177,7 @@ function bindLoad (element, img, mipEle) {
  * @param {HTMLElement} img image element
  */
 function errorHandle (img) {
+  /* istanbul ignore if */
   if (!viewer.isIframed) {
     return
   }
