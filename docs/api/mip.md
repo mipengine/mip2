@@ -40,6 +40,20 @@ viewport，参考[viewport](./viewport.md)
 
 hash 相关的工具，参考[hash](./hash.md)
 
+**CustomElement**: `CustomElement`
+
+- 用法：
+
+  `CustomElement` 提供直接实现 customElement v1 规范的组件使用，在 MIP 中，采用 JS 而不是 Vue 编写组件都需要继承 CustomElement
+
+  ```javascript
+  class MIPExample extends MIP.CustomElement {
+    constructor (...args) {
+      super(...args)
+    }
+  }
+  ```
+
 **builtinComponents.MIPShell**: `HTMLElement`
 
 - 用法：
