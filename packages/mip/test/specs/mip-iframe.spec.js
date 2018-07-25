@@ -4,7 +4,12 @@
  */
 
 /* eslint-disable no-unused-expressions */
-/* globals describe, before, it, expect, after */
+/* globals describe, before, it, expect, after, Event */
+
+import {
+  CUSTOM_EVENT_RESIZE_PAGE,
+  MESSAGE_PAGE_RESIZE
+} from 'src/page/const'
 
 describe('mip-iframe', function () {
   let mipIframe
@@ -24,7 +29,6 @@ describe('mip-iframe', function () {
     it('should produce iframe', function () {
       iframe = mipIframe.querySelector('iframe')
       expect(iframe.frameBorder).to.equal('0')
-      expect(iframe.scrolling).to.equal('yes')
       expect(iframe.style.width).to.equal('100%')
       expect(iframe.style.height).to.equal('100%')
       expect(iframe.classList.contains('mip-fill-content')).to.equal(true)
@@ -52,7 +56,6 @@ describe('mip-iframe', function () {
     it('should produce iframe', function () {
       iframe = mipIframe.querySelector('iframe')
       expect(iframe.frameBorder).to.equal('0')
-      expect(iframe.scrolling).to.equal('yes')
       expect(iframe.style.width).to.equal('200px')
       expect(iframe.style.height).to.equal('100px')
       expect(iframe.classList.contains('mip-fill-content')).to.equal(true)
@@ -60,6 +63,45 @@ describe('mip-iframe', function () {
       expect(iframe.getAttribute('allowfullscreen')).to.be.null
       expect(iframe.getAttribute('allowtransparency')).to.be.null
       expect(iframe.getAttribute('sandbox')).to.be.null
+    })
+
+    it('should resize with detail', function () {
+      let event = new Event(CUSTOM_EVENT_RESIZE_PAGE)
+      event.detail = [{
+        height: 10
+      }]
+      window.dispatchEvent(event)
+    })
+
+    it('should resize with detail again', function () {
+      let event = new Event(CUSTOM_EVENT_RESIZE_PAGE)
+      event.detail = [{
+        height: 20
+      }]
+      window.dispatchEvent(event)
+    })
+
+    it('should resize with viewport calculation', function () {
+      let event = new Event(CUSTOM_EVENT_RESIZE_PAGE)
+      event.detail = [{}]
+      window.dispatchEvent(event)
+    })
+
+    it('should not resize even if resize event triggered', function () {
+      let event = new Event(CUSTOM_EVENT_RESIZE_PAGE)
+      window.dispatchEvent(event)
+    })
+
+    it('should notifyRootPage when message event triggered', function () {
+      window.postMessage({
+        type: MESSAGE_PAGE_RESIZE
+      }, '*')
+    })
+
+    it('should not notifyRootPage when message event triggered', function () {
+      window.postMessage({
+        type: 'not_' + MESSAGE_PAGE_RESIZE
+      }, '*')
     })
 
     after(function () {

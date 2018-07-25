@@ -4,7 +4,7 @@
  */
 
 /* eslint-disable no-unused-expressions */
-/* globals describe, before, it, expect, after */
+/* globals describe, before, it, expect, after, Event */
 
 import MipVideo from 'src/components/mip-video'
 
@@ -47,6 +47,7 @@ describe('mip-video', function () {
 
     before(function () {
       mipVideo = document.createElement('mip-video')
+      mipVideo.setAttribute('id', 'mip-video-test')
       mipVideo.setAttribute('controls', 'true')
       mipVideo.setAttribute('loop', 'true')
       mipVideo.setAttribute('muted', 'true')
@@ -90,12 +91,21 @@ describe('mip-video', function () {
       expect(sources.length).to.equal(3)
     })
 
-    it('should change current time', function () {
-      // let video = mipVideo.querySelector('video')
-      // let event = document.createEvent('MouseEvents')
-      // event.initEvent('click', true, true)
-      // // event.data = data
-      // img.dispatchEvent(event)
+    it('should change current time by loadedmetadata event', function () {
+      let video = mipVideo.querySelector('video')
+      let event = new Event('loadedmetadata')
+      video.dispatchEvent(event)
+    })
+
+    it('should change current time by seekTo API', function () {
+      let p = document.createElement('p')
+      p.setAttribute('on', 'click:mip-video-test.seekTo(2)')
+      p.textContent = 'click me'
+      document.body.appendChild(p)
+
+      let event = document.createEvent('MouseEvents')
+      event.initEvent('click', true, true)
+      p.dispatchEvent(event)
     })
 
     after(function () {
@@ -140,7 +150,15 @@ describe('mip-video', function () {
       _mipVideo.attributes = getAttributeSet(div.attributes)
       _mipVideo.element = document.body
       _mipVideo.sourceDoms = mipVideo.querySelectorAll('source')
-      _mipVideo.renderPlayElsewhere()
+      let videoEl = _mipVideo.renderPlayElsewhere()
+
+      expect(videoEl.tagName).to.equal('DIV')
+      expect(videoEl.classList.contains('mip-video-poster')).to.be.true
+      expect(videoEl.style.backgroundImage).to.equal('url("https://www.mipengine.org/static/img/sample_04.jpg")')
+      expect(videoEl.style.backgroundSize).to.equal('cover')
+      expect(videoEl.dataset.videoSrc).to.equal('https://mip-doc.bj.bcebos.com/sample_video.mp4')
+
+      expect(videoEl.querySelector('span').classList.contains('mip-video-playbtn')).to.be.true
     })
 
     it('should renderPlayElsewhere without poster and sources', function () {
@@ -159,6 +177,10 @@ describe('mip-video', function () {
       let event = document.createEvent('MouseEvents')
       event.initEvent('click', true, true)
       videoEl.dispatchEvent(event)
+
+      expect(videoEl.tagName).to.equal('DIV')
+      expect(videoEl.style.backgroundImage).to.be.empty
+      expect(videoEl.querySelector('span').classList.contains('mip-video-playbtn')).to.be.true
     })
 
     after(function () {

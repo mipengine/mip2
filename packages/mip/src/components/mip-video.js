@@ -115,7 +115,7 @@ class MipVideo extends CustomElement {
     return videoEl
   }
 
-  // Render the `<a>` element with poster and play btn, and append to `this.element`
+  // Render the `<div>` element with poster and play btn, and append to `this.element`
   renderPlayElsewhere () {
     let videoEl = document.createElement('div')
     let urlSrc

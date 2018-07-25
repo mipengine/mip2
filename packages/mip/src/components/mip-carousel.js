@@ -61,6 +61,7 @@ function translateFn (value, time, wrapBox) {
 
 // 移出class
 function removeClass (dom, className) {
+  /* istanbul ignore if */
   if (!dom) {
     return
   }
@@ -70,6 +71,7 @@ function removeClass (dom, className) {
 
 // 追加class
 function addClass (dom, className) {
+  /* istanbul ignore if */
   if (!dom) {
     return
   }
