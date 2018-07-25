@@ -227,7 +227,7 @@ export function createFadeHeader (pageMeta) {
  * @param {Object} sourceMeta Page meta of source page (undefined when frameMoveIn, NOT undefined when frameMoveOut)
  * @returns {HTMLElement}
  */
-function getFadeHeader (targetMeta, sourceMeta) {
+export function getFadeHeader (targetMeta, sourceMeta) {
   let fadeHeader = document.querySelector('#mip-page-fade-header-wrapper')
   if (!fadeHeader) {
     createFadeHeader()
