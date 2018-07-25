@@ -19,8 +19,11 @@ class Bind {
     // require mip data extension runtime
     this._compile = new Compile()
     this._observer = new Observer()
-    MIP.setData = data => this._bindTarget(false, data)
-    MIP.$set = (data, cancel) => this._bindTarget(true, data, cancel)
+    // from=0 called by html attributes
+    // from=1 refers the method called by mip.js
+    MIP.setData = (action, from) => {
+      this._bindTarget(false, action, from)
+    }
     MIP.getData = key => {
       let ks = key.split('.')
       let res = this._win.m[ks[0]]
@@ -30,6 +33,9 @@ class Bind {
         i++
       }
       return res
+    }
+    MIP.$set = (action, from, cancel) => {
+      this._bindTarget(true, action, from, cancel)
     }
     MIP.$recompile = () => {
       this._observer.start(this._win.m)
@@ -86,8 +92,13 @@ class Bind {
     }
   }
 
-  _bindTarget (compile, data, cancel) {
+  _bindTarget (compile, action, from, cancel) {
     let win = this._win
+    let data = from ? action.arg : action
+    let evt = from && action.event ? action.event.target : {}
+    if (typeof data === 'string') {
+      data = (new Function('DOM', 'return ' + data))(evt)
+    }
 
     if (typeof data === 'object') {
       let origin = JSON.stringify(win.m)
