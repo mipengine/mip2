@@ -487,13 +487,12 @@ class MipShell extends CustomElement {
 
     /**
      * priority of header.title:
-     * 1. <a mip-link data-title>
-     * 2. <mip-shell> route.meta.header.title
-     * 3. <a mip-link></a> innerText
+     * 1. <a mip-link data-title> (to.meta.title)
+     * 2. <mip-shell> route.meta.header.title (findMetaById(id).header.title)
+     * 3. <a mip-link></a> innerText (to.meta.defaultTitle)
      */
-    let configPageMeta = this.findMetaByPageId(targetPageId)
-    let innerTitle = {title: to.meta.defaultTitle || undefined}
-    let targetPageMeta = fn.extend(true, innerTitle, configPageMeta, to.meta)
+    let targetPageMeta = fn.extend(true, {}, this.findMetaByPageId(targetPageId))
+    targetPageMeta.header.title = to.meta.title || targetPageMeta.header.title || to.meta.defaultTitle
 
     // Transition direction
     let isForward = window.MIP_SHELL_OPTION.isForward
@@ -567,7 +566,7 @@ class MipShell extends CustomElement {
       params.onComplete = () => {
         this.currentPageMeta = targetPageMeta
         window.MIP_SHELL_OPTION.allowTransition = false
-        window.MIP_SHELL_OPTION.isFoward = true
+        window.MIP_SHELL_OPTION.isForward = true
 
         if (!iframeCreated) {
           targetIFrame = createIFrame(targetPageInfo)
@@ -613,11 +612,9 @@ class MipShell extends CustomElement {
           display: 'block',
           opacity: 1
         })
+        this.refreshShell({pageMeta: targetPageMeta})
         this.toggleTransition(true)
         this.pauseBouncyHeader = false
-
-        // Update shell if new iframe has not been created
-        this.refreshShell({pageMeta: targetPageMeta})
 
         // Get <mip-shell> from root page
         let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
@@ -797,7 +794,7 @@ class MipShell extends CustomElement {
           this.backwardTransitionAndCreate(options)
         }
       } else {
-        if (options.isFoward) {
+        if (options.isForward) {
           this.forwardTransition(options)
         } else {
           this.backwardTransition(options)
@@ -914,6 +911,14 @@ class MipShell extends CustomElement {
     // If source page is root page, skip transition
     if (!iframe) {
       onComplete && onComplete()
+
+      let targetIFrame = getIFrame(targetPageId)
+      if (targetIFrame) {
+        activeZIndex -= 2
+        css(targetIFrame, 'z-index', activeZIndex++)
+      }
+
+      this.afterSwitchPage(options)
       return
     }
 
@@ -967,8 +972,8 @@ class MipShell extends CustomElement {
 
       let targetIFrame = getIFrame(targetPageId)
       if (targetIFrame) {
-        activeZIndex--
-        css(targetIFrame, 'z-index', activeZIndex)
+        activeZIndex -= 2
+        css(targetIFrame, 'z-index', activeZIndex++)
       }
 
       this.afterSwitchPage(options)
@@ -1028,8 +1033,12 @@ class MipShell extends CustomElement {
 
     let targetIFrame = getIFrame(targetPageId)
     if (targetIFrame) {
-      activeZIndex--
-      css(targetIFrame, 'z-index', activeZIndex)
+      activeZIndex -= 2
+      css(targetIFrame, {
+        opacity: 1,
+        display: 'block',
+        'z-index': activeZIndex++
+      })
     }
 
     // Goto root page, resume scroll position (Only appears in backward)
@@ -1045,6 +1054,7 @@ class MipShell extends CustomElement {
     // If source page is root page, skip transition
     if (!iframe) {
       onComplete && onComplete()
+      this.afterSwitchPage(options)
       return
     }
 
@@ -1136,8 +1146,7 @@ class MipShell extends CustomElement {
       Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
       this.restoreScrollPosition()
     }
-    window.MIP_SHELL_OPTION.allowTransition = false
-    window.MIP_SHELL_OPTION.isForward = null
+
     onComplete && onComplete()
 
     let iframe = getIFrame(targetPageId)
@@ -1325,7 +1334,7 @@ class MipShell extends CustomElement {
     if (buttonName === 'back') {
       // **Important** only allow transition happens when Back btn & <a> clicked
       window.MIP_SHELL_OPTION.allowTransition = true
-      window.MIP_SHELL_OPTION.isForward = 'back'
+      window.MIP_SHELL_OPTION.isForward = false
       page.back()
     } else if (buttonName === 'more') {
       this.toggleDropdown(true)
@@ -1412,8 +1421,8 @@ class MipShell extends CustomElement {
       if (!this.transitionContainsHeader) {
         let headerLogoTitle = this.$el.querySelector('.mip-shell-header-logo-title')
         headerLogoTitle && headerLogoTitle.classList.remove('fade-out')
+        toggleFadeHeader(false)
       }
-      toggleFadeHeader(false)
 
       // Rebind header events
       this.bindHeaderEvents()

@@ -68,31 +68,18 @@
     <mip-shell>
         <script type="application/json">
             {
+                "transitionContainsHeader": false,
                 "routes": [
                     {
-                        "pattern": "./tree.html",
+                        "pattern": "./index.html",
                         "meta": {
                             "header": {
                                 "show": true,
-                                "title": "MIP Tree",
-                                "buttonGroup": [
-                                    {
-                                        "name": "subscribe",
-                                        "text": "关注",
-                                        "link": "/examples/page/tree.html"
-                                    },
-                                    {
-                                        "name": "chat",
-                                        "text": "发消息"
-                                    },
-                                    {
-                                        "name": "cancel",
-                                        "text": "取消"
-                                    }
-                                ]
+                                "title": "MIP",
+                                "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png"
                             },
                             "view": {
-                                "isIndex": false
+                                "isIndex": true
                             }
                         }
                     },
@@ -101,7 +88,7 @@
                         "meta": {
                             "header": {
                                 "show": true,
-                                "title": "MIP",
+                                "title": "MIP Other Page",
                                 "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
                                 "buttonGroup": [
                                     {
@@ -127,7 +114,6 @@
                 ]
             }
         </script>
-        <div class="sidebar">This is tree sidebar</div>
     </mip-shell>
     <p class="input">
         <input type="text">
