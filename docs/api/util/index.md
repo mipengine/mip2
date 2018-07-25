@@ -56,12 +56,12 @@ EventEmitter 类，提供了 mixin 函数，参考[EventEmitter](./event-emitter
 
 **css**
 - 参数：
-  - {Array.<HTMLElement>|NodeList|HTMLElement} elements 需要设置的元素或者数组
+  - {Array.\<HTMLElement\>|NodeList|HTMLElement} elements 需要设置的元素或者数组
   - {Object.<string, string|number>|string} property 属性名，如果是 Object，则为属性和值的键值对 `css(element, {left: 0, top: 0})`
   - {string|number=} value 属性值
 - 返回值：
 
-    {Array.<HTMLElement>|HTMLElement|string}
+    {Array.\<HTMLElement\>|HTMLElement|string}
 
     - 如果 elements 为数组，返回值为数组
     - 如果 elements 单个 HTMLElement，并且有属性值，返回值为 HTMLElement

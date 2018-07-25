@@ -95,7 +95,7 @@ window.MIP.util.fn
 
 - 参数:
   - {Object} obj 目标 Object
-  - {Array.<string>} 需要挑选的 keys
+  - {Array.\<string\>} 需要挑选的 keys
 - 返回值：
 
   {Object.<string, *>}
