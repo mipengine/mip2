@@ -40,14 +40,14 @@ viewport，参考[viewport](./viewport.md)
 
 hash 相关的工具，参考[hash](./hash.md)
 
-**builtinComponents.MipShell**: `HTMLElement`
+**builtinComponents.MIPShell**: `HTMLElement`
 
 - 用法：
 
-  `MipShell` 为 [MIP Shell](../guide/all-sites-mip/mip-shell.md) 的自定义标签，暴露出来方便开发者进行继承并进行修改。
+  `MIPShell` 为 [MIP Shell](../guide/all-sites-mip/mip-shell.md) 的自定义标签，暴露出来方便开发者进行继承并进行修改。
 
   ```javascript
-  class MipShellTest extends MIP.builtinComponents.MipShell {
+  class MIPShellTest extends MIP.builtinComponents.MIPShell {
     constructor () {
       super()
       // other
@@ -69,7 +69,7 @@ hash 相关的工具，参考[hash](./hash.md)
 
   ```javascript
   MIP.registerVueCustomElement('mip-test', {
-    render() { console.log('mip-test') }
+    render () { console.log('mip-test') }
   })
   ```
 
@@ -83,7 +83,7 @@ hash 相关的工具，参考[hash](./hash.md)
   注册原生 customElement v2 编写的组件，不推荐使用
 
   ```javascript
-  MIP.registerCustomElement('mip-test', class MipTest {})
+  MIP.registerCustomElement('mip-test', class MipTest extends MIP.CustomElement {})
   ```
 
 **prerenderElement**

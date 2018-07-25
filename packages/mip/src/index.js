@@ -97,7 +97,9 @@ let mip = {
   push,
   prerenderElement: Resources.prerenderElement,
   builtinComponents: {
-    MipShell
+    // MipShell 应该删除，不符合命名
+    MipShell,
+    MIPShell: MipShell
   }
 }
 
