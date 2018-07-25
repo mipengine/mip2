@@ -12,7 +12,7 @@ MIP API 主要包括两个部分
 `MIP` 对象上挂了很多属性、方法和 Class
 
 - MIP 对象本身
-- utils
+- util
   - parseCacheUrl & makeCacheUrl & getOriginalUrl
   - fn
   - dom & event & rect & css
