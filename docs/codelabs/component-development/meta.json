@@ -1,0 +1,20 @@
+
+{
+    "menu": [
+        {
+            "key": "introduction"
+        },
+        {
+            "key": "preparation"
+        },
+        {
+            "key": "development"
+        },
+        {
+            "key": "preview"
+        },
+        {
+            "key": "submit"
+        }
+    ]
+}
