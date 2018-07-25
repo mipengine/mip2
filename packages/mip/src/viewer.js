@@ -62,11 +62,15 @@ let viewer = {
     // handle preregistered  extensions
     this.handlePreregisteredExtensions()
 
+    this.page = new Page()
+
+    // solve many browser quirks...
     this.handleBrowserQuirks()
 
-    this.page = new Page()
+    // start rendering page
     this.page.start()
 
+    // move <mip-fixed> to second <body>. see fixed-element.js
     this.fixedElement = fixedElement
     fixedElement.init()
 
@@ -391,7 +395,9 @@ let viewer = {
         document.documentElement.classList.add('mip-i-ios-scroll')
       }
 
-      this.fixIOSPageFreeze()
+      if (!this.page.isRootPage) {
+        this.fixIOSPageFreeze()
+      }
 
       if (this.isIframed) {
         this.lockBodyScroll()
