@@ -158,7 +158,7 @@ class EventEmitter {
    * Get an event's handler list. If not exist, create it.
    *
    * @param {string} name name
-   * @return {Object}
+   * @return {Array}
    */
   _getEvent (name) {
     if (!this.__events) {
