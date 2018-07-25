@@ -9,13 +9,13 @@ MIP.registerVueCustomElement('mip-tree', {
   template: `
     <li>
       <div :class="{ bold: isFolder }" @click="toggle" @dblclick="changeType">
-        {{ model.name }}
+        {{ treeData.name }}
         <span v-if="isFolder">[{{ open ? '-' : '+' }}]</span>
       </div>
       <ul v-show="open" v-if="isFolder">
         <mip-tree
           class="item"
-          v-for="(item, index) in model.children"
+          v-for="(item, index) in treeData.children"
           :model="stringify(item)"
           :key="index"
         ></mip-tree>
@@ -34,12 +34,13 @@ MIP.registerVueCustomElement('mip-tree', {
   },
   data () {
     return {
+      treeData: this.model,
       open: false
     }
   },
   computed: {
     isFolder () {
-      return this.model.children && this.model.children.length
+      return this.treeData.children && this.treeData.children.length
     }
   },
   methods: {
@@ -50,13 +51,16 @@ MIP.registerVueCustomElement('mip-tree', {
     },
     changeType () {
       if (!this.isFolder) {
-        MIP.Vue.set(this.model, 'children', [])
+        this.treeData = {
+          name: this.treeData.name,
+          children: []
+        }
         this.addChild()
         this.open = true
       }
     },
     addChild () {
-      this.model.children.push({
+      this.treeData.children.push({
         name: 'new stuff'
       })
     },

@@ -19,8 +19,9 @@
   <mip-b on="show:counter.add(1)"></mip-b>
   <script src="../../dist/mip.js"></script>
   <script>
+    /* global MIP */
     MIP.registerVueCustomElement('mip-a', {
-      data() {
+      data () {
         return {
           count: 0
         }
@@ -30,7 +31,7 @@
               counter: {{count}}
           </div>
       `,
-      mounted() {
+      mounted () {
         let vm = this
         // this.$element.customElement.addEventAction('add', function (event, num) {
         //   vm.add(parseInt(num, 10))
@@ -40,14 +41,14 @@
         })
       },
       methods: {
-        add(num) {
+        add (num) {
           this.count += num
         }
       }
     })
 
     MIP.registerVueCustomElement('mip-b', {
-      data() {
+      data () {
         return {
           show: false
         }
@@ -64,7 +65,7 @@
           </div>
       `,
       methods: {
-        onClick() {
+        onClick () {
           this.show = !this.show
           // MIP.viewer.eventAction.execute(this.show ? 'show' : 'close', this.$element, {})
           this.$emit(this.show ? 'show' : 'close', {})

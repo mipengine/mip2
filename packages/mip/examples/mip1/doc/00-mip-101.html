@@ -2,1634 +2,1634 @@
 <html lang="zh-cn" mip>
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-    <title>MIP 文档_移动网页加速器_MIP(Mobile Instant Pages) | 新手指南</title>
-    <meta name="description" content="MIP（Mobile Instant Pages - 移动网页加速器）是一套应用于移动网页的开放性技术标准，使用 MIP无需等待加载，页面内容将以更友好的方式瞬时到达用户。">
-    <meta name="keywords" content="MIP,AMP,百度MIP,Mobile Instant Pages,移动页面加速,H5页面加速,SEO,移动页面">
-    <meta name="baidu-site-verification" content="P4Uj0PXQrc">
-    <link rel="canonical" href="https://www.mipengine.org/doc/00-mip-101.html">
-    <link rel="stylesheet" href="https://c.mipcdn.com/static/v1/mip.css">
-    <link rel="icon" href="https://www.mipengine.org/favicon.ico">
-    <style mip-custom>
-        a,
-        abbr,
-        acronym,
-        address,
-        applet,
-        article,
-        aside,
-        audio,
-        b,
-        big,
-        blockquote,
-        body,
-        canvas,
-        caption,
-        center,
-        cite,
-        code,
-        dd,
-        del,
-        details,
-        dfn,
-        div,
-        dl,
-        dt,
-        em,
-        embed,
-        fieldset,
-        figcaption,
-        figure,
-        footer,
-        form,
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6,
-        header,
-        hgroup,
-        html,
-        i,
-        iframe,
-        img,
-        ins,
-        kbd,
-        label,
-        legend,
-        li,
-        mark,
-        menu,
-        nav,
-        object,
-        ol,
-        output,
-        p,
-        pre,
-        q,
-        ruby,
-        s,
-        samp,
-        section,
-        small,
-        span,
-        strike,
-        strong,
-        sub,
-        summary,
-        sup,
-        table,
-        tbody,
-        td,
-        tfoot,
-        th,
-        thead,
-        time,
-        tr,
-        tt,
-        u,
-        ul,
-        var,
-        video {
-            margin: 0;
-            padding: 0;
-            border: 0;
-            vertical-align: baseline
-        }
-
-        article,
-        aside,
-        details,
-        figcaption,
-        figure,
-        footer,
-        header,
-        hgroup,
-        menu,
-        nav,
-        section {
-            display: block
-        }
-
-        * {
-            box-sizing: border-box;
-            -webkit-box-sizing: border-box
-        }
-
-        body {
-            text-align: left;
-            color: #333;
-            line-height: 1.6;
-            background-color: #f2f2f2;
-            font-family: -apple-system, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", STHeiti, "Microsoft YaHei", "Microsoft JhengHei", "Source Han Sans SC", SimSun, sans-serif;
-            overflow-x: hidden
-        }
-
-        .article-header {
-            position: relative
-        }
-
-        .article-header h1 {
-            font-size: 30px;
-            margin-bottom: 20px;
-            position: relative;
-            color: #333;
-            line-height: 1.5;
-            font-weight: 400;
-            border-bottom: 1px solid #ccc;
-            padding: 0 35px 10px 0
-        }
-
-        .article-edit-link {
-            position: absolute;
-            right: 0;
-            top: 0;
-            height: 56px;
-            line-height: 56px;
-            color: #228ae6
-        }
-
-        .article-edit-link .fa {
-            margin-right: 6px
-        }
-
-        @media screen and (max-width:767px) {
-            .article-header h1 {
-                font-size: 24px
-            }
-            .article-edit-link {
-                height: 46px;
-                line-height: 46px
-            }
-        }
-
-        .article-footer {
-            position: relative;
-            margin: 20px 0;
-            padding-top: 20px;
-            border-top: 1px solid #e3e3e3;
-            line-height: 1em;
-            text-align: center;
-            color: #999;
-            font-size: 12px
-        }
-
-        .update-ie {
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #fff;
-            font-size: 20px;
-            text-align: center
-        }
-
-        .update-ie p {
-            padding-top: 30px
-        }
-
-        .update-ie a {
-            color: #009aed
-        }
-
-        /*!
-    *  Font Awesome 4.7.0 by @davegandy - http://fontawesome.io - @fontawesome
-    *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
-    */
-
-        @font-face {
-            font-family: iconfont;
-            src: url(/examples/static/fonts/fontawesome-webfont.eot?v=4.7.0);
-            src: url(/examples/static/fonts/fontawesome-webfont.eot?#iefix&v=4.7.0) format("embedded-opentype"), url(/examples/static/fonts/fontawesome-webfont.woff2?v=4.7.0) format("woff2"), url(/examples/static/fonts/fontawesome-webfont.woff?v=4.7.0) format("woff"), url(/examples/static/fonts/fontawesome-webfont.ttf?v=4.7.0) format("truetype"), url(/examples/static/fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular) format("svg")
-        }
-
-        .fa {
-            font-weight: 400;
-            font-style: normal;
-            display: inline-block;
-            font: normal normal normal 14px/1 iconfont;
-            font-size: inherit;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            text-rendering: auto
-        }
-
-        .fa-info-circle:before {
-            content: "\f05a"
-        }
-
-        .fa-exclamation-triangle:before {
-            content: "\f071"
-        }
-
-        .fa-window-close:before {
-            content: "\f2d3"
-        }
-
-        .fa-pencil:before {
-            content: "\f040"
-        }
-
-        .fa-chevron-right:before {
-            content: "\f054"
-        }
-
-        .fa-github:before {
-            content: "\f09b"
-        }
-
-        .fa-eye:before {
-            content: "\f06e"
-        }
-
-        .header {
-            background-color: #0c1a44;
-            position: relative;
-            z-index: 1000;
-            padding: 0 10px
-        }
-
-        .header ul {
-            list-style: none
-        }
-
-        .header-inner {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 10px 0
-        }
-
-        .header-flex {
-            display: -webkit-box;
-            display: -moz-box;
-            display: -webkit-flex;
-            display: -ms-flexbox;
-            display: box;
-            display: flex;
-            -webkit-align-items: center;
-            align-items: center;
-            -webkit-box-align: center;
-            -moz-box-align: center;
-            -webkit-box-lines: single;
-            -moz-box-lines: single;
-            -webkit-box-orient: horizontal;
-            -moz-box-orient: horizontal;
-            -ms-flex-align: center;
-            -webkit-flex-flow: row nowrap;
-            -ms-flex-flow: row nowrap;
-            flex-flow: row nowrap
-        }
-
-        .header-logo {
-            -webkit-box-flex: 1;
-            -moz-box-flex: 1;
-            box-flex: 1;
-            -webkit-flex: 0 42px;
-            -ms-flex: 0 42px;
-            flex: 0 42px
-        }
-
-        .header-logo a {
-            display: block;
-            overflow: hidden;
-            width: 81px;
-            height: 42px;
-            white-space: nowrap;
-            font-size: 0;
-            cursor: pointer;
-            background: url(https://www.mipengine.org/static/img/mip_logo_white_8c902ec.png);
-            -webkit-background-size: 100% 100%;
-            -moz-background-size: 100% 100%;
-            background-size: 100% 100%
-        }
-
-        .header-nav {
-            font-size: 14px;
-            line-height: 50px;
-            display: none;
-            padding-left: 20px;
-            -webkit-box-flex: 1;
-            -moz-box-flex: 1;
-            box-flex: 1;
-            -webkit-flex: 1 auto;
-            -ms-flex: 1 auto;
-            flex: 1 auto;
-            text-align: right
-        }
-
-        .header-nav-list>li {
-            position: relative;
-            display: inline-block;
-            padding: 0 10px
-        }
-
-        .header-nav-list>li>a,
-        .header-nav-list>li>span {
-            position: relative;
-            display: block;
-            text-decoration: none;
-            color: rgba(255, 255, 255, .8);
-            padding: 0 5px
-        }
-
-        .header-nav-list li>span:after {
-            content: '';
-            position: relative;
-            display: inline-block;
-            border: 4px solid transparent;
-            top: 1px;
-            border-color: #fff transparent transparent;
-            left: 3px
-        }
-
-        .header-nav-list li:hover>span:after {
-            border-color: transparent transparent #fff;
-            top: -3px
-        }
-
-        .header-nav-list>li>a:hover {
-            color: #fff
-        }
-
-        .header-nav-list>li ul {
-            display: none;
-            text-align: left;
-            position: absolute;
-            background-color: #fff;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, .1);
-            left: -30px;
-            top: 50px
-        }
-
-        .header-nav-list>li:hover ul {
-            display: block
-        }
-
-        .header-nav-list>li ul li:hover {
-            background-color: #eee
-        }
-
-        .header-nav-list>li ul a {
-            white-space: nowrap;
-            padding: 0 20px;
-            color: #666;
-            display: block
-        }
-
-        @media screen and (min-width:767px) {
-            .header-nav {
-                display: block
-            }
-        }
-
-        .header-mobile-nav-toggle {
-            display: none
-        }
-
-        @media screen and (max-width:767px) {
-            .header-mobile-nav-toggle {
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                right: 20px;
-                width: 25px;
-                height: 20px;
-                margin: auto;
-                opacity: .5;
-                -webkit-transition: .2s;
-                -moz-transition: .2s;
-                -ms-transition: .2s;
-                transition: .2s;
-                cursor: pointer;
-                outline: 0;
-                background-color: transparent;
-                border: none;
-                display: block
-            }
-            .header-mobile-nav-toggle span {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 2px;
-                border-radius: 2px;
-                background: #fff;
-                -webkit-transition: .4s;
-                -moz-transition: .4s;
-                -ms-transition: .4s;
-                transition: .4s;
-                -webkit-transform-origin: 0;
-                -moz-transform-origin: 0;
-                -ms-transform-origin: 0;
-                transform-origin: 0
-            }
-            .header-mobile-nav-toggle span:nth-child(2) {
-                top: 9px
-            }
-            .header-mobile-nav-toggle span:nth-child(3) {
-                top: 18px
-            }
-            .header-logo a {
-                width: 68px;
-                height: 33px
-            }
-            .header-inner {
-                padding: 5px 0
-            }
-        }
-
-        .markdown-body {
-            overflow: hidden;
-            font-size: 15px;
-            line-height: 1.8;
-            word-wrap: break-word;
-            color: #333;
-            font-family: -apple-system, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", STHeiti, "Microsoft YaHei", "Microsoft JhengHei", "Source Han Sans SC", SimSun, sans-serif text-align: left
-        }
-
-        @media screen and (max-width:767px) {
-            .markdown-body {
-                word-break: break-word
-            }
-        }
-
-        .markdown-body a {
-            color: #009aed;
-            text-decoration: none;
-            font-weight: 300;
-            margin: 0 3px
-        }
-
-        .markdown-body a strong {
-            font-weight: 400;
-            color: inherit
-        }
-
-        .markdown-body strong {
-            margin: 0 3px
-        }
-
-        .markdown-body a:hover {
-            text-decoration: underline
-        }
-
-        .markdown-body>:first-child {
-            margin-top: 0 !important
-        }
-
-        .markdown-body>:last-child {
-            margin-bottom: 0 !important
-        }
-
-        .markdown-body a.absent {
-            color: #c00
-        }
-
-        .markdown-body a.anchor {
-            bottom: 0;
-            cursor: pointer;
-            display: block;
-            left: 0;
-            margin-left: -30px;
-            padding-left: 30px;
-            position: absolute;
-            top: 0
-        }
-
-        .markdown-body h1,
-        .markdown-body h2,
-        .markdown-body h3,
-        .markdown-body h4,
-        .markdown-body h5,
-        .markdown-body h6 {
-            cursor: text;
-            margin: 20px 0 5px;
-            padding: 0;
-            position: relative;
-            color: #333;
-            line-height: 1.5;
-            font-weight: 400
-        }
-
-        .markdown-body h1 .mini-icon-link,
-        .markdown-body h2 .mini-icon-link,
-        .markdown-body h3 .mini-icon-link,
-        .markdown-body h4 .mini-icon-link,
-        .markdown-body h5 .mini-icon-link,
-        .markdown-body h6 .mini-icon-link {
-            color: #000;
-            display: none
-        }
-
-        .markdown-body h1:hover a.anchor,
-        .markdown-body h2:hover a.anchor,
-        .markdown-body h3:hover a.anchor,
-        .markdown-body h4:hover a.anchor,
-        .markdown-body h5:hover a.anchor,
-        .markdown-body h6:hover a.anchor {
-            line-height: 1;
-            margin-left: -22px;
-            padding-left: 0;
-            text-decoration: none;
-            top: 15%
-        }
-
-        .markdown-body h1:hover a.anchor .mini-icon-link,
-        .markdown-body h2:hover a.anchor .mini-icon-link,
-        .markdown-body h3:hover a.anchor .mini-icon-link,
-        .markdown-body h4:hover a.anchor .mini-icon-link,
-        .markdown-body h5:hover a.anchor .mini-icon-link,
-        .markdown-body h6:hover a.anchor .mini-icon-link {
-            display: inline-block
-        }
-
-        .markdown-body h1 code,
-        .markdown-body h1 tt,
-        .markdown-body h2 code,
-        .markdown-body h2 tt,
-        .markdown-body h3 code,
-        .markdown-body h3 tt,
-        .markdown-body h4 code,
-        .markdown-body h4 tt,
-        .markdown-body h5 code,
-        .markdown-body h5 tt,
-        .markdown-body h6 code,
-        .markdown-body h6 tt {
-            font-size: inherit
-        }
-
-        .markdown-body h1 {
-            font-size: 30px;
-            margin-bottom: 20px
-        }
-
-        .markdown-body h2 {
-            font-size: 20px;
-            font-weight: 700;
-            color: #333
-        }
-
-        .markdown-body h3 {
-            font-size: 18px
-        }
-
-        .markdown-body h4 {
-            font-size: 16px
-        }
-
-        .markdown-body h5 {
-            font-size: 14px
-        }
-
-        .markdown-body h6 {
-            color: #777;
-            font-size: 14px
-        }
-
-        .markdown-body blockquote,
-        .markdown-body dl,
-        .markdown-body ol,
-        .markdown-body p,
-        .markdown-body pre,
-        .markdown-body table,
-        .markdown-body ul {
-            margin: 10px 0
-        }
-
-        .markdown-body>h1:first-child,
-        .markdown-body>h1:first-child+h2,
-        .markdown-body>h2:first-child,
-        .markdown-body>h3:first-child,
-        .markdown-body>h4:first-child,
-        .markdown-body>h5:first-child,
-        .markdown-body>h6:first-child {
-            margin-top: 0;
-            padding-top: 0
-        }
-
-        .markdown-body a:first-child h1,
-        .markdown-body a:first-child h2,
-        .markdown-body a:first-child h3,
-        .markdown-body a:first-child h4,
-        .markdown-body a:first-child h5,
-        .markdown-body a:first-child h6 {
-            margin-top: 0;
-            padding-top: 0
-        }
-
-        .markdown-body h1+p,
-        .markdown-body h2+p,
-        .markdown-body h3+p,
-        .markdown-body h4+p,
-        .markdown-body h5+p,
-        .markdown-body h6+p {
-            margin-top: 0
-        }
-
-        .markdown-body li {
-            display: list-item
-        }
-
-        .markdown-body li p.first {
-            display: inline-block
-        }
-
-        .markdown-body ol,
-        .markdown-body ul {
-            padding-left: 30px
-        }
-
-        .markdown-body ol.no-list,
-        .markdown-body ul.no-list {
-            list-style-type: none;
-            padding: 0
-        }
-
-        .markdown-body ol li>:first-child,
-        .markdown-body ul li>:first-child {
-            margin-top: 0
-        }
-
-        .markdown-body ol ol,
-        .markdown-body ol ul,
-        .markdown-body ul ol,
-        .markdown-body ul ul {
-            margin-bottom: 0
-        }
-
-        .markdown-body dl {
-            padding: 0
-        }
-
-        .markdown-body dl dt {
-            font-size: 14px;
-            font-style: italic;
-            font-weight: 700;
-            margin: 15px 0 5px;
-            padding: 0
-        }
-
-        .markdown-body dl dt:first-child {
-            padding: 0
-        }
-
-        .markdown-body dl dt>:first-child {
-            margin-top: 0
-        }
-
-        .markdown-body dl dt>:last-child {
-            margin-bottom: 0
-        }
-
-        .markdown-body dl dd {
-            margin: 0 0 15px;
-            padding: 0 15px
-        }
-
-        .markdown-body dl dd>:first-child {
-            margin-top: 0
-        }
-
-        .markdown-body dl dd>:last-child {
-            margin-bottom: 0
-        }
-
-        .markdown-body blockquote {
-            border-left: 4px solid #ddd;
-            color: #777;
-            padding: 0 15px;
-            font-size: 16px
-        }
-
-        .markdown-body blockquote>:first-child {
-            margin-top: 0
-        }
-
-        .markdown-body blockquote>:last-child {
-            margin-bottom: 0
-        }
-
-        .markdown-body table {
-            border-collapse: collapse;
-            border-spacing: 0
-        }
-
-        .markdown-body table .minw-60 {
-            min-width: 60px;
-            display: inline-block
-        }
-
-        .markdown-body table .minw-125 {
-            min-width: 125px;
-            display: inline-block
-        }
-
-        .markdown-body table th {
-            font-weight: 700
-        }
-
-        .markdown-body table td,
-        .markdown-body table th {
-            border: 1px solid #ccc;
-            padding: 6px 13px
-        }
-
-        @media screen and (max-width:993px) {
-            .markdown-body table td,
-            .markdown-body table th {
-                word-break: break-word
-            }
-        }
-
-        .markdown-body table tr {
-            background-color: #fff;
-            border-top: 1px solid #ccc
-        }
-
-        .markdown-body table tr:nth-child(2n) {
-            background-color: #f8f8f8
-        }
-
-        .markdown-body img {
-            max-width: 100%
-        }
-
-        .markdown-body span.frame {
-            display: block;
-            overflow: hidden
-        }
-
-        .markdown-body span.frame>span {
-            border: 1px solid #ddd;
-            display: block;
-            float: left;
-            margin: 13px 0 0;
-            overflow: hidden;
-            padding: 7px;
-            width: auto
-        }
-
-        .markdown-body span.frame span img {
-            display: block;
-            float: left
-        }
-
-        .markdown-body span.frame span span {
-            clear: both;
-            color: #333;
-            display: block;
-            padding: 5px 0 0
-        }
-
-        .markdown-body span.align-center {
-            clear: both;
-            display: block;
-            overflow: hidden
-        }
-
-        .markdown-body span.align-center>span {
-            display: block;
-            margin: 13px auto 0;
-            overflow: hidden;
-            text-align: center
-        }
-
-        .markdown-body span.align-center span img {
-            margin: 0 auto;
-            text-align: center
-        }
-
-        .markdown-body span.align-right {
-            clear: both;
-            display: block;
-            overflow: hidden
-        }
-
-        .markdown-body span.align-right>span {
-            display: block;
-            margin: 13px 0 0;
-            overflow: hidden;
-            text-align: right
-        }
-
-        .markdown-body span.align-right span img {
-            margin: 0;
-            text-align: right
-        }
-
-        .markdown-body span.float-left {
-            display: block;
-            float: left;
-            margin-right: 13px;
-            overflow: hidden
-        }
-
-        .markdown-body span.float-left span {
-            margin: 13px 0 0
-        }
-
-        .markdown-body span.float-right {
-            display: block;
-            float: right;
-            margin-left: 13px;
-            overflow: hidden
-        }
-
-        .markdown-body span.float-right>span {
-            display: block;
-            margin: 13px auto 0;
-            overflow: hidden;
-            text-align: right
-        }
-
-        .markdown-body code,
-        .markdown-body tt {
-            background-color: rgba(0, 0, 0, .05);
-            border-radius: 3px 3px 3px 3px;
-            margin: 0 2px;
-            padding: 0 5px
-        }
-
-        .markdown-body pre>code {
-            background: none repeat scroll 0 0 transparent;
-            border: medium none;
-            margin: 0;
-            padding: 0
-        }
-
-        .markdown-body .highlight pre,
-        .markdown-body pre {
-            width: 100%;
-            border: 1px solid #ccc;
-            border-radius: 3px 3px 3px 3px;
-            font-size: 13px;
-            line-height: 19px;
-            overflow: auto;
-            padding: 6px 10px;
-            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .05), 0 1px 4px 0 rgba(0, 0, 0, .08), 0 3px 1px -2px rgba(0, 0, 0, .2)
-        }
-
-        .markdown-body pre code,
-        .markdown-body pre tt {
-            background-color: transparent;
-            border: medium none
-        }
-
-        .markdown-body hr {
-            height: 4px;
-            padding: 0;
-            margin: 16px 0;
-            background-color: #e7e7e7;
-            border: 0 none;
-            overflow: hidden
-        }
-
-        .markdown-body .orange {
-            color: #e38d11
-        }
-
-        .markdown-body .green {
-            color: #0ea127
-        }
-
-        .markdown-body .red {
-            color: #e11414
-        }
-
-        .markdown-body pre {
-            display: block;
-            overflow-x: auto;
-            -webkit-tap-highlight-color: transparent;
-            padding: .5em;
-            color: #657b83
-        }
-
-        .markdown-body pre .comment,
-        .markdown-body pre .quote {
-            color: #93a1a1
-        }
-
-        .markdown-body pre .addition,
-        .markdown-body pre .keyword,
-        .markdown-body pre .selector-tag {
-            color: #859900
-        }
-
-        .markdown-body pre .doctag,
-        .markdown-body pre .literal,
-        .markdown-body pre .meta pre .meta-string,
-        .markdown-body pre .number,
-        .markdown-body pre .regexp,
-        .markdown-body pre .string {
-            color: #2aa198
-        }
-
-        .markdown-body pre .name,
-        .markdown-body pre .section,
-        .markdown-body pre .selector-class,
-        .markdown-body pre .selector-id,
-        .markdown-body pre .title {
-            color: #268bd2
-        }
-
-        .markdown-body pre .attr,
-        .markdown-body pre .attribute,
-        .markdown-body pre .class pre .title,
-        .markdown-body pre .template-variable,
-        .markdown-body pre .type,
-        .markdown-body pre .variable {
-            color: #b58900
-        }
-
-        .markdown-body pre .bullet,
-        .markdown-body pre .link,
-        .markdown-body pre .meta,
-        .markdown-body pre .meta pre .keyword,
-        .markdown-body pre .selector-attr,
-        .markdown-body pre .selector-pseudo,
-        .markdown-body pre .subst,
-        .markdown-body pre .symbol {
-            color: #cb4b16
-        }
-
-        .markdown-body pre .built_in,
-        .markdown-body pre .deletion {
-            color: #dc322f
-        }
-
-        .markdown-body pre .formula {
-            background: #eee8d5
-        }
-
-        .markdown-body pre .emphasis {
-            font-style: italic
-        }
-
-        .markdown-body pre .strong {
-            font-weight: 700
-        }
-
-        .mipengine-doc-red {
-            color: #e11414
-        }
-
-        .mipengine-doc-orange {
-            color: #e38d11
-        }
-
-        .mipengine-doc-green {
-            color: #0ea127
-        }
-
-        .mipengine-doc-blue {
-            color: #009aed
-        }
-
-        .mipengine-doc-gray {
-            color: #999
-        }
-
-        .mipengine-doc-linethrough {
-            color: #999
-        }
-
-        .markdown-body .para-tip {
-            border-radius: 4px;
-            border: 1px solid transparent;
-            padding: 10px
-        }
-
-        .markdown-body .para-tip .fa {
-            position: absolute;
-            margin: 6px 0 0 4px
-        }
-
-        .markdown-body .para-info {
-            background-color: #f1f9f7;
-            border-color: #e0f1e9;
-            color: #1d9d74
-        }
-
-        .markdown-body .para-notice {
-            background-color: #fffdea;
-            border-color: #eae5d6;
-            color: #ad8d18
-        }
-
-        .markdown-body .para-warning {
-            background-color: #f9f1f1;
-            border-color: #decbcb;
-            color: #cc6d6d
-        }
-
-        .markdown-body .para-content {
-            display: block;
-            margin-left: 30px
-        }
-
-        .markdown-body .para-tip-text {
-            font-weight: 700
-        }
-
-        #right-sidebar {
-            padding: 0 15px;
-            background-color: #fff
-        }
-
-        #right-sidebar ul {
-            list-style: none
-        }
-
-        .mobile-nav-list {
-            padding: 45px 0 15px;
-            line-height: 2.3
-        }
-
-        .mobile-nav-list a {
-            display: block;
-            padding: 0 10px;
-            font-weight: 700;
-            font-size: 16px
-        }
-
-        .right-sidebar-doc {
-            line-height: 2.2;
-            padding-bottom: 40px
-        }
-
-        .right-sidebar-doc h3 {
-            padding: 10px 0 0;
-            position: relative;
-            display: block;
-            font-weight: 700;
-            font-size: 15px;
-            color: #333
-        }
-
-        .right-sidebar-doc a {
-            color: #666;
-            display: block;
-            font-size: 14px;
-            position: relative
-        }
-
-        .right-sidebar-doc a.current {
-            color: #009aed
-        }
-
-        .right-sidebar-doc a.current:before {
-            content: '';
-            width: 5px;
-            height: 1px;
-            top: 1px;
-            display: inline-block;
-            border: 6px solid transparent;
-            border-left: 8px solid #009aed;
-            border-right: 0;
-            border-radius: 1px;
-            position: relative
-        }
-
-        .mobile-nav-list>li>span {
-            display: none
-        }
-
-        .footer {
-            text-align: center;
-            line-height: 20px;
-            padding: 15px 0
-        }
-
-        .footer,
-        .footer a {
-            color: #999
-        }
-
-        .footer .fa-github {
-            font-size: 24px;
-            vertical-align: middle
-        }
-
-        .footer a:hover .fa-github {
-            color: #24292e
-        }
-
-        .doc-content {
-            background-color: #fff;
-            max-width: 1000px;
-            padding: 15px
-        }
-
-        .doc-content:after {
-            clear: both;
-            content: '';
-            display: block
-        }
-
-        .doc-article {
-            float: right;
-            width: 100%
-        }
-
-        .doc-left-sidebar {
-            display: none;
-            float: left;
-            width: 180px;
-            margin-left: -180px;
-            padding-bottom: 40px;
-            line-height: 2.1
-        }
-
-        .doc-left-sidebar h3 {
-            padding: 10px 0 0;
-            position: relative;
-            display: block;
-            font-weight: 700;
-            font-size: 15px;
-            color: #333
-        }
-
-        .doc-left-sidebar a {
-            color: #666;
-            display: block;
-            font-size: 14px;
-            position: relative
-        }
-
-        .doc-left-sidebar a.current {
-            color: #009aed
-        }
-
-        .doc-left-sidebar a.current:before {
-            content: '';
-            width: 5px;
-            height: 1px;
-            top: 1px;
-            display: inline-block;
-            border: 6px solid transparent;
-            border-left: 8px solid #009aed;
-            border-right: 0;
-            border-radius: 1px;
-            position: relative
-        }
-
-        @media screen and (min-width:767px) {
-            .doc-left-sidebar {
-                display: block
-            }
-            .doc-content-inner {
-                margin-left: 180px
-            }
-            .doc-content {
-                margin: 20px auto 0;
-                padding: 60px 55px 40px
-            }
-        }
-
-        .partners-wrap mip-img {
-            width: 125px;
-            height: 70px;
-            border: 1px solid #ddd;
-            padding: 5px;
-            margin: 0 12px 7px 0;
-            display: inline-block
-        }
-
-        .partners-wrap mip-img img {
-            object-fit: contain
-        }
-
-        .partners-wrap .kta-wrapper {
-            text-align: center;
-            padding: 20px
-        }
-
-        .partners-wrap .kta {
-            margin: 20px auto;
-            border: 1px solid #38f;
-            color: #38f;
-            padding: 10px 15px;
-            border-radius: 20px
-        }
-
-        .partners-wrap .kta:hover {
-            text-decoration: none;
-            background: #eee
-        }
-
-        .white-bg {
-            background: #fff
-        }
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP 文档_移动网页加速器_MIP(Mobile Instant Pages) | 新手指南</title>
+  <meta name="description" content="MIP（Mobile Instant Pages - 移动网页加速器）是一套应用于移动网页的开放性技术标准，使用 MIP无需等待加载，页面内容将以更友好的方式瞬时到达用户。">
+  <meta name="keywords" content="MIP,AMP,百度MIP,Mobile Instant Pages,移动页面加速,H5页面加速,SEO,移动页面">
+  <meta name="baidu-site-verification" content="P4Uj0PXQrc">
+  <link rel="canonical" href="https://www.mipengine.org/doc/00-mip-101.html">
+  <link rel="stylesheet" href="https://c.mipcdn.com/static/v1/mip.css">
+  <link rel="icon" href="https://www.mipengine.org/favicon.ico">
+  <style mip-custom>
+    a,
+    abbr,
+    acronym,
+    address,
+    applet,
+    article,
+    aside,
+    audio,
+    b,
+    big,
+    blockquote,
+    body,
+    canvas,
+    caption,
+    center,
+    cite,
+    code,
+    dd,
+    del,
+    details,
+    dfn,
+    div,
+    dl,
+    dt,
+    em,
+    embed,
+    fieldset,
+    figcaption,
+    figure,
+    footer,
+    form,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    header,
+    hgroup,
+    html,
+    i,
+    iframe,
+    img,
+    ins,
+    kbd,
+    label,
+    legend,
+    li,
+    mark,
+    menu,
+    nav,
+    object,
+    ol,
+    output,
+    p,
+    pre,
+    q,
+    ruby,
+    s,
+    samp,
+    section,
+    small,
+    span,
+    strike,
+    strong,
+    sub,
+    summary,
+    sup,
+    table,
+    tbody,
+    td,
+    tfoot,
+    th,
+    thead,
+    time,
+    tr,
+    tt,
+    u,
+    ul,
+    var,
+    video {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      vertical-align: baseline
+    }
+
+    article,
+    aside,
+    details,
+    figcaption,
+    figure,
+    footer,
+    header,
+    hgroup,
+    menu,
+    nav,
+    section {
+      display: block
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-box-sizing: border-box
+    }
+
+    body {
+      text-align: left;
+      color: #333;
+      line-height: 1.6;
+      background-color: #f2f2f2;
+      font-family: -apple-system, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", STHeiti, "Microsoft YaHei", "Microsoft JhengHei", "Source Han Sans SC", SimSun, sans-serif;
+      overflow-x: hidden
+    }
+
+    .article-header {
+      position: relative
+    }
+
+    .article-header h1 {
+      font-size: 30px;
+      margin-bottom: 20px;
+      position: relative;
+      color: #333;
+      line-height: 1.5;
+      font-weight: 400;
+      border-bottom: 1px solid #ccc;
+      padding: 0 35px 10px 0
+    }
+
+    .article-edit-link {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 56px;
+      line-height: 56px;
+      color: #228ae6
+    }
+
+    .article-edit-link .fa {
+      margin-right: 6px
+    }
+
+    @media screen and (max-width:767px) {
+      .article-header h1 {
+        font-size: 24px
+      }
+      .article-edit-link {
+        height: 46px;
+        line-height: 46px
+      }
+    }
+
+    .article-footer {
+      position: relative;
+      margin: 20px 0;
+      padding-top: 20px;
+      border-top: 1px solid #e3e3e3;
+      line-height: 1em;
+      text-align: center;
+      color: #999;
+      font-size: 12px
+    }
+
+    .update-ie {
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #fff;
+      font-size: 20px;
+      text-align: center
+    }
+
+    .update-ie p {
+      padding-top: 30px
+    }
+
+    .update-ie a {
+      color: #009aed
+    }
+
+    /*!
+  *  Font Awesome 4.7.0 by @davegandy - http://fontawesome.io - @fontawesome
+  *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
+  */
+
+    @font-face {
+      font-family: iconfont;
+      src: url(/examples/static/fonts/fontawesome-webfont.eot?v=4.7.0);
+      src: url(/examples/static/fonts/fontawesome-webfont.eot?#iefix&v=4.7.0) format("embedded-opentype"), url(/examples/static/fonts/fontawesome-webfont.woff2?v=4.7.0) format("woff2"), url(/examples/static/fonts/fontawesome-webfont.woff?v=4.7.0) format("woff"), url(/examples/static/fonts/fontawesome-webfont.ttf?v=4.7.0) format("truetype"), url(/examples/static/fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular) format("svg")
+    }
+
+    .fa {
+      font-weight: 400;
+      font-style: normal;
+      display: inline-block;
+      font: normal normal normal 14px/1 iconfont;
+      font-size: inherit;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: auto
+    }
+
+    .fa-info-circle:before {
+      content: "\f05a"
+    }
+
+    .fa-exclamation-triangle:before {
+      content: "\f071"
+    }
+
+    .fa-window-close:before {
+      content: "\f2d3"
+    }
+
+    .fa-pencil:before {
+      content: "\f040"
+    }
+
+    .fa-chevron-right:before {
+      content: "\f054"
+    }
+
+    .fa-github:before {
+      content: "\f09b"
+    }
+
+    .fa-eye:before {
+      content: "\f06e"
+    }
+
+    .header {
+      background-color: #0c1a44;
+      position: relative;
+      z-index: 1000;
+      padding: 0 10px
+    }
+
+    .header ul {
+      list-style: none
+    }
+
+    .header-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 10px 0
+    }
+
+    .header-flex {
+      display: -webkit-box;
+      display: -moz-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: box;
+      display: flex;
+      -webkit-align-items: center;
+      align-items: center;
+      -webkit-box-align: center;
+      -moz-box-align: center;
+      -webkit-box-lines: single;
+      -moz-box-lines: single;
+      -webkit-box-orient: horizontal;
+      -moz-box-orient: horizontal;
+      -ms-flex-align: center;
+      -webkit-flex-flow: row nowrap;
+      -ms-flex-flow: row nowrap;
+      flex-flow: row nowrap
+    }
+
+    .header-logo {
+      -webkit-box-flex: 1;
+      -moz-box-flex: 1;
+      box-flex: 1;
+      -webkit-flex: 0 42px;
+      -ms-flex: 0 42px;
+      flex: 0 42px
+    }
+
+    .header-logo a {
+      display: block;
+      overflow: hidden;
+      width: 81px;
+      height: 42px;
+      white-space: nowrap;
+      font-size: 0;
+      cursor: pointer;
+      background: url(https://www.mipengine.org/static/img/mip_logo_white_8c902ec.png);
+      -webkit-background-size: 100% 100%;
+      -moz-background-size: 100% 100%;
+      background-size: 100% 100%
+    }
+
+    .header-nav {
+      font-size: 14px;
+      line-height: 50px;
+      display: none;
+      padding-left: 20px;
+      -webkit-box-flex: 1;
+      -moz-box-flex: 1;
+      box-flex: 1;
+      -webkit-flex: 1 auto;
+      -ms-flex: 1 auto;
+      flex: 1 auto;
+      text-align: right
+    }
+
+    .header-nav-list>li {
+      position: relative;
+      display: inline-block;
+      padding: 0 10px
+    }
+
+    .header-nav-list>li>a,
+    .header-nav-list>li>span {
+      position: relative;
+      display: block;
+      text-decoration: none;
+      color: rgba(255, 255, 255, .8);
+      padding: 0 5px
+    }
+
+    .header-nav-list li>span:after {
+      content: '';
+      position: relative;
+      display: inline-block;
+      border: 4px solid transparent;
+      top: 1px;
+      border-color: #fff transparent transparent;
+      left: 3px
+    }
+
+    .header-nav-list li:hover>span:after {
+      border-color: transparent transparent #fff;
+      top: -3px
+    }
+
+    .header-nav-list>li>a:hover {
+      color: #fff
+    }
+
+    .header-nav-list>li ul {
+      display: none;
+      text-align: left;
+      position: absolute;
+      background-color: #fff;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, .1);
+      left: -30px;
+      top: 50px
+    }
+
+    .header-nav-list>li:hover ul {
+      display: block
+    }
+
+    .header-nav-list>li ul li:hover {
+      background-color: #eee
+    }
+
+    .header-nav-list>li ul a {
+      white-space: nowrap;
+      padding: 0 20px;
+      color: #666;
+      display: block
+    }
+
+    @media screen and (min-width:767px) {
+      .header-nav {
+        display: block
+      }
+    }
+
+    .header-mobile-nav-toggle {
+      display: none
+    }
+
+    @media screen and (max-width:767px) {
+      .header-mobile-nav-toggle {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 20px;
+        width: 25px;
+        height: 20px;
+        margin: auto;
+        opacity: .5;
+        -webkit-transition: .2s;
+        -moz-transition: .2s;
+        -ms-transition: .2s;
+        transition: .2s;
+        cursor: pointer;
+        outline: 0;
+        background-color: transparent;
+        border: none;
+        display: block
+      }
+      .header-mobile-nav-toggle span {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        border-radius: 2px;
+        background: #fff;
+        -webkit-transition: .4s;
+        -moz-transition: .4s;
+        -ms-transition: .4s;
+        transition: .4s;
+        -webkit-transform-origin: 0;
+        -moz-transform-origin: 0;
+        -ms-transform-origin: 0;
+        transform-origin: 0
+      }
+      .header-mobile-nav-toggle span:nth-child(2) {
+        top: 9px
+      }
+      .header-mobile-nav-toggle span:nth-child(3) {
+        top: 18px
+      }
+      .header-logo a {
+        width: 68px;
+        height: 33px
+      }
+      .header-inner {
+        padding: 5px 0
+      }
+    }
+
+    .markdown-body {
+      overflow: hidden;
+      font-size: 15px;
+      line-height: 1.8;
+      word-wrap: break-word;
+      color: #333;
+      font-family: -apple-system, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", STHeiti, "Microsoft YaHei", "Microsoft JhengHei", "Source Han Sans SC", SimSun, sans-serif text-align: left
+    }
+
+    @media screen and (max-width:767px) {
+      .markdown-body {
+        word-break: break-word
+      }
+    }
+
+    .markdown-body a {
+      color: #009aed;
+      text-decoration: none;
+      font-weight: 300;
+      margin: 0 3px
+    }
+
+    .markdown-body a strong {
+      font-weight: 400;
+      color: inherit
+    }
+
+    .markdown-body strong {
+      margin: 0 3px
+    }
+
+    .markdown-body a:hover {
+      text-decoration: underline
+    }
+
+    .markdown-body>:first-child {
+      margin-top: 0 !important
+    }
+
+    .markdown-body>:last-child {
+      margin-bottom: 0 !important
+    }
+
+    .markdown-body a.absent {
+      color: #c00
+    }
+
+    .markdown-body a.anchor {
+      bottom: 0;
+      cursor: pointer;
+      display: block;
+      left: 0;
+      margin-left: -30px;
+      padding-left: 30px;
+      position: absolute;
+      top: 0
+    }
+
+    .markdown-body h1,
+    .markdown-body h2,
+    .markdown-body h3,
+    .markdown-body h4,
+    .markdown-body h5,
+    .markdown-body h6 {
+      cursor: text;
+      margin: 20px 0 5px;
+      padding: 0;
+      position: relative;
+      color: #333;
+      line-height: 1.5;
+      font-weight: 400
+    }
+
+    .markdown-body h1 .mini-icon-link,
+    .markdown-body h2 .mini-icon-link,
+    .markdown-body h3 .mini-icon-link,
+    .markdown-body h4 .mini-icon-link,
+    .markdown-body h5 .mini-icon-link,
+    .markdown-body h6 .mini-icon-link {
+      color: #000;
+      display: none
+    }
+
+    .markdown-body h1:hover a.anchor,
+    .markdown-body h2:hover a.anchor,
+    .markdown-body h3:hover a.anchor,
+    .markdown-body h4:hover a.anchor,
+    .markdown-body h5:hover a.anchor,
+    .markdown-body h6:hover a.anchor {
+      line-height: 1;
+      margin-left: -22px;
+      padding-left: 0;
+      text-decoration: none;
+      top: 15%
+    }
+
+    .markdown-body h1:hover a.anchor .mini-icon-link,
+    .markdown-body h2:hover a.anchor .mini-icon-link,
+    .markdown-body h3:hover a.anchor .mini-icon-link,
+    .markdown-body h4:hover a.anchor .mini-icon-link,
+    .markdown-body h5:hover a.anchor .mini-icon-link,
+    .markdown-body h6:hover a.anchor .mini-icon-link {
+      display: inline-block
+    }
+
+    .markdown-body h1 code,
+    .markdown-body h1 tt,
+    .markdown-body h2 code,
+    .markdown-body h2 tt,
+    .markdown-body h3 code,
+    .markdown-body h3 tt,
+    .markdown-body h4 code,
+    .markdown-body h4 tt,
+    .markdown-body h5 code,
+    .markdown-body h5 tt,
+    .markdown-body h6 code,
+    .markdown-body h6 tt {
+      font-size: inherit
+    }
+
+    .markdown-body h1 {
+      font-size: 30px;
+      margin-bottom: 20px
+    }
+
+    .markdown-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #333
+    }
+
+    .markdown-body h3 {
+      font-size: 18px
+    }
+
+    .markdown-body h4 {
+      font-size: 16px
+    }
+
+    .markdown-body h5 {
+      font-size: 14px
+    }
+
+    .markdown-body h6 {
+      color: #777;
+      font-size: 14px
+    }
+
+    .markdown-body blockquote,
+    .markdown-body dl,
+    .markdown-body ol,
+    .markdown-body p,
+    .markdown-body pre,
+    .markdown-body table,
+    .markdown-body ul {
+      margin: 10px 0
+    }
+
+    .markdown-body>h1:first-child,
+    .markdown-body>h1:first-child+h2,
+    .markdown-body>h2:first-child,
+    .markdown-body>h3:first-child,
+    .markdown-body>h4:first-child,
+    .markdown-body>h5:first-child,
+    .markdown-body>h6:first-child {
+      margin-top: 0;
+      padding-top: 0
+    }
+
+    .markdown-body a:first-child h1,
+    .markdown-body a:first-child h2,
+    .markdown-body a:first-child h3,
+    .markdown-body a:first-child h4,
+    .markdown-body a:first-child h5,
+    .markdown-body a:first-child h6 {
+      margin-top: 0;
+      padding-top: 0
+    }
+
+    .markdown-body h1+p,
+    .markdown-body h2+p,
+    .markdown-body h3+p,
+    .markdown-body h4+p,
+    .markdown-body h5+p,
+    .markdown-body h6+p {
+      margin-top: 0
+    }
+
+    .markdown-body li {
+      display: list-item
+    }
+
+    .markdown-body li p.first {
+      display: inline-block
+    }
+
+    .markdown-body ol,
+    .markdown-body ul {
+      padding-left: 30px
+    }
+
+    .markdown-body ol.no-list,
+    .markdown-body ul.no-list {
+      list-style-type: none;
+      padding: 0
+    }
+
+    .markdown-body ol li>:first-child,
+    .markdown-body ul li>:first-child {
+      margin-top: 0
+    }
+
+    .markdown-body ol ol,
+    .markdown-body ol ul,
+    .markdown-body ul ol,
+    .markdown-body ul ul {
+      margin-bottom: 0
+    }
+
+    .markdown-body dl {
+      padding: 0
+    }
+
+    .markdown-body dl dt {
+      font-size: 14px;
+      font-style: italic;
+      font-weight: 700;
+      margin: 15px 0 5px;
+      padding: 0
+    }
+
+    .markdown-body dl dt:first-child {
+      padding: 0
+    }
+
+    .markdown-body dl dt>:first-child {
+      margin-top: 0
+    }
+
+    .markdown-body dl dt>:last-child {
+      margin-bottom: 0
+    }
+
+    .markdown-body dl dd {
+      margin: 0 0 15px;
+      padding: 0 15px
+    }
+
+    .markdown-body dl dd>:first-child {
+      margin-top: 0
+    }
+
+    .markdown-body dl dd>:last-child {
+      margin-bottom: 0
+    }
+
+    .markdown-body blockquote {
+      border-left: 4px solid #ddd;
+      color: #777;
+      padding: 0 15px;
+      font-size: 16px
+    }
+
+    .markdown-body blockquote>:first-child {
+      margin-top: 0
+    }
+
+    .markdown-body blockquote>:last-child {
+      margin-bottom: 0
+    }
+
+    .markdown-body table {
+      border-collapse: collapse;
+      border-spacing: 0
+    }
+
+    .markdown-body table .minw-60 {
+      min-width: 60px;
+      display: inline-block
+    }
+
+    .markdown-body table .minw-125 {
+      min-width: 125px;
+      display: inline-block
+    }
+
+    .markdown-body table th {
+      font-weight: 700
+    }
+
+    .markdown-body table td,
+    .markdown-body table th {
+      border: 1px solid #ccc;
+      padding: 6px 13px
+    }
+
+    @media screen and (max-width:993px) {
+      .markdown-body table td,
+      .markdown-body table th {
+        word-break: break-word
+      }
+    }
+
+    .markdown-body table tr {
+      background-color: #fff;
+      border-top: 1px solid #ccc
+    }
+
+    .markdown-body table tr:nth-child(2n) {
+      background-color: #f8f8f8
+    }
+
+    .markdown-body img {
+      max-width: 100%
+    }
+
+    .markdown-body span.frame {
+      display: block;
+      overflow: hidden
+    }
+
+    .markdown-body span.frame>span {
+      border: 1px solid #ddd;
+      display: block;
+      float: left;
+      margin: 13px 0 0;
+      overflow: hidden;
+      padding: 7px;
+      width: auto
+    }
+
+    .markdown-body span.frame span img {
+      display: block;
+      float: left
+    }
+
+    .markdown-body span.frame span span {
+      clear: both;
+      color: #333;
+      display: block;
+      padding: 5px 0 0
+    }
+
+    .markdown-body span.align-center {
+      clear: both;
+      display: block;
+      overflow: hidden
+    }
+
+    .markdown-body span.align-center>span {
+      display: block;
+      margin: 13px auto 0;
+      overflow: hidden;
+      text-align: center
+    }
+
+    .markdown-body span.align-center span img {
+      margin: 0 auto;
+      text-align: center
+    }
+
+    .markdown-body span.align-right {
+      clear: both;
+      display: block;
+      overflow: hidden
+    }
+
+    .markdown-body span.align-right>span {
+      display: block;
+      margin: 13px 0 0;
+      overflow: hidden;
+      text-align: right
+    }
+
+    .markdown-body span.align-right span img {
+      margin: 0;
+      text-align: right
+    }
+
+    .markdown-body span.float-left {
+      display: block;
+      float: left;
+      margin-right: 13px;
+      overflow: hidden
+    }
+
+    .markdown-body span.float-left span {
+      margin: 13px 0 0
+    }
+
+    .markdown-body span.float-right {
+      display: block;
+      float: right;
+      margin-left: 13px;
+      overflow: hidden
+    }
+
+    .markdown-body span.float-right>span {
+      display: block;
+      margin: 13px auto 0;
+      overflow: hidden;
+      text-align: right
+    }
+
+    .markdown-body code,
+    .markdown-body tt {
+      background-color: rgba(0, 0, 0, .05);
+      border-radius: 3px 3px 3px 3px;
+      margin: 0 2px;
+      padding: 0 5px
+    }
+
+    .markdown-body pre>code {
+      background: none repeat scroll 0 0 transparent;
+      border: medium none;
+      margin: 0;
+      padding: 0
+    }
+
+    .markdown-body .highlight pre,
+    .markdown-body pre {
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 3px 3px 3px 3px;
+      font-size: 13px;
+      line-height: 19px;
+      overflow: auto;
+      padding: 6px 10px;
+      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .05), 0 1px 4px 0 rgba(0, 0, 0, .08), 0 3px 1px -2px rgba(0, 0, 0, .2)
+    }
+
+    .markdown-body pre code,
+    .markdown-body pre tt {
+      background-color: transparent;
+      border: medium none
+    }
+
+    .markdown-body hr {
+      height: 4px;
+      padding: 0;
+      margin: 16px 0;
+      background-color: #e7e7e7;
+      border: 0 none;
+      overflow: hidden
+    }
+
+    .markdown-body .orange {
+      color: #e38d11
+    }
+
+    .markdown-body .green {
+      color: #0ea127
+    }
+
+    .markdown-body .red {
+      color: #e11414
+    }
+
+    .markdown-body pre {
+      display: block;
+      overflow-x: auto;
+      -webkit-tap-highlight-color: transparent;
+      padding: .5em;
+      color: #657b83
+    }
+
+    .markdown-body pre .comment,
+    .markdown-body pre .quote {
+      color: #93a1a1
+    }
+
+    .markdown-body pre .addition,
+    .markdown-body pre .keyword,
+    .markdown-body pre .selector-tag {
+      color: #859900
+    }
+
+    .markdown-body pre .doctag,
+    .markdown-body pre .literal,
+    .markdown-body pre .meta pre .meta-string,
+    .markdown-body pre .number,
+    .markdown-body pre .regexp,
+    .markdown-body pre .string {
+      color: #2aa198
+    }
+
+    .markdown-body pre .name,
+    .markdown-body pre .section,
+    .markdown-body pre .selector-class,
+    .markdown-body pre .selector-id,
+    .markdown-body pre .title {
+      color: #268bd2
+    }
+
+    .markdown-body pre .attr,
+    .markdown-body pre .attribute,
+    .markdown-body pre .class pre .title,
+    .markdown-body pre .template-variable,
+    .markdown-body pre .type,
+    .markdown-body pre .variable {
+      color: #b58900
+    }
+
+    .markdown-body pre .bullet,
+    .markdown-body pre .link,
+    .markdown-body pre .meta,
+    .markdown-body pre .meta pre .keyword,
+    .markdown-body pre .selector-attr,
+    .markdown-body pre .selector-pseudo,
+    .markdown-body pre .subst,
+    .markdown-body pre .symbol {
+      color: #cb4b16
+    }
+
+    .markdown-body pre .built_in,
+    .markdown-body pre .deletion {
+      color: #dc322f
+    }
+
+    .markdown-body pre .formula {
+      background: #eee8d5
+    }
+
+    .markdown-body pre .emphasis {
+      font-style: italic
+    }
+
+    .markdown-body pre .strong {
+      font-weight: 700
+    }
+
+    .mipengine-doc-red {
+      color: #e11414
+    }
+
+    .mipengine-doc-orange {
+      color: #e38d11
+    }
+
+    .mipengine-doc-green {
+      color: #0ea127
+    }
+
+    .mipengine-doc-blue {
+      color: #009aed
+    }
+
+    .mipengine-doc-gray {
+      color: #999
+    }
+
+    .mipengine-doc-linethrough {
+      color: #999
+    }
+
+    .markdown-body .para-tip {
+      border-radius: 4px;
+      border: 1px solid transparent;
+      padding: 10px
+    }
+
+    .markdown-body .para-tip .fa {
+      position: absolute;
+      margin: 6px 0 0 4px
+    }
+
+    .markdown-body .para-info {
+      background-color: #f1f9f7;
+      border-color: #e0f1e9;
+      color: #1d9d74
+    }
+
+    .markdown-body .para-notice {
+      background-color: #fffdea;
+      border-color: #eae5d6;
+      color: #ad8d18
+    }
+
+    .markdown-body .para-warning {
+      background-color: #f9f1f1;
+      border-color: #decbcb;
+      color: #cc6d6d
+    }
+
+    .markdown-body .para-content {
+      display: block;
+      margin-left: 30px
+    }
+
+    .markdown-body .para-tip-text {
+      font-weight: 700
+    }
+
+    #right-sidebar {
+      padding: 0 15px;
+      background-color: #fff
+    }
+
+    #right-sidebar ul {
+      list-style: none
+    }
+
+    .mobile-nav-list {
+      padding: 45px 0 15px;
+      line-height: 2.3
+    }
+
+    .mobile-nav-list a {
+      display: block;
+      padding: 0 10px;
+      font-weight: 700;
+      font-size: 16px
+    }
+
+    .right-sidebar-doc {
+      line-height: 2.2;
+      padding-bottom: 40px
+    }
+
+    .right-sidebar-doc h3 {
+      padding: 10px 0 0;
+      position: relative;
+      display: block;
+      font-weight: 700;
+      font-size: 15px;
+      color: #333
+    }
+
+    .right-sidebar-doc a {
+      color: #666;
+      display: block;
+      font-size: 14px;
+      position: relative
+    }
+
+    .right-sidebar-doc a.current {
+      color: #009aed
+    }
+
+    .right-sidebar-doc a.current:before {
+      content: '';
+      width: 5px;
+      height: 1px;
+      top: 1px;
+      display: inline-block;
+      border: 6px solid transparent;
+      border-left: 8px solid #009aed;
+      border-right: 0;
+      border-radius: 1px;
+      position: relative
+    }
+
+    .mobile-nav-list>li>span {
+      display: none
+    }
+
+    .footer {
+      text-align: center;
+      line-height: 20px;
+      padding: 15px 0
+    }
+
+    .footer,
+    .footer a {
+      color: #999
+    }
+
+    .footer .fa-github {
+      font-size: 24px;
+      vertical-align: middle
+    }
+
+    .footer a:hover .fa-github {
+      color: #24292e
+    }
+
+    .doc-content {
+      background-color: #fff;
+      max-width: 1000px;
+      padding: 15px
+    }
+
+    .doc-content:after {
+      clear: both;
+      content: '';
+      display: block
+    }
+
+    .doc-article {
+      float: right;
+      width: 100%
+    }
+
+    .doc-left-sidebar {
+      display: none;
+      float: left;
+      width: 180px;
+      margin-left: -180px;
+      padding-bottom: 40px;
+      line-height: 2.1
+    }
+
+    .doc-left-sidebar h3 {
+      padding: 10px 0 0;
+      position: relative;
+      display: block;
+      font-weight: 700;
+      font-size: 15px;
+      color: #333
+    }
+
+    .doc-left-sidebar a {
+      color: #666;
+      display: block;
+      font-size: 14px;
+      position: relative
+    }
+
+    .doc-left-sidebar a.current {
+      color: #009aed
+    }
+
+    .doc-left-sidebar a.current:before {
+      content: '';
+      width: 5px;
+      height: 1px;
+      top: 1px;
+      display: inline-block;
+      border: 6px solid transparent;
+      border-left: 8px solid #009aed;
+      border-right: 0;
+      border-radius: 1px;
+      position: relative
+    }
+
+    @media screen and (min-width:767px) {
+      .doc-left-sidebar {
+        display: block
+      }
+      .doc-content-inner {
+        margin-left: 180px
+      }
+      .doc-content {
+        margin: 20px auto 0;
+        padding: 60px 55px 40px
+      }
+    }
+
+    .partners-wrap mip-img {
+      width: 125px;
+      height: 70px;
+      border: 1px solid #ddd;
+      padding: 5px;
+      margin: 0 12px 7px 0;
+      display: inline-block
+    }
+
+    .partners-wrap mip-img img {
+      object-fit: contain
+    }
+
+    .partners-wrap .kta-wrapper {
+      text-align: center;
+      padding: 20px
+    }
+
+    .partners-wrap .kta {
+      margin: 20px auto;
+      border: 1px solid #38f;
+      color: #38f;
+      padding: 10px 15px;
+      border-radius: 20px
+    }
+
+    .partners-wrap .kta:hover {
+      text-decoration: none;
+      background: #eee
+    }
+
+    .white-bg {
+      background: #fff
+    }
+
+  </style>
+  <noscript>
+    <style mip-officialrelease>
+      body {
+        -webkit-animation: none;
+        -moz-animation: none;
+        -ms-animation: none;
+        animation: none;
+      }
 
     </style>
-    <noscript>
-        <style mip-officialrelease>
-            body {
-                -webkit-animation: none;
-                -moz-animation: none;
-                -ms-animation: none;
-                animation: none;
-            }
-
-        </style>
-    </noscript>
+  </noscript>
 </head>
 
 <body class="layout-doc">
-    <div class="header">
-        <div class="header-inner">
-            <div class="header-flex">
-                <h1 class="header-logo">
-                    <a data-type="mip" href="/" title="MIP">mipengine</a>
-                </h1>
-                <div class="header-nav">
-                    <ul class="header-nav-list">
-                        <li>
-                            <a data-type="mip" href="./">首页</a>
-                        </li>
-                        <li>
-                            <a data-type="mip" href="./doc/00-mip-101.html">使用文档</a>
-                        </li>
-                        <li>
-                            <a data-type="mip" href="./doc/3-widget/10-widgets.html">组件列表</a>
-                        </li>
-                        <li>
-                            <a href="https://github.com/mipengine/mip/wiki/MIP-%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%E5%A4%A7%E5%85%A8">帮助</a>
-                        </li>
-                        <li>
-                            <span>常用链接</span>
-                            <ul>
-                                <li>
-                                    <a href="http://www.cnblogs.com/mipengine">MIP 官方博客</a>
-                                </li>
-                                <li>
-                                    <a href="https://github.com/mipengine/mip-cli">MIP-CLI 本地开发工具</a>
-                                </li>
-                                <li>
-                                    <a data-type="mip" href="/timeline.html">MIP 升级动态</a>
-                                </li>
-                                <li>
-                                    <a href="https://www.mipengine.org/validator/validate">MIP 代码校验工具</a>
-                                </li>
-                                <li>
-                                    <a href="https://www.mipengine.org/validator/preview">MIP 效果预览工具</a>
-                                </li>
-                                <li>
-                                    <a href="/mippath.html">MIP PATH 转换工具</a>
-                                </li>
-                                <li>
-                                    <a href="https://www.mipengine.org/platform">MIP 组件审核平台</a>
-                                </li>
-                                <li>
-                                    <a href="https://bit.baidu.com/course/datalist/column/120.html">MIP 视频教程</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="https://github.com/mipengine/">GitHub</a>
-                        </li>
-                    </ul>
-                </div>
-                <button class="header-mobile-nav-toggle" on="tap:right-sidebar.open" role="button">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
+  <div class="header">
+    <div class="header-inner">
+      <div class="header-flex">
+        <h1 class="header-logo">
+          <a data-type="mip" href="/" title="MIP">mipengine</a>
+        </h1>
+        <div class="header-nav">
+          <ul class="header-nav-list">
+            <li>
+              <a data-type="mip" href="./">首页</a>
+            </li>
+            <li>
+              <a data-type="mip" href="./doc/00-mip-101.html">使用文档</a>
+            </li>
+            <li>
+              <a data-type="mip" href="./doc/3-widget/10-widgets.html">组件列表</a>
+            </li>
+            <li>
+              <a href="https://github.com/mipengine/mip/wiki/MIP-%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%E5%A4%A7%E5%85%A8">帮助</a>
+            </li>
+            <li>
+              <span>常用链接</span>
+              <ul>
+                <li>
+                  <a href="http://www.cnblogs.com/mipengine">MIP 官方博客</a>
+                </li>
+                <li>
+                  <a href="https://github.com/mipengine/mip-cli">MIP-CLI 本地开发工具</a>
+                </li>
+                <li>
+                  <a data-type="mip" href="/timeline.html">MIP 升级动态</a>
+                </li>
+                <li>
+                  <a href="https://www.mipengine.org/validator/validate">MIP 代码校验工具</a>
+                </li>
+                <li>
+                  <a href="https://www.mipengine.org/validator/preview">MIP 效果预览工具</a>
+                </li>
+                <li>
+                  <a href="/mippath.html">MIP PATH 转换工具</a>
+                </li>
+                <li>
+                  <a href="https://www.mipengine.org/platform">MIP 组件审核平台</a>
+                </li>
+                <li>
+                  <a href="https://bit.baidu.com/course/datalist/column/120.html">MIP 视频教程</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <a href="https://github.com/mipengine/">GitHub</a>
+            </li>
+          </ul>
         </div>
+        <button class="header-mobile-nav-toggle" on="tap:right-sidebar.open" role="button">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
     </div>
-    <div class="doc-content">
-        <div class="doc-content-inner">
-            <article class="doc-article">
-                <header class="article-header">
-                    <h1 class="article-title">新手指南</h1>
-                    <a href="https://github.com/mipengine/www.mipengine.org/edit/master/source/doc/00-mip-101.md"
-                        class="article-edit-link" title="点击编辑该页面">
-                        <i class="fa fa-pencil"></i>编辑</a>
-                </header>
-                <div class="doc-article-content markdown-body">
-                    <p>MIP（Mobile Instant Pages - 移动网页加速器）主要用于移动端页面加速。</p>
-                    <p>这篇文档将带你快速创建一个 MIP 页面。</p>
-                    <h2 id="markdown-doc-1.%20%E5%88%9B%E5%BB%BA%20HTML%20%E6%96%87%E4%BB%B6">1. 创建 HTML 文件</h2>
-                    <p>首先创建一个标准的 HTML 文件，注意：</p>
-                    <ul>
-                        <li>在
-                            <code>&lt;html&gt;</code> 标签中增加
-                            <code>mip</code> 属性标识。</li>
-                        <li>编码为
-                            <code>utf-8</code> 。</li>
-                        <li>添加
-                            <code>meta-viewport</code>，用于移动端展现。</li>
-                    </ul>
-                    <pre><code class="hljs lang-html"><span class="hljs-meta">&lt;!DOCTYPE html&gt;</span>
+  </div>
+  <div class="doc-content">
+    <div class="doc-content-inner">
+      <article class="doc-article">
+        <header class="article-header">
+          <h1 class="article-title">新手指南</h1>
+          <a href="https://github.com/mipengine/www.mipengine.org/edit/master/source/doc/00-mip-101.md"
+            class="article-edit-link" title="点击编辑该页面">
+            <i class="fa fa-pencil"></i>编辑</a>
+        </header>
+        <div class="doc-article-content markdown-body">
+          <p>MIP（Mobile Instant Pages - 移动网页加速器）主要用于移动端页面加速。</p>
+          <p>这篇文档将带你快速创建一个 MIP 页面。</p>
+          <h2 id="markdown-doc-1.%20%E5%88%9B%E5%BB%BA%20HTML%20%E6%96%87%E4%BB%B6">1. 创建 HTML 文件</h2>
+          <p>首先创建一个标准的 HTML 文件，注意：</p>
+          <ul>
+            <li>在
+              <code>&lt;html&gt;</code> 标签中增加
+              <code>mip</code> 属性标识。</li>
+            <li>编码为
+              <code>utf-8</code> 。</li>
+            <li>添加
+              <code>meta-viewport</code>，用于移动端展现。</li>
+          </ul>
+          <pre><code class="hljs lang-html"><span class="hljs-meta">&lt;!DOCTYPE html&gt;</span>
    <span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">mip</span>&gt;</span>
-       <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"UTF-8"</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"viewport"</span> <span class="hljs-attr">content</span>=<span class="hljs-string">"width=device-width,minimum-scale=1,initial-scale=1"</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Hello World<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
-       <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
-       <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello World!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
-       <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+     <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"UTF-8"</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"viewport"</span> <span class="hljs-attr">content</span>=<span class="hljs-string">"width=device-width,minimum-scale=1,initial-scale=1"</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Hello World<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+     <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+     <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello World!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+     <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
    <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span></code></pre>
-                    <h2 id="markdown-doc-2.%20%E6%B7%BB%E5%8A%A0%20MIP%20%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83">2. 添加 MIP 运行环境</h2>
-                    <p>在 HTML 代码中，添加 MIP 依赖的
-                        <code>mip.js</code> 和
-                        <code>mip.css</code> 。</p>
-                    <pre><code class="hljs lang-html"><span class="hljs-meta">&lt;!DOCTYPE html&gt;</span>
+          <h2 id="markdown-doc-2.%20%E6%B7%BB%E5%8A%A0%20MIP%20%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83">2. 添加 MIP 运行环境</h2>
+          <p>在 HTML 代码中，添加 MIP 依赖的
+            <code>mip.js</code> 和
+            <code>mip.css</code> 。</p>
+          <pre><code class="hljs lang-html"><span class="hljs-meta">&lt;!DOCTYPE html&gt;</span>
    <span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">mip</span>&gt;</span>
-       <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"UTF-8"</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"viewport"</span> <span class="hljs-attr">content</span>=<span class="hljs-string">"width=device-width,minimum-scale=1,initial-scale=1"</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"stylesheet"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text/css"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.css"</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Hello World<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
-       <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
-       <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello World!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
-       <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+     <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"UTF-8"</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"viewport"</span> <span class="hljs-attr">content</span>=<span class="hljs-string">"width=device-width,minimum-scale=1,initial-scale=1"</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"stylesheet"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text/css"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.css"</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Hello World<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+     <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+     <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello World!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+     <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
    <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span></code></pre>
-                    <h2 id="markdown-doc-3.%20%E6%B7%BB%E5%8A%A0%20MIP%20%E5%85%B3%E8%81%94%E6%A0%87%E7%AD%BE">3. 添加 MIP 关联标签</h2>
-                    <p>
-                        <code>&lt;link rel=&quot;miphtml&quot;&gt;</code> 和
-                        <code>&lt;link rel=&quot;canonical&quot;&gt;</code> 主要用于告知搜索引擎页面间的关系。添加关联标签后，MIP 页的会继承
-                        <strong>原页面</strong>(移动端) 的点击权重，同时
-                        <strong>MIP 页</strong> 将作为搜索引擎的首选导流页面。</p>
-                    <p>使用规则：</p>
-                    <ul>
-                        <li>
-                            <code>&lt;link rel=&quot;miphtml&quot;&gt;</code> 在移动端页面（H5）使用，指向对应内容的 MIP 页，方便搜索引擎发现对应的 MIP 页。</li>
-                        <li>
-                            <code>&lt;link rel=&quot;canonical&quot;&gt;</code> 在 MIP 页中使用，指向内容对应的移动端页面（H5）。</li>
-                        <li>若没有移动端页面（H5），则指向内容对应的 PC 页。</li>
-                        <li>若直接在原链接修改 MIP，则 Canonical 指向当前 URL 。</li>
-                    </ul>
-                    <pre><code class="hljs lang-html"><span class="hljs-meta">&lt;!DOCTYPE html&gt;</span>
+          <h2 id="markdown-doc-3.%20%E6%B7%BB%E5%8A%A0%20MIP%20%E5%85%B3%E8%81%94%E6%A0%87%E7%AD%BE">3. 添加 MIP 关联标签</h2>
+          <p>
+            <code>&lt;link rel=&quot;miphtml&quot;&gt;</code> 和
+            <code>&lt;link rel=&quot;canonical&quot;&gt;</code> 主要用于告知搜索引擎页面间的关系。添加关联标签后，MIP 页的会继承
+            <strong>原页面</strong>(移动端) 的点击权重，同时
+            <strong>MIP 页</strong> 将作为搜索引擎的首选导流页面。</p>
+          <p>使用规则：</p>
+          <ul>
+            <li>
+              <code>&lt;link rel=&quot;miphtml&quot;&gt;</code> 在移动端页面（H5）使用，指向对应内容的 MIP 页，方便搜索引擎发现对应的 MIP 页。</li>
+            <li>
+              <code>&lt;link rel=&quot;canonical&quot;&gt;</code> 在 MIP 页中使用，指向内容对应的移动端页面（H5）。</li>
+            <li>若没有移动端页面（H5），则指向内容对应的 PC 页。</li>
+            <li>若直接在原链接修改 MIP，则 Canonical 指向当前 URL 。</li>
+          </ul>
+          <pre><code class="hljs lang-html"><span class="hljs-meta">&lt;!DOCTYPE html&gt;</span>
    <span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">mip</span>&gt;</span>
-       <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"UTF-8"</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"viewport"</span> <span class="hljs-attr">content</span>=<span class="hljs-string">"width=device-width,minimum-scale=1,initial-scale=1"</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"stylesheet"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text/css"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.css"</span>&gt;</span>
-           <span class="hljs-comment">&lt;!-- canonical 中的链接优先填写对应内容的移动端页面（H5）地址 --&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"canonical"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://www.example.com/your/path.html"</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Hello World<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
-       <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
-       <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello World!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
-       <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+     <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"UTF-8"</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"viewport"</span> <span class="hljs-attr">content</span>=<span class="hljs-string">"width=device-width,minimum-scale=1,initial-scale=1"</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"stylesheet"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text/css"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.css"</span>&gt;</span>
+       <span class="hljs-comment">&lt;!-- canonical 中的链接优先填写对应内容的移动端页面（H5）地址 --&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"canonical"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://www.example.com/your/path.html"</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Hello World<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+     <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+     <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello World!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+     <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
    <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span></code></pre>
-                    <h2 id="markdown-doc-4.%20%E6%B7%BB%E5%8A%A0%E6%A0%B7%E5%BC%8F">4. 添加样式</h2>
-                    <p>出于速度考虑，建议內联使用 CSS 样式。所有样式写在
-                        <code>&lt;style mip-custom&gt;&lt;/style&gt;</code> 中，注意：
-                        <code>style</code> 标签仅允许出现一次。</p>
-                    <pre><code class="hljs lang-html"><span class="hljs-meta">&lt;!DOCTYPE html&gt;</span>
+          <h2 id="markdown-doc-4.%20%E6%B7%BB%E5%8A%A0%E6%A0%B7%E5%BC%8F">4. 添加样式</h2>
+          <p>出于速度考虑，建议內联使用 CSS 样式。所有样式写在
+            <code>&lt;style mip-custom&gt;&lt;/style&gt;</code> 中，注意：
+            <code>style</code> 标签仅允许出现一次。</p>
+          <pre><code class="hljs lang-html"><span class="hljs-meta">&lt;!DOCTYPE html&gt;</span>
    <span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">mip</span>&gt;</span>
-       <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"UTF-8"</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"viewport"</span> <span class="hljs-attr">content</span>=<span class="hljs-string">"width=device-width,minimum-scale=1,initial-scale=1"</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"stylesheet"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text/css"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.css"</span>&gt;</span>
-           <span class="hljs-comment">&lt;!-- canonical 中的链接优先填写对应内容的移动端页面（H5）地址 --&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"canonical"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://www.example.com/your/path.html"</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Hello World<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">style</span> <span class="hljs-attr">mip-custom</span>&gt;</span><span class="css">
-               <span class="hljs-selector-tag">h1</span> { <span class="hljs-attribute">color</span>: red;}
-           </span><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span>
-       <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
-       <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello World!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
-       <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+     <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"UTF-8"</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"viewport"</span> <span class="hljs-attr">content</span>=<span class="hljs-string">"width=device-width,minimum-scale=1,initial-scale=1"</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"stylesheet"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text/css"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.css"</span>&gt;</span>
+       <span class="hljs-comment">&lt;!-- canonical 中的链接优先填写对应内容的移动端页面（H5）地址 --&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"canonical"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://www.example.com/your/path.html"</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Hello World<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">style</span> <span class="hljs-attr">mip-custom</span>&gt;</span><span class="css">
+         <span class="hljs-selector-tag">h1</span> { <span class="hljs-attribute">color</span>: red;}
+       </span><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span>
+     <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+     <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello World!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+     <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
    <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span></code></pre>
-                    <h2 id="markdown-doc-5.%20%E6%9B%BF%E6%8D%A2%E7%A6%81%E7%94%A8%20HTML%20%E6%A0%87%E7%AD%BE">5. 替换禁用 HTML 标签</h2>
-                    <p class="para-tip para-notice">
-                        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                        <span class="para-content">
-                            <span class="para-tip-text">注意：</span>MIP 十分关注页面速度，也因此禁用了一些引起拖慢速度的 HTML 标签（
-                            <a data-type="mip" href="/doc/2-tech/1-mip-html.html">禁用列表</a>）。例如，
-                            <code>&lt;img&gt;</code> 标签会引起浏览器的 repaint 和 reflow，为了避免这些，MIP 提供了替代标签
-                            <code>&lt;mip-img&gt;</code> ，详见
-                            <a data-type="mip" href="/examples/mip/mip-img.html">
-                                <code>&lt;mip-img&gt;</code>使用文档</a> 。</span>
-                    </p>
-                    <pre><code class="hljs lang-html"><span class="hljs-meta">&lt;!DOCTYPE html&gt;</span>
+          <h2 id="markdown-doc-5.%20%E6%9B%BF%E6%8D%A2%E7%A6%81%E7%94%A8%20HTML%20%E6%A0%87%E7%AD%BE">5. 替换禁用 HTML 标签</h2>
+          <p class="para-tip para-notice">
+            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+            <span class="para-content">
+              <span class="para-tip-text">注意：</span>MIP 十分关注页面速度，也因此禁用了一些引起拖慢速度的 HTML 标签（
+              <a data-type="mip" href="/doc/2-tech/1-mip-html.html">禁用列表</a>）。例如，
+              <code>&lt;img&gt;</code> 标签会引起浏览器的 repaint 和 reflow，为了避免这些，MIP 提供了替代标签
+              <code>&lt;mip-img&gt;</code> ，详见
+              <a data-type="mip" href="/examples/mip/mip-img.html">
+                <code>&lt;mip-img&gt;</code>使用文档</a> 。</span>
+          </p>
+          <pre><code class="hljs lang-html"><span class="hljs-meta">&lt;!DOCTYPE html&gt;</span>
    <span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">mip</span>&gt;</span>
-       <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"UTF-8"</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"viewport"</span> <span class="hljs-attr">content</span>=<span class="hljs-string">"width=device-width,minimum-scale=1,initial-scale=1"</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"stylesheet"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text/css"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.css"</span>&gt;</span>
-           <span class="hljs-comment">&lt;!-- canonical 中的链接优先填写对应内容的移动端页面（H5）地址 --&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"canonical"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://www.example.com/your/path.html"</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Hello World<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">style</span> <span class="hljs-attr">mip-custom</span>&gt;</span><span class="css">
-               <span class="hljs-selector-tag">h1</span> { <span class="hljs-attribute">color</span>: red;}
-           </span><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span>
-       <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
-       <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello World!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">mip-img</span> <span class="hljs-attr">layout</span>=<span class="hljs-string">"responsive"</span> <span class="hljs-attr">width</span>=<span class="hljs-string">"350"</span> <span class="hljs-attr">height</span>=<span class="hljs-string">"263"</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://www.mipengine.orghttps://www.mipengine.org/static/img/mip_logo_3b722d7.png"</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">"MIP LOGO"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">mip-img</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
-       <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+     <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"UTF-8"</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"viewport"</span> <span class="hljs-attr">content</span>=<span class="hljs-string">"width=device-width,minimum-scale=1,initial-scale=1"</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"stylesheet"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text/css"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.css"</span>&gt;</span>
+       <span class="hljs-comment">&lt;!-- canonical 中的链接优先填写对应内容的移动端页面（H5）地址 --&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"canonical"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://www.example.com/your/path.html"</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Hello World<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">style</span> <span class="hljs-attr">mip-custom</span>&gt;</span><span class="css">
+         <span class="hljs-selector-tag">h1</span> { <span class="hljs-attribute">color</span>: red;}
+       </span><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span>
+     <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+     <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello World!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">mip-img</span> <span class="hljs-attr">layout</span>=<span class="hljs-string">"responsive"</span> <span class="hljs-attr">width</span>=<span class="hljs-string">"350"</span> <span class="hljs-attr">height</span>=<span class="hljs-string">"263"</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://www.mipengine.orghttps://www.mipengine.org/static/img/mip_logo_3b722d7.png"</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">"MIP LOGO"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">mip-img</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+     <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
    <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span></code></pre>
-                    <h2 id="markdown-doc-6.%20%E4%BD%BF%E7%94%A8%20MIP%20%E7%BB%84%E4%BB%B6">6. 使用 MIP 组件</h2>
-                    <p class="para-tip para-warning">
-                        <i class="fa fa-window-close" aria-hidden="true"></i>
-                        <span class="para-content">
-                            <span class="para-tip-text">警告：</span>出于对代码质量和性能的考虑，MIP 页中不允许自定义 JavaScript 代码。</span>
-                    </p>
-                    <p>在一个合法的 MIP 页面中，所有的交互通过引入 MIP 组件实现。MIP 组件可以理解为封装了 JS 的自定义 HTML 标签。上一步中的
-                        <code>&lt;mip-img&gt;</code> 也是一个 MIP 组件，
-                        <a data-type="mip" href="/doc/3-widget/10-widgets.html">点击这里</a> 查看更多组件。</p>
-                    <p>我们以分享组件为例，根据
-                        <a data-type="mip" href="/examples/mip-extensions/mip-share.html">分享组件文档</a>，组件对应的 HTML 标签为
-                        <code>&lt;mip-share&gt;</code> ，需要依赖
-                        <a href="https://c.mipcdn.com/static/v1/mip-share/mip-share.js" target="_blank"
-                            rel="noopener">https://c.mipcdn.com/static/v1/mip-share/mip-share.js</a> 脚本，用在页面里就是这样：</p>
-                    <pre><code class="hljs lang-html"><span class="hljs-meta">&lt;!DOCTYPE html&gt;</span>
+          <h2 id="markdown-doc-6.%20%E4%BD%BF%E7%94%A8%20MIP%20%E7%BB%84%E4%BB%B6">6. 使用 MIP 组件</h2>
+          <p class="para-tip para-warning">
+            <i class="fa fa-window-close" aria-hidden="true"></i>
+            <span class="para-content">
+              <span class="para-tip-text">警告：</span>出于对代码质量和性能的考虑，MIP 页中不允许自定义 JavaScript 代码。</span>
+          </p>
+          <p>在一个合法的 MIP 页面中，所有的交互通过引入 MIP 组件实现。MIP 组件可以理解为封装了 JS 的自定义 HTML 标签。上一步中的
+            <code>&lt;mip-img&gt;</code> 也是一个 MIP 组件，
+            <a data-type="mip" href="/doc/3-widget/10-widgets.html">点击这里</a> 查看更多组件。</p>
+          <p>我们以分享组件为例，根据
+            <a data-type="mip" href="/examples/mip-extensions/mip-share.html">分享组件文档</a>，组件对应的 HTML 标签为
+            <code>&lt;mip-share&gt;</code> ，需要依赖
+            <a href="https://c.mipcdn.com/static/v1/mip-share/mip-share.js" target="_blank"
+              rel="noopener">https://c.mipcdn.com/static/v1/mip-share/mip-share.js</a> 脚本，用在页面里就是这样：</p>
+          <pre><code class="hljs lang-html"><span class="hljs-meta">&lt;!DOCTYPE html&gt;</span>
    <span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">mip</span>&gt;</span>
-       <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"UTF-8"</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"viewport"</span> <span class="hljs-attr">content</span>=<span class="hljs-string">"width=device-width,minimum-scale=1,initial-scale=1"</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"stylesheet"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text/css"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.css"</span>&gt;</span>
-           <span class="hljs-comment">&lt;!-- canonical 中的链接优先填写对应内容的移动端页面（H5）地址 --&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"canonical"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://www.example.com/your/path.html"</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Hello World<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">style</span> <span class="hljs-attr">mip-custom</span>&gt;</span><span class="css">
-               <span class="hljs-selector-tag">h1</span> { <span class="hljs-attribute">color</span>: red;}
-           </span><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span>
-       <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
-       <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello World!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">mip-img</span> <span class="hljs-attr">layout</span>=<span class="hljs-string">"responsive"</span> <span class="hljs-attr">width</span>=<span class="hljs-string">"350"</span> <span class="hljs-attr">height</span>=<span class="hljs-string">"263"</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://www.mipengine.orghttps://www.mipengine.org/static/img/mip_logo_3b722d7.png"</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">"MIP LOGO"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">mip-img</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">mip-share</span> <span class="hljs-attr">title</span>=<span class="hljs-string">"分享：我的第一个 MIP 页面 "</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">mip-share</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
-           <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip-share/mip-share.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
-       <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+     <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"UTF-8"</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"viewport"</span> <span class="hljs-attr">content</span>=<span class="hljs-string">"width=device-width,minimum-scale=1,initial-scale=1"</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"stylesheet"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text/css"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.css"</span>&gt;</span>
+       <span class="hljs-comment">&lt;!-- canonical 中的链接优先填写对应内容的移动端页面（H5）地址 --&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"canonical"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://www.example.com/your/path.html"</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Hello World<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">style</span> <span class="hljs-attr">mip-custom</span>&gt;</span><span class="css">
+         <span class="hljs-selector-tag">h1</span> { <span class="hljs-attribute">color</span>: red;}
+       </span><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span>
+     <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+     <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello World!<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">mip-img</span> <span class="hljs-attr">layout</span>=<span class="hljs-string">"responsive"</span> <span class="hljs-attr">width</span>=<span class="hljs-string">"350"</span> <span class="hljs-attr">height</span>=<span class="hljs-string">"263"</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://www.mipengine.orghttps://www.mipengine.org/static/img/mip_logo_3b722d7.png"</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">"MIP LOGO"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">mip-img</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">mip-share</span> <span class="hljs-attr">title</span>=<span class="hljs-string">"分享：我的第一个 MIP 页面 "</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">mip-share</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+       <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://c.mipcdn.com/static/v1/mip-share/mip-share.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+     <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
    <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span></code></pre>
-                    <p>在使用组件时，请注意阅读组件文档，查看组件是否依赖所需脚本。如果依赖，请在
-                        <code>mip.js</code> 之后引入脚本。</p>
-                    <h2 id="markdown-doc-7.%20%E9%A2%84%E8%A7%88">7. 预览</h2>
-                    <p>开发完成后，可以使用
-                        <a href="//www.mipengine.org/validator/validate">MIP 校验工具</a> 保证代码规范。</p>
-                    <p class="para-tip para-info">
-                        <i class="fa fa-info-circle" aria-hidden="true"></i>
-                        <span class="para-content">
-                            <span class="para-tip-text">提示：</span>校验代码，使用
-                            <a href="//www.mipengine.org/validator/validate">MIP 校验工具</a>。
-                            <br>预览线上 URL 异步打开效果，使用
-                            <a href="//www.mipengine.org/validator/preview">MIP 预览工具</a>。</span>
-                    </p>
-                    <p>MIP 页文件可以直接运行，你可以选择如下方式，像预览普通 HTML 站点一样预览 MIP-HTML 页面：</p>
-                    <ul>
-                        <li>直接在浏览器中打开（由于 XML HTTP Requests 失败可能会导致某些元素预览失败）。</li>
-                        <li>在本地部署一个服务，如 Apache，Nginx 等。</li>
-                        <li>使用 MIP-CLI 辅助预览，使用方法见 MIP 博客：
-                            <a href="http://www.cnblogs.com/mipengine/p/mip_cli_1_install.html"
-                                target="_blank" rel="noopener">开发教程一</a>。</li>
-                    </ul>
-                    <h2 id="markdown-doc-8.%20%E8%B5%B7%E9%A3%9E">8. 起飞</h2>
-                    <p>到目前为止，你已经创建好了一个 MIP 页面。这个页面有图、有文、能分享，可以在浏览器中运行。</p>
-                    <p>进阶的内容，请参考：</p>
-                    <ul>
-                        <li>
-                            <a data-type="mip" href="/doc/2-tech/1-mip-html.html">MIP-HTML 规范</a>
-                        </li>
-                        <li>
-                            <a data-type="mip" href="/doc/3-widget/11-widget-layout.html">组件布局</a>
-                        </li>
-                        <li>
-                            <a data-type="mip" href="/doc/03-principle-of-mip.html">MIP 加速原理</a>
-                        </li>
-                        <li>
-                            <a data-type="mip" href="/doc/2-tech/4-mip-widget.html">扩展组件开发规范</a>
-                        </li>
-                    </ul>
-                    <p class="para-tip para-info">
-                        <i class="fa fa-info-circle" aria-hidden="true"></i>
-                        <span class="para-content">
-                            <span class="para-tip-text">提示：</span>MIP 开发系列视频教程：
-                            <a href="https://bit.baidu.com/course/datalist/column/120.html" target="_blank"
-                                rel="noopener">https://bit.baidu.com/course/datalist/column/120.html</a>
-                        </span>
-                    </p>
-                </div>
-            </article>
-            <aside class="doc-left-sidebar">
-                <div class="doc-left-sidebar-inner">
-                    <h3>简介</h3>
-                    <a data-type="mip" href="/doc/00-mip-101.html" class="current">新手指南</a>
-                    <a data-type="mip" href="/doc/01-mip-demo.html">完整 DEMO</a>
-                    <a data-type="mip" href="/doc/02-what-is-mip.html">什么是 MIP</a>
-                    <a data-type="mip" href="/doc/03-principle-of-mip.html">MIP 加速原理</a>
-                    <a data-type="mip" href="/doc/04-announcement.html">MIP 内容声明</a>
-                    <h3>开发规范</h3>
-                    <a data-type="mip" href="/doc/2-tech/1-mip-html.html">MIP-HTML 规范</a>
-                    <a data-type="mip" href="/doc/2-tech/3-mip-cache.html">MIP-Cache 规范</a>
-                    <a data-type="mip" href="/doc/2-tech/2-validate-mip.html">MIP 校验规则</a>
-                    <a data-type="mip" href="/doc/2-tech/5-show-your-page.html">Canonical 使用规范</a>
-                    <a data-type="mip" href="/doc/2-tech/4-mip-widget.html">组件开发规范</a>
-                    <h3>组件说明</h3>
-                    <a data-type="mip" href="/doc/3-widget/10-widgets.html">MIP 组件列表</a>
-                    <a data-type="mip" href="/doc/3-widget/11-widget-layout.html">组件布局</a>
-                    <h3>工具接口</h3>
-                    <a data-type="mip" href="/doc/3-widget/6-help/1-introduce.html">开发辅助工具和模块</a>
-                    <a data-type="mip" href="/doc/3-widget/6-help/3-mip-normal.html">事件通信</a>
-                    <a data-type="mip" href="/doc/3-widget/6-help/2-gesture.html">手势</a>
-                    <a data-type="mip" href="/doc/3-widget/6-help/4-mip-animate.html">动画</a>
-                    <a data-type="mip" href="/doc/3-widget/6-help/5-template.html">template 模板</a>
-                    <a data-type="mip" href="/doc/3-widget/6-help/6-storage.html">存储</a>
-                    <h3>帮助中心</h3>
-                    <a href="https://github.com/mipengine/mip/wiki/MIP-%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%E5%A4%A7%E5%85%A8">MIP FAQ</a>
-                    <a data-type="mip" href="/doc/4-support/support-browsers.html">浏览器兼容列表</a>
-                    <a data-type="mip" href="/doc/4-support/2-contact.html">联系我们</a>
-                    <a href="https://github.com/mipengine/www.mipengine.org/blob/master/CONTRIBUTING.md">贡献文档</a>
-                    <h3>成功案例</h3>
-                    <a data-type="mip" href="/doc/partners/partners.html">合作伙伴</a>
-                    <a data-type="mip" href="/demos.html">优秀案例</a>
-                </div>
-            </aside>
+          <p>在使用组件时，请注意阅读组件文档，查看组件是否依赖所需脚本。如果依赖，请在
+            <code>mip.js</code> 之后引入脚本。</p>
+          <h2 id="markdown-doc-7.%20%E9%A2%84%E8%A7%88">7. 预览</h2>
+          <p>开发完成后，可以使用
+            <a href="//www.mipengine.org/validator/validate">MIP 校验工具</a> 保证代码规范。</p>
+          <p class="para-tip para-info">
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+            <span class="para-content">
+              <span class="para-tip-text">提示：</span>校验代码，使用
+              <a href="//www.mipengine.org/validator/validate">MIP 校验工具</a>。
+              <br>预览线上 URL 异步打开效果，使用
+              <a href="//www.mipengine.org/validator/preview">MIP 预览工具</a>。</span>
+          </p>
+          <p>MIP 页文件可以直接运行，你可以选择如下方式，像预览普通 HTML 站点一样预览 MIP-HTML 页面：</p>
+          <ul>
+            <li>直接在浏览器中打开（由于 XML HTTP Requests 失败可能会导致某些元素预览失败）。</li>
+            <li>在本地部署一个服务，如 Apache，Nginx 等。</li>
+            <li>使用 MIP-CLI 辅助预览，使用方法见 MIP 博客：
+              <a href="http://www.cnblogs.com/mipengine/p/mip_cli_1_install.html"
+                target="_blank" rel="noopener">开发教程一</a>。</li>
+          </ul>
+          <h2 id="markdown-doc-8.%20%E8%B5%B7%E9%A3%9E">8. 起飞</h2>
+          <p>到目前为止，你已经创建好了一个 MIP 页面。这个页面有图、有文、能分享，可以在浏览器中运行。</p>
+          <p>进阶的内容，请参考：</p>
+          <ul>
+            <li>
+              <a data-type="mip" href="/doc/2-tech/1-mip-html.html">MIP-HTML 规范</a>
+            </li>
+            <li>
+              <a data-type="mip" href="/doc/3-widget/11-widget-layout.html">组件布局</a>
+            </li>
+            <li>
+              <a data-type="mip" href="/doc/03-principle-of-mip.html">MIP 加速原理</a>
+            </li>
+            <li>
+              <a data-type="mip" href="/doc/2-tech/4-mip-widget.html">扩展组件开发规范</a>
+            </li>
+          </ul>
+          <p class="para-tip para-info">
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+            <span class="para-content">
+              <span class="para-tip-text">提示：</span>MIP 开发系列视频教程：
+              <a href="https://bit.baidu.com/course/datalist/column/120.html" target="_blank"
+                rel="noopener">https://bit.baidu.com/course/datalist/column/120.html</a>
+            </span>
+          </p>
         </div>
+      </article>
+      <aside class="doc-left-sidebar">
+        <div class="doc-left-sidebar-inner">
+          <h3>简介</h3>
+          <a data-type="mip" href="/doc/00-mip-101.html" class="current">新手指南</a>
+          <a data-type="mip" href="/doc/01-mip-demo.html">完整 DEMO</a>
+          <a data-type="mip" href="/doc/02-what-is-mip.html">什么是 MIP</a>
+          <a data-type="mip" href="/doc/03-principle-of-mip.html">MIP 加速原理</a>
+          <a data-type="mip" href="/doc/04-announcement.html">MIP 内容声明</a>
+          <h3>开发规范</h3>
+          <a data-type="mip" href="/doc/2-tech/1-mip-html.html">MIP-HTML 规范</a>
+          <a data-type="mip" href="/doc/2-tech/3-mip-cache.html">MIP-Cache 规范</a>
+          <a data-type="mip" href="/doc/2-tech/2-validate-mip.html">MIP 校验规则</a>
+          <a data-type="mip" href="/doc/2-tech/5-show-your-page.html">Canonical 使用规范</a>
+          <a data-type="mip" href="/doc/2-tech/4-mip-widget.html">组件开发规范</a>
+          <h3>组件说明</h3>
+          <a data-type="mip" href="/doc/3-widget/10-widgets.html">MIP 组件列表</a>
+          <a data-type="mip" href="/doc/3-widget/11-widget-layout.html">组件布局</a>
+          <h3>工具接口</h3>
+          <a data-type="mip" href="/doc/3-widget/6-help/1-introduce.html">开发辅助工具和模块</a>
+          <a data-type="mip" href="/doc/3-widget/6-help/3-mip-normal.html">事件通信</a>
+          <a data-type="mip" href="/doc/3-widget/6-help/2-gesture.html">手势</a>
+          <a data-type="mip" href="/doc/3-widget/6-help/4-mip-animate.html">动画</a>
+          <a data-type="mip" href="/doc/3-widget/6-help/5-template.html">template 模板</a>
+          <a data-type="mip" href="/doc/3-widget/6-help/6-storage.html">存储</a>
+          <h3>帮助中心</h3>
+          <a href="https://github.com/mipengine/mip/wiki/MIP-%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%E5%A4%A7%E5%85%A8">MIP FAQ</a>
+          <a data-type="mip" href="/doc/4-support/support-browsers.html">浏览器兼容列表</a>
+          <a data-type="mip" href="/doc/4-support/2-contact.html">联系我们</a>
+          <a href="https://github.com/mipengine/www.mipengine.org/blob/master/CONTRIBUTING.md">贡献文档</a>
+          <h3>成功案例</h3>
+          <a data-type="mip" href="/doc/partners/partners.html">合作伙伴</a>
+          <a data-type="mip" href="/demos.html">优秀案例</a>
+        </div>
+      </aside>
     </div>
-    <mip-sidebar id="right-sidebar" layout="nodisplay" class="mip-hidden" side="right">
-        <div class="right-sidebar-nav">
-            <ul class="mobile-nav-list">
-                <li>
-                    <a data-type="mip" href="/examples/mip1/">首页</a>
-                </li>
-                <li>
-                    <a data-type="mip" href="/examples/mip1/doc/00-mip-101.html">使用文档</a>
-                </li>
-                <li>
-                    <a data-type="mip" href="/examples/mip1/doc/3-widget/10-widgets.html">组件列表</a>
-                </li>
-                <li>
-                    <span>常用链接</span>
-                    <ul>
-                        <li>
-                            <a data-type="mip" href="/timeline.html">MIP 升级动态</a>
-                        </li>
-                        <li>
-                            <a href="/mippath.html">MIP PATH 转换工具</a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-        <div class="right-sidebar-doc">
-            <h3>简介</h3>
-            <a data-type="mip" href="/doc/00-mip-101.html" class="current">新手指南</a>
-            <a data-type="mip" href="/doc/01-mip-demo.html">完整 DEMO</a>
-            <a data-type="mip" href="/doc/02-what-is-mip.html">什么是 MIP</a>
-            <a data-type="mip" href="/doc/03-principle-of-mip.html">MIP 加速原理</a>
-            <a data-type="mip" href="/doc/04-announcement.html">MIP 内容声明</a>
-            <h3>开发规范</h3>
-            <a data-type="mip" href="/doc/2-tech/1-mip-html.html">MIP-HTML 规范</a>
-            <a data-type="mip" href="/doc/2-tech/3-mip-cache.html">MIP-Cache 规范</a>
-            <a data-type="mip" href="/doc/2-tech/2-validate-mip.html">MIP 校验规则</a>
-            <a data-type="mip" href="/doc/2-tech/5-show-your-page.html">Canonical 使用规范</a>
-            <a data-type="mip" href="/doc/2-tech/4-mip-widget.html">组件开发规范</a>
-            <h3>组件说明</h3>
-            <a data-type="mip" href="/doc/3-widget/10-widgets.html">MIP 组件列表</a>
-            <a data-type="mip" href="/doc/3-widget/11-widget-layout.html">组件布局</a>
-            <h3>工具接口</h3>
-            <a data-type="mip" href="/doc/3-widget/6-help/1-introduce.html">开发辅助工具和模块</a>
-            <a data-type="mip" href="/doc/3-widget/6-help/3-mip-normal.html">事件通信</a>
-            <a data-type="mip" href="/doc/3-widget/6-help/2-gesture.html">手势</a>
-            <a data-type="mip" href="/doc/3-widget/6-help/4-mip-animate.html">动画</a>
-            <a data-type="mip" href="/doc/3-widget/6-help/5-template.html">template 模板</a>
-            <a data-type="mip" href="/doc/3-widget/6-help/6-storage.html">存储</a>
-            <h3>帮助中心</h3>
-            <a href="https://github.com/mipengine/mip/wiki/MIP-%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%E5%A4%A7%E5%85%A8">MIP FAQ</a>
-            <a data-type="mip" href="/doc/4-support/support-browsers.html">浏览器兼容列表</a>
-            <a data-type="mip" href="/doc/4-support/2-contact.html">联系我们</a>
-            <a href="https://github.com/mipengine/www.mipengine.org/blob/master/CONTRIBUTING.md">贡献文档</a>
-            <h3>成功案例</h3>
-            <a data-type="mip" href="/doc/partners/partners.html">合作伙伴</a>
-            <a data-type="mip" href="/demos.html">优秀案例</a>
-        </div>
-    </mip-sidebar>
-    <footer class="footer" class="wrapper">&copy; 2018
-        <a data-type="mip" href="https://www.mipengine.org">mipengine</a> -
-        <a href="https://github.com/mipengine">
-            <i class="fa-github fa"></i>
-        </a>
-    </footer>
-    <!--[if lte IE 9]><div class="update-ie">
-           <p>您当前的浏览器版本过低，建议您升级浏览器版本，或者安装 <a href="https://www.baidu.com/s?wd=%E8%B0%B7%E6%AD%8C%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%8B%E8%BD%BD">谷歌浏览器</a> 。</p>
-       </div><![endif]-->
-    <mip-fixed type="gototop">
-        <mip-gototop></mip-gototop>
-    </mip-fixed>
-    <mip-stats-baidu token="4e397f684261b9e4ff9d8ad4714f5b2b"></mip-stats-baidu>
-    <script src="/dist/mip.js"></script>
-    <script src="https://c.mipcdn.com/static/v1/mip-sidebar/mip-sidebar.js"></script>
-    <script src="https://c.mipcdn.com/static/v1/mip-stats-baidu/mip-stats-baidu.js"></script>
-    <script src="https://c.mipcdn.com/static/v1/mip-gototop/mip-gototop.js"></script>
+  </div>
+  <mip-sidebar id="right-sidebar" layout="nodisplay" class="mip-hidden" side="right">
+    <div class="right-sidebar-nav">
+      <ul class="mobile-nav-list">
+        <li>
+          <a data-type="mip" href="/examples/mip1/">首页</a>
+        </li>
+        <li>
+          <a data-type="mip" href="/examples/mip1/doc/00-mip-101.html">使用文档</a>
+        </li>
+        <li>
+          <a data-type="mip" href="/examples/mip1/doc/3-widget/10-widgets.html">组件列表</a>
+        </li>
+        <li>
+          <span>常用链接</span>
+          <ul>
+            <li>
+              <a data-type="mip" href="/timeline.html">MIP 升级动态</a>
+            </li>
+            <li>
+              <a href="/mippath.html">MIP PATH 转换工具</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="right-sidebar-doc">
+      <h3>简介</h3>
+      <a data-type="mip" href="/doc/00-mip-101.html" class="current">新手指南</a>
+      <a data-type="mip" href="/doc/01-mip-demo.html">完整 DEMO</a>
+      <a data-type="mip" href="/doc/02-what-is-mip.html">什么是 MIP</a>
+      <a data-type="mip" href="/doc/03-principle-of-mip.html">MIP 加速原理</a>
+      <a data-type="mip" href="/doc/04-announcement.html">MIP 内容声明</a>
+      <h3>开发规范</h3>
+      <a data-type="mip" href="/doc/2-tech/1-mip-html.html">MIP-HTML 规范</a>
+      <a data-type="mip" href="/doc/2-tech/3-mip-cache.html">MIP-Cache 规范</a>
+      <a data-type="mip" href="/doc/2-tech/2-validate-mip.html">MIP 校验规则</a>
+      <a data-type="mip" href="/doc/2-tech/5-show-your-page.html">Canonical 使用规范</a>
+      <a data-type="mip" href="/doc/2-tech/4-mip-widget.html">组件开发规范</a>
+      <h3>组件说明</h3>
+      <a data-type="mip" href="/doc/3-widget/10-widgets.html">MIP 组件列表</a>
+      <a data-type="mip" href="/doc/3-widget/11-widget-layout.html">组件布局</a>
+      <h3>工具接口</h3>
+      <a data-type="mip" href="/doc/3-widget/6-help/1-introduce.html">开发辅助工具和模块</a>
+      <a data-type="mip" href="/doc/3-widget/6-help/3-mip-normal.html">事件通信</a>
+      <a data-type="mip" href="/doc/3-widget/6-help/2-gesture.html">手势</a>
+      <a data-type="mip" href="/doc/3-widget/6-help/4-mip-animate.html">动画</a>
+      <a data-type="mip" href="/doc/3-widget/6-help/5-template.html">template 模板</a>
+      <a data-type="mip" href="/doc/3-widget/6-help/6-storage.html">存储</a>
+      <h3>帮助中心</h3>
+      <a href="https://github.com/mipengine/mip/wiki/MIP-%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%E5%A4%A7%E5%85%A8">MIP FAQ</a>
+      <a data-type="mip" href="/doc/4-support/support-browsers.html">浏览器兼容列表</a>
+      <a data-type="mip" href="/doc/4-support/2-contact.html">联系我们</a>
+      <a href="https://github.com/mipengine/www.mipengine.org/blob/master/CONTRIBUTING.md">贡献文档</a>
+      <h3>成功案例</h3>
+      <a data-type="mip" href="/doc/partners/partners.html">合作伙伴</a>
+      <a data-type="mip" href="/demos.html">优秀案例</a>
+    </div>
+  </mip-sidebar>
+  <footer class="footer" class="wrapper">&copy; 2018
+    <a data-type="mip" href="https://www.mipengine.org">mipengine</a> -
+    <a href="https://github.com/mipengine">
+      <i class="fa-github fa"></i>
+    </a>
+  </footer>
+  <!--[if lte IE 9]><div class="update-ie">
+       <p>您当前的浏览器版本过低，建议您升级浏览器版本，或者安装 <a href="https://www.baidu.com/s?wd=%E8%B0%B7%E6%AD%8C%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%8B%E8%BD%BD">谷歌浏览器</a> 。</p>
+     </div><![endif]-->
+  <mip-fixed type="gototop">
+    <mip-gototop></mip-gototop>
+  </mip-fixed>
+  <mip-stats-baidu token="4e397f684261b9e4ff9d8ad4714f5b2b"></mip-stats-baidu>
+  <script src="/dist/mip.js"></script>
+  <script src="https://c.mipcdn.com/static/v1/mip-sidebar/mip-sidebar.js"></script>
+  <script src="https://c.mipcdn.com/static/v1/mip-stats-baidu/mip-stats-baidu.js"></script>
+  <script src="https://c.mipcdn.com/static/v1/mip-gototop/mip-gototop.js"></script>
 </body>
 
 </html>

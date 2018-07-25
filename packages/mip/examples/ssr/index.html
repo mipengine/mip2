@@ -1,73 +1,72 @@
 <html mip="" class="mip-i-android-scroll" mip-ready="">
 <head>
-    <meta charset="utf-8">
-    <title>SSR Demo</title>
-    <meta name="apple-touch-fullscreen" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <meta charset="utf-8">
+  <title>SSR Demo</title>
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
 
-    <link rel="stylesheet" href="../../dist/mip.css">
+  <link rel="stylesheet" href="../../dist/mip.css">
 </head>
 <body class="mip-i-android-scroll" style="opacity: 1; animation: none;">
 
-    <div id="mip-router__app" data-server-rendered>
-        <div class="mip-appshell-header">
-            <span class="material-icons">
-                keyboard_arrow_left
-            </span>
-            <span class="mip-appshell-header-title">SSR Demo</span>
-        </div>
-        <div class="mip-appshell-router-view-mask" style="display: none;">
-            <div class="mip-loading mip-loading--indeterminate" style="height: 50px; width: 50px;">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="21.73913043478261 21.73913043478261 43.47826086956522 43.47826086956522" style="transform: rotate(0deg);">
-                    <circle fill="transparent" cx="43.47826086956522" cy="43.47826086956522" r="20" stroke-width="3.4782608695652177" stroke-dasharray="125.664" stroke-dashoffset="125.66370614359172px" class="mip-loading-overlay"></circle>
-                </svg>
-                <div class="v-progress-circular__info"></div>
-            </div>
-        </div>
-        <div data-page-id="/examples/ssr/index.html" class="mip-appshell-router-view mip-appshell-router-view-with-header transition-slide">
-            <custom-volume volume="62">
-              <div data-server-rendered>
-                  62 <input type="range">
-              </div>
-            </custom-volume>
-
-            <mip-img src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg" width="300" height="300" class="mip-layout-fixed mip-layout-size-defined" style="width: 300px; height: 300px;">
-                <div data-server-rendered data-v-2fc858b0="" class="mip-img mip-fill-content mip-replaced-content" style="width: 300px;">
-                    <img data-v-2fc858b0="" src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg">
-                </div>
-            </mip-img>
-        </div>
+  <div id="mip-router__app" data-server-rendered>
+    <div class="mip-appshell-header">
+      <span class="material-icons">
+        keyboard_arrow_left
+      </span>
+      <span class="mip-appshell-header-title">SSR Demo</span>
     </div>
+    <div class="mip-appshell-router-view-mask" style="display: none;">
+      <div class="mip-loading mip-loading--indeterminate" style="height: 50px; width: 50px;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="21.73913043478261 21.73913043478261 43.47826086956522 43.47826086956522" style="transform: rotate(0deg);">
+          <circle fill="transparent" cx="43.47826086956522" cy="43.47826086956522" r="20" stroke-width="3.4782608695652177" stroke-dasharray="125.664" stroke-dashoffset="125.66370614359172px" class="mip-loading-overlay"></circle>
+        </svg>
+        <div class="v-progress-circular__info"></div>
+      </div>
+    </div>
+    <div data-page-id="/examples/ssr/index.html" class="mip-appshell-router-view mip-appshell-router-view-with-header transition-slide">
+      <custom-volume volume="62">
+        <div data-server-rendered>
+          62 <input type="range">
+        </div>
+      </custom-volume>
 
-    <script src="../../dist/deps.js"></script>
-    <script src="../../dist/mip.js"></script>
-    <script>
-    mip.Vue.customElement('custom-volume', {
-        template: `
-            <div>
-              {{volume}} <input type="range" v-model="localVolume">
-            </div>
-        `,
-        props: {
-            volume: {
-                type: Number,
-                default: 100
-            }
+      <mip-img src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg" width="300" height="300" class="mip-layout-fixed mip-layout-size-defined" style="width: 300px; height: 300px;">
+        <div data-server-rendered data-v-2fc858b0="" class="mip-img mip-fill-content mip-replaced-content" style="width: 300px;">
+          <img data-v-2fc858b0="" src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg">
+        </div>
+      </mip-img>
+    </div>
+  </div>
+  <script src="../../dist/mip.js"></script>
+  <script>
+  /* global MIP */
+  MIP.registerVueCustomElement('custom-volume', {
+    template: `
+      <div>
+        {{volume}} <input type="range" v-model="localVolume">
+      </div>
+    `,
+    props: {
+      volume: {
+        type: Number,
+        default: 100
+      }
+    },
+    computed: {
+      localVolume: {
+        get () {
+          return this.volume
         },
-        computed: {
-            localVolume: {
-                get: function() {
-                    return this.volume;
-                },
-                set: function(volume) {
-                    // this.$emit('volume-changed', volume);
-                    this.$root.$el.parentNode.volume = volume;
-                }
-            }
+        set (volume) {
+          // this.$emit('volume-changed', volume);
+          this.$root.$el.parentNode.volume = volume
         }
-    });
-    </script>
+      }
+    }
+  })
+  </script>
 </body>
 </html>

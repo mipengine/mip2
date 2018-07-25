@@ -25,6 +25,8 @@
   <button on="tap:counter.add"> +<span m-text="num"></span> </button>
   <script src="../../dist/mip.js"></script>
   <script>
+    /* global MIP */
+
     /**
      * 事件通信配合 mip-data 实现 button 递增，加数递增功能
      */
@@ -32,7 +34,7 @@
       props: {
         num: Number
       },
-      data() {
+      data () {
         return {
           count: 0
         }
@@ -42,14 +44,14 @@
               counter: {{count}}
           </div>
       `,
-      mounted() {
+      mounted () {
         let vm = this
         this.$element.customElement.addEventAction('add', function (event) {
           vm.add()
         })
       },
       methods: {
-        add() {
+        add () {
           // this.$element.customElement.executeEventAction('change')
           MIP.viewer.eventAction.execute('change', this.$element, {})
           this.count += this.num

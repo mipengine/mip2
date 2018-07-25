@@ -25,7 +25,7 @@
         }
       </script>
       <template type="mip-mustache">
-        <div>{{name}}</div>
+        <div>{{ name }}</div>
       </template>
       <header slot="header">i am header</header>
       i am footer
@@ -68,7 +68,6 @@
       },
 
       mounted () {
-        let me = this
         let templateStr = ''
         let template = this.$el.querySelector('[type="mip-mustache"]')
 

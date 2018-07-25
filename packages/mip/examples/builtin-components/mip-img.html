@@ -1,0 +1,108 @@
+<!--htmlcs-disable-->
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <title>mip-img</title>
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <!-- <link rel="stylesheet" href="../../dist/mip.css"></link> -->
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script>
+    window.onerror = function (message, source, lineno, colno, error) {
+      window.alert('Ops, js 报错了，请联系 FE 修复')
+      window.alert(message)
+      window.alert(source + ':' + lineno + ':' + colno)
+      window.alert(JSON.stringify(error))
+    }
+  </script>
+</head>
+
+<body>
+
+<h1>mip-img</h1>
+
+<h2>基本使用</h2>
+
+<pre class="code">&lt;mip-img
+  layout="responsive"
+  width="350"
+  height="263"
+  src="https://www.mipengine.org/static/img/sample_01.jpg"&gt;
+&lt;/mip-img&gt;</pre>
+
+<mip-img
+  layout="responsive"
+  width="350"
+  height="263"
+  src="https://www.mipengine.org/static/img/sample_01.jpg">
+</mip-img>
+
+
+
+
+<h2>加全屏查看</h2>
+
+<pre class="code">&lt;mip-img
+  layout="responsive"
+  width="350"
+  height="263"
+  popup
+  src="https://www.mipengine.org/static/img/sample_01.jpg"&gt;
+&lt;/mip-img&gt;</pre>
+
+<mip-img
+  layout="responsive"
+  width="350"
+  height="263"
+  popup
+  src="https://www.mipengine.org/static/img/sample_01.jpg">
+</mip-img>
+
+
+
+<h2>其他布局（以 fixed 为例）</h2>
+
+<pre class="code">&lt;mip-img
+  layout="fixed-height"
+  height="263"
+  alt="baidu mip img"
+  src="https://www.mipengine.org/static/img/sample_01.jpg"&gt;
+&lt;/mip-img&gt;</pre>
+
+<mip-img
+  layout="fixed-height"
+  height="263"
+  alt="baidu mip img"
+  src="https://www.mipengine.org/static/img/sample_01.jpg">
+</mip-img>
+
+
+<h2>带图片标题</h2>
+<p class="desc">图片标题可添加在 &lt;mip-img&gt; 后用于说明，可在 &lt;style mip-custom&gt; 标签下自定义样式。</p>
+
+<pre class="code">&lt;mip-img
+  layout="responsive"
+  width="350"
+  height="263"
+  popup
+  alt="baidu mip img"
+  src="https://www.mipengine.org/static/img/sample_01.jpg"&gt;
+&lt;/mip-img&gt;
+&lt;p class="mip-img-subtitle"&gt;带图片标题的类型&lt;/p&gt;</pre>
+
+<mip-img
+  layout="responsive"
+  width="350"
+  height="263"
+  popup
+  alt="baidu mip img"
+  src="https://www.mipengine.org/static/img/sample_01.jpg">
+</mip-img>
+<p class="mip-img-subtitle">带图片标题的类型</p>
+
+</body>
+<script src="../../dist/mip.js"></script>
+</html>

@@ -26,6 +26,8 @@
   </demo-slots>
   <script src="../../dist/mip.js"></script>
   <script>
+    /* global MIP */
+
     MIP.registerVueCustomElement('demo-slots', {
       template: `
         <div>
@@ -40,10 +42,10 @@
               mip-a-slot
             </mip-a>
         </div>`,
-        mounted() {
-            console.log(this.$slots)
-            console.log(this.$element.querySelector('[type=mip-mustache]'))
-        }
+      mounted () {
+        console.log(this.$slots)
+        console.log(this.$element.querySelector('[type=mip-mustache]'))
+      }
     })
 
     MIP.registerVueCustomElement('mip-b', {
@@ -51,10 +53,11 @@
         <div>
             <slot></slot>
             mip-b-content
-        </div>`,
-        mounted() {
-            console.log(this.$slots)
-        }
+        </div>
+      `,
+      mounted () {
+        console.log(this.$slots)
+      }
     })
 
     MIP.registerVueCustomElement('mip-a', {
@@ -62,12 +65,12 @@
         <div>
             <slot></slot>
             <mip-b> mip-b-slot </mip-b>
-        </div>`,
-        mounted() {
-            console.log(this.$slots)
-        }
+        </div>
+      `,
+      mounted () {
+        console.log(this.$slots)
+      }
     })
-
   </script>
 </body>
 
