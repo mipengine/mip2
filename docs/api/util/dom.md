@@ -24,7 +24,7 @@ window.MIP.util.dom
 
 - 用法：
 
-  检测返回 element 就近的父级 <a> 标签， 没有返回 `null`
+  检测返回 element 就近的父级 `<a>` 标签， 没有返回 `null`
 
   ```javascript
   MIP.util.dom.closest(element, 'a')
@@ -61,7 +61,7 @@ window.MIP.util.dom
 
 - 用法：
 
-  检测 targetElement 中是否存在，element 的就近父级 <a> 标签，有则返回该 <a>标签，没有返回 `null`
+  检测 targetElement 中是否存在，element 的就近父级 `<a>` 标签，有则返回该 `<a>`标签，没有返回 `null`
 
   ```javascript
   MIP.util.dom.closestTo(element, 'a', targetElement)
@@ -92,7 +92,7 @@ window.MIP.util.dom
 
 - 用法：
 
-  将 html 字符串创建元素 <span> 节点
+  将 html 字符串创建元素 `<span>` 节点
 
   ```javascript
   MIP.util.dom.create('<span>test</span>')
@@ -117,14 +117,17 @@ window.MIP.util.dom
  **waitDocumentReady**
 - 参数：
   - {Function} cb 回调函数
+- 返回值：
+  
+  `undefined`
 
 - 用法：
 
-  待 document 准备好后执行传入的回调函数
+  检测 `document.body` 存在后执行传入的回调函数
 
   ```javascript
   MIP.util.dom.waitDocumentReady(function() {
-    console.log('Document is ready!')
+    console.log('Document.body is ready!')
   })
   ```
 

@@ -27,9 +27,17 @@ window.MIP.util.EventEmitter
   ```javascript
   MIP.util.EventEmitter.mixin(obj)
   ```
+
 >info 以下方法可以在 mixin 的 obj 上直接调用
 
 **on**
+
+- 参数
+  - {string} name
+  - {Function} handler
+- 返回值：
+
+  {Object}
 
 - 用法：
   
@@ -40,6 +48,15 @@ window.MIP.util.EventEmitter
   ```
 
 **off**
+
+- 参数
+  - {string} name
+  - {Function} handler
+- 返回值：
+
+  {?Array}
+
+  返回事件处理列表 或是 `null`
 
 - 用法：
   
@@ -52,6 +69,15 @@ window.MIP.util.EventEmitter
 
 **once**
 
+- 参数
+  - {string} name
+  - {Function} handler
+- 返回值：
+
+  {Function}
+
+  返回解绑函数
+
 - 用法：
   
   增加事件 `name` 的监听函数 `handler`，且 `handler` 执行一次之后立刻被移除
@@ -61,6 +87,12 @@ window.MIP.util.EventEmitter
   ```
 
 **trigger**
+
+- 参数
+  - {string} name
+- 返回值：
+
+  `undefined`
 
 - 用法：
   
@@ -74,6 +106,9 @@ window.MIP.util.EventEmitter
 
 - 参数：
   - {Function} context
+- 返回值：
+
+  `undefined`
 
 - 用法：
   
@@ -81,68 +116,6 @@ window.MIP.util.EventEmitter
 
   ```javascript
   MIP.util.EventEmitter.setEventContext(context)
-  ```
-
-**_getEvent**
-
-- 参数：
-  - {string} name
-- 返回值：
-
-  {Array}
-
-  有则返回处理函数的列表，无则返回`[]`
-
-- 用法：
-
-  获取事件 `name` 的处理函数列表
-
-  ```javascript
-  MIP.util.EventEmitter._getEvent(name)
-  ```
-
-
->info 以下三个钩子也可以在 mixin 的 `obj` 进行重写
-
-**_createEventCallback**
-
-- 参数：
-  - {string} name
-  - {Array.<Function>} handlers
-
-- 用法：
-
-  当事件`name` 创建时执行 `handlers`
-
-  ```javascript
-  MIP.util.EventEmitter._createEventCallback(name, handlers)
-  ```
-
-**_removeEventCallback**
-
-- 参数：
-  - {string} name
-
-- 用法：
-
-  当事件`name` 移除时调用
-
-  ```javascript
-  MIP.util.EventEmitter._removeEventCallback(name)
-  ```
-
-**_bindEventCallback**
-
-- 参数：
-  - {string} name
-  - {Function} handler
-
-- 用法：
-
-  当事件`name` 绑定时执行 `handler`
-
-  ```javascript
-  MIP.util.EventEmitter._bindEventCallback(name, handler)
   ```
 
 
