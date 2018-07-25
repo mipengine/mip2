@@ -127,7 +127,7 @@ window.MIP.util.dom
 
   ```javascript
   MIP.util.dom.waitDocumentReady(function() {
-    console.log('Document.body is ready!')
+    console.log('document.body is ready!')
   })
   ```
 
