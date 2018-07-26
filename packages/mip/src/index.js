@@ -29,7 +29,9 @@ import sleepWakeModule from './sleep-wake-module'
 import performance from './performance'
 import mip1PolyfillInstall from './mip1-polyfill/index'
 
-import './log/monitor'
+import monitorInstall from './log/monitor'
+
+monitorInstall()
 
 /**
  * register vue as custom element v1
