@@ -13,12 +13,14 @@
     sudo npm install mip2 -g
     ```
 
-2. 在合适的目录新建项目并命名，例如本教程中的 "mip-project0"
+2. 在合适的目录新建项目并命名，例如本教程中的 "myproject"
 
     ```bash
     mip2 init
     ```
     ![mip2 init](http://bos.nj.bpc.baidu.com/assets/mip/codelab/mip-init.jpeg)
+
+    ![myproject](http://bos.nj.bpc.baidu.com/assets/mip/codelab/project.jpg)
 
 3. 进入目录并启动开发服务器
 
