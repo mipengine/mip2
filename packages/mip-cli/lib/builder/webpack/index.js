@@ -110,17 +110,10 @@ module.exports = class WebpackBuilder {
   }
 
   async initWatcher () {
-    this.watcher = chokidar.watch([this.componentDir, this.packageJsonPathname])
+    let entryWatcher = chokidar.watch(this.componentDir)
     let cb = async pathname => {
       if (this.isOnInited) {
         return
-      }
-
-      if (path.resolve(pathname) === path.resolve(this.packageJsonPathname)) {
-        let reporter = await validator.whitelist(this.dir)
-        if (reporter.errors.length) {
-          throw new Error(reporter.errors[0].message)
-        }
       }
 
       if (!projectPath.isComponentPath(this.dir, pathname)) {
@@ -135,8 +128,18 @@ module.exports = class WebpackBuilder {
       }
     }
 
-    this.watcher.on('ready', () => {
-      this.watcher.on('add', cb).on('unlink', cb)
+    entryWatcher.on('ready', () => {
+      entryWatcher.on('add', cb).on('unlink', cb)
+    })
+
+    let packageWatcher = chokidar.watch(this.packageJsonPathname)
+    packageWatcher.on('ready', () => {
+      packageWatcher.on('change', async () => {
+        let reporter = await validator.whitelist(this.dir)
+        if (reporter.errors.length) {
+          cli.error(reporter.errors[0].message)
+        }
+      })
     })
   }
 }
