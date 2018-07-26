@@ -93,7 +93,7 @@ export function parseCacheUrl (url) {
  * 获取页面原 mip url，可以将页面 mip-cache url 处理为原页面
  * 由于 cache-url 可能会被改写，需要还原
  *
- * @param {string} url 传入的 URL
+ * @param {string=} url 传入的 URL
  * @return {string} 原 mip 页 URL
  */
 export function getOriginalUrl (url) {
@@ -112,6 +112,17 @@ export function getOriginalUrl (url) {
   return urlWithoutHash + (originHash.length ? '#' : '') + originHash
 }
 
+/**
+ * Whether pageUrl is mip cache url.
+ *
+ * @param {string} pageUrl - current page url.
+ * @return {boolean} isCacheUrl.
+ */
+export function isCacheUrl (pageUrl) {
+  return /mipcache.bdstatic.com/.test(pageUrl) ||
+    /^(\/\/|http:\/\/|https:\/\/)[A-Za-z0-9]{1,}-.*.mipcdn.com\/c\//.test(pageUrl)
+}
+
 export default {
   fn,
   dom,
@@ -123,6 +134,7 @@ export default {
   parseCacheUrl,
   makeCacheUrl,
   getOriginalUrl,
+  isCacheUrl,
   EventEmitter,
   Gesture,
   customStorage,

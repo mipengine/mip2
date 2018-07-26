@@ -1,0 +1,13 @@
+{
+    "menu": [
+        {
+            "key": "mip-started"
+        }
+    ],
+    "ignore": [
+        "README"
+    ],
+    "info": {
+        "name": "CODELAB"
+    }
+}

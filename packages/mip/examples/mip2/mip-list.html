@@ -1,0 +1,87 @@
+<!--htmlcs-disable-->
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <title>MIP list demo</title>
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+</head>
+
+<body>
+  <mip-wrapper>
+    <p>使用MIP-LIST</p>
+    <mip-list synchronous-data>
+      <script type="application/json">
+        {
+          "items": [{
+            "name": "1"
+          }, {
+            "name": "2"
+          }]
+        }
+      </script>
+      <template type="mip-mustache">
+        <div>{{ name }}</div>
+      </template>
+      <header slot="header">i am header</header>
+      i am footer
+    </mip-list>
+  </mip-wrapper>
+  <script src="../../dist/mip.js"></script>
+  <script>
+    MIP.registerVueCustomElement('mip-wrapper', {
+      template: `
+        <div class="app">
+            <slot></slot>
+        </div>
+      `
+    })
+
+    function mockMustacheRender (template, data) {
+      return template.replace(/\{\{(\w+)\}\}/g, item => data[item.replace(/[{}]/ig, '')])
+    }
+
+    MIP.registerVueCustomElement('mip-list', {
+      template: `
+        <div class="mip-list-wrap">
+          <slot name="header"></slot>
+          <div
+            class="mip-tr"
+            v-for="(item, index) in items"
+            :key="index"
+            v-html="tdContents[index]"
+          ></div>
+          <slot></slot>
+        </div>
+      `,
+      props: {
+        items: Array
+      },
+      data () {
+        return {
+          tdContents: []
+        }
+      },
+
+      mounted () {
+        let templateStr = ''
+        let template = this.$el.querySelector('[type="mip-mustache"]')
+
+        if (template) {
+          templateStr = template.innerHTML
+          template.remove()
+        }
+
+        if (templateStr) {
+          this.items.map(item => this.tdContents.push(mockMustacheRender(templateStr, item)))
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>

@@ -21,17 +21,10 @@ class Watcher {
     }
     this._node = node
     this._depIds = {}
-    let fn = this.getWithResult.bind(this, this._exp)
+    let fn = util.getWithResult.bind(this, this._exp)
     this._getter = fn.call(this._data)
     this._cb = cb
     this._value = this._get()
-  }
-
-  getWithResult (exp) {
-    exp = util.namespaced(exp)
-    /* eslint-disable */
-    return new Function(`with(this){try {return ${exp}} catch(e) {}}`)
-    /* eslint-enable */
   }
 
   update () {

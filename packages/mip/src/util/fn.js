@@ -139,9 +139,6 @@ function pick (obj) {
  * @return {boolean} whehter varible is string
  */
 function isString (string) {
-  if (!string) {
-    return false
-  }
   return Object.prototype.toString.call(string) === '[object String]'
 }
 

@@ -1,0 +1,115 @@
+<!--htmlcs-disable-->
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <title>props</title>
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <style>
+
+  </style>
+</head>
+<body>
+  <mip-a>
+    <script type="application/json">
+      {
+        "mipProps": "mipProps",
+        "mip-components": "mip-components"
+      }
+    </script>
+  </mip-a>
+</body>
+<script src="../../dist/mip.js"></script>
+<script type="x-tempalte" id="mip-a-template">
+  <div>
+    <p>I am mip-a</p>
+    <mip-b :userinfo="userinfo"></mip-b>
+    <vue-c :userinfo="userinfo"></vue-c>
+  </div>
+</script>
+
+<script type="x-tempalte" id="mip-b-template">
+  <div>
+    <p>I am mip-b </p>
+    <p>data from a prop: </p>
+    <code>{{userinfo}}</code>
+  </div>
+</script>
+
+<script type="x-tempalte" id="vue-c-template">
+  <div>
+    <p>I am vue-c </p>
+    <p>data from a prop: </p>
+    <code>{{userinfo}}</code>
+  </div>
+</script>
+
+
+<script>
+/* global MIP */
+MIP.registerVueCustomElement('mip-a', {
+  template: '#mip-a-template',
+  components: {
+    'vue-c': {
+      template: '#vue-c-template',
+      props: {
+        userinfo: [Object, Array]
+      },
+      created () {
+        console.log('vue-c: ', this.userinfo)
+      }
+    }
+  },
+  props: {
+    mipProps: {
+      type: String,
+      default: ''
+    },
+    'mip-components': {
+      type: String,
+      default: ''
+    }
+  },
+  data () {
+    return {
+      userinfo: [{
+        name: 'fakehuang'
+      }]
+    }
+  },
+  mounted () {
+    console.log(this.mipProps) // 空
+    console.log(this.mipComponents) // mip-components
+  },
+  filters: {
+    stringify (data) {
+      return typeof data === 'object' && JSON.stringify(data)
+    }
+  }
+})
+
+MIP.registerVueCustomElement('mip-b', {
+  template: '#mip-b-template',
+  props: {
+    userinfo: {
+      default () {
+        return {}
+      },
+      type: [Object, Array]
+    }
+  },
+  data () {
+    return {
+    }
+  },
+  created () {
+    console.log('mip-b: ', this.userinfo)
+  }
+})
+</script>
+</html>
+

@@ -1,0 +1,78 @@
+<!--htmlcs-disable-->
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <title>mip-img</title>
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+</head>
+
+<body>
+  <demo-slots>
+    <span slot="header">Heder slot passed from outside</span>
+    <span>Default slot</span>
+    <hr>
+    <template slot="footer">
+      <h4>Template Footer Slot</h4>
+    </template>
+    <template id="list" type="mip-mustache">
+      <!-- test mustache -->
+      <p>{{name}}</p>
+    </template>
+  </demo-slots>
+  <script src="../../dist/mip.js"></script>
+  <script>
+    /* global MIP */
+
+    MIP.registerVueCustomElement('demo-slots', {
+      template: `
+        <div>
+            <slot name="header">No HEADER slot content passed (this is default value)</slot>
+
+            <p>This is text from inside of the element</p>
+
+            <slot>No DEFAULT slot content passed (this is default value)</slot>
+
+            <slot name="footer">No FOOTER slot content passed (this is default value)</slot>
+            <mip-a>
+              mip-a-slot
+            </mip-a>
+        </div>`,
+      mounted () {
+        console.log(this.$slots)
+        console.log(this.$element.querySelector('[type=mip-mustache]'))
+      }
+    })
+
+    MIP.registerVueCustomElement('mip-b', {
+      template: `
+        <div>
+            <slot></slot>
+            mip-b-content
+        </div>
+      `,
+      mounted () {
+        console.log(this.$slots)
+      }
+    })
+
+    MIP.registerVueCustomElement('mip-a', {
+      template: `
+        <div>
+            <slot></slot>
+            <mip-b> mip-b-slot </mip-b>
+        </div>
+      `,
+      mounted () {
+        console.log(this.$slots)
+      }
+    })
+  </script>
+</body>
+
+</html>
+

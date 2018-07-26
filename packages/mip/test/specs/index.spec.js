@@ -16,6 +16,10 @@ describe('MIP', function () {
     expect(MIP.registerCustomElement).to.be.a('function')
   })
 
+  it('should expose MIP.CustomElement', function () {
+    expect(MIP.CustomElement).to.be.a('function')
+  })
+
   it('should expose MIP.util', function () {
     expect(MIP.util).to.be.a('object')
   })

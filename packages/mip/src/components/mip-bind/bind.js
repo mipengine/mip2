@@ -77,11 +77,11 @@ class Bind {
     }, 10)
   }
 
+  /* istanbul ignore next */
   _update (data, pageId) {
     let win = this._win
 
     for (let i = 0, frames = win.document.getElementsByTagName('iframe'); i < frames.length; i++) {
-      /* istanbul ignore if */
       if (frames[i].classList.contains('mip-page__iframe') &&
           frames[i].getAttribute('data-page-id') &&
           pageId !== frames[i].getAttribute('data-page-id')

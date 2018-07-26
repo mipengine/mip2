@@ -16,7 +16,7 @@ import dom from './dom/dom'
  * @inner
  * @type {RegExp}
  */
-const PARSE_REG = /^(\w+):([\w-]+)\.([\w-$]+)(?:\((.+)\))?$/
+const PARSE_REG = /^(\w+):\s*([\w-]+)\.([\w-$]+)(?:\((.+)\))?$/
 
 /**
  * Regular for checking elements.
@@ -66,13 +66,35 @@ class EventAction {
     if (!action) {
       return
     }
-    switch (action.handler) {
-      case 'setData':
-        MIP.setData(action, 1)
-        break
-      case '$set':
-        MIP.$set(action, 1)
-        break
+
+    let target = action.event && action.event.target ? action.event.target : {}
+
+    const allowedGlobals = (
+      'Infinity,undefined,NaN,isFinite,isNaN,' +
+      'parseFloat,parseInt,decodeURI,decodeURIComponent,encodeURI,encodeURIComponent,' +
+      'Math,Number,Date,Array,Object,Boolean,String,RegExp,Map,Set,JSON,Intl,' +
+      'm' // MIP global data
+    ).split(',')
+
+    let hasProxy = typeof Proxy !== 'undefined'
+    let proxy = hasProxy ? new Proxy({
+      DOM: target
+    }, {
+      has (target, key) {
+        let allowed = allowedGlobals.indexOf(key) >= 0
+        return target[key] || !allowed
+      }
+    }) : {}
+
+    let fn = new Function('DOM', `with(this){return ${action.arg}}`) // eslint-disable-line
+    let data = fn.call(proxy)
+
+    if (action.handler === 'setData') {
+      MIP.setData(data)
+    } else if (action.handler === '$set') {
+      MIP.$set(data)
+    } else {
+      throw new Error(`Can not find handler "${action.handler}" from MIP.`)
     }
   }
 
@@ -168,14 +190,53 @@ class EventAction {
     }
   }
 
-  parse (actionString, type, nativeEvent) {
-    if (typeof actionString !== 'string') {
+  parse (str, type, event) {
+    if (typeof str !== 'string') {
       return []
     }
-    let actions = actionString.trim().split(' ')
+
+    let isQuote = char => char === '"' || char === '\''
+    let isSpace = char => char === ' '
+    let isColon = char => char === ':'
+
+    let pos = 0
+    let actions = []
+    let pstack = []
+    for (let i = 0, slen = str.length; i < slen; i++) {
+      let peek = pstack[pstack.length - 1]
+      let char = str[i]
+
+      if (char === '(' && !isQuote(peek)) {
+        pstack.push(char)
+      } else if (char === ')' && peek === '(') {
+        pstack.pop()
+      } else if (isQuote(char) && str[i - 1] !== '\\') {
+        if (peek === char) {
+          pstack.pop()
+        } else {
+          pstack.push(char)
+        }
+      } else if (isColon(char) && !pstack.length) {
+        pstack.push(char)
+      } else if (isColon(peek) && !isSpace(str[i + 1])) {
+        pstack.pop()
+      } else if (isSpace(char) && !pstack.length) {
+        let act = str.substring(pos, i).trim(' ')
+        act && actions.push(act)
+        pos = i
+      }
+    }
+
+    if (pstack.length) {
+      throw new SyntaxError(`Can not match ${pstack[pstack.length - 1]} in statement: 'on=${str}'`)
+    }
+
+    let act = str.substring(pos, str.length).trim(' ')
+    act && actions.push(act)
+
     let result = []
     for (let i = 0, len = actions.length; i < len; i++) {
-      let action = actions[i]
+      let action = actions[i].replace(/\n/g, '')
       let matchedResult = action.match(PARSE_REG)
       if (matchedResult && matchedResult[1] === type) {
         result.push({
@@ -183,7 +244,7 @@ class EventAction {
           id: matchedResult[2],
           handler: matchedResult[3],
           arg: matchedResult[4],
-          event: nativeEvent
+          event: event
         })
       }
     }

@@ -177,6 +177,7 @@ function bindLoad (element, img, mipEle) {
  * @param {HTMLElement} img image element
  */
 function errorHandle (img) {
+  /* istanbul ignore if */
   if (!viewer.isIframed) {
     return
   }
@@ -260,12 +261,7 @@ class MipImg extends CustomElement {
   }
 
   firstInviewCallback () {
-    let ele = this.element.querySelector('img')
-    if (ele) {
-      return
-    }
-
-    ele = this.element
+    let ele = this.element
     let img = new Image()
 
     if (this.placeholder) {

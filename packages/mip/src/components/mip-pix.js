@@ -8,6 +8,12 @@
 import util from '../util/index'
 import CustomElement from '../custom-element'
 
+const DEFAULT_PARAMS = {
+  TIME: 't',
+  TITLE: 'title',
+  HOST: 'host'
+}
+
 /**
  * 替换请求链接中的参数
  *
@@ -22,6 +28,7 @@ function addParas (src, paraName, paraVal) {
     return src.replace(paraNameQ, paraVal)
   }
   src += src.indexOf('?') > -1 ? '&' : '?'
+  paraName = DEFAULT_PARAMS[paraName] || /* istanbul ignore next */ paraName
   return src + paraName + '=' + paraVal
 }
 
@@ -42,7 +49,7 @@ class MipPix extends CustomElement {
     let ele = this.element
     let src = ele.getAttribute('src')
     let host = window.location.href
-    let title = (document.querySelector('title') || {}).innerHTML || ''
+    let title = (document.querySelector('title') || /* istanbul ignore next */ {}).innerHTML || ''
     let time = Date.now()
 
     // 替换通用参数

@@ -7,7 +7,7 @@ window.MIP
 
 ## 描述
 
-`MIP` 对象是 MIP 对外暴露 API 的唯一方式，以前 AMD 的方式在 MIP2 中已经被废弃，MIP 对象提供了注册自定义组件、工具函数等
+`MIP` 对象是 MIP 对外暴露 API 的唯一方式，以前 AMD 的方式在 MIP2 中已经被废弃，MIP 对象提供了注册自定义组件、工具函数等
 
 ## 属性
 
@@ -40,14 +40,28 @@ viewport，参考[viewport](./viewport.md)
 
 hash 相关的工具，参考[hash](./hash.md)
 
-**builtinComponents.MipShell**: `HTMLElement`
+**CustomElement**: `CustomElement`
 
 - 用法：
 
-  `MipShell` 为 [MIP Shell](../guide/all-sites-mip/mip-shell.md) 的自定义标签，暴露出来方便开发者进行继承并进行修改。
+  `CustomElement` 提供直接实现 customElement v1 规范的组件使用，在 MIP 中，采用 JS 而不是 Vue 编写组件都需要继承 CustomElement
 
   ```javascript
-  class MipShellTest extends MIP.builtinComponents.MipShell {
+  class MIPExample extends MIP.CustomElement {
+    constructor (...args) {
+      super(...args)
+    }
+  }
+  ```
+
+**builtinComponents.MIPShell**: `HTMLElement`
+
+- 用法：
+
+  `MIPShell` 为 [MIP Shell](../guide/all-sites-mip/mip-shell.md) 的自定义标签，暴露出来方便开发者进行继承并进行修改。
+
+  ```javascript
+  class MIPShellTest extends MIP.builtinComponents.MIPShell {
     constructor () {
       super()
       // other
@@ -69,21 +83,21 @@ hash 相关的工具，参考[hash](./hash.md)
 
   ```javascript
   MIP.registerVueCustomElement('mip-test', {
-    render() { console.log('mip-test') }
+    render () { console.log('mip-test') }
   })
   ```
 
 **registerCustomElement**
 - 参数：
   - {string} tag 自定义标签名
-  - {BaseElement} clazz customElement v2 标准的自定义 Class
+  - {CustomElement} clazz customElement v2 标准的自定义 Class
   - {string} css 自定义组件的 css
 - 用法：
 
   注册原生 customElement v2 编写的组件，不推荐使用
 
   ```javascript
-  MIP.registerCustomElement('mip-test', class MipTest {})
+  MIP.registerCustomElement('mip-test', class MipTest extends MIP.CustomElement {})
   ```
 
 **prerenderElement**
