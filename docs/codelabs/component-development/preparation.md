@@ -16,11 +16,12 @@ $ npm install -g mip2
 
 1. fork 站长组件仓库
 
-在 Github fork `https://github.com/mipengine/mip2-extensions-platform` 仓库，并 `clone` 到本地。
+在 Github fork `https://github.com/mipengine/mip2-extensions-platform` 仓库到自己的 github，并将自己 github 的 fork 后的仓库 `clone` 到本地。
 
 2. 安装依赖
 
 ```bash
+$ cd mip2-extensions-platform
 $ npm install
 ```
 
@@ -45,11 +46,10 @@ INFO generate MIP project successfully!
 $ cd example.com
 ```
 
-切换到站点项目目录即可快速进行组件开发工作了。
+切换到站点项目目录即可快速进行组件开发工作了，可以选择您喜欢的编辑器(IDE)打开项目文件夹进行开发。
 
 ### 官方组件
 
-如果您需要向官方组件仓库提交组件，则不需要进行项目初始化，在 Github fork 官方组件仓库 `https://github.com/mipengine/mip2-extensions`，并 `clone` 到本地，即可开始开发。
+如果您需要向官方组件仓库提交组件，则不需要进行项目初始化，在 Github fork 官方组件仓库 `https://github.com/mipengine/mip2-extensions` 到自己的 github，并从您 fork 后的 github 仓库 `clone` 到本地，即可开始开发。
 
 组件开发请继续参考下一小节。
-
