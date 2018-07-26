@@ -41,15 +41,15 @@ Vue 自定义元素组件是在 MIP.CustomElement 的基础上进行封装的，
 - **示例**：
 
   ``` html
- <script>
-   export default {
-     data() {
-       return {
-         name: 'fake'
-       }
-     }
-   }
-</script>
+  <script>
+    export default {
+      data() {
+        return {
+          name: 'fake'
+        }
+      }
+    }
+  </script>
   ```
 
   注意，如果你为 `data` 属性使用了箭头函数，则 `this` 不会指向这个组件的实例，不过你仍然可以将其实例作为函数的第一个参数来访问。
@@ -538,6 +538,38 @@ Vue 自定义元素组件是在 MIP.CustomElement 的基础上进行封装的，
 - **详细**：
 
   Vue 实例使用的根 DOM 元素。实际是 MIP 自定义元素的第一个子元素
+
+### vm.element
+
+- **MIP 新增**
+
+- **类型**：`HTMLElement`
+
+- **只读**
+
+- **详细**：
+
+  MIP 自定义元素的真实 element 实例。可以通过该属性访问到自定义元素的 Element 实例。 也可以获取 CustomElement 实例。
+
+  ```html
+  <script>
+    export default {
+      created() {
+        // <mip-example><div class="child"></div></mip-example>
+        console.log(this.element)
+
+        // VueCustomElement
+        console.log(this.element.customElement)
+      }
+    }
+  </script>
+  ```
+
+  ```html
+  <mip-example>
+    <div class="child"></div>
+  </mip-example>
+  ```
 
 ### vm.$options
 
@@ -1058,10 +1090,10 @@ Vue 自定义元素组件是在 MIP.CustomElement 的基础上进行封装的，
   - `.{keyCode | keyAlias}` - 只当事件是从特定键触发时才触发回调。
   - `.native` - 监听组件根元素的原生事件。
   - `.once` - 只触发一次回调。
-  - `.left` - (2.2.0) 只当点击鼠标左键时触发。
-  - `.right` - (2.2.0) 只当点击鼠标右键时触发。
-  - `.middle` - (2.2.0) 只当点击鼠标中键时触发。
-  - `.passive` - (2.3.0) 以 `{ passive: true }` 模式添加侦听器
+  - `.left` - 只当点击鼠标左键时触发。
+  - `.right` - 只当点击鼠标右键时触发。
+  - `.middle` - 只当点击鼠标中键时触发。
+  - `.passive` - 以 `{ passive: true }` 模式添加侦听器
 
 - **用法**：
 
