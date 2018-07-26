@@ -12,7 +12,7 @@ import platform from './util/platform'
 import EventAction from './util/event-action'
 import EventEmitter from './util/event-emitter'
 import fn from './util/fn'
-import {makeCacheUrl, getOriginalUrl} from './util'
+import {makeCacheUrl, parseCacheUrl} from './util'
 import {supportsPassive} from './page/util/feature-detect'
 import {resolvePath} from './page/util/path'
 import viewport from './viewport'
@@ -225,7 +225,7 @@ let viewer = {
     }
     // Send statics message to BaiduResult page
     let pushMessage = {
-      url: getOriginalUrl(completeUrl),
+      url: parseCacheUrl(completeUrl),
       state
     }
     this.sendMessage(replace ? 'replaceState' : 'pushState', pushMessage)
