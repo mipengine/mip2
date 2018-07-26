@@ -19,10 +19,9 @@ class Bind {
     // require mip data extension runtime
     this._compile = new Compile()
     this._observer = new Observer()
-    // from=0 called by html attributes
-    // from=1 refers the method called by mip.js
-    MIP.setData = (action, from) => {
-      this._bindTarget(false, action, from)
+    MIP.$set = (data, cancel) => this._bindTarget(true, data, cancel)
+    MIP.setData = data => {
+      this._bindTarget(false, data)
     }
     MIP.getData = key => {
       let ks = key.split('.')
@@ -33,9 +32,6 @@ class Bind {
         i++
       }
       return res
-    }
-    MIP.$set = (action, from, cancel) => {
-      this._bindTarget(true, action, from, cancel)
     }
     MIP.$recompile = () => {
       this._observer.start(this._win.m)
@@ -65,10 +61,10 @@ class Bind {
     if (!isSelfParent(win)) {
       targetWin = win.parent
       // parent update
-      targetWin.MIP.$set(data, 0, true)
+      targetWin.MIP.$set(data, true)
     }
     // self update
-    win.MIP.$set(data, 0, true)
+    win.MIP.$set(data, true)
 
     let pageId = win.location.href.replace(win.location.hash, '')
     // defer
@@ -87,18 +83,13 @@ class Bind {
           pageId !== frames[i].getAttribute('data-page-id')
       ) {
         let subwin = frames[i].contentWindow
-        subwin && subwin.MIP && subwin.MIP.$set(data, 0, true)
+        subwin && subwin.MIP && subwin.MIP.$set(data, true)
       }
     }
   }
 
-  _bindTarget (compile, action, from, cancel) {
+  _bindTarget (compile, data, cancel) {
     let win = this._win
-    let data = from ? action.arg : action
-    let evt = from && action.event ? action.event.target : {}
-    if (typeof data === 'string') {
-      data = (new Function('DOM', 'return ' + data))(evt)
-    }
 
     if (typeof data === 'object') {
       let origin = JSON.stringify(win.m)
@@ -125,7 +116,7 @@ class Bind {
         })
       }
     } else {
-      console.error('setData method MUST accept an object!')
+      throw new Error('setData method MUST accept an object! Check your input:' + data)
     }
   }
 

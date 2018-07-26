@@ -106,6 +106,9 @@ describe('mip-video', function () {
       let event = document.createEvent('MouseEvents')
       event.initEvent('click', true, true)
       p.dispatchEvent(event)
+
+      let videoEl = mipVideo.querySelector('video')
+      expect(videoEl.currentTime).to.equal(2)
     })
 
     after(function () {

@@ -117,6 +117,7 @@ function bindPopup (element, img) {
   img.addEventListener('click', function (event) {
     event.stopPropagation()
     // 图片未加载则不弹层
+    /* istanbul ignore if */
     if (img.width + img.naturalWidth === 0) {
       return
     }

@@ -341,6 +341,7 @@ class MipCarousel extends CustomElement {
     // 绑定按钮切换事件
     function bindBtn () {
       ele.querySelector('.mip-carousel-preBtn').addEventListener('click', function (event) {
+        /* istanbul ignore if */
         if (!btnLock.stop) {
           return
         }
@@ -357,6 +358,7 @@ class MipCarousel extends CustomElement {
       }, false)
 
       ele.querySelector('.mip-carousel-nextBtn').addEventListener('click', function (event) {
+        /* istanbul ignore if */
         if (!btnLock.stop) {
           return
         }
@@ -374,6 +376,7 @@ class MipCarousel extends CustomElement {
 
     // 图片滑动处理与手势滑动函数endPosition为最终距离,Duration变换时间
     function move (wrapBox, startIdx, endIdx, Duration) {
+      /* istanbul ignore if */
       if (!wrapBox) {
         return
       }
