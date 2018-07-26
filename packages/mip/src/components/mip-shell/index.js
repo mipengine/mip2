@@ -22,8 +22,6 @@ import {
   createIFrame,
   getIFrame,
   hideAllIFrames,
-  frameMoveIn,
-  frameMoveOut,
   createLoading,
   getLoading,
   createFadeHeader,
@@ -597,6 +595,11 @@ class MipShell extends CustomElement {
       if (platform.isQQ() || platform.isQQApp()) {
         window.MIP_SHELL_OPTION.allowTransition = false
       }
+      // When transition contains header, fadeHeader won't appear
+      // Thus updating shell of target page first is required
+      if (this.transitionContainsHeader) {
+        this.refreshShell({pageMeta: targetPageMeta})
+      }
 
       params.newPage = false
       this.beforeSwitchPage(params)
@@ -612,7 +615,9 @@ class MipShell extends CustomElement {
           display: 'block',
           opacity: 1
         })
-        this.refreshShell({pageMeta: targetPageMeta})
+        if (!this.transitionContainsHeader) {
+          this.refreshShell({pageMeta: targetPageMeta})
+        }
         this.toggleTransition(true)
         this.pauseBouncyHeader = false
 
@@ -631,132 +636,6 @@ class MipShell extends CustomElement {
       this.switchPage(params)
     }
   }
-
-  /**
-   * render with current route
-   *
-   * @param {Route} from route
-   * @param {Route} to route
-   */
-  // render (from, to) {
-  //   this.resizeAllPages()
-  //   /**
-  //    * if `to` route is the same with `from` route in path & query,
-  //    * scroll in current page
-  //    */
-  //   if (isSameRoute(from, to, true)) {
-  //     // Emit event to current active page
-  //     page.emitEventInCurrentPage({
-  //       name: CUSTOM_EVENT_SCROLL_TO_ANCHOR,
-  //       data: to.hash
-  //     })
-  //     return
-  //   }
-
-  //   // Render target page
-  //   let targetFullPath = getFullPath(to)
-  //   let targetPageId = getCleanPageId(targetFullPath)
-  //   let targetPage = page.getPageById(targetPageId)
-
-  //   if (page.currentPageId === page.pageId) {
-  //     this.saveScrollPosition()
-  //   }
-
-  //   // Hide page mask and skip transition
-  //   this.togglePageMask(false, {skipTransition: true})
-
-  //   // Show header
-  //   this.slideHeader('down')
-  //   this.pauseBouncyHeader = true
-  //   /**
-  //    * Reload iframe when <a mip-link> clicked even if it's already existed.
-  //    * NOTE: forwarding or going back with browser history won't do
-  //    */
-  //   let needEmitPageEvent = true
-  //   if (!targetPage || (to.meta && to.meta.reload)) {
-  //     // When reloading root page...
-  //     if (page.pageId === targetPageId) {
-  //       page.pageId = NON_EXISTS_PAGE_ID
-  //       // Destroy root page first
-  //       if (targetPage) {
-  //         targetPage.destroy()
-  //       }
-  //       // Delete DOM & trigger disconnectedCallback in root page
-  //       Array.prototype.slice.call(page.getElementsInRootPage()).forEach(el => el.parentNode && el.parentNode.removeChild(el))
-  //     }
-
-  //     page.checkIfExceedsMaxPageNum()
-
-  //     let targetPageMeta = {
-  //       pageId: targetPageId,
-  //       fullpath: targetFullPath,
-  //       standalone: window.MIP.standalone,
-  //       isRootPage: false,
-  //       isCrossOrigin: to.origin !== window.location.origin
-  //     }
-
-  //     let iframeCreated = false
-  //     let targetIFrame
-  //     // qqbrowser contains bugs when [pushState] and [create iframe] invoked together
-  //     // Ensure [create iframe] before [pushState] and eliminate async operations
-  //     if (platform.isQQ() || platform.isQQApp()) {
-  //       targetIFrame = createIFrame(targetPageMeta)
-  //       targetPageMeta.targetWindow = targetIFrame.contentWindow
-  //       iframeCreated = true
-  //       window.MIP_SHELL_OPTION.allowTransition = false
-  //     }
-  //     page.addChild(targetPageMeta)
-  //     needEmitPageEvent = false
-  //     this.applyTransition(targetPageId, to.meta, {
-  //       newPage: true,
-  //       onComplete: () => {
-  //         if (!iframeCreated) {
-  //           targetIFrame = createIFrame(targetPageMeta)
-  //           targetPageMeta.targetWindow = targetIFrame.contentWindow
-  //         }
-  //         css(targetIFrame, {
-  //           display: 'block',
-  //           opacity: 1
-  //         })
-  //         // Get <mip-shell> from root page
-  //         let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
-  //         if (shellDOM) {
-  //           viewer.eventAction.execute('active', shellDOM, {})
-  //         }
-  //         page.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
-  //         page.currentPageId = targetPageId
-  //         page.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
-  //       }
-  //     })
-  //   } else {
-  //     if (platform.isQQ() || platform.isQQApp()) {
-  //       window.MIP_SHELL_OPTION.allowTransition = false
-  //     }
-  //     this.applyTransition(targetPageId, to.meta, {
-  //       onComplete: () => {
-  //         css(getIFrame(targetPageId), {
-  //           display: 'block',
-  //           opacity: 1
-  //         })
-  //         // Update shell if new iframe has not been created
-  //         let pageMeta = this.findMetaByPageId(targetPageId)
-  //         this.refreshShell({pageMeta})
-  //         // Get <mip-shell> from root page
-  //         let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
-  //         if (shellDOM) {
-  //           viewer.eventAction.execute('active', shellDOM, {})
-  //         }
-  //       }
-  //     })
-  //     window.MIP.$recompile()
-  //   }
-
-  //   if (needEmitPageEvent) {
-  //     page.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
-  //     page.currentPageId = targetPageId
-  //     page.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
-  //   }
-  // }
 
   /**
    * save scroll position in root page
@@ -1174,88 +1053,6 @@ class MipShell extends CustomElement {
   }
 
   /**
-   * apply transition effect to relative two pages
-   *
-   * @param {string} targetPageId targetPageId
-   * @param {Object} targetMeta metainfo of targetPage
-   * @param {Object} options
-   * @param {Object} options.newPage if just created a new page
-   * @param {Function} options.onComplete if just created a new page
-   */
-  // applyTransition (targetPageId, targetMeta, options = {}) {
-  //   let localMeta = this.findMetaByPageId(targetPageId)
-  //   /**
-  //    * priority of header.title:
-  //    * 1. <a mip-link data-title>
-  //    * 2. <mip-shell> route.meta.header.title
-  //    * 3. <a mip-link></a> innerText
-  //    */
-  //   let innerTitle = {title: targetMeta.defaultTitle || undefined}
-  //   let finalMeta = fn.extend(true, innerTitle, localMeta, targetMeta)
-
-  //   this.toggleTransition(false)
-
-  //   if (targetPageId === page.pageId || window.MIP_SHELL_OPTION.direction === 'back') {
-  //     // backward
-  //     let backwardOpitons = {
-  //       sourceMeta: this.currentPageMeta,
-  //       transitionContainsHeader: this.transitionContainsHeader,
-  //       onComplete: () => {
-  //         this.currentPageMeta = finalMeta
-  //         this.toggleTransition(true)
-  //         this.pauseBouncyHeader = false
-  //         if (window.MIP_SHELL_OPTION.direction === 'back' && targetPageId !== page.pageId) {
-  //           document.documentElement.classList.add('mip-no-scroll')
-  //           Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
-  //         }
-  //         options.onComplete && options.onComplete()
-  //       }
-  //     }
-
-  //     if (window.MIP_SHELL_OPTION.direction === 'back') {
-  //       backwardOpitons.targetPageId = targetPageId
-  //       backwardOpitons.targetPageMeta = this.findMetaByPageId(targetPageId)
-  //     } else {
-  //       backwardOpitons.targetPageMeta = this.currentPageMeta
-  //     }
-
-  //     // move current iframe to correct position
-  //     backwardOpitons.rootPageScrollPosition = 0
-  //     if (targetPageId === page.pageId) {
-  //       backwardOpitons.rootPageScrollPosition = this.rootPageScrollPosition
-  //       document.documentElement.classList.remove('mip-no-scroll')
-  //       Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
-  //     }
-  //     frameMoveOut(page.currentPageId, backwardOpitons)
-
-  //     window.MIP_SHELL_OPTION.direction = null
-  //     // restore scroll position in root page
-  //     if (targetPageId === page.pageId) {
-  //       this.restoreScrollPosition()
-  //     }
-  //   } else {
-  //     // forward
-  //     frameMoveIn(targetPageId, {
-  //       targetMeta: finalMeta,
-  //       newPage: options.newPage,
-  //       transitionContainsHeader: this.transitionContainsHeader,
-  //       onComplete: () => {
-  //         this.currentPageMeta = finalMeta
-  //         this.toggleTransition(true)
-  //         this.pauseBouncyHeader = false
-  //         /**
-  //          * Disable scrolling of root page when covered by an iframe
-  //          * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
-  //          */
-  //         document.documentElement.classList.add('mip-no-scroll')
-  //         Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
-  //         options.onComplete && options.onComplete()
-  //       }
-  //     })
-  //   }
-  // }
-
-  /**
    * handle resize event
    */
   resizeAllPages () {
@@ -1369,8 +1166,12 @@ class MipShell extends CustomElement {
 
     if (!(pageMeta.header && pageMeta.header.show)) {
       this.$wrapper.classList.add('hide')
-      toggleFadeHeader(false)
       css(this.$loading, 'display', 'none')
+      if (!this.transitionContainsHeader) {
+        let headerLogoTitle = this.$el.querySelector('.mip-shell-header-logo-title')
+        headerLogoTitle && headerLogoTitle.classList.remove('fade-out')
+        toggleFadeHeader(false)
+      }
       return
     }
 
