@@ -25,7 +25,7 @@ window.MIP.util.event
 
   {Function}
 
-  返回移除监听事件的函数方法，直接调动即可
+  返回移除代理的函数方法，直接调用即可
 
 - 用法
 
@@ -33,12 +33,12 @@ window.MIP.util.event
 
   ```javascript
   // 代理所有 <a> 元素的 click 事件
-  let unbindFunction = MIP.util.event.delegate(document, 'a', 'click', function (event) {
+  let undelegate = MIP.util.event.delegate(document, 'a', 'click', function (event) {
     // 具体处理
   }, true)
 
-  // 移除监听事件
-  unbindFunction()
+  // 移除代理事件
+  undelegate()
   ```
  
 **createEvent**
