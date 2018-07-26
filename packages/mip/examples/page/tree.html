@@ -68,36 +68,10 @@
     <mip-shell>
         <script type="application/json">
             {
+                "transitionContainsHeader": false,
                 "routes": [
                     {
-                        "pattern": "./tree.html",
-                        "meta": {
-                            "header": {
-                                "show": true,
-                                "title": "MIP Tree",
-                                "buttonGroup": [
-                                    {
-                                        "name": "subscribe",
-                                        "text": "关注",
-                                        "link": "/examples/page/tree.html"
-                                    },
-                                    {
-                                        "name": "chat",
-                                        "text": "发消息"
-                                    },
-                                    {
-                                        "name": "cancel",
-                                        "text": "取消"
-                                    }
-                                ]
-                            },
-                            "view": {
-                                "isIndex": false
-                            }
-                        }
-                    },
-                    {
-                        "pattern": "*",
+                        "pattern": "./index.html",
                         "meta": {
                             "header": {
                                 "show": true,
@@ -120,6 +94,27 @@
                                 ]
                             },
                             "view": {
+                                "isIndex": true
+                            }
+                        }
+                    },
+                    {
+                        "pattern": "./tree.html",
+                        "meta": {
+                            "header": {
+                                "show": true,
+                                "title": "MIP Tree"
+                            }
+                        }
+                    },
+                    {
+                        "pattern": "*",
+                        "meta": {
+                            "header": {
+                                "show": true,
+                                "title": "MIP Other Page"
+                            },
+                            "view": {
                                 "isIndex": false
                             }
                         }
@@ -127,7 +122,6 @@
                 ]
             }
         </script>
-        <div class="sidebar">This is tree sidebar</div>
     </mip-shell>
     <p class="input">
         <input type="text">

@@ -38,19 +38,19 @@ class Page {
   constructor () {
     Object.assign(this, window.MIP.viewer.pageMeta)
     this.pageId = undefined
+    this.fullpath = undefined
+    this.pageMeta = undefined
 
     // root page
     this.children = []
     this.currentPageId = undefined
     this.targetWindow = window
-
-    // sync from mip-shell
-    this.transitionContainsHeader = true
   }
 
   initPageId () {
     // generate pageId
-    this.pageId = getCleanPageId(window.location.href)
+    this.fullpath = window.location.href
+    this.pageId = getCleanPageId(this.fullpath)
     this.currentPageId = this.pageId
   }
 

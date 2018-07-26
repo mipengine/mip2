@@ -264,12 +264,39 @@
         {
             "routes": [
                 {
-                    "pattern": "/data.html",
+                    "pattern": "./index.html",
                     "meta": {
                         "header": {
                             "show": true,
-                            "title": "蓝犀牛数据",
-                            "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png"
+                            "title": "MIP",
+                            "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
+                            "buttonGroup": [
+                                {
+                                    "name": "subscribe",
+                                    "text": "关注",
+                                    "link": "/examples/page/tree.html"
+                                },
+                                {
+                                    "name": "chat",
+                                    "text": "发消息"
+                                },
+                                {
+                                    "name": "cancel",
+                                    "text": "取消"
+                                }
+                            ]
+                        },
+                        "view": {
+                            "isIndex": true
+                        }
+                    }
+                },
+                {
+                    "pattern": "./tree.html",
+                    "meta": {
+                        "header": {
+                            "show": true,
+                            "title": "MIP Tree"
                         }
                     }
                 },
@@ -278,51 +305,11 @@
                     "meta": {
                         "header": {
                             "show": true,
-                            "title": "蓝犀牛",
-                            "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
-                            "xiongzhang": true,
-                            "buttonGroup": [
-                                {
-                                    "type": "button",
-                                    "name": "subscribe",
-                                    "text": "关注",
-                                    "link": "/examples/page/tree.html"
-                                },
-                                {
-                                    "type": "button",
-                                    "name": "chat",
-                                    "text": "发消息",
-                                    "outline": true
-                                },
-                                {
-                                    "type": "icon",
-                                    "name": "search",
-                                    "text": "search",
-                                    "link": "/examples/page/tree.html"
-                                },
-                                {
-                                    "type": "dropdown",
-                                    "items": [
-                                        {
-                                            "name": "subscribe",
-                                            "text": "关注",
-                                            "link": "/examples/page/tree.html"
-                                        },
-                                        {
-                                            "name": "chat",
-                                            "text": "发消息"
-                                        }
-                                    ]
-                                }
-                            ]
+                            "title": "MIP Other Page"
                         },
                         "view": {
-                            "isIndex": true,
-                            "transition": {
-                                "mode": "slide"
-                            }
-                        },
-                        "footer": {}
+                            "isIndex": false
+                        }
                     }
                 }
             ]
