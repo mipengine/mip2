@@ -4,23 +4,30 @@
  * @author liwenqian
  */
 
-const fs = require('fs')
+const fs = require('fs-extra')
 const path = require('path')
 
-module.exports = {
-  walk (dirPath, callback) {
-    if (!fs.statSync(dirPath).isDirectory()) {
-      return callback(dirPath)
-    }
-    fs.readdirSync(dirPath).forEach(file => {
+async function walk (dirPath, callback) {
+  let stats = await fs.stat(dirPath)
+  if (!stats.isDirectory()) {
+    return await callback(dirPath)
+  }
+
+  let dir = await fs.readdir(dirPath)
+  await Promise.all(
+    dir.map(async file => {
       const pathname = path.join(dirPath, file)
-      const stats = fs.statSync(pathname)
+      const stats = await fs.stat(pathname)
 
       if (stats.isDirectory()) {
-        this.walk(pathname, callback)
+        await walk(pathname, callback)
       } else {
-        callback(pathname)
+        await callback(pathname)
       }
     })
-  }
+  )
+}
+
+module.exports = {
+  walk: walk
 }

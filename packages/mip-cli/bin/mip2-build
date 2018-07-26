@@ -2,6 +2,7 @@
 
 const cli = require('../lib/cli')
 const build = require('../lib/build')
+const validator = require('mip-component-validator')
 const path = require('path')
 const fs = require('fs')
 
@@ -29,4 +30,10 @@ if (fs.existsSync(configPath)) {
   defaultConfig = require(configPath)
 }
 
-build(Object.assign(defaultConfig.build || {}, cli.program))
+const conf = Object.assign(defaultConfig.build || {}, cli.program)
+validator.whitelist(conf.dir).then(reporter => {
+  if (reporter.errors.length) {
+    throw new Error(reporter.errors[0].message)
+  }
+})
+.then(() => build(conf))

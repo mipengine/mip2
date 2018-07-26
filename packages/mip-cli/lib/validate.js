@@ -10,7 +10,7 @@ const Validator = require('mip-validator')
 const compValidator = require('mip-component-validator')
 const pageValidator = new Validator()
 
-module.exports = function validate (config) {
+module.exports = async function validate (config) {
   const baseDir = config.baseDir || process.cwd()
   const filePath = path.join(baseDir, config.filePath)
 

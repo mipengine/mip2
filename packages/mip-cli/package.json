@@ -50,7 +50,6 @@
     "file-loader": "^1.1.11",
     "fs-extra": "^6.0.0",
     "glob": "^7.1.2",
-    "globals": "^11.5.0",
     "imports-loader": "^0.8.0",
     "inquirer": "^5.2.0",
     "koa": "^2.5.1",
@@ -65,6 +64,7 @@
     "mip-components-webpack-helpers": "^1.0.7",
     "mip-sandbox": "^1.0.19",
     "mip-validator": "^1.5.15",
+    "node-fetch": "^2.2.0",
     "opn": "^5.3.0",
     "ora": "^2.1.0",
     "postcss-loader": "^2.1.5",
@@ -89,7 +89,6 @@
   },
   "devDependencies": {
     "ava": "^0.25.0",
-    "execa": "^0.10.0",
     "nyc": "^11.7.3"
   },
   "ava": {
