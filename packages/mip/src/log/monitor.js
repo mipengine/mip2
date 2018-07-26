@@ -23,7 +23,7 @@ tags = coreTags.filter((it = '') => !!it.trim())
  * @param {Object} e 错误事件对象
  * @param {number} opts.rate 抽样率
  */
-export function errorHandle (e = {}, { rate = 0.1 }) {
+export function errorHandler (e = {}, { rate = 0.1 }) {
   rate = rate || RATE
 
   // 报错文件请求路径, 跨域js文件中错误无信息暂不上报
@@ -69,6 +69,6 @@ export function errorHandle (e = {}, { rate = 0.1 }) {
 }
 
 export default function install () {
-  window.removeEventListener('error', errorHandle)
-  window.addEventListener('error', errorHandle)
+  window.removeEventListener('error', errorHandler)
+  window.addEventListener('error', errorHandler)
 }

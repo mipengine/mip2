@@ -6,7 +6,7 @@
 /* globals describe, it, expect, sinon */
 
 import ls from 'src/log/log-send'
-import { errorHandle } from 'src/log/monitor'
+import { errorHandler } from 'src/log/monitor'
 
 describe('monitor', function () {
   it('catch error', function (done) {
@@ -24,6 +24,6 @@ describe('monitor', function () {
     let e = new Error(message)
     e.filename = filename
 
-    errorHandle(e, { rate: 1 })
+    errorHandler(e, { rate: 1 })
   })
 })
