@@ -789,6 +789,9 @@ class MipShell extends CustomElement {
     let iframe = getIFrame(sourcePageId)
     // If source page is root page, skip transition
     if (!iframe) {
+      document.documentElement.classList.add('mip-no-scroll')
+      Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
+
       onComplete && onComplete()
 
       let targetIFrame = getIFrame(targetPageId)
@@ -932,6 +935,9 @@ class MipShell extends CustomElement {
     let iframe = getIFrame(sourcePageId)
     // If source page is root page, skip transition
     if (!iframe) {
+      document.documentElement.classList.add('mip-no-scroll')
+      Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
+
       onComplete && onComplete()
       this.afterSwitchPage(options)
       return

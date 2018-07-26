@@ -8,11 +8,9 @@ import css from '../../util/dom/css'
 import platform from '../../util/platform'
 
 import {MIP_IFRAME_CONTAINER} from '../const/index'
-import {raf, transitionEndEvent, animationEndEvent, isPortrait} from './feature-detect'
+import {raf, transitionEndEvent, animationEndEvent} from './feature-detect'
 import {normalizeLocation} from './route'
 import viewport from '../../viewport'
-
-let activeZIndex = 10000
 
 export function createIFrame ({fullpath, pageId}, {onLoad, onError} = {}) {
   let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${pageId}"]`)
