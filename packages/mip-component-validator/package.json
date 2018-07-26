@@ -1,6 +1,6 @@
 {
   "name": "mip-component-validator",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "MIP component validate",
   "main": "index.js",
   "scripts": {
@@ -19,7 +19,7 @@
   "dependencies": {
     "babel-core": "^6.26.3",
     "babel-preset-stage-3": "^6.24.1",
-    "mip-sandbox": "^1.0.17",
+    "mip-sandbox": "^1.0.19",
     "mip-validator": "^1.5.15",
     "vue-template-compiler": "^2.5.16"
   },
