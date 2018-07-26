@@ -24,6 +24,7 @@
     "vue-template-compiler": "^2.5.16"
   },
   "devDependencies": {
+    "acorn-dynamic-import": "^3.0.0",
     "chai": "^4.1.2",
     "mocha": "^5.2.0",
     "nyc": "^12.0.2"
