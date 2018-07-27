@@ -2,6 +2,9 @@
     "menu": [
         {
             "key": "mip-started"
+        },
+        {
+            "key": "all-sites-mip"
         }
     ],
     "ignore": [

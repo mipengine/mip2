@@ -194,7 +194,7 @@ Shell 最基本的配置中必须包含 `routes` 数组。其中的每个元素�
                     "meta": {
                        "header": {
                             "show": true,
-                            "title": "Mip Index",
+                            "title": "MIP Index",
                             "logo": "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg",
                             "buttonGroup": [
                                 {
@@ -313,7 +313,7 @@ MIP 页面总共有 4 处可以配置头部标题，它们的生效顺序依次�
 全局的 MIP 对象会暴露一个 MIP Shell 基类供大家继承。例如我们要创建一个 MIP Shell Example 组件，我们可以写如下代码：
 
 ```javascript
-export default class MipShellExample extends window.MIP.builtinComponents.MIPShell {
+export default class MIPShellExample extends window.MIP.builtinComponents.MIPShell {
     // Functions go here
 }
 ```
@@ -338,7 +338,7 @@ export default class MipShellExample extends window.MIP.builtinComponents.MIPShe
                     "meta": {
                        "header": {
                             "show": true,
-                            "title": "Mip Index",
+                            "title": "MIP Index",
                             "logo": "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg"
                         },
                     }
@@ -601,6 +601,49 @@ afterSwitchPage(options) {
 }
 ```
 
+#### switchPage
+
+* __参数__：`options`, __Object__, 路由切换时的配置项。
+  * `targetPageId`, __string__, 目标页面的 `pageId`
+  * `targetPageMeta`, __Object__, 目标页面的 `pageMeta`，结构和 `<mip-shell>` 中的 `meta` 对象相同
+  * `sourcePageId`, __string__, 当前页面的 `pageId`
+  * `sourcePageMeta`, __Object__, 当前页面的 `pageMeta`，结构和 `<mip-shell>` 中的 `meta` 对象相同
+  * `newPage`, __boolean__, 是否需要创建 iframe
+  * `isForward`, __boolean__, 动画是否为前进方向
+  * `onComplete`, __Function__, 动画完成后的回调函数
+* __返回值__：无。
+
+MIP Shell 基类的动画切换逻辑实现方法。但子类如有需要也可继承修改，__非必须情况尽量不要继承。__
+
+在 `switchPage` 内部还根据动画的方向，是否创建 iframe，是否要跳过动画区分为6个细分方法。子类也可以继承其中的某一个或几个，来实现对动画的精确控制。
+
+在介绍具体方法前，先明晰3组概念：
+
+1. 是否需要动画
+  如点击浏览器的前进后退，没有动画效果；点击链接和头部的后退按钮，有动画效果。
+
+2. 是否创建 iframe
+  点击链接打开新页面时（或者直接调用 `viewer.open` 时）会创建 iframe 并把新页面放入其中。而浏览器的前进后退时不创建 iframe，只调用已有的 iframe 展现。
+
+3. 动画方向
+  这里的动画方向并不是视觉上的从左到右还是从右到左，而是指逻辑上的方向，分前进/后退。
+  只是在默认情况下，前进采用目标页面从右到左进入屏幕的方式；后退等价于当前页面向右侧退出屏幕，目标页面出现在下方的方式。
+
+* 不需要动画时
+
+    | 创建 iframe | 不创建 iframe |
+    | --- | --- |
+    | skipTransitionAndCreate(options) | skipTransition(optios) |
+
+* 需要动画时
+
+    | | 创建 iframe | 不创建 iframe |
+    | --- | --- | --- |
+    | 前进 | forwardTransitionAndCreate(options) | forwardTransition(optios) |
+    | 后退 | backwardTransitionAndCreate(options) | backwardTransition(optios) |
+
+和 `switchPage` 一样，这些方法关系到整个全站 MIP 的页面切换逻辑，非常重要，因此 __非必须情况尽量不要继承。__
+
 ### 个性化 Shell 实例
 
 这里列出两个个性化 Shell 的实例（均为实际线上代码，但隐去了敏感信息和复杂的业务逻辑）
@@ -617,7 +660,7 @@ afterSwitchPage(options) {
 * mip-shell-is.js
 
     ```javascript
-    export default class MipShellIS extends window.MIP.builtinComponents.MIPShell {
+    export default class MIPShellIS extends window.MIP.builtinComponents.MIPShell {
       constructor (...args) {
         super(...args)
 
@@ -725,7 +768,7 @@ afterSwitchPage(options) {
 * mip-shell-novel.js
 
     ```javascript
-    export default class MipShellNovel extends window.MIP.builtinComponents.MIPShell {
+    export default class MIPShellNovel extends window.MIP.builtinComponents.MIPShell {
       constructor (...args) {
         super(...args)
 
