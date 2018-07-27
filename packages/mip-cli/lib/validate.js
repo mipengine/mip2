@@ -41,6 +41,7 @@ function report (data, filePath) {
     cli.info('validate success', cli.chalk.green(filePath))
     return
   }
+
   let currentFile = ''
   data.errors.map(error => {
     if (currentFile !== error.file) {
@@ -49,4 +50,6 @@ function report (data, filePath) {
     }
     cli.error('line', error.line + ',', 'col', error.col + ':', error.message)
   })
+
+  throw new Error('validate fail')
 }
