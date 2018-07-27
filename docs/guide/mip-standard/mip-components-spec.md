@@ -26,7 +26,7 @@ MIP 扩展组件开发采用 [Forking工作流](https://github.com/oldratlee/tra
 ### 结构规范
 
 - [MUST] 所有组件目录必须是组件名称
-- [MUST] 目录名称（组件名称）必须是 `mip-` 为前缀的全小写字符串
+- [MUST] 目录名称（组件名称）必须是 `mip-` 为前缀的全小写字符串，站长组件需要加上站点名称标识，如 baidu.com 下的 tab 组件，可命名为`mip-baidu-tab`
 - [MUST] 所有组件必须是 `.vue` 后缀的 [单文件组件](https://cn.vuejs.org/v2/guide/single-file-components.html) 形式
 - [MUST] 必须包含说明组件用途的 `mip-xxx.md` 文件，具体规范可参照自动生成的 `README.md` 模板文件结构进行填充。
 
@@ -34,7 +34,7 @@ MIP 扩展组件开发采用 [Forking工作流](https://github.com/oldratlee/tra
 
 ```bash
 mip-example
-  ├── mip-example.md
+  ├── README.md
   ├── mip-example.vue
 ```
 
