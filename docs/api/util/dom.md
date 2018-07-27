@@ -102,11 +102,7 @@ window.MIP.util.dom
   MIP.util.dom.create('<span><span>1</span></span>')
 
   // 返回一个长度为2的 span 节点数组
-  MIP.util.dom.create(
-  '
-    <span>test1</span>
-    <span>test2</span>
-  ')
+  MIP.util.dom.create('<span>test1</span><span>test2</span>')
 
   // 返回 null
   MIP.util.dom.create('1')

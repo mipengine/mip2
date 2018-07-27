@@ -14,7 +14,11 @@
         },
         {
             "name": "使用内置组件",
-            "key": "mip-extension"
+            "key": "components-in"
+        },
+        {
+            "name": "页面校验",
+            "key": "validate"
         }
     ],
     "info": {

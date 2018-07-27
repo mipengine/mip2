@@ -20,7 +20,6 @@
     ```
     ![mip2 init](http://bos.nj.bpc.baidu.com/assets/mip/codelab/mip-init.jpeg)
 
-    ![myproject](http://bos.nj.bpc.baidu.com/assets/mip/codelab/project.jpg)
 
 3. 进入目录并启动开发服务器
 
@@ -33,4 +32,4 @@
 
     ![example Page](http://bos.nj.bpc.baidu.com/assets/mip/codelab/home-init.png)
 
-接下来我们会通过一些代码的修改来进一步加深印象，了解 MIP 的主要功能。
+>info 下一节我们会学习初始化的项目的文件结构及 MIP 页面的内容结构及开发方式。
