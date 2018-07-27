@@ -88,14 +88,24 @@ window.MIP.util.dom
   - {string} str html 字符串
 - 返回值：
 
-  {HTMLElement}
+  {?HTMLElement}
+
+  返回一个元素节点 or 多个元素节点列表 or null
 
 - 用法：
 
   将 html 字符串创建元素 `<span>` 节点
 
   ```javascript
+  // 返回一个 span 元素节点
   MIP.util.dom.create('<span>test</span>')
+  MIP.util.dom.create('<span><span>1</span></span>')
+
+  // 返回一个长度为2的 span 节点数组
+  MIP.util.dom.create('<span>test1</span><span>test2</span>')
+
+  // 返回 null
+  MIP.util.dom.create('1')
   ```
 
  **insert**
@@ -127,7 +137,7 @@ window.MIP.util.dom
 
   ```javascript
   MIP.util.dom.waitDocumentReady(function() {
-    console.log('Document.body is ready!')
+    console.log('document.body is ready!')
   })
   ```
 

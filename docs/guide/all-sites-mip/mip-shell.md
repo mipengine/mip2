@@ -194,8 +194,8 @@ Shell 最基本的配置中必须包含 `routes` 数组。其中的每个元素�
                     "meta": {
                        "header": {
                             "show": true,
-                            "title": "Mip Index",
-                            "logo": "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg",
+                            "title": "MIP Index",
+                            "logo": "http://boscdn.bpc.baidu.com/assets/mip/codelab/shell/mashroom.jpg",
                             "buttonGroup": [
                                 {
                                     "name": "subscribe",
@@ -313,7 +313,7 @@ MIP 页面总共有 4 处可以配置头部标题，它们的生效顺序依次�
 全局的 MIP 对象会暴露一个 MIP Shell 基类供大家继承。例如我们要创建一个 MIP Shell Example 组件，我们可以写如下代码：
 
 ```javascript
-export default class MipShellExample extends window.MIP.builtinComponents.MipShell {
+export default class MIPShellExample extends window.MIP.builtinComponents.MIPShell {
     // Functions go here
 }
 ```
@@ -338,8 +338,8 @@ export default class MipShellExample extends window.MIP.builtinComponents.MipShe
                     "meta": {
                        "header": {
                             "show": true,
-                            "title": "Mip Index",
-                            "logo": "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg"
+                            "title": "MIP Index",
+                            "logo": "http://boscdn.bpc.baidu.com/assets/mip/codelab/shell/mashroom.jpg"
                         },
                     }
                 }
@@ -554,6 +554,53 @@ updateOtherParts() {
 }
 ```
 
+#### beforeSwitchPage
+
+* __参数__：`options`, __Object__, 路由切换时的配置项。
+  * `targetPageId`, __string__, 目标页面的 `pageId`
+  * `targetPageMeta`, __Object__, 目标页面的 `pageMeta`，结构和 `<mip-shell>` 中的 `meta` 对象相同
+  * `sourcePageId`, __string__, 当前页面的 `pageId`
+  * `sourcePageMeta`, __Object__, 当前页面的 `pageMeta`，结构和 `<mip-shell>` 中的 `meta` 对象相同
+  * `newPage`, __boolean__, 是否需要创建 iframe
+  * `isForward`, __boolean__, 动画是否为前进方向
+* __返回值__：无。
+
+MIP 在页面切换之前，会调用此方法。如果子类需要在动画之前进行一些操作（例如加入自己的动画元素），可以继承并实现这个方法。示例如下：
+
+```javascript
+beforeSwitchPage(options) {
+  // 固定动画切换方向为前进方向
+  options.isForward = true
+}
+```
+
+#### afterSwitchPage
+
+* __参数__：`options`, __Object__, 路由切换时的配置项。
+  * `targetPageId`, __string__, 目标页面的 `pageId`
+  * `targetPageMeta`, __Object__, 目标页面的 `pageMeta`，结构和 `<mip-shell>` 中的 `meta` 对象相同
+  * `sourcePageId`, __string__, 当前页面的 `pageId`
+  * `sourcePageMeta`, __Object__, 当前页面的 `pageMeta`，结构和 `<mip-shell>` 中的 `meta` 对象相同
+  * `newPage`, __boolean__, 是否需要创建 iframe
+  * `isForward`, __boolean__, 动画是否为前进方向
+* __返回值__：无。
+
+MIP 在页面切换之后，会调用此方法。如果子类需要在动画之后进行一些操作（例如要通知一些消息），可以继承并实现这个方法。示例如下：
+
+```javascript
+afterSwitchPage(options) {
+  // 向所有页面广播页面切换事件，并给出切换前后的 pageId
+  let {sourcePageId, targetPageId} = options
+  window.MIP.viewer.page.broadcastCustomEvent({
+      name: 'switchPageComplete',
+      data: {
+          targetPageId,
+          sourcePageId
+      }
+  })
+}
+```
+
 ### 个性化 Shell 实例
 
 这里列出两个个性化 Shell 的实例（均为实际线上代码，但隐去了敏感信息和复杂的业务逻辑）
@@ -570,7 +617,7 @@ updateOtherParts() {
 * mip-shell-is.js
 
     ```javascript
-    export default class MipShellIS extends window.MIP.builtinComponents.MipShell {
+    export default class MIPShellIS extends window.MIP.builtinComponents.MIPShell {
       constructor (...args) {
         super(...args)
 
@@ -678,7 +725,7 @@ updateOtherParts() {
 * mip-shell-novel.js
 
     ```javascript
-    export default class MipShellNovel extends window.MIP.builtinComponents.MipShell {
+    export default class MIPShellNovel extends window.MIP.builtinComponents.MIPShell {
       constructor (...args) {
         super(...args)
 

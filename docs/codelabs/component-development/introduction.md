@@ -13,7 +13,7 @@ MIP 官方提供了一系列内置组件和官方组件，能够基本满足开�
 * HTML, CSS(less), JavaScript 等前端编程基础
 * ES6/7 部分常用语法，如 Promise, import/export 等
 * Vue 相关的基础开发知识
-* Webpack, Node.js 等基本知识 （__推荐__）
+* Git(github), Node.js，NPM，Webpack 等基本知识 （__推荐__）
 
 ## 在开发前您需要准备
 

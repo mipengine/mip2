@@ -10,9 +10,13 @@
  * 6. 点击 返回按钮 创建 iframe 后退到 index.html
  */
 
+let INDEX_PAGE_URL
+let TREE_PAGE_URL
+
 module.exports = {
   'open first page': function (browser) {
-    const INDEX_PAGE_URL = `${browser.globals.devServerURL}/examples/page/index.html`
+    INDEX_PAGE_URL = `${browser.globals.devServerURL}/examples/page/index.html`
+    TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
 
     browser
       // open index.html
@@ -23,8 +27,6 @@ module.exports = {
       .assert.containsText('.mip-shell-header-title', 'MIP')
   },
   'click a <mip-link>': function (browser) {
-    const TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
-
     browser
       .waitForElementVisible('.tree-link', 3000)
       // open tree.html
@@ -73,6 +75,54 @@ module.exports = {
     const TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
     browser
       .forward()
+      // URL changed
+      .assert.urlEquals(TREE_PAGE_URL)
+      .assert.containsText('.mip-shell-header-title', 'MIP Tree')
+
+      // show iframe
+      .waitForElementVisible('iframe', 3000)
+      .element('css selector', `iframe[data-page-id*="${TREE_PAGE_URL}"]`, function (frame) {
+        // enter iframe[src='tree.html'] and check
+        browser.frame({ELEMENT: frame.value.ELEMENT}, () => {
+          browser.waitForElementVisible('mip-page-tree', 3000)
+        })
+      })
+      .frame(null)
+
+      // hide root page
+      .assert.hidden('.tree-link')
+      .assert.hidden('.main-image')
+  },
+  'page back': function (browser) {
+    browser
+      .element('css selector', `iframe[data-page-id*="${TREE_PAGE_URL}"]`, function (frame) {
+        // enter iframe[src='tree.html'] and back to index.html
+        browser.frame({ ELEMENT: frame.value.ELEMENT }, () => {
+          browser
+            .waitForElementVisible('.page-back', 3000)
+            .waitForClick('.page-back')
+        })
+      })
+      .frame(null)
+
+    browser
+      .waitForElementVisible('.tree-link', 3000)
+      // URL changed
+      .assert.urlEquals(`${browser.globals.devServerURL}/examples/page/index.html`)
+      .assert.containsText('.mip-shell-header-title', 'MIP')
+
+      // hide iframe
+      .assert.hidden('iframe')
+
+      // show root page
+      .assert.visible('.tree-link')
+      .assert.visible('.main-image')
+  },
+  'page forward': function (browser) {
+    browser
+      // open tree.html
+      .waitForClick('.page-forward')
+      .waitForElementVisible(`.mip-page__iframe[data-page-id="${TREE_PAGE_URL}"]`, 3000)
       // URL changed
       .assert.urlEquals(TREE_PAGE_URL)
       .assert.containsText('.mip-shell-header-title', 'MIP Tree')

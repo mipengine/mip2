@@ -5,3 +5,4 @@ dist
 .vscode
 coverage*
 reports
+.nyc_output

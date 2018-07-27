@@ -4,7 +4,7 @@
  */
 
 /* eslint-disable no-unused-expressions */
-/* globals describe, before, it, expect, after */
+/* globals describe, before, it, expect, after, Event */
 
 describe('mip-img', function () {
   describe('with holding src', function () {
@@ -15,7 +15,7 @@ describe('mip-img', function () {
       mipImgWrapper.style.width = '100px'
       mipImgWrapper.style.height = '100px'
       mipImgWrapper.innerHTML = `
-        <mip-img popup src="https://www.wrong.org?mip_img_ori=1">
+        <mip-img popup src="https://www.wrong.org?mip_img_ori=1"></mip-img>
       `
       document.body.appendChild(mipImgWrapper)
     })
@@ -29,9 +29,25 @@ describe('mip-img', function () {
       event.initEvent('click', true, true)
       img.dispatchEvent(event)
 
+      // expect popup to be created
+      let mipPopWrap = document.querySelector('.mip-img-popUp-wrapper')
+      expect(mipPopWrap.getAttribute('data-name')).to.equal('mip-img-popUp-name')
+      expect(mipPopWrap.parentNode.tagName).to.equal('BODY')
+      expect(mipPopWrap.tagName).to.equal('DIV')
+      expect(mipPopWrap.querySelector('.mip-img-popUp-bg')).to.be.exist
+      expect(mipPopWrap.querySelector('.mip-img-popUp-innerimg')).to.be.exist
+      expect(mipPopWrap.querySelector('.mip-img-popUp-innerimg').getAttribute('src')).to.equal('https://www.wrong.org/?mip_img_ori=1')
+
+      // img
       expect(img.classList.contains('mip-img-loading')).to.equal(true)
       expect(img.classList.contains('mip-replaced-content')).to.equal(true)
       expect(img.getAttribute('src')).to.equal('https://www.wrong.org?mip_img_ori=1')
+
+      img.addEventListener('error', () => {
+        expect(img.src).to.equal('https://www.wrong.org/?mip_img_ori=1')
+      }, false)
+      let errEvent = new Event('error')
+      img.dispatchEvent(errEvent)
 
       let placeholder = mipImg.querySelector('div.mip-placeholder')
       expect(placeholder.classList.contains('mip-placeholder-other')).to.equal(true)
@@ -42,7 +58,7 @@ describe('mip-img', function () {
     })
   })
 
-  describe('with srcset and wrong img type', function () {
+  describe('with holding src2', function () {
     let mipImgWrapper
 
     before(function () {
@@ -50,7 +66,43 @@ describe('mip-img', function () {
       mipImgWrapper.style.width = '100px'
       mipImgWrapper.style.height = '100px'
       mipImgWrapper.innerHTML = `
-        <mip-img srcset="https://www.mipengine.org/static/img/wrong_address1.jxg 1x, https://www.mipengine.org/static/img/swrong_address2.jyg 2x, https://www.mipengine.org/static/img/wrong_address3.jzg 3x">
+        <mip-img popup src="https://www.wrong.org?test=1"></mip-img>
+      `
+      document.body.appendChild(mipImgWrapper)
+    })
+
+    it('should be loading with placeholder', function () {
+      let mipImg = mipImgWrapper.querySelector('mip-img')
+      let img = mipImg.querySelector('img')
+
+      expect(img.classList.contains('mip-img-loading')).to.equal(true)
+      expect(img.classList.contains('mip-replaced-content')).to.equal(true)
+      expect(img.getAttribute('src')).to.equal('https://www.wrong.org?test=1')
+
+      img.addEventListener('error', () => {
+        expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1')
+      }, false)
+      let errEvent = new Event('error')
+      img.dispatchEvent(errEvent)
+
+      let placeholder = mipImg.querySelector('div.mip-placeholder')
+      expect(placeholder.classList.contains('mip-placeholder-other')).to.equal(true)
+    })
+
+    after(function () {
+      document.body.removeChild(mipImgWrapper)
+    })
+  })
+
+  describe('with srcset', function () {
+    let mipImgWrapper
+
+    before(function () {
+      mipImgWrapper = document.createElement('div')
+      mipImgWrapper.style.width = '100px'
+      mipImgWrapper.style.height = '100px'
+      mipImgWrapper.innerHTML = `
+        <mip-img srcset="https://www.mipengine.org/static/img/wrong_address1.jpg 1x, https://www.mipengine.org/static/img/swrong_address2.jpg 2x, https://www.mipengine.org/static/img/wrong_address3.jpg 3x"></mip-img>
       `
       document.body.appendChild(mipImgWrapper)
     })
@@ -63,7 +115,7 @@ describe('mip-img', function () {
       expect(img.classList.contains('mip-replaced-content')).to.equal(true)
 
       let placeholder = mipImg.querySelector('div.mip-placeholder')
-      expect(placeholder.classList.contains('mip-placeholder-other')).to.equal(true)
+      expect(placeholder.classList.contains('mip-placeholder-jpg')).to.equal(true)
     })
 
     after(function () {
@@ -102,7 +154,7 @@ describe('mip-img', function () {
       mipImgWrapper.style.width = '100px'
       mipImgWrapper.style.height = '100px'
       mipImgWrapper.innerHTML = `
-        <mip-img src="https://www.mipengine.org/static/img/sample_01.jpg">
+        <mip-img src="https://www.mipengine.org/static/img/sample_01.jpg"></mip-img>
       `
       document.body.appendChild(mipImgWrapper)
     })
@@ -123,6 +175,8 @@ describe('mip-img', function () {
         expect(mipImg.querySelector('div.mip-placeholder')).to.be.null
         done()
       }, false)
+      let errEvent = new Event('load')
+      img.dispatchEvent(errEvent)
     })
 
     after(function () {

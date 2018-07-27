@@ -19,6 +19,7 @@ class MipData extends CustomElement {
       try {
         result = jsonParse(data)
       } catch (e) {
+        /* istanbul ignore next */
         console.error(e)
       }
       if (result) {
