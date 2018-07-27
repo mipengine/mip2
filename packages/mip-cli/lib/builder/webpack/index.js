@@ -132,6 +132,10 @@ module.exports = class WebpackBuilder {
       entryWatcher.on('add', cb).on('unlink', cb)
     })
 
+    if (this.ignore && /(^|,)whitelist(,|$)/.test(this.ignore)) {
+      return
+    }
+
     let packageWatcher = chokidar.watch(this.packageJsonPathname)
     packageWatcher.on('ready', () => {
       packageWatcher.on('change', async () => {
