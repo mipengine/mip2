@@ -14,7 +14,7 @@ cli.setup({
     ['-l, --livereload', '启用调试自动刷新'],
     ['-a, --asset <value>', '静态资源 publicPath'],
     ['-o, --autoopen <value>', '自动打开网页'],
-    ['-i, --ignore', '忽略沙盒注入'],
+    ['-i, --ignore [value]', '忽略沙盒注入或校验'],
     ['-c, --config <value>', 'mip-cli 配置文件路径']
   ],
   help: [
@@ -33,9 +33,19 @@ if (fs.existsSync(configPath)) {
 }
 
 const conf = Object.assign(defaultConfig.dev || {}, cli.program)
-validator.whitelist(conf.dir).then(reporter => {
-  if (reporter.errors.length) {
-    throw new Error(reporter.errors[0].message)
-  }
-})
-.then(() => dev(conf))
+
+if (conf.ignore === true) {
+  conf.ignore = 'sandbox'
+}
+
+if (conf.ignore && /(^|,)whitelist(,|$)/.test(conf.ignore)) {
+  dev(conf)
+} else {
+  validator.whitelist(conf.dir).then(reporter => {
+    if (reporter.errors.length) {
+      cli.error(reporter.errors[0].message)
+      process.exit(1)
+    }
+  })
+  .then(() => dev(conf))
+}

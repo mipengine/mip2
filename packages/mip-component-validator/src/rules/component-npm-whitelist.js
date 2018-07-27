@@ -53,10 +53,7 @@ function getWhitelist () {
     .then(response => response.text())
     .catch(() => fs.readFile(local, 'utf-8'))
     .then(txt => txt.split(/\s+/).filter(txt => !/^\s*$/.test(txt)))
-    .then(list => {
-      whitelist = list
-      return list
-    })
+    .then(list => whitelist = list)
 }
 
 function getDependenciesFromFile (pathname) {

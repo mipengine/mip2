@@ -44,7 +44,7 @@ module.exports = function (options) {
         {
           test: /\.js$/,
           exclude: /node_modules/,
-          use: options.ignore
+          use: options.ignore && /(^|,)sandbox(,|$)/.test(options.ignore)
             ? [
               babelLoader,
               path.resolve(__dirname, 'child-component-loader.js')

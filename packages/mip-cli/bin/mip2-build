@@ -13,7 +13,7 @@ cli.setup({
     ['-d, --dir <value>', '项目文件夹路径'],
     ['-o, --output <value>', '编译代码输出路径'],
     ['-c, --clean', '构建前先清空输出目录'],
-    ['-i, --ignore', '忽略沙盒注入']
+    ['-i, --ignore [value]', '忽略沙盒注入或校验']
   ],
   help: [
     '',
@@ -31,9 +31,19 @@ if (fs.existsSync(configPath)) {
 }
 
 const conf = Object.assign(defaultConfig.build || {}, cli.program)
-validator.whitelist(conf.dir).then(reporter => {
-  if (reporter.errors.length) {
-    throw new Error(reporter.errors[0].message)
-  }
-})
-.then(() => build(conf))
+
+if (conf.ignore === true) {
+  conf.ignore = 'sandbox'
+}
+
+if (conf.ignore && /(^|,)whitelist(,|$)/.test(conf.ignore)) {
+  build(conf)
+} else {
+  validator.whitelist(conf.dir).then(reporter => {
+    if (reporter.errors.length) {
+      cli.error(reporter.errors[0].message)
+      process.exit(1)
+    }
+  })
+  .then(() => build(conf))
+}
