@@ -32,7 +32,8 @@ class MipIframe extends CustomElement {
       return
     }
 
-    window.addEventListener('message', this.notifyRootPage)
+    // window.addEventListener('message', )
+    window.addEventListener('message', this.notifyRootPage.bind(this))
 
     let iframe = document.createElement('iframe')
     iframe.frameBorder = '0'
@@ -59,21 +60,23 @@ class MipIframe extends CustomElement {
       // 定时器是此时 iframe 可能处于隐藏状态，viewport.getHeight() 获取不到高度
       let timer = setInterval(() => {
         let viewportHeight = viewport.getHeight()
-        if (viewportHeight !== 0) {
-          this.setIframeHeight(viewportHeight)
-          clearInterval(timer)
+        /* istanbul ignore if */
+        if (viewportHeight === 0) {
+          return
         }
+        this.setIframeHeight(viewportHeight)
+        clearInterval(timer)
       }, 500)
     }
   }
 
   firstInviewCallback () {
-    window.addEventListener(CUSTOM_EVENT_RESIZE_PAGE, this.handlePageResize)
+    window.addEventListener(CUSTOM_EVENT_RESIZE_PAGE, this.handlePageResize.bind(this))
   }
 
   disconnectedCallback () {
-    window.removeEventListener(CUSTOM_EVENT_RESIZE_PAGE, this.handlePageResize)
-    window.removeEventListener('message', this.notifyRootPage)
+    window.removeEventListener(CUSTOM_EVENT_RESIZE_PAGE, this.handlePageResize.bind(this))
+    window.removeEventListener('message', this.notifyRootPage.bind(this))
   }
 
   notifyRootPage ({data}) {

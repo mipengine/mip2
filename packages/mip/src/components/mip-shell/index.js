@@ -262,7 +262,7 @@ class MipShell extends CustomElement {
     // Other parts
     this.renderOtherParts()
 
-    window.MIP.viewer.fixedElement.init()
+    // window.MIP.viewer.fixedElement.init()
   }
 
   renderHeader (container) {

@@ -13,6 +13,7 @@ class CustomElement {
      */
     this.element = element
 
+    // 不推荐使用
     if (this.init) {
       this.init()
     }

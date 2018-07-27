@@ -66,6 +66,11 @@
         .mip-page-loading.only-header::after {
             display: none;
         }
+        .num-button {
+            background: black;
+            color: white;
+            padding: 6px;
+        }
     </style>
 </head>
 
@@ -73,7 +78,8 @@
     <mip-data>
         <script type="application/json">
             {
-                "num": 1,
+                "num": 0,
+                "a": 0,
                 "title": "Apple/苹果 iPhone X",
                 "basePrice": "9688.00",
                 "price": "9688.00",
@@ -164,6 +170,12 @@
     </mip-data>
 
     <!-- <mip-complevel1 m-bind:userinfo="userInfo"></mip-complevel1> -->
+
+    <p class="num-button" on="click:MIP.setData({a:1})">1</p>
+    <p class="num-button" on="click:MIP.setData({a:2})">2</p>
+    <p class="num-button" on="click:MIP.setData({a:3})">3</p>
+    <p class="num-button" on="click:MIP.setData({a:4})">4</p>
+    <p class="num-button" on="click:MIP.setData({a:5})">5</p>
 
     <div class="main-content">
         <!-- <mip-global></mip-global> -->
@@ -336,8 +348,8 @@
         MIP.watch('lxndata', function () {
             console.log('lxndata')
         });
-        MIP.watch('num', function () {
-            console.log('num changed')
+        MIP.watch('a', function (newVal) {
+            console.log('a changed to ', newVal)
         });
         MIP.watch('city', function () {
             console.log('city changed')

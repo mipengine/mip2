@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    div {
+      width: 200px;
+      height: 200px;
+      margin: 20px
+    }
+    #ele1 {
+      background: red;
+    }
+    #ele2 {
+      background: blue;
+    }
+  </style>
+</head>
+<body>
+  <div id="ele1"></div>
+  <div id="ele2"></div>
+  <script src="/dist/mip.js"></script>
+  <script>
+    /* global MIP */
+    let naboo = MIP.util.naboo
+    let ele1 = document.getElementById('ele1')
+    let ele2 = document.getElementById('ele2')
+
+    naboo.p(
+      naboo.animate(ele1, {
+        transform: 'translateX(200px)'
+      }, {
+        duration: 2000,
+        cb () {
+          console.log('动画1结束')
+        }
+      }),
+      naboo.animate(ele2, {
+        transform: 'translateX(200px)'
+      }, {
+        duration: 3000,
+        cb () {
+          console.log('动画2结束')
+        }
+      })
+    ).start()
+  </script>
+</body>
+</html>
