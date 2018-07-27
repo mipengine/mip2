@@ -14,11 +14,9 @@ class MipFixed extends CustomElement {
       return
     }
 
-    // only in iOS + iframe
-    if (platform.isIos() && viewer.isIframed) {
-      // move element to fixedlayer
-      viewer.fixedElement.setFixedElement([this.element], true)
-    }
+    // only in iOS + iframe need moving element to fixedlayer
+    let shouldMoveToFixedLayer = platform.isIos() && viewer.isIframed
+    viewer.fixedElement.setFixedElement([this.element], shouldMoveToFixedLayer)
   }
 }
 
