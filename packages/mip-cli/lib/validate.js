@@ -23,18 +23,24 @@ module.exports = async function validate (config) {
     let content = await fs.readFile(filePath, 'utf-8')
     result.type = 'page'
     result.errors = pageValidator.validate(content)
-  } else {
+  } else if (config.options.component) {
     result = await compValidator.validate(filePath, {ignore: [/node_modules/, /dist/]})
     result.type = 'component'
+  } else {
+    result = await compValidator.whitelist(filePath)
   }
+
   report(result, filePath)
 }
 
 function report (data, filePath) {
-  if (data.type === 'page') {
-    cli.info('页面校验结果: ')
-  } else {
-    cli.info('组件校验结果: ')
+  switch (data.type) {
+    case 'page':
+      cli.info('页面校验结果：')
+    case 'component':
+      cli.info('组件校验结果：')
+    case 'whitelist':
+      cli.info('npm 白名单校验结果：')
   }
 
   if (!data.errors || !data.errors.length || data.status === 0) {

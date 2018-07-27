@@ -1,3 +1,5 @@
-mip-sandbox
-fastclick
 blueimp-md5
+fastclick
+lodash
+mip-sandbox
+moment
