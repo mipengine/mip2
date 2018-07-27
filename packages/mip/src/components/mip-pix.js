@@ -13,7 +13,7 @@ const DEFAULT_PARAMS = {
   TITLE: 'title',
   HOST: 'host',
   REFERER: 'referer',
-  UA: 'ua',
+  UA: 'ua'
 }
 
 /**
