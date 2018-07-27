@@ -72,7 +72,7 @@ describe('mip-carousel', function () {
     })
 
     it('should autoplay', function () {
-      
+
     })
 
     after(function () {
@@ -111,7 +111,7 @@ describe('mip-carousel', function () {
     })
 
     it('should autoplay', function () {
-      
+
     })
 
     after(function () {
@@ -145,7 +145,7 @@ describe('mip-carousel', function () {
     })
 
     it('', function () {
-      
+
     })
 
     it.skip('should not move when vertically scrolling', function () {
@@ -306,6 +306,52 @@ describe('mip-carousel', function () {
       let event = document.createEvent('MouseEvents')
       event.initEvent('click', true, true)
       nextBtn.dispatchEvent(event)
+    })
+
+    after(function () {
+      document.body.removeChild(div)
+    })
+  })
+
+  describe('with index and switchTo API', function () {
+    let div
+    this.timeout(200)
+
+    before(function () {
+      div = document.createElement('div')
+      div.innerHTML = `
+        <mip-carousel
+          id="carousel"
+          autoplay
+          defer="3000"
+          layout="responsive"
+          width="600"
+          height="400"
+          index="3"
+        >
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_01.jpg">
+          </mip-img>
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_02.jpg">
+          </mip-img>
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_03.jpg">
+          </mip-img>
+        </mip-carousel>
+        <div on="tap:carousel.go(3)">
+          <p>跳转到第<span>3</span>页</p>
+        </div>
+      `
+      document.body.appendChild(div)
+    })
+
+    it('should start from index', function () {
+
+    })
+
+    it('should switch to', function () {
+
     })
 
     after(function () {

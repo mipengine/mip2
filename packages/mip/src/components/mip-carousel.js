@@ -434,9 +434,9 @@ class MipCarousel extends CustomElement {
       let dotLen = dotItems.length
 
       if (index) {
-        // 清楚DOM中预先设置的mip-carousel-activeitem类
+        // 清除DOM中预先设置的mip-carousel-activeitem类
         dotItems = Array.prototype.slice.call(dotItems)
-        dotItems.forEach((dotItem) => {
+        dotItems.forEach(dotItem => {
           removeClass(dotItem, carouselParas.activeitem)
         })
         addClass(dotItems[imgIndex - 1], carouselParas.activeitem)
@@ -473,7 +473,6 @@ class MipCarousel extends CustomElement {
       if (isAutoPlay) {
         autoPlay()
       }
-      console.log(imgIndex)
     })
   }
 }
