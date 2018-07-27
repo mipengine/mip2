@@ -31,7 +31,8 @@ async function walk (dirPath, callback, opts) {
 
   let stats = await fs.stat(dirPath)
   if (!stats.isDirectory()) {
-    return await callback(dirPath)
+    await callback(dirPath)
+    return
   }
 
   let dir = await fs.readdir(dirPath)

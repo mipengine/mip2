@@ -57,7 +57,6 @@ function getWhitelist () {
       whitelist = list
       return list
     })
-
 }
 
 function getDependenciesFromFile (pathname) {
@@ -108,9 +107,12 @@ function getErrorInfo (result) {
     '',
     '非白名单 npm 列表：'
   ]
-  .concat(result)
-  .concat(['', ''])
-  .join('\n')
+    .concat(result)
+    .concat([
+      '',
+      ''
+    ])
+    .join('\n')
 }
 
 module.exports = {
@@ -135,12 +137,12 @@ module.exports = {
       getAllDependencies(dir),
       getWhitelist()
     ])
-    .then(([dependencies, whitelist]) => compare(dependencies, whitelist))
-    .then(result => {
-      if (result.length) {
-        let info = getErrorInfo(result)
-        reporter.error(dir, info)
-      }
-    })
+      .then(([dependencies, whitelist]) => compare(dependencies, whitelist))
+      .then(result => {
+        if (result.length) {
+          let info = getErrorInfo(result)
+          reporter.error(dir, info)
+        }
+      })
   }
 }
