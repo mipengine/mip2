@@ -34,8 +34,47 @@
 
       <p>针对移动端浏览器在高清屏幕显示中最常见的“一像素边框”问题，MIP 给出了通用的解决方案。开发者只需要引入固定的类名即可绘制出真实的一像素边框。</p>
 
-
-      <!-- <script src="/dist/mip.js"></script> -->
-      <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+      <mip-shell>
+        <script type="application/json">
+        {
+          "routes": [
+            {
+              "pattern": "/use-shell.html",
+              "meta": {
+                "header": {
+                  "show": true,
+                  "title": "我的首页",
+                  "logo": "https://gss0.bdstatic.com/5bd1bjqh_Q23odCf/static/wiseindex/img/favicon64.ico",
+                  "buttonGroup": [
+                    {
+                        "name": "subscribe",
+                        "text": "关注"
+                    },
+                    {
+                        "name": "chat",
+                        "text": "发消息"
+                    }
+                  ]
+                },
+                "view": {
+                  "isIndex": true
+                }
+              }
+            },
+            {
+              "pattern": "*",
+              "meta": {
+                "header": {
+                  "show": true,
+                  "title": "其他页面"
+                }
+              }
+            }
+          ]
+        }
+        </script>
+      </mip-shell>
+      <script src="/dist/mip.js"></script>
+      <!-- <script src="https://c.mipcdn.com/static/v2/mip.js"></script> -->
     </body>
 </html>

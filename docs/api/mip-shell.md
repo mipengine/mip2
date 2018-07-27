@@ -19,7 +19,7 @@
 全局的 MIP 对象会暴露一个 MIP Shell 基类供大家继承。例如我们要创建一个 MIP Shell Example 组件，我们可以写如下代码：
 
 ```javascript
-export default class MipShellExample extends window.MIP.builtinComponents.MIPShell {
+export default class MIPShellExample extends window.MIP.builtinComponents.MIPShell {
     // Functions go here
 }
 ```
@@ -44,8 +44,8 @@ export default class MipShellExample extends window.MIP.builtinComponents.MIPShe
                     "meta": {
                        "header": {
                             "show": true,
-                            "title": "Mip Index",
-                            "logo": "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg"
+                            "title": "MIP Index",
+                            "logo": "http://boscdn.bpc.baidu.com/assets/mip/codelab/shell/mashroom.jpg"
                         },
                     }
                 }
@@ -323,7 +323,7 @@ afterSwitchPage(options) {
 * mip-shell-is.js
 
     ```javascript
-    export default class MipShellIS extends window.MIP.builtinComponents.MIPShell {
+    export default class MIPShellIS extends window.MIP.builtinComponents.MIPShell {
       constructor (...args) {
         super(...args)
 
@@ -431,7 +431,7 @@ afterSwitchPage(options) {
 * mip-shell-novel.js
 
     ```javascript
-    export default class MipShellNovel extends window.MIP.builtinComponents.MIPShell {
+    export default class MIPShellNovel extends window.MIP.builtinComponents.MIPShell {
       constructor (...args) {
         super(...args)
 

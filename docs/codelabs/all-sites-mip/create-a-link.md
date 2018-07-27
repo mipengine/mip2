@@ -52,14 +52,16 @@
 
 ## 添加链接
 
-MIP 页面的链接采用和标准 HTML 相同的 `<a>` 标签，但进行了一些限制。最主要的一点是在 MIP 页面之间跳转时，加上 `mip-link` 或者 `data-type="mip"`。更加详细和完整的相关说明可以参阅[这篇文档](https://github.com/mipengine/mip2/blob/master/docs/guide/all-sites-mip/structure.md)。
+MIP 页面的链接采用和标准 HTML 相同的 `<a>` 标签，但进行了一些限制。最主要的一点是在 MIP 页面之间跳转时，加上 `mip-link` 或者 `data-type="mip"`。更加详细和完整的相关说明可以参阅[这篇文档](../../guide/all-sites-mip/structure.md)。
 
 既然我们已经有了两个页面 `index.html` 和 `second.html`，我们可以给它们之间添加链接了。例如我们在 `index.html` 的最后添加：
 
 ```html
-<a href="./second.html>
+<a mip-link href="./second.html" class="next-link">下一页</a>
 ```
 
-创建一个 MIP 页面和创建一个标准的 HTML 页面是完全相同的，同样是以 `.html` 作为扩展名。区别仅仅是在 MIP 页面中，您可以编写形如 `<mip-xxxx>` 这样的自定义标签来使用 MIP 组件。
+## 预览效果
 
-MIP 提供了一些很常用的组件，称为 “内置组件”，常用的如 `<mip-img>`, `<mip-iframe>`, `<mip-shell>` 等。关于 `<mip-shell>` 我们会在后面单独讲述，这里我们先用其他标签构成一个页面。
+点击 `index.html` 的下一页按钮，我们可以看到 `second.html` 以动画的形式流畅地侧滑进入屏幕，页面并没有常规的白屏，体验和单页应用完全相同。
+
+![切换效果](http://boscdn.bpc.baidu.com/assets/mip/codelab/shell/transition-forward.png)

@@ -32,13 +32,13 @@ MIP 提供了一些很常用的组件，称为 “内置组件”，常用的如
 </head>
 ```
 
-在 `<body>` 部分，我们可以混合使用标准的 HTML 标签和 MIP 标签。除了内置的 MIP 组件之外，我们也可以使用自定义的 MIP 组件。关于自定义组件的编写方式您可以参考[组件文档](https://github.com/mipengine/mip2/blob/master/docs/guide/component/introduction.md)，这里只讲 MIP 组件的使用。
+在 `<body>` 部分，我们可以混合使用标准的 HTML 标签和 MIP 标签。除了内置的 MIP 组件之外，我们也可以使用自定义的 MIP 组件。关于自定义组件的编写方式您可以参考[组件文档](../../guide/component/introduction)，这里只讲 MIP 组件的使用。
 
 ```html
 <body>
   <h2>这是我的第一个 MIP 页面</h2>
 
-  <mip-img src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg" width="300" height="300" class="main-image"></mip-img>
+  <mip-img src="http://boscdn.bpc.baidu.com/assets/mip/codelab/shell/mashroom.jpg" width="300" height="300" class="main-image"></mip-img>
 
   <p>MIP 全称为 Mobile Instant Pages，因此是以页面 (Page) 为单位来运行的。开发者通过改造/提交一个个页面，继而被百度收录并展示。 </p>
   <p>但以页面为单位会带来一个问题：当一个 MIP 页面中存在往其他页面跳转的链接时，就会使浏览器使用加载页面的默认行为来加载新页面。这“第二跳”的体验比起从搜索结果页到 MIP 页面的“第一跳”来说相去甚远。 </p>

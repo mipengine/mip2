@@ -195,7 +195,7 @@ Shell 最基本的配置中必须包含 `routes` 数组。其中的每个元素�
                        "header": {
                             "show": true,
                             "title": "MIP Index",
-                            "logo": "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg",
+                            "logo": "http://boscdn.bpc.baidu.com/assets/mip/codelab/shell/mashroom.jpg",
                             "buttonGroup": [
                                 {
                                     "name": "subscribe",
@@ -339,7 +339,7 @@ export default class MIPShellExample extends window.MIP.builtinComponents.MIPShe
                        "header": {
                             "show": true,
                             "title": "MIP Index",
-                            "logo": "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg"
+                            "logo": "http://boscdn.bpc.baidu.com/assets/mip/codelab/shell/mashroom.jpg"
                         },
                     }
                 }
