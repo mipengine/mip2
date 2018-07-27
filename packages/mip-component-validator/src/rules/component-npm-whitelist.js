@@ -51,6 +51,10 @@ function getWhitelist () {
 
   return fetch(url)
     .then(response => response.text())
+    .then(async txt => {
+      await fs.writeFile(local, data, {encodeing: 'utf8'})
+      return txt
+    })
     .catch(() => fs.readFile(local, 'utf-8'))
     .then(txt => txt.split(/\s+/).filter(txt => !/^\s*$/.test(txt)))
     .then(list => whitelist = list)
