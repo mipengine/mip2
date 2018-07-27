@@ -13,7 +13,7 @@ cli.setup({
     ['-d, --dir <value>', '项目文件夹路径'],
     ['-o, --output <value>', '编译代码输出路径'],
     ['-c, --clean', '构建前先清空输出目录'],
-    ['-i, --ignore [value]', '忽略沙盒注入或校验']
+    ['-i, --ignore [value]', '忽略沙盒注入或校验，可选参数为 -i, -i sandbox, -i whitelist, -i sandbox,whitelist']
   ],
   help: [
     '',
