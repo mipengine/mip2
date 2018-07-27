@@ -13,6 +13,7 @@ import MipPix from './mip-pix'
 import MipBind from './mip-bind/bind'
 import MipData from './mip-bind/mip-data'
 import MipShell from './mip-shell/index'
+import MipFixed from './mip-fixed'
 import registerElement from '../register-element'
 
 export default {
@@ -26,6 +27,7 @@ export default {
     registerElement('mip-carousel', MipCarousel)
     registerElement('mip-iframe', MipIframe)
     registerElement('mip-video', MipVideo)
+    registerElement('mip-fixed', MipFixed)
     new MipBind()
     registerElement('mip-data', MipData)
     registerElement('mip-shell', MipShell)
