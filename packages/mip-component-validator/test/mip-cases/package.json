@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "babel-core": "^6.26.3",
+    "babel-preset-stage-3": "^6.24.1",
+    "fs-extra": "^7.0.0",
+    "glob": "^7.1.2",
+    "mip-sandbox": "^1.0.20",
+    "mip-validator": "^1.5.15",
+    "node-fetch": "^2.2.0",
+    "vue-template-compiler": "^2.5.16"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
+    "nyc": "^12.0.2"
+  }
+}

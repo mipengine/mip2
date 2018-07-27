@@ -2,6 +2,7 @@
 
 const cli = require('../lib/cli')
 const dev = require('../lib/dev')
+const validator = require('mip-component-validator')
 const path = require('path')
 const fs = require('fs')
 
@@ -13,7 +14,7 @@ cli.setup({
     ['-l, --livereload', '启用调试自动刷新'],
     ['-a, --asset <value>', '静态资源 publicPath'],
     ['-o, --autoopen <value>', '自动打开网页'],
-    ['-i, --ignore', '忽略沙盒注入'],
+    ['-i, --ignore [value]', '忽略沙盒注入或校验，可选参数为 -i, -i sandbox, -i whitelist, -i sandbox,whitelist'],
     ['-c, --config <value>', 'mip-cli 配置文件路径']
   ],
   help: [
@@ -31,4 +32,20 @@ if (fs.existsSync(configPath)) {
   defaultConfig = require(configPath)
 }
 
-dev(Object.assign(defaultConfig.dev || {}, cli.program))
+const conf = Object.assign(defaultConfig.dev || {}, cli.program)
+
+if (conf.ignore === true) {
+  conf.ignore = 'sandbox'
+}
+
+if (conf.ignore && /(^|,)whitelist(,|$)/.test(conf.ignore)) {
+  dev(conf)
+} else {
+  validator.whitelist(conf.dir).then(reporter => {
+    if (reporter.errors.length) {
+      cli.error(reporter.errors[0].message)
+      process.exit(1)
+    }
+  })
+  .then(() => dev(conf))
+}

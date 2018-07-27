@@ -11,5 +11,8 @@ module.exports = {
     'disallowed-global-var'
   ],
   js: [],
-  css: []
+  css: [],
+  json: [
+    'component-npm-whitelist'
+  ]
 }

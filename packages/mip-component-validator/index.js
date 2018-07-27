@@ -7,3 +7,7 @@ const validator = require('./src/validator')
 exports.validate = function (path, options) {
   return validator.validate(path, options)
 }
+
+exports.whitelist = function (path) {
+  return validator.whitelist(path)
+}
