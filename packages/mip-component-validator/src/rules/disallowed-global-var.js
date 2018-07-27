@@ -17,7 +17,7 @@ module.exports = {
       return
     }
     const content = babel.transform(script.content, {
-      presets: ['stage-3']
+      presets: [require.resolve('babel-preset-stage-3')]
     }).code
     const results = detect(content, keywords.WHITELIST)
     results.forEach((result) => {

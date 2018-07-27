@@ -14,7 +14,7 @@ function createRuleProcess (rule) {
   return require('./rules/' + rule)
 }
 
-exports.validate = async function (dirPath, options) {
+exports.validate = async function (dirPath, opts) {
   const reporter = new Reporter()
   await walker.walk(dirPath, async pathname => {
     const fileName = path.basename(pathname)
@@ -39,7 +39,7 @@ exports.validate = async function (dirPath, options) {
         reporter.error('', e.message)
       }
     }
-  })
+  }, opts)
   return reporter.getReport()
 }
 

@@ -4,7 +4,7 @@
  */
 
 const cli = require('./cli')
-const fs = require('fs')
+const fs = require('fs-extra')
 const path = require('path')
 const Validator = require('mip-validator')
 const compValidator = require('mip-component-validator')
@@ -14,17 +14,17 @@ module.exports = async function validate (config) {
   const baseDir = config.baseDir || process.cwd()
   const filePath = path.join(baseDir, config.filePath)
 
-  if (!fs.existsSync(filePath)) {
+  if (!await fs.exists(filePath)) {
     cli.error('path not exist')
   }
 
   let result = {}
   if (config.options.page) {
-    let content = fs.readFileSync(filePath, 'utf-8')
+    let content = await fs.readFile(filePath, 'utf-8')
     result.type = 'page'
     result.errors = pageValidator.validate(content)
   } else {
-    result = compValidator.validate(filePath)
+    result = await compValidator.validate(filePath, {ignore: [/node_modules/, /dist/]})
     result.type = 'component'
   }
   report(result, filePath)
@@ -37,7 +37,7 @@ function report (data, filePath) {
     cli.info('组件校验结果: ')
   }
 
-  if (!data.errors.length || data.status === 0) {
+  if (!data.errors || !data.errors.length || data.status === 0) {
     cli.info('validate success', cli.chalk.green(filePath))
     return
   }
@@ -51,5 +51,6 @@ function report (data, filePath) {
     cli.error('line', error.line + ',', 'col', error.col + ':', error.message)
   })
 
-  throw new Error('validate fail')
+  process.exit(1)
+  // throw new Error('validate fail')
 }
