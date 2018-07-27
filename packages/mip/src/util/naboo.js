@@ -86,7 +86,7 @@ class Naboo extends EventEmitter {
  * Naboo#p & Naboo.p
  * Naboo的并行插件
  */
-Naboo.register('p', next => {
+Naboo.register('p', function (next) {
   let args = Array.prototype.slice.call(arguments, 1)
   let n = args.length
   args.forEach(naboo => naboo.start(() => (n-- === 0 && next())))
@@ -96,7 +96,9 @@ Naboo.register('p', next => {
  * Naboo#done & Naboo.done
  * Naboo的done插件，可用于在任何一个动画插件后进行回调
  */
-Naboo.register('done', (next, fn) => fn(next))
+Naboo.register('done', function (next, fn) {
+  fn(next)
+})
 
 Naboo.tool = (() => {
   // 定义一批检测浏览器特性需要的变量
@@ -357,7 +359,7 @@ Naboo.transition = (() => {
  * @param {?string} opt.mode 动画的模式，可选值有'transition','keyframes(暂未支持)','js(暂未支持)'，默认值'transition'
  * @return {Object} 返回当前的naboo对象
  */
-Naboo.register('animate', (next, dom, prop, opt) => {
+Naboo.register('animate', function (next, dom, prop, opt) {
   opt = opt || {}
   let cb = opt.cb
   opt.cb = function () {

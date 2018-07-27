@@ -13,6 +13,7 @@ export default {
    * @param {*} msg msg
    */
   sendLog (type, msg = {}) {
+    /* istanbul ignore if */
     if (!type) {
       return
     }
@@ -20,6 +21,7 @@ export default {
     this.data.event = 'log'
     this.data.data = msg || {}
 
+    /* istanbul ignore if */
     if (window !== window.top) {
       window.parent.postMessage(this.data, '*')
     }

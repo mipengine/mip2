@@ -47,12 +47,12 @@ class FixedElement {
    * Initializition of current fixed element processor.
    */
   init () {
-    let mipFixedElements = document.querySelectorAll('mip-fixed, mip-semi-fixed')
+    let mipFixedElements = document.body.querySelectorAll('mip-fixed, mip-semi-fixed')
 
     this.setFixedElement(mipFixedElements)
     let fixedLen = this._fixedElements.length
-    let hasParentPage = window.MIP.viewer.isIframed
-    if ((platform.isIos()) && hasParentPage) {
+    let isIframed = window.MIP.viewer.isIframed
+    if ((platform.isIos()) && isIframed) {
       // let fixedLayer =
       this.getFixedLayer()
       for (let i = 0; i < fixedLen; i++) {
@@ -74,7 +74,7 @@ class FixedElement {
         this.moveToFixedLayer(fixedElem, i)
       }
     }
-    if (hasParentPage) {
+    if (isIframed) {
       this.doCustomElements()
     }
   }
@@ -134,15 +134,15 @@ class FixedElement {
       }
       fixedEle.element.setAttribute('mipdata-fixedIdx', eleId)
 
+      this._count++
+      this._fixedElements.push(fixedEle)
+
       // when `setFixedElement function` called by components,
       // the element will moved to fixedlayer directly.
       if (move) {
         this.moveToFixedLayer(fixedEle, this._count)
-        return 10000 - this._count++
+        return 10000 - this._count
       }
-
-      this._count++
-      this._fixedElements.push(fixedEle)
     }
   }
 

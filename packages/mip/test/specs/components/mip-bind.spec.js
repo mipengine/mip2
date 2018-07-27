@@ -38,7 +38,7 @@ describe('mip-bind', function () {
           <p style="color:red;;;" m-bind:style="{fontSize: fontSize + 'px'}">test:<span>1</span></p>
           <mip-data></mip-data>
           <mip-data>
-            <script type="application/json">{}</script>
+            <script type="application/json"></script>
           </mip-data>
           <mip-data>
             <script type="application/json">
@@ -103,13 +103,13 @@ describe('mip-bind', function () {
     })
   })
 
-  describe('json format', function () {
+  describe.skip('json format', function () {
     before(function () {
       let mipData = document.createElement('mip-data')
       mipData.innerHTML = `
         <script type="application/json">
           {
-            wrongFormatData: function () {}
+            "wrongFormatData": function () {}
           }
         </script>
       `
@@ -118,18 +118,7 @@ describe('mip-bind', function () {
 
     it('should not combine wrong formatted data with m', function () {
       expect(window.m.wrongFormatData).to.be.undefined
-    })
-
-    it('should not set wrong formatted data', function () {
-      try {
-        MIP.setData({
-          loading: function () {
-            return false
-          }
-        })
-      } catch (e) {}
-
-      expect(MIP.getData('loading')).to.be.undefined
+      // expect(err.message).include('Content should be a valid JSON string!')
     })
   })
 
@@ -244,7 +233,17 @@ describe('mip-bind', function () {
     })
 
     it('should set an object as data', function () {
-      MIP.setData(1)
+      expect(() => MIP.setData(1)).to.throw(/setData method MUST accept an object! Check your input:1/)
+    })
+
+    it('should not set wrong formatted data', function () {
+      expect(() => MIP.setData({
+        loading: function () {
+          return false
+        }
+      })).to.throw(/setData method MUST NOT accept object that contains functions/)
+
+      expect(MIP.getData('loading')).to.be.true
     })
   })
 
@@ -441,7 +440,7 @@ function createEle (tag, props, key) {
         <script type="application/json">
           {
             "#open": false,
-            "username": "iframe"
+            "username": "iframe" 
           }
         </script>
       </mip-data>

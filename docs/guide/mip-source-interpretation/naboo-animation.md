@@ -78,27 +78,27 @@ MIP.util.naboo.animate(ele, {
 
 ```js
 MIP.util.noboo.animate(ele, {
-    width: "90%"
-  }, {
-    duration: 2000,
-    cb: function () {
-      console.log('动画1结束')
-    }
-  })
-  .done(function (next) {
-    console.log('done 调用完成')
-    // 调用下一个动画
-    next()
-  })
-  .animate(ele, {
-    'transform': 'translateX(200px)'
-  }, {
-    duration: 2000,
-    ease: "ease",
-    cb: function () {
-      console.log('动画2结束')
-    }
-  }).start()
+  width: "90%"
+}, {
+  duration: 2000,
+  cb: function () {
+    console.log('动画1结束')
+  }
+})
+.done(function (next) {
+  console.log('done 调用完成')
+  // 调用下一个动画
+  next()
+})
+.animate(ele, {
+  'transform': 'translateX(200px)'
+}, {
+  duration: 2000,
+  ease: "ease",
+  cb: function () {
+    console.log('动画2结束')
+  }
+}).start()
 ```
 
 ### naboo.cancel()
@@ -165,7 +165,7 @@ cancelBtn.onclick = function () {
 
 返回值结构如下表所示：
 
-|类    型|说    明|、
+|类    型|说    明|
 |---|---|
 |Object|返回当前 naboo 实例|
 
@@ -193,7 +193,7 @@ Naboo 的并行插件，可以同时执行多个动画。
 
 |参   数|类    型|必   填|说    明|
 |---|---|---|---|
-|list|Array|是|动画列表|
+|list|Object|是|naboo 对象，可填多个，逗号隔开|
 
 返回值结构如下表所示：
 
@@ -243,24 +243,24 @@ Naboo 的 `done` 插件，可用于在任何一个动画插件后进行回调。
 
 ```js
 MIP.naboo.animate(ele1, {
-    width: "90%"
-  }, {
-    duration: 2000,
-    cb: function () {
-      console.log('动画1结束')
-    }
-  })
-  .done(function (next) {
-    console.log('done调用完成')
-    next()
-  })
-  .animate(ele2, {
-    'transform': 'translateX(200px)'
-  }, {
-    duration: 2000,
-    ease: "ease",
-    cb: function () {
-      console.log('动画2结束')
-    }
-  }).start()
+  width: "90%"
+}, {
+  duration: 2000,
+  cb: function () {
+    console.log('动画1结束')
+  }
+})
+.done(function (next) {
+  console.log('done调用完成')
+  next()
+})
+.animate(ele2, {
+  'transform': 'translateX(200px)'
+}, {
+  duration: 2000,
+  ease: "ease",
+  cb: function () {
+    console.log('动画2结束')
+  }
+}).start()
 ```

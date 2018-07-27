@@ -8,15 +8,17 @@
 
 import {
   CUSTOM_EVENT_RESIZE_PAGE,
-  MESSAGE_PAGE_RESIZE
+  MESSAGE_MIPIFRAME_RESIZE
 } from 'src/page/const'
+
+import viewport from 'src/viewport'
 
 describe('mip-iframe', function () {
   let mipIframe
   let iframe
 
   describe('iframe with default width and attrs', function () {
-    this.timeout(600)
+    this.timeout(700)
     before(function () {
       mipIframe = document.createElement('mip-iframe')
       mipIframe.setAttribute('srcdoc', '<p>Hello MIP!</p>')
@@ -26,8 +28,12 @@ describe('mip-iframe', function () {
       document.body.appendChild(mipIframe)
     })
 
-    it('should produce iframe', function () {
+    it('should produce iframe with height 100%', function (done) {
       iframe = mipIframe.querySelector('iframe')
+      setTimeout(() => {
+        expect(iframe.style.height).to.equal(viewport.getHeight() + 'px')
+        done()
+      }, 600)
       expect(iframe.frameBorder).to.equal('0')
       expect(iframe.style.width).to.equal('100%')
       expect(iframe.style.height).to.equal('100%')
@@ -44,7 +50,6 @@ describe('mip-iframe', function () {
   })
 
   describe('iframe with set width and height', function () {
-    this.timeout(600)
     before(function () {
       mipIframe = document.createElement('mip-iframe')
       mipIframe.setAttribute('srcdoc', '<p>Hello MIP!</p>')
@@ -68,15 +73,7 @@ describe('mip-iframe', function () {
     it('should resize with detail', function () {
       let event = new Event(CUSTOM_EVENT_RESIZE_PAGE)
       event.detail = [{
-        height: 10
-      }]
-      window.dispatchEvent(event)
-    })
-
-    it('should resize with detail again', function () {
-      let event = new Event(CUSTOM_EVENT_RESIZE_PAGE)
-      event.detail = [{
-        height: 20
+        height: viewport.getHeight()
       }]
       window.dispatchEvent(event)
     })
@@ -87,20 +84,20 @@ describe('mip-iframe', function () {
       window.dispatchEvent(event)
     })
 
-    it('should not resize even if resize event triggered', function () {
+    it('should resize with viewport calculation', function () {
       let event = new Event(CUSTOM_EVENT_RESIZE_PAGE)
       window.dispatchEvent(event)
     })
 
     it('should notifyRootPage when message event triggered', function () {
       window.postMessage({
-        type: MESSAGE_PAGE_RESIZE
+        type: MESSAGE_MIPIFRAME_RESIZE
       }, '*')
     })
 
     it('should not notifyRootPage when message event triggered', function () {
       window.postMessage({
-        type: 'not_' + MESSAGE_PAGE_RESIZE
+        type: 'not_' + MESSAGE_MIPIFRAME_RESIZE
       }, '*')
     })
 
@@ -109,28 +106,9 @@ describe('mip-iframe', function () {
     })
   })
 
-  describe('iframe with no src', function () {
-    this.timeout(600)
+  describe('iframe with no src and height', function () {
     before(function () {
       mipIframe = document.createElement('mip-iframe')
-      document.body.appendChild(mipIframe)
-    })
-
-    it('should not produce iframe', function () {
-      iframe = mipIframe.querySelector('iframe')
-      expect(iframe).to.be.null
-    })
-
-    after(function () {
-      document.body.removeChild(mipIframe)
-    })
-  })
-
-  describe('iframe with height', function () {
-    this.timeout(600)
-    before(function () {
-      mipIframe = document.createElement('mip-iframe')
-      mipIframe.setAttribute('srcdoc', '<p>Hello MIP!</p>')
       document.body.appendChild(mipIframe)
     })
 

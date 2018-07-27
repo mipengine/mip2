@@ -72,8 +72,8 @@ module.exports = {
       '__VERSION__': JSON.stringify(version.toString())
     }),
     new webpack.BannerPlugin({
-        banner: 'window._mipStartTiming=Date.now();',
-        raw: true
+      banner: 'window._mipStartTiming=Date.now();',
+      raw: true
     })
   ]
 }
