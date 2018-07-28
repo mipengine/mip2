@@ -89,7 +89,9 @@ describe('mip-pix', function () {
     expect(keys).to.include('t')
     expect(keys).to.include('title')
     expect(keys).to.include('host')
-    expect(keys.length).to.equal(3)
+    expect(keys).to.include('referer')
+    expect(keys).to.include('ua')
+    expect(keys.length).to.equal(5)
     expect(isValidDate(params.t)).to.be.true
     expect(params.title).to.equal(title)
     expect(params.host).to.equal(encodeURIComponent(window.location.href))
@@ -103,7 +105,9 @@ describe('mip-pix', function () {
     expect(keys).to.include('t')
     expect(keys).to.include('title')
     expect(keys).to.include('host')
-    expect(keys.length).to.equal(3)
+    expect(keys).to.include('referer')
+    expect(keys).to.include('ua')
+    expect(keys.length).to.equal(5)
     expect(isValidDate(params.t)).to.be.true
     expect(params.title).to.equal(title)
     expect(params.host).to.equal(encodeURIComponent(window.location.href))
@@ -118,7 +122,9 @@ describe('mip-pix', function () {
     expect(keys).to.include('title')
     expect(keys).to.include('host')
     expect(keys).to.include('area')
-    expect(keys.length).to.equal(4)
+    expect(keys).to.include('referer')
+    expect(keys).to.include('ua')
+    expect(keys.length).to.equal(6)
     expect(isValidDate(params.t)).to.be.true
     expect(params.title).to.equal(title)
     expect(params.host).to.equal(encodeURIComponent(window.location.href))
@@ -133,9 +139,12 @@ describe('mip-pix', function () {
     expect(keys).to.include('t')
     expect(keys).to.include('title')
     expect(keys).to.include('host')
+    expect(keys).to.include('referer')
+    expect(keys).to.include('ua')
     expect(keys).to.include('mip-x-button-color')
     expect(keys).to.include('mip-x-font-color')
-    expect(keys.length).to.equal(5)
+    expect(keys.length).to.equal(7)
+    
     expect(isValidDate(params.t)).to.be.true
     expect(params.title).to.equal(title)
     expect(params.host).to.equal(encodeURIComponent(window.location.href))

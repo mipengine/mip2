@@ -11,7 +11,9 @@ import CustomElement from '../custom-element'
 const DEFAULT_PARAMS = {
   TIME: 't',
   TITLE: 'title',
-  HOST: 'host'
+  HOST: 'host',
+  REFERER: 'referer',
+  UA: 'ua'
 }
 
 /**
@@ -56,7 +58,9 @@ class MipPix extends CustomElement {
     src = addParas(src, 'TIME', time)
     src = addParas(src, 'TITLE', encodeURIComponent(title))
     src = addParas(src, 'HOST', encodeURIComponent(host))
-
+    src = addParas(src, 'REFERER', encodeURIComponent(window.document.referer))
+    src = addParas(src, 'UA', encodeURIComponent(window.navigator.userAgent))
+    
     // 增加对<mip-experiment>支持，获取实验分组
     let expReg = /MIP-X-((\w|-|\d|_)+)/g
     let matchExpArr = src.match(expReg)
