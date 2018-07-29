@@ -108,6 +108,7 @@ describe('fn', function () {
     expect(util.isCacheUrl('http://www-mipengine-com.mipcdn.com/c/www.mipengine.com/docs/index.html')).to.be.true
     expect(util.isCacheUrl('https://www.badiu.com/c/www.mipengine.com/docs/index.html')).to.be.false
     expect(util.isCacheUrl('//mipcache.bdstatic.com/c/')).to.be.true
+    expect(util.isCacheUrl('https://c.mipcdn.com/static/v2/internal/instantService-mip-duliangheng/font/wendu-bda6817d452d4a204e4371b3c6c06715.svg')).to.be.true
   })
 })
 /* eslint-enable no-unused-expressions */
