@@ -11,11 +11,15 @@ window.MIP
 
 ## 属性
 
-**version**: `string`
+### version
 
-等于 '2'
+- type: `string`
 
-**standalone**: `boolean`
+  等于 '2'
+
+### standalone
+
+- type: `boolean`
 
 - 用法：
 
@@ -24,23 +28,33 @@ window.MIP
   - `true`: 代表当前 MIP 运行在独立模式下，而非百度搜索结果页中
   - `false`: 代表当前不在独立模式下运行
 
-**util**: `Object`
+### util
 
-util 工具，参考[工具](./util/index.md)
+- type: `Object`
 
-**viewer**: `Object`
+  util 工具，参考[工具](./util/index.md)
 
-viewer，参考[viewer](./viewer.md)
+### viewer
 
-**viewport**: `Object`
+- type: `Object`
 
-viewport，参考[viewport](./viewport.md)
+  viewer，参考[viewer](./viewer.md)
 
-**hash**: `Object`
+### viewport
 
-hash 相关的工具，参考[hash](./hash.md)
+- type: `Object`
 
-**CustomElement**: `CustomElement`
+  viewport，参考[viewport](./viewport.md)
+
+### hash
+
+- type: `Object`
+
+  hash 相关的工具，参考[hash](./hash.md)
+
+### CustomElement
+
+- type: `CustomElement`
 
 - 用法：
 
@@ -54,7 +68,9 @@ hash 相关的工具，参考[hash](./hash.md)
   }
   ```
 
-**builtinComponents.MIPShell**: `HTMLElement`
+### builtinComponents.MIPShell
+
+- type: `HTMLElement`
 
 - 用法：
 
@@ -73,7 +89,7 @@ hash 相关的工具，参考[hash](./hash.md)
 
 ## 方法
 
-**registerVueCustomElement**
+### registerVueCustomElement
 - 参数：
   - {string} tag 自定义标签名
   - {*} component vue component
@@ -87,7 +103,7 @@ hash 相关的工具，参考[hash](./hash.md)
   })
   ```
 
-**registerCustomElement**
+### registerCustomElement
 - 参数：
   - {string} tag 自定义标签名
   - {CustomElement} clazz customElement v1 标准的自定义 Class
@@ -100,7 +116,7 @@ hash 相关的工具，参考[hash](./hash.md)
   MIP.registerCustomElement('mip-test', class MipTest extends MIP.CustomElement {})
   ```
 
-**prerenderElement**
+### prerenderElement
 - 参数：
   - {MIPElement} element 必须是 MIP 自定义标签，浏览器原生标签不起作用
 - 用法：

@@ -11,45 +11,65 @@ window.MIP.util
 
 ## 属性
 
-### fn: `Object`
+### fn
 
-一些函数式的工具函数，参考[工具](./util/fn.md)
+- type: `Object`
 
-### dom: `Object`
+  一些函数式的工具函数，参考[工具](./util/fn.md)
 
-DOM 相关的工具函数，参考[DOM](./dom.md)
+### dom
 
-### event: `Object`
+- type: `Object`
 
-事件代理工具函数，参考[event](./event.md)
+  DOM 相关的工具函数，参考[DOM](./dom.md)
 
-### rect: `Object`
+### event
 
-DOM 位置相关的工具函数，参考[rect](./rect.md)
+- type: `Object`
 
-### hash: `Object`
+  事件代理工具函数，参考[event](./event.md)
 
-hash 相关的工具，参考[hash](./hash.md)
+### rect
 
-### platform: `Object`
+- type: `Object`
 
-当前所处平台相关的工具，如浏览器和系统，参考[platform](./platform.md)
+  DOM 位置相关的工具函数，参考[rect](./rect.md)
 
-### EventEmitter: `EventEmitter`
+### hash
 
-EventEmitter 类，提供了 mixin 函数，参考[EventEmitter](./event-emitter.md)
+- type: `Object`
 
-### Gesture: `Gesture`
+  hash 相关的工具，参考[hash](./hash.md)
 
-手势相关的工具，参考[Gesture](./gesture.md)
+### platform
 
-### customStorage: `Object`
+- type: `Object`
 
-存储相关的工具，参考[customStorage](./customStorage.md)
+  当前所处平台相关的工具，如浏览器和系统，参考[platform](./platform.md)
 
-### naboo: `Object`
+### EventEmitter
 
-动画库 Naboo，参考[naboo](./naboo.md)
+- type: `EventEmitter`
+
+  EventEmitter 类，提供了 mixin 函数，参考[EventEmitter](./event-emitter.md)
+
+### Gesture
+
+- type: `Gesture`
+
+  手势相关的工具，参考[Gesture](./gesture.md)
+
+### customStorage
+
+- type: `Object`
+
+  存储相关的工具，参考[customStorage](./customStorage.md)
+
+### naboo
+
+- type: `Object`
+
+  动画库 Naboo，参考[naboo](./naboo.md)
 
 
 ## 方法

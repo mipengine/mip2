@@ -10,9 +10,9 @@ window.MIP.util.event
 `MIP.util.event` 事件代理工具函数
 
 
-### 方法
+## 方法
 
-**delegate**
+### delegate
 
 - 参数
   - {HTMLElement} element 指定元素
@@ -41,7 +41,7 @@ window.MIP.util.event
   undelegate()
   ```
 
-**createEvent**
+### createEvent
 
 - 参数
   - {string} type Event name

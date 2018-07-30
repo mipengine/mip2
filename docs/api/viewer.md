@@ -10,7 +10,7 @@
 
 下面将介绍向 SuperFrame 发送以及从 SuperFrame 接受消息的两个方法。
 
-**sendMessage**
+### sendMessage
 - 参数：
   - {string} eventName 信息名称
   - {Object} data 信息内容
@@ -23,7 +23,7 @@
   MIP.viewer.sendMessage('mipMessage', {message: 'Hello SF! I am MIP'})
   ```
 
-**onMessage**
+### onMessage
 - 参数：
   - {string} eventName 信息名称
   - {Function} callback 收到特定信息后的回调函数。仅有一个参数：消息的具体信息。

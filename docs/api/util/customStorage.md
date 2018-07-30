@@ -26,7 +26,7 @@ number|type|是|存储对象的类型，取值为 0, 1, 2 中的一个
 
 ### 方法
 
-#### localStorage.set()
+#### localStorage.set
 
 - 描述
 
@@ -58,7 +58,7 @@ lsObject.set('test-ls-key', 'storage content', 24 * 60 * 60 , function (err) {
 > 注意：
 > 使用 MIP 提供的 localStorage 封装的对象存储的内容应该控制在 4K 以内
 
-#### localStorage.get()
+#### localStorage.get
 
 - 描述
 
@@ -86,7 +86,7 @@ console.log(content)
 // 返回的是存储的内容
 ```
 
-#### localStorage.rm()
+#### localStorage.rm
 
 - 描述
 
@@ -113,7 +113,7 @@ lsObject.rm('test-ls-key2')
 console.log(lsObject.get('test-ls-key2')) // 这里返回 undefined
 ```
 
-#### localStorage.clear()
+#### localStorage.clear
 
 - 描述
 
@@ -137,7 +137,7 @@ lsObject.clear()
 console.log(lsObject.get('test-ls-key')) // 返回 undefined
 ```
 
-#### localStorage.rmExpires()
+#### localStorage.rmExpires
 
 - 描述
 
@@ -164,7 +164,7 @@ asyncStorage 是一个 MIP 封装的请求服务端的对象，用来和服务�
 
 ### 方法
 
-#### asyncStorage.request()
+#### asyncStorage.request
 
 - 描述
 
@@ -220,7 +220,7 @@ cookieStorage 是 MIP 提供的一个在前端操作 cookie 的对象，MIP 为�
 
 ### 方法
 
-#### cookieStorage.delExceedCookie()
+#### cookieStorage.delExceedCookie
 
 - 描述
 

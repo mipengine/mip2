@@ -11,73 +11,107 @@ window.MIP.util.platform
 
 ## 属性
 
-### isIos: `boolean`
+### isIos
 
-判断是否为 iOS 系统
+- type: `boolean`
 
-### isAndroid: `boolean`
+  判断是否为 iOS 系统
 
-判断是否为 Android 系统
+### isAndroid
 
-### isWechatApp: `boolean`
+- type: `boolean`
 
-判断是否在微信中
+  判断是否为 Android 系统
 
-### isBaiduApp: `boolean`
+### isWechatApp
 
-判断是否在百度 App 中
+- type: `boolean`
 
-### isWeiboApp: `boolean`
+  判断是否在微信中
 
-判断是否在微博 App 中
+### isBaiduApp
 
-### isQQApp: `boolean`
+- type: `boolean`
 
-判断是否在 QQ App 中
+  判断是否在百度 App 中
 
-### isUc: `boolean`
+### isWeiboApp
 
-判断是否在 UC 浏览器中
+- type: `boolean`
 
-### isBaidu: `boolean`
+  判断是否在微博 App 中
 
-判断是否在百度浏览器中
+### isQQApp
 
-### isQQ: `boolean`
+- type: `boolean`
 
-判断是否在 QQ 浏览器中
+  判断是否在 QQ App 中
 
-### isAdr: `boolean`
+### isUc
 
-判断是否在 Android 原生浏览器中
+- type: `boolean`
 
-### isSafari: `boolean`
+  判断是否在 UC 浏览器中
 
-判断是否在 Safari 浏览器中
+### isBaidu
 
-### isChrome: `boolean`
+- type: `boolean`
 
-判断是否在 Chrome 浏览器中
+  判断是否在百度浏览器中
 
-### isFireFox: `boolean` _[deprecated]_
+### isQQ
 
-判断是否在 Firefox 浏览器中，请用 `isFirefox` 替代
+- type: `boolean`
 
-### isFirefox: `boolean`
+  判断是否在 QQ 浏览器中
 
-判断是否在 Firefox 浏览器中
+### isAdr
 
-### isTrident: `boolean`
+- type: `boolean`
 
-是否为 trident 内核，目前只有 IE 浏览器使用 trident 内核
+  判断是否在 Android 原生浏览器中
 
-### isGecko: `boolean`
+### isSafari
 
-是否为 Gecko 内核，目前使用 Gecko 内核主流还是 Firefox
+- type: `boolean`
 
-### isWebkit: `boolean`
+  判断是否在 Safari 浏览器中
 
-是否为 webkit 内核
+### isChrome
+
+- type: `boolean`
+
+  判断是否在 Chrome 浏览器中
+
+### isFireFox _[deprecated]_
+
+- type: `boolean`
+
+  判断是否在 Firefox 浏览器中，请用 `isFirefox` 替代
+
+### isFirefox
+
+- type: `boolean`
+
+  判断是否在 Firefox 浏览器中
+
+### isTrident
+
+- type: `boolean`
+
+  是否为 trident 内核，目前只有 IE 浏览器使用 trident 内核
+
+### isGecko
+
+- type: `boolean`
+
+  是否为 Gecko 内核，目前使用 Gecko 内核主流还是 Firefox
+
+### isWebkit
+
+- type: `boolean`
+
+  是否为 webkit 内核
 
 ## 方法
 
