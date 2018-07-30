@@ -59,6 +59,9 @@ $ mip2 validate -c components
 
 # 页面校验
 $ mip2 validate -p page.html
+
+# npm 白名单校验
+$ mip2 validate -w path-to-project
 ```
 
 构建组件，在项目根目录运行
@@ -104,6 +107,12 @@ module.exports = {
 更多的配置选项可以参考 [Workbox 配置项](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateswstring_mode)
 
 ## changelog
+
+- 1.1.20
+    1. 升级 validator 依赖 mip-component-validator 至 1.1.0，该版本全流程改为异步实现
+    2. dev 和 build 命令强制进行 npm 白名单校验，出现非白名单的 npm 包，会在控制台将包名打印出来
+    3. validate 命令增加 -w 参数校验 npm 白名单
+    4. validate -c 命令增加组件所在白名单校验
 
 - 1.1.10
     1. 升级 mip-sandbox 依赖，添加 `crypto` 入白名单

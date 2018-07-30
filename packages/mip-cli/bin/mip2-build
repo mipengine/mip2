@@ -42,7 +42,8 @@ if (conf.ignore && /(^|,)whitelist(,|$)/.test(conf.ignore)) {
   validator.whitelist(conf.dir).then(reporter => {
     if (reporter.errors.length) {
       cli.error(reporter.errors[0].message)
-      process.exit(1)
+      // 先把白名单校验过程改成非中断式的
+      // process.exit(1)
     }
   })
   .then(() => build(conf))

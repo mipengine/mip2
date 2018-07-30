@@ -37,8 +37,10 @@ function report (data, filePath) {
   switch (data.type) {
     case 'page':
       cli.info('页面校验结果：')
+      break
     case 'component':
       cli.info('组件校验结果：')
+      break
     case 'whitelist':
       cli.info('npm 白名单校验结果：')
   }
