@@ -11,77 +11,77 @@ window.MIP.util.platform
 
 ## 属性
 
-**isIos**: `boolean`
+### isIos: `boolean`
 
 判断是否为 iOS 系统
 
-**isAndroid**: `boolean`
+### isAndroid: `boolean`
 
 判断是否为 Android 系统
 
-**isWechatApp**: `boolean`
+### isWechatApp: `boolean`
 
 判断是否在微信中
 
-**isBaiduApp**: `boolean`
+### isBaiduApp: `boolean`
 
 判断是否在百度 App 中
 
-**isWeiboApp**: `boolean`
+### isWeiboApp: `boolean`
 
 判断是否在微博 App 中
 
-**isQQApp**: `boolean`
+### isQQApp: `boolean`
 
 判断是否在 QQ App 中
 
-**isUc**: `boolean`
+### isUc: `boolean`
 
 判断是否在 UC 浏览器中
 
-**isBaidu**: `boolean`
+### isBaidu: `boolean`
 
 判断是否在百度浏览器中
 
-**isQQ**: `boolean`
+### isQQ: `boolean`
 
 判断是否在 QQ 浏览器中
 
-**isAdr**: `boolean`
+### isAdr: `boolean`
 
 判断是否在 Android 原生浏览器中
 
-**isSafari**: `boolean`
+### isSafari: `boolean`
 
 判断是否在 Safari 浏览器中
 
-**isChrome**: `boolean`
+### isChrome: `boolean`
 
 判断是否在 Chrome 浏览器中
 
-**isFireFox**: `boolean` _[deprecated]_
+### isFireFox: `boolean` _[deprecated]_
 
 判断是否在 Firefox 浏览器中，请用 `isFirefox` 替代
 
-**isFirefox**: `boolean`
+### isFirefox: `boolean`
 
 判断是否在 Firefox 浏览器中
 
-**isTrident**: `boolean`
+### isTrident: `boolean`
 
 是否为 trident 内核，目前只有 IE 浏览器使用 trident 内核
 
-**isGecko**: `boolean`
+### isGecko: `boolean`
 
 是否为 Gecko 内核，目前使用 Gecko 内核主流还是 Firefox
 
-**isWebkit**: `boolean`
+### isWebkit: `boolean`
 
 是否为 webkit 内核
 
 ## 方法
 
-**start**
+### start
 
 - 用法：
 
@@ -92,7 +92,7 @@ window.MIP.util.platform
   MIP.util.platform.isIos
   ```
 
-**getOsVersion**
+### getOsVersion
 
 - 返回值：
 

@@ -11,50 +11,50 @@ window.MIP.util
 
 ## 属性
 
-**fn**: `Object`
+### fn: `Object`
 
 一些函数式的工具函数，参考[工具](./util/fn.md)
 
-**dom**: `Object`
+### dom: `Object`
 
 DOM 相关的工具函数，参考[DOM](./dom.md)
 
-**event**: `Object`
+### event: `Object`
 
 事件代理工具函数，参考[event](./event.md)
 
-**rect**: `Object`
+### rect: `Object`
 
 DOM 位置相关的工具函数，参考[rect](./rect.md)
 
-**hash**: `Object`
+### hash: `Object`
 
 hash 相关的工具，参考[hash](./hash.md)
 
-**platform**: `Object`
+### platform: `Object`
 
 当前所处平台相关的工具，如浏览器和系统，参考[platform](./platform.md)
 
-**EventEmitter**: `EventEmitter`
+### EventEmitter: `EventEmitter`
 
 EventEmitter 类，提供了 mixin 函数，参考[EventEmitter](./event-emitter.md)
 
-**Gesture**: `Gesture`
+### Gesture: `Gesture`
 
 手势相关的工具，参考[Gesture](./gesture.md)
 
-**customStorage**: `Object`
+### customStorage: `Object`
 
-存储相关的工具，参考[customStorage](./custom-storage.md)
+存储相关的工具，参考[customStorage](./customStorage.md)
 
-**naboo**: `Object`
+### naboo: `Object`
 
 动画库 Naboo，参考[naboo](./naboo.md)
 
 
 ## 方法
 
-**css**
+### css
 - 参数：
   - {Array.\<HTMLElement\>|NodeList|HTMLElement} elements 需要设置的元素或者数组
   - {Object.<string, string|number>|string} property 属性名，如果是 Object，则为属性和值的键值对 `css(element, {left: 0, top: 0})`
@@ -83,7 +83,7 @@ EventEmitter 类，提供了 mixin 函数，参考[EventEmitter](./event-emitter
   MIP.util.css(elements, {color: '#ccc', 'font-size': '14px'})
   ```
 
-**jsonParse**
+### jsonParse
 
 - 参数：
   - {string} jsonStr 需要转成 JSON 的字符串
@@ -96,7 +96,7 @@ EventEmitter 类，提供了 mixin 函数，参考[EventEmitter](./event-emitter
   MIP.util.jsonParse('{a: 1, \'b\': 2, "c": 3}')
   ```
 
-**parseCacheUrl**
+### parseCacheUrl
 - 参数：
   - {string} url 源 URL
 - 返回值：
@@ -111,7 +111,7 @@ EventEmitter 类，提供了 mixin 函数，参考[EventEmitter](./event-emitter
   MIP.util.parseCacheUrl('https://mipcache.bdstatic.com/c/www.mipengine.org/static/index.html')
   ```
 
-**makeCacheUrl**
+### makeCacheUrl
 - 参数：
   - {string} url 源 URL
   - {string} type URL 的类型，目前只有两种情况，img 或者为空
@@ -131,7 +131,7 @@ EventEmitter 类，提供了 mixin 函数，参考[EventEmitter](./event-emitter
 
   参考相关[测试用例](https://github.com/mipengine/mip2/blob/master/packages/mip/test/specs/util.spec.js#L112)
 
-**isCacheUrl**
+### isCacheUrl
 
 - 参数：
   - {string} url

@@ -24,14 +24,14 @@ Gesture 是 MIP 封装的手势库，目前包含了对单击、双击、滑动�
 
 ## 方法
 
-**on**
+### on
 
 - 描述：
 
   利用手势识别器，给手势事件添加对应的手势事件处理函数
 
 - 参数：
-  
+
   类型|参数名|是否必选|描述
   ---|---|---|---
   string|type|是|手势事件类型
@@ -52,7 +52,7 @@ Gesture 是 MIP 封装的手势库，目前包含了对单击、双击、滑动�
   ---|---|---|---
   Object|event|是|描述手势事件的对象，原生Event对象的接口实现
   Object|data|是|滑动手势的数据对象
-  
+
   滑动手势的数据对象的通用字段如下：
   - angle: 滑动角度，如横滑为0度
   - deltaTime: 从开始到结束的时间间隔。单位是ms
@@ -68,7 +68,7 @@ Gesture 是 MIP 封装的手势库，目前包含了对单击、双击、滑动�
   - x: 触摸中心点坐标x
   - y: 触摸中心点坐标y
   - type: 手势事件类型，内置类型见上文
-  
+
   特别地，当 type 为 swipe 时，数据对象会增加一个额外的 swipeDirection   字段，它表示滑动的方向，其值可以是 up、 down、 left、 right
 
 - 返回值：
@@ -89,13 +89,13 @@ Gesture 是 MIP 封装的手势库，目前包含了对单击、双击、滑动�
   })
   ```
 
-**off**
+### off
 
 - 描述：
 
   清除手势事件对应的处理函数，由于 MIP.util.Gesture 继承自 MIP.util.EventEmitter，并且没有重写 off 方法，所以详细用法见[EventEmitter](./event-emitter.md)
 
-**cleanup**
+### cleanup
 
 - 描述：
 

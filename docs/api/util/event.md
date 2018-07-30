@@ -40,7 +40,7 @@ window.MIP.util.event
   // 移除代理事件
   undelegate()
   ```
- 
+
 **createEvent**
 
 - 参数
@@ -59,5 +59,5 @@ window.MIP.util.event
   ```javascript
   MIP.util.event.createEvent('click', data)
   ```
- 
+
 

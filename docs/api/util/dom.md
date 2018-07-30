@@ -12,14 +12,14 @@ window.MIP.util.dom
 
 ### 方法
 
-**closest**
+### closest
 - 参数：
   - {HTMLElement} element 指定元素
   - {string} selector 选择器
 - 返回值：
 
 	{?HTMLElement}
-	
+
 	匹配的元素节点 或 `null`
 
 - 用法：
@@ -29,15 +29,15 @@ window.MIP.util.dom
   ```javascript
   MIP.util.dom.closest(element, 'a')
   ```
-  
- **contains**
+
+### contains
 - 参数：
   - {HTMLElement} element 指定元素节点
   - {HTMLElement} child 子节点
 - 返回值：
 
 	{boolean}
-	
+
 	包含返回 true , 不包含返回 false
 
 - 用法：
@@ -47,8 +47,8 @@ window.MIP.util.dom
   ```javascript
   MIP.util.dom.contains(element, childElement)
   ```
- 
- **closestTo**
+
+### closestTo
 - 参数：
   - {HTMLElement} element 指定元素
   - {string} selector 选择器
@@ -56,7 +56,7 @@ window.MIP.util.dom
 - 返回值：
 
 	{?HTMLElement}
-	
+
 	匹配的元素节点 或 `null`
 
 - 用法：
@@ -66,8 +66,8 @@ window.MIP.util.dom
   ```javascript
   MIP.util.dom.closestTo(element, 'a', targetElement)
   ```
- 
- **matches**
+
+### matches
 - 参数：
   - {HTMLElement} element 指定元素
   - {string} selector 选择器
@@ -83,7 +83,7 @@ window.MIP.util.dom
   MIP.util.dom.matches(element, '.test')
   ```
 
- **create**
+### create
 - 参数：
   - {string} str html 字符串
 - 返回值：
@@ -108,7 +108,7 @@ window.MIP.util.dom
   MIP.util.dom.create('1')
   ```
 
- **insert**
+### insert
 - 参数：
   - {HTMLElement} parent 指定元素节点
   - {Array} children 待插入的子节点列表
@@ -124,11 +124,11 @@ window.MIP.util.dom
   MIP.util.dom.insert(element, [childElement0, childElement1])
   ```
 
- **waitDocumentReady**
+### waitDocumentReady
 - 参数：
   - {Function} cb 回调函数
 - 返回值：
-  
+
   `undefined`
 
 - 用法：

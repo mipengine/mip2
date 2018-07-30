@@ -12,7 +12,7 @@ window.MIP.util.EventEmitter
 
 ### 方法
 
-**mixin**
+### mixin
 
 - 参数
   - {Object} obj
@@ -21,7 +21,7 @@ window.MIP.util.EventEmitter
   {Object}
 
 - 用法：
-  
+
   使输入的任意 `obj` 对象能够拥有 EventEmitter 的属性方法
 
   ```javascript
@@ -30,7 +30,7 @@ window.MIP.util.EventEmitter
 
 >info 以下方法可以在 mixin 的 obj 上直接调用
 
-**on**
+### on
 
 - 参数
   - {string} name
@@ -40,14 +40,14 @@ window.MIP.util.EventEmitter
   {Object}
 
 - 用法：
-  
-  增加事件 `name` 的监听函数 `handler` 
+
+  增加事件 `name` 的监听函数 `handler`
 
   ```javascript
   MIP.util.EventEmitter.on(name, handler)
   ```
 
-**off**
+### off
 
 - 参数
   - {string} name
@@ -59,15 +59,15 @@ window.MIP.util.EventEmitter
   返回事件处理列表 或是 `null`
 
 - 用法：
-  
-  移除事件 `name` 的监听函数 `handler` 
+
+  移除事件 `name` 的监听函数 `handler`
 
   ```javascript
   MIP.util.EventEmitter.off(name, handler)
   ```
 
 
-**once**
+### once
 
 - 参数
   - {string} name
@@ -79,14 +79,14 @@ window.MIP.util.EventEmitter
   返回解绑函数
 
 - 用法：
-  
+
   增加事件 `name` 的监听函数 `handler`，且 `handler` 执行一次之后立刻被移除
 
   ```javascript
   MIP.util.EventEmitter.once(name, handler)
   ```
 
-**trigger**
+### trigger
 
 - 参数
   - {string} name
@@ -95,14 +95,14 @@ window.MIP.util.EventEmitter
   `undefined`
 
 - 用法：
-  
+
   触发事件 `name`，执行监听函数
 
   ```javascript
   MIP.util.EventEmitter.once(name)
   ```
 
-**setEventContext**
+### setEventContext
 
 - 参数：
   - {Function} context
@@ -111,7 +111,7 @@ window.MIP.util.EventEmitter
   `undefined`
 
 - 用法：
-  
+
   设置 `handler` 的执行环境
 
   ```javascript
