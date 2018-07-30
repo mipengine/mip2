@@ -10,5 +10,8 @@
     "it": true,
     "before": true,
     "sinon": true
+  },
+  "rules": {
+    "no-unused-expressions": 0
   }
 }

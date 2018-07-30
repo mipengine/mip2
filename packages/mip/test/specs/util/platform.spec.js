@@ -41,7 +41,7 @@ describe('platform', function () {
       stub2.returns('5.0 (iPhone; CPU iPhone OS 10_1_1 like Mac OS X) AppleWebKit/602.2.14 (KHTML, like Gecko) Version/10.0 Mobile/14B100 Safari/602.1')
       let stub3 = sinon.stub(platform, 'isAndroid')
       stub3.returns(false)
-      let stub4 = sinon.stub(platform, 'isIos')
+      let stub4 = sinon.stub(platform, 'isIOS')
       stub4.returns(true)
 
       let osVersion = platform.getOsVersion()
