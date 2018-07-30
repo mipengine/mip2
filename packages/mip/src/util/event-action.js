@@ -34,6 +34,8 @@ const CHECK_REG = /^mip-/
  */
 const OPTION_KEYS = ['executeEventAction', 'parse', 'checkTarget', 'getTarget', 'attr']
 
+const READY_ACTION_POOL = {}
+
 /**
  * MIP does not support external JavaScript, so we provide EventAction to trigger events between elements.
  * TODO: refactor
@@ -170,6 +172,19 @@ class EventAction {
   }
 
   /**
+   * Excute all action in action pool
+   */
+  executeReadyEventActionPool () {
+    let me = this
+    for (let key in READY_ACTION_POOL) {
+      READY_ACTION_POOL[key].forEach(action => {
+        let ele = document.getElementById(key)
+        ele && me.executeEventAction(action, ele)
+      })
+    }
+  }
+
+  /**
    * Excute the parsed actions.
    *
    * @private
@@ -183,9 +198,16 @@ class EventAction {
         globalTarget(action)
         continue
       }
-      let target = this.getTarget(action.id)
-      if (this.checkTarget(target)) {
-        this.executeEventAction(action, target)
+      if (action.type === 'ready') {
+        if (!READY_ACTION_POOL[action.id]) {
+          READY_ACTION_POOL[action.id] = []
+        }
+        READY_ACTION_POOL[action.id].push(action)
+      } else {
+        let target = this.getTarget(action.id)
+        if (this.checkTarget(target)) {
+          this.executeEventAction(action, target)
+        }
       }
     }
   }

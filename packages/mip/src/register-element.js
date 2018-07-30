@@ -3,13 +3,14 @@
  * @author sfe-sy (sfe-sy@baidu.com)
  */
 
-/* global HTMLElement */
+/* global HTMLElement,CustomEvent */
 
 import resources from './resources'
 import layout from './layout'
 import performance from './performance'
 import customElementsStore from './custom-element-store'
 import cssLoader from './util/dom/css-loader'
+import EventAction from './util/event-action'
 
 class BaseElement extends HTMLElement {
   constructor (element) {
@@ -76,6 +77,9 @@ class BaseElement extends HTMLElement {
   }
 
   build () {
+    let eventAction = new EventAction()
+    let readyEvent = new CustomEvent('ready')
+
     if (this.isBuilt()) {
       return
     }
@@ -83,6 +87,8 @@ class BaseElement extends HTMLElement {
     try {
       this.customElement.build()
       this._built = true
+      this.addEventListener('ready', event => eventAction.execute('ready', this, event))
+      this.dispatchEvent(readyEvent)
     } catch (e) {
       console.warn('build error:', e)
     }

@@ -107,6 +107,12 @@ let viewer = {
     this.isShow = true
     this._showTiming = Date.now()
     this.trigger('show', this._showTiming)
+
+    // trigger all ready event after viewer show
+    setTimeout(() => {
+      let eventAction = new EventAction()
+      eventAction.executeReadyEventActionPool()
+    })
   },
 
   /**
