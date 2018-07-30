@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 /**
  * @file   提供 iframe-shell/messenger 模块。
  * @author oott123

@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 /**
  * @file Hash Function. Support hash get function
  * @author zhangzhiqiang(zhiqiangzhang37@163.com)
@@ -29,7 +30,7 @@ import fixedElement from './fixed-element'
  */
 const win = window
 
-const eventListenerOptions = supportsPassive ? {passive: true} : /* istanbul ignore next */ false
+const eventListenerOptions = supportsPassive ? {passive: true} : false
 
 /**
  * The mip viewer.Complement native viewer, and solve the page-level problems.
@@ -139,7 +140,6 @@ let viewer = {
     let eventAction = this.eventAction = new EventAction()
     if (hasTouch) {
       // In mobile phone, bind Gesture-tap which listen to touchstart/touchend event
-      // istanbul ignore next
       this._gesture.on('tap', event => {
         eventAction.execute('tap', event.target, event)
       })
@@ -154,7 +154,6 @@ let viewer = {
       eventAction.execute('click', event.target, event)
     }, false)
 
-    // istanbul ignore next
     event.delegate(document, 'input', 'change', event => {
       eventAction.execute('change', event.target, event)
     })
@@ -164,14 +163,13 @@ let viewer = {
    * Setup event-action of viewer. To handle `on="tap:xxx"`.
    */
   handlePreregisteredExtensions () {
-    window.MIP = window.MIP || /* istanbul ignore next */ {}
+    window.MIP = window.MIP || {}
     window.MIP.push = extensions => {
       if (extensions && typeof extensions.func === 'function') {
         extensions.func()
       }
     }
     let preregisteredExtensions = window.MIP.extensions
-    /* istanbul ignore next */
     if (preregisteredExtensions && preregisteredExtensions.length) {
       for (let i = 0; i < preregisteredExtensions.length; i++) {
         let curExtensionObj = preregisteredExtensions[i]
@@ -191,21 +189,17 @@ let viewer = {
    * @param {Object} options.state Target page info
    */
   open (to, {isMipLink = true, replace = false, state} = {}) {
-    /* istanbul ignore next */
     if (!state) {
       state = {click: undefined, title: undefined, defaultTitle: undefined}
     }
 
     let hash = ''
-    /* istanbul ignore next */
     if (to.lastIndexOf('#') > -1) {
       hash = to.substring(to.lastIndexOf('#'))
     }
-    /* istanbul ignore next */
     let isHashInCurrentPage = hash && to.indexOf(window.location.origin + window.location.pathname) > -1
 
     // Invalid target, ignore it
-    /* istanbul ignore next */
     if (!to) {
       return
     }
@@ -213,7 +207,6 @@ let viewer = {
     // Jump in top window directly
     // 1. Cross origin and NOT in SF
     // 2. Not MIP page and not only hash change
-    /* istanbul ignore next */
     if ((this._isCrossOrigin(to) && window.MIP.standalone) ||
       (!isMipLink && !isHashInCurrentPage)) {
       window.top.location.href = to
@@ -221,7 +214,6 @@ let viewer = {
     }
 
     let completeUrl
-    /* istanbul ignore next */
     if (/^\/\//.test(to)) {
       completeUrl = location.protocol + to
     } else if (to.charAt(0) === '/' || to.charAt(0) === '.') {
@@ -234,7 +226,6 @@ let viewer = {
       url: parseCacheUrl(completeUrl),
       state
     }
-    /* istanbul ignore next */
     this.sendMessage(replace ? 'replaceState' : 'pushState', pushMessage)
 
     // Create target route
@@ -242,7 +233,6 @@ let viewer = {
       path: window.MIP.standalone ? to : makeCacheUrl(to)
     }
 
-    /* istanbul ignore if */
     if (isMipLink) {
       // Reload page even if it's already existed
       targetRoute.meta = {
@@ -255,7 +245,6 @@ let viewer = {
     }
 
     // Handle <a mip-link replace> & hash
-    /* istanbul ignore next */
     if (isHashInCurrentPage || replace) {
       this.page.replace(targetRoute, {allowTransition: true})
     } else {
@@ -272,7 +261,6 @@ let viewer = {
    * @param {Function} handler
    */
   _bindEventCallback (name, handler) {
-    /* istanbul ignore next */
     if (name === 'show' && this.isShow && typeof handler === 'function') {
       handler.call(this, this._showTiming)
     }
@@ -283,7 +271,7 @@ let viewer = {
    *
    * @private
    */
-  viewportScroll /* istanbul ignore next */ () {
+  viewportScroll () {
     let self = this
     let dist = 0
     let direct = 0
@@ -301,7 +289,6 @@ let viewer = {
     function pagemove (e) {
       scrollTop = viewport.getScrollTop()
       scrollHeight = viewport.getScrollHeight()
-      /* istanbul ignore next */
       if (scrollTop > 0 && scrollTop < scrollHeight) {
         if (lastScrollTop < scrollTop) {
           // down
@@ -339,7 +326,6 @@ let viewer = {
      * if an <a> tag has `mip-link` or `data-type='mip'` let router handle it,
      * otherwise let TOP jump
      */
-    /* istanbul ignore next */
     event.delegate(document, 'a', 'click', function (event) {
       let $a = this
 
@@ -376,7 +362,7 @@ let viewer = {
    *
    * @return {Object} messageData
    */
-  _getMipLinkData /* istanbul ignore next */ () {
+  _getMipLinkData () {
     // compatible with MIP1
     let parentNode = this.parentNode
 
@@ -390,14 +376,12 @@ let viewer = {
   handleBrowserQuirks () {
     // add normal scroll class to body. except ios in iframe.
     // Patch for ios+iframe is default in mip.css
-    /* istanbul ignore next */
     if (!platform.needSpecialScroll) {
       document.documentElement.classList.add('mip-i-android-scroll')
       document.body.classList.add('mip-i-android-scroll')
     }
 
     // prevent bouncy scroll in iOS 7 & 8
-    /* istanbul ignore next */
     if (platform.isIos()) {
       let iosVersion = platform.getOsVersion()
       iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
@@ -434,7 +418,6 @@ let viewer = {
      * trigger layout to solve a strange bug in Android Superframe,
      * which will make page unscrollable
      */
-    /* istanbul ignore next */
     if (platform.isAndroid()) {
       setTimeout(() => {
         document.documentElement.classList.add('trigger-layout')
@@ -442,12 +425,10 @@ let viewer = {
       })
     }
 
-    /* istanbul ignore next */
     if (this.isIframed) {
       this.viewportScroll()
     }
 
-    /* istanbul ignore next */
     this.fixSoftKeyboard()
   },
 
@@ -458,16 +439,11 @@ let viewer = {
    * https://github.com/mipengine/mip2/issues/19
    */
   fixIOSPageFreeze () {
-    /* istanbul ignore next */
     let $style = document.createElement('style')
-    /* istanbul ignore next */
     let $head = document.head || document.getElementsByTagName('head')[0]
-    /* istanbul ignore next */
     $style.setAttribute('mip-bouncy-scrolling', '')
-    /* istanbul ignore next */
     $style.textContent = '* {-webkit-overflow-scrolling: auto!important;}'
 
-    /* istanbul ignore next */
     if (!platform.isSafari() && !platform.isChrome()) {
       window.addEventListener(CUSTOM_EVENT_SHOW_PAGE, (e) => {
         try {
@@ -486,14 +462,12 @@ let viewer = {
    * https://github.com/mipengine/mip2/issues/38
    */
   fixSoftKeyboard () {
-    /* istanbul ignore next */
     // reset iframe's height when input focus/blur
     event.delegate(document, 'input', 'focus', event => {
       this.page.notifyRootPage({
         type: MESSAGE_PAGE_RESIZE
       })
     }, true)
-    /* istanbul ignore next */
     event.delegate(document, 'input', 'blur', event => {
       this.page.notifyRootPage({
         type: MESSAGE_PAGE_RESIZE
@@ -508,7 +482,6 @@ let viewer = {
    * http://blog.christoffer.online/2015-06-10-six-things-i-learnt-about-ios-rubberband-overflow-scrolling/
    */
   lockBodyScroll () {
-    /* istanbul ignore next */
     viewport.on('scroll', () => {
       let scrollTop = viewport.getScrollTop()
       let totalScroll = viewport.getScrollHeight()
@@ -520,11 +493,8 @@ let viewer = {
     }, eventListenerOptions)
 
     // scroll 1px
-    /* istanbul ignore next */
     document.documentElement.classList.add('trigger-layout')
-    /* istanbul ignore next */
     document.body.classList.add('trigger-layout')
-    /* istanbul ignore next */
     viewport.setScrollTop(1)
   },
 
