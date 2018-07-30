@@ -10,7 +10,8 @@ module.exports = function (config) {
     dir: config.dir,
     dev: true,
     asset: config.asset,
-    ignore: config.ignore
+    ignore: config.ignore,
+    proxy: config.proxy
   })
 
   config.app.builder = builder

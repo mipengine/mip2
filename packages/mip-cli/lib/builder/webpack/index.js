@@ -21,6 +21,7 @@ module.exports = class WebpackBuilder {
     this.componentDir = projectPath.components(this.dir)
     this.asset = options.asset
     this.ignore = options.ignore
+    this.proxy = options.proxy
 
     if (options.dev) {
       this.mode = 'development'
@@ -80,7 +81,8 @@ module.exports = class WebpackBuilder {
       mode: this.mode,
       context: this.dir,
       asset: this.asset,
-      ignore: this.ignore
+      ignore: this.ignore,
+      proxy: this.proxy
     })
   }
 
