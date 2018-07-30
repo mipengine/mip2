@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <title>MIP API Page</title>
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+</head>
+<body>
+  <a class="toggle-page-mask">togglePageMask</a>
+  <a class="toggle-drop-down">toggleDropdown</a>
+  <a class="toggle-fade-header">toggleFadeHeader</a>
+
+  <mip-shell>
+    <script type="application/json">
+    {
+      "routes": [
+        {
+          "pattern": "*",
+          "meta": {
+            "header": {
+              "show": true,
+              "title": "MIP",
+              "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
+              "buttonGroup": [
+                {
+                  "name": "subscribe",
+                  "text": "关注",
+                  "link": "/examples/page/tree.html"
+                },
+                {
+                  "name": "chat",
+                  "text": "发消息"
+                },
+                {
+                  "name": "cancel",
+                  "text": "取消"
+                }
+              ]
+            },
+            "view": {
+              "isIndex": false
+            }
+          }
+        }
+      ]
+    }
+    </script>
+  </mip-shell>
+
+  <script src="/dist/mip.js"></script>
+  <script>
+    let pageMaskToggle = false
+    let dropdownToggle = false
+    let fadeHeaderToggle = false
+
+    document.querySelector('.toggle-page-mask').addEventListener('click', () => {
+      pageMaskToggle = !pageMaskToggle
+      window.MIP.viewer.page.togglePageMask(pageMaskToggle)
+    })
+
+    document.querySelector('.toggle-drop-down').addEventListener('click', () => {
+      dropdownToggle = !dropdownToggle
+      window.MIP.viewer.page.toggleDropdown(dropdownToggle)
+    })
+
+    document.querySelector('.toggle-fade-header').addEventListener('click', () => {
+      fadeHeaderToggle = !fadeHeaderToggle
+      window.MIP.viewer.page.toggleFadeHeader(fadeHeaderToggle)
+    })
+  </script>
+</body>

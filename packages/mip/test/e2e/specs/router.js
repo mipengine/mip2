@@ -1,5 +1,5 @@
 /**
- * @file history e2e test case (standalone 模式)
+ * @file router e2e test case (standalone 模式)
  * @author panyuqi
  * @description 测试流程：
  * 1. 打开 index.html
@@ -30,7 +30,6 @@ module.exports = {
   },
   'click a <mip-link>': function (browser) {
     browser
-      .waitForElementVisible('.tree-link', 3000)
       // open tree.html
       .waitForClick('.tree-link')
 
@@ -47,19 +46,15 @@ module.exports = {
       .assert.attributeContains('iframe', 'data-page-id', TREE_PAGE_URL)
       .assert.attributeContains('iframe', 'src', TREE_PAGE_URL)
       .assert.attributeContains('iframe', 'name', '{"standalone":true,"isRootPage":false,"isCrossOrigin":false}')
-      .element('css selector', `iframe[data-page-id*="${TREE_PAGE_URL}"]`, function (frame) {
-        // enter iframe[src='tree.html'] and check
-        browser.frame({ELEMENT: frame.value.ELEMENT}, () => {
-          browser.waitForElementVisible('mip-page-tree', 3000)
-        })
+      .enterIframe(TREE_PAGE_URL, () => {
+        browser.waitForElementVisible('mip-page-tree', 3000)
       })
-      .frame(null)
 
       // hide elements in root page
       .assert.hidden('.tree-link')
       .assert.hidden('.main-image')
   },
-  'history back': function (browser) {
+  'router back': function (browser) {
     browser
       .back()
       // URL changed
@@ -73,7 +68,7 @@ module.exports = {
       .assert.visible('.tree-link')
       .assert.visible('.main-image')
   },
-  'history forward': function (browser) {
+  'router forward': function (browser) {
     browser
       .forward()
       // URL changed
@@ -82,13 +77,9 @@ module.exports = {
 
       // show iframe
       .waitForElementVisible('iframe', 3000)
-      .element('css selector', `iframe[data-page-id*="${TREE_PAGE_URL}"]`, function (frame) {
-        // enter iframe[src='tree.html'] and check
-        browser.frame({ELEMENT: frame.value.ELEMENT}, () => {
-          browser.waitForElementVisible('mip-page-tree', 3000)
-        })
+      .enterIframe(TREE_PAGE_URL, () => {
+        browser.waitForElementVisible('mip-page-tree', 3000)
       })
-      .frame(null)
 
       // hide root page
       .assert.hidden('.tree-link')
@@ -96,15 +87,10 @@ module.exports = {
   },
   'page back': function (browser) {
     browser
-      .element('css selector', `iframe[data-page-id*="${TREE_PAGE_URL}"]`, function (frame) {
-        // enter iframe[src='tree.html'] and back to index.html
-        browser.frame({ ELEMENT: frame.value.ELEMENT }, () => {
-          browser
-            .waitForElementVisible('.page-back', 3000)
-            .waitForClick('.page-back')
-        })
+      .enterIframe(TREE_PAGE_URL, () => {
+        browser.waitForElementVisible('mip-page-tree', 3000)
+        browser.waitForClick('.page-back')
       })
-      .frame(null)
 
     browser
       .waitForElementVisible('.tree-link', 3000)
@@ -130,13 +116,9 @@ module.exports = {
 
       // show iframe
       .waitForElementVisible('iframe', 3000)
-      .element('css selector', `iframe[data-page-id*="${TREE_PAGE_URL}"]`, function (frame) {
-        // enter iframe[src='tree.html'] and check
-        browser.frame({ELEMENT: frame.value.ELEMENT}, () => {
-          browser.waitForElementVisible('mip-page-tree', 3000)
-        })
+      .enterIframe(TREE_PAGE_URL, () => {
+        browser.waitForElementVisible('mip-page-tree', 3000)
       })
-      .frame(null)
 
       // hide root page
       .assert.hidden('.tree-link')
@@ -162,13 +144,9 @@ module.exports = {
       .assert.attributeContains('iframe', 'data-page-id', INDEX_PAGE_URL)
       .assert.attributeContains('iframe', 'src', INDEX_PAGE_URL)
       .assert.attributeContains('iframe', 'name', '{"standalone":true,"isRootPage":false,"isCrossOrigin":false}')
-      .element('css selector', `iframe[data-page-id*="${INDEX_PAGE_URL}"]`, function (frame) {
-        // enter iframe[src='index.html'] and check
-        browser.frame({ELEMENT: frame.value.ELEMENT}, () => {
-          browser.waitForElementVisible('.main-image', 3000)
-        })
+      .enterIframe(INDEX_PAGE_URL, () => {
+        browser.waitForElementVisible('.main-image', 3000)
       })
-      .frame(null)
 
       // hide root page(tree.html)
       .assert.hidden('mip-page-tree')

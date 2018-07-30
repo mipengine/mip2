@@ -124,6 +124,7 @@ describe('jsonParse strings', () => {
 describe('jsonParse comments', () => {
   it('parses single-line comments', () => {
     expect(jsonParse('{//comment\n}')).to.deep.equal({})
+    expect(jsonParse('["/*comment*/"]')).to.deep.equal(['/*comment*/'])
   })
 
   it('parses single-line comments at end of input', () => {
@@ -132,5 +133,11 @@ describe('jsonParse comments', () => {
 
   it('parses multi-line comments', () => {
     expect(jsonParse('{/*comment** */}')).to.deep.equal({})
+  })
+})
+
+describe('jsonParse error', () => {
+  it('throw an error', () => {
+    expect(() => jsonParse('{a,b}')).to.throw('Content should be a valid JSON string!')
   })
 })
