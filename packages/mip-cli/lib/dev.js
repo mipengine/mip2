@@ -14,9 +14,10 @@ module.exports = function ({
   livereload = false,
   asset,
   autoopen,
-  ignore
+  ignore,
+  proxy
 }) {
-  const server = new Server({port, dir, livereload, ignore, asset})
+  const server = new Server({port, dir, livereload, ignore, asset, proxy})
 
   try {
     server.run()

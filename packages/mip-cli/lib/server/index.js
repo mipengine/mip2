@@ -18,7 +18,8 @@ module.exports = class Server {
     dir,
     livereload,
     asset,
-    ignore
+    ignore,
+    proxy
   }) {
     if (!asset) {
       asset = 'http://127.0.0.1:' + port
@@ -32,6 +33,7 @@ module.exports = class Server {
     this.app = new Koa()
     this.asset = asset
     this.ignore = ignore
+    this.proxy = proxy
   }
 
   run () {
@@ -40,8 +42,19 @@ module.exports = class Server {
       await next()
     }
 
-    let scriptMiddlewares = script({dir: this.dir, asset: this.asset, ignore: this.ignore, app: this.app})
-    let htmlMiddlewares = html({dir: this.dir, livereload: this.livereload, app: this.app})
+    let scriptMiddlewares = script({
+      dir: this.dir,
+      asset: this.asset,
+      ignore: this.ignore,
+      app: this.app,
+      proxy: this.proxy
+    })
+
+    let htmlMiddlewares = html({
+      dir: this.dir,
+      livereload: this.livereload,
+      app: this.app
+    })
 
     this.router = new Router()
     this.router
