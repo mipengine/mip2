@@ -1,5 +1,5 @@
 /**
- * @file history e2e test case (standalone 模式)
+ * @file router e2e test case (standalone 模式)
  * @author panyuqi
  * @description 测试流程：
  * 1. 打开 index.html
@@ -54,7 +54,7 @@ module.exports = {
       .assert.hidden('.tree-link')
       .assert.hidden('.main-image')
   },
-  'history back': function (browser) {
+  'router back': function (browser) {
     browser
       .back()
       // URL changed
@@ -68,7 +68,7 @@ module.exports = {
       .assert.visible('.tree-link')
       .assert.visible('.main-image')
   },
-  'history forward': function (browser) {
+  'router forward': function (browser) {
     browser
       .forward()
       // URL changed
