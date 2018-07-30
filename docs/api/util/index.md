@@ -15,7 +15,7 @@ window.MIP.util
 
 - type: `Object`
 
-  一些函数式的工具函数，参考[工具](./util/fn.md)
+  一些函数式的工具函数，参考[工具](./fn.md)
 
 ### dom
 
