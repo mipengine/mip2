@@ -146,7 +146,7 @@ describe('mip-carousel', function () {
       document.body.appendChild(div)
     })
 
-    it('should autoplay', function () {
+    it('should autoplay', function (done) {
       let wrapBox = div.querySelector('.mip-carousel-wrapper')
       setTimeout(() => {
         expect(wrapBox.style.transform).to.equal('translate3d(-200px, 0px, 0px)')
@@ -644,9 +644,8 @@ describe('mip-carousel', function () {
           id="carousel"
           autoplay
           defer="1000"
-          layout="responsive"
-          width="600"
-          height="400"
+          width="100"
+          height="80"
           indicator
           indicatorId="mip-carousel-example5"
           buttonController
@@ -678,7 +677,7 @@ describe('mip-carousel', function () {
 
     it('should start from index img', function () {
       wrapBox = div.querySelector('div.mip-carousel-wrapper')
-      expect(wrapBox.style.transform).to.equal('translate3d(-2400px, 0px, 0px)')
+      expect(wrapBox.style.transform).to.equal('translate3d(-200px, 0px, 0px)')
 
       indicatorDom = div.querySelector('#mip-carousel-example5')
       dotsDom = indicatorDom.querySelectorAll('.mip-carousel-indecator-item')
@@ -692,7 +691,7 @@ describe('mip-carousel', function () {
       switchBtn.dispatchEvent(eventClick)
 
       setTimeout(function () {
-        expect(wrapBox.style.transform).to.equal('translate3d(-3600px, 0px, 0px)')
+        expect(wrapBox.style.transform).to.equal('translate3d(-300px, 0px, 0px)')
         done()
       }, 330)
     })
