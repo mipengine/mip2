@@ -111,11 +111,8 @@ Fast - Respond quickly to user interactions with silky smooth animations and no 
     <a class="link" href="./test.html" mip-link>Go to Test</a>
     <a class="link" onclick="window.MIP.viewer.open('./tree.html', {isMipLink:true})">Go to Tree (viewer.open)</a>
     <a class="link" href="http://test.baidu.com:8080/examples/page/tree.html" mip-link>Go to Tree(Cross Origin)</a>
-    <a class="link page-forward" onclick="window.MIP.viewer.page.forward()">page.forward()</a>
-    <a class="link tree-link" href="./tree.html" mip-link>Go to Tree</a>
+    <a class="link" href="./tree.html" mip-link>Go to Tree</a>
     <a class="link" href="./data.html" mip-link>Go to Data</a>
-    <!-- <a class="link" href="./not-mip.html">Go to Not MIP</a> -->
-    <a class="link" href="https://m.baidu.com">Go to Baidu</a>
 
     <br><br>
     <p>
@@ -139,8 +136,6 @@ Fast - Respond quickly to user interactions with silky smooth animations and no 
 Reliable - Load instantly and never show the downasaur, even in uncertain network conditions.
 Fast - Respond quickly to user interactions with silky smooth animations and no janky scrolling.
     </p>
-
-    <mip-page-index></mip-page-index>
 
     <mip-shell>
         <script type="application/json">
@@ -202,11 +197,4 @@ Fast - Respond quickly to user interactions with silky smooth animations and no 
     </mip-shell>
 
     <script src="../../dist/mip.js"></script>
-    <script src="./components/mip-page-index.js"></script>
-    <script>
-        // iOS 下滚动页面居然会触发 resize 事件
-        // window.addEventListener('resize', () => {
-        //     window.alert(window.MIP.viewport.getHeight())
-        // })
-    </script>
 </body>
