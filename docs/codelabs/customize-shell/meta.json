@@ -2,19 +2,24 @@
 {
   "menu": [
     {
-        "key": "introduction"
+      "name": "概述",
+      "key": "introduction"
     },
     {
-        "key": "create-shell"
+      "name": "创建自定义 Shell",
+      "key": "create-shell"
     },
     {
-        "key": "add-function"
+      "name": "添加方法",
+      "key": "add-function"
     },
     {
-        "key": "use-shell"
+      "name": "使用自定义 Shell",
+      "key": "use-shell"
     },
     {
-        "key": "sample-code"
+      "name": "完整示例代码",
+      "key": "sample-code"
     }
   ],
   "info": {

@@ -534,7 +534,9 @@ class MipShell extends CustomElement {
         Array.prototype.slice.call(page.getElementsInRootPage()).forEach(el => el.parentNode && el.parentNode.removeChild(el))
       }
 
-      page.checkIfExceedsMaxPageNum()
+      if (!targetPage) {
+        page.checkIfExceedsMaxPageNum(targetPageId)
+      }
 
       let targetPageInfo = {
         pageId: targetPageId,

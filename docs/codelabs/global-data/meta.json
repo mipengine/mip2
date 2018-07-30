@@ -1,0 +1,26 @@
+{
+    "menu": [
+        {
+            "name": "概述",
+            "key": "introduction"
+        },
+        {
+            "name": "初始化全局数据",
+            "key": "initialize-data"
+        },
+        {
+            "name": "在其他页面使用和修改全局数据",
+            "key": "use-data-everywhere"
+        },
+        {
+            "name": "完整示例代码",
+            "key": "sample-code"
+        }
+    ],
+    "info": {
+        "name": "如何实现页面间数据共享",
+        "description": "本示例针对有独立页面间数据共享需求的开发者",
+        "tag": ["MIP 2.0", "mip-bind", "页面间数据共享"],
+        "duration": "20分钟"
+    }
+}

@@ -300,13 +300,22 @@ class Page {
    * if so, remove the first child
    */
   /* istanbul ignore next */
-  checkIfExceedsMaxPageNum () {
+  checkIfExceedsMaxPageNum (targetPageId) {
     if (this.children.length >= MAX_PAGE_NUM) {
-      // remove from children list
-      let firstChildPage = this.children.splice(0, 1)[0]
-      let firstIframe = getIFrame(firstChildPage.pageId)
-      if (firstIframe && firstIframe.parentNode) {
-        firstIframe.parentNode.removeChild(firstIframe)
+      let currentPage
+      for (let i = 0; i < this.children.length; i++) {
+        currentPage = this.children[i]
+        // find first removable page, which can't be target page or current page
+        if (currentPage.pageId !== targetPageId &&
+          currentPage.pageId !== this.currentPageId) {
+          const firstRemovableIframe = getIFrame(currentPage.pageId)
+          if (firstRemovableIframe && firstRemovableIframe.parentNode) {
+            firstRemovableIframe.parentNode.removeChild(firstRemovableIframe)
+          }
+          // remove from children list
+          this.children.splice(i, 1)
+          return
+        }
       }
     }
   }

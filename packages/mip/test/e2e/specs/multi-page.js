@@ -11,9 +11,15 @@
  * 6. 点击 <a mip-link href="./index.html"> 创建新 iframe
  */
 
+let INDEX_PAGE_URL
+let DATA_PAGE_URL
+let TREE_PAGE_URL
+
 module.exports = {
   'open index.html': function (browser) {
-    const INDEX_PAGE_URL = `${browser.globals.devServerURL}/examples/page/index.html`
+    INDEX_PAGE_URL = `${browser.globals.devServerURL}/test/e2e/cases/index.html`
+    DATA_PAGE_URL = `${browser.globals.devServerURL}/test/e2e/cases/data.html`
+    TREE_PAGE_URL = `${browser.globals.devServerURL}/test/e2e/cases/tree.html`
 
     browser
       // open index.html
@@ -24,12 +30,11 @@ module.exports = {
       .assert.containsText('.mip-shell-header-title', 'MIP')
   },
   'click a <mip-link> and goto tree.html': function (browser) {
-    const TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
-
     browser
       .waitForElementVisible('.tree-link', 3000)
       // open tree.html
       .waitForClick('.tree-link')
+      .pause(500)
 
       // URL changed
       .assert.urlEquals(TREE_PAGE_URL)
@@ -58,9 +63,6 @@ module.exports = {
       .assert.visible('.mip-shell-header-wrapper > .mip-shell-header')
   },
   'click a <mip-link> and goto data.html': function (browser) {
-    const TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
-    const DATA_PAGE_URL = `${browser.globals.devServerURL}/examples/page/data.html`
-
     browser
       .element('css selector', `iframe[data-page-id*="${TREE_PAGE_URL}"]`, function (frame) {
         // enter iframe[src='tree.html'] and check
@@ -89,13 +91,10 @@ module.exports = {
       .frame(null)
   },
   'go back to tree.html': function (browser) {
-    const TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
-    const DATA_PAGE_URL = `${browser.globals.devServerURL}/examples/page/data.html`
-
     browser
       .back()
       // URL changed
-      .assert.urlEquals(`${browser.globals.devServerURL}/examples/page/tree.html`)
+      .assert.urlEquals(TREE_PAGE_URL)
 
       .assert.elementCount('iframe', 2)
       .assert.visible(`iframe[data-page-id*="${TREE_PAGE_URL}"]`)
@@ -103,13 +102,9 @@ module.exports = {
       .assert.visible('.mip-shell-header-wrapper > .mip-shell-header')
   },
   'go back to index.html': function (browser) {
-    const INDEX_PAGE_URL = `${browser.globals.devServerURL}/examples/page/index.html`
-    const TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
-    const DATA_PAGE_URL = `${browser.globals.devServerURL}/examples/page/data.html`
-
     browser
       .waitForClick('.back-button')
-      .pause(2000)
+      .pause(500)
       // URL changed
       .assert.urlEquals(INDEX_PAGE_URL)
 
@@ -124,9 +119,6 @@ module.exports = {
       .assert.visible('.mip-shell-header-wrapper > .mip-shell-header')
   },
   'recreate an iframe contains tree.html': function (browser) {
-    const TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
-    const DATA_PAGE_URL = `${browser.globals.devServerURL}/examples/page/data.html`
-
     browser
       .waitForElementVisible('.tree-link', 3000)
       // open tree.html
@@ -151,10 +143,6 @@ module.exports = {
       .assert.hidden('.main-image')
   },
   'recreate an iframe contains index.html': function (browser) {
-    const INDEX_PAGE_URL = `${browser.globals.devServerURL}/examples/page/index.html`
-    const TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
-    const DATA_PAGE_URL = `${browser.globals.devServerURL}/examples/page/data.html`
-
     browser
       .element('css selector', `iframe[data-page-id*="${TREE_PAGE_URL}"]`, function (frame) {
         // enter iframe[src='tree.html'] and check
