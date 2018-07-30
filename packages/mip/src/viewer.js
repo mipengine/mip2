@@ -29,7 +29,7 @@ import fixedElement from './fixed-element'
  */
 const win = window
 
-const eventListenerOptions = supportsPassive ? {passive: true} : false
+const eventListenerOptions = supportsPassive ? {passive: true} : /* istanbul ignore next */ false
 
 /**
  * The mip viewer.Complement native viewer, and solve the page-level problems.
@@ -164,13 +164,14 @@ let viewer = {
    * Setup event-action of viewer. To handle `on="tap:xxx"`.
    */
   handlePreregisteredExtensions () {
-    window.MIP = window.MIP || {}
+    window.MIP = window.MIP || /* istanbul ignore next */ {}
     window.MIP.push = extensions => {
       if (extensions && typeof extensions.func === 'function') {
         extensions.func()
       }
     }
     let preregisteredExtensions = window.MIP.extensions
+    /* istanbul ignore next */
     if (preregisteredExtensions && preregisteredExtensions.length) {
       for (let i = 0; i < preregisteredExtensions.length; i++) {
         let curExtensionObj = preregisteredExtensions[i]
@@ -189,19 +190,22 @@ let viewer = {
    * @param {boolean} options.replace If true, use `history.replace` instead of `history.push`. Defaults to `false`
    * @param {Object} options.state Target page info
    */
-  /* istanbul ignore next */
   open (to, {isMipLink = true, replace = false, state} = {}) {
+    /* istanbul ignore next */
     if (!state) {
       state = {click: undefined, title: undefined, defaultTitle: undefined}
     }
 
     let hash = ''
+    /* istanbul ignore next */
     if (to.lastIndexOf('#') > -1) {
       hash = to.substring(to.lastIndexOf('#'))
     }
+    /* istanbul ignore next */
     let isHashInCurrentPage = hash && to.indexOf(window.location.origin + window.location.pathname) > -1
 
     // Invalid target, ignore it
+    /* istanbul ignore next */
     if (!to) {
       return
     }
@@ -209,6 +213,7 @@ let viewer = {
     // Jump in top window directly
     // 1. Cross origin and NOT in SF
     // 2. Not MIP page and not only hash change
+    /* istanbul ignore next */
     if ((this._isCrossOrigin(to) && window.MIP.standalone) ||
       (!isMipLink && !isHashInCurrentPage)) {
       window.top.location.href = to
@@ -216,6 +221,7 @@ let viewer = {
     }
 
     let completeUrl
+    /* istanbul ignore next */
     if (/^\/\//.test(to)) {
       completeUrl = location.protocol + to
     } else if (to.charAt(0) === '/' || to.charAt(0) === '.') {
@@ -228,6 +234,7 @@ let viewer = {
       url: parseCacheUrl(completeUrl),
       state
     }
+    /* istanbul ignore next */
     this.sendMessage(replace ? 'replaceState' : 'pushState', pushMessage)
 
     // Create target route
@@ -235,6 +242,7 @@ let viewer = {
       path: window.MIP.standalone ? to : makeCacheUrl(to)
     }
 
+    /* istanbul ignore if */
     if (isMipLink) {
       // Reload page even if it's already existed
       targetRoute.meta = {
@@ -247,6 +255,7 @@ let viewer = {
     }
 
     // Handle <a mip-link replace> & hash
+    /* istanbul ignore next */
     if (isHashInCurrentPage || replace) {
       this.page.replace(targetRoute, {allowTransition: true})
     } else {
@@ -263,6 +272,7 @@ let viewer = {
    * @param {Function} handler
    */
   _bindEventCallback (name, handler) {
+    /* istanbul ignore next */
     if (name === 'show' && this.isShow && typeof handler === 'function') {
       handler.call(this, this._showTiming)
     }
@@ -273,8 +283,7 @@ let viewer = {
    *
    * @private
    */
-  viewportScroll () {
-    /* istanbul ignore next */
+  viewportScroll /* istanbul ignore next */ () {
     let self = this
     let dist = 0
     let direct = 0
@@ -330,6 +339,7 @@ let viewer = {
      * if an <a> tag has `mip-link` or `data-type='mip'` let router handle it,
      * otherwise let TOP jump
      */
+    /* istanbul ignore next */
     event.delegate(document, 'a', 'click', function (event) {
       let $a = this
 
@@ -366,7 +376,7 @@ let viewer = {
    *
    * @return {Object} messageData
    */
-  _getMipLinkData () {
+  _getMipLinkData /* istanbul ignore next */ () {
     // compatible with MIP1
     let parentNode = this.parentNode
 
