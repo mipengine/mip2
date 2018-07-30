@@ -86,7 +86,10 @@
   },
   "devDependencies": {
     "ava": "^0.25.0",
-    "nyc": "^11.7.3"
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
+    "nyc": "^11.7.3",
+    "supertest": "^3.1.0"
   },
   "ava": {
     "files": [
