@@ -6,8 +6,10 @@
  * 2. 点击 <a mip-link href="./tree.html"> 创建 iframe
  * 3. 浏览器后退 回到 index.html
  * 4. 浏览器前进 回到 tree.html
- * 5. 在当前页面刷新
- * 6. 点击 返回按钮 创建 iframe 后退到 index.html
+ * 5. 调用page.back 回到 index.html
+ * 6. 调用page.forward 回到 tree.html
+ * 7. 在当前页面刷新
+ * 8. 点击 返回按钮 创建 iframe 后退到 index.html
  */
 
 let INDEX_PAGE_URL
@@ -15,8 +17,8 @@ let TREE_PAGE_URL
 
 module.exports = {
   'open first page': function (browser) {
-    INDEX_PAGE_URL = `${browser.globals.devServerURL}/examples/page/index.html`
-    TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
+    INDEX_PAGE_URL = `${browser.globals.devServerURL}/test/e2e/cases/index.html`
+    TREE_PAGE_URL = `${browser.globals.devServerURL}/test/e2e/cases/tree.html`
 
     browser
       // open index.html
@@ -61,7 +63,7 @@ module.exports = {
     browser
       .back()
       // URL changed
-      .assert.urlEquals(`${browser.globals.devServerURL}/examples/page/index.html`)
+      .assert.urlEquals(INDEX_PAGE_URL)
       .assert.containsText('.mip-shell-header-title', 'MIP')
 
       // hide iframe
@@ -72,7 +74,6 @@ module.exports = {
       .assert.visible('.main-image')
   },
   'history forward': function (browser) {
-    const TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
     browser
       .forward()
       // URL changed
@@ -108,7 +109,7 @@ module.exports = {
     browser
       .waitForElementVisible('.tree-link', 3000)
       // URL changed
-      .assert.urlEquals(`${browser.globals.devServerURL}/examples/page/index.html`)
+      .assert.urlEquals(INDEX_PAGE_URL)
       .assert.containsText('.mip-shell-header-title', 'MIP')
 
       // hide iframe
@@ -150,8 +151,6 @@ module.exports = {
       .assert.elementNotPresent('iframe')
   },
   'go back by clicking the `Back` button in mip header': function (browser) {
-    const INDEX_PAGE_URL = `${browser.globals.devServerURL}/examples/page/index.html`
-
     browser
       .waitForClick('.back-button')
       // URL changed
