@@ -92,15 +92,15 @@ $ mip2 sw
 
 ``` javascript
 module.exports = {
-    dev: {/*...*/},
-    serviceWorker: {
-        cacheId: 'mipuser',
-        skipWaiting: true,
-        clientsClaim: true,
-        runtimeCaching: [],
-        globPatterns: [],
-        globIgnores: []
-    }
+  dev: {/*...*/},
+  serviceWorker: {
+    cacheId: 'mipuser',
+    skipWaiting: true,
+    clientsClaim: true,
+    runtimeCaching: [],
+    globPatterns: [],
+    globIgnores: []
+  }
 }
 ```
 
