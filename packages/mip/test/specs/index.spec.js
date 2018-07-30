@@ -3,7 +3,7 @@
  * @author huanghuiquan(huanghuiquan@baidu.com)
  */
 
-/* globals describe, it, expect */
+/* globals describe, it, expect, sinon */
 
 import MIP from 'src/index'
 
