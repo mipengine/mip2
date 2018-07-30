@@ -7,9 +7,9 @@
 
 // import resources from '../resources'
 import CustomElement from '../custom-element'
-import Resources from '../resources'
+import resources from '../resources'
 import viewer from '../viewer'
-let prerenderElement = Resources.prerenderElement
+let prerenderElement = resources.prerenderElement
 
 let carouselParas = {
   boxClass: 'mip-carousel-container',
@@ -116,7 +116,7 @@ function changeIndicatorStyle (startDot, endDot, className) {
   addClass(endDot, className)
 }
 
-class MipCarousel extends CustomElement {
+class MIPCarousel extends CustomElement {
   /* eslint-disable fecs-max-statements */
   build () {
     let ele = this.element
@@ -454,4 +454,4 @@ class MipCarousel extends CustomElement {
   }
 }
 
-export default MipCarousel
+export default MIPCarousel

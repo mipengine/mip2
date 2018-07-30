@@ -269,7 +269,7 @@ class MipShell extends CustomElement {
     let pageMeta = this.currentPageMeta
     let {
       buttonGroup,
-      title,
+      title = '',
       logo,
       color = '#000000',
       borderColor,

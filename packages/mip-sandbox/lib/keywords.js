@@ -115,7 +115,9 @@ var SANDBOX_STRICT = {
       name: 'document',
       host: 'document',
       properties: [
-        'cookie'
+        'cookie',
+        // https://github.com/mipengine/mip2/issues/95
+        'domain'
       ]
     },
     {
@@ -197,6 +199,8 @@ var SANDBOX = {
       name: 'document',
       host: 'document',
       properties: [
+        // https://github.com/mipengine/mip2/issues/95
+        'domain',
         'head',
         'body',
         'title',

@@ -6,10 +6,10 @@ MIP 提供了`MIP.util.hash`对象，可以用来让 iframe 页面从上层页�
 
 ## 方法
 
-**get**
+### get
 
 - 描述：
-  
+
   以当前页面 URL 为 key，去获取 hash 的 value
 
 - 参数：
@@ -21,12 +21,12 @@ MIP 提供了`MIP.util.hash`对象，可以用来让 iframe 页面从上层页�
     对应 URL 存储的消息内容
 
 - 用法：
-  
+
   ```javascript
   MIP.util.hash.get(url)
   ```
 
-**bindAnchor**
+### bindAnchor
 
 - 描述：
 
@@ -37,19 +37,19 @@ MIP 提供了`MIP.util.hash`对象，可以用来让 iframe 页面从上层页�
   无
 
 - 返回值：
-  
+
   `undefined`
 
 - 用法：
-  
+
   ```javascript
   MIP.util.hash.bindAnchor()
   ```
 
-**scrollToAnchor**
+### scrollToAnchor
 
 - 描述：
-  
+
   跳转页面到锚点对应的位置
 
 - 参数：
@@ -57,7 +57,7 @@ MIP 提供了`MIP.util.hash`对象，可以用来让 iframe 页面从上层页�
   - {Object} 一个锚点对象
 
 - 返回值：
-  
+
   `undefined`
 
 - 用法：
@@ -66,14 +66,14 @@ MIP 提供了`MIP.util.hash`对象，可以用来让 iframe 页面从上层页�
   MIP.util.hash.scrollToAnchor(anchor)
   ```
 
-**refreshHashTree**
+### refreshHashTree
 
 - 描述：
 
   重新解析 hash 得到 MIP.util.hash 中的内容
 
 - 参数：
-  
+
   无
 
 - 返回值：

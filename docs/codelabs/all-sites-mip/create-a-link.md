@@ -35,18 +35,18 @@
     </style>
   </head>
   <body>
-      <h2>这是我的第二个 MIP 页面</h2>
+    <h2>这是我的第二个 MIP 页面</h2>
 
-      <mip-img src="https://www.mipengine.org/static/img/mip_logo_3b722d7.png" width="300" height="300" class="main-image"></mip-img>
+    <mip-img src="https://www.mipengine.org/static/img/mip_logo_3b722d7.png" width="300" height="300" class="main-image"></mip-img>
 
-      <p>MIP 为所有组件提供了一些常用的样式，避免开发者在编写组件时重复实现。这部分样式会在以后的迭代中逐步完善，敬请开发者们关注。</p>
+    <p>MIP 为所有组件提供了一些常用的样式，避免开发者在编写组件时重复实现。这部分样式会在以后的迭代中逐步完善，敬请开发者们关注。</p>
 
-      <h3>一像素边框</h3>
+    <h3>一像素边框</h3>
 
-      <p>针对移动端浏览器在高清屏幕显示中最常见的“一像素边框”问题，MIP 给出了通用的解决方案。开发者只需要引入固定的类名即可绘制出真实的一像素边框。</p>
+    <p>针对移动端浏览器在高清屏幕显示中最常见的“一像素边框”问题，MIP 给出了通用的解决方案。开发者只需要引入固定的类名即可绘制出真实的一像素边框。</p>
 
-      <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
-    </body>
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  </body>
 </html>
 ```
 

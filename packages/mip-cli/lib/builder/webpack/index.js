@@ -142,7 +142,8 @@ module.exports = class WebpackBuilder {
         let reporter = await validator.whitelist(this.dir)
         if (reporter.errors.length) {
           cli.error(reporter.errors[0].message)
-          process.exit(1)
+          // 暂时把白名单校验过程改成非中断式的
+          // process.exit(1)
         }
       })
     })

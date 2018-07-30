@@ -10,7 +10,7 @@
 
 下面将介绍向 SuperFrame 发送以及从 SuperFrame 接受消息的两个方法。
 
-**sendMessage**
+### sendMessage
 - 参数：
   - {string} eventName 信息名称
   - {Object} data 信息内容
@@ -23,7 +23,7 @@
   MIP.viewer.sendMessage('mipMessage', {message: 'Hello SF! I am MIP'})
   ```
 
-**onMessage**
+### onMessage
 - 参数：
   - {string} eventName 信息名称
   - {Function} callback 收到特定信息后的回调函数。仅有一个参数：消息的具体信息。
@@ -63,7 +63,7 @@
 
 ### 页面属性
 
-**standalone**: `boolean`
+#### standalone: `boolean`
 
 MIP 页面的运行环境有两种：独立站点和百度搜索结果页。页面通过这个标志变量可以进行判断。
 
@@ -82,7 +82,7 @@ MIP 页面的运行环境有两种：独立站点和百度搜索结果页。页�
   }
   ```
 
-**isRootPage**: `boolean`
+#### isRootPage: `boolean`
 
 我们把打开的第一个页面称作“根页面”，后续打开新页面时，会在这个“根页面”中创建新的 iframe。
 由于运行环境不同，我们需要一个标志变量来区分“根页面”和后续页面。
@@ -100,7 +100,7 @@ MIP 页面的运行环境有两种：独立站点和百度搜索结果页。页�
   }
   ```
 
-**isCrossOrigin**: `boolean`
+#### isCrossOrigin: `boolean`
 
 我们支持打开一个跨域的 MIP 页面。
 如果页面想知道当前是否处于跨域状态，可以访问这个变量。
@@ -123,7 +123,7 @@ MIP 页面的运行环境有两种：独立站点和百度搜索结果页。页�
 对于历史记录的操作需要路由来完成。
 我们通过 page 暴露了两个快速操作路由的方法供开发者使用。
 
-**back**
+#### back
 - 参数：无
 - 返回值：无
 - 用法：
@@ -133,7 +133,7 @@ MIP 页面的运行环境有两种：独立站点和百度搜索结果页。页�
   MIP.viewer.page.back()
   ```
 
-**forward**
+#### forward
 - 参数：无
 - 返回值：无
 - 用法：
@@ -147,7 +147,7 @@ MIP 页面的运行环境有两种：独立站点和百度搜索结果页。页�
 
 在一些场景下，滚动到某个锚点并且具有平滑的效果是很有用的。
 
-**scrollToHash**
+#### scrollToHash
 - 参数：锚点字符串
 - 返回值：无
 - 用法：
@@ -185,7 +185,7 @@ mounted() {
 从发送的形式上看，可以分成向指定页面发送消息和向全部页面广播两种。
 而从发送消息的实际内容上看，开发者可以指定自定义事件 CustomEvent 的名称和附带数据，MIP 会确保在目标页面中触发这个自定义事件。作为接收者，只需要监听这个自定义事件即可。
 
-**emitCustomEvent**
+#### emitCustomEvent
 - 参数：
   - {Window} targetWindow 目标页面 window
   - {boolean} isCrossOrigin 是否跨域
@@ -215,7 +215,7 @@ mounted() {
   })
   ```
 
-**broadcastCustomEvent**
+#### broadcastCustomEvent
 - 参数：
   - {Object} event 事件对象
     - {string} event.name 自定义事件名称
@@ -246,7 +246,7 @@ mounted() {
 
 ## isIframed
 
-**isIframed**: `boolean`
+### isIframed: `boolean`
 
 - 用法：
 
@@ -294,7 +294,7 @@ mounted() {
 
 在组件中使用 `<mip-fixed>` 时，一定要在 `mounted()` 生命周期中调用 `fixedElement.init()` 触发移动到 `<body>` 的操作。后续我们会将 `<mip-fixed>` 改造成真正的自定义组件，免去开发者手动调用的操作。
 
-**fixedElement.init**
+#### fixedElement.init
 - 参数：无
 - 返回值：无
 - 用法：

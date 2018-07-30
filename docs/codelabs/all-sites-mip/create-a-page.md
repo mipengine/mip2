@@ -71,7 +71,7 @@ __注意__： `<style mip-custom>` 整个页面只能使用一次，不要遗漏
     p {
       margin: 10px;
     }
-    </style>
+  </style>
 </head>
 ```
 

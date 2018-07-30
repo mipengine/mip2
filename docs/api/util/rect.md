@@ -12,7 +12,7 @@ window.MIP.util.rect
 
 ### 方法
 
-**getElementRect**
+### getElementRect
 
 - 参数
   - {HTMLElement} element
@@ -28,7 +28,7 @@ window.MIP.util.rect
     with: XX,
     height: XX,
     right: XX,
-    bottom: XX 
+    bottom: XX
   }
 
 - 用法：
@@ -37,7 +37,7 @@ window.MIP.util.rect
   MIP.util.rect.getElementRect(element)
   ```
 
-**getElementOffset**
+### getElementOffset
 
 - 参数
   - {HTMLElement} element
@@ -59,8 +59,8 @@ window.MIP.util.rect
   ```javascript
   MIP.util.rect.getElementOffset(element)
   ```
- 
- **scrollingElement**
+
+### scrollingElement
 
 - 参数
 
@@ -71,17 +71,17 @@ window.MIP.util.rect
   {HTMLElement}
 
 - 用法：
-  
+
   获取滚动元素
 
   ```javascript
   MIP.util.rect.scrollingElement()
   ```
 
-**getScrollTop**
+### getScrollTop
 
 - 参数
-  
+
   无
 
 - 返回值
@@ -94,11 +94,11 @@ window.MIP.util.rect
   MIP.util.rect.getScrollTop()
   ```
 
-**getScrollHeight**
+### getScrollHeight
 
 
 - 参数
-  
+
   无
 
 - 返回值
@@ -110,11 +110,10 @@ window.MIP.util.rect
   ```javascript
   MIP.util.rect.getScrollHeight()
   ```
-
-**getScrollWidth**
+### getScrollWidth
 
 - 参数
-  
+
   无
 
 - 返回值
@@ -128,7 +127,7 @@ window.MIP.util.rect
   ```
 
 
-**setScrollTop**
+### setScrollTop
 
 - 参数
   - {number} top  设置滚动元素的 top 值
@@ -144,7 +143,7 @@ window.MIP.util.rect
   ```
 
 
-**overlapping**
+### overlapping
 
 - 参数
   - {Object} rect1 rect1
@@ -183,5 +182,5 @@ window.MIP.util.rect
 
   MIP.util.rect.overlapping(rect1, rect3) // 返回 false
   ```
- 
- 
+
+
