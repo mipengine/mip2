@@ -1,30 +1,30 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: 反馈 Bug 帮助我们改进
 
 ---
 
 **BUG 描述**
-A clear and concise description of what the bug is.
+清晰和准确的描述 Bug 是什么
 
 **复现步骤**
-Steps to reproduce the behavior:
+重新复现 Bug 的步骤
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
 
 **期望结果**
-A clear and concise description of what you expected to happen.
+清晰和准确的描述你期望的结果
 
 **截图**
-If applicable, add screenshots to help explain your problem.
+如果合适，添加问题相关的截图
 
 **环境及版本信息:**
  - OS: [e.g. iOS]
  - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
- - mip-cli Version
+ - 浏览器 Version [e.g. 64]
+ - mip-cli 版本
 
 **其他信息**
-Add any other context about the problem here.
+其他补充信息
