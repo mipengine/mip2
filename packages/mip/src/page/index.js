@@ -24,7 +24,7 @@ import {
   MESSAGE_BROADCAST_EVENT
 } from './const/index'
 
-import {customEmit} from '../vue-custom-element/utils/custom-event'
+import {customEmit} from '../util/custom-event'
 import viewport from '../viewport'
 import '../styles/mip.less'
 

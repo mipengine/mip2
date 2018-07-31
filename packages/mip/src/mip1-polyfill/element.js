@@ -8,9 +8,8 @@ import layout from '../layout'
 import performance from '../performance'
 import resources from '../resources'
 import customElementsStore from '../custom-element-store'
-import EventAction from '../util/event-action'
 
-/* globals HTMLElement, CustomEvent */
+/* globals HTMLElement */
 
 /**
  * Save the base element prototype to avoid duplicate initialization.
@@ -153,9 +152,6 @@ function createBaseElementProto () {
    * This will be executed only once.
    */
   proto.build = function () {
-    let eventAction = new EventAction()
-    let readyEvent = new CustomEvent('ready')
-
     if (this.isBuilt()) {
       return
     }
@@ -163,8 +159,6 @@ function createBaseElementProto () {
     try {
       this.customElement.build()
       this._built = true
-      this.addEventListener('ready', event => eventAction.execute('ready', this, event))
-      this.dispatchEvent(readyEvent)
     } catch (e) {
       console.warn('build error:', e)
     }

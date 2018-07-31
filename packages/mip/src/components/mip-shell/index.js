@@ -48,7 +48,7 @@ import {
   MESSAGE_PAGE_RESIZE
 } from '../../page/const/index'
 import viewport from '../../viewport'
-import {customEmit} from '../../vue-custom-element/utils/custom-event'
+import {customEmit} from '../../util/custom-event'
 
 let viewer = null
 let page = null
