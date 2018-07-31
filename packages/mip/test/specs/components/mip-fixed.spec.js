@@ -161,6 +161,20 @@ describe('mip-fixed', function () {
       element && element.parentNode && element.parentNode.removeChild(element)
     })
 
+    it('should not move <mip-fixed> to <body> if `still` is set', function () {
+      changeUa('Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1')
+      expect(platform.isIos()).to.be.true
+
+      fixedElement.init()
+
+      element.setAttribute('still', '')
+      element.setAttribute('type', 'left')
+      element.setAttribute('bottom', '50px')
+      document.body.appendChild(element)
+
+      expect(element.parentNode).to.be.not.equal(fixedElement._fixedLayer)
+    })
+
     it('should move <mip-fixed> to <body>', function () {
       changeUa('Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1')
       expect(platform.isIos()).to.be.true

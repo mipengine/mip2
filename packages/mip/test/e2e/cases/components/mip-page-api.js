@@ -1,14 +1,11 @@
 /* global MIP */
-MIP.registerVueCustomElement('mip-page-index', {
+MIP.registerVueCustomElement('mip-page-api', {
   prerenderAllowed () {
     return true
   },
   template: `
     <div>
       <h1 class="message-receiver">{{message}}</h1>
-      <mip-fixed type="bottom">
-        <div @click="log">Go to Top</div>
-      </mip-fixed>
     </div>
   `,
   data () {
