@@ -143,6 +143,11 @@ class MIPCarousel extends CustomElement {
     // 翻页按钮
     let indicatorId = ele.getAttribute('indicatorId')
 
+    // 跳转索引
+    let index = ele.getAttribute('index')
+
+    let indexNum = parseInt(index) || 1
+
     // Gesture锁
     let slideLock = {
       stop: 1
@@ -160,7 +165,8 @@ class MIPCarousel extends CustomElement {
     let curGestureClientx = -eleWidth
 
     // 当前图片显示索引
-    let imgIndex = 1
+    // let imgIndex = 1
+    let imgIndex = indexNum
 
     // 定时器时间hold
     let moveInterval
@@ -211,7 +217,9 @@ class MIPCarousel extends CustomElement {
     ele.appendChild(carouselBox)
 
     // 初始渲染时应该改变位置到第一张图
-    let initPostion = -eleWidth
+    // let initPostion = -eleWidth
+    // 初始渲染时如果有跳转索引就改变位置到指定图片
+    let initPostion = index ? -eleWidth * indexNum : -eleWidth
     wrapBox.style.webkitTransform = 'translate3d(' + initPostion + 'px, 0, 0)'
 
     // 绑定wrapBox的手势事件
@@ -428,6 +436,15 @@ class MIPCarousel extends CustomElement {
       dotItems = indicDom.children
       let dotLen = dotItems.length
 
+      if (index) {
+        // 清除DOM中预先设置的mip-carousel-activeitem类
+        dotItems = Array.prototype.slice.call(dotItems)
+        dotItems.forEach(dotItem => {
+          removeClass(dotItem, carouselParas.activeitem)
+        })
+        addClass(dotItems[imgIndex - 1], carouselParas.activeitem)
+      }
+
       if (dotLen === childNum - 2) {
         for (let i = 0; i < dotLen; i++) {
           dotItems[i].count = i
@@ -451,6 +468,15 @@ class MIPCarousel extends CustomElement {
       eleWidth = ele.clientWidth
       move(wrapBox, imgIndex, imgIndex, '0ms')
     }, false)
+
+    // 跳转索引
+    this.addEventAction('go', function (event, num) {
+      clearInterval(moveInterval)
+      move(wrapBox, imgIndex, parseInt(num))
+      if (isAutoPlay) {
+        autoPlay()
+      }
+    })
   }
 }
 
