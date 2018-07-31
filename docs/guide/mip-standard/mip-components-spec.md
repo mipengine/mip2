@@ -1,19 +1,19 @@
 # MIP 2.0 组件开发规范
 
-    在本文档中，使用的关键字会以英文表示：`"MUST"`, `"MUST NOT"`, `"REQUIRED"`, `"SHALL"`, `"SHALL NOT"`, `"SHOULD"`, `"SHOULD NOT"`, `"RECOMMENDED"`, `"MAY"`, 和 `"OPTIONAL"`被定义在 rfc2119 中。
+在本文档中，使用的关键字会以英文表示：`"MUST"`, `"MUST NOT"`, `"REQUIRED"`, `"SHALL"`, `"SHALL NOT"`, `"SHOULD"`, `"SHOULD NOT"`, `"RECOMMENDED"`, `"MAY"`, 和 `"OPTIONAL"`被定义在 rfc2119 中。
 
 ## 源文件仓库
 
-    MIP 扩展组件的中央仓库是 https://github.com/mipengine/mip2-extensions 。中央仓库 master 分支下的代码永远是稳定的。根目录下，每个 mip- 前缀的目录为一个扩展组件。
+MIP 扩展组件的中央仓库是 https://github.com/mipengine/mip2-extensions 。中央仓库 master 分支下的代码永远是稳定的。根目录下，每个 mip- 前缀的目录为一个扩展组件。
 
 ## 开发方式
 
-    MIP 扩展组件开发采用 [Forking工作流](https://github.com/oldratlee/translations/blob/master/git-workflows-and-tutorials/workflow-forking.md) 的方式。
+MIP 扩展组件开发采用 [Forking工作流](https://github.com/oldratlee/translations/blob/master/git-workflows-and-tutorials/workflow-forking.md) 的方式。
 
-    - 开发者需要 fork MIP 扩展组件仓库
-    - 开发者在自己的仓库下开发
-    - 开发完成后通过 pull request 提交修改，由 MIP 开发小组审核与合并
-    - 不允许在主仓库 https://github.com/mipengine/mip2-extensions 下开发。
+- 开发者需要 fork MIP 扩展组件仓库
+- 开发者在自己的仓库下开发
+- 开发完成后通过 pull request 提交修改，由 MIP 开发小组审核与合并
+- 不允许在主仓库 https://github.com/mipengine/mip2-extensions 下开发。
 
 
 ## 审核标准
