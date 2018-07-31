@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
+about: 提出你对 MIP 的建议和改进措施
 
 ---
 
