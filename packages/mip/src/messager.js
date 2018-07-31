@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 /**
  * @file   提供 iframe-shell/messenger 模块。
  * @author oott123
@@ -205,6 +206,7 @@ class Messenger {
       let requestData = {
         name: messenger.name,
         event: eventName,
+        sender: 'mip/2',
         data
       }
       let sessionId = getSessionId()

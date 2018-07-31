@@ -22,7 +22,8 @@ let videoAttributes = [
   'muted',
   'preload',
   'poster',
-  'width'
+  'width',
+  'currenttime'
 ]
 
 /**
@@ -71,11 +72,18 @@ class MipVideo extends CustomElement {
     // page ishttps(else)   + video is http     = renderInView（not mip）
     // page ishttp          + random video      = renderInView
     // page not iframe || video src is https ||  video http + page http
-    if (!windowInIframe || videoProHttps || (windowInIframe && !videoProHttps && !windowProHttps)) {
+    /* istanbul ignore else */
+    if (!windowInIframe || videoProHttps ||
+    /* istanbul ignore next */ (windowInIframe && !videoProHttps && !windowProHttps)
+    ) {
       this.videoElement = this.renderInView()
     } else {
       this.videoElement = this.renderPlayElsewhere()
     }
+
+    this.addEventAction('seekTo', (e, currentTime) => {
+      this.videoElement.currentTime = currentTime
+    })
 
     this.applyFillContent(this.videoElement, true)
   }
@@ -88,7 +96,7 @@ class MipVideo extends CustomElement {
         videoEl.setAttribute(k, this.attributes[k])
       }
     }
-
+    let currentTime = this.attributes['currenttime'] || 0
     videoEl.setAttribute('playsinline', 'playsinline')
     videoEl.setAttribute('webkit-playsinline', 'webkit-playsinline')
     videoEl.setAttribute('t7-video-player-type', 'inline')
@@ -99,11 +107,15 @@ class MipVideo extends CustomElement {
       }
       videoEl.appendChild(node)
     })
+    // 如果设置了播放时间点，则直接跳转至播放时间的位置开始播放
+    videoEl.addEventListener('loadedmetadata', function () {
+      this.currentTime = currentTime
+    })
     this.element.appendChild(videoEl)
     return videoEl
   }
 
-  // Render the `<a>` element with poster and play btn, and append to `this.element`
+  // Render the `<div>` element with poster and play btn, and append to `this.element`
   renderPlayElsewhere () {
     let videoEl = document.createElement('div')
     let urlSrc
@@ -135,6 +147,7 @@ class MipVideo extends CustomElement {
     }
 
     function sendVideoMessage () {
+      /* istanbul ignore if */
       if (windowInIframe) {
         // mip_video_jump is written outside iframe
         viewer.sendMessage('mip_video_jump', {

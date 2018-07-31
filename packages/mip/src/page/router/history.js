@@ -1,6 +1,7 @@
 import {START, normalizeLocation} from '../util/route'
 import {pushState, replaceState} from '../util/push-state'
 import {getLocation} from '../util/path'
+import platform from '../../util/platform'
 
 export default class HTML5History {
   constructor (router) {
@@ -17,6 +18,7 @@ export default class HTML5History {
       // Avoiding first `popstate` event dispatched in some browsers but first
       // history route not updated since async guard at the same time.
       const location = getLocation()
+      /* istanbul ignore next */
       if (this.current === START && location === initLocation) {
         return
       }
@@ -35,12 +37,14 @@ export default class HTML5History {
 
   push (location) {
     this.transitionTo(location, route => {
+      /* istanbul ignore next */
       pushState(route.fullPath)
     })
   }
 
   replace (location) {
     this.transitionTo(location, route => {
+      /* istanbul ignore next */
       replaceState(route.fullPath)
     })
   }
@@ -51,8 +55,14 @@ export default class HTML5History {
 
   transitionTo (location, onComplete) {
     const route = normalizeLocation(location, this.current)
-    this.updateRoute(route)
-    onComplete && onComplete(route)
+    /* istanbul ignore next */
+    if (platform.isAndroid() && (platform.isQQ() || platform.isQQApp())) {
+      onComplete && onComplete(route)
+      this.updateRoute(route)
+    } else {
+      this.updateRoute(route)
+      onComplete && onComplete(route)
+    }
   }
 
   updateRoute (route) {

@@ -36,12 +36,7 @@ module.exports = async function (source, map, meta) {
     // 由于在初始渲染的时候子组件先渲染父组件后渲染可能会导致数据丢失，因此需要先注册父组件再注册子组件
     return `
     import ${name} from './${basename}'
-    setTimeout(() => {
-      MIP[typeof ${name} === 'function' ? 'registerCustomElement' : 'registerVueCustomElement'](
-        '${basename}',
-        ${name}
-      )
-    })
+    MIP[typeof ${name} === 'function' ? 'registerCustomElement' : 'registerVueCustomElement']('${basename}', ${name})
     `
   }).join('\n')
 

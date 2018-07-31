@@ -139,9 +139,6 @@ function pick (obj) {
  * @return {boolean} whehter varible is string
  */
 function isString (string) {
-  if (!string) {
-    return false
-  }
   return Object.prototype.toString.call(string) === '[object String]'
 }
 
@@ -181,7 +178,7 @@ function hasTouch () {
  */
 function isCacheUrl (pageUrl) {
   return /mipcache.bdstatic.com/.test(pageUrl) ||
-    /^(\/\/|http:\/\/|https:\/\/)[A-Za-z0-9]{1,}-.*.mipcdn.com\/c\//.test(pageUrl)
+    /^(\/\/|http:\/\/|https:\/\/)([A-Za-z0-9]{1,}-?){1,}.mipcdn.com\/(stati)?c\//.test(pageUrl)
 }
 
 export default {

@@ -29,13 +29,6 @@ const commonStyleLoaders = [
 
 module.exports = [
   {
-    test: /\.styl(us)?$/,
-    use: [
-      ...commonStyleLoaders,
-      resolveModule('stylus-loader')
-    ]
-  },
-  {
     test: /\.less$/,
     use: [
       ...commonStyleLoaders,

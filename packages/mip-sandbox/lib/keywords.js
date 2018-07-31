@@ -47,7 +47,11 @@ var ORIGINAL = [
   'Uint32Array',
   'Uint8Array',
   'Uint8ClampedArray',
+  // 1.0.17 新增 WebSocket
+  'WebSocket',
   'WritableStream',
+  // issue https://github.com/mipengine/mip2/issues/62
+  'crypto',
   'clearInterval',
   'clearTimeout',
   'console',
@@ -85,7 +89,9 @@ var ORIGINAL = [
   'undefined',
   'unescape',
   // mip1 polyfill
-  'fetchJsonp'
+  'fetchJsonp',
+  // mip-data ready status
+  'mipDataPromises'
 ]
 
 var RESERVED = [
@@ -94,7 +100,9 @@ var RESERVED = [
   'module',
   'exports',
   'define',
-  'import'
+  'import',
+  // process.env.NODE_ENV
+  'process'
 ]
 
 var SANDBOX_STRICT = {
@@ -107,7 +115,9 @@ var SANDBOX_STRICT = {
       name: 'document',
       host: 'document',
       properties: [
-        'cookie'
+        'cookie',
+        // https://github.com/mipengine/mip2/issues/95
+        'domain'
       ]
     },
     {
@@ -133,6 +143,7 @@ var SANDBOX_STRICT = {
       properties: [
         'watch',
         'setData',
+        'getData',
         'viewport',
         'util',
         'sandbox',
@@ -188,6 +199,8 @@ var SANDBOX = {
       name: 'document',
       host: 'document',
       properties: [
+        // https://github.com/mipengine/mip2/issues/95
+        'domain',
         'head',
         'body',
         'title',

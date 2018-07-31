@@ -1,0 +1,436 @@
+<!--htmlcs-disable-->
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <title>mip-carousel</title>
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <!-- <link rel="stylesheet" href="../../dist/mip.css"></link> -->
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+
+<h1>mip-carousel</h1>
+
+<h2>responsive 布局</h2>
+
+<pre class="code">&lt;mip-carousel
+  layout="responsive"
+  width="600"
+  height="400"&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_01.jpg"&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_02.jpg"&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_03.jpg"&gt;
+  &lt;/mip-img&gt;
+&lt;/mip-carousel&gt;</pre>
+
+<mip-carousel
+  layout="responsive"
+  width="600"
+  height="400">
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_01.jpg">
+  </mip-img>
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_02.jpg">
+  </mip-img>
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_03.jpg">
+  </mip-img>
+</mip-carousel>
+
+
+
+
+<h2>自动轮播</h2>
+
+<pre class="code">&lt;mip-carousel
+  autoplay
+  layout="responsive"
+  width="600"
+  height="400"&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_01.jpg"&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_02.jpg"&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_03.jpg"&gt;
+  &lt;/mip-img&gt;
+&lt;/mip-carousel&gt;</pre>
+
+<mip-carousel
+  autoplay
+  layout="responsive"
+  width="600"
+  height="400">
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_01.jpg">
+  </mip-img>
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_02.jpg">
+  </mip-img>
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_03.jpg">
+  </mip-img>
+</mip-carousel>
+
+
+
+<h2>设置轮播时间间隔</h2>
+
+<pre class="code">&lt;mip-carousel
+  autoplay
+  defer="1000"
+  layout="responsive"
+  width="600"
+  height="400"&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_01.jpg"&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_02.jpg"&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_03.jpg"&gt;
+  &lt;/mip-img&gt;
+&lt;/mip-carousel&gt;</pre>
+
+<mip-carousel
+  autoplay
+  defer="1000"
+  layout="responsive"
+  width="600"
+  height="400">
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_01.jpg">
+  </mip-img>
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_02.jpg">
+  </mip-img>
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_03.jpg">
+  </mip-img>
+</mip-carousel>
+
+
+<h2>加数字指示器</h2>
+
+<pre class="code">&lt;mip-carousel
+  autoplay
+  defer="1000"
+  layout="responsive"
+  width="600"
+  height="400"
+  indicator
+  &gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_01.jpg"&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_02.jpg"&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_03.jpg"&gt;
+  &lt;/mip-img&gt;
+&lt;/mip-carousel&gt;</pre>
+
+<mip-carousel
+  autoplay
+  defer="1000"
+  layout="responsive"
+  width="600"
+  height="400"
+  indicator
+  >
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_01.jpg">
+  </mip-img>
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_02.jpg">
+  </mip-img>
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_03.jpg">
+  </mip-img>
+</mip-carousel>
+
+
+
+<h2>加下方指示器</h2>
+
+<pre class="code">&lt;mip-carousel
+  autoplay
+  defer="1000"
+  layout="responsive"
+  width="600"
+  height="400"
+  indicator
+  indicatorId="mip-carousel-example"
+  &gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_01.jpg"&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_02.jpg"&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_03.jpg"&gt;
+  &lt;/mip-img&gt;
+&lt;/mip-carousel&gt;
+&lt;div class="mip-carousel-indicator-wrapper"&gt;
+  &lt;div class="mip-carousel-indicatorDot" id="mip-carousel-example"&gt;
+    &lt;div class="mip-carousel-activeitem mip-carousel-indecator-item"&gt;&lt;/div&gt;
+    &lt;div class="mip-carousel-indecator-item"&gt;&lt;/div&gt;
+    &lt;div class="mip-carousel-indecator-item"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+
+<mip-carousel
+  autoplay
+  defer="1000"
+  layout="responsive"
+  width="600"
+  height="400"
+  indicator
+  indicatorId="mip-carousel-example"
+  >
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_01.jpg">
+  </mip-img>
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_02.jpg">
+  </mip-img>
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_03.jpg">
+  </mip-img>
+</mip-carousel>
+<div class="mip-carousel-indicator-wrapper">
+  <div class="mip-carousel-indicatorDot" id="mip-carousel-example">
+    <div class="mip-carousel-activeitem mip-carousel-indecator-item"></div>
+    <div class="mip-carousel-indecator-item"></div>
+    <div class="mip-carousel-indecator-item"></div>
+  </div>
+</div>
+
+
+<h2>加翻页按钮</h2>
+
+<pre class="code">&lt;mip-carousel
+  defer="1000"
+  layout="responsive"
+  width="600"
+  height="400"
+  indicator
+  buttonController
+  &gt;
+   &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_01.jpg"&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_02.jpg"&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_03.jpg"&gt;
+  &lt;/mip-img&gt;
+&lt;/mip-carousel&gt;</pre>
+
+<mip-carousel
+  defer="1000"
+  layout="responsive"
+  width="600"
+  height="400"
+  indicator
+  buttonController
+  >
+   <mip-img
+    src="https://www.mipengine.org/static/img/sample_01.jpg">
+  </mip-img>
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_02.jpg">
+  </mip-img>
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_03.jpg">
+  </mip-img>
+</mip-carousel>
+
+
+
+<h2>加副标题</h2>
+
+<pre class="code">&lt;mip-carousel
+  autoplay
+  defer="1000"
+  layout="responsive"
+  width="600"
+  height="400"
+  indicator
+  buttonController
+  &gt;
+  &lt;a target="_blank" href="http://wenda.tianya.cn/m/question/1almfj0foas94gc7vtoq6ejbfbmdk3e78ehaa"&gt;
+    &lt;mip-img
+      src="https://www.mipengine.org/static/img/sample_01.jpg" layout="responsive"
+    width="600"
+    height="400"&gt;
+    &lt;/mip-img&gt;
+    &lt;div class="mip-carousle-subtitle"&gt;这里是title2&lt;/div&gt;
+  &lt;/a&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_02.jpg"&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_03.jpg"&gt;
+  &lt;/mip-img&gt;
+&lt;/mip-carousel&gt;</pre>
+
+<mip-carousel
+  autoplay
+  defer="1000"
+  layout="responsive"
+  width="600"
+  height="400"
+  indicator
+  buttonController
+  >
+  <a target="_blank" href="http://wenda.tianya.cn/m/question/1almfj0foas94gc7vtoq6ejbfbmdk3e78ehaa">
+    <mip-img
+      src="https://www.mipengine.org/static/img/sample_01.jpg" layout="responsive"
+    width="600"
+    height="400">
+    </mip-img>
+    <div class="mip-carousle-subtitle">这里是title2</div>
+  </a>
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_02.jpg">
+  </mip-img>
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_03.jpg">
+  </mip-img>
+</mip-carousel>
+
+
+
+<h2>点击图片跳转</h2>
+
+<p class="desc">非 &lt;mip-carousel&gt; 直接子级元素的 &lt;mip-img&gt; 节点需要设置 width 和 height 属性。</p>
+
+<pre class="code">&lt;mip-carousel
+  autoplay
+  defer="1000"
+  layout="responsive"
+  width="600"
+  height="400"&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_01.jpg"&gt;
+  &lt;/mip-img&gt;
+  &lt;a target="_blank" href="http://wenda.tianya.cn/m/question/1almfj0foas94gc7vtoq6ejbfbmdk3e78ehaa"&gt;
+    &lt;mip-img
+      src="https://www.mipengine.org/static/img/sample_02.jpg" width="600" height="400"&gt;
+    &lt;/mip-img&gt;
+  &lt;/a&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_03.jpg"&gt;
+  &lt;/mip-img&gt;
+&lt;/mip-carousel&gt;</pre>
+
+<mip-carousel
+  autoplay
+  defer="1000"
+  layout="responsive"
+  width="600"
+  height="400">
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_01.jpg">
+  </mip-img>
+  <a target="_blank" href="http://wenda.tianya.cn/m/question/1almfj0foas94gc7vtoq6ejbfbmdk3e78ehaa">
+    <mip-img
+      src="https://www.mipengine.org/static/img/sample_02.jpg" width="600" height="400">
+    </mip-img>
+  </a>
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_03.jpg">
+  </mip-img>
+</mip-carousel>
+
+
+<h2>跳转到指定图片</h2>
+
+<pre class="code">&lt;mip-carousel
+  id=&quot;carousel&quot;
+  autoplay
+  defer=&quot;3000&quot;
+  layout=&quot;responsive&quot;
+  width=&quot;600&quot;
+  height=&quot;400&quot;
+  indicator
+  indicatorId=&quot;mip-carousel-example2&quot;
+  buttonController
+  index=&quot;3&quot;
+&gt;
+  &lt;mip-img
+    src=&quot;https://www.mipengine.org/static/img/sample_01.jpg&quot;&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+    src=&quot;https://www.mipengine.org/static/img/sample_02.jpg&quot;&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+    src=&quot;https://www.mipengine.org/static/img/sample_03.jpg&quot;&gt;
+  &lt;/mip-img&gt;
+&lt;/mip-carousel&gt;
+&lt;div class=&quot;mip-carousel-indicator-wrapper&quot;&gt;
+  &lt;div class=&quot;mip-carousel-indicatorDot&quot; id=&quot;mip-carousel-example2&quot;&gt;
+    &lt;div class=&quot;mip-carousel-activeitem mip-carousel-indecator-item&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;mip-carousel-indecator-item&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;mip-carousel-indecator-item&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div on=&quot;tap:carousel.go(3)&quot;&gt;
+  &lt;p&gt;跳转到第&lt;span&gt;3&lt;/span&gt;页&lt;/p&gt;
+&lt;/div&gt;</pre>
+
+<mip-carousel
+  id="carousel"
+  autoplay
+  defer="3000"
+  layout="responsive"
+  width="600"
+  height="400"
+  indicator
+  indicatorId="mip-carousel-example2"
+  buttonController
+  index="3"
+>
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_01.jpg">
+  </mip-img>
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_02.jpg">
+  </mip-img>
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_03.jpg">
+  </mip-img>
+</mip-carousel>
+<div class="mip-carousel-indicator-wrapper">
+  <div class="mip-carousel-indicatorDot" id="mip-carousel-example2">
+    <div class="mip-carousel-activeitem mip-carousel-indecator-item"></div>
+    <div class="mip-carousel-indecator-item"></div>
+    <div class="mip-carousel-indecator-item"></div>
+  </div>
+</div>
+<div class="mip-carousel-switchBtn" on="tap:carousel.go(3)">
+  <p>跳转到第<span>3</span>页</p>
+</div>
+
+
+</body>
+<script src="../../dist/mip.js"></script>
+</html>

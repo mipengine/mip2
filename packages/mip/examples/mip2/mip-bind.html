@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP Bind</title>
+  <link rel="canonical">
+  <link rel="stylesheet" href="../../dist/mip.css">
+  <style mip-custom>
+  .content {
+    width: 950px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+  .left {
+    float: left;
+    width: 500px;
+  }
+  .right {
+    width: 420px;
+    float: left;
+    margin-left: 30px;
+    font-size: 12px;
+  }
+  @media screen and (max-width: 600px) {
+    .content {
+      width: 100%;
+      padding-bottom: 10px;
+    }
+
+    .left {
+      float: none;
+      width: 80%;
+      margin: 0 auto;
+    }
+
+    .right {
+      float: none;
+      width: 100%;
+      margin: 0 auto;
+    }
+  }
+  .silder {
+    padding-left: 50px;
+    height: 65px;
+    margin: 10px 0 10px 0;
+    overflow: hidden;
+  }
+  .preview {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    border: 1px solid rgba(0, 0, 0, .05);
+  }
+  .silder mip-img {
+    float: left;
+    width: 60px;
+    height: 60px;
+    margin: 0 0 0 16px;
+    border: 2px solid #fff !important;
+  }
+  mip-img[selected="1"] {
+    border: 2px solid #000;
+  }
+  .common-margin {
+    margin: 10px 0;
+    display: block;
+  }
+  .title-ele {
+    vertical-align: middle;
+    color: #000;
+    line-height: 1;
+    font-size: 16px;
+    font-weight: 700;
+    padding-left: 8px;
+  }
+  .price-ele {
+    color: #666;
+    display: flex;
+    align-item: center;
+    background-color: #e9e9e9;
+    background-repeat: no-repeat;
+    padding: 10px 5px;
+    line-height: 28px;
+  }
+  .price {
+    color: #FF0036;
+    font-size: 24px;
+    font-weight: bolder;
+    margin-left: 30px;
+  }
+  .border {
+    border: 1px dotted #c9c9c9;
+    border-width: 1px 0;
+    margin: 0 20px 0 0;
+    padding: 10px 0;
+    overflow: hidden;
+  }
+  .comments-ele {
+    float: left;
+    width: 49%;
+    text-align: center;
+  }
+  .sperate {
+    border-left: 1px solid #e5dfda;
+  }
+  .flex {
+    display: flex;
+    align-items: center
+  }
+  span[selected="1"] {
+    border: 2px solid #FF0036;
+  }
+  .item {
+    background-color: #fff;
+    white-space: nowrap;
+    width: auto !important;
+    min-width: 10px;
+    padding: 5px 9px;
+    text-align: center;
+    border: 1px solid #b8b7bd;
+    color: #000;
+    text-decoration: none;
+    margin-right: 5px;
+    overflow: hidden;
+  }
+  .item-left {
+    float: left;
+    padding: 2px 0;
+  }
+  .item-right {
+    display: block;
+    margin-left: 10px;
+    line-height: 28px;
+    padding: 2px 0;
+  }
+  .ship {
+    width: 30px !important;
+    text-align: center;
+  }
+  .comments-num,
+  .integral-num {
+    color: #FF0036;
+    font-weight: 700;
+    margin-left: 3px;
+  }
+  .green {
+    color: green !important;
+  }
+  .purchase {
+    margin-right: 0;
+    float: left;
+    overflow: hidden;
+    position: relative;
+    width: 178px;
+    background-color: #ffeded;
+    border: 1px solid #FF0036;
+    color: #FF0036;
+    font-family: 'Microsoft Yahei';
+    height: 38px;
+    line-height: 38px;
+    text-align: center;
+    font-size: 16px;
+    outline: none;
+  }
+  .cart {
+    background-color: #ff0036;
+    border: 1px solid #ff0036;
+    color: #fff;
+    margin-right: 0;
+    margin-left: 10px;
+    float: left;
+    overflow: hidden;
+    position: relative;
+    width: 178px;
+    font-family: 'Microsoft Yahei';
+    height: 38px;
+    line-height: 38px;
+    text-align: center;
+    font-size: 16px;
+    outline: none;
+  }
+  .btn {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    overflow: hidden;
+  }
+  </style>
+</head>
+<body>
+  <mip-data>
+    <script type="application/json">
+      {
+        "num": 1,
+        "title": "Apple/苹果 iPhone X",
+        "basePrice": "9688.00",
+        "price": "9688.00",
+        "comments": 5855,
+        "integral": 968,
+        "network": {
+          "nocontract": 1
+        },
+        "color": {
+          "silver": 0,
+          "grey": 1
+        },
+        "size": {
+          "small": 0,
+          "big": 1
+        },
+        "staging": {
+          "three": 0,
+          "six": 0,
+          "twelve": 0
+        },
+        "sp": {
+          "three": "¥3303.60",
+          "six": "¥1687.32",
+          "twelve": "¥867.88"
+        },
+        "img": {
+          "first": 0,
+          "second": 0,
+          "third": 0,
+          "four": 0,
+          "five": 0
+        },
+        "time": 1,
+        "src": "https://img.alicdn.com/bao/uploaded/i4/1917047079/TB2ZpydmPihSKJjy0FeXXbJtpXa_!!1917047079.png_430x430q90.jpg"
+      }
+    </script>
+  </mip-data>
+  <div class="content">
+    <div class="left">
+      <mip-img class="preview" layout="responsive" width="100" height="100" popup m-bind:src="src" src="https://img.alicdn.com/bao/uploaded/i4/1917047079/TB2ZpydmPihSKJjy0FeXXbJtpXa_!!1917047079.png_430x430q90.jpg">
+      </mip-img>
+      <div class="silder">
+        <mip-img layout="responsive" width="100" height="100" src="https://img.alicdn.com/bao/uploaded/i3/1917047079/TB1IfFybl_85uJjSZPfXXcp0FXa_!!0-item_pic.jpg_60x60q90.jpg"
+            on="tap:MIP.setData({img:{'first':1,'second':0,'third':0,'four':0,'five':0},src:'https://img.alicdn.com/bao/uploaded/i3/1917047079/TB1IfFybl_85uJjSZPfXXcp0FXa_!!0-item_pic.jpg_430x430q90.jpg'})"
+            m-bind:selected="img.first"></mip-img>
+        <mip-img layout="responsive" width="100" height="100" src="https://img.alicdn.com/bao/uploaded/i1/1917047079/TB2ExXzblY85uJjSZPcXXaGGpXa_!!1917047079.jpg_60x60q90.jpg"
+            on="tap:MIP.setData({img:{'first':0,'second':1,'third':0,'four':0,'five':0},src:'https://img.alicdn.com/imgextra/i1/1917047079/TB2ExXzblY85uJjSZPcXXaGGpXa_!!1917047079.jpg_430x430q90.jpg'})"
+            m-bind:selected="img.second"></mip-img>
+        <mip-img layout="responsive" width="100" height="100" src="https://img.alicdn.com/bao/uploaded/i4/1917047079/TB2CRmRmPuhSKJjSspjXXci8VXa_!!1917047079.jpg_60x60q90.jpg"
+            on="tap:MIP.setData({img:{'first':0,'second':0,'third':1,'four':0,'five':0},src:'https://img.alicdn.com/imgextra/i4/1917047079/TB2CRmRmPuhSKJjSspjXXci8VXa_!!1917047079.jpg_430x430q90.jpg'})"
+            m-bind:selected="img.third"></mip-img>
+        <mip-img layout="responsive" width="100" height="100" src="https://img.alicdn.com/bao/uploaded/i3/1917047079/TB25Tn3qRUSMeJjy1zjXXc0dXXa_!!1917047079.jpg_60x60q90.jpg"
+            on="tap:MIP.setData({img:{'first':0,'second':0,'third':0,'four':1,'five':0},src:'https://img.alicdn.com/imgextra/i3/1917047079/TB25Tn3qRUSMeJjy1zjXXc0dXXa_!!1917047079.jpg_430x430q90.jpg'})"
+            m-bind:selected="img.four"></mip-img>
+        <mip-img layout="responsive" width="100" height="100" src="https://img.alicdn.com/bao/uploaded/i4/1917047079/TB2HeSvmGagSKJjy0FgXXcRqFXa_!!1917047079.jpg_60x60q90.jpg"
+            on="tap:MIP.setData({img:{'first':0,'second':0,'third':0,'four':0,'five':1},src:'https://img.alicdn.com/imgextra/i4/1917047079/TB2HeSvmGagSKJjy0FgXXcRqFXa_!!1917047079.jpg_430x430q90.jpg'})"
+            m-bind:selected="img.five"></mip-img>
+      </div>
+    </div>
+    <div class="right">
+      <span class="common-margin title-ele" m-text="title"></span>
+      <div class="common-margin price-ele">
+        <span>价格</span>
+        <span class="price">¥
+          <span m-text="price"></span>
+        </span>
+      </div>
+      <div class="common-margin border">
+        <div class="comments-ele">累计评价
+          <span class="comments-num" m-text="comments"></span>
+        </div>
+        <div class="comments-ele sperate">送积分
+          <span class="integral-num green" m-text="integral"></span>
+        </div>
+      </div>
+      <div>
+        <div class="common-margin flex">
+          <span class="item-left">网络类型</span>
+          <span class="item-right">
+            <span class="item" m-bind:selected="network.nocontract">无需合约版</span>
+          </span>
+        </div>
+        <div class="common-margin flex">
+          <span class="item-left">机身颜色</span>
+          <span class="item-right">
+            <span class="item" m-bind:selected="color.silver" on="tap:MIP.setData({src:'https://img.alicdn.com/bao/uploaded/i2/1917047079/TB2QvO4mPihSKJjy0FlXXadEXXa_!!1917047079.png_430x430q90.jpg',color:{grey:0,silver:1}})">银色</span>
+            <span class="item" m-bind:selected="color.grey" on="tap:MIP.setData({src:'https://img.alicdn.com/bao/uploaded/i4/1917047079/TB2ZpydmPihSKJjy0FeXXbJtpXa_!!1917047079.png_430x430q90.jpg',color:{grey:1,silver:0}})">深空灰色</span>
+          </span>
+        </div>
+        <div class="common-margin flex">
+          <span class="item-left">存储容量</span>
+          <span class="item-right">
+            <span class="item" m-bind:selected="size.small" on="tap:MIP.setData({basePrice:'8388.00',price:8388.00*m.num,sp:{three:2860.30,six:1460.91,twelve:751.42},size:{small:1,big:0}})">64GB</span>
+            <span class="item" m-bind:selected="size.big" on="tap:MIP.setData({basePrice:'9688.00',price:9688.00*m.num,sp:{three:3303.60,six:1687.32,twelve:867.88},size:{small:0,big:1}})">256GB</span>
+          </span>
+        </div>
+        <div class="common-margin flex">
+          <span class="item-left">发货时间</span>
+          <span class="item-right">
+            <span>付款后 28 天内</span>
+          </span>
+        </div>
+        <div class="common-margin flex">
+          <span class="item-left">发货时间</span>
+          <span class="item-right">
+            <mip-form url="https://example.com">
+              <input class="item ship" type="text" value="1" on="change:MIP.setData({num:DOM.value,price:DOM.value*m.basePrice,sp:{three:2868.30*DOM.value,six:2868.30*DOM.value,twelve:2868.30*DOM.value}})">
+            </mip-form>
+          </span>
+        </div>
+        <div class="common-margin flex">
+          <span class="item-left">分期付款</span>
+          <span class="item-right">
+            <span class="item" m-bind:selected="staging.three" on="tap:MIP.setData({staging:{three:1,six:0,twelve:0}})">
+              <strong m-text="sp.three"></strong>
+              <span>x3期(含手续费)</span>
+            </span>
+            <span class="item" m-bind:selected="staging.six" on="tap:MIP.setData({staging:{three:0,six:1,twelve:0}})">
+              <strong m-text="sp.six"></strong>
+              <span>x6期(含手续费)</span>
+            </span>
+            <span class="item" m-bind:selected="staging.twelve" on="tap:MIP.setData({staging:{three:0,six:0,twelve:1}})">
+              <strong m-text="sp.twelve"></strong>
+              <span>x12期(含手续费)</span>
+            </span>
+          </span>
+        </div>
+      </div>
+      <div class="btn">
+        <a href="#" class="purchase" m-text="purchase">立即购买</a>
+        <a href="#" class="cart" m-text="cart">加入购物车</a>
+      </div>
+    </div>
+  </div>
+  <script src="../../dist/mip.js"></script>
+</body>
+</html>
+

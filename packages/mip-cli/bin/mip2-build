@@ -2,6 +2,7 @@
 
 const cli = require('../lib/cli')
 const build = require('../lib/build')
+const validator = require('mip-component-validator')
 const path = require('path')
 const fs = require('fs')
 
@@ -12,7 +13,7 @@ cli.setup({
     ['-d, --dir <value>', '项目文件夹路径'],
     ['-o, --output <value>', '编译代码输出路径'],
     ['-c, --clean', '构建前先清空输出目录'],
-    ['-i, --ignore', '忽略沙盒注入']
+    ['-i, --ignore [value]', '忽略沙盒注入或校验，可选参数为 -i, -i sandbox, -i whitelist, -i sandbox,whitelist']
   ],
   help: [
     '',
@@ -29,4 +30,21 @@ if (fs.existsSync(configPath)) {
   defaultConfig = require(configPath)
 }
 
-build(Object.assign(defaultConfig.build || {}, cli.program))
+const conf = Object.assign(defaultConfig.build || {}, cli.program)
+
+if (conf.ignore === true) {
+  conf.ignore = 'sandbox'
+}
+
+if (conf.ignore && /(^|,)whitelist(,|$)/.test(conf.ignore)) {
+  build(conf)
+} else {
+  validator.whitelist(conf.dir).then(reporter => {
+    if (reporter.errors.length) {
+      cli.error(reporter.errors[0].message)
+      // 先把白名单校验过程改成非中断式的
+      // process.exit(1)
+    }
+  })
+  .then(() => build(conf))
+}

@@ -7,6 +7,7 @@ const regVar = /[\w\d-._]+/gmi
 const regTplLike = /`[^`]+`/gmi
 const regTpl = /(\${)([^}]+)(}.*)/gmi
 const vendorNames = ['Webkit', 'Moz', 'ms']
+const RESERVED = ['Math', 'Number', 'String', 'Object', 'window']
 let emptyStyle
 
 export function isObject (obj) {
@@ -33,7 +34,15 @@ export function arrayToObject (arr) {
   return obj
 }
 
-export function parseClass (classSpecs) {
+export function parseClass (classSpecs, oldSpecs = {}) {
+  if (typeof classSpecs === 'string') {
+    Object.keys(oldSpecs).forEach(k => {
+      oldSpecs[k] = false
+    })
+    return Object.assign({}, oldSpecs, {
+      [classSpecs]: true
+    })
+  }
   if (isArray(classSpecs)) {
     classSpecs = arrayToObject(classSpecs)
   }
@@ -43,8 +52,8 @@ export function parseClass (classSpecs) {
     Object.keys(classSpecs).forEach(k => {
       typeof classSpecs[k] !== 'undefined' && k && (newClasses[k] = classSpecs[k])
     })
-    return newClasses
   }
+  return newClasses
 }
 
 export function parseStyle (styleSpecs) {
@@ -62,6 +71,10 @@ export function parseStyle (styleSpecs) {
 
   Object.keys(styleSpecs).forEach(k => {
     let normalizedName = normalize(k)
+    if (!normalizedName) {
+      return
+    }
+
     let newKey = normalizedName.replace(/[A-Z]/g, match => '-' + match.toLowerCase())
     let val = styleSpecs[k]
     if (isArray(val)) {
@@ -80,7 +93,7 @@ export function parseStyle (styleSpecs) {
 // autoprefixer
 export function normalize (prop) {
   emptyStyle = emptyStyle || document.createElement('div').style
-  prop = prop.replace(/-(\w)/g, (_, c) => (c ? c.toUpperCase() : ''))
+  prop = prop.replace(/-(\w)/g, (_, c) => (c ? c.toUpperCase() : /* istanbul ignore next */ ''))
 
   if (prop !== 'filter' && (prop in emptyStyle)) {
     return prop
@@ -93,6 +106,7 @@ export function normalize (prop) {
       return name
     }
   }
+  return ''
 }
 
 export function styleToObject (style) {
@@ -115,10 +129,6 @@ export function styleToObject (style) {
 }
 
 export function objectToStyle (obj) {
-  if (!isObject(obj)) {
-    return ''
-  }
-
   let styles = ''
   // etc: {fontSize: '12px'} => font-size:12px;
   Object.keys(obj).forEach(k => {
@@ -127,7 +137,34 @@ export function objectToStyle (obj) {
   return styles
 }
 
+export function getWithResult (exp) {
+  exp = namespaced(exp)
+  let func
+  try {
+    func = new Function(`with(this){try {return ${exp}} catch(e) {}}`) // eslint-disable-line
+  } catch (e) {
+    /* istanbul ignore next */
+    func = () => ''
+  }
+  return func
+}
+
+export function setWithResult (exp, value) {
+  exp = namespaced(exp)
+  let func
+  try {
+    func = new Function(`with(this){try {${exp} = "${value}"} catch (e) {}}`) // eslint-disable-line
+  } catch (e) {
+    /* istanbul ignore next */
+    func = () => ''
+  }
+  return func
+}
+
 export function namespaced (str) {
+  if (!str) {
+    return
+  }
   let newExp = ''
   let match = null
   let pointer = 0
@@ -153,8 +190,12 @@ export function namespaced (str) {
       newExp += tpls[+match[0].substr(11)]
       continue
     }
-    // skip number or memberExpression that was left behind
-    if (!isNaN(match[0]) || /^\./.test(match[0])) {
+    // skip special cases
+    if (!isNaN(match[0]) ||
+        /^\./.test(match[0]) ||
+        !match[0].replace(/[-._]/g, '').length ||
+        RESERVED.indexOf(match[0].split('.')[0]) !== -1
+    ) {
       newExp += match[0]
       continue
     }

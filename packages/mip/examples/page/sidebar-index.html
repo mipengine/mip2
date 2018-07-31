@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>MIP page</title>
+    <link rel="canonical" href="对应的原页面地址">
+    <link rel="stylesheet" href="/dist/mip.css">
+    <style mip-custom>
+      /* 自定义样式 */
+      h2 {
+        margin: 50px auto;
+        text-align: center;
+      }
+
+      .haha {
+        position: absolute;
+        top: 200px;
+        left: 0;
+        background: #dcdcdc;
+        z-index: 20000;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Index</h1>
+    <p m-text="num"></p>
+    <a class="link" href="/examples/page/sidebar-second.html" mip-link>Go to Second</a>
+    <mip-data>
+      <script type="application/json">
+        {
+          num: 1
+        }
+      </script>
+    </mip-data>
+    <mip-shell on="ready:MIP.setData({num:m.num+1})">
+      <script type="application/json">
+        {
+          "routes": [
+            {
+              "pattern": "*",
+              "meta": {
+                 "header": {
+                  "show": true
+                }
+              }
+            }
+          ]
+        }
+      </script>
+      <div class="haha" mip-shell>samurai</div>
+    </mip-shell>
+    <script src="/dist/mip.js"></script>
+  </body>
+</html>

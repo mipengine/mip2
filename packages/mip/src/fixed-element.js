@@ -2,7 +2,6 @@
  *
  * @file fixed element
  * @author xx
- * @modify wupeng10@baidu.com 2017-03-27 upgrade mip fixed, The only limitation is ten fixed elements.
  */
 
 import platform from './util/platform'
@@ -28,18 +27,6 @@ class FixedElement {
      * @private
      * @type {number}
      */
-    this._maxFixedCount = 10
-
-    /**
-     * @private
-     * @type {number}
-     */
-    this._currentFixedCount = 0
-
-    /**
-     * @private
-     * @type {number}
-     */
     this._count = 0
 
     /**
@@ -47,7 +34,7 @@ class FixedElement {
      * @private
      * @type {boolean}
      */
-    this._isAndroidUc = platform.isUc() && !platform.isIos()
+    this._isAndroidUc = platform.isUc() && /* istanbul ignore next */!platform.isIos()
 
     /**
      * @private
@@ -60,12 +47,12 @@ class FixedElement {
    * Initializition of current fixed element processor.
    */
   init () {
-    let mipFixedElements = document.querySelectorAll('mip-fixed, mip-semi-fixed')
+    let mipFixedElements = document.body.querySelectorAll('mip-fixed, mip-semi-fixed')
 
     this.setFixedElement(mipFixedElements)
     let fixedLen = this._fixedElements.length
-    let hasParentPage = window.MIP.viewer.isIframed
-    if ((platform.isIos()) && hasParentPage) {
+    let isIframed = window.MIP.viewer.isIframed
+    if ((platform.isIos()) && isIframed) {
       // let fixedLayer =
       this.getFixedLayer()
       for (let i = 0; i < fixedLen; i++) {
@@ -87,7 +74,8 @@ class FixedElement {
         this.moveToFixedLayer(fixedElem, i)
       }
     }
-    if (hasParentPage) {
+    /* istanbul ignore if */
+    if (isIframed) {
       this.doCustomElements()
     }
   }
@@ -111,10 +99,10 @@ class FixedElement {
       let bottom = layout.parseLength(ele.getAttribute('bottom'))
       let top = layout.parseLength(ele.getAttribute('top'))
       /* eslint-disable */
-      if (fType === 'left' && !top && !bottom || this._currentFixedCount >= this._maxFixedCount ||
-                fType === 'gototop' && ele.firstElementChild.tagName.toLowerCase() !== 'mip-gototop' ||
-                ele.tagName.toLowerCase() !== 'mip-semi-fixed' && ele.tagName.toLowerCase() !== 'mip-fixed') {
-        ele.parentElement.removeChild(ele)
+      if (fType === 'left' && !top && !bottom ||
+            fType === 'gototop' && ele.firstElementChild.tagName.toLowerCase() !== 'mip-gototop' ||
+            ele.tagName.toLowerCase() !== 'mip-semi-fixed' && ele.tagName.toLowerCase() !== 'mip-fixed') {
+        ele.parentElement && ele.parentElement.removeChild(ele)
         continue
       }
       /* eslint-enable */
@@ -139,7 +127,6 @@ class FixedElement {
         })
       }
 
-      this._currentFixedCount++
       this.setFixedElementRule(ele, fType)
       let eleId = 'Fixed' + (this._count)
       fixedEle = {
@@ -148,15 +135,15 @@ class FixedElement {
       }
       fixedEle.element.setAttribute('mipdata-fixedIdx', eleId)
 
+      this._count++
+      this._fixedElements.push(fixedEle)
+
       // when `setFixedElement function` called by components,
       // the element will moved to fixedlayer directly.
       if (move) {
         this.moveToFixedLayer(fixedEle, this._count)
-        return 10000 - this._count++
+        return 10000 - this._count
       }
-
-      this._count++
-      this._fixedElements.push(fixedEle)
     }
   }
 
@@ -212,6 +199,7 @@ class FixedElement {
     if (element.parentElement === this._fixedLayer) {
       return
     }
+    /* istanbul ignore else */
     if (!fixedEle.placeholder) {
       css(element, {
         'pointer-events': 'initial'
@@ -230,6 +218,7 @@ class FixedElement {
    */
   doCustomElements () {
     let stylesheets = document.styleSheets
+    /* istanbul ignore if */
     if (!stylesheets) {
       return
     }
@@ -237,6 +226,7 @@ class FixedElement {
     // let fixedSelectors = [];
     for (let i = 0; i < stylesheets.length; i++) {
       let stylesheet = stylesheets[i]
+      /* istanbul ignore if */
       if (stylesheet.disabled || !stylesheet.ownerNode ||
                 stylesheet.ownerNode.tagName !== 'STYLE' ||
                 stylesheet.ownerNode.hasAttribute('mip-extension')) {
@@ -267,18 +257,20 @@ class FixedElement {
                * in `development` mode, CSS isn't extracted
                * and will be inserted in runtime, which will be removed by this func.
                */
+              /* istanbul ignore next */
               if (process.env.NODE_ENV === 'production') {
                 elements[j].parentElement.removeChild(elements[j])
               }
             }
           } catch (e) {
+            /* istanbul ignore next */
             console.warn('Cannot find the selector of custom fixed elements')
           }
         }
       } else if (rType === 4) {
         // CSSMediaRule
         this._findFixedSelectors(cssRule.cssRules)
-      } else if (rType === 12) {
+      }/* istanbul ignore next */ else if (rType === 12) {
         // CSSSupportsRule
         this._findFixedSelectors(cssRule.cssRules)
       }
@@ -337,6 +329,7 @@ class FixedElement {
    * @param {HTMLElement} layer layer
    */
   showFixedLayer (layer) {
+    /* istanbul ignore else */
     if (layer) {
       css(layer, {
         display: 'block'
@@ -350,6 +343,7 @@ class FixedElement {
    * @param {HTMLElement} layer layer
    */
   hideFixedLayer (layer) {
+    /* istanbul ignore else */
     if (layer) {
       css(layer, {
         display: 'none'

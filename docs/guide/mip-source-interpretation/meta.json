@@ -1,0 +1,36 @@
+{
+  "menu": [
+    {
+      "name": "MIP 模块简介",
+      "key": "introduction"
+    },
+    {
+      "name": "MIP 基础模块",
+      "key": "basic"
+    },
+    {
+      "name": "MIP 组件机制详解",
+      "key": "components"
+    },
+    {
+      "name": "layout 布局规范",
+      "key": "layout"
+    },
+    {
+      "name": "naboo 动画库",
+      "key": "naboo-animation"
+    },
+    {
+      "name": "gesture 手势集合",
+      "key": "gesture-sets"
+    },
+    {
+      "name": "hash 通信机制",
+      "key": "hash"
+    },
+    {
+      "name": "platform 识别",
+      "key": "platform"
+    }
+  ]
+}

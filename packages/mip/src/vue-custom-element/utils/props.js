@@ -156,7 +156,7 @@ export function getPropsData (element, componentDefinition, props) {
     if (attrValue !== null) {
       propsData[propCamelCase] = convertAttributeValue(attrValue, props.types[propCamelCase])
     } else {
-      propsData[propCamelCase] = element[propCamelCase] || propsData[name]
+      propsData[propCamelCase] = element[propCamelCase] || propsData[propCamelCase] || propsData[name]
     }
   })
 

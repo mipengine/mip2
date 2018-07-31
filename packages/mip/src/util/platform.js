@@ -15,7 +15,9 @@
 class Platform {
   constructor () {
     // system
+    // deprecated
     this.isIos = false
+    this.isIOS = false
     this.isAndroid = false
     // browser
     this.isWechatApp = false
@@ -28,7 +30,9 @@ class Platform {
     this.isAdr = false
     this.isSafari = false
     this.isChrome = false
+    // deprecated
     this.isFireFox = false
+    this.isFirefox = false
     // engine
     this.isTrident = false
     this.isGecko = false
@@ -43,6 +47,7 @@ class Platform {
   _matchOs () {
     if (/iPhone|iPad|iPod/i.test(this._ua())) {
       this.isIos = true
+      this.isIOS = true
     } else if (/Android/i.test(this._ua())) {
       this.isAndroid = true
     }
@@ -81,6 +86,7 @@ class Platform {
       this.isChrome = true
     } else if (/(firefox|FxiOS+)\/([0-9.ab]+)/i.test(this._ua())) {
       this.isFireFox = true
+      this.isFirefox = true
     } else if (
       /android/i.test(this._ua()) &&
             /Android[\s_\-/i686]?[\s_\-/](\d+[.\-_]\d+[.\-_]?\d*)/i.test(this._ua())
@@ -115,7 +121,7 @@ class Platform {
       if (result && result.length > 1) {
         osVersion = result[1]
       }
-    } else if (this.isIos()) {
+    } else if (this.isIOS()) {
       result = /OS (\d+)_(\d+)_?(\d+)?/.exec(this._appVersion())
       if (result && result.length > 3) {
         osVersion = result[1] + '.' + result[2] + '.' + (result[3] | 0)
@@ -137,7 +143,7 @@ class Platform {
         self[key] = handle
       }
     }
-    self.needSpecialScroll = self.isIos() && window !== top
+    self.needSpecialScroll = self.isIOS() && window !== top
   }
 
   /**

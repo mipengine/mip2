@@ -68,35 +68,10 @@
     <mip-shell>
         <script type="application/json">
             {
+                "transitionContainsHeader": false,
                 "routes": [
                     {
-                        "pattern": "./tree.html",
-                        "meta": {
-                            "header": {
-                                "show": true,
-                                "buttonGroup": [
-                                    {
-                                        "name": "subscribe",
-                                        "text": "关注",
-                                        "link": "/examples/page/tree.html"
-                                    },
-                                    {
-                                        "name": "chat",
-                                        "text": "发消息"
-                                    },
-                                    {
-                                        "name": "cancel",
-                                        "text": "取消"
-                                    }
-                                ]
-                            },
-                            "view": {
-                                "isIndex": false
-                            }
-                        }
-                    },
-                    {
-                        "pattern": "*",
+                        "pattern": "./index.html",
                         "meta": {
                             "header": {
                                 "show": true,
@@ -119,6 +94,27 @@
                                 ]
                             },
                             "view": {
+                                "isIndex": true
+                            }
+                        }
+                    },
+                    {
+                        "pattern": "./tree.html",
+                        "meta": {
+                            "header": {
+                                "show": true,
+                                "title": "MIP Tree"
+                            }
+                        }
+                    },
+                    {
+                        "pattern": "*",
+                        "meta": {
+                            "header": {
+                                "show": true,
+                                "title": "MIP Other Page"
+                            },
+                            "view": {
                                 "isIndex": false
                             }
                         }
@@ -127,45 +123,37 @@
             }
         </script>
     </mip-shell>
-
-    <mip-page-tree></mip-page-tree>
+    <p class="input">
+        <input type="text">
+    </p>
 
     <p>This is Page#2, using different component (mip-tree)</p>
 
-    <mip-tree>
-        <script type="application/json">
-            {"model":{"name":"My Tree","children":[{"name":"hello"},{"name":"wat"},{"name":"child folder","children":[{"name":"child folder","children":[{"name":"hello"},{"name":"wat"}]},{"name":"hello"},{"name":"wat"},{"name":"child folder","children":[{"name":"hello"},{"name":"wat"}]}]}]}}
-        </script>
-    </mip-tree>
 
+    <a class="link" href="http://eason.baidu.com:8080/examples/page/index.html" mip-link>Back to Index (Cross Origin)</a>
     <a class="link" href="./index.html" mip-link>Back to Index</a>
+    <a class="link page-back" onclick="window.MIP.viewer.page.back()">page.back()</a>
     <a class="link" href="./data.html" mip-link>Go to Data</a>
+    <div id="broadcast" class="link">Broadcast</div>
 
-    <p class="input">
-        <input type="text">
-    </p>
-    <p class="input">
-        <input type="text">
-    </p>
-    <p class="input">
-        <input type="text">
-    </p>
-    <p m-text="city"></p>
-    <div on="tap:MIP.setData({'city':'深圳'})" class="button">click change city</div>
-
-    <br><br>
-    <span>Read from global store(group.info.name) from index.html</span>
-    <span m-text="group.info.name"></span>
-    <mip-script>
-        MIP.watch('city', function () {
-            console.log('city changed callback')
-        });
-    </mip-script>
 
 
     <script src="../../dist/mip.js"></script>
     <script src="./components/mip-tree.js"></script>
-    <script src="./components/mip-page-tree.js"></script>
+    <script>
+        window.addEventListener('myEvent', e => {
+            console.log('receive myEvent in tree.html', e)
+        })
+
+        document.querySelector('#broadcast').addEventListener('click', () => {
+            window.MIP.viewer.page.broadcastCustomEvent({
+                name: 'myEvent',
+                data: {
+                    'message': 'hello everyone!'
+                }
+            })
+        })
+    </script>
 </body>
 
 </html>

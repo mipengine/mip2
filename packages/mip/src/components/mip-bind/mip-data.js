@@ -10,6 +10,7 @@ class MipData extends CustomElement {
     let src = this.element.getAttribute('src')
     let ele = this.element.querySelector('script[type="application/json"]')
 
+    /* istanbul ignore if */
     if (src) {
       this.getData(src)
     } else if (ele) {
@@ -18,6 +19,7 @@ class MipData extends CustomElement {
       try {
         result = jsonParse(data)
       } catch (e) {
+        /* istanbul ignore next */
         console.error(e)
       }
       if (result) {
@@ -26,6 +28,7 @@ class MipData extends CustomElement {
     }
   }
 
+  /* istanbul ignore next */
   getData (url) {
     if (!url) {
       return
@@ -55,6 +58,7 @@ class MipData extends CustomElement {
       })
   }
 
+  /* istanbul ignore next  */
   prerenderAllowed () {
     return true
   }

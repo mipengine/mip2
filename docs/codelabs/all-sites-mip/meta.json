@@ -1,0 +1,31 @@
+
+{
+  "menu": [
+    {
+      "name": "概述",
+      "key": "introduction"
+    },
+    {
+      "name": "创建一个独立的页面",
+      "key": "create-a-page"
+    },
+    {
+      "name": "创建一个链接",
+      "key": "create-a-link"
+    },
+    {
+      "name": "创建 Shell",
+      "key": "create-shell"
+    },
+    {
+      "name": "完整示例代码",
+      "key": "sample-code"
+    }
+  ],
+  "info": {
+    "name": "如何完成全站 MIP 改造",
+    "description": "本示例针对已经成功开发一个 MIP 页面的开发者，演示如何使用 MIP Shell 将多个 MIP 页面串联起来，使整站融为一体。",
+    "tag": ["MIP", "Shell"],
+    "duration": "30分钟"
+  }
+}

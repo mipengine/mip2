@@ -1,0 +1,30 @@
+{
+  "menu": [
+      {
+          "name": "概述",
+          "key": "introduction"
+      },
+      {
+          "name": "初始化数据",
+          "key": "initialize-data"
+      },
+      {
+          "name": "绑定数据",
+          "key": "bind-data"
+      },
+      {
+        "name": "修改数据",
+        "key": "set-data"
+    },
+      {
+          "name": "完整示例代码",
+          "key": "sample-code"
+      }
+  ],
+  "info": {
+      "name": "如何利用 MIP 打造可交互的 MIP",
+      "description": "本示例针对有独立页面间数据共享需求的开发者",
+      "tag": ["MIP 2.0", "mip-bind"],
+      "duration": "20分钟"
+  }
+}

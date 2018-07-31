@@ -5,8 +5,6 @@
 
 import platform from '../platform'
 
-'use strict'
-
 // Save the native object or method.
 let docBody = document.body
 let docElem = document.documentElement

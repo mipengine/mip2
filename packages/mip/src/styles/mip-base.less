@@ -1,271 +1,181 @@
 @import "./variable.less";
-
 * {
-    margin: 0;
-    padding: 0
+  margin: 0;
+  padding: 0
 }
 
 html {
-    font-size: 100px;
+  font-size: 100px;
 }
+
 body {
-    font-size-adjust:  none;
-    text-size-adjust: none;
-    font: 14px Arial, Helvetica, sans-serif;
-    box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-
-    &.with-header {
-        padding-top: @shell-header-height;
-    }
+  font-size-adjust: none;
+  text-size-adjust: none;
+  font: 14px Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  &.with-header {
+    padding-top: @shell-header-height;
+  }
 }
-html, body {
-    // height: 100% !important;
-    overflow-y: auto;
-    position: relative;
 
-    &.trigger-layout {
-        height: 100% !important;
-    }
+html,
+body {
+  // height: 100% !important;
+  overflow-y: auto;
+  position: relative;
+  &.trigger-layout {
+    height: 100% !important;
+  }
 }
+
 html.mip-i-ios-scroll,
-html.mip-i-ios-scroll > body[mip-ready] {
-    -webkit-overflow-scrolling: touch;
+html.mip-i-ios-scroll>body[mip-ready] {
+  -webkit-overflow-scrolling: touch;
 }
+
 html.mip-i-android-scroll,
 body.mip-i-android-scroll {
-    height: auto !important;
-    overflow-y: visible;
-    position: static;
-    -webkit-overflow-scrolling: auto!important;
+  height: auto !important;
+  overflow-y: visible;
+  position: static;
+  -webkit-overflow-scrolling: auto !important;
 }
+
 html.mip-no-scroll,
-html.mip-no-scroll > body {
-    height: 100% !important;
-    position: relative;
-    overflow: hidden;
+html.mip-no-scroll>body {
+  height: 100% !important;
+  position: relative;
+  overflow: hidden;
 }
 
 @media screen and (max-width: 360px) {
-    html {
-        font-size: 90px!important;
-    }
+  html {
+    font-size: 90px !important;
+  }
+}
+
+[on^="click:"] {
+  cursor: pointer
 }
 
 a {
-    text-decoration : none;
-    color: #333;
+  text-decoration: none;
+  color: #333;
 }
+
 img {
-    width:100%;
-    margin: 0 auto;
+  width: 100%;
+  margin: 0 auto;
 }
+
 template {
-    display: none;
+  display: none;
 }
+
 span[id^="cnzz_stat"] {
-    display: none;
+  display: none;
 }
 
 mip-i-space {
-    display: block;
-}
-.mip-layout-relative {
-    display: block;
-    position: relative;
-}
-.mip-fill-content {
-    display: block;
-    min-width: 100%;
-    max-width: 100%;
-    height: 100%;
-    margin: auto;
-}
-.mip-i-space .mip-fill-content {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
+  display: block;
 }
 
+.mip-layout-relative {
+  display: block;
+  position: relative;
+}
+
+.mip-fill-content {
+  display: block;
+  min-width: 100%;
+  max-width: 100%;
+  height: 100%;
+  margin: auto;
+}
+
+.mip-i-space .mip-fill-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
 
 .mip-layout-fixed {
-    display: inline-block;
-    position: relative;
+  display: inline-block;
+  position: relative;
 }
 
 .mip-layout-responsive {
-    display: block;
-    position: relative;
+  display: block;
+  position: relative;
 }
 
 .mip-layout-fixed-height {
-    display: block;
-    position: relative;
+  display: block;
+  position: relative;
 }
 
 .mip-layout-container {
-    display: block;
-    position: relative;
+  display: block;
+  position: relative;
 }
 
 .mip-layout-fill {
-    display: block;
-    overflow: hidden !important;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
+  display: block;
+  overflow: hidden !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
 }
 
 .mip-layout-flex-item {
-    display: block;
-    position: relative;
-    flex: 1 1 auto;
+  display: block;
+  position: relative;
+  flex: 1 1 auto;
 }
 
 .mip-layout-size-defined {
-    overflow: hidden !important;
+  overflow: hidden !important;
 }
 
 imip-sizer {
-    display: block !important;
+  display: block !important;
 }
 
 .mip-fill-content {
-    display: block;
-    min-width: 100%;
-    max-width: 100%;
-    height: 100%;
-    margin: auto;
+  display: block;
+  min-width: 100%;
+  max-width: 100%;
+  height: 100%;
+  margin: auto;
 }
 
 .mip-layout-size-defined .mip-fill-content {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
 }
 
 .mip-replaced-content {
-    padding: 0 !important;
-    border: none !important;
+  padding: 0 !important;
+  border: none !important;
 }
 
 .mip-hidden {
-    visibility: hidden;
-    overflow: hidden;
+  visibility: hidden;
+  overflow: hidden;
 }
 
 .hide {
-    display: none !important;
-}
-
-/* border 1px */
-.mip-border {
-    border: 0 solid @border-default-color;
-
-    @media (-webkit-min-device-pixel-ratio: 1.5) {
-        & {
-            position: relative;
-            border: none !important;
-
-            &::after {
-                content: ' ';
-                display: block;
-                position: aboslute;
-                top: 0;
-                right: -33.33%;
-                bottom: -33.33%;
-                left: 0;
-                border: 0 solid @border-default-color;
-                transform-origin: 0 0;
-                pointer-events: none; // 解决挡住点击事件的问题
-                transform: scale(.75);
-                width: 133.33%;
-                box-sizing: border-box;
-            }
-        }
-    }
-
-    @media (-webkit-min-device-pixel-ratio: 2) {
-        & {
-            position: relative;
-            border: none !important;
-
-            &::after {
-                content: ' ';
-                display: block;
-                position: absolute;
-                top: 0;
-                right: -100%;
-                bottom: -100%;
-                left: 0;
-                border: 0 solid @border-default-color;
-                transform-origin: 0 0;
-                pointer-events: none; // 解决挡住点击事件的问题
-                transform: scale(.5);
-                width: 200%;
-                box-sizing: border-box;
-            }
-        }
-    }
-}
-
-.mip-border-top {
-    border-top-width: 1px;
-    &::after {
-        border-top-width: 1px;
-    }
-}
-
-.mip-border-right {
-    border-right-width: 1px;
-    &::after {
-        border-right-width: 1px;
-    }
-}
-
-.mip-border-bottom {
-    border-bottom-width: 1px;
-    &::after {
-        border-bottom-width: 1px;
-    }
-}
-
-.mip-border-left {
-    border-left-width: 1px;
-    &::after {
-        border-left-width: 1px;
-    }
-}
-
-.mip-border-all {
-    border-width: 1px;
-    &::after {
-        border-width: 1px;
-    }
-}
-
-// 设置1px边框的颜色
-.set-border-color(@color) {
-    border-color: @color;
-    &::after {
-        border-color: @color;
-    }
-}
-
-// 设置1px边框的圆角
-.set-border-radius(@radius) {
-    border-radius: @radius;
-    &::after {
-        border-radius: (@radius * 2);
-    }
+  display: none !important;
 }
 
 mip-script {
-    display: none !important;
+  display: none !important;
 }

@@ -7,9 +7,9 @@
 
 // import resources from '../resources'
 import CustomElement from '../custom-element'
-import Resources from '../resources'
-
-let prerenderElement = Resources.prerenderElement
+import resources from '../resources'
+import viewer from '../viewer'
+let prerenderElement = resources.prerenderElement
 
 let carouselParas = {
   boxClass: 'mip-carousel-container',
@@ -61,6 +61,7 @@ function translateFn (value, time, wrapBox) {
 
 // 移出class
 function removeClass (dom, className) {
+  /* istanbul ignore if */
   if (!dom) {
     return
   }
@@ -70,6 +71,7 @@ function removeClass (dom, className) {
 
 // 追加class
 function addClass (dom, className) {
+  /* istanbul ignore if */
   if (!dom) {
     return
   }
@@ -114,7 +116,7 @@ function changeIndicatorStyle (startDot, endDot, className) {
   addClass(endDot, className)
 }
 
-class MipCarousel extends CustomElement {
+class MIPCarousel extends CustomElement {
   /* eslint-disable fecs-max-statements */
   build () {
     let ele = this.element
@@ -141,6 +143,11 @@ class MipCarousel extends CustomElement {
     // 翻页按钮
     let indicatorId = ele.getAttribute('indicatorId')
 
+    // 跳转索引
+    let index = ele.getAttribute('index')
+
+    let indexNum = parseInt(index) || 1
+
     // Gesture锁
     let slideLock = {
       stop: 1
@@ -158,7 +165,8 @@ class MipCarousel extends CustomElement {
     let curGestureClientx = -eleWidth
 
     // 当前图片显示索引
-    let imgIndex = 1
+    // let imgIndex = 1
+    let imgIndex = indexNum
 
     // 定时器时间hold
     let moveInterval
@@ -209,7 +217,9 @@ class MipCarousel extends CustomElement {
     ele.appendChild(carouselBox)
 
     // 初始渲染时应该改变位置到第一张图
-    let initPostion = -eleWidth
+    // let initPostion = -eleWidth
+    // 初始渲染时如果有跳转索引就改变位置到指定图片
+    let initPostion = index ? -eleWidth * indexNum : -eleWidth
     wrapBox.style.webkitTransform = 'translate3d(' + initPostion + 'px, 0, 0)'
 
     // 绑定wrapBox的手势事件
@@ -339,6 +349,7 @@ class MipCarousel extends CustomElement {
     // 绑定按钮切换事件
     function bindBtn () {
       ele.querySelector('.mip-carousel-preBtn').addEventListener('click', function (event) {
+        /* istanbul ignore if */
         if (!btnLock.stop) {
           return
         }
@@ -355,6 +366,7 @@ class MipCarousel extends CustomElement {
       }, false)
 
       ele.querySelector('.mip-carousel-nextBtn').addEventListener('click', function (event) {
+        /* istanbul ignore if */
         if (!btnLock.stop) {
           return
         }
@@ -372,6 +384,7 @@ class MipCarousel extends CustomElement {
 
     // 图片滑动处理与手势滑动函数endPosition为最终距离,Duration变换时间
     function move (wrapBox, startIdx, endIdx, Duration) {
+      /* istanbul ignore if */
       if (!wrapBox) {
         return
       }
@@ -407,6 +420,11 @@ class MipCarousel extends CustomElement {
       }
       btnLock.stop = 1
       indicatorChange(imgIndex)
+      viewer.eventAction.execute('switchCompleted', ele, {
+        currIndex: imgIndex,
+        currCarouselItem: childNodes[imgIndex],
+        carouselChildrenLength: childNum
+      })
     }
 
     // 处理圆点型指示器
@@ -417,6 +435,15 @@ class MipCarousel extends CustomElement {
       }
       dotItems = indicDom.children
       let dotLen = dotItems.length
+
+      if (index) {
+        // 清除DOM中预先设置的mip-carousel-activeitem类
+        dotItems = Array.prototype.slice.call(dotItems)
+        dotItems.forEach(dotItem => {
+          removeClass(dotItem, carouselParas.activeitem)
+        })
+        addClass(dotItems[imgIndex - 1], carouselParas.activeitem)
+      }
 
       if (dotLen === childNum - 2) {
         for (let i = 0; i < dotLen; i++) {
@@ -441,7 +468,16 @@ class MipCarousel extends CustomElement {
       eleWidth = ele.clientWidth
       move(wrapBox, imgIndex, imgIndex, '0ms')
     }, false)
+
+    // 跳转索引
+    this.addEventAction('go', function (event, num) {
+      clearInterval(moveInterval)
+      move(wrapBox, imgIndex, parseInt(num))
+      if (isAutoPlay) {
+        autoPlay()
+      }
+    })
   }
 }
 
-export default MipCarousel
+export default MIPCarousel

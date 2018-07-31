@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <title>MIP Index Page</title>
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+  <style mip-custom>
+    p {
+      font-size: 1.5em;
+      margin: 0 30px;
+    }
+    .main-image {
+      text-align: center;
+    }
+    .link {
+      text-align: center;
+      margin-top: 20px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-image">
+    <mip-img src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg" width="300" height="300"></mip-img>
+  </div>
+  <p>
+  Progressive Web Apps are user experiences that have the reach of the web, and are:
+Reliable - Load instantly and never show the downasaur, even in uncertain network conditions.
+Fast - Respond quickly to user interactions with silky smooth animations and no janky scrolling.
+  </p>
+
+  <a class="link page-forward" onclick="window.MIP.viewer.page.forward()">page.forward()</a>
+  <a class="link tree-link" href="./tree.html" mip-link>Go to Tree</a>
+  <a class="link api-link" href="./api.html" mip-link>Go to API</a>
+
+  <mip-page-index></mip-page-index>
+
+  <mip-shell>
+    <script type="application/json">
+    {
+      "routes": [
+        {
+          "pattern": "./index.html",
+          "meta": {
+            "header": {
+              "show": true,
+              "title": "MIP",
+              "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
+              "buttonGroup": [
+                {
+                  "name": "subscribe",
+                  "text": "关注",
+                  "link": "/examples/page/tree.html"
+                },
+                {
+                  "name": "chat",
+                  "text": "发消息"
+                },
+                {
+                  "name": "cancel",
+                  "text": "取消"
+                }
+              ]
+            },
+            "view": {
+              "isIndex": true
+            }
+          }
+        },
+        {
+          "pattern": "./tree.html",
+          "meta": {
+            "header": {
+              "show": true,
+              "title": "MIP Tree"
+            }
+          }
+        },
+        {
+          "pattern": "*",
+          "meta": {
+            "header": {
+              "show": true,
+              "title": "MIP Other Page"
+            },
+            "view": {
+              "isIndex": false
+            }
+          }
+        }
+      ]
+    }
+    </script>
+  </mip-shell>
+
+  <script src="/dist/mip.js"></script>
+  <script src="./components/mip-page-index.js"></script>
+</body>

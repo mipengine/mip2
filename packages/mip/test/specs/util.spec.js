@@ -102,6 +102,10 @@ describe('util', function () {
       expect(
         util.parseCacheUrl('/c/s/www.mipengine.org/static/index.html')
       ).to.equal('https://www.mipengine.org/static/index.html')
+
+      expect(
+        util.parseCacheUrl('http://www-lanxiniu-com.mipcdn.com/c/s/www.lanxiniu.com/BaiduMip/mapout')
+      ).to.equal('https://www.lanxiniu.com/BaiduMip/mapout')
     })
   })
 
@@ -111,7 +115,14 @@ describe('util', function () {
     // mock cache url
     beforeEach(function () {
       spy = sinon.stub(util.fn, 'isCacheUrl')
-      spy.returns(true)
+      spy.callsFake(function (url) {
+        if (url.indexOf('localhost') !== -1) {
+          // Makes `isCacheUrl(location.href)` return true
+          return true
+        } else {
+          return false
+        }
+      })
     })
 
     afterEach(function () {
@@ -121,7 +132,10 @@ describe('util', function () {
     })
 
     it('not cache url', function () {
-      spy.returns(false)
+      spy.restore()
+      spy.callsFake(function (url) {
+        return false
+      })
       expect(util.makeCacheUrl('https://www.mipengine.com')).to.equal('https://www.mipengine.com')
     })
 
@@ -149,6 +163,12 @@ describe('util', function () {
       expect(util.makeCacheUrl('//www.mipengine.com', 'img')).to.equal('/i/s/www.mipengine.com')
     })
 
+    it('containsHost', function () {
+      let url = 'http://www.mipengine.com/docs/index.html'
+      let cacheUrl = util.makeCacheUrl(url, 'url', true)
+      expect(cacheUrl).to.equal('http://www-mipengine-com.mipcdn.com/c/www.mipengine.com/docs/index.html')
+    })
+
     it('parseCacheUrl https', function () {
       let url = 'https://www.mipengine.com/docs/index.html'
       let cacheUrl = util.makeCacheUrl(url)
@@ -163,8 +183,43 @@ describe('util', function () {
   })
 
   describe('.getOriginalUrl', function () {
-    // 由于getOriginalUrl 直接获取window.location,不能 sinon.stub, 跳过
-    // 由于 hash.get 取的是 window.location 而不是传入的 url，mip-cache+hash情况单测跳过
+    it('getOriginalUrl', function () {
+      expect(
+        util.getOriginalUrl('https://www.baidu.com/c/s/lavas.baidu.com/mip/guide')
+      ).to.equal('https://lavas.baidu.com/mip/guide')
+    })
+
+    it('getOriginalUrl not mip url', function () {
+      expect(
+        util.getOriginalUrl('https://www.baidu.com/')
+      ).to.equal('https://www.baidu.com/')
+    })
+
+    describe('.getOriginalUrl hash related', function () {
+      let spy
+
+      beforeEach(function () {
+        spy = sinon.stub(util.hash, 'get').callsFake(function (key) {
+          return key
+        })
+      })
+
+      afterEach(function () {
+        spy.restore()
+      })
+
+      it('getOriginalUrl with hash', function () {
+        expect(
+          util.getOriginalUrl('https://www.baidu.com/c/s/lavas.baidu.com/mip/guide#mipanchor=1221')
+        ).to.equal('https://lavas.baidu.com/mip/guide#mipanchor')
+      })
+    })
+  })
+
+  it('.isCacheUrl', function () {
+    expect(util.isCacheUrl('http://www-mipengine-com.mipcdn.com/c/www.mipengine.com/docs/index.html')).to.be.true
+    expect(util.isCacheUrl('https://www.badiu.com/c/www.mipengine.com/docs/index.html')).to.be.false
+    expect(util.isCacheUrl('//mipcache.bdstatic.com/c/')).to.be.true
   })
 })
 

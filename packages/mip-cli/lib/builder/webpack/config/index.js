@@ -14,6 +14,7 @@ const {babelLoader, babelExternals} = require('./babel')
 const path = require('path')
 const componentExternals = require('./component-externals')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const webpack = require('webpack')
 
 module.exports = function (options) {
   let config = {
@@ -43,7 +44,7 @@ module.exports = function (options) {
         {
           test: /\.js$/,
           exclude: /node_modules/,
-          use: options.ignore
+          use: options.ignore && /(^|,)sandbox(,|$)/.test(options.ignore)
             ? [
               babelLoader,
               path.resolve(__dirname, 'child-component-loader.js')
@@ -90,7 +91,10 @@ module.exports = function (options) {
     },
     plugins: [
       new VueLoaderPlugin(),
-      new CustomElementPlugin(options)
+      new CustomElementPlugin(options),
+      new webpack.DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify(options.mode)
+      })
     ]
   }
 

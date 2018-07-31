@@ -9,6 +9,7 @@ const config = require('./config')
 const chokidar = require('chokidar')
 const {globPify} = require('../../utils/helper')
 const projectPath = require('../../utils/project-path')
+const validator = require('mip-component-validator')
 const path = require('path')
 const cli = require('../../cli')
 
@@ -16,6 +17,7 @@ module.exports = class WebpackBuilder {
   constructor (options) {
     this.outputDir = options.output || path.resolve('dist')
     this.dir = options.dir
+    this.packageJsonPathname = path.resolve(this.dir, 'package.json')
     this.componentDir = projectPath.components(this.dir)
     this.asset = options.asset
     this.ignore = options.ignore
@@ -61,34 +63,13 @@ module.exports = class WebpackBuilder {
     let components = await globPify('mip-*/mip-*.@(vue|js)', globOpts)
       .then(arr => arr.filter(name => /(mip-[\w-]+)\/\1\.(vue|js)$/.test(name)))
 
-    // let [vueComponents, jsComponents] = await Promise.all([
-    //   globPify('mip-*/mip-*.vue', globOpts).then(arr => arr.filter(name => /(mip-[\w-]+)\/\1\.vue$/.test(name))),
-    //   globPify('mip-*/mip-*.vue', globOpts).then(arr => arr.filter(name => /(mip-[\w-]+)\/\1\.vue$/.test(name)))
-    // ])
-
-    // globPify('mip-*/mip-*.vue', globOpts)
-    //   .then(arr => arr.filter(name => /(mip-[\w-]+)\/\1\.vue$/.test(name)))
-
     let entries = components.reduce((entries, pathname) => {
       let basename = path.basename(pathname, path.extname(pathname))
       entries[`${basename}/${basename}`] = path.resolve(this.componentDir, pathname)
       return entries
     }, {})
 
-    // entries['mip-components-webpack-helpers'] = resolveModule('mip-components-webpack-helpers/dist/mip-components-webpack-helpers.js')
-
     return entries
-    // let [singleComponents, complexComponents] = await Promise.all([
-    //     globPify('mip-*.vue', globOpts),
-    //     globPify('mip-*/mip-*.vue', globOpts)
-    //         .then(arr => arr.filter(name => /(mip-\w+)\/\1\.vue$/.test(name)))
-    // ]);
-
-    // return [...singleComponents, ...complexComponents].reduce((entries, pathname) => {
-    //     let basename = path.basename(pathname, '.vue');
-    //     entries[basename] = path.resolve(this.componentDir, pathname);
-    //     return entries;
-    // }, {});
   }
 
   async initConfig () {
@@ -129,7 +110,7 @@ module.exports = class WebpackBuilder {
   }
 
   async initWatcher () {
-    this.watcher = chokidar.watch(this.componentDir)
+    let entryWatcher = chokidar.watch(this.componentDir)
     let cb = async pathname => {
       if (this.isOnInited) {
         return
@@ -139,27 +120,6 @@ module.exports = class WebpackBuilder {
         return
       }
 
-      // let basename = path.basename(pathname)
-      // // 非入口文件的增减则不做任何处理
-      // if (!/^mip-[\w-]+\.(vue|js)$/.test(basename)) {
-      //   return
-      // }
-
-      // if (
-      //   path.resolve(
-      //     projectPath.componentDir(this.dir),
-      //     path.basename(basename, path.extname(basename)),
-      //     basename
-      //   ) !== path.resolve(pathname)
-      // ) {
-      //   return
-      // }
-
-      // let possibleComponents = projectPath.possibleComponents(this.componentDir, basename.slice(-4));
-      // if (possibleComponents.indexOf(pathname) < 0) {
-      //     return;
-      // }
-
       try {
         await this.initDev()
       } catch (e) {
@@ -168,8 +128,24 @@ module.exports = class WebpackBuilder {
       }
     }
 
-    this.watcher.on('ready', () => {
-      this.watcher.on('add', cb).on('unlink', cb)
+    entryWatcher.on('ready', () => {
+      entryWatcher.on('add', cb).on('unlink', cb)
+    })
+
+    if (this.ignore && /(^|,)whitelist(,|$)/.test(this.ignore)) {
+      return
+    }
+
+    let packageWatcher = chokidar.watch(this.packageJsonPathname)
+    packageWatcher.on('ready', () => {
+      packageWatcher.on('change', async () => {
+        let reporter = await validator.whitelist(this.dir)
+        if (reporter.errors.length) {
+          cli.error(reporter.errors[0].message)
+          // 暂时把白名单校验过程改成非中断式的
+          // process.exit(1)
+        }
+      })
     })
   }
 }

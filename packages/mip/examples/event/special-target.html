@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP Event</title>
+  <link rel="canonical">
+  <style mip-custom>
+    button {
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <mip-data>
+    <script type="application/json">
+      {
+        num: 1,
+        anum: 1,
+        atext: "default"
+      }
+    </script>
+  </mip-data>
+  <mip-a id="counter" on=" change:MIP.setData({num:     (m.num +   1) *  2}) change:  MIP.setData({atext: 'space in \' text, ( )) in text'})  " m-bind:num="num"></mip-a>
+  <button on="tap:MIP.setData({
+    anum: (m.num+1) * 2
+  })  tap:counter.add"> +<span m-text="num"></span> </button>
+  <hr>
+  <p m-text="anum"></p>
+  <p m-text="atext"></p>
+
+  <script src="../../dist/mip.js"></script>
+  <script>
+    /* global MIP */
+
+    /**
+     * 事件通信配合 mip-data 实现 button 递增，加数递增功能
+     */
+    MIP.registerVueCustomElement('mip-a', {
+      props: {
+        num: Number
+      },
+      data () {
+        return {
+          count: 0
+        }
+      },
+      template: `
+        <div >-ad
+          counter: {{count}}
+        </div>
+      `,
+      mounted () {
+        let vm = this
+        this.$element.customElement.addEventAction('add', function (event) {
+          vm.add()
+        })
+      },
+      methods: {
+        add () {
+          // this.$element.customElement.executeEventAction('change')
+          MIP.viewer.eventAction.execute('change', this.$element, {})
+          this.count += this.num
+        }
+      }
+    })
+  </script>
+</body>
+</html>

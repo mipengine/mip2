@@ -4,7 +4,7 @@
  */
 
 const path = require('path')
-const buble = require('rollup-plugin-buble')
+const babel = require('rollup-plugin-babel')
 const alias = require('rollup-plugin-alias')
 const replace = require('rollup-plugin-replace')
 const node = require('rollup-plugin-node-resolve')
@@ -27,7 +27,8 @@ const builds = {
     entry: resolve('mip'),
     dest: resolve('dist/mip.js'),
     format: 'umd',
-    env: 'production'
+    env: 'production',
+    intro: 'window._mipStartTiming=Date.now();'
   }
 }
 
@@ -56,12 +57,15 @@ function genConfig (name) {
           include: 'node_modules/**'
         }
       ),
-      buble()
+      babel({
+        plugins: ['external-helpers']
+      })
     ].concat(opts.plugins || []),
     output: {
       file: opts.dest,
       format: opts.format,
       banner: opts.banner,
+      intro: opts.intro,
       name: opts.moduleName || 'MIP'
     }
   }

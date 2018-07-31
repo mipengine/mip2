@@ -1,0 +1,40 @@
+{
+  "menu": [
+    {
+      "name": "简介",
+      "key": "basic"
+    },
+    {
+      "name": "开发规范",
+      "key": "mip-standard"
+    },
+    {
+      "name": "MIP 组件机制",
+      "key": "component"
+    },
+    {
+      "name": "MIP 组件开发",
+      "key": "mip-cli"
+    },
+    {
+      "name": "进阶教程",
+      "key": "mip-advanced"
+    },
+    {
+      "name": "MIP 源码解析",
+      "key": "mip-source-interpretation"
+    },
+    {
+      "name": "可交互 MIP",
+      "key": "interactive-mip"
+    },
+    {
+      "name": "全站 MIP",
+      "key": "all-sites-mip"
+    },
+    {
+      "name": "MIP 搜索生效",
+      "key": "mip-in-search"
+    }
+  ]
+}

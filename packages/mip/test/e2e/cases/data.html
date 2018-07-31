@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <title>MIP Data Page</title>
+  <meta name="keywords" content="vue,mip,store">
+  <meta name="description" content="mip-store">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+</head>
+
+<body>
+  <div class="main-content">
+    <p>This is data.html</p>
+    <mip-data>
+      <script type="application/json">
+        { "key": "value"}
+      </script>
+    </mip-data>
+    <a href="./index.html" class="link" mip-link>Back to Index</a>
+    <a class="link" href="./tree.html" mip-link>Go to Tree</a>
+  </div>
+  <br><br>
+
+  <mip-shell>
+    <script type="application/json">
+    {
+      "routes": [
+        {
+          "pattern": "./index.html",
+          "meta": {
+            "header": {
+              "show": true,
+              "title": "MIP",
+              "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
+              "buttonGroup": [
+                {
+                  "name": "subscribe",
+                  "text": "关注",
+                  "link": "/examples/page/tree.html"
+                },
+                {
+                  "name": "chat",
+                  "text": "发消息"
+                },
+                {
+                  "name": "cancel",
+                  "text": "取消"
+                }
+              ]
+            },
+            "view": {
+              "isIndex": true
+            }
+          }
+        },
+        {
+          "pattern": "./tree.html",
+          "meta": {
+            "header": {
+              "show": true,
+              "title": "MIP Tree"
+            }
+          }
+        },
+        {
+          "pattern": "*",
+          "meta": {
+            "header": {
+              "show": true,
+              "title": "MIP Other Page"
+            },
+            "view": {
+              "isIndex": false
+            }
+          }
+        }
+      ]
+    }
+    </script>
+  </mip-shell>
+
+  <script src="/dist/mip.js"></script>
+</body>

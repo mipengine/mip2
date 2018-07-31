@@ -19,18 +19,19 @@
   <mip-b on="show:counter.add(1)"></mip-b>
   <script src="../../dist/mip.js"></script>
   <script>
+    /* global MIP */
     MIP.registerVueCustomElement('mip-a', {
-      data() {
+      data () {
         return {
           count: 0
         }
       },
       template: `
-          <div >
-              counter: {{count}}
-          </div>
+        <div >
+          counter: {{count}}
+        </div>
       `,
-      mounted() {
+      mounted () {
         let vm = this
         // this.$element.customElement.addEventAction('add', function (event, num) {
         //   vm.add(parseInt(num, 10))
@@ -40,31 +41,31 @@
         })
       },
       methods: {
-        add(num) {
+        add (num) {
           this.count += num
         }
       }
     })
 
     MIP.registerVueCustomElement('mip-b', {
-      data() {
+      data () {
         return {
           show: false
         }
       },
       template: `
-          <div >
-              <div @click="onClick">
-                <span v-if="show">点击隐藏内容</span>
-                <span v-else>点击显示内容</span>
-              </div>
-              <div v-if="show">
-                MIP 提供了强大的组件DOM通信，组件间通信功能，以解决在MIP组件开发中遇到的组件交互问题。可以通过 DOM 属性来触发某个 MIP 元素的自定义事件。
-              </div>
+        <div >
+          <div @click="onClick">
+            <span v-if="show">点击隐藏内容</span>
+            <span v-else>点击显示内容</span>
           </div>
+          <div v-if="show">
+            MIP 提供了强大的组件DOM通信，组件间通信功能，以解决在MIP组件开发中遇到的组件交互问题。可以通过 DOM 属性来触发某个 MIP 元素的自定义事件。
+          </div>
+        </div>
       `,
       methods: {
-        onClick() {
+        onClick () {
           this.show = !this.show
           // MIP.viewer.eventAction.execute(this.show ? 'show' : 'close', this.$element, {})
           this.$emit(this.show ? 'show' : 'close', {})
@@ -73,5 +74,4 @@
     })
   </script>
 </body>
-
 </html>

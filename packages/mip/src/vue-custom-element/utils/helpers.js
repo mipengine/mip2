@@ -6,17 +6,15 @@
 /**
  * Camelize a hyphen-delimited string.
  */
-const camelizeRE = /-(\w)/g
+const camelizeRE = /-+(\w)/g
 export const camelize = (str) => str.replace(camelizeRE, (_, c) => c ? c.toUpperCase() : '')
 
 /**
  * Hyphenate a camelCase string.
  */
-const hyphenateRE = /([^-])([A-Z])/g
 export const hyphenate = str => str
-  .replace(hyphenateRE, '$1-$2')
-  .replace(hyphenateRE, '$1-$2')
-  .toLowerCase()
+  .replace(/[A-Z]/g, s => ('-' + s.toLowerCase()))
+  .replace(/^-/, '')
 
 // Convert an Array - like object to a real Array.
 export function toArray (list, start = 0) {

@@ -1,34 +1,58 @@
+/* istanbul ignore file */
 /**
  * @file MIP Shell Base
  * @author wangyisheng@baidu.com (wangyisheng)
  */
 
-import css from '../../util/dom/css'
-import CustomElement from '../../custom-element'
-import fn from '../../util/fn'
-import event from '../../util/dom/event'
-import {isPortrait} from '../../page/util/feature-detect'
 import {
   convertPatternToRegexp,
   createMoreButtonWrapper,
   createPageMask,
   toggleInner
 } from './util'
+import {makeCacheUrl} from '../../util'
+import css from '../../util/dom/css'
+import fn from '../../util/fn'
+import platform from '../../util/platform'
+import event from '../../util/dom/event'
+import CustomElement from '../../custom-element'
+import {supportsPassive, isPortrait} from '../../page/util/feature-detect'
+import {isSameRoute, getFullPath} from '../../page/util/route'
+import {
+  createIFrame,
+  getIFrame,
+  hideAllIFrames,
+  createLoading,
+  getLoading,
+  createFadeHeader,
+  getFadeHeader,
+  toggleFadeHeader,
+  nextFrame,
+  whenTransitionEnds
+} from '../../page/util/dom'
+import {getCleanPageId} from '../../page/util/path'
+import Router from '../../page/router/index'
+import {
+  DEFAULT_SHELL_CONFIG,
+  NON_EXISTS_PAGE_ID,
+  CUSTOM_EVENT_SCROLL_TO_ANCHOR,
+  CUSTOM_EVENT_RESIZE_PAGE,
+  CUSTOM_EVENT_SHOW_PAGE,
+  CUSTOM_EVENT_HIDE_PAGE,
+  MESSAGE_ROUTER_PUSH,
+  MESSAGE_ROUTER_REPLACE,
+  MESSAGE_ROUTER_BACK,
+  MESSAGE_ROUTER_FORWARD,
+  MESSAGE_CROSS_ORIGIN,
+  MESSAGE_BROADCAST_EVENT,
+  MESSAGE_PAGE_RESIZE
+} from '../../page/const/index'
+import viewport from '../../viewport'
+import {customEmit} from '../../vue-custom-element/utils/custom-event'
 
-const DEFAULT_SHELL_CONFIG = {
-  header: {
-    title: '',
-    logo: '',
-    buttonGroup: [],
-    show: false,
-    bouncy: true
-  },
-  view: {
-    isIndex: false
-  }
-}
-
+let viewer = null
 let page = null
+let activeZIndex = 10000
 window.MIP_PAGE_META_CACHE = Object.create(null)
 window.MIP_SHELL_CONFIG = null
 
@@ -36,6 +60,8 @@ class MipShell extends CustomElement {
   // ===================== CustomElement LifeCycle =====================
   constructor (...args) {
     super(...args)
+
+    this.messageHandlers = []
 
     // If true, always load configures from `<mip-shell>` and overwrite shellConfig when opening new page
     this.alwaysReadConfigOnLoad = true
@@ -45,29 +71,43 @@ class MipShell extends CustomElement {
   }
 
   build () {
-    page = window.MIP.viewer.page
-
-    page.notifyRootPage({
-      type: 'sync-page-config',
-      data: {
-        transitionContainsHeader: this.transitionContainsHeader
-      }
-    })
+    viewer = window.MIP.viewer
+    page = viewer.page
 
     // Read config
     let ele = this.element.querySelector('script[type="application/json"]')
+    let tmpShellConfig
 
     if (!ele) {
-      return
-    }
-    let tmpShellConfig
-    try {
-      tmpShellConfig = JSON.parse(ele.textContent.toString()) || {}
-      if (!tmpShellConfig.routes) {
-        tmpShellConfig.routes = []
+      tmpShellConfig = {
+        routes: [{
+          pattern: '*',
+          meta: DEFAULT_SHELL_CONFIG
+        }]
       }
-    } catch (e) {
-      tmpShellConfig = {routes: []}
+    } else {
+      try {
+        tmpShellConfig = JSON.parse(ele.textContent.toString()) || {}
+        if (tmpShellConfig.alwaysReadConfigOnLoad !== undefined) {
+          this.alwaysReadConfigOnLoad = tmpShellConfig.alwaysReadConfigOnLoad
+        }
+        if (tmpShellConfig.transitionContainsHeader !== undefined) {
+          this.transitionContainsHeader = tmpShellConfig.transitionContainsHeader
+        }
+        if (!tmpShellConfig.routes) {
+          tmpShellConfig.routes = [{
+            pattern: '*',
+            meta: DEFAULT_SHELL_CONFIG
+          }]
+        }
+      } catch (e) {
+        tmpShellConfig = {
+          routes: [{
+            pattern: '*',
+            meta: DEFAULT_SHELL_CONFIG
+          }]
+        }
+      }
     }
 
     if (page.isRootPage) {
@@ -75,29 +115,57 @@ class MipShell extends CustomElement {
         route.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, route.meta || {})
         route.regexp = convertPatternToRegexp(route.pattern || '*')
 
-        // get title from <title> tag
+        // Get title from <title> tag
         if (!route.meta.header.title) {
           route.meta.header.title = (document.querySelector('title') || {}).innerHTML || ''
         }
       })
-
       this.processShellConfig(tmpShellConfig)
 
       window.MIP_SHELL_CONFIG = tmpShellConfig.routes
-      page.notifyRootPage({
-        type: 'set-mip-shell-config',
-        data: {
-          shellConfig: tmpShellConfig.routes
-        }
-      })
+      // Append other DOM
+      let children = this.element.children
+      let otherDOM = [].slice.call(children).slice(1, children.length)
+      if (otherDOM.length > 0) {
+        otherDOM.forEach(dom => {
+          dom.setAttribute('mip-shell-inner', '')
+          document.body.appendChild(dom)
+        })
+      }
     } else {
       let pageId = page.pageId
       let pageMeta
-      if (this.alwaysReadConfigOnLoad) {
+
+      if (page.isCrossOrigin) {
+        // If this iframe is a cross origin one
+        // Read all config and save it in window.
+        // Avoid find page meta from `window.parent`
+        tmpShellConfig.routes.forEach(route => {
+          route.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, route.meta || {})
+          route.regexp = convertPatternToRegexp(route.pattern || '*')
+
+          // Get title from <title> tag
+          if (!route.meta.header.title) {
+            route.meta.header.title = (document.querySelector('title') || {}).innerHTML || ''
+          }
+
+          // Find current page meta
+          if (route.regexp.test(pageId)) {
+            pageMeta = window.MIP_PAGE_META_CACHE[pageId] = route.meta
+          }
+        })
+
+        window.MIP_SHELL_CONFIG = tmpShellConfig.routes
+        window.MIP_PAGE_META_CACHE = Object.create(null)
+      } else if (this.alwaysReadConfigOnLoad) {
+        // If `alwaysReadConfigOnLoad` equals `true`
+        // Read config in leaf pages and pick up the matched one. Send it to page for updating.
         pageMeta = DEFAULT_SHELL_CONFIG
         for (let i = 0; i < tmpShellConfig.routes.length; i++) {
           let config = tmpShellConfig.routes[i]
           config.regexp = convertPatternToRegexp(config.pattern || '*')
+
+          // Only process matched page meta
           if (config.regexp.test(pageId)) {
             config.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, config.meta || {})
             // get title from <title> tag
@@ -105,18 +173,21 @@ class MipShell extends CustomElement {
               config.meta.header.title = (document.querySelector('title') || {}).innerHTML || ''
             }
 
-            // this.processShellConfig([config.meta])
-            pageMeta = window.MIP_PAGE_META_CACHE[pageId] = config.meta
+            pageMeta = window.parent.MIP_PAGE_META_CACHE[pageId] = config.meta
             break
           }
         }
       }
 
-      page.notifyRootPage({
-        type: 'update-mip-shell-config',
+      if (!pageMeta) {
+        pageMeta = this.findMetaByPageId(pageId)
+      }
+
+      page.emitCustomEvent(window.parent, page.isCrossOrigin, {
+        name: 'mipShellEvents',
         data: {
-          pageId,
-          pageMeta
+          type: 'updateShell',
+          data: {pageMeta}
         }
       })
     }
@@ -130,7 +201,9 @@ class MipShell extends CustomElement {
     this.currentPageMeta = this.findMetaByPageId(page.pageId)
 
     if (page.isRootPage) {
+      page.pageMeta = this.currentPageMeta
       this.initShell()
+      this.initRouter()
       this.bindRootEvents()
     }
 
@@ -163,7 +236,7 @@ class MipShell extends CustomElement {
 
     // Header
     this.$el = document.createElement('div')
-    this.$el.classList.add('mip-shell-header', 'mip-border', 'mip-border-bottom', 'transition')
+    this.$el.classList.add('mip-shell-header', 'transition')
     this.renderHeader(this.$el)
     this.$wrapper.insertBefore(this.$el, this.$wrapper.firstChild)
 
@@ -178,17 +251,25 @@ class MipShell extends CustomElement {
     // Page mask
     this.$pageMask = createPageMask()
 
+    // Loading
+    this.$loading = createLoading(this.currentPageMeta)
+
+    // Fade header
+    if (!this.transitionContainsHeader) {
+      this.$fadeHeader = createFadeHeader(this.currentPageMeta)
+    }
+
     // Other parts
     this.renderOtherParts()
 
-    window.MIP.viewer.fixedElement.init()
+    // window.MIP.viewer.fixedElement.init()
   }
 
   renderHeader (container) {
     let pageMeta = this.currentPageMeta
     let {
       buttonGroup,
-      title,
+      title = '',
       logo,
       color = '#000000',
       borderColor,
@@ -197,10 +278,14 @@ class MipShell extends CustomElement {
     let showBackIcon = !pageMeta.view.isIndex
 
     let headerHTML = `
-      ${showBackIcon ? `<span class="back-button" mip-header-btn
+      ${showBackIcon ? `<a href="javascript:void(0)" class="back-button" mip-header-btn
         data-button-name="back">
-        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs><style/></defs><path d="M769.405 977.483a68.544 68.544 0 0 1-98.121 0L254.693 553.679c-27.173-27.568-27.173-72.231 0-99.899L671.185 29.976c13.537-13.734 31.324-20.652 49.109-20.652s35.572 6.917 49.109 20.652c27.173 27.568 27.173 72.331 0 99.899L401.921 503.681l367.482 373.904c27.074 27.568 27.074 72.231 0 99.899z"/></svg>
-      </span>` : ''}
+        <svg t="1530857979993" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3173"
+          xmlns:xlink="http://www.w3.org/1999/xlink">
+          <path  fill="currentColor" d="M348.949333 511.829333L774.250667 105.728C783.978667 96 789.333333 83.712 789.333333 71.104c0-12.629333-5.354667-24.917333-15.082666-34.645333-9.728-9.728-22.037333-15.082667-34.645334-15.082667-12.586667 0-24.917333 5.333333-34.624 15.082667L249.557333 471.616A62.570667 62.570667 0 0 0 234.666667 512c0 10.410667 1.130667 25.408 14.890666 40.042667l455.424 435.605333c9.706667 9.728 22.016 15.082667 34.624 15.082667s24.917333-5.354667 34.645334-15.082667c9.728-9.728 15.082667-22.037333 15.082666-34.645333 0-12.608-5.354667-24.917333-15.082666-34.645334L348.949333 511.829333z"
+            p-id="3174"></path>
+        </svg>
+      </a>` : ''}
       <div class="mip-shell-header-logo-title">
         ${logo ? `<img class="mip-shell-header-logo" src="${logo}">` : ''}
         <span class="mip-shell-header-title">${title}</span>
@@ -213,29 +298,47 @@ class MipShell extends CustomElement {
     if (moreFlag && closeFlag) {
       // more & close
       headerHTML += `
-       <div class="mip-shell-header-button-group">
-         <div class="button more" mip-header-btn data-button-name="more">
-           <svg t="1529487280740" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6294" xmlns:xlink="http://www.w3.org/1999/xlink" width="17" height="17"><path d="M64 512a85.333333 85.333333 0 1 1 170.666667 0 85.333333 85.333333 0 0 1-170.666667 0zM512 597.333333a85.333333 85.333333 0 1 1 0-170.666666 85.333333 85.333333 0 0 1 0 170.666666zM789.333333 512a85.333333 85.333333 0 1 1 170.666667 0 85.333333 85.333333 0 0 1-170.666667 0z" p-id="6295"></path></svg>
-         </div>
-         <div class="split"></div>
-         <div class="button close" mip-header-btn data-button-name="close">
-           <svg t="1529487311635" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6410" xmlns:xlink="http://www.w3.org/1999/xlink" width="17" height="17"><path d="M557.482667 512L822.613333 246.869333a32.149333 32.149333 0 0 0-45.44-45.44L512 466.517333 246.890667 201.408a32.149333 32.149333 0 1 0-45.44 45.44L466.56 512 201.429333 777.130667a32.149333 32.149333 0 0 0 45.461334 45.44l265.130666-265.109334L777.173333 822.592a32.149333 32.149333 0 1 0 45.461334-45.44L557.482667 512z" p-id="6411"></path></svg>
-         </div>
-       </div>
+        <div class="mip-shell-header-button-group">
+          <div class="button more" mip-header-btn data-button-name="more">
+            <svg t="1530857985972" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3393"
+              xmlns:xlink="http://www.w3.org/1999/xlink">
+              <path d="M128 512m-128 0a128 128 0 1 0 256 0 128 128 0 1 0-256 0Z" p-id="3394" fill="currentColor"></path>
+              <path d="M512 512m-128 0a128 128 0 1 0 256 0 128 128 0 1 0-256 0Z" p-id="3395" fill="currentColor"></path>
+              <path d="M896 512m-128 0a128 128 0 1 0 256 0 128 128 0 1 0-256 0Z" p-id="3396" fill="currentColor"></path>
+            </svg>
+          </div>
+          <div class="split"></div>
+          <div class="button close" mip-header-btn data-button-name="close">
+            <svg t="1530857971603" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2953"
+              xmlns:xlink="http://www.w3.org/1999/xlink">
+              <path  fill="currentColor" d="M586.026667 533.248l208.789333-208.576c9.856-8.874667 15.488-21.248 15.850667-34.858667a53.717333 53.717333 0 0 0-15.829334-39.146666 48.042667 48.042667 0 0 0-36.224-15.872c-14.165333 0-27.584 5.632-37.802666 15.850666L512 459.221333l-208.789333-208.576a48.042667 48.042667 0 0 0-36.245334-15.850666c-14.144 0-27.562667 5.632-37.781333 15.850666A48.085333 48.085333 0 0 0 213.333333 285.504a53.717333 53.717333 0 0 0 15.850667 39.168l208.789333 208.576-208.576 208.853333a48.085333 48.085333 0 0 0-15.850666 34.88 53.717333 53.717333 0 0 0 15.850666 39.146667c9.194667 10.24 22.058667 15.872 36.224 15.872 14.144 0 27.562667-5.632 37.802667-15.850667L512 607.274667l208.597333 208.853333c9.216 10.24 22.08 15.872 36.224 15.872s27.584-5.632 37.802667-15.850667c9.856-8.874667 15.488-21.269333 15.850667-34.88a53.717333 53.717333 0 0 0-15.850667-39.146666l-208.597333-208.853334z"
+                p-id="2954"></path>
+            </svg>
+          </div>
+        </div>
      `
     } else if (moreFlag && !closeFlag) {
       // only more
       headerHTML += `
-       <div class="mip-shell-header-button-group-standalone more" mip-header-btn data-button-name="more">
-         <svg t="1529487280740" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6294" xmlns:xlink="http://www.w3.org/1999/xlink" width="17" height="17"><path d="M64 512a85.333333 85.333333 0 1 1 170.666667 0 85.333333 85.333333 0 0 1-170.666667 0zM512 597.333333a85.333333 85.333333 0 1 1 0-170.666666 85.333333 85.333333 0 0 1 0 170.666666zM789.333333 512a85.333333 85.333333 0 1 1 170.666667 0 85.333333 85.333333 0 0 1-170.666667 0z" p-id="6295"></path></svg>
-       </div>
+        <div class="mip-shell-header-button-group-standalone more" mip-header-btn data-button-name="more">
+          <svg t="1530857985972" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3393"
+            xmlns:xlink="http://www.w3.org/1999/xlink">
+            <path d="M128 512m-128 0a128 128 0 1 0 256 0 128 128 0 1 0-256 0Z" p-id="3394" fill="currentColor"></path>
+            <path d="M512 512m-128 0a128 128 0 1 0 256 0 128 128 0 1 0-256 0Z" p-id="3395" fill="currentColor"></path>
+            <path d="M896 512m-128 0a128 128 0 1 0 256 0 128 128 0 1 0-256 0Z" p-id="3396" fill="currentColor"></path>
+          </svg>
+        </div>
      `
     } else if (!moreFlag && closeFlag) {
       // only close
       headerHTML += `
         <div class="mip-shell-header-button-group-standalone">
           <div class="button close" mip-header-btn data-button-name="close">
-            <svg t="1529487311635" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="6410" xmlns:xlink="http://www.w3.org/1999/xlink" width="17" height="17"><path d="M557.482667 512L822.613333 246.869333a32.149333 32.149333 0 0 0-45.44-45.44L512 466.517333 246.890667 201.408a32.149333 32.149333 0 1 0-45.44 45.44L466.56 512 201.429333 777.130667a32.149333 32.149333 0 0 0 45.461334 45.44l265.130666-265.109334L777.173333 822.592a32.149333 32.149333 0 1 0 45.461334-45.44L557.482667 512z" p-id="6411"></path></svg>
+            <svg t="1530857971603" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2953"
+              xmlns:xlink="http://www.w3.org/1999/xlink">
+              <path  fill="currentColor" d="M586.026667 533.248l208.789333-208.576c9.856-8.874667 15.488-21.248 15.850667-34.858667a53.717333 53.717333 0 0 0-15.829334-39.146666 48.042667 48.042667 0 0 0-36.224-15.872c-14.165333 0-27.584 5.632-37.802666 15.850666L512 459.221333l-208.789333-208.576a48.042667 48.042667 0 0 0-36.245334-15.850666c-14.144 0-27.562667 5.632-37.781333 15.850666A48.085333 48.085333 0 0 0 213.333333 285.504a53.717333 53.717333 0 0 0 15.850667 39.168l208.789333 208.576-208.576 208.853333a48.085333 48.085333 0 0 0-15.850666 34.88 53.717333 53.717333 0 0 0 15.850666 39.146667c9.194667 10.24 22.058667 15.872 36.224 15.872 14.144 0 27.562667-5.632 37.802667-15.850667L512 607.274667l208.597333 208.853333c9.216 10.24 22.08 15.872 36.224 15.872s27.584-5.632 37.802667-15.850667c9.856-8.874667 15.488-21.269333 15.850667-34.88a53.717333 53.717333 0 0 0-15.850667-39.146666l-208.597333-208.853334z"
+                p-id="2954"></path>
+            </svg>
           </div>
         </div>
       `
@@ -247,22 +350,87 @@ class MipShell extends CustomElement {
     css(container, 'background-color', backgroundColor)
     css(container.querySelectorAll('svg'), 'fill', color)
     css(container.querySelector('.mip-shell-header-title'), 'color', color)
-    if (!borderColor) {
-      container.classList.add('mip-border', 'mip-border-bottom')
-      css(container, 'border-bottom', '0')
-      css(container, 'box-sizing', 'content-box')
-      borderColor = '#e1e1e1'
-    } else {
-      container.classList.remove('mip-border', 'mip-border-bottom')
-      css(container, 'border-bottom', `1px solid ${borderColor}`)
-      css(container, 'box-sizing', 'border-box')
-    }
     css(container.querySelector('.mip-shell-header-logo'), 'border-color', borderColor)
     css(container.querySelector('.mip-shell-header-button-group'), 'border-color', borderColor)
     css(container.querySelector('.mip-shell-header-button-group .split'), 'background-color', borderColor)
   }
 
+  initRouter () {
+    // Init router
+    let router = new Router()
+    router.init()
+    router.listen(this.render.bind(this))
+    this.router = router
+
+    // Handle events emitted by SF
+    viewer.onMessage('changeState', ({url}) => {
+      router.replace(makeCacheUrl(url, 'url', true))
+    })
+
+    window.MIP_SHELL_OPTION = {
+      allowTransition: false,
+      isForward: true
+    }
+
+    window.addEventListener('message', e => {
+      let type
+      let data
+      try {
+        type = e.data.type
+        data = e.data.data
+      } catch (e) {
+        // Ignore other messages
+        return
+      }
+
+      // Deal message and operate router
+      if (type === MESSAGE_ROUTER_PUSH) {
+        if (data.options.allowTransition) {
+          window.MIP_SHELL_OPTION.allowTransition = true
+        }
+        router.push(data.route)
+      } else if (type === MESSAGE_ROUTER_REPLACE) {
+        if (data.options.allowTransition) {
+          window.MIP_SHELL_OPTION.allowTransition = true
+        }
+        router.replace(data.route)
+      } else if (type === MESSAGE_ROUTER_BACK) {
+        window.MIP_SHELL_OPTION.allowTransition = true
+        window.MIP_SHELL_OPTION.isForward = false
+        router.back()
+      } else if (type === MESSAGE_ROUTER_FORWARD) {
+        window.MIP_SHELL_OPTION.allowTransition = true
+        router.forward()
+      }
+    }, false)
+  }
+
   bindRootEvents () {
+    this.currentViewportHeight = viewport.getHeight()
+    this.currentViewportWidth = viewport.getWidth()
+
+    // Receive and resend message
+    this.messageHandlers.push((type, data) => {
+      if (type === MESSAGE_BROADCAST_EVENT) {
+        // Broadcast Event
+        page.broadcastCustomEvent(data)
+      } else if (type === MESSAGE_PAGE_RESIZE) {
+        this.resizeAllPages()
+      }
+    })
+
+    // update every iframe's height when viewport resizing
+    viewport.on('resize', () => {
+      // only when screen gets spinned
+      let currentViewportWidth = viewport.getWidth()
+      if (this.currentViewportWidth !== currentViewportWidth) {
+        this.currentViewportHeight = viewport.getHeight()
+        this.currentViewportWidth = currentViewportWidth
+        this.resizeAllPages()
+      }
+    })
+
+    // Listen events
     window.addEventListener('mipShellEvents', e => {
       let {type, data} = e.detail[0]
 
@@ -285,7 +453,631 @@ class MipShell extends CustomElement {
       }
     })
 
+    // Bind DOM events
     this.bindHeaderEvents()
+
+    window.MIP.viewer.eventAction.execute('active', this.element, {})
+  }
+
+  /**
+   * render with current route
+   *
+   * @param {Route} from route
+   * @param {Route} to route
+   */
+  render (from, to) {
+    this.resizeAllPages()
+
+    // If `to` route is the same with `from` route in path & query, scroll in current page
+    if (isSameRoute(from, to, true)) {
+      // Emit event to current active page
+      page.emitEventInCurrentPage({
+        name: CUSTOM_EVENT_SCROLL_TO_ANCHOR,
+        data: to.hash
+      })
+      return
+    }
+
+    // Render target page
+    let sourcePage = page.getPageById(page.currentPageId)
+    let targetFullPath = getFullPath(to)
+    let targetPageId = getCleanPageId(targetFullPath)
+    let targetPage = page.getPageById(targetPageId)
+
+    /**
+     * priority of header.title:
+     * 1. <a mip-link data-title> (to.meta.title)
+     * 2. <mip-shell> route.meta.header.title (findMetaById(id).header.title)
+     * 3. <a mip-link></a> innerText (to.meta.defaultTitle)
+     */
+    let targetPageMeta = fn.extend(true, {}, this.findMetaByPageId(targetPageId))
+    targetPageMeta.header.title = to.meta.title || targetPageMeta.header.title || to.meta.defaultTitle
+
+    // Transition direction
+    let isForward = window.MIP_SHELL_OPTION.isForward
+
+    // Hide page mask and skip transition
+    this.togglePageMask(false, {skipTransition: true})
+
+    // Show header
+    this.toggleTransition(false)
+    this.slideHeader('down')
+    this.pauseBouncyHeader = true
+
+    let params = {
+      targetPageId,
+      targetPageMeta,
+      sourcePageId: page.currentPageId,
+      sourcePageMeta: sourcePage.pageMeta,
+      isForward
+    }
+
+    // Leave from root page, save scroll position
+    if (page.currentPageId === page.pageId) {
+      this.saveScrollPosition()
+    }
+
+    if (!targetPage || (to.meta && to.meta.reload)) {
+      // Iframe will be created in following situation:
+      // 1. `!targetPage` means target iframe doesn't exists.
+      // 2. `to.meta && to.meta.reload` means target iframe MUST be recreated even it exists.
+      //    `to.meta.reload` will be set when click `<a mip-link>`
+
+      // If target page is root page
+      if (page.pageId === targetPageId) {
+        // Clear root pageId and destroy root page (Root page will exist in newly created iframe)
+        page.pageId = NON_EXISTS_PAGE_ID
+        if (targetPage) {
+          targetPage.destroy()
+        }
+        // Delete DOM & trigger disconnectedCallback in root page
+        Array.prototype.slice.call(page.getElementsInRootPage()).forEach(el => el.parentNode && el.parentNode.removeChild(el))
+      }
+
+      if (!targetPage) {
+        page.checkIfExceedsMaxPageNum(targetPageId)
+      }
+
+      let targetPageInfo = {
+        pageId: targetPageId,
+        pageMeta: targetPageMeta,
+        fullpath: targetFullPath,
+        standalone: window.MIP.standalone,
+        isRootPage: false,
+        isCrossOrigin: to.origin !== window.location.origin
+      }
+
+      let iframeCreated = false
+      let targetIFrame
+      // Bugs appear in QQBrowser when [pushState] and [create iframe] invoked together
+      // Ensure [create iframe] before [pushState] and eliminate async operations can help
+      // Thus, disable transition in QQBrowser
+      if (platform.isQQ() || platform.isQQApp()) {
+        targetIFrame = createIFrame(targetPageInfo)
+        targetPageInfo.targetWindow = targetIFrame.contentWindow
+        iframeCreated = true
+        window.MIP_SHELL_OPTION.allowTransition = false
+      }
+
+      page.addChild(targetPageInfo)
+      params.newPage = true
+
+      this.beforeSwitchPage(params)
+
+      params.onComplete = () => {
+        this.currentPageMeta = targetPageMeta
+        window.MIP_SHELL_OPTION.allowTransition = false
+        window.MIP_SHELL_OPTION.isForward = true
+
+        if (!iframeCreated) {
+          targetIFrame = createIFrame(targetPageInfo)
+          targetPageInfo.targetWindow = targetIFrame.contentWindow
+        }
+        css(targetIFrame, {
+          display: 'block',
+          opacity: 1
+        })
+        this.toggleTransition(true)
+        this.pauseBouncyHeader = false
+
+        // Get <mip-shell> from root page
+        let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
+        if (shellDOM) {
+          viewer.eventAction.execute('active', shellDOM, {})
+        }
+
+        // Emit show/hide event to both pages
+        page.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
+        page.currentPageId = targetPageId
+        page.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+      }
+
+      this.switchPage(params)
+    } else {
+      // Use existing iframe without recreating
+      if (platform.isQQ() || platform.isQQApp()) {
+        window.MIP_SHELL_OPTION.allowTransition = false
+      }
+      // When transition contains header, fadeHeader won't appear
+      // Thus updating shell of target page first is required
+      if (this.transitionContainsHeader) {
+        this.refreshShell({pageMeta: targetPageMeta})
+      }
+
+      params.newPage = false
+      this.beforeSwitchPage(params)
+
+      params.onComplete = () => {
+        this.currentPageMeta = targetPageMeta
+        window.MIP_SHELL_OPTION.allowTransition = false
+        window.MIP_SHELL_OPTION.isForward = true
+
+        window.MIP.$recompile()
+
+        css(getIFrame(targetPageId), {
+          display: 'block',
+          opacity: 1
+        })
+        if (!this.transitionContainsHeader) {
+          this.refreshShell({pageMeta: targetPageMeta})
+        }
+        this.toggleTransition(true)
+        this.pauseBouncyHeader = false
+
+        // Get <mip-shell> from root page
+        let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
+        if (shellDOM) {
+          viewer.eventAction.execute('active', shellDOM, {})
+        }
+
+        // Emit show/hide event to both pages
+        page.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
+        page.currentPageId = targetPageId
+        page.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+      }
+
+      this.switchPage(params)
+    }
+  }
+
+  /**
+   * save scroll position in root page
+   */
+  saveScrollPosition () {
+    this.rootPageScrollPosition = viewport.getScrollTop()
+  }
+
+  /**
+   * restore scroll position in root page
+   */
+  restoreScrollPosition () {
+    viewport.setScrollTop(this.rootPageScrollPosition)
+  }
+
+  /**
+   * Apply transition effect when switching page
+   *
+   * @param {Object} options
+   * @param {string} options.targetPageId targetPageId
+   * @param {Object} options.targetPageMeta pageMeta of target page
+   * @param {string} options.sourcePageId sourcePageId
+   * @param {Object} options.sourcePageMeta pageMeta of source page
+   * @param {boolean} options.newPage whether a new iframe should be created
+   * @param {boolean} options.isForward whether transition direction is forward
+   * @param {Function} options.onComplete complete callback
+   */
+  switchPage (options) {
+    if (isPortrait() && window.MIP_SHELL_OPTION.allowTransition) {
+      // enable transition
+      if (options.newPage) {
+        if (options.isForward) {
+          this.forwardTransitionAndCreate(options)
+        } else {
+          this.backwardTransitionAndCreate(options)
+        }
+      } else {
+        if (options.isForward) {
+          this.forwardTransition(options)
+        } else {
+          this.backwardTransition(options)
+        }
+      }
+    } else {
+      // disable transition
+      if (options.newPage) {
+        this.skipTransitionAndCreate(options)
+      } else {
+        this.skipTransition(options)
+      }
+    }
+  }
+
+  /**
+   * Forward transition and create new iframe
+   *
+   * @param {Object} options
+   * @param {string} options.targetPageId targetPageId
+   * @param {Object} options.targetPageMeta pageMeta of target page
+   * @param {string} options.sourcePageId sourcePageId
+   * @param {Object} options.sourcePageMeta pageMeta of source page
+   * @param {boolean} options.newPage whether a new iframe should be created (true)
+   * @param {boolean} options.isForward whether transition direction is forward (true)
+   * @param {Function} options.onComplete complete callback
+   */
+  forwardTransitionAndCreate (options) {
+    let {sourcePageId, targetPageId, targetPageMeta, onComplete} = options
+    let loading = getLoading(targetPageMeta, {transitionContainsHeader: this.transitionContainsHeader})
+    loading.classList.add('slide-enter', 'slide-enter-active')
+    css(loading, 'display', 'block')
+
+    let headerLogoTitle
+    let fadeHeader
+    if (!this.transitionContainsHeader) {
+      headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
+      headerLogoTitle && headerLogoTitle.classList.add('fade-out')
+      fadeHeader = getFadeHeader(targetPageMeta)
+      fadeHeader.classList.add('fade-enter', 'fade-enter-active')
+      css(fadeHeader, 'display', 'block')
+    }
+
+    // trigger layout
+    /* eslint-disable no-unused-expressions */
+    loading.offsetWidth
+    /* eslint-enable no-unused-expressions */
+
+    whenTransitionEnds(loading, 'transition', () => {
+      loading.classList.remove('slide-enter-to', 'slide-enter-active')
+      if (!this.transitionContainsHeader) {
+        fadeHeader.classList.remove('fade-enter-to', 'fade-enter-active')
+      }
+
+      hideAllIFrames()
+
+      if (sourcePageId === page.pageId) {
+        /**
+         * Disable scrolling of root page when covered by an iframe
+         * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
+         */
+        document.documentElement.classList.add('mip-no-scroll')
+        Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
+      }
+
+      onComplete && onComplete()
+
+      let iframe = getIFrame(targetPageId)
+      css(iframe, 'z-index', activeZIndex++)
+
+      this.afterSwitchPage(options)
+    })
+
+    nextFrame(() => {
+      loading.classList.add('slide-enter-to')
+      loading.classList.remove('slide-enter')
+      if (!this.transitionContainsHeader) {
+        fadeHeader.classList.add('fade-enter-to')
+        fadeHeader.classList.remove('fade-enter')
+      }
+    })
+  }
+
+  /**
+   * Backward transition and create new iframe
+   *
+   * @param {Object} options
+   * @param {string} options.targetPageId targetPageId
+   * @param {Object} options.targetPageMeta pageMeta of target page
+   * @param {string} options.sourcePageId sourcePageId
+   * @param {Object} options.sourcePageMeta pageMeta of source page
+   * @param {boolean} options.newPage whether a new iframe should be created (true)
+   * @param {boolean} options.isForward whether transition direction is forward (false)
+   * @param {Function} options.onComplete complete callback
+   */
+  backwardTransitionAndCreate (options) {
+    let {
+      targetPageId,
+      targetPageMeta,
+      sourcePageId,
+      sourcePageMeta,
+      onComplete
+    } = options
+    // Goto root page, resume scroll position (Only appears in backward)
+    let rootPageScrollPosition = 0
+    if (targetPageId === page.pageId) {
+      document.documentElement.classList.remove('mip-no-scroll')
+      Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
+      rootPageScrollPosition = this.rootPageScrollPosition
+      this.restoreScrollPosition()
+    }
+
+    let iframe = getIFrame(sourcePageId)
+    // If source page is root page, skip transition
+    if (!iframe) {
+      document.documentElement.classList.add('mip-no-scroll')
+      Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
+
+      onComplete && onComplete()
+
+      let targetIFrame = getIFrame(targetPageId)
+      if (targetIFrame) {
+        activeZIndex -= 2
+        css(targetIFrame, 'z-index', activeZIndex++)
+      }
+
+      this.afterSwitchPage(options)
+      return
+    }
+
+    // Moving out only needs header, not loading body
+    let loading = getLoading(sourcePageMeta, {
+      onlyHeader: true,
+      transitionContainsHeader: this.transitionContainsHeader
+    })
+    let headerLogoTitle
+    let fadeHeader
+
+    if (this.transitionContainsHeader) {
+      css(loading, 'display', 'block')
+    } else {
+      headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
+      headerLogoTitle && headerLogoTitle.classList.add('fade-out')
+      fadeHeader = getFadeHeader(targetPageMeta, sourcePageMeta)
+      css(fadeHeader, 'display', 'block')
+    }
+
+    iframe.classList.add('slide-leave', 'slide-leave-active')
+    if (this.transitionContainsHeader) {
+      loading.classList.add('slide-leave', 'slide-leave-active')
+    } else {
+      fadeHeader.classList.add('fade-enter', 'fade-enter-active')
+    }
+
+    // trigger layout and move current iframe to correct position
+    /* eslint-disable no-unused-expressions */
+    css(iframe, {
+      opacity: 1,
+      top: rootPageScrollPosition + 'px'
+    })
+    /* eslint-enable no-unused-expressions */
+
+    whenTransitionEnds(iframe, 'transition', () => {
+      css(iframe, {
+        display: 'none',
+        'z-index': 10000,
+        top: 0
+      })
+      iframe.classList.remove('slide-leave-to', 'slide-leave-active')
+      if (this.transitionContainsHeader) {
+        loading.classList.remove('slide-leave-to', 'slide-leave-active')
+        css(loading, 'display', 'none')
+      } else {
+        fadeHeader.classList.remove('fade-enter-to', 'fade-enter')
+      }
+
+      onComplete && onComplete()
+
+      let targetIFrame = getIFrame(targetPageId)
+      if (targetIFrame) {
+        activeZIndex -= 2
+        css(targetIFrame, 'z-index', activeZIndex++)
+      }
+
+      this.afterSwitchPage(options)
+    })
+
+    nextFrame(() => {
+      iframe.classList.add('slide-leave-to')
+      iframe.classList.remove('slide-leave')
+      if (this.transitionContainsHeader) {
+        loading.classList.add('slide-leave-to')
+        loading.classList.remove('slide-leave')
+      } else {
+        fadeHeader.classList.add('fade-enter-to')
+        fadeHeader.classList.remove('fade-enter')
+      }
+    })
+  }
+
+  /**
+   * Forward transition
+   *
+   * @param {Object} options
+   * @param {string} options.targetPageId targetPageId
+   * @param {Object} options.targetPageMeta pageMeta of target page
+   * @param {string} options.sourcePageId sourcePageId
+   * @param {Object} options.sourcePageMeta pageMeta of source page
+   * @param {boolean} options.newPage whether a new iframe should be created (false)
+   * @param {boolean} options.isForward whether transition direction is forward (true)
+   * @param {Function} options.onComplete complete callback
+   */
+  forwardTransition (options) {
+    // Currently act the same as forwardTransitionAndCreate
+    // This can be extended by sub-shell which executes different operations
+    this.forwardTransitionAndCreate(options)
+  }
+
+  /**
+   * Backward transition
+   *
+   * @param {Object} options
+   * @param {string} options.targetPageId targetPageId
+   * @param {Object} options.targetPageMeta pageMeta of target page
+   * @param {string} options.sourcePageId sourcePageId
+   * @param {Object} options.sourcePageMeta pageMeta of source page
+   * @param {boolean} options.newPage whether a new iframe should be created (false)
+   * @param {boolean} options.isForward whether transition direction is forward (true)
+   * @param {Function} options.onComplete complete callback
+   */
+  backwardTransition (options) {
+    let {
+      targetPageId,
+      targetPageMeta,
+      sourcePageId,
+      sourcePageMeta,
+      onComplete
+    } = options
+
+    let targetIFrame = getIFrame(targetPageId)
+    if (targetIFrame) {
+      activeZIndex -= 2
+      css(targetIFrame, {
+        opacity: 1,
+        display: 'block',
+        'z-index': activeZIndex++
+      })
+    }
+
+    // Goto root page, resume scroll position (Only appears in backward)
+    let rootPageScrollPosition = 0
+    if (targetPageId === page.pageId) {
+      document.documentElement.classList.remove('mip-no-scroll')
+      Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
+      rootPageScrollPosition = this.rootPageScrollPosition
+      this.restoreScrollPosition()
+    }
+
+    let iframe = getIFrame(sourcePageId)
+    // If source page is root page, skip transition
+    if (!iframe) {
+      document.documentElement.classList.add('mip-no-scroll')
+      Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
+
+      onComplete && onComplete()
+      this.afterSwitchPage(options)
+      return
+    }
+
+    // Moving out only needs header, not loading body
+    let loading = getLoading(sourcePageMeta, {
+      onlyHeader: true,
+      transitionContainsHeader: this.transitionContainsHeader
+    })
+    let headerLogoTitle
+    let fadeHeader
+
+    if (this.transitionContainsHeader) {
+      css(loading, 'display', 'block')
+    } else {
+      headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
+      headerLogoTitle && headerLogoTitle.classList.add('fade-out')
+      fadeHeader = getFadeHeader(targetPageMeta, sourcePageMeta)
+      css(fadeHeader, 'display', 'block')
+    }
+
+    iframe.classList.add('slide-leave', 'slide-leave-active')
+    if (this.transitionContainsHeader) {
+      loading.classList.add('slide-leave', 'slide-leave-active')
+    } else {
+      fadeHeader.classList.add('fade-enter', 'fade-enter-active')
+    }
+
+    // trigger layout and move current iframe to correct position
+    /* eslint-disable no-unused-expressions */
+    css(iframe, {
+      opacity: 1,
+      top: rootPageScrollPosition + 'px'
+    })
+    /* eslint-enable no-unused-expressions */
+
+    whenTransitionEnds(iframe, 'transition', () => {
+      css(iframe, {
+        display: 'none',
+        'z-index': 10000,
+        top: 0
+      })
+      iframe.classList.remove('slide-leave-to', 'slide-leave-active')
+      if (this.transitionContainsHeader) {
+        loading.classList.remove('slide-leave-to', 'slide-leave-active')
+        css(loading, 'display', 'none')
+      } else {
+        fadeHeader.classList.remove('fade-enter-to', 'fade-enter')
+      }
+
+      onComplete && onComplete()
+      this.afterSwitchPage(options)
+    })
+
+    nextFrame(() => {
+      iframe.classList.add('slide-leave-to')
+      iframe.classList.remove('slide-leave')
+      if (this.transitionContainsHeader) {
+        loading.classList.add('slide-leave-to')
+        loading.classList.remove('slide-leave')
+      } else {
+        fadeHeader.classList.add('fade-enter-to')
+        fadeHeader.classList.remove('fade-enter')
+      }
+    })
+  }
+
+  /**
+   * Skip transition and create new iframe
+   *
+   * @param {Object} options
+   * @param {string} options.targetPageId targetPageId
+   * @param {Object} options.targetPageMeta pageMeta of target page
+   * @param {string} options.sourcePageId sourcePageId
+   * @param {Object} options.sourcePageMeta pageMeta of source page
+   * @param {boolean} options.newPage whether a new iframe should be created (false)
+   * @param {boolean} options.isForward whether transition direction is forward (true)
+   * @param {Function} options.onComplete complete callback
+   */
+  skipTransitionAndCreate (options) {
+    let {sourcePageId, targetPageId, onComplete} = options
+
+    hideAllIFrames()
+    if (sourcePageId === page.pageId) {
+      document.documentElement.classList.add('mip-no-scroll')
+      Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
+    }
+    if (targetPageId === page.pageId) {
+      document.documentElement.classList.remove('mip-no-scroll')
+      Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
+      this.restoreScrollPosition()
+    }
+
+    onComplete && onComplete()
+
+    let iframe = getIFrame(targetPageId)
+    css(iframe, 'z-index', activeZIndex++)
+
+    this.afterSwitchPage(options)
+  }
+
+  /**
+   * Skip transition
+   *
+   * @param {Object} options
+   * @param {string} options.targetPageId targetPageId
+   * @param {Object} options.targetPageMeta pageMeta of target page
+   * @param {string} options.sourcePageId sourcePageId
+   * @param {Object} options.sourcePageMeta pageMeta of source page
+   * @param {boolean} options.newPage whether a new iframe should be created (false)
+   * @param {boolean} options.isForward whether transition direction is forward (true)
+   * @param {Function} options.onComplete complete callback
+   */
+  skipTransition (options) {
+    // Currently act the same as skipTransitionAndCreate
+    // This can be extended by sub-shell which executes different operations
+    this.skipTransitionAndCreate(options)
+  }
+
+  /**
+   * handle resize event
+   */
+  resizeAllPages () {
+    // 1.set every page's iframe
+    Array.prototype.slice.call(document.querySelectorAll('.mip-page__iframe')).forEach($el => {
+      $el.style.height = `${this.currentViewportHeight}px`
+    })
+    // 2.notify <mip-iframe> in every page
+    page.broadcastCustomEvent({
+      name: CUSTOM_EVENT_RESIZE_PAGE,
+      data: {
+        height: this.currentViewportHeight
+      }
+    })
+    // 3.notify SF to set the iframe outside
+    viewer.sendMessage('resizeContainer', {height: this.currentViewportHeight})
   }
 
   bindHeaderEvents () {
@@ -300,10 +1092,30 @@ class MipShell extends CustomElement {
     this.buttonEventHandler = event.delegate(this.$buttonWrapper, '[mip-header-btn]', 'click', function (e) {
       let buttonName = this.dataset.buttonName
       me.handleClickHeaderButton(buttonName)
+
+      // Fix buttonGroup with 'link' config
+      let children = this.children && this.children[0]
+      if (children && children.tagName.toLowerCase() === 'a' && children.hasAttribute('mip-link')) {
+        me.toggleDropdown(false)
+      }
     })
 
+    let fadeHeader = document.querySelector('#mip-page-fade-header-wrapper')
+    if (fadeHeader) {
+      this.fadeHeaderEventHandler = event.delegate(fadeHeader, '[mip-header-btn]', 'click', function (e) {
+        if (this.dataset.buttonName === 'back') {
+          window.MIP_SHELL_OPTION.allowTransition = true
+          window.MIP_SHELL_OPTION.isForward = false
+          page.back()
+        }
+      })
+    }
+
     if (this.$buttonMask) {
-      this.$buttonMask.onclick = () => this.toggleDropdown(false)
+      this.$buttonMask.addEventListener('click', () => this.toggleDropdown(false))
+      this.$buttonMask.addEventListener('touchmove',
+        e => e.preventDefault(),
+        supportsPassive ? {passive: false} : false)
     }
   }
 
@@ -317,21 +1129,19 @@ class MipShell extends CustomElement {
       this.buttonEventHandler()
       this.buttonEventHandler = undefined
     }
+
+    if (this.fadeHeaderEventHandler) {
+      this.fadeHeaderEventHandler()
+      this.fadeHeaderEventHandler = undefined
+    }
   }
 
   handleClickHeaderButton (buttonName) {
     if (buttonName === 'back') {
       // **Important** only allow transition happens when Back btn & <a> clicked
-      if (isPortrait()) {
-        page.allowTransition = true
-      }
-      page.direction = 'back'
-      // SF can help to navigate by 'changeState' when standalone = false
-      if (window.MIP.standalone) {
-        window.MIP_ROUTER.go(-1)
-      } else {
-        window.MIP.viewer.sendMessage('historyNavigate', {step: -1})
-      }
+      window.MIP_SHELL_OPTION.allowTransition = true
+      window.MIP_SHELL_OPTION.isForward = false
+      page.back()
     } else if (buttonName === 'more') {
       this.toggleDropdown(true)
     } else if (buttonName === 'close') {
@@ -365,11 +1175,23 @@ class MipShell extends CustomElement {
 
     if (!(pageMeta.header && pageMeta.header.show)) {
       this.$wrapper.classList.add('hide')
+      css(this.$loading, 'display', 'none')
+      if (!this.transitionContainsHeader) {
+        let headerLogoTitle = this.$el.querySelector('.mip-shell-header-logo-title')
+        headerLogoTitle && headerLogoTitle.classList.remove('fade-out')
+        toggleFadeHeader(false)
+      }
       return
     }
 
     // Refresh header
+    this.toggleTransition(false)
+    /* eslint-disable no-unused-expressions */
+    window.innerHeight
     this.slideHeader('down')
+    window.innerHeight
+    /* eslint-enable no-unused-expressions */
+    this.toggleTransition(true)
     if (asyncRefresh) {
       // In async mode: (Invoked from `processShellConfig` by user)
       // 1. Render fade header with updated pageMeta
@@ -378,10 +1200,10 @@ class MipShell extends CustomElement {
       // 4. Update real header (along with otherParts, buttonWrapper, buttonMask)
       // 5. Hide fade header
       // 6. Bind header events
-      page.toggleFadeHeader(true, pageMeta)
+      toggleFadeHeader(true, pageMeta)
       setTimeout(() => {
         this.renderHeader(this.$el)
-        page.toggleFadeHeader(false)
+        toggleFadeHeader(false)
         // Rebind header events
         this.bindHeaderEvents()
       }, 350)
@@ -392,6 +1214,7 @@ class MipShell extends CustomElement {
       // 3. Wait for transition ending
       // 4. Hide fade header (Fade header was shown in MIP Page)
       this.renderHeader(this.$el)
+      css(this.$loading, 'display', 'none')
     }
 
     this.updateOtherParts()
@@ -408,12 +1231,8 @@ class MipShell extends CustomElement {
       if (!this.transitionContainsHeader) {
         let headerLogoTitle = this.$el.querySelector('.mip-shell-header-logo-title')
         headerLogoTitle && headerLogoTitle.classList.remove('fade-out')
+        toggleFadeHeader(false)
       }
-
-      setTimeout(() => {
-        page.toggleFadeHeader(false)
-        // css(document.querySelector('.mip-page-fade-header-wrapper'), 'display', 'none')
-      }, 350)
 
       // Rebind header events
       this.bindHeaderEvents()
@@ -421,6 +1240,9 @@ class MipShell extends CustomElement {
   }
 
   slideHeader (direction) {
+    if (this.pauseBouncyHeader) {
+      return
+    }
     if (direction === 'up') {
       this.$el.classList.add('slide-up')
     } else {
@@ -475,11 +1297,38 @@ class MipShell extends CustomElement {
 
   // ===================== All Page Functions =====================
   bindAllEvents () {
-    let {show: showHeader} = this.currentPageMeta.header
+    // Don't let browser restore scroll position.
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual'
+    }
+
+    let {show: showHeader, bouncy} = this.currentPageMeta.header
     // Set `padding-top` on scroller
     if (showHeader) {
       document.body.classList.add('with-header')
     }
+
+    if (bouncy) {
+      page.setupBouncyHeader()
+    }
+
+    // Cross origin
+    this.messageHandlers.push((type, data) => {
+      if (type === MESSAGE_CROSS_ORIGIN) {
+        customEmit(window, data.name, data.data)
+      }
+    })
+
+    window.addEventListener('message', e => {
+      try {
+        this.messageHandlers.forEach(handler => {
+          handler.call(this, e.data.type, e.data.data || {})
+        })
+      } catch (e) {
+        // Message sent from SF will cause cross domain error when reading e.source.location
+        // Just ignore these messages.
+      }
+    }, false)
   }
 
   updateShellConfig (newShellConfig) {
@@ -503,7 +1352,13 @@ class MipShell extends CustomElement {
    * @return {Object} meta object
    */
   findMetaByPageId (pageId) {
-    let target = window.MIP.viewer.page.isRootPage ? window : window.parent
+    let target
+    if (!page.isRootPage && !page.isCrossOrigin) {
+      target = window.parent
+    } else {
+      target = window
+    }
+
     if (target.MIP_PAGE_META_CACHE[pageId]) {
       return target.MIP_PAGE_META_CACHE[pageId]
     } else {
@@ -516,6 +1371,7 @@ class MipShell extends CustomElement {
       }
     }
 
+    console.warn('Cannot find MIP Shell Config for current page. Use default instead.')
     return Object.assign({}, DEFAULT_SHELL_CONFIG)
   }
 
@@ -547,6 +1403,28 @@ class MipShell extends CustomElement {
     // Whether show close button in header
     // Only effective when window.MIP.standalone = false
     return true
+  }
+
+  beforeSwitchPage (options) {
+    // Operations before switch page transition
+    // params `options` contains:
+    // targetPageId
+    // targetPageMeta
+    // sourcePageId
+    // sourcePageMeta
+    // newPage, true/false, whether a new frame should be created
+    // isForward, true/false, indicates transition direction
+  }
+
+  afterSwitchPage (options) {
+    // Operations before switch page transition
+    // params `options` contains:
+    // targetPageId
+    // targetPageMeta
+    // sourcePageId
+    // sourcePageMeta
+    // newPage, true/false, whether a new frame should be created
+    // isForward, true/false, indicates transition direction
   }
 }
 

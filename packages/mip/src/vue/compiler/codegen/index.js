@@ -342,9 +342,9 @@ function genScopedSlots (
   slots,
   state
 ) {
-  return `scopedSlots:_u([
-        ${Object.keys(slots).map(key => genScopedSlot(key, slots[key], state)).join(',')}
-    ])`
+  return `scopedSlots:_u([${
+    Object.keys(slots).map(key => genScopedSlot(key, slots[key], state)).join(',')
+  }])`
 }
 
 function genScopedSlot (

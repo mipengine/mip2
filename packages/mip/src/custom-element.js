@@ -13,6 +13,7 @@ class CustomElement {
      */
     this.element = element
 
+    // 不推荐使用
     if (this.init) {
       this.init()
     }
@@ -110,7 +111,7 @@ class CustomElement {
    * @param {string} name event name
    * @param {Function} handler event handler
    */
-  addEventAction () {
+  addEventAction (/* name, handler */) {
     let evt = this._actionEvent
     if (!evt) {
       evt = this._actionEvent = new EventEmitter()

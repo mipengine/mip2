@@ -235,9 +235,9 @@ export function updateChildComponent (
   // we need to do this before overwriting $options._renderChildren
   const hasChildren = !!(
     renderChildren || // has new static slots
-        vm.$options._renderChildren || // has old static slots
-        parentVnode.data.scopedSlots || // has new scoped slots
-        vm.$scopedSlots !== emptyObject // has old scoped slots
+    vm.$options._renderChildren || // has old static slots
+    parentVnode.data.scopedSlots || // has new scoped slots
+    vm.$scopedSlots !== emptyObject // has old scoped slots
   )
 
   vm.$options._parentVnode = parentVnode
@@ -277,7 +277,10 @@ export function updateChildComponent (
   }
 
   // resolve slots + force update if has children
-  if (hasChildren) {
+  // mip-patch:
+  // 如果 renderChildren 的元素是 Node 表明是 mip 组件的 slot，
+  // 不需要重新更新 slot, vue 的 renderChildren 元素是 VNode
+  if (hasChildren && !(renderChildren && renderChildren[0] instanceof Node)) {
     vm.$slots = resolveSlots(renderChildren, parentVnode.context)
     vm.$forceUpdate()
   }

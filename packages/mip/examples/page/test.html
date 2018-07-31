@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+    <meta charset="utf-8">
+    <title>MIP Test Page</title>
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <style mip-custom>
+    </style>
+</head>
+<body>
+    <mip-iframe
+        layout="fixed-height"
+        src="./not-mip.html"
+        allowfullscreen
+        width="400"
+        height="300"
+        allowtransparency="true">
+    </mip-iframe>
+    <div>
+        <h2>Test page</h2>
+        <mip-data>
+            <script type="application/json">
+                {
+                  "#demo": {
+                    "name": 'ck1'
+                  }
+                }
+            </script>
+        </mip-data>
+      </div>
+      <mip-test m-bind:demo="demo"></mip-test>
+      <p on="tap:MIP.setData({'#demo':{name:{name:'whattt'}}})">click me</p>
+    <script src="../../dist/mip.js"></script>
+    <script src="./components/mip-test.js"></script>
+</body>

@@ -3,4 +3,6 @@ node_modules
 *.log
 dist
 .vscode
-coverage
+coverage*
+reports
+.nyc_output

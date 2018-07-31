@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="zh-cn" mip>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>mip-video文档示例</title>
+  <meta name="baidu-site-verification" content="P4Uj0PXQrc">
+  <link rel="canonical" href="https://www.mipengine.org/examples/mip/mip-video.html">
+  <link rel="icon" href="https://www.mipengine.org/favicon.ico">
+  <style mip-custom>
+    a,
+    abbr,
+    acronym,
+    address,
+    applet,
+    article,
+    aside,
+    audio,
+    b,
+    big,
+    blockquote,
+    body,
+    canvas,
+    caption,
+    center,
+    cite,
+    code,
+    dd,
+    del,
+    details,
+    dfn,
+    div,
+    dl,
+    dt,
+    em,
+    embed,
+    fieldset,
+    figcaption,
+    figure,
+    footer,
+    form,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    header,
+    hgroup,
+    html,
+    i,
+    iframe,
+    img,
+    ins,
+    kbd,
+    label,
+    legend,
+    li,
+    mark,
+    menu,
+    nav,
+    object,
+    ol,
+    output,
+    p,
+    pre,
+    q,
+    ruby,
+    s,
+    samp,
+    section,
+    small,
+    span,
+    strike,
+    strong,
+    sub,
+    summary,
+    sup,
+    table,
+    tbody,
+    td,
+    tfoot,
+    th,
+    thead,
+    time,
+    tr,
+    tt,
+    u,
+    ul,
+    var,
+    video {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      vertical-align: baseline
+    }
+
+    article,
+    aside,
+    details,
+    figcaption,
+    figure,
+    footer,
+    header,
+    hgroup,
+    menu,
+    nav,
+    section {
+      display: block
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-box-sizing: border-box
+    }
+
+    body {
+      text-align: left;
+      color: #333;
+      line-height: 1.6;
+      background-color: #f2f2f2;
+      font-family: -apple-system, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", STHeiti, "Microsoft YaHei", "Microsoft JhengHei", "Source Han Sans SC", SimSun, sans-serif;
+      overflow-x: hidden
+    }
+
+    .article-header {
+      position: relative
+    }
+
+    .article-header h1 {
+      font-size: 30px;
+      margin-bottom: 20px;
+      position: relative;
+      color: #333;
+      line-height: 1.5;
+      font-weight: 400;
+      border-bottom: 1px solid #ccc;
+      padding: 0 35px 10px 0
+    }
+
+    .article-edit-link {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 56px;
+      line-height: 56px;
+      color: #228ae6
+    }
+
+    .article-edit-link .fa {
+      margin-right: 6px
+    }
+
+    @media screen and (max-width:767px) {
+      .article-header h1 {
+        font-size: 24px
+      }
+      .article-edit-link {
+        height: 46px;
+        line-height: 46px
+      }
+    }
+
+    .article-footer {
+      position: relative;
+      margin: 20px 0;
+      padding-top: 20px;
+      border-top: 1px solid #e3e3e3;
+      line-height: 1em;
+      text-align: center;
+      color: #999;
+      font-size: 12px
+    }
+
+    .update-ie {
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #fff;
+      font-size: 20px;
+      text-align: center
+    }
+
+    .update-ie p {
+      padding-top: 30px
+    }
+
+    .update-ie a {
+      color: #009aed
+    }
+
+    /*!
+ *  Font Awesome 4.7.0 by @davegandy - http://fontawesome.io - @fontawesome
+ *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
+ */
+
+    @font-face {
+      font-family: iconfont;
+      src: url(/static/fonts/fontawesome-webfont.eot?v=4.7.0);
+      src: url(/static/fonts/fontawesome-webfont.eot?#iefix&v=4.7.0) format("embedded-opentype"), url(/static/fonts/fontawesome-webfont.woff2?v=4.7.0) format("woff2"), url(/static/fonts/fontawesome-webfont.woff?v=4.7.0) format("woff"), url(/static/fonts/fontawesome-webfont.ttf?v=4.7.0) format("truetype"), url(/static/fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular) format("svg")
+    }
+
+    .fa {
+      font-weight: 400;
+      font-style: normal;
+      display: inline-block;
+      font: normal normal normal 14px/1 iconfont;
+      font-size: inherit;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: auto
+    }
+
+    .fa-info-circle:before {
+      content: "\f05a"
+    }
+
+    .fa-exclamation-triangle:before {
+      content: "\f071"
+    }
+
+    .fa-window-close:before {
+      content: "\f2d3"
+    }
+
+    .fa-pencil:before {
+      content: "\f040"
+    }
+
+    .fa-chevron-right:before {
+      content: "\f054"
+    }
+
+    .fa-github:before {
+      content: "\f09b"
+    }
+
+    .fa-eye:before {
+      content: "\f06e"
+    }
+
+    .header {
+      background-color: #0c1a44;
+      position: relative;
+      z-index: 1000;
+      padding: 0 10px
+    }
+
+    .header ul {
+      list-style: none
+    }
+
+    .header-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 10px 0
+    }
+
+    .header-flex {
+      display: -webkit-box;
+      display: -moz-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-align-items: center;
+      align-items: center;
+      -webkit-box-align: center;
+      -moz-box-align: center;
+      -webkit-box-lines: single;
+      -moz-box-lines: single;
+      -webkit-box-orient: horizontal;
+      -moz-box-orient: horizontal;
+      -ms-flex-align: center;
+      -webkit-flex-flow: row nowrap;
+      -ms-flex-flow: row nowrap;
+      flex-flow: row nowrap
+    }
+
+    .header-logo {
+      -webkit-box-flex: 1;
+      -moz-box-flex: 1;
+      box-flex: 1;
+      -webkit-flex: 0 42px;
+      -ms-flex: 0 42px;
+      flex: 0 42px
+    }
+
+    .header-logo a {
+      display: block;
+      overflow: hidden;
+      width: 81px;
+      height: 42px;
+      white-space: nowrap;
+      font-size: 0;
+      cursor: pointer;
+      background: url(/static/img/mip_logo_white_8c902ec.png);
+      -webkit-background-size: 100% 100%;
+      -moz-background-size: 100% 100%;
+      background-size: 100% 100%
+    }
+
+    .header-nav {
+      font-size: 14px;
+      line-height: 50px;
+      display: none;
+      padding-left: 20px;
+      -webkit-box-flex: 1;
+      -moz-box-flex: 1;
+      box-flex: 1;
+      -webkit-flex: 1 auto;
+      -ms-flex: 1 auto;
+      flex: 1 auto;
+      text-align: right
+    }
+
+    .header-nav-list>li {
+      position: relative;
+      display: inline-block;
+      padding: 0 10px
+    }
+
+    .header-nav-list>li>a,
+    .header-nav-list>li>span {
+      position: relative;
+      display: block;
+      text-decoration: none;
+      color: rgba(255, 255, 255, .8);
+      padding: 0 5px
+    }
+
+    .header-nav-list li>span:after {
+      content: '';
+      position: relative;
+      display: inline-block;
+      border: 4px solid transparent;
+      top: 1px;
+      border-color: #fff transparent transparent;
+      left: 3px
+    }
+
+    .header-nav-list li:hover>span:after {
+      border-color: transparent transparent #fff;
+      top: -3px
+    }
+
+    .header-nav-list>li>a:hover {
+      color: #fff
+    }
+
+    .header-nav-list>li ul {
+      display: none;
+      text-align: left;
+      position: absolute;
+      background-color: #fff;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, .1);
+      left: -30px;
+      top: 50px
+    }
+
+    .header-nav-list>li:hover ul {
+      display: block
+    }
+
+    .header-nav-list>li ul li:hover {
+      background-color: #eee
+    }
+
+    .header-nav-list>li ul a {
+      white-space: nowrap;
+      padding: 0 20px;
+      color: #666;
+      display: block
+    }
+
+    @media screen and (min-width:767px) {
+      .header-nav {
+        display: block
+      }
+    }
+
+    .header-mobile-nav-toggle {
+      display: none
+    }
+
+    @media screen and (max-width:767px) {
+      .header-mobile-nav-toggle {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 20px;
+        width: 25px;
+        height: 20px;
+        margin: auto;
+        opacity: .5;
+        -webkit-transition: .2s;
+        -moz-transition: .2s;
+        -ms-transition: .2s;
+        transition: .2s;
+        cursor: pointer;
+        outline: 0;
+        background-color: transparent;
+        border: none;
+        display: block
+      }
+      .header-mobile-nav-toggle span {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        border-radius: 2px;
+        background: #fff;
+        -webkit-transition: .4s;
+        -moz-transition: .4s;
+        -ms-transition: .4s;
+        transition: .4s;
+        -webkit-transform-origin: 0;
+        -moz-transform-origin: 0;
+        -ms-transform-origin: 0;
+        transform-origin: 0
+      }
+      .header-mobile-nav-toggle span:nth-child(2) {
+        top: 9px
+      }
+      .header-mobile-nav-toggle span:nth-child(3) {
+        top: 18px
+      }
+      .header-logo a {
+        width: 68px;
+        height: 33px
+      }
+      .header-inner {
+        padding: 5px 0
+      }
+    }
+
+    .markdown-body {
+      overflow: hidden;
+      font-size: 15px;
+      line-height: 1.8;
+      word-wrap: break-word;
+      color: #333;
+      font-family: -apple-system, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", STHeiti, "Microsoft YaHei", "Microsoft JhengHei", "Source Han Sans SC", SimSun, sans-serif;
+      text-align: left
+    }
+
+    @media screen and (max-width:767px) {
+      .markdown-body {
+        word-break: break-word
+      }
+    }
+
+    .markdown-body a {
+      color: #009aed;
+      text-decoration: none;
+      font-weight: 300;
+      margin: 0 3px
+    }
+
+    .markdown-body a strong {
+      font-weight: 400;
+      color: inherit
+    }
+
+    .markdown-body strong {
+      margin: 0 3px
+    }
+
+    .markdown-body a:hover {
+      text-decoration: underline
+    }
+
+    .markdown-body>:first-child {
+      margin-top: 0 !important
+    }
+
+    .markdown-body>:last-child {
+      margin-bottom: 0 !important
+    }
+
+    .markdown-body a.absent {
+      color: #c00
+    }
+
+    .markdown-body a.anchor {
+      bottom: 0;
+      cursor: pointer;
+      display: block;
+      left: 0;
+      margin-left: -30px;
+      padding-left: 30px;
+      position: absolute;
+      top: 0
+    }
+
+    .markdown-body h1,
+    .markdown-body h2,
+    .markdown-body h3,
+    .markdown-body h4,
+    .markdown-body h5,
+    .markdown-body h6 {
+      cursor: text;
+      margin: 20px 0 5px;
+      padding: 0;
+      position: relative;
+      color: #333;
+      line-height: 1.5;
+      font-weight: 400
+    }
+
+    .markdown-body h1 .mini-icon-link,
+    .markdown-body h2 .mini-icon-link,
+    .markdown-body h3 .mini-icon-link,
+    .markdown-body h4 .mini-icon-link,
+    .markdown-body h5 .mini-icon-link,
+    .markdown-body h6 .mini-icon-link {
+      color: #000;
+      display: none
+    }
+
+    .markdown-body h1:hover a.anchor,
+    .markdown-body h2:hover a.anchor,
+    .markdown-body h3:hover a.anchor,
+    .markdown-body h4:hover a.anchor,
+    .markdown-body h5:hover a.anchor,
+    .markdown-body h6:hover a.anchor {
+      line-height: 1;
+      margin-left: -22px;
+      padding-left: 0;
+      text-decoration: none;
+      top: 15%
+    }
+
+    .markdown-body h1:hover a.anchor .mini-icon-link,
+    .markdown-body h2:hover a.anchor .mini-icon-link,
+    .markdown-body h3:hover a.anchor .mini-icon-link,
+    .markdown-body h4:hover a.anchor .mini-icon-link,
+    .markdown-body h5:hover a.anchor .mini-icon-link,
+    .markdown-body h6:hover a.anchor .mini-icon-link {
+      display: inline-block
+    }
+
+    .markdown-body h1 code,
+    .markdown-body h1 tt,
+    .markdown-body h2 code,
+    .markdown-body h2 tt,
+    .markdown-body h3 code,
+    .markdown-body h3 tt,
+    .markdown-body h4 code,
+    .markdown-body h4 tt,
+    .markdown-body h5 code,
+    .markdown-body h5 tt,
+    .markdown-body h6 code,
+    .markdown-body h6 tt {
+      font-size: inherit
+    }
+
+    .markdown-body h1 {
+      font-size: 30px;
+      margin-bottom: 20px
+    }
+
+    .markdown-body h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #333
+    }
+
+    .markdown-body h3 {
+      font-size: 18px
+    }
+
+    .markdown-body h4 {
+      font-size: 16px
+    }
+
+    .markdown-body h5 {
+      font-size: 14px
+    }
+
+    .markdown-body h6 {
+      color: #777;
+      font-size: 14px
+    }
+
+    .markdown-body blockquote,
+    .markdown-body dl,
+    .markdown-body ol,
+    .markdown-body p,
+    .markdown-body pre,
+    .markdown-body table,
+    .markdown-body ul {
+      margin: 10px 0
+    }
+
+    .markdown-body>h1:first-child,
+    .markdown-body>h1:first-child+h2,
+    .markdown-body>h2:first-child,
+    .markdown-body>h3:first-child,
+    .markdown-body>h4:first-child,
+    .markdown-body>h5:first-child,
+    .markdown-body>h6:first-child {
+      margin-top: 0;
+      padding-top: 0
+    }
+
+    .markdown-body a:first-child h1,
+    .markdown-body a:first-child h2,
+    .markdown-body a:first-child h3,
+    .markdown-body a:first-child h4,
+    .markdown-body a:first-child h5,
+    .markdown-body a:first-child h6 {
+      margin-top: 0;
+      padding-top: 0
+    }
+
+    .markdown-body h1+p,
+    .markdown-body h2+p,
+    .markdown-body h3+p,
+    .markdown-body h4+p,
+    .markdown-body h5+p,
+    .markdown-body h6+p {
+      margin-top: 0
+    }
+
+    .markdown-body li {
+      display: list-item
+    }
+
+    .markdown-body li p.first {
+      display: inline-block
+    }
+
+    .markdown-body ol,
+    .markdown-body ul {
+      padding-left: 30px
+    }
+
+    .markdown-body ol.no-list,
+    .markdown-body ul.no-list {
+      list-style-type: none;
+      padding: 0
+    }
+
+    .markdown-body ol li>:first-child,
+    .markdown-body ul li>:first-child {
+      margin-top: 0
+    }
+
+    .markdown-body ol ol,
+    .markdown-body ol ul,
+    .markdown-body ul ol,
+    .markdown-body ul ul {
+      margin-bottom: 0
+    }
+
+    .markdown-body dl {
+      padding: 0
+    }
+
+    .markdown-body dl dt {
+      font-size: 14px;
+      font-style: italic;
+      font-weight: 700;
+      margin: 15px 0 5px;
+      padding: 0
+    }
+
+    .markdown-body dl dt:first-child {
+      padding: 0
+    }
+
+    .markdown-body dl dt>:first-child {
+      margin-top: 0
+    }
+
+    .markdown-body dl dt>:last-child {
+      margin-bottom: 0
+    }
+
+    .markdown-body dl dd {
+      margin: 0 0 15px;
+      padding: 0 15px
+    }
+
+    .markdown-body dl dd>:first-child {
+      margin-top: 0
+    }
+
+    .markdown-body dl dd>:last-child {
+      margin-bottom: 0
+    }
+
+    .markdown-body blockquote {
+      border-left: 4px solid #ddd;
+      color: #777;
+      padding: 0 15px;
+      font-size: 16px
+    }
+
+    .markdown-body blockquote>:first-child {
+      margin-top: 0
+    }
+
+    .markdown-body blockquote>:last-child {
+      margin-bottom: 0
+    }
+
+    .markdown-body table {
+      border-collapse: collapse;
+      border-spacing: 0
+    }
+
+    .markdown-body table .minw-60 {
+      min-width: 60px;
+      display: inline-block
+    }
+
+    .markdown-body table .minw-125 {
+      min-width: 125px;
+      display: inline-block
+    }
+
+    .markdown-body table th {
+      font-weight: 700
+    }
+
+    .markdown-body table td,
+    .markdown-body table th {
+      border: 1px solid #ccc;
+      padding: 6px 13px
+    }
+
+    @media screen and (max-width:993px) {
+      .markdown-body table td,
+      .markdown-body table th {
+        word-break: break-word
+      }
+    }
+
+    .markdown-body table tr {
+      background-color: #fff;
+      border-top: 1px solid #ccc
+    }
+
+    .markdown-body table tr:nth-child(2n) {
+      background-color: #f8f8f8
+    }
+
+    .markdown-body img {
+      max-width: 100%
+    }
+
+    .markdown-body span.frame {
+      display: block;
+      overflow: hidden
+    }
+
+    .markdown-body span.frame>span {
+      border: 1px solid #ddd;
+      display: block;
+      float: left;
+      margin: 13px 0 0;
+      overflow: hidden;
+      padding: 7px;
+      width: auto
+    }
+
+    .markdown-body span.frame span img {
+      display: block;
+      float: left
+    }
+
+    .markdown-body span.frame span span {
+      clear: both;
+      color: #333;
+      display: block;
+      padding: 5px 0 0
+    }
+
+    .markdown-body span.align-center {
+      clear: both;
+      display: block;
+      overflow: hidden
+    }
+
+    .markdown-body span.align-center>span {
+      display: block;
+      margin: 13px auto 0;
+      overflow: hidden;
+      text-align: center
+    }
+
+    .markdown-body span.align-center span img {
+      margin: 0 auto;
+      text-align: center
+    }
+
+    .markdown-body span.align-right {
+      clear: both;
+      display: block;
+      overflow: hidden
+    }
+
+    .markdown-body span.align-right>span {
+      display: block;
+      margin: 13px 0 0;
+      overflow: hidden;
+      text-align: right
+    }
+
+    .markdown-body span.align-right span img {
+      margin: 0;
+      text-align: right
+    }
+
+    .markdown-body span.float-left {
+      display: block;
+      float: left;
+      margin-right: 13px;
+      overflow: hidden
+    }
+
+    .markdown-body span.float-left span {
+      margin: 13px 0 0
+    }
+
+    .markdown-body span.float-right {
+      display: block;
+      float: right;
+      margin-left: 13px;
+      overflow: hidden
+    }
+
+    .markdown-body span.float-right>span {
+      display: block;
+      margin: 13px auto 0;
+      overflow: hidden;
+      text-align: right
+    }
+
+    .markdown-body code,
+    .markdown-body tt {
+      background-color: rgba(0, 0, 0, .05);
+      border-radius: 3px 3px 3px 3px;
+      margin: 0 2px;
+      padding: 0 5px
+    }
+
+    .markdown-body pre>code {
+      background: none repeat scroll 0 0 transparent;
+      border: medium none;
+      margin: 0;
+      padding: 0
+    }
+
+    .markdown-body .highlight pre,
+    .markdown-body pre {
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 3px 3px 3px 3px;
+      font-size: 13px;
+      line-height: 19px;
+      overflow: auto;
+      padding: 6px 10px;
+      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .05), 0 1px 4px 0 rgba(0, 0, 0, .08), 0 3px 1px -2px rgba(0, 0, 0, .2)
+    }
+
+    .markdown-body pre code,
+    .markdown-body pre tt {
+      background-color: transparent;
+      border: medium none
+    }
+
+    .markdown-body hr {
+      height: 4px;
+      padding: 0;
+      margin: 16px 0;
+      background-color: #e7e7e7;
+      border: 0 none;
+      overflow: hidden
+    }
+
+    .markdown-body .orange {
+      color: #e38d11
+    }
+
+    .markdown-body .green {
+      color: #0ea127
+    }
+
+    .markdown-body .red {
+      color: #e11414
+    }
+
+    .markdown-body pre {
+      display: block;
+      overflow-x: auto;
+      -webkit-tap-highlight-color: transparent;
+      padding: .5em;
+      color: #657b83
+    }
+
+    .markdown-body pre .comment,
+    .markdown-body pre .quote {
+      color: #93a1a1
+    }
+
+    .markdown-body pre .addition,
+    .markdown-body pre .keyword,
+    .markdown-body pre .selector-tag {
+      color: #859900
+    }
+
+    .markdown-body pre .doctag,
+    .markdown-body pre .literal,
+    .markdown-body pre .meta pre .meta-string,
+    .markdown-body pre .number,
+    .markdown-body pre .regexp,
+    .markdown-body pre .string {
+      color: #2aa198
+    }
+
+    .markdown-body pre .name,
+    .markdown-body pre .section,
+    .markdown-body pre .selector-class,
+    .markdown-body pre .selector-id,
+    .markdown-body pre .title {
+      color: #268bd2
+    }
+
+    .markdown-body pre .attr,
+    .markdown-body pre .attribute,
+    .markdown-body pre .class pre .title,
+    .markdown-body pre .template-variable,
+    .markdown-body pre .type,
+    .markdown-body pre .variable {
+      color: #b58900
+    }
+
+    .markdown-body pre .bullet,
+    .markdown-body pre .link,
+    .markdown-body pre .meta,
+    .markdown-body pre .meta pre .keyword,
+    .markdown-body pre .selector-attr,
+    .markdown-body pre .selector-pseudo,
+    .markdown-body pre .subst,
+    .markdown-body pre .symbol {
+      color: #cb4b16
+    }
+
+    .markdown-body pre .built_in,
+    .markdown-body pre .deletion {
+      color: #dc322f
+    }
+
+    .markdown-body pre .formula {
+      background: #eee8d5
+    }
+
+    .markdown-body pre .emphasis {
+      font-style: italic
+    }
+
+    .markdown-body pre .strong {
+      font-weight: 700
+    }
+
+    .mipengine-doc-red {
+      color: #e11414
+    }
+
+    .mipengine-doc-orange {
+      color: #e38d11
+    }
+
+    .mipengine-doc-green {
+      color: #0ea127
+    }
+
+    .mipengine-doc-blue {
+      color: #009aed
+    }
+
+    .mipengine-doc-gray {
+      color: #999
+    }
+
+    .mipengine-doc-linethrough {
+      color: #999
+    }
+
+    .markdown-body .para-tip {
+      border-radius: 4px;
+      border: 1px solid transparent;
+      padding: 10px
+    }
+
+    .markdown-body .para-tip .fa {
+      position: absolute;
+      margin: 6px 0 0 4px
+    }
+
+    .markdown-body .para-info {
+      background-color: #f1f9f7;
+      border-color: #e0f1e9;
+      color: #1d9d74
+    }
+
+    .markdown-body .para-notice {
+      background-color: #fffdea;
+      border-color: #eae5d6;
+      color: #ad8d18
+    }
+
+    .markdown-body .para-warning {
+      background-color: #f9f1f1;
+      border-color: #decbcb;
+      color: #cc6d6d
+    }
+
+    .markdown-body .para-content {
+      display: block;
+      margin-left: 30px
+    }
+
+    .markdown-body .para-tip-text {
+      font-weight: 700
+    }
+
+    #right-sidebar {
+      padding: 0 15px;
+      background-color: #fff
+    }
+
+    #right-sidebar ul {
+      list-style: none
+    }
+
+    .mobile-nav-list {
+      padding: 45px 0 15px;
+      line-height: 2.3
+    }
+
+    .mobile-nav-list a {
+      display: block;
+      padding: 0 10px;
+      font-weight: 700;
+      font-size: 16px
+    }
+
+    .right-sidebar-doc {
+      line-height: 2.2;
+      padding-bottom: 40px
+    }
+
+    .right-sidebar-doc h3 {
+      padding: 10px 0 0;
+      position: relative;
+      display: block;
+      font-weight: 700;
+      font-size: 15px;
+      color: #333
+    }
+
+    .right-sidebar-doc a {
+      color: #666;
+      display: block;
+      font-size: 14px;
+      position: relative
+    }
+
+    .right-sidebar-doc a.current {
+      color: #009aed
+    }
+
+    .right-sidebar-doc a.current:before {
+      content: '';
+      width: 5px;
+      height: 1px;
+      top: 1px;
+      display: inline-block;
+      border: 6px solid transparent;
+      border-left: 8px solid #009aed;
+      border-right: 0;
+      border-radius: 1px;
+      position: relative
+    }
+
+    .mobile-nav-list>li>span {
+      display: none
+    }
+
+    .footer {
+      text-align: center;
+      line-height: 20px;
+      padding: 15px 0
+    }
+
+    .footer,
+    .footer a {
+      color: #999
+    }
+
+    .footer .fa-github {
+      font-size: 24px;
+      vertical-align: middle
+    }
+
+    .footer a:hover .fa-github {
+      color: #24292e
+    }
+
+    .examples-content {
+      background-color: #fff;
+      max-width: 1000px;
+      padding: 15px;
+      margin: 0 auto
+    }
+
+    .examples-content:after {
+      clear: both;
+      content: '';
+      display: block
+    }
+
+    .examples-article {
+      float: right;
+      width: 100%;
+      position: relative;
+      z-index: 100
+    }
+
+    .examples-left-sidebar {
+      display: none;
+      float: left;
+      width: 240px;
+      margin-left: -240px;
+      padding-bottom: 40px;
+      line-height: 2.1;
+      padding-right: 10px;
+      position: relative;
+      z-index: 1
+    }
+
+    .examples-left-sidebar-inner {
+      -webkit-position: sticky;
+      position: sticky;
+      top: 0
+    }
+
+    .examples-doc {
+      width: 240px;
+      overflow: hidden
+    }
+
+    .examples-doc,
+    .examples-doc ol {
+      list-style: none;
+      margin: 0;
+      padding: 0
+    }
+
+    .examples-doc-item {
+      padding-left: 1em
+    }
+
+    .examples-doc-level-1,
+    .examples-doc-level-2 {
+      font-size: 16px;
+      padding-left: 0
+    }
+
+    .examples-doc-level-3 {
+      font-size: 14px
+    }
+
+    @media screen and (min-width:1000px) {
+      .examples-left-sidebar {
+        display: block
+      }
+      .examples-content-inner {
+        margin-left: 240px
+      }
+      .examples-content {
+        box-shadow: 5px 5px 30px 0 rgba(0, 0, 0, .1);
+        border-radius: 20px;
+        margin-top: 30px
+      }
+    }
+
+    @media screen and (max-width:1000px) {
+      #mip-semi-fixed0,
+      body.mip-fixedlayer mip-semi-fixed {
+        display: none !important
+      }
+    }
+
+    .mip-preview-btn {
+      float: right;
+      margin-top: -10px;
+      padding-left: 26px;
+      line-height: 25px;
+      cursor: pointer;
+      color: #228ae6
+    }
+
+    .mip-preview-btn .fa {
+      margin-right: 6px
+    }
+
+    #example-lightbox {
+      position: fixed;
+      z-index: 1000;
+      top: 0;
+      left: 0;
+      display: none;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, .5)
+    }
+
+    #example-lightbox .close-btn {
+      display: none
+    }
+
+    #example-lightbox .iphone {
+      position: relative;
+      width: 351.7px;
+      height: 723.1px;
+      margin: 10px auto;
+      background-image: url(/static/img/iphone@2x_463a1e2.png);
+      background-repeat: no-repeat;
+      background-size: 100%
+    }
+
+    #example-lightbox iframe {
+      position: absolute;
+      top: 98px;
+      left: 24px;
+      width: 302px;
+      height: 521px;
+      border: 1px
+    }
+
+    @media screen and (max-width:420px) {
+      #example-lightbox .iphone {
+        position: absolute;
+        top: 10px;
+        width: 90%;
+        height: 500px;
+        margin: 0 5%;
+        background: 0 0
+      }
+      #example-lightbox iframe {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #fff;
+        box-shadow: 0 0 20px rgba(0, 0, 0, .5)
+      }
+      #example-lightbox .close-btn {
+        position: absolute;
+        z-index: 12;
+        top: 15px;
+        right: 21px;
+        display: block;
+        width: 35px;
+        height: 35px;
+        border: 0;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, .4)
+      }
+      #example-lightbox .close-btn:after,
+      #example-lightbox .close-btn:before {
+        content: "";
+        position: absolute;
+        top: 6px;
+        left: 17px;
+        width: 1px;
+        height: 23px;
+        background-color: #fff
+      }
+      #example-lightbox .close-btn:before {
+        -webkit-transform: rotate(45deg);
+        transform: rotate(45deg)
+      }
+      #example-lightbox .close-btn:after {
+        -webkit-transform: rotate(-45deg);
+        transform: rotate(-45deg)
+      }
+    }
+  </style>
+  <noscript>
+    <style mip-officialrelease>
+      body {
+        -webkit-animation: none;
+        -moz-animation: none;
+        -ms-animation: none;
+        animation: none;
+      }
+    </style>
+  </noscript>
+</head>
+
+<body class="layout-examples">
+  <div class="examples-content">
+    <div class="examples-content-inner">
+      <article class="examples-article">
+        <header class="article-header">
+          <h1 class="article-title">mip-video</h1>
+        </header>
+        <div class="examples-article-content markdown-body">
+          <p>
+            <code>&lt;mip-video&gt;</code> 用来支持在 MIP 中增加视频内容，是 HTML
+            <code>&lt;video&gt;</code>的直接包装。 功能和兼容性与 HTML5
+            <code>&lt;video&gt;</code> 一致。</p>
+          <table>
+            <thead>
+              <tr>
+                <th>标题</th>
+                <th>内容</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>类型</td>
+                <td>通用</td>
+              </tr>
+              <tr>
+                <td>支持布局</td>
+                <td>responsive, fixed-height, fill, container, fixed</td>
+              </tr>
+              <tr>
+                <td>所需脚本</td>
+                <td>无</td>
+              </tr>
+            </tbody>
+          </table>
+          <h2 id="markdown-doc-%E7%A4%BA%E4%BE%8B">示例</h2>
+          <h3 id="markdown-doc-%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8">基本使用</h3>
+          <mip-mipengine-preview-v2 class="mip-preview-btn">
+            <i class="fa fa-eye"></i>预览</mip-mipengine-preview-v2>
+          <pre><code class="hljs lang-html">&lt;mip-<span class="hljs-selector-tag">video</span> poster=<span class="hljs-string">"https://www.mipengine.org/static/img/sample_04.jpg"</span> controls
+  layout=<span class="hljs-string">"responsive"</span> <span class="hljs-attribute">width</span>=<span class="hljs-string">"640"</span> height=<span class="hljs-string">"360"</span>
+  src=<span class="hljs-string">"https://gss0.bdstatic.com/-b1Caiqa0d9Bmcmop9aC2jh9h2w8e4_h7sED0YQ_t9iCPK/mda-gjkt21pkrsd8ae5y/mda-gjkt21pkrsd8ae5y.mp4"</span>&gt;
+&lt;/mip-video&gt;</code></pre>
+          <h3 id="markdown-doc-%3Ccode%3E%26lt%3Bvideo%26gt%3B%3C%2Fcode%3E%20%E5%B1%9E%E6%80%A7%E4%BD%BF%E7%94%A8">
+            <code>&lt;video&gt;</code> 属性使用</h3>
+          <p>所有
+            <code>&lt;video&gt;</code> 属性都可以在
+            <code>&lt;mip-video&gt;</code> 上使用，例如下面的视频设置了
+            <code>width</code>,
+            <code>height</code>,
+            <code>controls</code>,
+            <code>loop</code>,
+            <code>muted</code> 等属性。</p>
+          <mip-mipengine-preview-v2 class="mip-preview-btn">
+            <i class="fa fa-eye"></i>预览</mip-mipengine-preview-v2>
+          <pre><code class="hljs lang-html">&lt;mip-video controls <span class="hljs-built_in">loop</span> muted
+  layout=<span class="hljs-string">"responsive"</span> <span class="hljs-built_in">width</span>=<span class="hljs-string">"640"</span> <span class="hljs-built_in">height</span>=<span class="hljs-string">"360"</span>
+  src=<span class="hljs-string">"https://mip-doc.bj.bcebos.com/sample_video.mp4"</span>&gt;
+&lt;/mip-video&gt;</code></pre>
+          <h3 id="markdown-doc-%E5%A4%B1%E6%95%88%E6%8F%90%E7%A4%BA">失效提示</h3>
+          <p>对于不支持 HTML5
+            <code>&lt;video&gt;</code> 的环境，
+            <code>&lt;mip-video&gt;</code> 同样可以显示提示信息。
+            <code>&lt;mip-video&gt;</code> 内部的 DOM（
+            <code>&lt;source&gt;</code> 除外）将会在不支持
+            <code>&lt;video&gt;</code> 标签的浏览器中显示。</p>
+          <mip-mipengine-preview-v2 class="mip-preview-btn">
+            <i class="fa fa-eye"></i>预览</mip-mipengine-preview-v2>
+          <pre><code class="hljs lang-html">&lt;mip-<span class="hljs-selector-tag">video</span> controls layout=<span class="hljs-string">"responsive"</span> <span class="hljs-attribute">width</span>=<span class="hljs-string">"640"</span> height=<span class="hljs-string">"360"</span>
+  src=<span class="hljs-string">"https://mip-doc.bj.bcebos.com/sample_video.mp4"</span>&gt;
+  您的浏览器不支持视频播放，可以从
+  &lt;<span class="hljs-selector-tag">a</span> href=<span class="hljs-string">"http://www.baidu.com"</span> target=<span class="hljs-string">"_blank"</span>&gt;这里&lt;/a&gt; 下载该视频。
+&lt;/mip-video&gt;</code></pre>
+          <h3 id="markdown-doc-%E4%BD%BF%E7%94%A8%E5%A4%9A%E8%A7%86%E9%A2%91%E6%BA%90%20%3Ccode%3E%26lt%3Bsource%26gt%3B%3C%2Fcode%3E">使用多视频源
+            <code>&lt;source&gt;</code>
+          </h3>
+          <mip-mipengine-preview-v2 class="mip-preview-btn">
+            <i class="fa fa-eye"></i>预览</mip-mipengine-preview-v2>
+          <pre><code class="hljs lang-html">&lt;mip-video controls loop muted
+  layout=<span class="hljs-string">"responsive"</span> width=<span class="hljs-string">"640"</span> height=<span class="hljs-string">"360"</span>&gt;
+  &lt;<span class="hljs-built_in">source</span>
+    src=<span class="hljs-string">"https://mip-doc.bj.bcebos.com/sample_video.webm"</span>
+    <span class="hljs-built_in">type</span>=<span class="hljs-string">"video/webm"</span>&gt;
+  &lt;<span class="hljs-built_in">source</span>
+    src=<span class="hljs-string">"https://mip-doc.bj.bcebos.com/sample_video.mp4"</span>
+    <span class="hljs-built_in">type</span>=<span class="hljs-string">"video/mp4"</span>&gt;
+  &lt;<span class="hljs-built_in">source</span>
+    src=<span class="hljs-string">"https://mip-doc.bj.bcebos.com/sample_video.ogv"</span>
+    <span class="hljs-built_in">type</span>=<span class="hljs-string">"video/ogg"</span>&gt;
+&lt;/mip-video&gt;</code></pre>
+          <h2 id="markdown-doc-%E5%B1%9E%E6%80%A7">属性</h2>
+          <p>下面是几个重要的
+            <code>&lt;mip-video&gt;</code>属性。事实上，所有 HTML5
+            <code>&lt;video&gt;</code> 属性都是可用的， 对此可参考 MDN 文档：
+            <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video"
+              target="_blank" rel="noopener">https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video</a>
+          </p>
+          <h3 id="markdown-doc-src">src</h3>
+          <p>说明：视频源地址，必须是 HTTPS 资源
+            <br>必选项：否
+            <br>类型：字符串
+            <br>取值范围：URL
+            <br>默认值：无</p>
+          <h3 id="markdown-doc-poster">poster</h3>
+          <p>说明：封面图地址，为了保证视频载入过程中仍然有很好的呈现效果，请设置该字段
+            <br>必选项：否
+            <br>类型：字符串
+            <br>取值范围：URL
+            <br>默认值：无</p>
+          <h3 id="markdown-doc-controls">controls</h3>
+          <p>说明：是否显示视频控制控件，包括开始/暂停按钮、全屏按钮、音量按钮等。对于非自动播放视频，请务必设置该属性。
+            <br>必选项：否
+            <br>类型：字符串
+            <br>取值范围：任何
+            <br>默认值：无</p>
+          <h3 id="markdown-doc-autoplay">autoplay</h3>
+          <p>说明：是否自动播放。移动端部分浏览器会忽视
+            <code>autoplay</code> 参数，禁止自动播放，（
+            <a href="https://developer.apple.com/library/content/documentation/AudioVideo/Conceptual/Using_HTML5_Audio_Video/Device-SpecificConsiderations/Device-SpecificConsiderations.html"
+              target="_blank" rel="noopener">developer.apple.com 从用户体验角度的解释</a>）
+            <br>必选项：否
+            <br>类型：字符串
+            <br>取值范围：任何
+            <br>默认值：无</p>
+          <h2 id="markdown-doc-%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9">注意事项</h2>
+          <ol>
+            <li>为防止视频加载造成页面抖动，指定视频的高度和宽度是一个好习惯。MIP 中，指定宽高是强制的。</li>
+            <li>如果定义了
+              <code>layout</code> 属性，
+              <code>width</code> 和
+              <code>height</code> 属性将配合
+              <code>layout</code> 进行缩放。</li>
+          </ol>
+        </div>
+      </article>
+    </div>
+  </div>
+  <script src="../../dist/mip.js"></script>
+  <script type="application/json" id="mip-components-config">
+    {
+      "name": "mip-video",
+      "deps": "",
+      "preset": "%3Cstyle%20mip-custom%3E%0A%20%09mip-iframe%7B%0A%09%09border%3A1px%20solid%20black%3B%0A%20%09%7D%0A%3C/style%3E%0A",
+      "preview": true
+    }
+  </script>
+  <script src="./mip-mipengine-preview-v2.js"></script>
+</body>
+</html>

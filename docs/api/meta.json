@@ -1,0 +1,33 @@
+{
+  "menu": [
+    {
+      "name": "API",
+      "key": "index"
+    },
+    {
+      "key": "mip"
+    },
+    {
+      "key": "base-custom-element"
+    },
+    {
+      "key": "vue-custom-element"
+    },
+    {
+      "key": "viewer"
+    },
+    {
+      "key": "viewport"
+    },
+    {
+      "key": "mip-shell"
+    },
+    {
+      "key": "mip-shell"
+    },
+    {
+      "name": "工具",
+      "key": "util"
+    }
+  ]
+}
