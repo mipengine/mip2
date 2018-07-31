@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" mip>
+<!--htmlcs-disable-->
+<head>
+    <title>MIP Tree Page</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <style mip-custom>
+    .link {
+        text-align: center;
+        margin-top: 20px;
+        display: block;
+    }
+    </style>
+</head>
+
+<body>
+    <mip-shell>
+        <script type="application/json">
+            {
+                "routes": [
+                    {
+                        "pattern": "./index.html",
+                        "meta": {
+                            "header": {
+                                "show": true,
+                                "title": "MIP",
+                                "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
+                                "buttonGroup": [
+                                    {
+                                        "name": "subscribe",
+                                        "text": "关注",
+                                        "link": "/examples/page/tree.html"
+                                    },
+                                    {
+                                        "name": "chat",
+                                        "text": "发消息"
+                                    },
+                                    {
+                                        "name": "cancel",
+                                        "text": "取消"
+                                    }
+                                ]
+                            },
+                            "view": {
+                                "isIndex": true
+                            }
+                        }
+                    },
+                    {
+                        "pattern": "./tree.html",
+                        "meta": {
+                            "header": {
+                                "show": true,
+                                "title": "MIP Tree"
+                            }
+                        }
+                    },
+                    {
+                        "pattern": "*",
+                        "meta": {
+                            "header": {
+                                "show": true,
+                                "title": "MIP Other Page"
+                            },
+                            "view": {
+                                "isIndex": false
+                            }
+                        }
+                    }
+                ]
+            }
+        </script>
+    </mip-shell>
+
+    <mip-page-tree></mip-page-tree>
+
+    <a class="link" href="./index.html" mip-link>Back to Index</a>
+    <a class="link page-back" onclick="window.MIP.viewer.page.back()">page.back()</a>
+    <a class="link" href="./data.html" mip-link>Go to Data</a>
+    <!-- <div id="broadcast" class="link">Broadcast</div> -->
+
+    <script src="/dist/mip.js"></script>
+    <script src="./components/mip-page-tree.js"></script>
+    <script>
+        document.querySelector('#broadcast').addEventListener('click', () => {
+            window.MIP.viewer.page.broadcastCustomEvent({
+                name: 'myEvent',
+                data: {
+                    'message': 'hello everyone!'
+                }
+            })
+        })
+    </script>
+</body>
+
+</html>

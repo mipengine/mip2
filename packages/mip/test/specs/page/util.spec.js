@@ -50,18 +50,22 @@ describe('page.util', function () {
       spy = sinon.stub(viewport, 'setScrollTop')
       spy.returns(true)
 
-      scrollTo(200, { duration: 500, scrollTop: 0 }).then(() => {
-        done()
-      })
+      setTimeout(() => {
+        scrollTo(200, { duration: 500, scrollTop: 0 }).then(() => {
+          done()
+        })
+      }, 1000)
     })
 
     it('scroll down', function (done) {
       spy = sinon.stub(viewport, 'setScrollTop')
       spy.returns(true)
 
-      scrollTo(200, { duration: 500, scrollTop: 500 }).then(() => {
-        done()
-      })
+      setTimeout(() => {
+        scrollTo(200, { duration: 500, scrollTop: 500 }).then(() => {
+          done()
+        })
+      }, 1000)
     })
 
     it('don not need to scroll', function (done) {

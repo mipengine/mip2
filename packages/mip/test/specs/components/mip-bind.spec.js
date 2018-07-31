@@ -4,7 +4,7 @@
  */
 
 /* eslint-disable no-unused-expressions */
-/* globals describe, before, it, expect, MIP, after */
+/* globals describe, before, it, expect, MIP, after, sinon */
 
 describe('mip-bind', function () {
   let eleText
@@ -149,6 +149,8 @@ describe('mip-bind', function () {
     })
 
     it('should change global data correctly', function () {
+      let $set = sinon.spy(MIP, '$set')
+
       MIP.setData({
         '#global': {
           data: {
@@ -170,6 +172,7 @@ describe('mip-bind', function () {
       })
       expect(eleBind.getAttribute('data-active')).to.equal('false')
       expect(window.m.title).to.equal('changed')
+      sinon.assert.calledThrice($set)
     })
 
     it('should have watched the change of isGlobal and do cb', function () {

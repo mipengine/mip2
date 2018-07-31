@@ -1,13 +1,15 @@
 /**
- * @file history e2e test case (standalone 模式)
+ * @file router e2e test case (standalone 模式)
  * @author panyuqi
  * @description 测试流程：
  * 1. 打开 index.html
  * 2. 点击 <a mip-link href="./tree.html"> 创建 iframe
  * 3. 浏览器后退 回到 index.html
  * 4. 浏览器前进 回到 tree.html
- * 5. 在当前页面刷新
- * 6. 点击 返回按钮 创建 iframe 后退到 index.html
+ * 5. 调用page.back 回到 index.html
+ * 6. 调用page.forward 回到 tree.html
+ * 7. 在当前页面刷新
+ * 8. 点击 返回按钮 创建 iframe 后退到 index.html
  */
 
 let INDEX_PAGE_URL
@@ -15,8 +17,8 @@ let TREE_PAGE_URL
 
 module.exports = {
   'open first page': function (browser) {
-    INDEX_PAGE_URL = `${browser.globals.devServerURL}/examples/page/index.html`
-    TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
+    INDEX_PAGE_URL = `${browser.globals.devServerURL}/test/e2e/cases/index.html`
+    TREE_PAGE_URL = `${browser.globals.devServerURL}/test/e2e/cases/tree.html`
 
     browser
       // open index.html
@@ -28,7 +30,6 @@ module.exports = {
   },
   'click a <mip-link>': function (browser) {
     browser
-      .waitForElementVisible('.tree-link', 3000)
       // open tree.html
       .waitForClick('.tree-link')
 
@@ -45,23 +46,19 @@ module.exports = {
       .assert.attributeContains('iframe', 'data-page-id', TREE_PAGE_URL)
       .assert.attributeContains('iframe', 'src', TREE_PAGE_URL)
       .assert.attributeContains('iframe', 'name', '{"standalone":true,"isRootPage":false,"isCrossOrigin":false}')
-      .element('css selector', `iframe[data-page-id*="${TREE_PAGE_URL}"]`, function (frame) {
-        // enter iframe[src='tree.html'] and check
-        browser.frame({ELEMENT: frame.value.ELEMENT}, () => {
-          browser.waitForElementVisible('mip-page-tree', 3000)
-        })
+      .enterIframe(TREE_PAGE_URL, () => {
+        browser.waitForElementVisible('mip-page-tree', 3000)
       })
-      .frame(null)
 
       // hide elements in root page
       .assert.hidden('.tree-link')
       .assert.hidden('.main-image')
   },
-  'history back': function (browser) {
+  'router back': function (browser) {
     browser
       .back()
       // URL changed
-      .assert.urlEquals(`${browser.globals.devServerURL}/examples/page/index.html`)
+      .assert.urlEquals(INDEX_PAGE_URL)
       .assert.containsText('.mip-shell-header-title', 'MIP')
 
       // hide iframe
@@ -71,8 +68,7 @@ module.exports = {
       .assert.visible('.tree-link')
       .assert.visible('.main-image')
   },
-  'history forward': function (browser) {
-    const TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
+  'router forward': function (browser) {
     browser
       .forward()
       // URL changed
@@ -81,13 +77,9 @@ module.exports = {
 
       // show iframe
       .waitForElementVisible('iframe', 3000)
-      .element('css selector', `iframe[data-page-id*="${TREE_PAGE_URL}"]`, function (frame) {
-        // enter iframe[src='tree.html'] and check
-        browser.frame({ELEMENT: frame.value.ELEMENT}, () => {
-          browser.waitForElementVisible('mip-page-tree', 3000)
-        })
+      .enterIframe(TREE_PAGE_URL, () => {
+        browser.waitForElementVisible('mip-page-tree', 3000)
       })
-      .frame(null)
 
       // hide root page
       .assert.hidden('.tree-link')
@@ -95,20 +87,15 @@ module.exports = {
   },
   'page back': function (browser) {
     browser
-      .element('css selector', `iframe[data-page-id*="${TREE_PAGE_URL}"]`, function (frame) {
-        // enter iframe[src='tree.html'] and back to index.html
-        browser.frame({ ELEMENT: frame.value.ELEMENT }, () => {
-          browser
-            .waitForElementVisible('.page-back', 3000)
-            .waitForClick('.page-back')
-        })
+      .enterIframe(TREE_PAGE_URL, () => {
+        browser.waitForElementVisible('mip-page-tree', 3000)
+        browser.waitForClick('.page-back')
       })
-      .frame(null)
 
     browser
       .waitForElementVisible('.tree-link', 3000)
       // URL changed
-      .assert.urlEquals(`${browser.globals.devServerURL}/examples/page/index.html`)
+      .assert.urlEquals(INDEX_PAGE_URL)
       .assert.containsText('.mip-shell-header-title', 'MIP')
 
       // hide iframe
@@ -129,13 +116,9 @@ module.exports = {
 
       // show iframe
       .waitForElementVisible('iframe', 3000)
-      .element('css selector', `iframe[data-page-id*="${TREE_PAGE_URL}"]`, function (frame) {
-        // enter iframe[src='tree.html'] and check
-        browser.frame({ELEMENT: frame.value.ELEMENT}, () => {
-          browser.waitForElementVisible('mip-page-tree', 3000)
-        })
+      .enterIframe(TREE_PAGE_URL, () => {
+        browser.waitForElementVisible('mip-page-tree', 3000)
       })
-      .frame(null)
 
       // hide root page
       .assert.hidden('.tree-link')
@@ -150,8 +133,6 @@ module.exports = {
       .assert.elementNotPresent('iframe')
   },
   'go back by clicking the `Back` button in mip header': function (browser) {
-    const INDEX_PAGE_URL = `${browser.globals.devServerURL}/examples/page/index.html`
-
     browser
       .waitForClick('.back-button')
       // URL changed
@@ -163,13 +144,9 @@ module.exports = {
       .assert.attributeContains('iframe', 'data-page-id', INDEX_PAGE_URL)
       .assert.attributeContains('iframe', 'src', INDEX_PAGE_URL)
       .assert.attributeContains('iframe', 'name', '{"standalone":true,"isRootPage":false,"isCrossOrigin":false}')
-      .element('css selector', `iframe[data-page-id*="${INDEX_PAGE_URL}"]`, function (frame) {
-        // enter iframe[src='index.html'] and check
-        browser.frame({ELEMENT: frame.value.ELEMENT}, () => {
-          browser.waitForElementVisible('.main-image', 3000)
-        })
+      .enterIframe(INDEX_PAGE_URL, () => {
+        browser.waitForElementVisible('.main-image', 3000)
       })
-      .frame(null)
 
       // hide root page(tree.html)
       .assert.hidden('mip-page-tree')

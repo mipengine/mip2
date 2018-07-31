@@ -146,7 +146,7 @@ describe('mip-carousel', function () {
       document.body.appendChild(div)
     })
 
-    it('should autoplay', function () {
+    it('should autoplay', function (done) {
       let wrapBox = div.querySelector('.mip-carousel-wrapper')
       setTimeout(() => {
         expect(wrapBox.style.transform).to.equal('translate3d(-200px, 0px, 0px)')
@@ -560,7 +560,7 @@ describe('mip-carousel', function () {
     it('should go to last img by clicking preBtn', function (done) {
       eventClick.initEvent('click', true, true)
       preBtn.dispatchEvent(eventClick)
-      
+
       setTimeout(function () {
         expect(wrapBox.style.transform).to.equal('translate3d(-300px, 0px, 0px)')
         done()
