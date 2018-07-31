@@ -215,7 +215,11 @@ class Page {
   /**
    * Emit a custom event in current page
    *
-   * @param {Object} event event
+   * @param {Window} targetWindow Window of target page. Can be `window` or `window.top`
+   * @param {boolean} isCrossOrigin Whether targetWindow is cross origin compared with current one
+   * @param {Object} event Event needs to be sent
+   * @param {string} event.name Event name
+   * @param {Object} event.data Event data
    */
   emitCustomEvent (targetWindow, isCrossOrigin, event) {
     if (isCrossOrigin) {
@@ -228,6 +232,13 @@ class Page {
     }
   }
 
+  /**
+   * Broadcast custom event to all pages.
+   *
+   * @param {Object} event Event needs to be sent
+   * @param {string} event.name Event name
+   * @param {Object} event.data Event data
+   */
   broadcastCustomEvent (event) {
     if (this.isRootPage) {
       customEmit(window, event.name, event.data)
