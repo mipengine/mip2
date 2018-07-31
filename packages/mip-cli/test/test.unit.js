@@ -3,8 +3,6 @@
  * @author tracy(qiushidev@gmail.com)
  */
 
-
-// import test from 'ava';
 const fs = require('fs-extra')
 const path = require('path')
 const meta = require('../lib/utils/meta')
@@ -30,7 +28,4 @@ describe('test meta', function () {
     expect(res).to.be.equal('<div>this is test</div>')
   })
 })
-
-// TODO ...
-
 
