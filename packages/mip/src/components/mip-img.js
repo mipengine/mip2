@@ -77,18 +77,23 @@ function getImgOffset (img) {
   let imgOffset = rect.getElementOffset(img)
   return imgOffset
 }
-/**
- * 获取所有图片的 src
- * @return {Array.<HTMLElement>} 返回修改的元素集
- */
+// 根据元素element获取相邻图片的src
 function getImgsSrc () {
-  return [...document.querySelectorAll('mip-img')].filter(value => value.hasAttribute('popup')).map(value => value.getAttribute('src'))
+  let imgsSrcArray = []
+  let imgs = Array.prototype.slice.call(document.querySelectorAll('mip-img'))
+  for (let i = 0; i < imgs.length; i++) {
+    if (imgs[i].hasAttribute('popup')) {
+      imgsSrcArray.push(imgs[i].getAttribute('src'))
+    }
+  }
+  return imgsSrcArray
 }
 // 创建弹层 dom
 function createPopup (element, img) {
   // 获取图片数组
   let imgsSrcArray = getImgsSrc()
-  let index = parseInt(element.getAttribute('index'), 10) || 0
+  let index = parseInt(element.getAttribute('index'))
+  let mipPopWrap = document.querySelector('.mip-img-popUp-wrapper')
 
   let popup = document.createElement('div')
   css(popup, 'display', 'block')
@@ -148,6 +153,7 @@ function bindPopup (element, img) {
     let popupImg = popup.querySelector('mip-carousel')
 
     let imgOffset = getImgOffset(img)
+    let PopupImgPos = getPopupImgPos(imgOffset.width, imgOffset.height)
 
     popup.addEventListener('click', imagePop, false)
 
@@ -278,7 +284,11 @@ class MipImg extends CustomElement {
     if (element.isBuilt()) {
       return
     }
-
+    if (element.hasAttribute('popup')) {
+      let allMipImg = [].slice.call(document.querySelectorAll('mip-img')).filter(value => value.hasAttribute('popup'))
+      let index = allMipImg.indexOf(element)
+      element.setAttribute('index', index)
+    }
     let layoutAttr = element.getAttribute('layout')
     let heightAttr = element.getAttribute('height')
     if (!layoutAttr && !heightAttr) {
