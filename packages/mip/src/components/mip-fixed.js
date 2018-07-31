@@ -7,15 +7,17 @@ import CustomElement from '../custom-element'
 
 class MipFixed extends CustomElement {
   connectedCallback () {
-    let viewer = window.MIP.viewer
-    let platform = window.MIP.util.platform
+    const viewer = window.MIP.viewer
+    const platform = window.MIP.util.platform
 
     if (this.element.getAttribute('mipdata-fixedidx')) {
       return
     }
 
+    const scrollable = this.element.hasAttribute('scrollable')
+
     // only in iOS + iframe need moving element to fixedlayer
-    let shouldMoveToFixedLayer = platform.isIos() && viewer.isIframed
+    const shouldMoveToFixedLayer = scrollable && platform.isIos() && viewer.isIframed
     viewer.fixedElement.setFixedElement([this.element], shouldMoveToFixedLayer)
   }
 }
