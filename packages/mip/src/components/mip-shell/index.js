@@ -420,15 +420,17 @@ class MipShell extends CustomElement {
     })
 
     // update every iframe's height when viewport resizing
-    viewport.on('resize', () => {
+    let resizeHandler = () => {
       // only when screen gets spinned
-      let currentViewportWidth = viewport.getWidth()
-      if (this.currentViewportWidth !== currentViewportWidth) {
-        this.currentViewportHeight = viewport.getHeight()
-        this.currentViewportWidth = currentViewportWidth
+      let currentViewportHeight = viewport.getHeight()
+      if (this.currentViewportHeight !== currentViewportHeight) {
+        this.currentViewportWidth = viewport.getWidth()
+        this.currentViewportHeight = currentViewportHeight
         this.resizeAllPages()
       }
-    })
+    }
+    viewport.on('resize', resizeHandler)
+    setInterval(resizeHandler, 500)
 
     // Listen events
     window.addEventListener('mipShellEvents', e => {
