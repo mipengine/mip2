@@ -4,7 +4,7 @@
  */
 
 /* eslint-disable no-unused-expressions */
-/* global describe, it, expect */
+/* global describe, it, expect, sinon, MIP */
 
 import EventAction from 'src/util/event-action'
 
@@ -126,7 +126,7 @@ describe('event-action', function () {
       .to.throw(`Can not find handler "anotherMethod" from MIP.`)
   })
 
-  it('normal', function () {
+  it('normal', function (done) {
     let action = new EventAction({
       getTarget () {
         return mockElement
@@ -138,7 +138,10 @@ describe('event-action', function () {
         return 'tap:id.abc(123)'
       }
     }, 'event')
-    expect(mockElement.arg).to.equal('123')
+    setTimeout(() => {
+      expect(mockElement.arg).to.equal('123')
+      done()
+    })
   })
 
   it('error check', function () {
