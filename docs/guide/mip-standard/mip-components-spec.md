@@ -26,7 +26,7 @@
 
 
 <a name="1"></a>
-### 目录规范
+## 目录规范
 
 #### 1. 官方组件
 
@@ -61,13 +61,13 @@
 
 
 <a name="2"></a>
-### 文档规范
+## 文档规范
 
 文档规范指的是各组件目录下的 README.md 文件的编写规范，MIP2 复用 [MIP1 的规范](https://github.com/mipengine/mip-extensions/blob/master/docs/spec-readme-md.md)
 
 
 <a name="3"></a>
-### 命名规范
+## 命名规范
 
 命名规范涵盖以下几个部分
 - 组件命名规范
@@ -104,7 +104,7 @@ MIP 自定义组件的配置项需符合 Camel 规范，不得采用中划线
 ```
 
 <a name="4"></a>
-### JavaScript 规范
+## JavaScript 规范
 
 - [MUST] 组件的脚本开发必须遵守 JavaScript Standard Style [[CN](https://standardjs.com/rules-zhcn.html)/[EN](https://standardjs.com/rules-en.html)] 代码规范
 - [MUST] 组件的模版开发应该遵循 [Vue Style Guide](https://cn.vuejs.org/v2/style-guide/index.html)
@@ -115,7 +115,7 @@ MIP 自定义组件的配置项需符合 Camel 规范，不得采用中划线
 
 
 <a name="5"></a>
-### CSS 规范
+## CSS 规范
 
 - [MUST] 组件的样式必须遵循 Stylelint 中 [`stylelint-config-standard`](https://github.com/stylelint/stylelint-config-standard) 中包含的规范，且必须通过 Stylelint 工具审核之后才能提交。
 - [MUST] 组件所有样式必须 scoped
