@@ -64,6 +64,10 @@ module.exports = class WebpackBuilder {
     let components = await globPify('mip-*/mip-*.@(vue|js)', globOpts)
       .then(arr => arr.filter(name => /(mip-[\w-]+)\/\1\.(vue|js)$/.test(name)))
 
+    if (!components.length) {
+      throw Error(`找不到入口文件，请检查路径是否规范：\n${this.componentDir}`)
+    }
+
     let entries = components.reduce((entries, pathname) => {
       let basename = path.basename(pathname, path.extname(pathname))
       entries[`${basename}/${basename}`] = path.resolve(this.componentDir, pathname)

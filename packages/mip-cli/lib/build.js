@@ -9,29 +9,19 @@ const path = require('path')
 const cli = require('./cli')
 const CWD = process.cwd()
 
-module.exports = async function ({
-  dir = CWD,
-  output = 'dist',
-  clean,
-  asset = '/',
-  ignore,
-  proxy
-} = {}) {
-  output = path.resolve(CWD, output)
-  dir = path.resolve(CWD, dir)
+module.exports = async function (options) {
+  options.output = path.resolve(CWD, options.output || 'dist')
+  options.dir = path.resolve(CWD, options.dir || CWD)
+  options.asset = options.asset || '/'
+  options.dev = false
+  // output = path.resolve(CWD, output)
+  // dir = path.resolve(CWD, dir)
 
-  const builder = new Builder({
-    dir,
-    output,
-    dev: false,
-    asset,
-    ignore,
-    proxy
-  })
+  const builder = new Builder(options)
 
   try {
-    if (clean) {
-      await fs.remove(output)
+    if (options.clean) {
+      await fs.remove(options.output)
     }
     await builder.build()
 

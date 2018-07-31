@@ -30,7 +30,7 @@ if (fs.existsSync(configPath)) {
   defaultConfig = require(configPath)
 }
 
-const conf = Object.assign(defaultConfig.build || {}, cli.program)
+const conf = Object.assign(defaultConfig.build || {}, cli.program, {config: configPath})
 
 if (conf.ignore === true) {
   conf.ignore = 'sandbox'
