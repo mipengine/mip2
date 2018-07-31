@@ -80,15 +80,16 @@ class Compile {
     let fnName = directive.name.slice(2)
     let attrName = directive.name
     let data
+    let shouldRm
 
     if (/^bind:.*/.test(fnName)) {
       let attr = fnName.slice(5)
       if (attr === 'class' || attr === 'style') {
         let attrKey = attr.charAt(0).toUpperCase() + attr.slice(1)
         try {
-          let fn = util.getWithResult.bind(this, expression)
-          let getter = fn.call(this.data)
-          data = util['parse' + attrKey](getter.call(this.data, this.data))
+          let res = util.getter(this, expression)
+          data = util['parse' + attrKey](res.value)
+          shouldRm = res.hadReadAll
         } catch (e) {
           // istanbul ignore next
           data = {}
@@ -99,7 +100,7 @@ class Compile {
     }
     !data && (data = me._getMVal(node, attrName, expression))
     if (typeof data !== 'undefined') {
-      me[fnName] && me[fnName](node, attrName, data)
+      me[fnName] && me[fnName](node, attrName, data, shouldRm)
     }
 
     this._listenerFormElement(node, directive, expression)
@@ -118,9 +119,7 @@ class Compile {
         return
       }
       let handle = function (e) {
-        let fn = util.setWithResult.bind(this, expression, e.target.value)
-        let setter = fn.call(this.data)
-        setter.call(this.data)
+        util.setter(this, expression, e.target.value)
       }
       node.addEventListener('input', handle.bind(this))
     }
@@ -130,7 +129,7 @@ class Compile {
     node.textContent = newVal
   }
 
-  bind (node, directive, newVal) {
+  bind (node, directive, newVal, shouldRm) {
     let reg = /bind:(.*)/
     let result = reg.exec(directive)
     if (!result) {
@@ -145,7 +144,7 @@ class Compile {
     if (attr === 'class') {
       if (util.objNotEmpty(newVal)) {
         Object.keys(newVal).forEach(k => node.classList.toggle(k, newVal[k]))
-        node.removeAttribute(directive)
+        shouldRm && node.removeAttribute(directive)
       }
     } else if (attr === 'style') {
       if (util.objNotEmpty(newVal)) {
@@ -154,7 +153,7 @@ class Compile {
           staticStyle[styleAttr] = newVal[styleAttr]
         })
         node.setAttribute(attr, util.objectToStyle(staticStyle))
-        node.removeAttribute(directive)
+        shouldRm && node.removeAttribute(directive)
       }
     } else {
       if (typeof newVal === 'object') {
@@ -181,9 +180,7 @@ class Compile {
     }
     let value
     try {
-      let fn = util.getWithResult.bind(this, exp)
-      let getter = fn.call(this.data)
-      value = getter.call(this.data, this.data)
+      value = util.getter(this, exp).value
       if (value !== '' && typeof value !== 'undefined') {
         node.removeAttribute(attrName)
       }

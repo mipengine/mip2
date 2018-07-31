@@ -43,7 +43,7 @@ class Watcher {
   _get (oldVal) {
     let value
     Deps.target = this
-    value = this._getter.call(this._data, this._data)
+    value = this._getter.call(this._data, this._data).value
     if (this._specWatcher && this._specWatcher !== 'Watch') {
       value = util['parse' + this._specWatcher](value, oldVal)
     }
