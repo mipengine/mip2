@@ -7,7 +7,7 @@
 
 1. 在 `/example/index.html` 文件的 `<body>` 标签中增加增加 `<mip-img>` 标签。
 
-  ```html
+```html
   <body>
     <div>
       <h2>First MIP page</h2>
@@ -19,15 +19,13 @@
       <!-- 自定义组件引入方式 -->
       <mip-example></mip-example>
 
-
     </div>
-
     <!-- body的底部引入 mip.js 文件必须 & 自定义组件的 .js 文件 -->
     <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
     <script src="/mip-example/mip-example.js"></script>
 
   </body>
-  ```
+```
 
 2. 在项目根目录 `mip2 dev` 起服务，查看 `http://127.0.0.1:8111/example/index.html` ，可以看到插入图片的页面效果。
 
