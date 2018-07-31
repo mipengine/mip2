@@ -45,17 +45,17 @@ MIP 扩展组件开发采用 [Forking工作流](https://github.com/oldratlee/tra
 
 - [MUST] 站长组件必须提交到 `sites` 目录，且以站点的名称命名，如 `xiongzhang.baidu.com`
 - 站长组件目录结构与官方组件基本一致，规范参考上述第 1 点。
-- [MUST] （补充）站长组件命名需要加上站点名称标识，如 `baidu.com` 下的 tab 组件，可命名为 `mip-baidu-tab`
+- [MUST] （补充）站长组件命名需要加上站点名称标识，如 `mysite.com` 下的 tab 组件，可命名为 `mip-mysite-tab`
 
 示例：
 
 ```bash
   components
-    ├── mip-example
-          ├── mip-example.vue
+    ├── mip-mysite-example
+          ├── mip-mysite-example.vue
           ├── README.md
           ├── example
-                ├── mip-example.html
+                ├── mip-mysite-example.html
        
 ```
 
@@ -79,6 +79,7 @@ MIP 扩展组件开发采用 [Forking工作流](https://github.com/oldratlee/tra
 MIP 扩展组件仓库 下，每个 mip- 前缀的目录为一个扩展组件。其中：
 - 目录名称为组件名称
 - 目录名称（组件名称）必须是 mip- 为前缀的全小写字符串，以 `-` 分隔
+- 站长组件需要加上站点名称标识，如 `mip-mysite-tab`
 
 #### 2.组件属性命名规范
 
