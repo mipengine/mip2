@@ -74,19 +74,26 @@ function getImgOffset (img) {
   let imgOffset = rect.getElementOffset(img)
   return imgOffset
 }
-
+// 根据元素element获取相邻图片的src
+function getImgsSrc () {
+  let imgsSrcArray = []
+  let imgs = Array.prototype.slice.call(document.querySelectorAll('mip-img'))
+  for (let i = 0; i < imgs.length; i++) {
+    if (imgs[i].hasAttribute('popup')) {
+      imgsSrcArray.push(imgs[i].getAttribute('src'))
+    }
+  }
+  return imgsSrcArray
+}
 // 创建弹层 dom
 function createPopup (element, img) {
+  // 获取图片数组
+  let imgsSrcArray = getImgsSrc()
+  let index = parseInt(element.getAttribute('index'))
   let mipPopWrap = document.querySelector('.mip-img-popUp-wrapper')
-  if (!!mipPopWrap && mipPopWrap.getAttribute('data-name') === 'mip-img-popUp-name' &&
-        mipPopWrap.parentNode.tagName.toLowerCase() === 'body'
-  ) {
-    mipPopWrap.querySelector('img').setAttribute('src', img.src)
-    return mipPopWrap
-  }
 
   let popup = document.createElement('div')
-
+  css(popup, 'display', 'block')
   // 阻止纵向滑动
   new Gesture(popup, {
     preventY: true
@@ -96,23 +103,40 @@ function createPopup (element, img) {
 
   // 创建图片预览图层
   let popUpBg = document.createElement('div')
-  let innerImg = new Image()
+  // 创建多图预览 wrapper
+  let carouselWrapper = document.createElement('div')
+  // 计算 wrapper 窗口大小
+  let imgOffset = getImgOffset(img)
+  let PopupImgPos = getPopupImgPos(imgOffset.width, imgOffset.height)
+  css(carouselWrapper, {
+    'position': 'absolute'
+  })
+  css(carouselWrapper, PopupImgPos)
+  // 创建 mip-carousel
+  let carousel = document.createElement('mip-carousel')
 
+  carousel.setAttribute('layout', 'height-fixed')
+  carousel.setAttribute('index', index + 1)
+  carousel.setAttribute('width', PopupImgPos.width)
+  carousel.setAttribute('height', PopupImgPos.height)
+
+  for (let i = 0; i < imgsSrcArray.length; i++) {
+    let mipImg = document.createElement('mip-img')
+    mipImg.setAttribute('src', imgsSrcArray[i])
+    carousel.appendChild(mipImg)
+  }
   popUpBg.className = 'mip-img-popUp-bg'
-  innerImg.className = 'mip-img-popUp-innerimg'
-  innerImg.src = img.src
 
+  carouselWrapper.appendChild(carousel)
   popup.appendChild(popUpBg)
-  popup.appendChild(innerImg)
+  popup.appendChild(carouselWrapper)
   document.body.appendChild(popup)
 
   return popup
 }
 
 function bindPopup (element, img) {
-  let popup
-  let popupBg
-  let popupImg
+
   // 图片点击时展现图片
   img.addEventListener('click', function (event) {
     event.stopPropagation()
@@ -122,15 +146,12 @@ function bindPopup (element, img) {
       return
     }
 
-    // Show page mask
-    window.MIP.viewer.page.togglePageMask(true, {
-      skipTransition: true,
-      extraClass: 'black'
-    })
+    let popup = createPopup(element, img)
+    let popupBg = popup.querySelector('.mip-img-popUp-bg')
+    let popupImg = popup.querySelector('mip-carousel')
 
-    popup = createPopup(element, img)
-    popupBg = popup.querySelector('.mip-img-popUp-bg')
-    popupImg = popup.querySelector('img')
+    let imgOffset = getImgOffset(img)
+    let PopupImgPos = getPopupImgPos(imgOffset.width, imgOffset.height)
 
     popup.addEventListener('click', imagePop, false)
 
@@ -146,11 +167,10 @@ function bindPopup (element, img) {
       naboo.animate(popupImg, getImgOffset(img)).start(function () {
         css(img, 'visibility', 'visible')
         css(popup, 'display', 'none')
+        popup.removeEventListener('click', imagePop, false)
+        popup.remove()
       })
-      popup.removeEventListener('click', imagePop, false)
     }
-
-    let imgOffset = getImgOffset(img)
 
     let onResize = function () {
       imgOffset = getImgOffset(img)
@@ -160,8 +180,8 @@ function bindPopup (element, img) {
     window.addEventListener('resize', onResize)
 
     css(popupImg, imgOffset)
+    css(popupImg, 'position', 'fixed')
     css(popupBg, 'opacity', 1)
-    css(popup, 'display', 'block')
 
     naboo.animate(popupImg, getPopupImgPos(imgOffset.width, imgOffset.height)).start()
     css(img, 'visibility', 'hidden')
@@ -262,7 +282,11 @@ class MipImg extends CustomElement {
     if (element.isBuilt()) {
       return
     }
-
+    if (element.hasAttribute('popup')) {
+      let allMipImg = [].slice.call(document.querySelectorAll('mip-img')).filter(value => value.hasAttribute('popup'))
+      let index = allMipImg.indexOf(element)
+      element.setAttribute('index', index)
+    }
     let layoutAttr = element.getAttribute('layout')
     let heightAttr = element.getAttribute('height')
     if (!layoutAttr && !heightAttr) {
