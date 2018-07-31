@@ -5,7 +5,7 @@
 
 import {getPropsData, reactiveProps} from './props'
 import {toArray} from './helpers'
-import {customEmit} from './custom-event'
+import {customEmit} from '../../util/custom-event'
 import viewer from '../../viewer'
 
 /**
