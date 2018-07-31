@@ -21,10 +21,11 @@ tags = coreTags.filter((it = '') => !!it.trim())
  * MIP错误捕获处理
  *
  * @param {Object} e 错误事件对象
- * @param {number} opts.rate 抽样率
+ * @param {?Object} opts 可选项
+ * @param {?number} opts.rate 抽样率
  */
-export function errorHandler (e = {}, { rate = 0.1 }) {
-  rate = rate || RATE
+export function errorHandler (e = {}, opts = {}) {
+  let rate = opts.rate || RATE
 
   // 报错文件请求路径, 跨域js文件中错误无信息暂不上报
   let filename = e.filename || ''
