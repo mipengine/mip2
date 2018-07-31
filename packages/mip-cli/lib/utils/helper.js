@@ -201,6 +201,7 @@ module.exports = {
   resolvePath,
   isJsRelated,
   isJsMap,
+  pify,
   globPify,
   kebab2Camel,
   someAsync,

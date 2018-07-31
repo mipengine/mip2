@@ -15,6 +15,7 @@ const koaStatic = require('koa-static')
 module.exports = class Server {
   constructor (options) {
     this.app = new Koa()
+    this.options = options
 
     Object.keys(options).forEach(key => {
       this[key] = options[key]
@@ -27,8 +28,10 @@ module.exports = class Server {
       await next()
     }
 
-    let scriptMiddlewares = script(this)
-    let htmlMiddlewares = html(this)
+    let options = Object.assign({app: this.app}, this.options)
+
+    let scriptMiddlewares = script(options)
+    let htmlMiddlewares = html(options)
 
     this.router = new Router()
     this.router

@@ -5,16 +5,10 @@
 
 const Builder = require('../../builder')
 
-module.exports = function ({dir, asset, ignore, proxy, app}) {
-  let builder = new Builder({
-    dir: dir,
-    dev: true,
-    asset: asset,
-    ignore: ignore,
-    proxy: proxy
-  })
+module.exports = function (options) {
+  let builder = new Builder(options)
 
-  app.builder = builder
+  options.app.builder = builder
 
   return [
     async function (ctx, next) {

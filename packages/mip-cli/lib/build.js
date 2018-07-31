@@ -13,7 +13,8 @@ module.exports = async function (options) {
   options.output = path.resolve(CWD, options.output || 'dist')
   options.dir = path.resolve(CWD, options.dir || CWD)
   options.asset = options.asset || '/'
-  options.dev = false
+  options.env = options.env || 'production'
+  // options.dev = false
   // output = path.resolve(CWD, output)
   // dir = path.resolve(CWD, dir)
 

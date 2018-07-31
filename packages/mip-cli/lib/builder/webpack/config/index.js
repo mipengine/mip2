@@ -20,9 +20,9 @@ module.exports = function (options) {
       chunkFilename: '[name].[hash].js',
       publicPath: options.asset.replace(/\/$/, '') + '/'
     },
-    mode: options.mode,
+    mode: options.env === 'development' ? 'development' : 'production',
     context: options.context,
-    devtool: options.mode === 'development' ? 'inline-source-map' : false,
+    devtool: options.env === 'development' ? 'inline-source-map' : false,
     module: {
       rules: [
         {
@@ -31,7 +31,7 @@ module.exports = function (options) {
             {
               loader: require.resolve('vue-loader'),
               options: {
-                productionMode: options.mode === 'production'
+                productionMode: options.env !== 'development'
               }
             }
           ]
@@ -87,7 +87,7 @@ module.exports = function (options) {
       new VueLoaderPlugin(),
       new CustomElementPlugin(options),
       new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify(options.mode)
+        'process.env.NODE_ENV': JSON.stringify(options.env)
       })
     ]
   }

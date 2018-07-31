@@ -12,6 +12,7 @@ module.exports = function (options) {
   options.dir = options.dir || process.cwd()
   options.port = options.port || 8111
   options.livereload = options.livereload || false
+  options.env = 'development'
 
   if (options.asset) {
     options.asset = options.asset.replace(/\/$/, '').replace(/:\d+/, '') + ':' + options.port
