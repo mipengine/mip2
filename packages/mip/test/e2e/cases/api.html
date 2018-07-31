@@ -7,11 +7,22 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="format-detection" content="telephone=no">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+  <style mip-custom>
+  a {
+    display: block;
+    text-align: center;
+  }
+  </style>
 </head>
 <body>
   <a class="toggle-page-mask">togglePageMask</a>
   <a class="toggle-drop-down">toggleDropdown</a>
   <a class="toggle-fade-header">toggleFadeHeader</a>
+  <a class="toggle-fade-header">toggleFadeHeader</a>
+  <a class="broadcast">broadcast</a>
+  <a class="emit-custom-event">emitCustomEvent</a>
+
+  <mip-page-api></mip-page-api>
 
   <mip-shell>
     <script type="application/json">
@@ -51,6 +62,7 @@
   </mip-shell>
 
   <script src="/dist/mip.js"></script>
+  <script src="./components/mip-page-api.js"></script>
   <script>
     let pageMaskToggle = false
     let dropdownToggle = false
@@ -69,6 +81,31 @@
     document.querySelector('.toggle-fade-header').addEventListener('click', () => {
       fadeHeaderToggle = !fadeHeaderToggle
       window.MIP.viewer.page.toggleFadeHeader(fadeHeaderToggle)
+    })
+
+    document.querySelector('.broadcast').addEventListener('click', () => {
+      window.MIP.viewer.page.broadcastCustomEvent({
+        name: 'testEvent',
+        data: {
+          message: 'Hello from broadcast!'
+        }
+      })
+    })
+
+    document.querySelector('.emit-custom-event').addEventListener('click', () => {
+      window.MIP.viewer.page.emitCustomEvent(window, false, {
+        name: 'testEvent',
+        data: {
+          message: 'Hello from emitCustomEvent!'
+        }
+      })
+
+      window.MIP.viewer.page.emitCustomEvent(window.top, false, {
+        name: 'testEvent',
+        data: {
+          message: 'Hello from emitCustomEvent!'
+        }
+      })
     })
   </script>
 </body>

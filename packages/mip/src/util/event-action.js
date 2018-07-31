@@ -185,7 +185,7 @@ class EventAction {
       }
       let target = this.getTarget(action.id)
       if (this.checkTarget(target)) {
-        this.executeEventAction(action, target)
+        setTimeout(() => this.executeEventAction(action, target))
       }
     }
   }

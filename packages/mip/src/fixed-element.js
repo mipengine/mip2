@@ -71,7 +71,9 @@ class FixedElement {
             parentNode.appendChild(node)
           }
         }
-        this.moveToFixedLayer(fixedElem, i)
+        if (!fixedElem.element.hasAttribute('still')) {
+          this.moveToFixedLayer(fixedElem, i)
+        }
       }
     }
     /* istanbul ignore if */

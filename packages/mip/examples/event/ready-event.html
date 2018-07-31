@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <mip-a id="a" on="ready:b.readyHandler(a)"></mip-a>
+  <mip-b id="b" on="ready:c.readyHandler(b) tap:c.tapHandler(b) ready:a.readyHandler(b)">
+    click me
+  </mip-b>
+  <mip-c id="c" on="ready:b.readyHandler(c)"></mip-c>
+
+  <script src="/dist/mip.js"></script>
+  <script>
+    /* global MIP */
+    MIP.registerVueCustomElement('mip-a', {
+      mounted () {
+        this.$on('readyHandler', function (args, str) {
+          console.log('Hello from mip-a ready handler to mip-' + str, args)
+        })
+        this.$emit('ready', {from: 'a'})
+      }
+    })
+
+    MIP.registerVueCustomElement('mip-b', {
+      template: `<div><slot></slot></div>`,
+      mounted () {
+        this.$on('readyHandler', function (args, str) {
+          console.log('Hello from mip-b ready handler to mip-' + str, args)
+        })
+        this.$emit('ready', {from: 'b'})
+      }
+    })
+
+    MIP.registerVueCustomElement('mip-c', {
+      template: `
+        <div @click="onclick">
+          mip-c click
+        </div>
+      `,
+      mounted () {
+        this.$on('tapHandler', function (event, str) {
+          console.log('Hello from mip-c tap handler to mip-' + str, event)
+        })
+        this.$on('readyHandler', function (args, str) {
+          console.log('Hello from mip-c ready handler to mip-' + str, args)
+        })
+        this.$emit('ready', {from: 'c'})
+      },
+
+      methods: {
+        onclick () {
+          this.$emit('ready', {from: 'c'})
+        }
+      }
+    })
+  </script>
+</body>
+</html>
