@@ -257,44 +257,42 @@ class Layout {
     if (this.isLayoutSizeDefined(layout)) {
       element.classList.add('mip-layout-size-defined')
     }
-    if (layout === LAYOUT.NODISPLAY) {
-      element.style.display = 'none'
-    } else if (layout === LAYOUT.FIXED) {
-      element.style.width = width
-      element.style.height = height
-    } else if (layout === LAYOUT.FIXED_HEIGHT) {
-      element.style.height = height
-    } else if (layout === LAYOUT.RESPONSIVE) {
-      if (
-        element.firstChild &&
-        element.firstChild.tagName &&
-        element.firstChild.tagName.toLowerCase() === SPACE_TAG_NAME
-      ) {
-        return
-      }
 
-      let space = element.ownerDocument.createElement(SPACE_TAG_NAME)
-      space.style.display = 'block'
-      space.style.paddingTop =
-        this.getLengthNumeral(height) / this.getLengthNumeral(width) * 100 + '%'
-      element.insertBefore(space, element.firstChild)
-      element._spaceElement = space
-    } else if (layout === LAYOUT.FILL) {
-      // Do nothing.
-    } else if (layout === LAYOUT.CONTAINER) {
-      // Do nothing. Elements themselves will check whether the supplied
-      // layout value is acceptable. In particular container is only OK
-      // sometimes.
-    } else if (layout === LAYOUT.FLEX_ITEM) {
-      // Set height and width to a flex item if they exist.
-      // The size set to a flex item could be overridden by `display: flex` later.
-      if (width) {
+    switch (layout) {
+      case LAYOUT.NODISPLAY:
+        element.style.display = 'none'
+        break
+      case LAYOUT.FIXED:
         element.style.width = width
-      }
-      if (height) {
         element.style.height = height
-      }
+        break
+      case LAYOUT.FIXED_HEIGHT:
+        element.style.height = height
+        break
+      case LAYOUT.RESPONSIVE:
+        let firstChild = element.firstChild
+        if (firstChild &&
+          firstChild.tagName &&
+          firstChild.tagName.toLowerCase() === SPACE_TAG_NAME) {
+          return
+        }
+        let space = element.ownerDocument.createElement(SPACE_TAG_NAME)
+        space.style.display = 'block'
+        space.style.paddingTop =
+          this.getLengthNumeral(height) / this.getLengthNumeral(width) * 100 + '%'
+        element.insertBefore(space, element.firstChild)
+        element._spaceElement = space
+        break
+      case LAYOUT.FILL:
+        break
+      case LAYOUT.CONTAINER:
+        break
+      case LAYOUT.FLEX_ITEM:
+        width && (element.style.width = width)
+        height && (element.style.height = height)
+        break
     }
+
     if (element.classList.contains('mip-hidden')) {
       element.classList.remove('mip-hidden')
     }

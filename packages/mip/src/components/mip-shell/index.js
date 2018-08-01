@@ -48,7 +48,7 @@ import {
   MESSAGE_PAGE_RESIZE
 } from '../../page/const/index'
 import viewport from '../../viewport'
-import {customEmit} from '../../vue-custom-element/utils/custom-event'
+import {customEmit} from '../../util/custom-event'
 
 let viewer = null
 let page = null
@@ -420,15 +420,17 @@ class MipShell extends CustomElement {
     })
 
     // update every iframe's height when viewport resizing
-    viewport.on('resize', () => {
+    let resizeHandler = () => {
       // only when screen gets spinned
-      let currentViewportWidth = viewport.getWidth()
-      if (this.currentViewportWidth !== currentViewportWidth) {
-        this.currentViewportHeight = viewport.getHeight()
-        this.currentViewportWidth = currentViewportWidth
+      let currentViewportHeight = viewport.getHeight()
+      if (this.currentViewportHeight !== currentViewportHeight) {
+        this.currentViewportWidth = viewport.getWidth()
+        this.currentViewportHeight = currentViewportHeight
         this.resizeAllPages()
       }
-    })
+    }
+    viewport.on('resize', resizeHandler)
+    setInterval(resizeHandler, 500)
 
     // Listen events
     window.addEventListener('mipShellEvents', e => {
@@ -534,7 +536,9 @@ class MipShell extends CustomElement {
         Array.prototype.slice.call(page.getElementsInRootPage()).forEach(el => el.parentNode && el.parentNode.removeChild(el))
       }
 
-      page.checkIfExceedsMaxPageNum()
+      if (!targetPage) {
+        page.checkIfExceedsMaxPageNum(targetPageId)
+      }
 
       let targetPageInfo = {
         pageId: targetPageId,

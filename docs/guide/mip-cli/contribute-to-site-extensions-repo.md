@@ -46,9 +46,9 @@ https://c.mipcdn.com/extensions/platform/v2/test.a.com/mip-example/mip-example.j
 
 ## 站长组件开发、提交流程
 
-1.**fork 官方组件仓库**
+1.**fork 站长组件仓库**
 
-在 Github fork `https://github.com/mipengine/mip2-extensions-platform` 仓库，并 `clone` 到本地。
+首先，浏览器进入 GitHub 中 MIP 官方组件代码仓库：`https://github.com/mipengine/mip2-extensions-platform`。点击右上角的 fork 按钮，fork 完成后，在你 GitHub 主页下的 Repositories 下会多出一个 mip2-extensions-platform 仓库。
 
 2.**开发**
 
@@ -72,7 +72,9 @@ $ cd cafe.com
 
 3.**发起 Pull Request**
 
-开发完成后，[发起 pull Request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/)
+开发完成后，[发起 pull Request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/)。进入自己 fork 的仓库，点击 New pull request 按钮，按照提示，完成提交。最终会在官方仓库提交一个 Pull request。Pull request 提交后，会自动触发持续集成的任务，如代码规范检查、部署预览等，在 Conversation 选项卡可以看到实时状态。如果有不通过的，需要再次修改提交，确保所有检查项都成功通过，官方才能审核合入。
+
+![github-status](./images/Picture5.png)
 
 4.**官方审核通过，合入上线**
 

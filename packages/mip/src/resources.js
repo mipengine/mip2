@@ -95,9 +95,6 @@ class Resources {
     resources[this._rid][element._eid] = element
     element.build()
     this.updateState()
-    // setTimeout(() => {
-    //     this.updateState();
-    // });
   }
 
   /**

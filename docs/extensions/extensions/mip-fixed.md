@@ -126,6 +126,10 @@
 必须项：否  
 默认值：`type="top"` 时默认取值 `mip-fixed-hide-top`（`translate3d(0, -200%, 0)`） ，`type="bottom"` 时默认取值 `mip-fixed-hide-bottom`（`translate3d(0, 200%, 0)`）  
 
+### still
+
+说明：不需要移动到 fixedLayer 中  
+必选项: 否
 
 ## 注意事项
 
@@ -136,3 +140,15 @@
 - `type` 为 `left`, `right` 类别需要至少添加一个 `top/bottom` 属性，优先用 `bottom`。
 
 - `type` 为 `gototop` 类别不需要任何属性。
+
+### 不需要滚动的场景
+
+为了解决 iOS iframe 中滚动场景下的 fixed 问题，默认我们会将所有 `<mip-fixed>` 元素移动到原始 `<body>` 的兄弟节点（fixedLayer）中。由于发生了节点移动，在开发过程中会带来一些问题，[详见](https://github.com/mipengine/mip2/issues/90)。
+
+所以如果 `<mip-fixed>` 不需要在滚动中保持 fixed，例如常见的对话框场景，可以加上 `still` 属性显式声明不需要移动节点。代码示例如下：
+
+```html
+// 处于 iOS 下 iframe 中不会发生节点移动
+<mip-fixed type="top" still>  
+</mip-fixed>
+```

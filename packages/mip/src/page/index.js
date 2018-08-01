@@ -24,7 +24,7 @@ import {
   MESSAGE_BROADCAST_EVENT
 } from './const/index'
 
-import {customEmit} from '../vue-custom-element/utils/custom-event'
+import {customEmit} from '../util/custom-event'
 import viewport from '../viewport'
 import '../styles/mip.less'
 
@@ -215,7 +215,11 @@ class Page {
   /**
    * Emit a custom event in current page
    *
-   * @param {Object} event event
+   * @param {Window} targetWindow Window of target page. Can be `window` or `window.top`
+   * @param {boolean} isCrossOrigin Whether targetWindow is cross origin compared with current one
+   * @param {Object} event Event needs to be sent
+   * @param {string} event.name Event name
+   * @param {Object} event.data Event data
    */
   emitCustomEvent (targetWindow, isCrossOrigin, event) {
     if (isCrossOrigin) {
@@ -228,6 +232,13 @@ class Page {
     }
   }
 
+  /**
+   * Broadcast custom event to all pages.
+   *
+   * @param {Object} event Event needs to be sent
+   * @param {string} event.name Event name
+   * @param {Object} event.data Event data
+   */
   broadcastCustomEvent (event) {
     if (this.isRootPage) {
       customEmit(window, event.name, event.data)
@@ -300,13 +311,22 @@ class Page {
    * if so, remove the first child
    */
   /* istanbul ignore next */
-  checkIfExceedsMaxPageNum () {
+  checkIfExceedsMaxPageNum (targetPageId) {
     if (this.children.length >= MAX_PAGE_NUM) {
-      // remove from children list
-      let firstChildPage = this.children.splice(0, 1)[0]
-      let firstIframe = getIFrame(firstChildPage.pageId)
-      if (firstIframe && firstIframe.parentNode) {
-        firstIframe.parentNode.removeChild(firstIframe)
+      let currentPage
+      for (let i = 0; i < this.children.length; i++) {
+        currentPage = this.children[i]
+        // find first removable page, which can't be target page or current page
+        if (currentPage.pageId !== targetPageId &&
+          currentPage.pageId !== this.currentPageId) {
+          const firstRemovableIframe = getIFrame(currentPage.pageId)
+          if (firstRemovableIframe && firstRemovableIframe.parentNode) {
+            firstRemovableIframe.parentNode.removeChild(firstRemovableIframe)
+          }
+          // remove from children list
+          this.children.splice(i, 1)
+          return
+        }
       }
     }
   }

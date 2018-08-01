@@ -11,9 +11,15 @@
  * 6. 点击 <a mip-link href="./index.html"> 创建新 iframe
  */
 
+let INDEX_PAGE_URL
+let DATA_PAGE_URL
+let TREE_PAGE_URL
+
 module.exports = {
   'open index.html': function (browser) {
-    const INDEX_PAGE_URL = `${browser.globals.devServerURL}/examples/page/index.html`
+    INDEX_PAGE_URL = `${browser.globals.devServerURL}/test/e2e/cases/index.html`
+    DATA_PAGE_URL = `${browser.globals.devServerURL}/test/e2e/cases/data.html`
+    TREE_PAGE_URL = `${browser.globals.devServerURL}/test/e2e/cases/tree.html`
 
     browser
       // open index.html
@@ -24,10 +30,7 @@ module.exports = {
       .assert.containsText('.mip-shell-header-title', 'MIP')
   },
   'click a <mip-link> and goto tree.html': function (browser) {
-    const TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
-
     browser
-      .waitForElementVisible('.tree-link', 3000)
       // open tree.html
       .waitForClick('.tree-link')
 
@@ -44,13 +47,9 @@ module.exports = {
       .assert.attributeContains('iframe', 'data-page-id', TREE_PAGE_URL)
       .assert.attributeContains('iframe', 'src', TREE_PAGE_URL)
       .assert.attributeContains('iframe', 'name', '{"standalone":true,"isRootPage":false,"isCrossOrigin":false}')
-      .element('css selector', `iframe[data-page-id*="${TREE_PAGE_URL}"]`, function (frame) {
-        // enter iframe[src='tree.html'] and check
-        browser.frame({ ELEMENT: frame.value.ELEMENT }, () => {
-          browser.waitForElementVisible('mip-page-tree', 3000)
-        })
+      .enterIframe(TREE_PAGE_URL, () => {
+        browser.waitForElementVisible('mip-page-tree', 3000)
       })
-      .frame(null)
 
       // hide elements in root page except for <mip-shell>
       .assert.hidden('.tree-link')
@@ -58,20 +57,12 @@ module.exports = {
       .assert.visible('.mip-shell-header-wrapper > .mip-shell-header')
   },
   'click a <mip-link> and goto data.html': function (browser) {
-    const TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
-    const DATA_PAGE_URL = `${browser.globals.devServerURL}/examples/page/data.html`
-
     browser
-      .element('css selector', `iframe[data-page-id*="${TREE_PAGE_URL}"]`, function (frame) {
-        // enter iframe[src='tree.html'] and check
-        browser.frame({ ELEMENT: frame.value.ELEMENT }, () => {
-          browser
-            .waitForElementVisible('mip-page-tree', 3000)
-            .waitForElementVisible('a[href="./data.html"]', 3000)
-            .waitForClick('a[href="./data.html"]')
-        })
+      .enterIframe(TREE_PAGE_URL, () => {
+        browser
+          .waitForElementVisible('mip-page-tree', 3000)
+          .waitForClick('a[href="./data.html"]')
       })
-      .frame(null)
 
       // there're 2 iframes now
       .assert.elementCount('iframe', 2)
@@ -79,23 +70,15 @@ module.exports = {
       .assert.hidden(`iframe[data-page-id*="${TREE_PAGE_URL}"]`)
       .assert.visible('.mip-shell-header-wrapper > .mip-shell-header')
 
-      .element('css selector', `iframe[data-page-id*="${DATA_PAGE_URL}"]`, function (frame) {
-        // enter iframe[src='data.html'] and check
-        browser.frame({ ELEMENT: frame.value.ELEMENT }, () => {
-          browser
-            .waitForElementVisible('mip-data', 3000)
-        })
+      .enterIframe(DATA_PAGE_URL, () => {
+        browser.waitForElementVisible('mip-data', 3000)
       })
-      .frame(null)
   },
   'go back to tree.html': function (browser) {
-    const TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
-    const DATA_PAGE_URL = `${browser.globals.devServerURL}/examples/page/data.html`
-
     browser
       .back()
       // URL changed
-      .assert.urlEquals(`${browser.globals.devServerURL}/examples/page/tree.html`)
+      .assert.urlEquals(TREE_PAGE_URL)
 
       .assert.elementCount('iframe', 2)
       .assert.visible(`iframe[data-page-id*="${TREE_PAGE_URL}"]`)
@@ -103,13 +86,8 @@ module.exports = {
       .assert.visible('.mip-shell-header-wrapper > .mip-shell-header')
   },
   'go back to index.html': function (browser) {
-    const INDEX_PAGE_URL = `${browser.globals.devServerURL}/examples/page/index.html`
-    const TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
-    const DATA_PAGE_URL = `${browser.globals.devServerURL}/examples/page/data.html`
-
     browser
       .waitForClick('.back-button')
-      .pause(2000)
       // URL changed
       .assert.urlEquals(INDEX_PAGE_URL)
 
@@ -124,9 +102,6 @@ module.exports = {
       .assert.visible('.mip-shell-header-wrapper > .mip-shell-header')
   },
   'recreate an iframe contains tree.html': function (browser) {
-    const TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
-    const DATA_PAGE_URL = `${browser.globals.devServerURL}/examples/page/data.html`
-
     browser
       .waitForElementVisible('.tree-link', 3000)
       // open tree.html
@@ -135,13 +110,9 @@ module.exports = {
       // URL changed
       .assert.urlEquals(TREE_PAGE_URL)
 
-      .element('css selector', `iframe[data-page-id*="${TREE_PAGE_URL}"]`, function (frame) {
-        // enter iframe[src='tree.html'] and check
-        browser.frame({ ELEMENT: frame.value.ELEMENT }, () => {
-          browser.waitForElementVisible('mip-page-tree', 3000)
-        })
+      .enterIframe(TREE_PAGE_URL, () => {
+        browser.waitForElementVisible('mip-page-tree', 3000)
       })
-      .frame(null)
 
       // hide elements in root page
       .assert.elementCount('iframe', 2)
@@ -151,19 +122,11 @@ module.exports = {
       .assert.hidden('.main-image')
   },
   'recreate an iframe contains index.html': function (browser) {
-    const INDEX_PAGE_URL = `${browser.globals.devServerURL}/examples/page/index.html`
-    const TREE_PAGE_URL = `${browser.globals.devServerURL}/examples/page/tree.html`
-    const DATA_PAGE_URL = `${browser.globals.devServerURL}/examples/page/data.html`
-
     browser
-      .element('css selector', `iframe[data-page-id*="${TREE_PAGE_URL}"]`, function (frame) {
-        // enter iframe[src='tree.html'] and check
-        browser.frame({ ELEMENT: frame.value.ELEMENT }, () => {
-          browser
-            .waitForClick('a[href="./index.html"]')
-        })
+      .enterIframe(TREE_PAGE_URL, () => {
+        browser.waitForElementVisible('mip-page-tree', 3000)
+        browser.waitForClick('a[href="./index.html"]')
       })
-      .frame(null)
 
       // create a new iframe for index.html
       .assert.elementCount('iframe', 3)
@@ -176,16 +139,12 @@ module.exports = {
       .assert.elementNotPresent('.main-image')
       .assert.elementNotPresent('mip-page-index')
 
-      .element('css selector', `iframe[data-page-id*="${INDEX_PAGE_URL}"]`, function (frame) {
-        // enter iframe[src='index.html'] and check
-        browser.frame({ ELEMENT: frame.value.ELEMENT }, () => {
-          browser
-            .assert.elementPresent('.tree-link')
-            .assert.elementPresent('.main-image')
-            .assert.elementPresent('mip-page-index')
-        })
+      .enterIframe(INDEX_PAGE_URL, () => {
+        browser
+          .assert.elementPresent('.tree-link')
+          .assert.elementPresent('.main-image')
+          .assert.elementPresent('mip-page-index')
       })
-      .frame(null)
       .end()
   }
 }

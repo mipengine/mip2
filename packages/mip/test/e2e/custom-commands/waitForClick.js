@@ -6,13 +6,13 @@
  * @param {number} ms
  */
 exports.command = function (selector, ms = 2000) {
+  this.waitForElementVisible(selector, ms)
   this.execute(function (selector) {
-    console.log(document.querySelector(selector))
     document.querySelector(selector).click()
     return true
   }, [selector])
 
-  this.pause(ms)
+  this.pause(500)
 
   return this
 }
