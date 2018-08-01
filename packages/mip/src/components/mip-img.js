@@ -90,7 +90,6 @@ function createPopup (element, img) {
   // 获取图片数组
   let imgsSrcArray = getImgsSrc()
   let index = parseInt(element.getAttribute('index'))
-  let mipPopWrap = document.querySelector('.mip-img-popUp-wrapper')
 
   let popup = document.createElement('div')
   css(popup, 'display', 'block')
@@ -136,7 +135,6 @@ function createPopup (element, img) {
 }
 
 function bindPopup (element, img) {
-
   // 图片点击时展现图片
   img.addEventListener('click', function (event) {
     event.stopPropagation()
@@ -151,7 +149,6 @@ function bindPopup (element, img) {
     let popupImg = popup.querySelector('mip-carousel')
 
     let imgOffset = getImgOffset(img)
-    let PopupImgPos = getPopupImgPos(imgOffset.width, imgOffset.height)
 
     popup.addEventListener('click', imagePop, false)
 
