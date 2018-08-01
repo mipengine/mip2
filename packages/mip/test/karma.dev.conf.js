@@ -6,9 +6,5 @@
 const base = require('./karma.base.conf')
 
 module.exports = function (config) {
-  config.set(Object.assign(base, {
-    plugins: base.plugins.concat([
-      'karma-chrome-launcher'
-    ])
-  }))
+  config.set(base)
 }
