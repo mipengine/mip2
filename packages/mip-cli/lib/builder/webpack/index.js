@@ -48,19 +48,6 @@ module.exports = class WebpackBuilder {
     }
 
     return result
-
-    // await this.initConfig()
-    // return new Promise((resolve, reject) => {
-    //   webpack(this.config, (err, result) => {
-    //     if (err) {
-    //       reject(err)
-    //     } else if (result.hasErrors()) {
-    //       reject(result.compilation.errors)
-    //     } else {
-    //       resolve(result)
-    //     }
-    //   })
-    // })
   }
 
   async getEntries () {
