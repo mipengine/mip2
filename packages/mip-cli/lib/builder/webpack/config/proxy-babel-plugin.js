@@ -16,12 +16,7 @@ module.exports = function ({types: t}) {
         for (let i = 0; i < keys.length; i++) {
           if (minimatch(path.node.value, keys[i])) {
             let match = state.opts[keys[i]]
-            let dist
-            if (typeof match === 'function') {
-              dist = match(path.node.value)
-            } else {
-              dist = match
-            }
+            let dist = typeof match === 'function' ? match(path.node.value) : match
             path.replaceWith(t.stringLiteral(dist))
             path.stop()
             return
