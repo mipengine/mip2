@@ -277,11 +277,7 @@ class MipImg extends CustomElement {
     if (element.isBuilt()) {
       return
     }
-    if (element.hasAttribute('popup')) {
-      let allMipImg = [].slice.call(document.querySelectorAll('mip-img')).filter(value => value.hasAttribute('popup'))
-      let index = allMipImg.indexOf(element)
-      element.setAttribute('index', index)
-    }
+
     let layoutAttr = element.getAttribute('layout')
     let heightAttr = element.getAttribute('height')
     if (!layoutAttr && !heightAttr) {
@@ -294,7 +290,11 @@ class MipImg extends CustomElement {
   firstInviewCallback () {
     let ele = this.element
     let img = new Image()
-
+    if (ele.hasAttribute('popup')) {
+      let allMipImg = [].slice.call(document.querySelectorAll('mip-img')).filter(value => value.hasAttribute('popup'))
+      let index = allMipImg.indexOf(ele)
+      ele.setAttribute('index', index)
+    }
     if (this.placeholder) {
       img.classList.add('mip-img-loading')
     }
