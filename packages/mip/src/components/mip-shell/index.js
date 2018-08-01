@@ -53,6 +53,8 @@ import {customEmit} from '../../util/custom-event'
 let viewer = null
 let page = null
 let activeZIndex = 10000
+let innerBodyHeight
+let innerBodyFreezeTime
 window.MIP_PAGE_META_CACHE = Object.create(null)
 window.MIP_SHELL_CONFIG = null
 
@@ -551,11 +553,45 @@ class MipShell extends CustomElement {
 
       let iframeCreated = false
       let targetIFrame
+      innerBodyHeight = 0
+      innerBodyFreezeTime = 0
+      let hackForAndroidScroll = () => {
+        let mask = this.$buttonMask
+        css(mask, {
+          opacity: '0.01',
+          display: 'block'
+        })
+        setTimeout(() => {
+          css(mask, {
+            display: 'none',
+            opacity: ''
+          })
+        }, 100)
+      }
+      let iframeOnLoad = () => {
+        if (!targetPageInfo.isCrossOrigin && platform.isAndroid()) {
+          let doc = targetIFrame.contentWindow.document
+          let checkInterval = setInterval(() => {
+            let currentHeight = doc.body.clientHeight
+            if (doc.body.clientHeight !== innerBodyHeight) {
+              innerBodyHeight = currentHeight
+              innerBodyFreezeTime = 0
+              hackForAndroidScroll()
+            } else {
+              innerBodyFreezeTime++
+            }
+
+            if (innerBodyFreezeTime >= 10) {
+              clearInterval(checkInterval)
+            }
+          }, 500)
+        }
+      }
       // Bugs appear in QQBrowser when [pushState] and [create iframe] invoked together
       // Ensure [create iframe] before [pushState] and eliminate async operations can help
       // Thus, disable transition in QQBrowser
       if (platform.isQQ() || platform.isQQApp()) {
-        targetIFrame = createIFrame(targetPageInfo)
+        targetIFrame = createIFrame(targetPageInfo, {onLoad: iframeOnLoad})
         targetPageInfo.targetWindow = targetIFrame.contentWindow
         iframeCreated = true
         window.MIP_SHELL_OPTION.allowTransition = false
@@ -572,7 +608,7 @@ class MipShell extends CustomElement {
         window.MIP_SHELL_OPTION.isForward = true
 
         if (!iframeCreated) {
-          targetIFrame = createIFrame(targetPageInfo)
+          targetIFrame = createIFrame(targetPageInfo, {onLoad: iframeOnLoad})
           targetPageInfo.targetWindow = targetIFrame.contentWindow
         }
         css(targetIFrame, {
