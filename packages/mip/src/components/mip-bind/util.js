@@ -147,12 +147,11 @@ export function getWithResult (exp) {
   exp = namespaced(exp) || ''
   let matches = exp.match(/this\.[\w\d-._]+/gmi)
   let read = ''
-  if (!matches || !matches.length) {
-    matches = []
+  if (matches && matches.length) {
+    matches.forEach(function (e) {
+      read += `;typeof ${e} === 'undefined' && (hadReadAll = false)`
+    })
   }
-  matches.forEach(function (e) {
-    read += `;typeof ${e} === 'undefined' && (hadReadAll = false)`
-  })
   let func
   try {
     /* eslint-disable */
