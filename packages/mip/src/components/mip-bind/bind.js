@@ -50,10 +50,10 @@ class Bind {
   }
 
   _postMessage (data) {
-    for (let k of Object.keys(data)) {
+    Object.keys(data).forEach(k => {
       data[`#${k}`] = data[k]
       delete data[k]
-    }
+    })
 
     let win = this._win
     let targetWin = win
