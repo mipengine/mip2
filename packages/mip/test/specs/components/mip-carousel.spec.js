@@ -700,4 +700,67 @@ describe('mip-carousel', function () {
       document.body.removeChild(div)
     })
   })
+  // 图片又可能因为不在 viewport 所以一直没加载，所以又要放到 body 的最前面，时间不能设置太短，可能真的没加载
+  describe('with lazy loading', function () {
+    let div
+    let event = document.createEvent('Events')
+    this.timeout(2000)
+
+    before(function () {
+      div = document.createElement('div')
+      div.innerHTML = `
+        <mip-carousel
+          width="100"
+          height="80">
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_01.jpg">
+          </mip-img>
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_02.jpg">
+          </mip-img>
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_04.jpg">
+          </mip-img>
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_03.jpg">
+          </mip-img>
+        </mip-carousel>
+      `
+      let theFirst = document.body.firstChild
+      document.body.insertBefore(div, theFirst)
+    })
+    // 一定要挑一张图片上面的代码都没用到过，并且不能在第一张和最后一张
+    it('should not load picture sample04', function () {
+      let target = Array.prototype.slice.call(div.querySelectorAll('mip-img')).find(value => value.getAttribute('src') === 'https://www.mipengine.org/static/img/sample_04.jpg')
+      expect(target.querySelector('img').classList.contains('mip-img-loading')).to.be.true
+    })
+    it('should load picture sample04 when swiping', function (done) {
+      let event = document.createEvent('Events')
+      event.initEvent('touchstart', true, true)
+      event.targetTouches = event.touches = [{
+        pageX: 0,
+        pageY: 0
+      }]
+      div.dispatchEvent(event)
+
+      event.initEvent('touchmove', true, true)
+      event.targetTouches = event.touches = [{
+        pageX: -60,
+        pageY: 0
+      }]
+      div.dispatchEvent(event)
+
+      event.initEvent('touchend', true, true)
+      div.dispatchEvent(event)
+      setTimeout(() => {
+        let target = Array.prototype.slice.call(div.querySelectorAll('mip-img')).find(value => value.getAttribute('src') === 'https://www.mipengine.org/static/img/sample_04.jpg')
+        expect(target.querySelector('img').classList.contains('mip-img-loading')).to.be.false
+        done()
+      }, 1900)
+    })
+
+    after(function () {
+      document.body.removeChild(div)
+    })
+  })
 })
