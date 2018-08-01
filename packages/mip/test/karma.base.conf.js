@@ -9,6 +9,16 @@ const webpackConfig = {
   },
   module: {
     rules: [{
+      test: /\.js$/,
+      use: {
+        loader: 'istanbul-instrumenter-loader',
+        options: {
+          esModules: true
+        }
+      },
+      enforce: 'post',
+      exclude: /node_modules|deps|test|src\/vue\/|\.spec\.js$/
+    }, {
       test: /\.(css|less)$/,
       use: [
         {
@@ -60,7 +70,23 @@ module.exports = {
     'index.js': ['webpack']
   },
 
-  reporters: ['mocha'],
+  reporters: ['mocha', 'coverage'],
+  coverageReporter: {
+    reporters: [{
+      type: 'lcov',
+      dir: '../coverage',
+      subdir: '.'
+    },
+    {
+      type: 'text-summary',
+      dir: '../coverage',
+      subdir: '.'
+    }
+    ]
+  },
+  webpackMiddleware: {
+    logLevel: 'silent'
+  },
 
   webpack: webpackConfig,
 
@@ -70,8 +96,9 @@ module.exports = {
     'karma-chai',
     'karma-mocha-reporter',
     'karma-sourcemap-loader',
-    'karma-chai-sinon'
-    // 'karma-chai-as-promised'
+    'karma-chai-sinon',
+    'karma-coverage',
+    'karma-chrome-launcher'
   ],
   browsers: browsers,
   // custom launchers
