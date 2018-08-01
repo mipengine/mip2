@@ -171,7 +171,6 @@ export function getWithResult (exp) {
     `)
     /* eslint-enable */
   } catch (e) {
-    console.error(e)
     /* istanbul ignore next */
     func = () => ({})
   }
