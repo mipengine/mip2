@@ -1270,7 +1270,11 @@ class MipShell extends CustomElement {
    * @param {Object} options
    * @param {boolean} options.skipTransition show result without transition
    */
-  togglePageMask (toggle, {skipTransition} = {}) {
+  togglePageMask (toggle, {skipTransition, extraClass} = {}) {
+    if (extraClass) {
+      toggle ? this.$pageMask.classList.add(extraClass) : this.$pageMask.classList.remove(extraClass)
+    }
+
     toggleInner(this.$pageMask, toggle, {skipTransition})
   }
 
