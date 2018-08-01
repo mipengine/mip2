@@ -18,6 +18,17 @@ let carouselParas = {
   activeitem: 'mip-carousel-activeitem',
   threshold: 0.2
 }
+// 当前图片为 index，懒加载 index 前后各 NUM 个图
+let NUM = 1
+// 强行渲染 element 元素下的 mip-img，开始位置为 start，结束至 end - 1，轮播组件会多两个 mip-img
+function preRender (element, index, NUM) {
+  let allMipImgs = Array.prototype.slice.call(element.querySelectorAll('mip-img'))
+  let start = index - NUM <= 0 ? 0 : index - NUM
+  let end = index + NUM + 1 > allMipImgs.length ? allMipImgs.length : index + NUM + 1
+  for (let i = start; i < end; i++) {
+    prerenderElement(allMipImgs[i])
+  }
+}
 // 按tagName创建一个固定class的tag
 function createTagWithClass (className, tagName) {
   tagName = tagName || 'div'
@@ -202,7 +213,7 @@ class MIPCarousel extends CustomElement {
       self.applyFillContent(ele, true)
       // inview callback  bug, TODO
       // let MIP = window.MIP || {};
-      prerenderElement(ele)
+      // 没有对下面的代码进行处理
       let allImgs = ele.querySelectorAll('mip-img')
       let len = allImgs.length
       for (let idx = 0; idx < len; idx++) {
@@ -221,6 +232,7 @@ class MIPCarousel extends CustomElement {
     // 初始渲染时如果有跳转索引就改变位置到指定图片
     let initPostion = index ? -eleWidth * indexNum : -eleWidth
     curGestureClientx = initPostion
+    preRender(wrapBox, indexNum, NUM)
     wrapBox.style.webkitTransform = 'translate3d(' + initPostion + 'px, 0, 0)'
 
     // 绑定wrapBox的手势事件
@@ -426,6 +438,8 @@ class MIPCarousel extends CustomElement {
         currCarouselItem: childNodes[imgIndex],
         carouselChildrenLength: childNum
       })
+      // 加载需要的图片
+      preRender(wrapBox, imgIndex, NUM)
     }
 
     // 处理圆点型指示器
