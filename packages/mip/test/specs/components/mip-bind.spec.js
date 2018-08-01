@@ -17,6 +17,8 @@ describe('mip-bind', function () {
     document.body.removeChild(eleBind)
     document.body.removeChild(eleObject)
     document.body.removeChild(iframe)
+    window.g = null
+    window.m = null
   })
 
   describe('init data', function () {
