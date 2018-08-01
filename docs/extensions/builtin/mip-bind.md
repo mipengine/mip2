@@ -38,7 +38,7 @@
 >**注意：**
 > `src` 需要是 `https` 或 `//` 协议开头，否则在 HTTPS 环境下会无法正常加载
 
-当使用这种方式获取异步数据时，请注意：**需要开发者服务端配置 cors 跨站访问**，具体步骤如下：
+当使用这种方式获取异步数据时，请注意：**需要开发者服务端配置 CORS 跨站访问**，具体步骤如下：
 
 - 接收到请求后，判断请求头中的 `origin` 是否是允许的，其中需要允许的域名包括：`https://mipcache.bdstatic.com`、开发者的站点`origin` 、`https://站点域名转换的字符串.mipcdn.com` 。站点域名转换的字符串是指开发者的站点origin通过一定的规则（点.转换为中横线-）转换的字符串，如下面代码中的origins数组所示：origins[1]为开发者的站点origin，origins[2]为转换后的 origin；
 - 如果 `origin` 在指定的列表中则设置 `response header` 中的 `Access-Control-Allow-Origin` 为请求接收到的 `origin`，以 Node.js 举例，如下所示：
@@ -49,7 +49,7 @@ let origins = {
   'https://www-mipengine-org.mipcdn.com': 1,
   'https://www.mipengine.org': 1
 }
-app.get('/bind', function (req, res) {
+app.get('/data', function (req, res) {
   let ori = req.headers.origin
   if (origins[ori]) {
     res.header('Access-Control-Allow-Origin', ori)

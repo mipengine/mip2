@@ -3,40 +3,52 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-const {resolveModule, pathFormat} = require('../../../utils/helper')
+const {pathFormat, resolveModule} = require('../../../utils/helper')
 const path = require('path')
 const prefix = '__mipComponentsWebpackHelpers__'
 
 module.exports = {
-  babelLoader: {
-    loader: resolveModule('babel-loader'),
-    options: {
-      babelrc: false,
-      presets: [
-        [
-          resolveModule('babel-preset-env'),
-          {
-            modules: false,
-            targets: {
-              browsers: ['> 1%', 'last 2 versions', 'not ie <= 8']
+  babelLoader (options = {}) {
+    let config = {
+      loader: require.resolve('babel-loader'),
+      options: {
+        babelrc: false,
+        presets: [
+          [
+            require.resolve('babel-preset-env'),
+            {
+              modules: false,
+              targets: {
+                browsers: ['> 1%', 'last 2 versions', 'not ie <= 8']
+              }
             }
-          }
+          ],
+          require.resolve('babel-preset-stage-2')
         ],
-        resolveModule('babel-preset-stage-2')
-      ],
-      plugins: [
-        [
-          require('babel-plugin-transform-runtime'),
-          {
-            helpers: true,
-            polyfill: true,
-            regenerator: true,
-            moduleName: resolveModule('babel-runtime')
-          }
+        plugins: [
+          [
+            require('babel-plugin-transform-runtime'),
+            {
+              helpers: true,
+              polyfill: true,
+              regenerator: true,
+              moduleName: resolveModule('babel-runtime')
+            }
+          ]
         ]
-      ]
+      }
     }
+
+    if (typeof options.proxy === 'object' && Object.keys(options.proxy).length > 0) {
+      config.options.plugins.push([
+        require('./proxy-babel-plugin'),
+        options.proxy
+      ])
+    }
+
+    return config
   },
+
   babelExternals (context, request, callback) {
     let req = pathFormat(path.resolve(context, request))
 

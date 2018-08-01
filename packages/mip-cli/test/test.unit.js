@@ -3,30 +3,29 @@
  * @author tracy(qiushidev@gmail.com)
  */
 
-import test from 'ava';
-import fs from 'fs';
-import path from 'path';
-import meta from '../lib/utils/meta';
-import {render} from '../lib/utils/render';
+const fs = require('fs-extra')
+const path = require('path')
+const meta = require('../lib/utils/meta')
+const {render} = require('../lib/utils/render')
+const {expect} = require('chai')
 
-test('it should read and modify meta.js correctly', t => {
-    const mockDir = path.join(__dirname, 'mock/mock-default-template');
-    let options = meta('testInputProjectName', mockDir);
-    t.truthy(options);
-    t.truthy(options.prompts);
-    t.is(typeof options.prompts.name, 'object');
-    t.is(typeof options.prompts.description, 'object');
-    t.is(typeof options.prompts.author, 'object');
-    t.is(options.prompts.name.default, 'testInputProjectName');
-});
+describe('test meta', function () {
+  it('it should read and modify meta.js correctly', function () {
+    const mockDir = path.join(__dirname, 'mock/mock-default-template')
+    const projectName = 'testInputProjectName'
+    let options = meta(projectName, mockDir)
+    expect(options).to.be.an('object')
+    expect(options.prompts).to.be.an('object')
+    expect(options.prompts.name).to.be.an('object')
+    expect(options.prompts.description).to.be.an('object')
+    expect(options.prompts.author).to.be.an('object')
+    expect(options.prompts.name.default).to.be.equal(projectName)
+  })
 
-test('it should render file correctly',  t => {
-    const template = '<div>this is {{name}}</div>';
-    let res = render(template, {name: 'test'});
-
-    t.is(res, '<div>this is test</div>');
-});
-
-// TODO ...
-
+  it('it should render file correctly',  function () {
+    const template = '<div>this is {{name}}</div>'
+    let res = render(template, {name: 'test'})
+    expect(res).to.be.equal('<div>this is test</div>')
+  })
+})
 

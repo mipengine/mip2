@@ -5,6 +5,7 @@
 
 module.exports = {
 
+  dev: {
     /**
      * 启动mip server调试的端口号
      *
@@ -24,5 +25,14 @@ module.exports = {
      *
      * @type {boolean}
      */
-    autoOpenBrowser: false,
-};
+    autooopen: false
+  },
+
+  build: {
+    proxy: {
+      'http://www.baidu.com/**': function (str) {
+        return str.replace('http://www.baidu.com', '/proxy-to-local-path')
+      }
+    }
+  }
+}

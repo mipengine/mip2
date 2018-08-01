@@ -8,15 +8,19 @@ const cli = require('./cli')
 const opn = require('opn')
 const chalk = require('chalk')
 
-module.exports = function ({
-  dir = process.cwd(),
-  port = 8111,
-  livereload = false,
-  asset,
-  autoopen,
-  ignore
-}) {
-  const server = new Server({port, dir, livereload, ignore, asset})
+module.exports = function (options) {
+  options.dir = options.dir || process.cwd()
+  options.port = options.port || 8111
+  options.livereload = options.livereload || false
+  options.env = 'development'
+
+  if (options.asset) {
+    options.asset = options.asset.replace(/\/$/, '').replace(/:\d+/, '') + ':' + options.port
+  } else {
+    options.asset = 'http://127.0.0.1:' + options.port
+  }
+
+  const server = new Server(options)
 
   try {
     server.run()
@@ -35,6 +39,8 @@ module.exports = function ({
     console.log(`组件可以通过引入 http://127.0.0.1:${server.port}/{组件名}/{组件名}.js 进行调试。`)
     console.log()
     console.log()
+
+    let autoopen = options.autoopen
 
     if (autoopen) {
       if (/^\//.test(autoopen)) {

@@ -7,7 +7,7 @@
     "mip2": "bin/mip2"
   },
   "scripts": {
-    "test": "NODE_ENV=test && nyc ava --verbose",
+    "test": "mocha test/**/*.spec.js",
     "lint": "eslint lib"
   },
   "repository": {
@@ -41,7 +41,6 @@
     "chalk": "^2.4.1",
     "chokidar": "^2.0.3",
     "commander": "^2.15.1",
-    "copy-webpack-plugin": "^4.5.2",
     "css-loader": "^0.28.11",
     "deepmerge": "^2.1.1",
     "download-git-repo": "^1.0.2",
@@ -60,6 +59,7 @@
     "less-loader": "^4.1.0",
     "livereload": "^0.7.0",
     "metalsmith": "^2.3.0",
+    "minimatch": "^3.0.4",
     "mip-component-validator": "^1.1.0",
     "mip-components-webpack-helpers": "^1.0.7",
     "mip-sandbox": "^1.0.21",
@@ -86,7 +86,10 @@
   },
   "devDependencies": {
     "ava": "^0.25.0",
-    "nyc": "^11.7.3"
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
+    "nyc": "^11.7.3",
+    "supertest": "^3.1.0"
   },
   "ava": {
     "files": [

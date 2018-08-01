@@ -50,7 +50,7 @@ window.MIP
 
 - type: `Object`
 
-  hash 相关的工具，参考[hash](./hash.md)
+  hash 相关的工具，参考[hash](./util/hash.md)
 
 ### CustomElement
 

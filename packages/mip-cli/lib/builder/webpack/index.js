@@ -7,7 +7,7 @@ const webpack = require('webpack')
 const middleware = require('koa-webpack')
 const config = require('./config')
 const chokidar = require('chokidar')
-const {globPify} = require('../../utils/helper')
+const {pify, globPify} = require('../../utils/helper')
 const projectPath = require('../../utils/project-path')
 const validator = require('mip-component-validator')
 const path = require('path')
@@ -15,19 +15,19 @@ const cli = require('../../cli')
 
 module.exports = class WebpackBuilder {
   constructor (options) {
+    this.options = options
+
+    Object.keys(options).forEach(key => {
+      this[key] = options[key]
+    })
+
     this.outputDir = options.output || path.resolve('dist')
-    this.dir = options.dir
     this.packageJsonPathname = path.resolve(this.dir, 'package.json')
     this.componentDir = projectPath.components(this.dir)
-    this.asset = options.asset
-    this.ignore = options.ignore
 
-    if (options.dev) {
-      this.mode = 'development'
+    if (this.env === 'development') {
       this.initDev()
       this.initWatcher()
-    } else {
-      this.mode = 'production'
     }
   }
 
@@ -41,17 +41,13 @@ module.exports = class WebpackBuilder {
 
   async build () {
     await this.initConfig()
-    return new Promise((resolve, reject) => {
-      webpack(this.config, (err, result) => {
-        if (err) {
-          reject(err)
-        } else if (result.hasErrors()) {
-          reject(result.compilation.errors)
-        } else {
-          resolve(result)
-        }
-      })
-    })
+    let result = await pify(webpack)(this.config)
+
+    if (result.hasErrors()) {
+      throw Error(result.compilation.errors)
+    }
+
+    return result
   }
 
   async getEntries () {
@@ -62,6 +58,10 @@ module.exports = class WebpackBuilder {
 
     let components = await globPify('mip-*/mip-*.@(vue|js)', globOpts)
       .then(arr => arr.filter(name => /(mip-[\w-]+)\/\1\.(vue|js)$/.test(name)))
+
+    if (!components.length) {
+      throw Error(`找不到入口文件，请检查路径是否规范：\n${this.componentDir}`)
+    }
 
     let entries = components.reduce((entries, pathname) => {
       let basename = path.basename(pathname, path.extname(pathname))
@@ -74,14 +74,17 @@ module.exports = class WebpackBuilder {
 
   async initConfig () {
     let entries = await this.getEntries()
-    this.config = config({
-      entry: entries,
-      outputPath: this.outputDir,
-      mode: this.mode,
-      context: this.dir,
-      asset: this.asset,
-      ignore: this.ignore
-    })
+
+    let options = Object.assign(
+      {
+        entry: entries,
+        outputPath: this.outputDir,
+        context: this.dir
+      },
+      this.options
+    )
+
+    this.config = config(options)
   }
 
   async initDev () {
