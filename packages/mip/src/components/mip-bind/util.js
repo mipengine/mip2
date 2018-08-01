@@ -144,7 +144,7 @@ export function getter (ctx, exp) {
 }
 
 export function getWithResult (exp) {
-  exp = namespaced(exp)
+  exp = namespaced(exp) || ''
   let matches = exp.match(/this\.[\w\d-._]+/gmi)
   let read = ''
   if (!matches || !matches.length) {
@@ -166,7 +166,7 @@ export function getWithResult (exp) {
             hadReadAll: hadReadAll
           }
         } catch (e) {
-          console.error(e)
+          return {}
         }
       }
     `)
