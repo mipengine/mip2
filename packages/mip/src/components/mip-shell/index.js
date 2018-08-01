@@ -432,7 +432,7 @@ class MipShell extends CustomElement {
       }
     }
     viewport.on('resize', resizeHandler)
-    setInterval(resizeHandler, 500)
+    setInterval(resizeHandler, 250)
 
     // Listen events
     window.addEventListener('mipShellEvents', e => {
