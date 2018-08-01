@@ -220,6 +220,7 @@ class MIPCarousel extends CustomElement {
     // let initPostion = -eleWidth
     // 初始渲染时如果有跳转索引就改变位置到指定图片
     let initPostion = index ? -eleWidth * indexNum : -eleWidth
+    curGestureClientx = initPostion
     wrapBox.style.webkitTransform = 'translate3d(' + initPostion + 'px, 0, 0)'
 
     // 绑定wrapBox的手势事件
