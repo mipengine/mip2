@@ -48,7 +48,7 @@ import {
   MESSAGE_PAGE_RESIZE
 } from '../../page/const/index'
 import viewport from '../../viewport'
-import {customEmit} from '../../vue-custom-element/utils/custom-event'
+import {customEmit} from '../../util/custom-event'
 
 let viewer = null
 let page = null
@@ -420,15 +420,17 @@ class MipShell extends CustomElement {
     })
 
     // update every iframe's height when viewport resizing
-    viewport.on('resize', () => {
+    let resizeHandler = () => {
       // only when screen gets spinned
-      let currentViewportWidth = viewport.getWidth()
-      if (this.currentViewportWidth !== currentViewportWidth) {
-        this.currentViewportHeight = viewport.getHeight()
-        this.currentViewportWidth = currentViewportWidth
+      let currentViewportHeight = viewport.getHeight()
+      if (this.currentViewportHeight !== currentViewportHeight) {
+        this.currentViewportWidth = viewport.getWidth()
+        this.currentViewportHeight = currentViewportHeight
         this.resizeAllPages()
       }
-    })
+    }
+    viewport.on('resize', resizeHandler)
+    setInterval(resizeHandler, 500)
 
     // Listen events
     window.addEventListener('mipShellEvents', e => {
@@ -531,7 +533,7 @@ class MipShell extends CustomElement {
           targetPage.destroy()
         }
         // Delete DOM & trigger disconnectedCallback in root page
-        Array.prototype.slice.call(page.getElementsInRootPage()).forEach(el => el.parentNode && el.parentNode.removeChild(el))
+        page.getElementsInRootPage().forEach(el => el.parentNode && el.parentNode.removeChild(el))
       }
 
       if (!targetPage) {
@@ -739,7 +741,7 @@ class MipShell extends CustomElement {
          * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
          */
         document.documentElement.classList.add('mip-no-scroll')
-        Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
+        page.getElementsInRootPage().forEach(e => e.classList.add('hide'))
       }
 
       onComplete && onComplete()
@@ -784,7 +786,7 @@ class MipShell extends CustomElement {
     let rootPageScrollPosition = 0
     if (targetPageId === page.pageId) {
       document.documentElement.classList.remove('mip-no-scroll')
-      Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
+      page.getElementsInRootPage().forEach(e => e.classList.remove('hide'))
       rootPageScrollPosition = this.rootPageScrollPosition
       this.restoreScrollPosition()
     }
@@ -793,7 +795,7 @@ class MipShell extends CustomElement {
     // If source page is root page, skip transition
     if (!iframe) {
       document.documentElement.classList.add('mip-no-scroll')
-      Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
+      page.getElementsInRootPage().forEach(e => e.classList.add('hide'))
 
       onComplete && onComplete()
 
@@ -930,7 +932,7 @@ class MipShell extends CustomElement {
     let rootPageScrollPosition = 0
     if (targetPageId === page.pageId) {
       document.documentElement.classList.remove('mip-no-scroll')
-      Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
+      page.getElementsInRootPage().forEach(e => e.classList.remove('hide'))
       rootPageScrollPosition = this.rootPageScrollPosition
       this.restoreScrollPosition()
     }
@@ -939,7 +941,7 @@ class MipShell extends CustomElement {
     // If source page is root page, skip transition
     if (!iframe) {
       document.documentElement.classList.add('mip-no-scroll')
-      Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
+      page.getElementsInRootPage().forEach(e => e.classList.add('hide'))
 
       onComplete && onComplete()
       this.afterSwitchPage(options)
@@ -1027,11 +1029,11 @@ class MipShell extends CustomElement {
     hideAllIFrames()
     if (sourcePageId === page.pageId) {
       document.documentElement.classList.add('mip-no-scroll')
-      Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.add('hide'))
+      page.getElementsInRootPage().forEach(e => e.classList.add('hide'))
     }
     if (targetPageId === page.pageId) {
       document.documentElement.classList.remove('mip-no-scroll')
-      Array.prototype.slice.call(page.getElementsInRootPage()).forEach(e => e.classList.remove('hide'))
+      page.getElementsInRootPage().forEach(e => e.classList.remove('hide'))
       this.restoreScrollPosition()
     }
 

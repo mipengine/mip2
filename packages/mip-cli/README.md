@@ -92,15 +92,15 @@ $ mip2 sw
 
 ``` javascript
 module.exports = {
-    dev: {/*...*/},
-    serviceWorker: {
-        cacheId: 'mipuser',
-        skipWaiting: true,
-        clientsClaim: true,
-        runtimeCaching: [],
-        globPatterns: [],
-        globIgnores: []
-    }
+  dev: {/*...*/},
+  serviceWorker: {
+    cacheId: 'mipuser',
+    skipWaiting: true,
+    clientsClaim: true,
+    runtimeCaching: [],
+    globPatterns: [],
+    globIgnores: []
+  }
 }
 ```
 
@@ -108,7 +108,11 @@ module.exports = {
 
 ## changelog
 
-- 1.1.20
+-1.2.1
+    1. cli dev 和 build 命令增加 proxy 配置，支持对组件代码中字符串部分做替换以模拟实现开发和测试时的请求转发功能；
+    2. mip2 build 增加 -e/--env 指定当前编译的环境变量 process.env.NODE_ENV
+
+- 1.2.0
     1. 升级 validator 依赖 mip-component-validator 至 1.1.0，该版本全流程改为异步实现
     2. dev 和 build 命令强制进行 npm 白名单校验，出现非白名单的 npm 包，会在控制台将包名打印出来
     3. validate 命令增加 -w 参数校验 npm 白名单

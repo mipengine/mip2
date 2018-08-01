@@ -19,20 +19,6 @@ function customElementHeader (options) {
       return ''
     }
 
-    // let mipComponentsWebpackHelperUrl = options.mode === 'development'
-    //   ? options.asset.replace(/\/$/, '') + '/mip-components-webpack-helpers'
-    //   // 线上 helpers 地址
-    //   : 'https://c.mipcdn.com/static/v2/mip-components-webpack-helpers'
-
-    // let mipComponentsWebpackHelperUrl = (mode === 'development')
-    //   ? '/mip-components-webpack-helpers'
-    //   : asset.replace(/\/$/, '') + '/mip-components-webpack-helpers'
-
-    // return `(function() {
-    //   require.config({paths: {'mipComponentsWepackHelpers': '${mipComponentsWebpackHelperUrl}'}});
-    //   require(['mipComponentsWepackHelpers'], function (__mipComponentsWepackHelpers__) {
-    //     var __mip_component__ = `
-
     // helper 改同步加载
     return `(function() {
         var __mip_component__ = `

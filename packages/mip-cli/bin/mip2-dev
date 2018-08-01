@@ -32,7 +32,19 @@ if (fs.existsSync(configPath)) {
   defaultConfig = require(configPath)
 }
 
-const conf = Object.assign(defaultConfig.dev || {}, cli.program)
+// FIX ME
+const conf = Object.assign(
+  defaultConfig.dev || {},
+  {
+    cliConfigPath: configPath,
+    port: cli.program.port,
+    dir: cli.program.dir,
+    livereload: cli.program.livereload,
+    asset: cli.program.asset,
+    autoopen: cli.program.autoopen,
+    ignore: cli.program.ignore
+  }
+)
 
 if (conf.ignore === true) {
   conf.ignore = 'sandbox'

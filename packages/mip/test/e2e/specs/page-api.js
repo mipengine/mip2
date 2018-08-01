@@ -23,14 +23,11 @@ module.exports = {
       .assert.hidden('div[data-button-name="chat"]')
       .assert.hidden('div[data-button-name="cancel"]')
   },
-  'open index.html and jump to api.html': function (browser) {
+  'togglePageMask true': function (browser) {
     browser
       .url(INDEX_PAGE_URL)
       .waitForClick('.api-link', 3000)
       .assert.urlEquals(API_PAGE_URL)
-  },
-  'togglePageMask true': function (browser) {
-    browser
       .enterIframe(API_PAGE_URL, () => {
         browser.waitForClick('.toggle-page-mask')
       })
@@ -68,6 +65,49 @@ module.exports = {
       .assert.hidden('div[data-button-name="subscribe"]')
       .assert.hidden('div[data-button-name="chat"]')
       .assert.hidden('div[data-button-name="cancel"]')
+  },
+  'broadcastCustomEvent': function (browser) {
+    browser
+      // Back to index.html and check initial state
+      .back()
+      .assert.urlEquals(INDEX_PAGE_URL)
+      .assert.containsText('h1.message-receiver', 'Hello everyone!')
+
+      // Go to api.html
+      .waitForClick('.api-link', 3000)
+      .assert.urlEquals(API_PAGE_URL)
+      .enterIframe(API_PAGE_URL, () => {
+        browser
+          // Check initial state
+          .assert.containsText('h1.message-receiver', 'Hello everyone!')
+          // Broadcast
+          .waitForClick('.broadcast')
+          // Check state after broadcasting
+          .assert.containsText('h1.message-receiver', 'Hello from broadcast!')
+      })
+
+      // Back to index.html and check state after broadcasting
+      .back()
+      .assert.urlEquals(INDEX_PAGE_URL)
+      .assert.containsText('h1.message-receiver', 'Hello from broadcast!')
+  },
+  'emitCustomEvent': function (browser) {
+    browser
+      // Go to api.html
+      .forward()
+      .assert.urlEquals(API_PAGE_URL)
+      .enterIframe(API_PAGE_URL, () => {
+        browser
+          // emitCustomEvent
+          .waitForClick('.emit-custom-event')
+          // Check state after broadcasting
+          .assert.containsText('h1.message-receiver', 'Hello from emitCustomEvent!')
+      })
+
+      // Back to index.html and check state after broadcasting
+      .back()
+      .assert.urlEquals(INDEX_PAGE_URL)
+      .assert.containsText('h1.message-receiver', 'Hello from emitCustomEvent!')
       .end()
   }
 
