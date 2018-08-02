@@ -525,7 +525,7 @@ class MipShell extends CustomElement {
       this.saveScrollPosition()
     }
 
-    if (!targetPage || (to.meta && to.meta.reload)) {
+    if (!targetPage || (to.meta && to.meta.reload && !to.meta.fromCache)) {
       // Iframe will be created in following situation:
       // 1. `!targetPage` means target iframe doesn't exists.
       // 2. `to.meta && to.meta.reload` means target iframe MUST be recreated even it exists.
@@ -670,6 +670,8 @@ class MipShell extends CustomElement {
         })
         if (!this.transitionContainsHeader) {
           this.refreshShell({pageMeta: targetPageMeta})
+        } else {
+          css(this.$loading, 'display', 'none')
         }
         this.toggleTransition(true)
         this.pauseBouncyHeader = false
@@ -783,13 +785,18 @@ class MipShell extends CustomElement {
 
       hideAllIFrames()
 
+      /**
+       * Disable scrolling of root page when covered by an iframe
+       * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
+       */
       if (sourcePageId === page.pageId) {
-        /**
-         * Disable scrolling of root page when covered by an iframe
-         * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
-         */
         document.documentElement.classList.add('mip-no-scroll')
         page.getElementsInRootPage().forEach(e => e.classList.add('hide'))
+      }
+      if (targetPageId === page.pageId) {
+        document.documentElement.classList.remove('mip-no-scroll')
+        page.getElementsInRootPage().forEach(e => e.classList.remove('hide'))
+        this.restoreScrollPosition()
       }
 
       onComplete && onComplete()
