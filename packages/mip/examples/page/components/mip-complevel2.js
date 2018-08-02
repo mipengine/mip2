@@ -7,7 +7,7 @@
 MIP.registerVueCustomElement('mip-complevel2', {
   template: `<div class="mip-complevel2">
       <h3>This is component mip-complevel2</h3>
-      <p>userInfo.name : {{userInfo.name}}</p>
+      <p v-if="userInfo.name">userInfo.name : {{userInfo.name}}</p>
       <p v-if="msg">string 'msg' show if loading=true: <span v-if="loading">{{msg}}</span></p>
       <p v-if="list && list.length">list:</p>
       <ul v-if="list && list.length">
