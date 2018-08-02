@@ -20,14 +20,41 @@ let carouselParas = {
 }
 // 当前图片为 index，懒加载 index 前后各 NUM 个图
 let NUM = 1
-// 强行渲染 element 元素下的 mip-img，开始位置为 start，结束至 end - 1，轮播组件会多两个 mip-img
+// 强行渲染 element(childNodes) 元素下的 mip-img，开始位置为 start，结束至 end - 1，轮播组件会多两个 mip-img
 function preRender (element, index, NUM) {
-  let allMipImgs = Array.prototype.slice.call(element.querySelectorAll('mip-img'))
+  let allMipImgs = element
   let start = index - NUM <= 0 ? 0 : index - NUM
   let end = index + NUM + 1 > allMipImgs.length ? allMipImgs.length : index + NUM + 1
   for (let i = start; i < end; i++) {
-    prerenderElement(allMipImgs[i])
+    if (allMipImgs[i].tagName === 'MIP-IMG') {
+      prerenderElement(allMipImgs[i])
+    }
   }
+}
+// 根据 bug 调整方案为修改 src 使其加载
+function preRenderSetSRC (element, index, NUM, arraySRC) {
+  let allMipImgs = element
+  let start = index - NUM <= 0 ? 0 : index - NUM
+  let end = index + NUM + 1 > allMipImgs.length ? allMipImgs.length : index + NUM + 1
+  for (let i = start; i < end; i++) {
+    if (allMipImgs[i].tagName === 'MIP-IMG') {
+      allMipImgs[i].setAttribute('src', arraySRC[i])
+    }
+  }
+}
+// 修改 src 为某张图的 src
+function changeSRC (childList, j) {
+  let src = childList[j].getAttribute('src')
+  for (let i = 0; i < childList.length; i++) {
+    if (childList[i].tagName === 'MIP-IMG') {
+      childList[i].setAttribute('src', src)
+    }
+  }
+  return childList
+}
+// get all the src
+function getSRC (childList) {
+  return childList.map(value => value.getAttribute('src'))
 }
 // 按tagName创建一个固定class的tag
 function createTagWithClass (className, tagName) {
@@ -188,7 +215,9 @@ class MIPCarousel extends CustomElement {
     let isScrolling = 0
 
     // 获取carousel下的所有节点
-    let childNodes = getChildNodes(ele)
+    let _childNodes = getChildNodes(ele)
+    let arraySRC = getSRC(_childNodes)
+    let childNodes = changeSRC(_childNodes, imgIndex)
 
     // 图片显示个数
     // 其实图片个数应该为实际个数+2.copy了头和尾的两部分
@@ -211,6 +240,9 @@ class MIPCarousel extends CustomElement {
 
       // 遍历mip-img计算布局
       self.applyFillContent(ele, true)
+      if (ele.tagName !== 'MIP-IMG') {
+        prerenderElement(ele)
+      }
       // inview callback  bug, TODO
       // let MIP = window.MIP || {};
       // 没有对下面的代码进行处理
@@ -232,7 +264,8 @@ class MIPCarousel extends CustomElement {
     // 初始渲染时如果有跳转索引就改变位置到指定图片
     let initPostion = index ? -eleWidth * indexNum : -eleWidth
     curGestureClientx = initPostion
-    preRender(wrapBox, indexNum, NUM)
+    preRender(childNodes, indexNum, NUM)
+    preRenderSetSRC(childNodes, indexNum, NUM, arraySRC)
     wrapBox.style.webkitTransform = 'translate3d(' + initPostion + 'px, 0, 0)'
 
     // 绑定wrapBox的手势事件
@@ -439,7 +472,8 @@ class MIPCarousel extends CustomElement {
         carouselChildrenLength: childNum
       })
       // 加载需要的图片
-      preRender(wrapBox, imgIndex, NUM)
+      preRender(childNodes, imgIndex, NUM)
+      preRenderSetSRC(childNodes, imgIndex, NUM, arraySRC)
     }
 
     // 处理圆点型指示器
