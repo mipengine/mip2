@@ -53,7 +53,7 @@ MIP.registerVueCustomElement('mip-complevel1', {
     setData (num, loading) {
       console.log(loading)
       MIP.setData({
-        loading: typeof loading !== 'undefined' ? loading : true
+        loading
       })
       MIP.setData({
         a: num
