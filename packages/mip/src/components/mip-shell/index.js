@@ -495,7 +495,7 @@ class MipShell extends CustomElement {
      * 3. <a mip-link></a> innerText (to.meta.defaultTitle)
      */
     let targetPageMeta = fn.extend(true, {}, this.findMetaByPageId(targetPageId))
-    targetPageMeta.header.title = to.meta.title || targetPageMeta.header.title || to.meta.defaultTitle
+    document.title = targetPageMeta.header.title = to.meta.title || targetPageMeta.header.title || to.meta.defaultTitle
 
     // Transition direction
     let isForward = window.MIP_SHELL_OPTION.isForward
