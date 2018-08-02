@@ -60,18 +60,20 @@ class Page {
    * @param {string} hash hash
    */
   scrollToHash (hash) {
-    if (hash) {
-      try {
-        let $hash = document.querySelector(decodeURIComponent(hash))
-        /* istanbul ignore next */
-        if ($hash) {
-          // scroll to current hash
-          scrollTo($hash.offsetTop, {
-            scrollTop: viewport.getScrollTop()
-          })
-        }
-      } catch (e) {}
+    if (typeof hash !== 'string' || hash[0] !== '#') {
+      return
     }
+
+    try {
+      const anchor = document.getElementById(decodeURIComponent(hash.slice(1)))
+
+      /* istanbul ignore next */
+      if (anchor) {
+        scrollTo(anchor.offsetTop, {
+          scrollTop: viewport.getScrollTop()
+        })
+      }
+    } catch (e) {}
   }
 
   /**
