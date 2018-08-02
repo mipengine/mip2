@@ -187,8 +187,9 @@ let viewer = {
    * @param {boolean} options.isMipLink Whether targetUrl is a MIP page. If not, use `top.location.href`. Defaults to `true`
    * @param {boolean} options.replace If true, use `history.replace` instead of `history.push`. Defaults to `false`
    * @param {Object} options.state Target page info
+   * @param {Object} options.fromCache If true, use cached iframe when available
    */
-  open (to, {isMipLink = true, replace = false, state} = {}) {
+  open (to, {isMipLink = true, replace = false, state, fromCache} = {}) {
     if (!state) {
       state = {click: undefined, title: undefined, defaultTitle: undefined}
     }
@@ -237,6 +238,7 @@ let viewer = {
       // Reload page even if it's already existed
       targetRoute.meta = {
         reload: true,
+        fromCache,
         header: {
           title: pushMessage.state.title,
           defaultTitle: pushMessage.state.defaultTitle
@@ -337,6 +339,7 @@ let viewer = {
       let to = $a.href
       let isMipLink = $a.hasAttribute('mip-link') || $a.getAttribute('data-type') === 'mip'
       let replace = $a.hasAttribute('replace')
+      let fromCache = $a.hasAttribute('from-cache')
       let state = self._getMipLinkData.call($a)
 
       /**
@@ -351,7 +354,7 @@ let viewer = {
         return
       }
 
-      self.open(to, {isMipLink, replace, state})
+      self.open(to, {isMipLink, replace, state, fromCache})
 
       event.preventDefault()
     }, false)

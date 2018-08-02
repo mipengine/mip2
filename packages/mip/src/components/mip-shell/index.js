@@ -521,7 +521,7 @@ class MipShell extends CustomElement {
       this.saveScrollPosition()
     }
 
-    if (!targetPage || (to.meta && to.meta.reload)) {
+    if (!targetPage || (to.meta && to.meta.reload && !to.meta.fromCache)) {
       // Iframe will be created in following situation:
       // 1. `!targetPage` means target iframe doesn't exists.
       // 2. `to.meta && to.meta.reload` means target iframe MUST be recreated even it exists.
@@ -555,8 +555,12 @@ class MipShell extends CustomElement {
       let targetIFrame
       innerBodyHeight = 0
       innerBodyFreezeTime = 0
-      let hackForAndroidScroll = () => {
+      let hackForAndroidScroll = interval => {
         let mask = this.$buttonMask
+        if (mask.style.display === 'block') {
+          clearInterval(interval)
+          return
+        }
         css(mask, {
           opacity: '0.01',
           display: 'block'
@@ -566,7 +570,7 @@ class MipShell extends CustomElement {
             display: 'none',
             opacity: ''
           })
-        }, 100)
+        }, 20)
       }
       let iframeOnLoad = () => {
         if (!targetPageInfo.isCrossOrigin && platform.isAndroid()) {
@@ -576,13 +580,14 @@ class MipShell extends CustomElement {
             if (doc.body.clientHeight !== innerBodyHeight) {
               innerBodyHeight = currentHeight
               innerBodyFreezeTime = 0
-              hackForAndroidScroll()
             } else {
               innerBodyFreezeTime++
             }
 
             if (innerBodyFreezeTime >= 10) {
               clearInterval(checkInterval)
+            } else {
+              innerBodyFreezeTime % 2 === 0 && hackForAndroidScroll(checkInterval)
             }
           }, 500)
         }
@@ -658,6 +663,8 @@ class MipShell extends CustomElement {
         })
         if (!this.transitionContainsHeader) {
           this.refreshShell({pageMeta: targetPageMeta})
+        } else {
+          css(this.$loading, 'display', 'none')
         }
         this.toggleTransition(true)
         this.pauseBouncyHeader = false
@@ -771,13 +778,18 @@ class MipShell extends CustomElement {
 
       hideAllIFrames()
 
+      /**
+       * Disable scrolling of root page when covered by an iframe
+       * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
+       */
       if (sourcePageId === page.pageId) {
-        /**
-         * Disable scrolling of root page when covered by an iframe
-         * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
-         */
         document.documentElement.classList.add('mip-no-scroll')
         page.getElementsInRootPage().forEach(e => e.classList.add('hide'))
+      }
+      if (targetPageId === page.pageId) {
+        document.documentElement.classList.remove('mip-no-scroll')
+        page.getElementsInRootPage().forEach(e => e.classList.remove('hide'))
+        this.restoreScrollPosition()
       }
 
       onComplete && onComplete()
