@@ -502,7 +502,12 @@ class MipShell extends CustomElement {
     document.title = targetPageMeta.header.title = to.meta.title || targetPageMeta.header.title || to.meta.defaultTitle
 
     // Transition direction
-    let isForward = window.MIP_SHELL_OPTION.isForward
+    let isForward
+    if (targetPageMeta.view.isIndex) {
+      isForward = false
+    } else {
+      isForward = window.MIP_SHELL_OPTION.isForward
+    }
 
     // Hide page mask and skip transition
     this.togglePageMask(false, {skipTransition: true})
