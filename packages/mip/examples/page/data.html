@@ -87,6 +87,15 @@
             border: 1px solid #e1e1e1;
             padding: 10px;
         }
+        .mip-complevel1 {
+            border: 1px solid red;
+            padding: 4px;
+        }
+        .mip-complevel2 {
+            border: 1px solid blue;
+            padding: 4px;
+            margin: 6px 0;
+        }
     </style>
 </head>
 
@@ -96,7 +105,6 @@
             {
                 "#empty_str": "",
                 "num": 0,
-                "a": 0,
                 "loading": false,
                 "title": "Apple/苹果 iPhone X",
                 "basePrice": "9688.00",
@@ -187,9 +195,8 @@
         </script>
     </mip-data>
 
-    <!-- <mip-complevel1 m-bind:userinfo="userInfo" m-bind:a="a" m-bind:loading="loading"></mip-complevel1>
-    <mip-complevel2 m-bind:a="a"></mip-complevel2>
-    <mip-mask m-bind:loading="loading"></mip-mask> -->
+    <mip-complevel1 m-bind:user-info="userInfo" m-bind:loading="loading"></mip-complevel1>
+    <mip-mask m-bind:loading="loading"></mip-mask>
 
     <div class="global-data main-content">
         <h3>共享数据 checklist:</h3>
@@ -271,20 +278,7 @@
             input to change pics:
             <input type='text' on="change:MIP.setData({no:DOM.value})">
         </mip-form>
-        <!-- <p m-text="weekFull"></p>   -->
         <mip-img m-bind:src="imgList[no]" style="width:150px;height:150px;"></mip-img>
-
-        <!-- <mip-script>
-            let weekDay = ['一', '二', '三', '四', '五', '六', '日']
-            MIP.watch('no', function (newVal, oldVal) {
-                if (newVal < 1 || newVal > 8) {
-                    MIP.setData({weekFull: '输入错误'})
-                }
-                else {
-                    MIP.setData({weekFull: `星期${weekDay[+newVal - 1]}`})
-                }
-            })
-        </mip-script> -->
 
         <br><br>
         <a href="./index.html" class="link" mip-link>Back to Index</a>
@@ -350,8 +344,6 @@
         }
         </script>
     </mip-shell>
-
-    <mip-script src="http://127.0.0.1:8080/examples/static/test-script.js"></mip-script>
 
     <mip-script>
         console.log('watched')
