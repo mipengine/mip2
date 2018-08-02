@@ -86,6 +86,7 @@
             margin: 30px 0;
             border: 1px solid #e1e1e1;
             padding: 10px;
+<<<<<<< 0af3f2c78c0ba5195cfbdd63bead7a1088b790c7
         }
         .mip-complevel1 {
             border: 1px solid red;
@@ -95,6 +96,8 @@
             border: 1px solid blue;
             padding: 4px;
             margin: 6px 0;
+=======
+>>>>>>> update example & codelab meta.json
         }
     </style>
 </head>
@@ -196,9 +199,15 @@
         </script>
     </mip-data>
 
+<<<<<<< 0af3f2c78c0ba5195cfbdd63bead7a1088b790c7
     <mip-complevel1 m-bind:user-info="userInfo" m-bind:loading="loading"></mip-complevel1>
     <mip-complevel2></mip-complevel2>
     <mip-mask m-bind:loading="loading"></mip-mask>
+=======
+    <!-- <mip-complevel1 m-bind:userinfo="userInfo" m-bind:a="a" m-bind:loading="loading"></mip-complevel1>
+    <mip-complevel2 m-bind:a="a"></mip-complevel2>
+    <mip-mask m-bind:loading="loading"></mip-mask> -->
+>>>>>>> update example & codelab meta.json
 
     <div class="global-data main-content">
         <h3>共享数据 checklist:</h3>
@@ -223,10 +232,17 @@
         <p>全局数据#test => <span m-text="test" style="color: red;"></span></p>
         <div on="tap:MIP.setData({'test':'haha'})" class="button">click change #test</div>
     </div>
+<<<<<<< 0af3f2c78c0ba5195cfbdd63bead7a1088b790c7
 
     <div class="main-content">
         <!-- <mip-global></mip-global> -->
 
+=======
+
+    <div class="main-content">
+        <!-- <mip-global></mip-global> -->
+
+>>>>>>> update example & codelab meta.json
         <h1 m-text="title" style="margin-left: 20px;"></h1>
 
         <p m-text="size.small"></p>
@@ -346,6 +362,8 @@
         }
         </script>
     </mip-shell>
+
+    <mip-script src="http://127.0.0.1:8080/examples/static/test-script.js"></mip-script>
 
     <mip-script>
         console.log('watched')
