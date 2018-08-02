@@ -64,6 +64,10 @@
         .mip-page-loading.only-header::after {
             display: none;
         }
+        .global-data {
+            border: 1px solid #e1e1e1;
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
@@ -87,15 +91,22 @@
         </script>
     </mip-data>
 
-    <p>
-    global data: group.info.name =>
-    <span m-text="group.info.name" style="color:red;font-size:12px;"></span>
-    </p>
-    <p m-text="demo.name"></p>
-    <p m-text="city"></p>
-<p m-text="city1"></p>
-
-<p m-text="test"></p>
+    <div class="global-data">
+        <h3>共享数据 checklist:</h3>
+        <pre>
+    {
+        "#city": "上海",
+        "#city1": "厦门",
+        "test": "ckkkk2"
+    }
+        </pre>
+        <p>#group.info.name => <span m-text="group.info.name" style="color:red;"></span></p>
+        <p>全局数据#city => <span m-text="city" style="color: red;"></span></p>
+        <p>全局数据#city1 => <span m-text="city1" style="color: red;"></span></p>
+        <p>页面数据test => <span m-text="test" style="color: red;"></span></p>
+        <br />
+        <a class="link" href="./data.html" mip-link>Go to Data</a>
+    </div>
 
     <div id="简介2"></div>
 
@@ -112,7 +123,7 @@ Fast - Respond quickly to user interactions with silky smooth animations and no 
     <a class="link" onclick="window.MIP.viewer.open('./tree.html', {isMipLink:true})">Go to Tree (viewer.open)</a>
     <a class="link" href="http://test.baidu.com:8080/examples/page/tree.html" mip-link>Go to Tree(Cross Origin)</a>
     <a class="link" href="./tree.html" mip-link>Go to Tree</a>
-    <a class="link" href="./data.html" mip-link>Go to Data</a>
+    
 
     <br><br>
     <p>

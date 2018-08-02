@@ -69,7 +69,23 @@
         .num-button {
             background: black;
             color: white;
-            padding: 6px;
+            padding: 20px 6px;
+        }
+        .mip-mask {
+            position: fixed;
+            top: 450px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.5)
+        }
+        .mip-mask.hide {
+            display: none;
+        }
+        .global-data {
+            margin: 30px 0;
+            border: 1px solid #e1e1e1;
+            padding: 10px;
         }
     </style>
 </head>
@@ -78,8 +94,10 @@
     <mip-data>
         <script type="application/json">
             {
+                "#empty_str": "",
                 "num": 0,
                 "a": 0,
+                "loading": false,
                 "title": "Apple/苹果 iPhone X",
                 "basePrice": "9688.00",
                 "price": "9688.00",
@@ -169,33 +187,38 @@
         </script>
     </mip-data>
 
-    <!-- <mip-complevel1 m-bind:userinfo="userInfo"></mip-complevel1> -->
+    <!-- <mip-complevel1 m-bind:userinfo="userInfo" m-bind:a="a" m-bind:loading="loading"></mip-complevel1>
+    <mip-complevel2 m-bind:a="a"></mip-complevel2>
+    <mip-mask m-bind:loading="loading"></mip-mask> -->
 
-    <p class="num-button" on="click:MIP.setData({a:1})">1</p>
-    <p class="num-button" on="click:MIP.setData({a:2})">2</p>
-    <p class="num-button" on="click:MIP.setData({a:3})">3</p>
-    <p class="num-button" on="click:MIP.setData({a:4})">4</p>
-    <p class="num-button" on="click:MIP.setData({a:5})">5</p>
+    <div class="global-data main-content">
+        <h3>共享数据 checklist:</h3>
+        <pre>
+    {
+        "#city": "上海",
+        "city1": "厦门",
+        "#test": "ckkkk2"
+    }
+        </pre>
+        <p>#group.info.name (initial in index.html):
+            <span m-text="group.info.name" style="color: red;"></span>
+        </p>
+        <div on="tap:MIP.setData({group:{info:{name:'sfe2018'}}})" class="button">click change global group.info.name</div>
+
+        <p>全局数据#city => <span m-text="city" style="color: red;"></span></p>
+        <div on="tap:MIP.setData({'city':'深圳'})" class="button">click change city</div>
+
+        <p>页面数据city1 => <span m-text="city1" style="color: red;"></span></p>
+        <div on="tap:MIP.setData({'#city1':'成都'})" class="button">click change #city1</div>
+
+        <p>全局数据#test => <span m-text="test" style="color: red;"></span></p>
+        <div on="tap:MIP.setData({'test':'haha'})" class="button">click change #test</div>
+    </div>
 
     <div class="main-content">
         <!-- <mip-global></mip-global> -->
 
-        <p>group.info.name (a global state shared from index.html):
-        <span m-text="group.info.name" style="color: red;"></span>
-        </p>
-        <div on="tap:MIP.setData({group:{info:{name:'sfe2018'}}})" class="button">click change global group.info.name</div>
-
-        <br><br>
         <h1 m-text="title" style="margin-left: 20px;"></h1>
-
-        <p m-text="city"></p>
-        <div on="tap:MIP.setData({'city':'深圳'})" class="button">click change city</div>
-
-        <p m-text="city1"></p>
-        <div on="tap:MIP.setData({'#city1':'成都'})" class="button">click change city1</div>
-
-        <p m-text="test"></p>
-        <div on="tap:MIP.setData({'test':'haha'})" class="button">click change test</div>
 
         <p m-text="size.small"></p>
         <div on="tap:MIP.setData({size:{small:2}})" class="button">click change size.small</div>
@@ -230,8 +253,6 @@
         <mip-form url="https://www.mipengine.org/" class="button">
             <input type='text' on="change:MIP.setData({price:DOM.value*m.price})" style="width:150px;">
         </mip-form>
-
-        <input type='text' m-bind:value="value" style="width:150px;">
 
         <mip-data>
             <script type="application/json">
@@ -268,6 +289,7 @@
         <br><br>
         <a href="./index.html" class="link" mip-link>Back to Index</a>
         <a class="link" href="./tree.html" mip-link>Go to Tree</a>
+        <a class="link" href="./test.html" mip-link>Go to Test</a>
     </div>
     <br><br>
 
@@ -329,7 +351,7 @@
         </script>
     </mip-shell>
 
-    <mip-script src="http://127.0.0.1:8848/test-script.js"></mip-script>
+    <mip-script src="http://127.0.0.1:8080/examples/static/test-script.js"></mip-script>
 
     <mip-script>
         console.log('watched')
@@ -348,7 +370,7 @@
         MIP.watch('lxndata', function () {
             console.log('lxndata')
         });
-        MIP.watch('a', function (newVal) {
+        MIP.watch('ac', function (newVal) {
             console.log('a changed to ', newVal)
         });
         MIP.watch('city', function () {
@@ -363,8 +385,9 @@
     <!-- <script src="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script> -->
     <script src="./components/mip-complevel2.js"></script>
     <script src="./components/mip-complevel1.js"></script>
+    <script src="./components/mip-mask.js"></script>
     <script src="https://c.mipcdn.com/static/v1/mip-form/mip-form.js"></script>
     <!-- <script src="./components/mip-global.js"></script> -->
-    <script src="https://deploy-preview-63--mip2-deploy-preview.netlify.com/mip-script/mip-script.js"></script>
-
+    <script src="https://c.mipcdn.com/static/v2/mip-script/mip-script.js"></script>
+    <!-- <script src="http://127.0.0.1:8111/mip-script/mip-script.js"></script> -->
 </body>
