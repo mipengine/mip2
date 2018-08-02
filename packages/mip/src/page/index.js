@@ -176,9 +176,6 @@ class Page {
 
     // trigger show page custom event
     this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
-
-    // Job complete!
-    document.body.setAttribute('mip-ready', '')
   }
 
   // ========================= Util functions for developers =========================
