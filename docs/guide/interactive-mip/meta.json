@@ -2,7 +2,7 @@
   "menu": [
     {
       "name": "可交互 MIP - 概况",
-      "key": "introdution"
+      "key": "introduction"
     },
     {
       "name": "mip-data 设置数据",

@@ -105,7 +105,7 @@ class BaseElement extends HTMLElement {
   viewportCallback (inViewport) {
     this.customElement.viewportCallback(inViewport)
     this._inViewport = inViewport
-    if (!this._firstInViewport) {
+    if (inViewport && !this._firstInViewport) {
       this._firstInViewport = true
       this.customElement.firstInviewCallback()
     }

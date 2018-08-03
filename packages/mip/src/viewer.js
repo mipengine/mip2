@@ -7,7 +7,6 @@
 /* global top screen location */
 
 import event from './util/dom/event'
-import css from './util/dom/css'
 import Gesture from './util/gesture/index'
 import platform from './util/platform'
 import EventAction from './util/event-action'
@@ -71,17 +70,14 @@ let viewer = {
     // start rendering page
     this.page.start()
 
+    // notify internal performance module
+    this.isShow = true
+    this._showTiming = Date.now()
+    this.trigger('show', this._showTiming)
+
     // move <mip-fixed> to second <body>. see fixed-element.js
     this.fixedElement = fixedElement
     fixedElement.init()
-
-    // Only send at first time
-    if (win.MIP.viewer.page.isRootPage) {
-      this.sendMessage('mippageload', {
-        time: Date.now(),
-        title: encodeURIComponent(document.title)
-      })
-    }
 
     // proxy <a mip-link>
     this._proxyLink(this.page)
@@ -100,13 +96,16 @@ let viewer = {
    * Show contents of page. The contents will not be displayed until the components are registered.
    */
   show () {
-    css(document.body, {
-      opacity: 1,
-      animation: 'none'
-    })
-    this.isShow = true
-    this._showTiming = Date.now()
-    this.trigger('show', this._showTiming)
+    // Job complete! Hide the loading spinner
+    document.body.setAttribute('mip-ready', '')
+
+    // notify SF hide its loading
+    if (win.MIP.viewer.page.isRootPage) {
+      this.sendMessage('mippageload', {
+        time: Date.now(),
+        title: encodeURIComponent(document.title)
+      })
+    }
   },
 
   /**
