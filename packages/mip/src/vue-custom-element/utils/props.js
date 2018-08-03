@@ -3,11 +3,8 @@
  * @author sfe-sy (sfe-sy@baidu.com)
  */
 
-import {camelize, hyphenate} from './helpers'
+import {camelize, hyphenate, isArray, isFunction} from './helpers'
 import jsonParse from '../../util/json-parse'
-
-let isArray = Array.isArray
-let isFunction = fn => typeof fn === 'function'
 
 /**
  * 从 vue 组件定义的 prop 中获取类型，如果没有定义类型，默认返回 String
@@ -115,15 +112,14 @@ export function reactiveProps (element, props) {
   props.camelCase.forEach((name, index) => {
     Object.defineProperty(element, name, {
       get () {
-        return this.vm[name]
+        if (element.customElement && element.customElement.vm) {
+          return element.customElement.vm[name]
+        }
       },
       set (value) {
-        if ((typeof value === 'object' || typeof value === 'function') && this.vm) {
-          let propName = props.camelCase[index]
-          this.vm[propName] = value
-        } else {
-          let type = props.types[props.camelCase[index]]
-          this.setAttribute(props.hyphenate[index], convertAttributeValue(value, type))
+        let vm = element.customElement && element.customElement.vm
+        if (vm) {
+          vm[name] = value
         }
       }
     })
@@ -155,8 +151,8 @@ export function getPropsData (element, componentDefinition, props) {
 
     if (attrValue !== null) {
       propsData[propCamelCase] = convertAttributeValue(attrValue, props.types[propCamelCase])
-    } else {
-      propsData[propCamelCase] = element[propCamelCase] || propsData[propCamelCase] || propsData[name]
+    } else if (propCamelCase in element) {
+      propsData[propCamelCase] = element[propCamelCase]
     }
   })
 
