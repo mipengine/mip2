@@ -39,6 +39,11 @@ function preRenderSetSRC (element, index, NUM, arraySRC) {
   for (let i = start; i < end; i++) {
     if (allMipImgs[i].tagName === 'MIP-IMG') {
       allMipImgs[i].setAttribute('src', arraySRC[i])
+      // 头尾增加的两个 dom 没有正确渲染，多了个img，TODO
+      let imgs = Array.prototype.slice.call(allMipImgs[i].querySelectorAll('img'))
+      for (let j = 0; j < imgs.length; j++) {
+        imgs[j].setAttribute('src', arraySRC[i])
+      }
     }
   }
 }
@@ -264,8 +269,8 @@ class MIPCarousel extends CustomElement {
     // 初始渲染时如果有跳转索引就改变位置到指定图片
     let initPostion = index ? -eleWidth * indexNum : -eleWidth
     curGestureClientx = initPostion
-    preRender(childNodes, indexNum, NUM)
     preRenderSetSRC(childNodes, indexNum, NUM, arraySRC)
+    preRender(childNodes, indexNum, NUM)
     wrapBox.style.webkitTransform = 'translate3d(' + initPostion + 'px, 0, 0)'
 
     // 绑定wrapBox的手势事件
@@ -472,8 +477,8 @@ class MIPCarousel extends CustomElement {
         carouselChildrenLength: childNum
       })
       // 加载需要的图片
-      preRender(childNodes, imgIndex, NUM)
       preRenderSetSRC(childNodes, imgIndex, NUM, arraySRC)
+      preRender(childNodes, imgIndex, NUM)
     }
 
     // 处理圆点型指示器
