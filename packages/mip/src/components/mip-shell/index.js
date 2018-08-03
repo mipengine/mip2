@@ -574,14 +574,12 @@ class MipShell extends CustomElement {
       let executeHackForAndroidScroll = mask => {
         css(mask, {
           opacity: '0.01',
-          display: 'block',
-          pointerEvents: 'none'
+          display: 'block'
         })
         setTimeout(() => {
           css(mask, {
             display: 'none',
-            opacity: '',
-            pointerEvents: 'none'
+            opacity: ''
           })
         }, 20)
       }
@@ -680,8 +678,6 @@ class MipShell extends CustomElement {
           css(this.$loading, 'display', 'none')
         } else {
           this.refreshShell({pageMeta: targetPageMeta})
-        } else {
-          css(this.$loading, 'display', 'none')
         }
         this.toggleTransition(true)
         this.pauseBouncyHeader = false
