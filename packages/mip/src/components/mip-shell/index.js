@@ -580,7 +580,7 @@ class MipShell extends CustomElement {
           css(mask, {
             display: 'none',
             opacity: '',
-            pointerEvents: 'none'
+            pointerEvents: ''
           })
         }, 20)
       }
