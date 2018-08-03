@@ -559,19 +559,23 @@ class MipShell extends CustomElement {
         let mask = this.$buttonMask
         css(mask, {
           opacity: '0.01',
-          display: 'block'
+          display: 'block',
+          pointerEvents: 'none'
         })
         setTimeout(() => {
           css(mask, {
             display: 'none',
-            opacity: ''
+            opacity: '',
+            pointerEvents: 'none'
           })
-        }, 100)
+        }, 20)
       }
       let iframeOnLoad = () => {
         if (!targetPageInfo.isCrossOrigin && platform.isAndroid()) {
           let doc = targetIFrame.contentWindow.document
+          let intervalTimes = 0
           let checkInterval = setInterval(() => {
+            intervalTimes++
             let currentHeight = doc.body.clientHeight
             if (doc.body.clientHeight !== innerBodyHeight) {
               innerBodyHeight = currentHeight
@@ -581,7 +585,7 @@ class MipShell extends CustomElement {
               innerBodyFreezeTime++
             }
 
-            if (innerBodyFreezeTime >= 10) {
+            if (innerBodyFreezeTime >= 10 || intervalTimes >= 20) {
               clearInterval(checkInterval)
             }
           }, 500)
