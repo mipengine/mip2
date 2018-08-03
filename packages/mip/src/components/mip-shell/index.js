@@ -53,6 +53,7 @@ import {customEmit} from '../../util/custom-event'
 let viewer = null
 let page = null
 let activeZIndex = 10000
+let isHeaderShown = false
 let innerBodyHeight
 let innerBodyFreezeTime
 window.MIP_PAGE_META_CACHE = Object.create(null)
@@ -234,6 +235,9 @@ class MipShell extends CustomElement {
     this.$wrapper.classList.add('mip-shell-header-wrapper')
     if (!(this.currentPageMeta.header && this.currentPageMeta.header.show)) {
       this.$wrapper.classList.add('hide')
+      isHeaderShown = false
+    } else {
+      isHeaderShown = true
     }
 
     // Header
@@ -1315,6 +1319,10 @@ class MipShell extends CustomElement {
    * @param {boolean} options.skipTransition show result without transition
    */
   togglePageMask (toggle, {skipTransition, extraClass} = {}) {
+    if (!isHeaderShown) {
+      return
+    }
+
     if (extraClass) {
       toggle ? this.$pageMask.classList.add(extraClass) : this.$pageMask.classList.remove(extraClass)
     }
