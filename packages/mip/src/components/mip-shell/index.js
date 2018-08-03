@@ -562,7 +562,6 @@ class MipShell extends CustomElement {
         return mask
       }
       let executeHackForAndroidScroll = mask => {
-        alert('absolute')
         css(mask, {
           opacity: '0.01',
           display: 'block'
