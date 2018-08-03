@@ -589,14 +589,13 @@ class MipShell extends CustomElement {
             if (doc.body.clientHeight !== innerBodyHeight) {
               innerBodyHeight = currentHeight
               innerBodyFreezeTime = 0
+              hackForAndroidScroll()
             } else {
               innerBodyFreezeTime++
             }
 
             if (innerBodyFreezeTime >= 10 || intervalTimes >= 20) {
               clearInterval(checkInterval)
-            } else {
-              innerBodyFreezeTime % 2 === 0 && hackForAndroidScroll(checkInterval)
             }
           }, 500)
         }
