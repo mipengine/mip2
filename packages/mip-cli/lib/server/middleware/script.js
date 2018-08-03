@@ -5,15 +5,10 @@
 
 const Builder = require('../../builder')
 
-module.exports = function (config) {
-  let builder = new Builder({
-    dir: config.dir,
-    dev: true,
-    asset: config.asset,
-    ignore: config.ignore
-  })
+module.exports = function (options) {
+  let builder = new Builder(options)
 
-  config.app.builder = builder
+  options.app.builder = builder
 
   return [
     async function (ctx, next) {

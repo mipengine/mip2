@@ -13,25 +13,13 @@ const cli = require('../cli')
 const koaStatic = require('koa-static')
 
 module.exports = class Server {
-  constructor ({
-    port = 8111,
-    dir,
-    livereload,
-    asset,
-    ignore
-  }) {
-    if (!asset) {
-      asset = 'http://127.0.0.1:' + port
-    } else {
-      asset = asset.replace(/\/$/, '').replace(/:\d+/, '') + ':' + port
-    }
-
-    this.port = port
-    this.dir = dir
-    this.livereload = livereload
+  constructor (options) {
     this.app = new Koa()
-    this.asset = asset
-    this.ignore = ignore
+    this.options = options
+
+    Object.keys(options).forEach(key => {
+      this[key] = options[key]
+    })
   }
 
   run () {
@@ -40,13 +28,14 @@ module.exports = class Server {
       await next()
     }
 
-    let scriptMiddlewares = script({dir: this.dir, asset: this.asset, ignore: this.ignore, app: this.app})
-    let htmlMiddlewares = html({dir: this.dir, livereload: this.livereload, app: this.app})
+    let options = Object.assign({app: this.app}, this.options)
+
+    let scriptMiddlewares = script(options)
+    let htmlMiddlewares = html(options)
 
     this.router = new Router()
     this.router
       .get(['/:id([^\\.]*)', '/:id([^\\.]+\\.html)'], ...htmlMiddlewares)
-      // .get('/mip-components-webpack-helpers.js', koaStatic(path.resolve(__dirname, '../../node_modules/mip-components-webpack-helpers/dist')))
       .get('*', ...scriptMiddlewares, koaStatic(this.dir))
 
     this.app
@@ -56,7 +45,7 @@ module.exports = class Server {
 
     if (this.livereload) {
       const lrserver = livereload.createServer({
-        extraExts: ['vue', 'styl', 'less'],
+        extraExts: ['vue', 'less'],
         delay: 500
       })
 

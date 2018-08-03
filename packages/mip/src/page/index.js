@@ -371,7 +371,7 @@ class Page {
       '[mip-global-component]'
     ]
     let notInWhitelistSelector = whitelist.map(selector => `:not(${selector})`).join('')
-    return document.querySelectorAll(`body > ${notInWhitelistSelector}`)
+    return [...document.querySelectorAll(`body > ${notInWhitelistSelector}`)]
   }
 }
 

@@ -30,9 +30,9 @@ function componentTestDir (dir, component) {
   return path.resolve(dir, component, 'example')
 }
 
-function storeDir (dir) {
-  return path.resolve(dir, 'store')
-}
+// function storeDir (dir) {
+//   return path.resolve(dir, 'store')
+// }
 
 function isComponentPath (rootDir, pathname) {
   // let basename = path.basename(pathname)
@@ -50,12 +50,20 @@ function isComponentPath (rootDir, pathname) {
   ) === path.resolve(pathname)
 }
 
+// function packageJson (rootDir) {
+//   return path.resolve(dir, 'package.json')
+// }
+
+// function config (rootDir) {
+//   return
+// }
+
 module.exports = {
   components: componentsDir,
   // componentPath: componentPath,
   componentTestDir: componentTestDir,
   // possibleComponents: possibleComponentPaths,
   test: testDir,
-  store: storeDir,
+  // store: storeDir,
   isComponentPath
 }
