@@ -555,18 +555,22 @@ class MipShell extends CustomElement {
       let targetIFrame
       innerBodyHeight = 0
       innerBodyFreezeTime = 0
-      let hackForAndroidScroll = () => {
-        let mask = this.$buttonMask
+      let initHackForAndroidScroll = () => {
+        let mask = document.createElement('div')
+        mask.classList.add('hack-for-android-scroll-mask')
+        document.body.appendChild(mask)
+        return mask
+      }
+      let executeHackForAndroidScroll = mask => {
+        alert('absolute')
         css(mask, {
           opacity: '0.01',
-          display: 'block',
-          pointerEvents: 'none'
+          display: 'block'
         })
         setTimeout(() => {
           css(mask, {
             display: 'none',
-            opacity: '',
-            pointerEvents: ''
+            opacity: ''
           })
         }, 20)
       }
@@ -574,13 +578,14 @@ class MipShell extends CustomElement {
         if (!targetPageInfo.isCrossOrigin && platform.isAndroid()) {
           let doc = targetIFrame.contentWindow.document
           let intervalTimes = 0
+          let hackMask = initHackForAndroidScroll()
           let checkInterval = setInterval(() => {
             intervalTimes++
             let currentHeight = doc.body.clientHeight
             if (doc.body.clientHeight !== innerBodyHeight) {
               innerBodyHeight = currentHeight
               innerBodyFreezeTime = 0
-              hackForAndroidScroll()
+              executeHackForAndroidScroll(hackMask)
             } else {
               innerBodyFreezeTime++
             }
