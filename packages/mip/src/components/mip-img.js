@@ -77,7 +77,7 @@ function getImgOffset (img) {
 // 根据元素element获取相邻图片的src
 function getImgsSrc () {
   let imgsSrcArray = []
-  let imgs = Array.prototype.slice.call(document.querySelectorAll('mip-img'))
+  let imgs = [...document.querySelectorAll('mip-img')]
   for (let i = 0; i < imgs.length; i++) {
     if (imgs[i].hasAttribute('popup')) {
       imgsSrcArray.push(imgs[i].getAttribute('src'))
@@ -288,9 +288,8 @@ class MipImg extends CustomElement {
     let ele = this.element
     let img = new Image()
     if (ele.hasAttribute('popup')) {
-      let allMipImg = [].slice.call(document.querySelectorAll('mip-img')).filter(value => value.hasAttribute('popup'))
-      let index = allMipImg.indexOf(ele)
-      ele.setAttribute('index', index)
+      let allMipImg = [...document.querySelectorAll('mip-img')].filter(value => value.hasAttribute('popup'))
+      ele.setAttribute('index', allMipImg.indexOf(ele))
     }
     if (this.placeholder) {
       img.classList.add('mip-img-loading')
