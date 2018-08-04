@@ -408,7 +408,8 @@ let viewer = {
         // So we are forced to load the page in iphone 5s UC
         // and iOS 9 safari.
         let needBackReload = (iosVersion === '8' && platform.isUc() && screen.width === 320) ||
-          (iosVersion === '9' && platform.isSafari())
+          (iosVersion === '9' && platform.isSafari()) ||
+          (iosVersion === '10' && platform.isSafari())
         if (needBackReload) {
           window.addEventListener('pageshow', e => {
             if (e.persisted) {
