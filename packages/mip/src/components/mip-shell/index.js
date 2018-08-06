@@ -530,11 +530,12 @@ class MipShell extends CustomElement {
       this.saveScrollPosition()
     }
 
-    if (!targetPage || (to.meta && to.meta.reload && !to.meta.fromCache)) {
+    if (!targetPage || (to.meta && to.meta.reload && !to.meta.cacheFirst)) {
       // Iframe will be created in following situation:
       // 1. `!targetPage` means target iframe doesn't exists.
       // 2. `to.meta && to.meta.reload` means target iframe MUST be recreated even it exists.
       //    `to.meta.reload` will be set when click `<a mip-link>`
+      // 2.1 `cacheFirst` uses cached page first, thus `newPage` will be `false` if cached page exists
 
       // If target page is root page
       if (page.pageId === targetPageId) {
