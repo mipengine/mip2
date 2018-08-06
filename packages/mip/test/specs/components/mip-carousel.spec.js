@@ -720,7 +720,7 @@ describe('mip-carousel', function () {
             src="https://www.mipengine.org/static/img/sample_02.jpg">
           </mip-img>
           <mip-img
-            src="https://www.mipengine.org/static/img/sample_04.jpg">
+            src="https://www.mipengine.org/static/img/P2x1_457e18b.jpg">
           </mip-img>
           <mip-img
             src="https://www.mipengine.org/static/img/sample_03.jpg">
@@ -731,15 +731,15 @@ describe('mip-carousel', function () {
       document.body.insertBefore(div, theFirst)
     })
     // 一定要挑一张图片上面的代码都没用到过，并且不能在第一张和最后一张
-    it('should not load picture sample04', function (done) {
+    it('should not load picture sampleX', function (done) {
       setTimeout(() => {
         let mipImg = div.querySelectorAll('mip-img')[3]
         let img = mipImg.querySelector('img')
-        expect(img.getAttribute('src')).to.not.equal('https://www.mipengine.org/static/img/sample_04.jpg')
+        expect(img.getAttribute('src')).to.not.equal('https://www.mipengine.org/static/img/P2x1_457e18b.jpg')
         done()
       }, 500);
     })
-    it('should load picture sample04 when swiping', function (done) {
+    it('should load picture sampleX when swiping', function (done) {
       let eventClick = document.createEvent('MouseEvents')
       let nextBtn = div.querySelector('p.mip-carousel-nextBtn')
       eventClick.initEvent('click', true, true)
@@ -747,7 +747,7 @@ describe('mip-carousel', function () {
 
       setTimeout(() => {
         let img = div.querySelectorAll('mip-img')[3].querySelector('img')
-        expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_04.jpg')
+        expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/P2x1_457e18b.jpg')
         done()
       }, 1500);
     })
