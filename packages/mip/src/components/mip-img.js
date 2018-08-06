@@ -290,7 +290,6 @@ class MipImg extends CustomElement {
     let img = new Image()
     if (ele.hasAttribute('popup')) {
       let allMipImg = [...document.querySelectorAll('mip-img')].filter(value => value.hasAttribute('popup'))
-      console.log(allMipImg.indexOf(ele))
       ele.setAttribute('index', allMipImg.indexOf(ele))
     }
     if (this.placeholder) {
