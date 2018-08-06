@@ -678,8 +678,6 @@ class MipShell extends CustomElement {
           css(this.$loading, 'display', 'none')
         } else {
           this.refreshShell({pageMeta: targetPageMeta})
-        } else {
-          css(this.$loading, 'display', 'none')
         }
         this.toggleTransition(true)
         this.pauseBouncyHeader = false
