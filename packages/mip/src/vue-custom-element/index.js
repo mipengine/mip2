@@ -37,9 +37,8 @@ function install (Vue) {
 
       _build () {
         let vueInstance = this.vueInstance = createVueInstance(
-          this.element, {
-            Vue
-          },
+          this.element,
+          Vue,
           componentDefinition,
           props
         )

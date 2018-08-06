@@ -22,53 +22,57 @@
         }
     </style>
     <style>
-            body::before {
-                display: block;
-                content: '';
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: #fff;
-                z-index: 99999;
-            }
-            body::after,
-            .mip-page-loading::after {
-                content: '';
-                background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEUAAABFCAMAAAArU9sbAAAAllBMVEUAAAA5kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv98v3f9AAAAMXRSTlMA+u4H8xwSDeG7KBapjYhP28EE9jfmpJoxItOALLFuQcxrZOrXdnPHVDyVe11aSIN5drPNPgAAAx5JREFUWMOlmOl2qlAMhbcyySCiBUFRUazzVXve/+Vuk2NZTgwHvx+uVjBk2MmJopxRkvvecBn0gqXt+ecZ1DEW8654ZO3lLhTQznZHvKNj70dohrWNRDm9rYZ6Rqsiki/7uBhkiZNkg208LLyL/qGOcCkk39eD9hhm5veEZDirdsS/eRGHby9nY+lRZ1VVmJ200XfLb4mlnbmJEhzpsWegCseWEZfcFXJau3vUkX9xsZy3RvjaboJ6Zt/8vNmbK+zJWGsmKZvF/PJEg3PSb6zuMd0emE/v7hSMMGxmjgf6HI5Sr3FQC9yRsSI1qGBNSX7OnSbpjbUBNRydHo2CDbkygCo5faxoTVfnpKgzpA7XIKEW1F2oM6OeWoExyZUr2hBTJ4xALFq5wkzIGdl40xe9qWlvzsFRph20IyPNUBzp7x9LtGRE7ZcD2LGQW8L19QCLEjRBWw6keuBCxUJrRjTbZliwS+0Zchccf19PaA1/3ofNumnPimMJfl9DtGfA46HLJWpPSGcTqNAmKnCT6r7mGpP+raqG64qxW2uFxoKBcjw6vxYjlJHQiYKophfngliGVeJdgg7LqsgtXy4JsVlRI9beoMmSsM7L9cJDb1OniUAQO+nz63mYYttk/msnnVeo/ms1ydEzLpzjWgxPENH5uad1zqspuNT1ZFNB2M5LibojObxzNN9hO/59WOltfPtcqka4sVyci5pKH1bcTgr9mOzkhvl3f1LkI+BaNeVfxMtsqhWHow3ihxJkoSlWn8UcXCjEr2JrcPVX4TURs2fAv1sa+uSMCQWkmPUrubIFI/06QgXtxNvxQy58+vcAFVjMj/uhFZEKTKhxJiNT7WFIkATVMH396fgYqy7NjHk9PYqAvx/84EMc7rQNPiT8kkF9yKBTfJP73EzvgM/IuoKI3Wq5pW5NiqfyzNhY5cVNdbHe17RHfGuO1MA7Jn1dtrNWk5zo73eJ3Hg2sRgKSZA1G0JMMN4MQscwzUm4//F64oZ+0lCPS26X0k2basHcTEtsLFcWFEj86auJ1IEy5mUbD4NIF3r0bR+3lwov/gPz4J/MfidXggAAAABJRU5ErkJggg==);
-                background-size: 100% 100%;
-                width: 34px;
-                height: 34px;
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                margin: -17px 0 0 -17px;
-                z-index: 100000;
-                animation: loading-rotate 1s linear infinite
-            }
+        body::before {
+            display: block;
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #fff;
+            z-index: 99999;
+        }
+        body::after,
+        .mip-page-loading::after {
+            content: '';
+            background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEUAAABFCAMAAAArU9sbAAAAllBMVEUAAAA5kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv85kv98v3f9AAAAMXRSTlMA+u4H8xwSDeG7KBapjYhP28EE9jfmpJoxItOALLFuQcxrZOrXdnPHVDyVe11aSIN5drPNPgAAAx5JREFUWMOlmOl2qlAMhbcyySCiBUFRUazzVXve/+Vuk2NZTgwHvx+uVjBk2MmJopxRkvvecBn0gqXt+ecZ1DEW8654ZO3lLhTQznZHvKNj70dohrWNRDm9rYZ6Rqsiki/7uBhkiZNkg208LLyL/qGOcCkk39eD9hhm5veEZDirdsS/eRGHby9nY+lRZ1VVmJ200XfLb4mlnbmJEhzpsWegCseWEZfcFXJau3vUkX9xsZy3RvjaboJ6Zt/8vNmbK+zJWGsmKZvF/PJEg3PSb6zuMd0emE/v7hSMMGxmjgf6HI5Sr3FQC9yRsSI1qGBNSX7OnSbpjbUBNRydHo2CDbkygCo5faxoTVfnpKgzpA7XIKEW1F2oM6OeWoExyZUr2hBTJ4xALFq5wkzIGdl40xe9qWlvzsFRph20IyPNUBzp7x9LtGRE7ZcD2LGQW8L19QCLEjRBWw6keuBCxUJrRjTbZliwS+0Zchccf19PaA1/3ofNumnPimMJfl9DtGfA46HLJWpPSGcTqNAmKnCT6r7mGpP+raqG64qxW2uFxoKBcjw6vxYjlJHQiYKophfngliGVeJdgg7LqsgtXy4JsVlRI9beoMmSsM7L9cJDb1OniUAQO+nz63mYYttk/msnnVeo/ms1ydEzLpzjWgxPENH5uad1zqspuNT1ZFNB2M5LibojObxzNN9hO/59WOltfPtcqka4sVyci5pKH1bcTgr9mOzkhvl3f1LkI+BaNeVfxMtsqhWHow3ihxJkoSlWn8UcXCjEr2JrcPVX4TURs2fAv1sa+uSMCQWkmPUrubIFI/06QgXtxNvxQy58+vcAFVjMj/uhFZEKTKhxJiNT7WFIkATVMH396fgYqy7NjHk9PYqAvx/84EMc7rQNPiT8kkF9yKBTfJP73EzvgM/IuoKI3Wq5pW5NiqfyzNhY5cVNdbHe17RHfGuO1MA7Jn1dtrNWk5zo73eJ3Hg2sRgKSZA1G0JMMN4MQscwzUm4//F64oZ+0lCPS26X0k2basHcTEtsLFcWFEj86auJ1IEy5mUbD4NIF3r0bR+3lwov/gPz4J/MfidXggAAAABJRU5ErkJggg==);
+            background-size: 100% 100%;
+            width: 34px;
+            height: 34px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            margin: -17px 0 0 -17px;
+            z-index: 100000;
+            animation: loading-rotate 1s linear infinite
+        }
 
-            @keyframes loading-rotate {
-                from {
-                    transform: rotate(0deg)
-                }
-                to {
-                    transform: rotate(360deg)
-                }
+        @keyframes loading-rotate {
+            from {
+                transform: rotate(0deg)
             }
+            to {
+                transform: rotate(360deg)
+            }
+        }
 
-            body.mip-fixedlayer::before,
-            body.mip-fixedlayer::after,
-            body[mip-ready]::before,
-            body[mip-ready]::after,
-            .mip-page-loading.only-header::after {
-                display: none;
-            }
-        </style>
+        body.mip-fixedlayer::before,
+        body.mip-fixedlayer::after,
+        body[mip-ready]::before,
+        body[mip-ready]::after,
+        .mip-page-loading.only-header::after {
+            display: none;
+        }
+        .global-data {
+            border: 1px solid #e1e1e1;
+            padding: 10px;
+        }
+    </style>
 </head>
 <body>
     <div class="main-image">
-        <mip-img src="https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3010417400,2137373730&fm=27&gp=0.jpg" width="300" height="300"></mip-img>
+        <mip-img popup src="http://boscdn.bpc.baidu.com/assets/mip/codelab/shell/mashroom.jpg" width="300" height="300"></mip-img>
     </div>
     <br><br>
     <mip-data>
@@ -87,15 +91,22 @@
         </script>
     </mip-data>
 
-    <p>
-    global data: group.info.name =>
-    <span m-text="group.info.name" style="color:red;font-size:12px;"></span>
-    </p>
-    <p m-text="demo.name"></p>
-    <p m-text="city"></p>
-<p m-text="city1"></p>
-
-<p m-text="test"></p>
+    <div class="global-data">
+        <h3>共享数据 checklist:</h3>
+        <pre>
+    {
+        "#city": "上海",
+        "#city1": "厦门",
+        "test": "ckkkk2"
+    }
+        </pre>
+        <p>#group.info.name => <span m-text="group.info.name" style="color:red;"></span></p>
+        <p>全局数据#city => <span m-text="city" style="color: red;"></span></p>
+        <p>全局数据#city1 => <span m-text="city1" style="color: red;"></span></p>
+        <p>页面数据test => <span m-text="test" style="color: red;"></span></p>
+        <br />
+        <a class="link" href="./data.html" mip-link>Go to Data</a>
+    </div>
 
     <div id="简介2"></div>
 
@@ -112,7 +123,7 @@ Fast - Respond quickly to user interactions with silky smooth animations and no 
     <a class="link" onclick="window.MIP.viewer.open('./tree.html', {isMipLink:true})">Go to Tree (viewer.open)</a>
     <a class="link" href="http://test.baidu.com:8080/examples/page/tree.html" mip-link>Go to Tree(Cross Origin)</a>
     <a class="link" href="./tree.html" mip-link>Go to Tree</a>
-    <a class="link" href="./data.html" mip-link>Go to Data</a>
+    
 
     <br><br>
     <p>

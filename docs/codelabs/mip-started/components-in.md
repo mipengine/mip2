@@ -1,4 +1,4 @@
-# 3. 使用内置组件
+# 4. 使用内置组件
 
 考虑到页面的性能，MIP 页面限制了部分 HTML 原始标签的使用，如`<img> <video> <iframe>` 等 等，同时提供了可以替代的相应的内置组件标签，如`<mip-img> <mip-video> <mip-iframe>` 等， [查看具体限制详情](../../guide/mip-standard/mip-html-spec.md)，本小节我们利用内置标签 `<mip-img>` 来插入图片，加深大家印象。
 

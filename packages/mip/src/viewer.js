@@ -7,7 +7,6 @@
 /* global top screen location */
 
 import event from './util/dom/event'
-import css from './util/dom/css'
 import Gesture from './util/gesture/index'
 import platform from './util/platform'
 import EventAction from './util/event-action'
@@ -71,17 +70,14 @@ let viewer = {
     // start rendering page
     this.page.start()
 
+    // notify internal performance module
+    this.isShow = true
+    this._showTiming = Date.now()
+    this.trigger('show', this._showTiming)
+
     // move <mip-fixed> to second <body>. see fixed-element.js
     this.fixedElement = fixedElement
     fixedElement.init()
-
-    // Only send at first time
-    if (win.MIP.viewer.page.isRootPage) {
-      this.sendMessage('mippageload', {
-        time: Date.now(),
-        title: encodeURIComponent(document.title)
-      })
-    }
 
     // proxy <a mip-link>
     this._proxyLink(this.page)
@@ -100,13 +96,16 @@ let viewer = {
    * Show contents of page. The contents will not be displayed until the components are registered.
    */
   show () {
-    css(document.body, {
-      opacity: 1,
-      animation: 'none'
-    })
-    this.isShow = true
-    this._showTiming = Date.now()
-    this.trigger('show', this._showTiming)
+    // Job complete! Hide the loading spinner
+    document.body.setAttribute('mip-ready', '')
+
+    // notify SF hide its loading
+    if (win.MIP.viewer.page.isRootPage) {
+      this.sendMessage('mippageload', {
+        time: Date.now(),
+        title: encodeURIComponent(document.title)
+      })
+    }
   },
 
   /**
@@ -187,8 +186,9 @@ let viewer = {
    * @param {boolean} options.isMipLink Whether targetUrl is a MIP page. If not, use `top.location.href`. Defaults to `true`
    * @param {boolean} options.replace If true, use `history.replace` instead of `history.push`. Defaults to `false`
    * @param {Object} options.state Target page info
+   * @param {Object} options.cacheFirst If true, use cached iframe when available
    */
-  open (to, {isMipLink = true, replace = false, state} = {}) {
+  open (to, {isMipLink = true, replace = false, state, cacheFirst} = {}) {
     if (!state) {
       state = {click: undefined, title: undefined, defaultTitle: undefined}
     }
@@ -207,8 +207,15 @@ let viewer = {
     // Jump in top window directly
     // 1. Cross origin and NOT in SF
     // 2. Not MIP page and not only hash change
-    if ((this._isCrossOrigin(to) && window.MIP.standalone) ||
-      (!isMipLink && !isHashInCurrentPage)) {
+    if ((this._isCrossOrigin(to) && window.MIP.standalone)) {
+      if (replace) {
+        window.top.location.replace(to)
+      } else {
+        window.top.location.href = to
+      }
+      return
+    }
+    if (!isMipLink && !isHashInCurrentPage) {
       window.top.location.href = to
       return
     }
@@ -237,6 +244,7 @@ let viewer = {
       // Reload page even if it's already existed
       targetRoute.meta = {
         reload: true,
+        cacheFirst,
         header: {
           title: pushMessage.state.title,
           defaultTitle: pushMessage.state.defaultTitle
@@ -337,6 +345,7 @@ let viewer = {
       let to = $a.href
       let isMipLink = $a.hasAttribute('mip-link') || $a.getAttribute('data-type') === 'mip'
       let replace = $a.hasAttribute('replace')
+      let cacheFirst = $a.hasAttribute('cache-first')
       let state = self._getMipLinkData.call($a)
 
       /**
@@ -351,7 +360,7 @@ let viewer = {
         return
       }
 
-      self.open(to, {isMipLink, replace, state})
+      self.open(to, {isMipLink, replace, state, cacheFirst})
 
       event.preventDefault()
     }, false)
@@ -402,7 +411,8 @@ let viewer = {
         // So we are forced to load the page in iphone 5s UC
         // and iOS 9 safari.
         let needBackReload = (iosVersion === '8' && platform.isUc() && screen.width === 320) ||
-          (iosVersion === '9' && platform.isSafari())
+          (iosVersion === '9' && platform.isSafari()) ||
+          (iosVersion === '10' && platform.isSafari())
         if (needBackReload) {
           window.addEventListener('pageshow', e => {
             if (e.persisted) {

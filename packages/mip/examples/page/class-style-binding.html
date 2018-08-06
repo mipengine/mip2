@@ -89,10 +89,16 @@
     <mip-data>
         <script type="application/json">
             {
-              "open": false
+              "open": false,
+              "sidebarFrag": "nav"
             }
         </script>
     </mip-data>
+
+    <div>value of sidebarFrag: <span m-text="sidebarFrag"></span></div>
+    <div class="sidebar-nav-wrapper" m-bind:class="{hide:sidebarFrag!=='nav'}">show me when sidebarFrag === 'nav'</div>
+    <p on="tap:MIP.setData({sidebarFrag:'test'})">click me to hide value of sidebarFrag</p>
+    <p on="tap:MIP.setData({sidebarFrag:'nav'})">click me to show value of sidebarFrag</p>
 
     <p on="tap:MIP.setData({loading:true})" class="click-btn">click me to change class</p>
     <br />
@@ -133,7 +139,7 @@
         <p on="tap:MIP.setData({open:false})" class="click-btn">click me to hide sidebar</p>
       </div>
     </div>
-    
+
     <script src="../../dist/mip.js"></script>
 
 </body>

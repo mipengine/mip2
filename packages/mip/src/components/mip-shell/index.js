@@ -53,6 +53,9 @@ import {customEmit} from '../../util/custom-event'
 let viewer = null
 let page = null
 let activeZIndex = 10000
+let isHeaderShown = false
+let innerBodyHeight
+let innerBodyFreezeTime
 window.MIP_PAGE_META_CACHE = Object.create(null)
 window.MIP_SHELL_CONFIG = null
 
@@ -78,14 +81,7 @@ class MipShell extends CustomElement {
     let ele = this.element.querySelector('script[type="application/json"]')
     let tmpShellConfig
 
-    if (!ele) {
-      tmpShellConfig = {
-        routes: [{
-          pattern: '*',
-          meta: DEFAULT_SHELL_CONFIG
-        }]
-      }
-    } else {
+    if (ele) {
       try {
         tmpShellConfig = JSON.parse(ele.textContent.toString()) || {}
         if (tmpShellConfig.alwaysReadConfigOnLoad !== undefined) {
@@ -107,6 +103,13 @@ class MipShell extends CustomElement {
             meta: DEFAULT_SHELL_CONFIG
           }]
         }
+      }
+    } else {
+      tmpShellConfig = {
+        routes: [{
+          pattern: '*',
+          meta: DEFAULT_SHELL_CONFIG
+        }]
       }
     }
 
@@ -230,8 +233,11 @@ class MipShell extends CustomElement {
     this.$wrapper = document.createElement('mip-fixed')
     this.$wrapper.setAttribute('type', 'top')
     this.$wrapper.classList.add('mip-shell-header-wrapper')
-    if (!(this.currentPageMeta.header && this.currentPageMeta.header.show)) {
+    if (this.currentPageMeta.header && this.currentPageMeta.header.show) {
+      isHeaderShown = true
+    } else {
       this.$wrapper.classList.add('hide')
+      isHeaderShown = false
     }
 
     // Header
@@ -430,7 +436,7 @@ class MipShell extends CustomElement {
       }
     }
     viewport.on('resize', resizeHandler)
-    setInterval(resizeHandler, 500)
+    setInterval(resizeHandler, 250)
 
     // Listen events
     window.addEventListener('mipShellEvents', e => {
@@ -493,10 +499,15 @@ class MipShell extends CustomElement {
      * 3. <a mip-link></a> innerText (to.meta.defaultTitle)
      */
     let targetPageMeta = fn.extend(true, {}, this.findMetaByPageId(targetPageId))
-    targetPageMeta.header.title = to.meta.title || targetPageMeta.header.title || to.meta.defaultTitle
+    document.title = targetPageMeta.header.title = to.meta.title || targetPageMeta.header.title || to.meta.defaultTitle
 
     // Transition direction
-    let isForward = window.MIP_SHELL_OPTION.isForward
+    let isForward
+    if (targetPageMeta.view.isIndex) {
+      isForward = false
+    } else {
+      isForward = window.MIP_SHELL_OPTION.isForward
+    }
 
     // Hide page mask and skip transition
     this.togglePageMask(false, {skipTransition: true})
@@ -519,11 +530,12 @@ class MipShell extends CustomElement {
       this.saveScrollPosition()
     }
 
-    if (!targetPage || (to.meta && to.meta.reload)) {
+    if (!targetPage || (to.meta && to.meta.reload && !to.meta.cacheFirst)) {
       // Iframe will be created in following situation:
       // 1. `!targetPage` means target iframe doesn't exists.
       // 2. `to.meta && to.meta.reload` means target iframe MUST be recreated even it exists.
       //    `to.meta.reload` will be set when click `<a mip-link>`
+      // 2.1 `cacheFirst` uses cached page first, thus `newPage` will be `false` if cached page exists
 
       // If target page is root page
       if (page.pageId === targetPageId) {
@@ -551,11 +563,53 @@ class MipShell extends CustomElement {
 
       let iframeCreated = false
       let targetIFrame
+      innerBodyHeight = 0
+      innerBodyFreezeTime = 0
+      let initHackForAndroidScroll = () => {
+        let mask = document.createElement('div')
+        mask.classList.add('hack-for-android-scroll-mask')
+        document.body.appendChild(mask)
+        return mask
+      }
+      let executeHackForAndroidScroll = mask => {
+        css(mask, {
+          opacity: '0.01',
+          display: 'block'
+        })
+        setTimeout(() => {
+          css(mask, {
+            display: 'none',
+            opacity: ''
+          })
+        }, 20)
+      }
+      let iframeOnLoad = () => {
+        if (!targetPageInfo.isCrossOrigin && platform.isAndroid()) {
+          let doc = targetIFrame.contentWindow.document
+          let intervalTimes = 0
+          let hackMask = initHackForAndroidScroll()
+          let checkInterval = setInterval(() => {
+            intervalTimes++
+            let currentHeight = doc.body.clientHeight
+            if (doc.body.clientHeight !== innerBodyHeight) {
+              innerBodyHeight = currentHeight
+              innerBodyFreezeTime = 0
+              executeHackForAndroidScroll(hackMask)
+            } else {
+              innerBodyFreezeTime++
+            }
+
+            if (innerBodyFreezeTime >= 10 || intervalTimes >= 20) {
+              clearInterval(checkInterval)
+            }
+          }, 500)
+        }
+      }
       // Bugs appear in QQBrowser when [pushState] and [create iframe] invoked together
       // Ensure [create iframe] before [pushState] and eliminate async operations can help
       // Thus, disable transition in QQBrowser
       if (platform.isQQ() || platform.isQQApp()) {
-        targetIFrame = createIFrame(targetPageInfo)
+        targetIFrame = createIFrame(targetPageInfo, {onLoad: iframeOnLoad})
         targetPageInfo.targetWindow = targetIFrame.contentWindow
         iframeCreated = true
         window.MIP_SHELL_OPTION.allowTransition = false
@@ -572,7 +626,7 @@ class MipShell extends CustomElement {
         window.MIP_SHELL_OPTION.isForward = true
 
         if (!iframeCreated) {
-          targetIFrame = createIFrame(targetPageInfo)
+          targetIFrame = createIFrame(targetPageInfo, {onLoad: iframeOnLoad})
           targetPageInfo.targetWindow = targetIFrame.contentWindow
         }
         css(targetIFrame, {
@@ -620,7 +674,9 @@ class MipShell extends CustomElement {
           display: 'block',
           opacity: 1
         })
-        if (!this.transitionContainsHeader) {
+        if (this.transitionContainsHeader) {
+          css(this.$loading, 'display', 'none')
+        } else {
           this.refreshShell({pageMeta: targetPageMeta})
         }
         this.toggleTransition(true)
@@ -694,6 +750,22 @@ class MipShell extends CustomElement {
     }
   }
 
+  fixRootPageScroll ({sourcePageId, targetPageId} = {}) {
+    /**
+     * Disable scrolling of root page when covered by an iframe
+     * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
+     */
+    if (sourcePageId === page.pageId) {
+      document.documentElement.classList.add('mip-no-scroll')
+      page.getElementsInRootPage().forEach(e => e.classList.add('hide'))
+    }
+    if (targetPageId === page.pageId) {
+      document.documentElement.classList.remove('mip-no-scroll')
+      page.getElementsInRootPage().forEach(e => e.classList.remove('hide'))
+      this.restoreScrollPosition()
+    }
+  }
+
   /**
    * Forward transition and create new iframe
    *
@@ -734,16 +806,7 @@ class MipShell extends CustomElement {
       }
 
       hideAllIFrames()
-
-      if (sourcePageId === page.pageId) {
-        /**
-         * Disable scrolling of root page when covered by an iframe
-         * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
-         */
-        document.documentElement.classList.add('mip-no-scroll')
-        page.getElementsInRootPage().forEach(e => e.classList.add('hide'))
-      }
-
+      this.fixRootPageScroll({sourcePageId, targetPageId})
       onComplete && onComplete()
 
       let iframe = getIFrame(targetPageId)
@@ -784,11 +847,9 @@ class MipShell extends CustomElement {
     } = options
     // Goto root page, resume scroll position (Only appears in backward)
     let rootPageScrollPosition = 0
+    this.fixRootPageScroll({targetPageId})
     if (targetPageId === page.pageId) {
-      document.documentElement.classList.remove('mip-no-scroll')
-      page.getElementsInRootPage().forEach(e => e.classList.remove('hide'))
       rootPageScrollPosition = this.rootPageScrollPosition
-      this.restoreScrollPosition()
     }
 
     let iframe = getIFrame(sourcePageId)
@@ -930,11 +991,9 @@ class MipShell extends CustomElement {
 
     // Goto root page, resume scroll position (Only appears in backward)
     let rootPageScrollPosition = 0
+    this.fixRootPageScroll({targetPageId})
     if (targetPageId === page.pageId) {
-      document.documentElement.classList.remove('mip-no-scroll')
-      page.getElementsInRootPage().forEach(e => e.classList.remove('hide'))
       rootPageScrollPosition = this.rootPageScrollPosition
-      this.restoreScrollPosition()
     }
 
     let iframe = getIFrame(sourcePageId)
@@ -1027,16 +1086,7 @@ class MipShell extends CustomElement {
     let {sourcePageId, targetPageId, onComplete} = options
 
     hideAllIFrames()
-    if (sourcePageId === page.pageId) {
-      document.documentElement.classList.add('mip-no-scroll')
-      page.getElementsInRootPage().forEach(e => e.classList.add('hide'))
-    }
-    if (targetPageId === page.pageId) {
-      document.documentElement.classList.remove('mip-no-scroll')
-      page.getElementsInRootPage().forEach(e => e.classList.remove('hide'))
-      this.restoreScrollPosition()
-    }
-
+    this.fixRootPageScroll({sourcePageId, targetPageId})
     onComplete && onComplete()
 
     let iframe = getIFrame(targetPageId)
@@ -1270,7 +1320,15 @@ class MipShell extends CustomElement {
    * @param {Object} options
    * @param {boolean} options.skipTransition show result without transition
    */
-  togglePageMask (toggle, {skipTransition} = {}) {
+  togglePageMask (toggle, {skipTransition, extraClass} = {}) {
+    if (!isHeaderShown) {
+      return
+    }
+
+    if (extraClass) {
+      toggle ? this.$pageMask.classList.add(extraClass) : this.$pageMask.classList.remove(extraClass)
+    }
+
     toggleInner(this.$pageMask, toggle, {skipTransition})
   }
 

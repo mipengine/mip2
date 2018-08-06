@@ -181,6 +181,10 @@ mip-shell * {
   background: rgba(0, 0, 0, 0.5);
   display: none;
   z-index: 20001 !important;
+
+  &.black {
+    background: black;
+  }
 }
 
 .mip-shell-more-button-mask,
@@ -197,4 +201,14 @@ mip-shell * {
   &.fade-leave {
     opacity: 1;
   }
+}
+
+.hack-for-android-scroll-mask {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  pointer-events: none;
 }

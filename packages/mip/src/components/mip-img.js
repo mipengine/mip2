@@ -140,6 +140,11 @@ function bindPopup (element, img) {
       return
     }
 
+    // Show page mask
+    window.MIP.viewer.page.togglePageMask(true, {
+      skipTransition: true,
+      extraClass: 'black'
+    })
     let popup = createPopup(element, img)
     let popupBg = popup.querySelector('.mip-img-popUp-bg')
     let popupImg = popup.querySelector('mip-carousel')
@@ -149,6 +154,11 @@ function bindPopup (element, img) {
     popup.addEventListener('click', imagePop, false)
 
     function imagePop () {
+      // Hide page mask
+      window.MIP.viewer.page.togglePageMask(false, {
+        skipTransition: true,
+        extraClass: 'black'
+      })
       naboo.animate(popupBg, {
         opacity: 0
       }).start()
