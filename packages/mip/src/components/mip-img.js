@@ -42,7 +42,10 @@ let imgRatio = {
 function getPopupImgPos (imgWidth, imgHeight) {
   let width = viewport.getWidth()
   let height = Math.round(width * imgHeight / imgWidth)
-  let top = (viewport.getHeight() - height) / 2
+  let viewportH = viewport.getHeight()
+  let top = viewportH > height
+    ? (viewportH - height) / 2
+    : 0
   return {
     width: width,
     height: height,
@@ -91,6 +94,7 @@ function createPopup (element, img) {
   new Gesture(popup, {
     preventY: true
   })
+
   popup.className = 'mip-img-popUp-wrapper'
   popup.setAttribute('data-name', 'mip-img-popUp-name')
 
