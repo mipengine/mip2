@@ -750,7 +750,7 @@ class MipShell extends CustomElement {
     }
   }
 
-  fixRootPageScroll ({sourcePageId, targetPageId}) {
+  fixRootPageScroll ({sourcePageId, targetPageId} = {}) {
     /**
      * Disable scrolling of root page when covered by an iframe
      * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
