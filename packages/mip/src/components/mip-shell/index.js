@@ -806,7 +806,7 @@ class MipShell extends CustomElement {
       }
 
       hideAllIFrames()
-      this.fixRootPageScroll({sourcePageId, targetPageId, isBack: false})
+      this.fixRootPageScroll({sourcePageId, targetPageId})
       onComplete && onComplete()
 
       let iframe = getIFrame(targetPageId)
