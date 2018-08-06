@@ -94,8 +94,6 @@ function createPopup (element, img) {
     preventY: true
   })
 
-
-
   popup.className = 'mip-img-popUp-wrapper'
   popup.setAttribute('data-name', 'mip-img-popUp-name')
 
