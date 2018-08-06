@@ -731,7 +731,7 @@ describe('mip-carousel', function () {
       document.body.insertBefore(div, theFirst)
     })
     // 一定要挑一张图片上面的代码都没用到过，并且不能在第一张和最后一张
-    it('should not load picture sampleX', function (done) {
+    it('should not load picture samplePX', function (done) {
       setTimeout(() => {
         let mipImg = div.querySelectorAll('mip-img')[3]
         let img = mipImg.querySelector('img')
@@ -739,7 +739,7 @@ describe('mip-carousel', function () {
         done()
       }, 500);
     })
-    it('should load picture sampleX when swiping', function (done) {
+    it('should load picture samplePX when swiping', function (done) {
       let eventClick = document.createEvent('MouseEvents')
       let nextBtn = div.querySelector('p.mip-carousel-nextBtn')
       eventClick.initEvent('click', true, true)
