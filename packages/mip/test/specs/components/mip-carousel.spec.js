@@ -735,7 +735,7 @@ describe('mip-carousel', function () {
       setTimeout(() => {
         let mipImg = div.querySelectorAll('mip-img')[3]
         let img = mipImg.querySelector('img')
-        expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_01.jpg')
+        expect(img.getAttribute('src')).to.not.equal('https://www.mipengine.org/static/img/sample_04.jpg')
         done()
       }, 500);
     })
@@ -747,7 +747,6 @@ describe('mip-carousel', function () {
 
       setTimeout(() => {
         let img = div.querySelectorAll('mip-img')[3].querySelector('img')
-        expect(img.classList.contains('mip-img-loading')).to.be.false
         expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_04.jpg')
         done()
       }, 1500);
