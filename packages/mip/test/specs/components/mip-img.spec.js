@@ -36,7 +36,6 @@ describe('mip-img', function () {
       expect(mipPopWrap.tagName).to.equal('DIV')
       expect(mipPopWrap.querySelector('.mip-img-popUp-bg')).to.be.exist
       expect(mipPopWrap.querySelector('mip-carousel')).to.be.exist
-      expect(mipPopWrap.querySelector('mip-carousel').getAttribute('index')).to.equal('1')
 
       // img
       expect(img.classList.contains('mip-img-loading')).to.equal(true)
