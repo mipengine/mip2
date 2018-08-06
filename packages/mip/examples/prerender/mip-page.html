@@ -1,0 +1,131 @@
+<!--htmlcs-disable-->
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <title>MIP tree demo</title>
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <style mip-custom>
+    .item {
+      cursor: pointer;
+    }
+
+    .bold {
+      font-weight: 800;
+    }
+
+    ul {
+      padding-left: 30px;
+      line-height: 1.5;
+      list-style-type: dot;
+    }
+
+    li {
+      padding-left: 10px;
+    }
+
+    html, body {
+      background: #eee
+    }
+    mip-img {
+      margin-top: 10px;
+      background: green;
+    }
+  </style>
+</head>
+
+<body>
+
+<mip-img popup layout="responsive" width="350" height="263" src="https://www.mipengine.org/static/img/sample_01.jpg"></mip-img>
+
+<mip-tree>
+  <script type="application/json">
+    {
+      "model": {
+        'name': "My Tree",
+        children: [
+          {
+            "name": "hello"
+          },
+          {
+            "name": "wat"
+          },
+          {
+            "name": "child folder",
+            "children": [
+              {
+                "name": "child folder",
+                "children": [
+                  {
+                    "name": "hello"
+                  },
+                  {
+                    "name": "wat"
+                  }
+                ]
+              },
+              {
+                "name": "hello"
+              },
+              {
+                "name": "wat"
+              },
+              {
+                "name": "child folder",
+                "children": [
+                  {
+                    "name": "hello"
+                  },
+                  {
+                    "name": "wat"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  </script>
+  <template>
+    <div class="aaa">
+      aaa
+    </div>
+  </template>
+</mip-tree>
+<p>
+  Progressive Web Apps are user experiences that have the reach of the web, and are: Reliable - Load instantly and never show
+  the downasaur, even in uncertain network conditions. Fast - Respond quickly to user interactions with silky smooth animations
+  and no janky scrolling.
+</p>
+<p>
+  Progressive Web Apps are user experiences that have the reach of the web, and are: Reliable - Load instantly and never show
+  the downasaur, even in uncertain network conditions. Fast - Respond quickly to user interactions with silky smooth animations
+  and no janky scrolling.
+</p>
+<p>
+  Progressive Web Apps are user experiences that have the reach of the web, and are: Reliable - Load instantly and never show
+  the downasaur, even in uncertain network conditions. Fast - Respond quickly to user interactions with silky smooth animations
+  and no janky scrolling.
+</p>
+<p>
+  Progressive Web Apps are user experiences that have the reach of the web, and are: Reliable - Load instantly and never show
+  the downasaur, even in uncertain network conditions. Fast - Respond quickly to user interactions with silky smooth animations
+  and no janky scrolling.
+</p>
+<mip-img popup layout="responsive" width="350" height="263" src="https://www.mipengine.org/static/img/sample_01.jpg"></mip-img>
+<mip-img popup layout="responsive" width="350" height="263" src="https://www.mipengine.org/static/img/sample_01.jpg"></mip-img>
+<mip-img popup layout="responsive" width="350" height="263" src="https://www.mipengine.org/static/img/sample_01.jpg"></mip-img>
+<mip-img popup layout="responsive" width="350" height="263" src="https://www.mipengine.org/static/img/sample_01.jpg"></mip-img>
+  <mip-link to="./list.html">list.html</mip-link>
+  <br>
+  <mip-link to="./template.html">template.html</mip-link>
+  <script src="../../dist/mip.js"></script>
+  <script src="../mip/mip-tree.js"></script>
+</body>
+
+</html>
