@@ -53,6 +53,7 @@ import {customEmit} from '../../util/custom-event'
 let viewer = null
 let page = null
 let activeZIndex = 10000
+let isHeaderShown = false
 let innerBodyHeight
 let innerBodyFreezeTime
 window.MIP_PAGE_META_CACHE = Object.create(null)
@@ -234,6 +235,9 @@ class MipShell extends CustomElement {
     this.$wrapper.classList.add('mip-shell-header-wrapper')
     if (!(this.currentPageMeta.header && this.currentPageMeta.header.show)) {
       this.$wrapper.classList.add('hide')
+      isHeaderShown = false
+    } else {
+      isHeaderShown = true
     }
 
     // Header
@@ -560,22 +564,21 @@ class MipShell extends CustomElement {
       let targetIFrame
       innerBodyHeight = 0
       innerBodyFreezeTime = 0
-      let hackForAndroidScroll = interval => {
-        let mask = this.$buttonMask
-        if (mask.style.display === 'block') {
-          clearInterval(interval)
-          return
-        }
+      let initHackForAndroidScroll = () => {
+        let mask = document.createElement('div')
+        mask.classList.add('hack-for-android-scroll-mask')
+        document.body.appendChild(mask)
+        return mask
+      }
+      let executeHackForAndroidScroll = mask => {
         css(mask, {
           opacity: '0.01',
-          display: 'block',
-          pointerEvents: 'none'
+          display: 'block'
         })
         setTimeout(() => {
           css(mask, {
             display: 'none',
-            opacity: '',
-            pointerEvents: 'none'
+            opacity: ''
           })
         }, 20)
       }
@@ -583,13 +586,14 @@ class MipShell extends CustomElement {
         if (!targetPageInfo.isCrossOrigin && platform.isAndroid()) {
           let doc = targetIFrame.contentWindow.document
           let intervalTimes = 0
+          let hackMask = initHackForAndroidScroll()
           let checkInterval = setInterval(() => {
             intervalTimes++
             let currentHeight = doc.body.clientHeight
             if (doc.body.clientHeight !== innerBodyHeight) {
               innerBodyHeight = currentHeight
               innerBodyFreezeTime = 0
-              hackForAndroidScroll()
+              executeHackForAndroidScroll(hackMask)
             } else {
               innerBodyFreezeTime++
             }
@@ -1327,6 +1331,10 @@ class MipShell extends CustomElement {
    * @param {boolean} options.skipTransition show result without transition
    */
   togglePageMask (toggle, {skipTransition, extraClass} = {}) {
+    if (!isHeaderShown) {
+      return
+    }
+
     if (extraClass) {
       toggle ? this.$pageMask.classList.add(extraClass) : this.$pageMask.classList.remove(extraClass)
     }

@@ -207,8 +207,15 @@ let viewer = {
     // Jump in top window directly
     // 1. Cross origin and NOT in SF
     // 2. Not MIP page and not only hash change
-    if ((this._isCrossOrigin(to) && window.MIP.standalone) ||
-      (!isMipLink && !isHashInCurrentPage)) {
+    if ((this._isCrossOrigin(to) && window.MIP.standalone)) {
+      if (replace) {
+        window.top.location.replace(to)
+      } else {
+        window.top.location.href = to
+      }
+      return
+    }
+    if (!isMipLink && !isHashInCurrentPage) {
       window.top.location.href = to
       return
     }
@@ -404,7 +411,8 @@ let viewer = {
         // So we are forced to load the page in iphone 5s UC
         // and iOS 9 safari.
         let needBackReload = (iosVersion === '8' && platform.isUc() && screen.width === 320) ||
-          (iosVersion === '9' && platform.isSafari())
+          (iosVersion === '9' && platform.isSafari()) ||
+          (iosVersion === '10' && platform.isSafari())
         if (needBackReload) {
           window.addEventListener('pageshow', e => {
             if (e.persisted) {
