@@ -750,7 +750,7 @@ describe('mip-carousel', function () {
         expect(img.classList.contains('mip-img-loading')).to.be.false
         expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_04.jpg')
         done()
-      }, 1000);
+      }, 1500);
     })
 
     after(function () {

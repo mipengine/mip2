@@ -75,7 +75,7 @@ function getImgOffset (img) {
   return imgOffset
 }
 /**
- * 根据元素 element 获取相邻图片的 src
+ * 获取所有图片的 src
  * @return {Array.<HTMLElement>} 返回修改的元素集
  */
 function getImgsSrc () {
@@ -85,7 +85,7 @@ function getImgsSrc () {
 function createPopup (element, img) {
   // 获取图片数组
   let imgsSrcArray = getImgsSrc()
-  let index = parseInt(element.getAttribute('index'), 10) || 1
+  let index = parseInt(element.getAttribute('index'), 10) || 0
 
   let popup = document.createElement('div')
   css(popup, 'display', 'block')
@@ -290,6 +290,7 @@ class MipImg extends CustomElement {
     let img = new Image()
     if (ele.hasAttribute('popup')) {
       let allMipImg = [...document.querySelectorAll('mip-img')].filter(value => value.hasAttribute('popup'))
+      console.log(allMipImg.indexOf(ele))
       ele.setAttribute('index', allMipImg.indexOf(ele))
     }
     if (this.placeholder) {
