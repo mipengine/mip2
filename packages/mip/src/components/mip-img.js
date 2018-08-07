@@ -96,7 +96,6 @@ function createPopup (element, img) {
   new Gesture(popup, {
     preventY: true
   })
-
   popup.className = 'mip-img-popUp-wrapper'
   popup.setAttribute('data-name', 'mip-img-popUp-name')
 
