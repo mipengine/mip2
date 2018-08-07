@@ -256,6 +256,9 @@ describe('vue-custom-element/utils/props', function () {
           name: 'mip'
         }
       })
+
+      script.textContent = false
+      expect(getPropsData(ele, componenntDef, props)).to.deep.equal({})
     })
 
     it('attribute should overwrite script data', function () {
