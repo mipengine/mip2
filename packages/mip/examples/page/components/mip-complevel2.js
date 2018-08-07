@@ -41,8 +41,8 @@ MIP.registerVueCustomElement('mip-complevel2', {
     })
     MIP.watch('a', function (newVal) {
       MIP.setData({
-        // loading: false
-        a: +newVal + 1
+        loading: false
+        // a: +newVal + 1
       })
       console.log('watch a:', newVal, ',set {loading:', MIP.getData('loading'), '}')
     })
