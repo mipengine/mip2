@@ -24,6 +24,7 @@ class Platform {
     this.isBaiduApp = false
     this.isWeiboApp = false
     this.isQQApp = false
+    this.isAlipayApp = false
     this.isUc = false
     this.isBaidu = false
     this.isQQ = false
@@ -68,6 +69,8 @@ class Platform {
       this.isWeiboApp = true
     } else if (/\sQQ/i.test(apps)) {
       this.isQQApp = true
+    } else if (/\sAlipay/i.test(apps)) {
+      this.isAlipayApp = true
     } else if (/UCBrowser/i.test(this._ua())) {
       this.isUc = true
     } else if (/baidubrowser/i.test(this._ua())) {

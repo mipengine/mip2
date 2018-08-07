@@ -91,6 +91,11 @@ describe('platform', function () {
       expect(platform.isQQApp()).to.be.true
     })
 
+    it('AlipayApp', function () {
+      changeUa('Mozilla/5.0 (iPhone; CPU iPhone OS 10_1_1 like Mac OS X) AppleWebKit/602.2.14 (KHTML, like Gecko) Mobile/14B100 AlipayDefined(nt:WIFI,ws:320|504|2.0) AliApp(AP/9.6.0.000001) AlipayClient/9.6.0.000001 Language/zh-Hans ProductType/dev')
+      expect(platform.isAlipayApp()).to.be.true
+    })
+
     it('uc', function () {
       changeUa('Mozilla/5.0 (iPhone; CPU iPhone OS 10_1_1 like Mac OS X; zh-CN) AppleWebKit/537.51.1 (KHTML, like Gecko) Mobile/14B100 UCBrowser/11.4.7.931 Mobile AliApp(TUnionSDK/0.1.12)')
       expect(platform.isUc()).to.be.true
