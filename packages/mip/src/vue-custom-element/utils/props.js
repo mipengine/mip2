@@ -36,7 +36,7 @@ function getPropType (prop) {
  */
 export function convertAttributeValue (value, type) {
   if (type === Boolean) {
-    return value === 'false' ? false : !!value
+    return value !== 'false'
   }
 
   if (type === Number) {

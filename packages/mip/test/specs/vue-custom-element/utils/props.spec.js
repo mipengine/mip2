@@ -322,8 +322,12 @@ describe('vue-custom-element/utils/props', function () {
     it('convert boolean', function () {
       expect(convertAttributeValue('true', Boolean)).to.be.equal(true)
       expect(convertAttributeValue('false', Boolean)).to.be.equal(false)
-      expect(convertAttributeValue('', Boolean)).to.be.equal(false)
+
+      expect(convertAttributeValue('', Boolean)).to.be.equal(true)
       expect(convertAttributeValue('1', Boolean)).to.be.equal(true)
+      expect(convertAttributeValue('0', Boolean)).to.be.equal(true)
+      expect(convertAttributeValue('NaN', Boolean)).to.be.equal(true)
+      expect(convertAttributeValue('[]', Boolean)).to.be.equal(true)
     })
 
     it('convert array', function () {
@@ -343,38 +347,6 @@ describe('vue-custom-element/utils/props', function () {
       let str = '{"name": -"mip"}'
       convertAttributeValue(str, Object)
       sinon.assert.calledWith(warn, str + ' attribute content should be a valid JSON string!')
-    })
-
-    describe('props#reactiveProps', function () {
-      it('convert string', function () {
-        expect(convertAttributeValue('str')).to.be.equal('str')
-        expect(convertAttributeValue('str', String)).to.be.equal('str')
-      })
-
-      it('convert number', function () {
-        expect(convertAttributeValue('123', Number)).to.be.equal(123)
-        expect(convertAttributeValue('1.23', Number)).to.be.equal(1.23)
-        expect(convertAttributeValue('0.23', Number)).to.be.equal(0.23)
-      })
-
-      it('convert boolean', function () {
-        expect(convertAttributeValue('true', Boolean)).to.be.equal(true)
-        expect(convertAttributeValue('false', Boolean)).to.be.equal(false)
-        expect(convertAttributeValue('', Boolean)).to.be.equal(false)
-        expect(convertAttributeValue('1', Boolean)).to.be.equal(true)
-      })
-
-      it('convert array', function () {
-        expect(convertAttributeValue('[123]', Array)).to.deep.equal([123])
-        expect(convertAttributeValue('[true]', Array)).to.deep.equal([true])
-        expect(convertAttributeValue('["huang", "test"]', Array)).to.deep.equal(['huang', 'test'])
-      })
-
-      it('convert object', function () {
-        expect(convertAttributeValue('{"name": "mip"}', Object)).to.deep.equal({
-          name: 'mip'
-        })
-      })
     })
   })
 
