@@ -8,8 +8,13 @@ MIP.registerVueCustomElement('mip-complevel1', {
   template: `
     <div class="mip-complevel1">
       <h3>This is component mip-complevel1</h3>
+<<<<<<< HEAD
       <p class="num-button" @click="setData(1)">1</p>
       <p class="num-button" @click="setData(2)">2</p>
+=======
+      <p class="num-button" @click="setData(1, true)">1</p>
+      <p class="num-button" @click="setData(2, false)">2</p>
+>>>>>>> 68540b65a36f5fd54930fdc9ae0e99c4a625022f
       <p>userInfo.name: {{userInfo.name}}</p>
       <p @click="changeData" class="click-btn">click to change userInfo.name</p>
       <p @click="changeData2" class="click-btn">click to change loading to true</p>
