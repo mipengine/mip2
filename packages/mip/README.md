@@ -6,8 +6,10 @@ MIP
 - Clone 代码之后运行
 
 ```sh
-$ cnpm install # npm install
+$ npm install # 安装依赖
 ```
+
+> 建议使用 [淘宝NPM 镜像](https://npm.taobao.org/) 安装速度更快: `cnpm install`
 
 ## Test and coverage
 
@@ -27,7 +29,7 @@ $ npm run test:cover
 # watch and auto re-build dist/mip.js
 $ npm run dev
 ```
-监控代码改动并编译代码到 `dist/mip.js`，可通过 `open examples/simple/index.html` 预览效果
+监控代码改动并编译代码到 `dist/mip.js`，可通过 http://localhost:8080/examples/ 预览效果
 
 ```sh
 # build all dist files, including npm packages
