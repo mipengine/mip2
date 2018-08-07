@@ -145,7 +145,7 @@ export function getter (ctx, exp) {
 
 export function getWithResult (exp) {
   exp = namespaced(exp) || ''
-  let matches = exp.match(/this\.[\w\d-._]+/gmi)
+  let matches = exp.match(/(this\.[\w\d-._]+|this\['[\w\d-._]+'\])/gmi)
   let read = ''
   if (matches && matches.length) {
     matches.forEach(function (e) {
@@ -211,6 +211,13 @@ export function namespaced (str) {
     return `MIP-STR-TPL${tpls.length - 1}`
   })
 
+  function wrap (exp) {
+    if (/-/.test(exp)) {
+      return `this['${exp}']`
+    }
+    return `this.${exp}`
+  }
+
   while ((match = regVar.exec(str)) != null) {
     let index = match['index']
     let matched = match[0]
@@ -238,14 +245,14 @@ export function namespaced (str) {
     let i = findChar(str, pointer, true)
     // not key of an obj or string warpped by quotes - vars
     if (i >= str.length || !/['`:]/.test(str[i])) {
-      newExp += 'this.' + match[0]
+      newExp += wrap(match[0])
     } else if (str[i] === ':') {
       i = findChar(str, index - 1, false)
       // tell if conditional operator ?:
       if (i < 0 || str[i] !== '?') {
         newExp += match[0]
       } else {
-        newExp += 'this.' + match[0]
+        newExp += wrap(match[0])
       }
     } else {
       newExp += match[0]

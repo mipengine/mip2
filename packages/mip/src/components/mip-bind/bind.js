@@ -5,7 +5,7 @@
 
 import Compile from './compile'
 import Observer from './observer'
-import Watcher from './watcher'
+import Watcher, {locker} from './watcher'
 import {isObject, objNotEmpty} from './util'
 
 /* global MIP */
@@ -13,19 +13,19 @@ import {isObject, objNotEmpty} from './util'
 
 class Bind {
   constructor () {
-    this._win = window
-    this._watcherIds = []
-    this._win.pgStates = new Set()
+    this.win = window
+    this.watcherIds = []
+    this.win.pgStates = new Set()
     // require mip data extension runtime
-    this._compile = new Compile()
-    this._observer = new Observer()
-    MIP.$set = (data, cancel) => this._bindTarget(true, data, cancel)
+    this.compile = new Compile()
+    this.observer = new Observer()
+    MIP.$set = (data, cancel) => this.bindTarget(true, data, cancel)
     MIP.setData = data => {
-      this._bindTarget(false, data)
+      this.bindTarget(false, data)
     }
     MIP.getData = key => {
       let ks = key.split('.')
-      let res = this._win.m[ks[0]]
+      let res = this.win.m[ks[0]]
       let i = 1
       while (isObject(res) && i < ks.length) {
         res = res[ks[i]]
@@ -34,14 +34,14 @@ class Bind {
       return res
     }
     MIP.$recompile = () => {
-      this._observer.start(this._win.m)
-      this._compile.start(this._win.m)
+      this.observer.start(this.win.m)
+      this.compile.start(this.win.m)
     }
     MIP.$update = (data, pageId) => {
-      this._update(data, pageId)
+      this.update(data, pageId)
     }
     MIP.watch = (target, cb) => {
-      this._bindWatch(target, cb)
+      this.bindWatch(target, cb)
     }
 
     window.m = window.m || {}
@@ -49,13 +49,13 @@ class Bind {
     MIP.$set(window.m)
   }
 
-  _postMessage (data) {
+  postMessage (data) {
     Object.keys(data).forEach(k => {
       data[`#${k}`] = data[k]
       delete data[k]
     })
 
-    let win = this._win
+    let win = this.win
     let targetWin = win
     /* istanbul ignore if */
     if (!isSelfParent(win)) {
@@ -74,8 +74,8 @@ class Bind {
   }
 
   /* istanbul ignore next */
-  _update (data, pageId) {
-    let win = this._win
+  update (data, pageId) {
+    let win = this.win
 
     for (let i = 0, frames = win.document.getElementsByTagName('iframe'); i < frames.length; i++) {
       if (frames[i].classList.contains('mip-page__iframe') &&
@@ -88,21 +88,22 @@ class Bind {
     }
   }
 
-  _bindTarget (compile, data, cancel) {
-    let win = this._win
+  bindTarget (compile, data, cancel) {
+    let win = this.win
 
     if (typeof data === 'object') {
       let origin = JSON.stringify(win.m)
-      this._compile.upadteData(JSON.parse(origin))
-      let classified = this._normalize(data)
+      this.compile.upadteData(JSON.parse(origin))
+      let classified = this.normalize(data)
       if (compile) {
-        this._setGlobalState(classified.globalData, cancel)
-        this._setPageState(classified, cancel)
-        this._observer.start(win.m)
-        this._compile.start(win.m)
+        this.setGlobalState(classified.globalData, cancel)
+        this.setPageState(classified, cancel)
+        this.observer.start(win.m)
+        this.compile.start(win.m)
       } else {
+        locker(true) // lock, don't call watchers immediatly
         if (classified.globalData && objNotEmpty(classified.globalData)) {
-          !cancel && this._postMessage(classified.globalData)
+          !cancel && this.postMessage(classified.globalData)
         }
         data = classified.pageData
         Object.keys(data).forEach(field => {
@@ -111,18 +112,19 @@ class Bind {
               [field]: data[field]
             })
           } else {
-            this._dispatch(field, data[field], cancel)
+            this.dispatch(field, data[field], cancel)
           }
         })
+        locker(false) // unlock
       }
     } else {
       throw new Error('setData method MUST accept an object! Check your input:' + data)
     }
   }
 
-  _bindWatch (target, cb) {
+  bindWatch (target, cb) {
     if (target.constructor === Array) {
-      target.forEach(key => MIP.watch(key, cb))
+      target.forEach(key => this.bindWatch(key, cb))
       return
     }
     if (typeof target !== 'string' || !target) {
@@ -138,53 +140,53 @@ class Bind {
       }
       return total + `"${current}":`
     }, '')
-    if (!JSON.stringify(this._win.m).match(new RegExp(reg))) {
+    if (!JSON.stringify(this.win.m).match(new RegExp(reg))) {
       return
     }
 
     let watcherId = `${target}${cb.toString()}`.replace(/[\n\t\s]/g, '')
     /* istanbul ignore if */
-    if (this._watcherIds.indexOf(watcherId) !== -1) {
+    if (this.watcherIds.indexOf(watcherId) !== -1) {
       return
     }
 
-    this._watcherIds.push(watcherId)
-    new Watcher(null, this._win.m, '', `Watch:${target}`, cb) // eslint-disable-line no-new
+    this.watcherIds.push(watcherId)
+    new Watcher(null, this.win.m, '', `Watch:${target}`, cb) // eslint-disable-line no-new
   }
 
-  _dispatch (key, val, cancel) {
-    let win = this._win
+  dispatch (key, val, cancel) {
+    let win = this.win
     let data = {
       [key]: val
     }
     if (win.g && win.g.hasOwnProperty(key)) {
-      !cancel && this._postMessage(data)
+      !cancel && this.postMessage(data)
     } else {
       /* istanbul ignore if */
       if (!isSelfParent(win) &&
       /* istanbul ignore next */ win.parent.g &&
       /* istanbul ignore next */ win.parent.g.hasOwnProperty(key)
       ) {
-        !cancel && this._postMessage(data)
+        !cancel && this.postMessage(data)
       } else {
         Object.assign(win.m, data)
       }
     }
   }
 
-  _setGlobalState (data, cancel) {
-    let win = this._win
+  setGlobalState (data, cancel) {
+    let win = this.win
     /* istanbul ignore else */
     if (isSelfParent(win)) {
       win.g = win.g || {}
       assign(win.g, data)
     } else {
-      !cancel && objNotEmpty(data) && this._postMessage(data)
+      !cancel && objNotEmpty(data) && this.postMessage(data)
     }
   }
 
-  _setPageState (data, cancel) {
-    let win = this._win
+  setPageState (data, cancel) {
+    let win = this.win
     Object.assign(win.m, data.pageData)
     !cancel && Object.keys(data.pageData).forEach(k => win.pgStates.add(k))
 
@@ -204,7 +206,7 @@ class Bind {
     // win.m.__proto__ = getGlobalData(win) // eslint-disable-line no-proto
   }
 
-  _normalize (data) {
+  normalize (data) {
     let globalData = {}
     let pageData = {}
 

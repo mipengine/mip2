@@ -12,7 +12,7 @@ let ATTRS = /^(checked|selected|autofocus|controls|disabled|hidden|multiple|read
 
 class Compile {
   constructor () {
-    this._el = document.documentElement
+    this.el = document.documentElement
   }
 
   start (data) {
@@ -20,62 +20,60 @@ class Compile {
       return
     }
     this.data = data
-    this._compileElement(this._el)
-    // this._fragment = this._cloneNode();
-    // this._compileElement(this._fragment);
-    // this._el.appendChild(this._fragment);
+    this.compileElement(this.el)
+    // this.fragment = this.cloneNode();
+    // this.compileElement(this.fragment);
+    // this.el.appendChild(this.fragment);
   }
 
   /* istanbul ignore next */
-  _cloneNode () {
+  cloneNode () {
     let child
     let fragment = document.createDocumentFragment()
     /* eslint-disable */
-    while (child = this._el.firstChild) {
+    while (child = this.el.firstChild) {
     /* eslint-enable */
       fragment.appendChild(child)
     }
     return fragment
   }
 
-  _compileElement (el) {
-    let me = this
+  compileElement (el) {
     let nodes = el.childNodes;
-    [].slice.call(nodes).forEach(function (node) {
-      if (!me._isElementNode(node)) {
+    [].slice.call(nodes).forEach(node => {
+      if (!this.isElementNode(node)) {
         return
       }
-      me._compileAttributes(node)
+      this.compileAttributes(node)
       if (node.childNodes && node.childNodes.length) {
-        me._compileElement(node)
+        this.compileElement(node)
       }
     })
   }
 
-  _isDirective (attr) {
+  isDirective (attr) {
     return attr.indexOf('m-') === 0
   }
 
-  _isElementNode (node) {
+  isElementNode (node) {
     return node.nodeType === 1
   }
 
-  _compileAttributes (node) {
-    let me = this
+  compileAttributes (node) {
     /* istanbul ignore if */
     if (!node) {
       return
     }
     let attrs = node.attributes;
-    [].slice.call(attrs).forEach(function (attr) {
-      if (!me._isDirective(attr.name)) {
+    [].slice.call(attrs).forEach(attr => {
+      if (!this.isDirective(attr.name)) {
         return
       }
-      me._compileDirective(node, attr, attr.value)
+      this.compileDirective(node, attr, attr.value)
     })
   }
 
-  _compileDirective (node, directive, expression) {
+  compileDirective (node, directive, expression) {
     let me = this
     let fnName = directive.name.slice(2)
     let attrName = directive.name
@@ -98,12 +96,12 @@ class Compile {
       }
       fnName = 'bind'
     }
-    !data && (data = me._getMVal(node, attrName, expression))
+    !data && (data = me.getMVal(node, attrName, expression))
     if (typeof data !== 'undefined') {
       me[fnName] && me[fnName](node, attrName, data, shouldRm)
     }
 
-    this._listenerFormElement(node, directive, expression)
+    this.listenerFormElement(node, directive, expression)
     /* eslint-disable */
     new Watcher(node, me.data, attrName, expression, function (dir, newVal) {
       me[fnName] && me[fnName](node, dir, newVal)
@@ -111,7 +109,7 @@ class Compile {
     /* eslint-enable */
   }
 
-  _listenerFormElement (node, directive, expression) {
+  listenerFormElement (node, directive, expression) {
     if (TAGNAMES.test(node.tagName)) {
       let attr = directive.name.split(':')
       attr = attr.length > 1 ? attr[1] : ''
@@ -174,7 +172,7 @@ class Compile {
     this.origin = data
   }
 
-  _getMVal (node, attrName, exp) {
+  getMVal (node, attrName, exp) {
     if (!exp) {
       return
     }

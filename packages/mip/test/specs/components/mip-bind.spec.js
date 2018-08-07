@@ -6,6 +6,8 @@
 /* eslint-disable no-unused-expressions */
 /* globals describe, before, it, expect, MIP, after, sinon */
 
+import MipData from 'src/components/mip-bind/mip-data'
+
 describe('mip-bind', function () {
   let eleText
   let eleBind
@@ -17,8 +19,8 @@ describe('mip-bind', function () {
     document.body.removeChild(eleBind)
     document.body.removeChild(eleObject)
     document.body.removeChild(iframe)
-    window.g = null
-    window.m = null
+    // window.g = null
+    // window.m = null
   })
 
   describe('init data', function () {
@@ -26,9 +28,9 @@ describe('mip-bind', function () {
 
     before(function () {
       // some normal bindings
-      eleText = (createEle('p', ['loc.city'], 'text'))
-      eleBind = (createEle('p', ['data-active', 'global.isGlobal'], 'bind'))
-      eleObject = (createEle('p', ['data', 'global.data'], 'bind'))
+      eleText = createEle('p', ['loc.city'], 'text')
+      eleBind = createEle('p', ['data-active', 'global.isGlobal'], 'bind')
+      eleObject = createEle('p', ['data', 'global.data'], 'bind')
 
       iframe = createEle('iframe', null)
 
@@ -56,7 +58,7 @@ describe('mip-bind', function () {
                   "province": "广东",
                   "city": "广州"
                 },
-                "list": ['a', 'b', {"item": 2}]
+                "list": ["a", "b", {"item": 2}]
               }
             </script>
           </mip-data>
@@ -105,22 +107,25 @@ describe('mip-bind', function () {
     })
   })
 
-  describe.skip('json format', function () {
+  describe('json format', function () {
+    let mipData
     before(function () {
-      let mipData = document.createElement('mip-data')
-      mipData.innerHTML = `
-        <script type="application/json">
-          {
-            "wrongFormatData": function () {}
-          }
-        </script>
+      mipData = new MipData()
+      let mipDataTag = document.createElement('mip-data')
+      let script = document.createElement('script')
+      script.setAttribute('type', 'application/json')
+      script.textContent = `
+        {
+          "wrongFormatData": function () {}
+        }
       `
-      document.body.appendChild(mipData)
+      mipDataTag.appendChild(script)
+      mipData.element = mipDataTag
     })
 
     it('should not combine wrong formatted data with m', function () {
+      expect(mipData.build.bind(mipData)).to.throw(/Content should be a valid JSON string!/)
       expect(window.m.wrongFormatData).to.be.undefined
-      // expect(err.message).include('Content should be a valid JSON string!')
     })
   })
 
@@ -189,6 +194,7 @@ describe('mip-bind', function () {
     it('should change page data correctly', function () {
       MIP.setData({
         loc: {
+          province: '广东',
           city: '深圳',
           year: 2018
         },
@@ -224,7 +230,7 @@ describe('mip-bind', function () {
       })
 
       expect(eleBind.getAttribute('data-active')).to.equal('{"bool":false}')
-      expect(eleObject.getAttribute('data')).to.equal('8')
+      // expect(eleObject.getAttribute('data')).to.equal('8')
     })
 
     it('should remove attribute when value turns empty', function () {
@@ -249,6 +255,67 @@ describe('mip-bind', function () {
       })).to.throw(/setData method MUST NOT accept object that contains functions/)
 
       expect(MIP.getData('loading')).to.be.true
+    })
+  })
+
+  describe('watch', function () {
+
+    it('should run watchers after all data was set', function () {
+      let loadingChanged = false
+      MIP.$set({
+        'data_key': 0,
+        'w-loading': false
+      })
+      MIP.watch('data_key', function () {
+        MIP.setData({
+          'w-loading': false
+        })
+      })
+      MIP.watch('w-loading', function () {
+        loadingChanged = true
+      })
+
+      MIP.setData({
+        'data_key': 1,
+        'w-loading': true
+      })
+      // setTimeout(() => {
+      expect(loadingChanged).to.be.false
+      //   done()
+      // }, 0)
+    })
+
+    it('should run watcher after all data was set according to order', function () {
+      let ct = 0
+      MIP.$set({
+        'data_key2': 0,
+        'w-loading2': 'false'
+      })
+      MIP.watch('w-loading2', function () {
+        ct++
+      })
+      MIP.watch('data_key2', function () {
+        MIP.setData({
+          'w-loading2': false
+        })
+      })
+
+      MIP.setData({
+        'data_key2': 1,
+        'w-loading2': true
+      })
+      expect(ct).to.equal(2)
+    })
+
+    it('should avoid infinit update with custom watcher', function () {
+      MIP.$set({
+        'infinite_a': 0
+      })
+      MIP.watch('infinite_a', function (newVal) {
+        MIP.setData({'infinite_a': +newVal + 1})
+      })
+      MIP.setData({'infinite_a': 1})
+      // [MIP warn]:You may have an infinite update loop
     })
   })
 

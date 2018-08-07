@@ -6,15 +6,15 @@
 import Deps from './deps'
 
 class Observer {
-  _walk (data, depMap) {
+  walk (data, depMap) {
     if (typeof data !== 'object' || typeof depMap !== 'object') {
       return
     }
 
-    Object.keys(data).forEach(key => this._define(data, key, data[key], depMap))
+    Object.keys(data).forEach(key => this.define(data, key, data[key], depMap))
   }
 
-  _define (data, key, value, depMap) {
+  define (data, key, value, depMap) {
     if (typeof depMap[key] === 'undefined') {
       return
     }
@@ -23,7 +23,7 @@ class Observer {
     let deep = value && typeof value === 'object'
     // if value is object, define it's value
     if (deep) {
-      this._walk(value, depMap[key])
+      this.walk(value, depMap[key])
     }
 
     let property = Object.getOwnPropertyDescriptor(data, key)
@@ -70,7 +70,7 @@ class Observer {
         } else {
           value = newVal
         }
-        me._walk(newVal, depMap[key])
+        me.walk(newVal, depMap[key])
         if (depMap[key]._deps && typeof newVal !== 'object') {
           depMap[key] = depMap[key]._deps
         } else if (depMap[key].isDep && typeof newVal === 'object') {
@@ -82,11 +82,11 @@ class Observer {
   }
 
   start (data) {
-    this._depMap = this._depMap || {}
+    this.depMap = this.depMap || {}
     for (let key in data) {
-      this._depMap[key] = JSON.parse(JSON.stringify(data[key]))
+      this.depMap[key] = JSON.parse(JSON.stringify(data[key]))
     }
-    this._walk(data, this._depMap)
+    this.walk(data, this.depMap)
   }
 }
 
