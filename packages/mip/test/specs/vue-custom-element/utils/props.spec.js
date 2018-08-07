@@ -320,6 +320,11 @@ describe('vue-custom-element/utils/props', function () {
       expect(convertAttributeValue('123', Number)).to.be.equal(123)
       expect(convertAttributeValue('1.23', Number)).to.be.equal(1.23)
       expect(convertAttributeValue('0.23', Number)).to.be.equal(0.23)
+      expect(convertAttributeValue('0.0', Number)).to.be.equal(0)
+      expect(convertAttributeValue('0', Number)).to.be.equal(0)
+      expect(convertAttributeValue('', Number)).to.be.NaN
+      expect(convertAttributeValue('-0', Number)).to.be.equal(0)
+      expect(convertAttributeValue('-1', Number)).to.be.equal(-1)
     })
 
     it('convert boolean', function () {
@@ -337,6 +342,7 @@ describe('vue-custom-element/utils/props', function () {
       expect(convertAttributeValue('[123]', Array)).to.deep.equal([123])
       expect(convertAttributeValue('[true]', Array)).to.deep.equal([true])
       expect(convertAttributeValue('["huang", "test"]', Array)).to.deep.equal(['huang', 'test'])
+      expect(convertAttributeValue('[]', Array)).to.deep.equal([])
     })
 
     it('convert object', function () {
