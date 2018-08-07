@@ -176,6 +176,8 @@ class MipShell extends CustomElement {
               config.meta.header.title = (document.querySelector('title') || {}).innerHTML || ''
             }
 
+            this.processShellConfigInLeaf(tmpShellConfig, i)
+
             pageMeta = window.parent.MIP_PAGE_META_CACHE[pageId] = config.meta
             break
           }
@@ -1438,7 +1440,13 @@ class MipShell extends CustomElement {
   // ===================== Interfaces =====================
   processShellConfig (shellConfig) {
     // Change shell config
-    // E.g. `routeConfig.header.buttonGroup = []` forces empty buttons
+    // E.g. `shellConfig.routes.forEach(route => route.meta.header.buttonGroup = [])` forces empty buttons
+  }
+
+  processShellConfigInLeaf (shellConfig, matchIndex) {
+    // Change shell config in leaf page
+    // E.g. `shellConfig.routes[matchIndex].meta.header.bouncy = false` disables bouncy feature
+    // Only works when `alwaysReadConfigOnLoad` equals `true`
   }
 
   handleShellCustomButton (buttonName) {
