@@ -211,13 +211,6 @@ export function namespaced (str) {
     return `MIP-STR-TPL${tpls.length - 1}`
   })
 
-  function wrap (exp) {
-    if (/-/.test(exp)) {
-      return `this['${exp}']`
-    }
-    return `this.${exp}`
-  }
-
   while ((match = regVar.exec(str)) != null) {
     let index = match['index']
     let matched = match[0]
@@ -261,6 +254,13 @@ export function namespaced (str) {
   newExp += str.substr(pointer)
 
   return newExp
+}
+
+function wrap (exp) {
+  if (/-/.test(exp)) {
+    return `this['${exp}']`
+  }
+  return `this.${exp}`
 }
 
 function findChar (str, i, forward) {
