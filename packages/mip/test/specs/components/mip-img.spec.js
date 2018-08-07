@@ -35,8 +35,7 @@ describe('mip-img', function () {
       expect(mipPopWrap.parentNode.tagName).to.equal('BODY')
       expect(mipPopWrap.tagName).to.equal('DIV')
       expect(mipPopWrap.querySelector('.mip-img-popUp-bg')).to.be.exist
-      expect(mipPopWrap.querySelector('.mip-img-popUp-innerimg')).to.be.exist
-      expect(mipPopWrap.querySelector('.mip-img-popUp-innerimg').getAttribute('src')).to.equal('https://www.wrong.org/?mip_img_ori=1')
+      expect(mipPopWrap.querySelector('mip-carousel')).to.be.exist
 
       // img
       expect(img.classList.contains('mip-img-loading')).to.equal(true)
@@ -55,6 +54,7 @@ describe('mip-img', function () {
 
     after(function () {
       document.body.removeChild(mipImgWrapper)
+      document.body.removeChild(document.querySelector('.mip-img-popUp-wrapper'))
     })
   })
 
@@ -226,7 +226,8 @@ describe('mip-img', function () {
       mipImg.setAttribute('srcset', 'https://www.mipengine.org/static/img/sample_01.jpg 1x, https://www.mipengine.org/static/img/sample_01.jpg 2x, https://www.mipengine.org/static/img/sample_01.jpg 3x')
       mipImg.setAttribute('popup', 'true')
       mipImg.setAttribute('alt', 'baidu mip img')
-      document.body.appendChild(mipImg)
+      let theFirst = document.body.firstChild
+      document.body.insertBefore(mipImg, theFirst)
     })
 
     it('should set props correctly', function () {
@@ -254,8 +255,8 @@ describe('mip-img', function () {
       expect(mipPopWrap.parentNode.tagName).to.equal('BODY')
       expect(mipPopWrap.tagName).to.equal('DIV')
       expect(mipPopWrap.querySelector('.mip-img-popUp-bg')).to.be.exist
-      expect(mipPopWrap.querySelector('.mip-img-popUp-innerimg')).to.be.exist
-      expect(mipPopWrap.querySelector('.mip-img-popUp-innerimg').getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_01.jpg')
+      expect(mipPopWrap.querySelector('mip-carousel')).to.be.exist
+      expect(mipPopWrap.querySelector('mip-carousel').getAttribute('index')).to.equal('1')
     })
 
     it('should resize popup according to window resizing', function () {
