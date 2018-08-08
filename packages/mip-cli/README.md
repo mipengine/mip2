@@ -111,7 +111,8 @@ module.exports = {
 - 1.2.2
     1. cli 沙盒注入提示信息增加对应文件提示以及白名单申请引导
     2. 修复 1.2.1 dev/build 模式下默认命令行参数失效的 bug
-    3. 升级 mip-sandbox，添加 `CustomEvent` 依赖
+    3. 修复 dev 模式下 -d 参数不能传相对路径的 bug
+    4. 升级 mip-sandbox，添加 `CustomEvent` 依赖
 
 - 1.2.1
     1. cli dev 和 build 命令增加 proxy 配置，支持对组件代码中字符串部分做替换以模拟实现开发和测试时的请求转发功能；
