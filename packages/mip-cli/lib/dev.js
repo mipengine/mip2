@@ -9,11 +9,8 @@ const opn = require('opn')
 const chalk = require('chalk')
 const path = require('path')
 
-const CWD = process.cwd()
-
 module.exports = function (options) {
-  console.log(options)
-  options.dir = path.resolve(CWD, options.dir || CWD)
+  options.dir = path.resolve(process.cwd(), options.dir || '')
   options.port = options.port || 8111
   options.livereload = options.livereload || false
   options.env = 'development'
