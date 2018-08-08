@@ -108,7 +108,12 @@ module.exports = {
 
 ## changelog
 
--1.2.1
+- 1.2.2
+    1. cli 沙盒注入提示信息增加对应文件提示以及白名单申请引导
+    2. 修复 1.2.1 dev/build 模式下默认命令行参数失效的 bug
+    3. 升级 mip-sandbox，添加 `CustomEvent` 依赖
+
+- 1.2.1
     1. cli dev 和 build 命令增加 proxy 配置，支持对组件代码中字符串部分做替换以模拟实现开发和测试时的请求转发功能；
     2. mip2 build 增加 -e/--env 指定当前编译的环境变量 process.env.NODE_ENV
 
