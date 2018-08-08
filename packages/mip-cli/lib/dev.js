@@ -7,9 +7,10 @@ const Server = require('./server')
 const cli = require('./cli')
 const opn = require('opn')
 const chalk = require('chalk')
+const path = require('path')
 
 module.exports = function (options) {
-  options.dir = options.dir || process.cwd()
+  options.dir = path.resolve(process.cwd(), options.dir || '')
   options.port = options.port || 8111
   options.livereload = options.livereload || false
   options.env = 'development'
