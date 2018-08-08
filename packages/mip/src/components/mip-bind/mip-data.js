@@ -1,3 +1,8 @@
+/**
+ * @file customeELement mip-data
+ * @author qiusiqi (qiusiqi@baidu.com)
+ */
+
 /* global fetch */
 /* global MIP */
 /* global mipDataPromises */
@@ -21,6 +26,9 @@ class MipData extends CustomElement {
     }
   }
 
+  /*
+   * get initial data asynchronouslly
+   */
   /* istanbul ignore next */
   getData (url) {
     if (!url) {

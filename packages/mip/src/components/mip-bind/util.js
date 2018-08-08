@@ -34,15 +34,23 @@ export function arrayToObject (arr) {
   return obj
 }
 
+/*
+ * parse class binding
+ * @param {Object|Array} classSpecs new classObject
+ * @param {Object|Array} oldSpecs old classObject
+ */
 export function parseClass (classSpecs, oldSpecs = {}) {
   if (typeof classSpecs === 'string') {
+    // reset old classes
     Object.keys(oldSpecs).forEach(k => {
       oldSpecs[k] = false
     })
+    // set new classes
     return Object.assign({}, oldSpecs, {
       [classSpecs]: true
     })
   }
+  // parse Object only
   if (isArray(classSpecs)) {
     classSpecs = arrayToObject(classSpecs)
   }
@@ -56,9 +64,14 @@ export function parseClass (classSpecs, oldSpecs = {}) {
   return newClasses
 }
 
+/*
+ * parse style binding
+ * @param {Object|Array} styleSpecs new styleObject
+ */
 export function parseStyle (styleSpecs) {
   let styles = {}
 
+  // parse Object only
   if (isArray(styleSpecs)) {
     styleSpecs.forEach(styleObj => {
       styles = Object.assign(styles, parseStyle(styleObj))
@@ -90,7 +103,10 @@ export function parseStyle (styleSpecs) {
   return styles
 }
 
-// autoprefixer
+/*
+ * autoprefixer
+ * @param {string} prop css prop needed to be prefixed
+ */
 export function normalize (prop) {
   emptyStyle = emptyStyle || document.createElement('div').style
   prop = prop.replace(/-(\w)/g, (_, c) => (c ? c.toUpperCase() : /* istanbul ignore next */ ''))

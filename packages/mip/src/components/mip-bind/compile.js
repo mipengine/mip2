@@ -1,6 +1,6 @@
 /**
  * @file compile.js
- * @author huanghuiquan (huanghuiquan@baidu.com)
+ * @author qiusiqi (qiusiqi@baidu.com)
  */
 
 import Watcher from './watcher'
@@ -73,6 +73,12 @@ class Compile {
     })
   }
 
+  /*
+   * compile directive that meet spec: m-text/m-bind
+   * @param {DOM.ELEMENT} node node
+   * @param {string} directive m-xx directive
+   * @param {string} exp expression to calculate value that needs to be bound
+   */
   compileDirective (node, directive, expression) {
     let me = this
     let fnName = directive.name.slice(2)
@@ -80,6 +86,8 @@ class Compile {
     let data
     let shouldRm
 
+    // if is m-bind directive, check if binding class/style
+    // compile these two spectially
     if (/^bind:.*/.test(fnName)) {
       let attr = fnName.slice(5)
       if (attr === 'class' || attr === 'style') {
@@ -109,6 +117,12 @@ class Compile {
     /* eslint-enable */
   }
 
+  /*
+   * add eventlistener of form element
+   * @param {DOM.ELEMENT} node node
+   * @param {string} directive m-xx directive
+   * @param {string} exp expression to calculate value that needs to be bound
+   */
   listenerFormElement (node, directive, expression) {
     if (TAGNAMES.test(node.tagName)) {
       let attr = directive.name.split(':')
@@ -123,10 +137,22 @@ class Compile {
     }
   }
 
+  /*
+   * directive m-text
+   * params {NODE} node DOM NODE
+   * params {string} newVal value to set as node.textContent
+   */
   text (node, directive, newVal) {
     node.textContent = newVal
   }
 
+  /*
+   * directive m-bind
+   * params {NODE} node DOM NODE
+   * params {string} directive directive
+   * params {string} newVal value to bind
+   * params {boolean} shouldRm tell if should remove directive
+   */
   bind (node, directive, newVal, shouldRm) {
     let reg = /bind:(.*)/
     let result = reg.exec(directive)
@@ -172,6 +198,12 @@ class Compile {
     this.origin = data
   }
 
+  /*
+   * to get value
+   * @param {DOM.ELEMENT} node node
+   * @param {string} attrName attribute
+   * @param {string} exp expression to calculate value that needs to be bound
+   */
   getMVal (node, attrName, exp) {
     if (!exp) {
       return

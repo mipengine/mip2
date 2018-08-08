@@ -1,6 +1,6 @@
 /**
  * @file watcher.js
- * @author huanghuiquan (huanghuiquan@baidu.com)
+ * @author qiusiqi (qiusiqi@baidu.com)
  */
 
 import Deps from './deps'
@@ -19,6 +19,14 @@ let lock = false
 let uid = 0
 
 class Watcher {
+  /*
+   * constructor
+   * params {NODE} node DOM NODE
+   * params {Object} data pageData
+   * params {string} dir directive
+   * params {string} exp expression
+   * params {Function} cb watcher callback
+   */
   constructor (node, data, dir, exp, cb) {
     this.data = data
     this.dir = dir
@@ -40,6 +48,9 @@ class Watcher {
     this.value = this.get()
   }
 
+  /*
+   * scheduler to update
+   */
   update () {
     if (lock) {
       const id = this.id
@@ -63,6 +74,9 @@ class Watcher {
     }
   }
 
+  /*
+   * controller to update dom or call callbacks of watchers
+   */
   run () {
     let oldVal = this.value
     let newVal = this.get(oldVal)
@@ -76,10 +90,16 @@ class Watcher {
     }
   }
 
+  /*
+   * get new val for comparing
+   * @param {*} oldVal oldValue used to build new value
+   */
   get (oldVal) {
     let value
     Deps.target = this
+    // get new value
     value = this.getter.call(this.data, this.data).value
+    // parse class/style with spectial parser
     if (this.specWatcher && this.specWatcher !== 'Watch') {
       value = util['parse' + this.specWatcher](value, oldVal)
     }
@@ -87,6 +107,9 @@ class Watcher {
     return value
   }
 
+  /*
+   * save dependencies
+   */
   addWatcher (dep) {
     if (!this.depIds.hasOwnProperty(dep.id)) {
       dep.subs.push(this)

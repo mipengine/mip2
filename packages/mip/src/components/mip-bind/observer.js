@@ -1,11 +1,29 @@
 /**
  * @file observer.js
- * @author huanghuiquan (huanghuiquan@baidu.com)
+ * @author qiusiqi (qiusiqi@baidu.com)
  */
 
 import Deps from './deps'
 
 class Observer {
+  /*
+   * start to defineProperty
+   * @param {Object} data target to be defined
+   */
+  start (data) {
+    // supporting dependencies map
+    this.depMap = this.depMap || {}
+    for (let key in data) {
+      this.depMap[key] = JSON.parse(JSON.stringify(data[key]))
+    }
+    this.walk(data, this.depMap)
+  }
+
+  /*
+   * to traverse
+   * @param {Object} data target to be defined
+   * @param {Object} depMap supporting dependencies map
+   */
   walk (data, depMap) {
     if (typeof data !== 'object' || typeof depMap !== 'object') {
       return
@@ -14,6 +32,13 @@ class Observer {
     Object.keys(data).forEach(key => this.define(data, key, data[key], depMap))
   }
 
+  /*
+   * to define
+   * @param {Object} data target to be defined
+   * @param {string} key key
+   * @param {*} value value
+   * @param {Object} depMap supporting dependencies map
+   */
   define (data, key, value, depMap) {
     if (typeof depMap[key] === 'undefined') {
       return
@@ -79,14 +104,6 @@ class Observer {
         deps.notify(key)
       }
     })
-  }
-
-  start (data) {
-    this.depMap = this.depMap || {}
-    for (let key in data) {
-      this.depMap[key] = JSON.parse(JSON.stringify(data[key]))
-    }
-    this.walk(data, this.depMap)
   }
 }
 

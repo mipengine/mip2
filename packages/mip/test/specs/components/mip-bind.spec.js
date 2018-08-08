@@ -213,24 +213,33 @@ describe('mip-bind', function () {
     it('should shift data to a different type and still trace', function () {
       MIP.setData({
         global: {
-          data: 7,
           isGlobal: {
             bool: true
           }
         }
       })
-
       MIP.setData({
         global: {
-          data: 8,
           isGlobal: {
             bool: false
           }
         }
       })
 
+      MIP.setData({
+        global: {
+          data: 7
+        }
+      })
+      MIP.setData({
+        global: {
+          data: 8
+        }
+      })
+
+
       expect(eleBind.getAttribute('data-active')).to.equal('{"bool":false}')
-      // expect(eleObject.getAttribute('data')).to.equal('8')
+      expect(eleObject.getAttribute('data')).to.equal('8')
     })
 
     it('should remove attribute when value turns empty', function () {
