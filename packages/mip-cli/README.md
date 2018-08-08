@@ -113,6 +113,7 @@ module.exports = {
     2. 修复 1.2.1 dev/build 模式下默认命令行参数失效的 bug
     3. 修复 dev 模式下 -d 参数不能传相对路径的 bug
     4. 升级 mip-sandbox，添加 `CustomEvent` 依赖
+    5. 增加 mip2 dev/build -i all 的参数简写
 
 - 1.2.1
     1. cli dev 和 build 命令增加 proxy 配置，支持对组件代码中字符串部分做替换以模拟实现开发和测试时的请求转发功能；

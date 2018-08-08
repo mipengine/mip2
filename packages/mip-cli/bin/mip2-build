@@ -14,7 +14,9 @@ cli.setup({
     ['-d, --dir <value>', '项目文件夹路径'],
     ['-o, --output <value>', '编译代码输出路径'],
     ['-c, --clean', '构建前先清空输出目录'],
-    ['-i, --ignore [value]', '忽略沙盒注入或校验，可选参数为 -i, -i sandbox, -i whitelist, -i sandbox,whitelist'],
+    /* eslint disable */
+    ['-i, --ignore [value]', '忽略沙盒注入或校验，可选参数为 -i sandbox, -i whitelist, -i sandbox,whitelist; -i 默认为 -i sandbox, -i all 默认为 -i sandbox,whitelist'],
+    /* eslint enable */
     ['-e, --env <value>', 'NODE_ENV 环境变量，默认为 "production"', 'production']
   ],
   help: [
@@ -41,6 +43,8 @@ const conf = Object.assign(
 
 if (conf.ignore === true) {
   conf.ignore = 'sandbox'
+} else if (conf.ignore === 'all') {
+  conf.ignore = 'sandbox,whitelist'
 }
 
 if (conf.ignore && /(^|,)whitelist(,|$)/.test(conf.ignore)) {

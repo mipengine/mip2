@@ -15,7 +15,9 @@ cli.setup({
     ['-l, --livereload', '启用调试自动刷新'],
     ['-a, --asset <value>', '静态资源 publicPath'],
     ['-o, --autoopen <value>', '自动打开网页'],
-    ['-i, --ignore [value]', '忽略沙盒注入或校验，可选参数为 -i, -i sandbox, -i whitelist, -i sandbox,whitelist'],
+    /* eslint disable */
+    ['-i, --ignore [value]', '忽略沙盒注入或校验，可选参数为 -i sandbox, -i whitelist, -i sandbox,whitelist; -i 默认为 -i sandbox, -i all 默认为 -i sandbox,whitelist'],
+    /* eslint enable */
     ['-c, --config <value>', 'mip-cli 配置文件路径']
   ],
   help: [
@@ -42,6 +44,8 @@ const conf = Object.assign(
 
 if (conf.ignore === true) {
   conf.ignore = 'sandbox'
+} else if (conf.ignore === 'all') {
+  conf.ignore = 'sandbox,whitelist'
 }
 
 if (conf.ignore && /(^|,)whitelist(,|$)/.test(conf.ignore)) {
