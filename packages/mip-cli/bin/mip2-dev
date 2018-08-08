@@ -5,6 +5,7 @@ const dev = require('../lib/dev')
 const validator = require('mip-component-validator')
 const path = require('path')
 const fs = require('fs')
+const {objectSubset} = require('../lib/utils/helper')
 
 cli.setup({
   noArgs: true,
@@ -32,18 +33,11 @@ if (fs.existsSync(configPath)) {
   defaultConfig = require(configPath)
 }
 
-// FIX ME
 const conf = Object.assign(
   defaultConfig.dev || {},
-  {
-    cliConfigPath: configPath,
-    port: cli.program.port,
-    dir: cli.program.dir,
-    livereload: cli.program.livereload,
-    asset: cli.program.asset,
-    autoopen: cli.program.autoopen,
-    ignore: cli.program.ignore
-  }
+  // FIX ME
+  objectSubset(cli.program, ['port', 'dir', 'livereload', 'asset', 'autoopen', 'ignore']),
+  {cliConfigPath: configPath}
 )
 
 if (conf.ignore === true) {
