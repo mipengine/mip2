@@ -60,7 +60,9 @@ module.exports = class WebpackBuilder {
       .then(arr => arr.filter(name => /(mip-[\w-]+)\/\1\.(vue|js)$/.test(name)))
 
     if (!components.length) {
-      throw Error(`找不到入口文件，请检查路径是否规范：\n${this.componentDir}`)
+      cli.error(`在该路径下找不到 mip 组件入口文件，请检查路径是否规范：\n${this.componentDir}`)
+      // 在 dev 模式下 throw Error 不会导致中断也不会显示错误，因此需要 process.exit(1) 强制中断
+      process.exit(1)
     }
 
     let entries = components.reduce((entries, pathname) => {

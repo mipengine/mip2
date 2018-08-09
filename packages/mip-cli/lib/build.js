@@ -11,7 +11,7 @@ const CWD = process.cwd()
 
 module.exports = async function (options) {
   options.output = path.resolve(CWD, options.output || 'dist')
-  options.dir = path.resolve(CWD, options.dir || CWD)
+  options.dir = path.resolve(CWD, options.dir || '')
   options.asset = options.asset || '/'
   options.env = options.env || 'production'
   // options.dev = false

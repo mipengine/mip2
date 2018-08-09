@@ -10,9 +10,9 @@
     <a href='https://coveralls.io/github/mipengine/mip2'>
         <img src='https://coveralls.io/repos/github/mipengine/mip2/badge.svg?branch=master' title='Coverage Status' alt='Coverage Status' />
     </a>
-	<a href='https://opensource.org/licenses/MIT'>
-		<img src='https://img.shields.io/github/license/mipengine/mip2.svg'  title='license' alt='license'>
-	</a>
+    <a href='https://opensource.org/licenses/MIT'>
+        <img src='https://img.shields.io/github/license/mipengine/mip2.svg'  title='license' alt='license'>
+    </a>
 </p>
 
 # MIP 2
