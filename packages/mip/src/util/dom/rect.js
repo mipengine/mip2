@@ -140,7 +140,6 @@ export default {
    * @param {number} top top
    */
   setScrollTop (top) {
-    // debugger
     if (setterElement) {
       setterElement.style.top = top + 'px'
       setterElement.scrollIntoView(true)
