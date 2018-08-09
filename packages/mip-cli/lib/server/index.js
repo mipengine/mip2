@@ -45,7 +45,7 @@ module.exports = class Server {
 
     if (this.livereload) {
       const lrserver = livereload.createServer({
-        extraExts: ['vue', 'less'],
+        extraExts: ['vue', 'less', 'styl', 'stylus'],
         delay: 500
       })
 

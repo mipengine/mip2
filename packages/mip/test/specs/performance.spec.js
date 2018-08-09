@@ -22,7 +22,7 @@ describe('performance', function () {
     util.dom.waitDocumentReady(function () {
       setTimeout(function () {
         expect(performance.getTiming()).to.include.all.keys([
-          'MIPFirstScreen',
+          // 'MIPFirstScreen',
           'MIPStart',
           'MIPDomContentLoaded'
         ])

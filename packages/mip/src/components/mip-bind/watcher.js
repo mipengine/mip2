@@ -1,62 +1,177 @@
 /**
  * @file watcher.js
- * @author huanghuiquan (huanghuiquan@baidu.com)
+ * @author qiusiqi (qiusiqi@baidu.com)
  */
 
 import Deps from './deps'
 import * as util from './util'
 
+import {MAX_UPDATE_COUNT} from '../../vue/core/observer/scheduler'
+
+const queue = []
+let has = {}
+let circular = {}
+let flushing = false
+let index = 0
+let lock = false
+
+// Record watcher id, avoid add repeatly
+let uid = 0
+
 class Watcher {
+  /*
+   * @constructor
+   * params {NODE} node DOM NODE
+   * params {Object} data pageData
+   * params {string} dir directive
+   * params {string} exp expression
+   * params {Function} cb watcher callback
+   */
   constructor (node, data, dir, exp, cb) {
-    this._data = data
-    this._dir = dir
-    this._exp = exp
+    this.data = data
+    this.dir = dir
+    this.exp = exp
+    this.id = uid++
     let specPrefix
     if ((specPrefix = exp.slice(0, 6)) === 'Class:' ||
       specPrefix === 'Style:' ||
       specPrefix === 'Watch:'
     ) {
-      this._specWatcher = specPrefix.slice(0, 5)
-      this._exp = exp = exp.slice(6)
+      this.specWatcher = specPrefix.slice(0, 5)
+      this.exp = exp = exp.slice(6)
     }
-    this._node = node
-    this._depIds = {}
-    let fn = util.getWithResult.bind(this, this._exp)
-    this._getter = fn.call(this._data)
-    this._cb = cb
-    this._value = this._get()
+    this.node = node
+    this.depIds = {}
+    let fn = util.getWithResult.bind(this, this.exp)
+    this.getter = fn.call(this.data)
+    this.cb = cb
+    this.value = this.get()
   }
 
+  /*
+   * scheduler to update
+   */
   update () {
-    let oldVal = this._value
-    let newVal = this._get(oldVal)
-    if (newVal !== oldVal) {
-      this._value = newVal
-      if (this._dir) {
-        this._cb.call(this._data, this._dir, newVal)
+    if (lock) {
+      const id = this.id
+      if (has[id] != null) {
+        return
+      }
+      has[id] = true
+
+      if (flushing) {
+        queue.push(this)
       } else {
-        this._cb.call(this._data, newVal)
+        let i = queue.length - 1
+        /* istanbul ignore next */
+        while (i > index && queue[i].id > id) {
+          i--
+        }
+        queue.splice(i + 1, 0, this)
+      }
+    } else {
+      this.run()
+    }
+  }
+
+  /*
+   * controller to update dom or call callbacks of watchers
+   */
+  run () {
+    let oldVal = this.value
+    let newVal = this.get(oldVal)
+    if (newVal !== oldVal) {
+      this.value = newVal
+      if (this.dir) {
+        this.cb.call(this.data, this.dir, newVal)
+      } else {
+        this.cb.call(this.data, newVal)
       }
     }
   }
 
-  _get (oldVal) {
+  /*
+   * get new val for comparing
+   * @param {*} oldVal oldValue used to build new value
+   */
+  get (oldVal) {
     let value
     Deps.target = this
-    value = this._getter.call(this._data, this._data).value
-    if (this._specWatcher && this._specWatcher !== 'Watch') {
-      value = util['parse' + this._specWatcher](value, oldVal)
+    // get new value
+    value = this.getter.call(this.data, this.data).value
+    // parse class/style with spectial parser
+    if (this.specWatcher && this.specWatcher !== 'Watch') {
+      value = util['parse' + this.specWatcher](value, oldVal)
     }
     Deps.target = null
     return value
   }
 
+  /*
+   * save dependencies
+   */
   addWatcher (dep) {
-    if (!this._depIds.hasOwnProperty(dep.id)) {
+    if (!this.depIds.hasOwnProperty(dep.id)) {
       dep.subs.push(this)
-      this._depIds[dep.id] = dep
+      this.depIds[dep.id] = dep
     }
   }
 }
 
 export default Watcher
+
+/**
+ * Reset the scheduler's state.
+ */
+function resetState () {
+  index = queue.length = 0
+  has = {}
+  /* istanbul ignore if */
+  if (process.env.NODE_ENV !== 'production') {
+    circular = {}
+  }
+  flushing = false
+}
+
+/**
+ * Flush queues and run the watchers.
+ */
+function flushWatcherQueue () {
+  flushing = true
+  let watcher
+  let id
+
+  queue.sort((a, b) => a.id - b.id)
+
+  for (index = 0; index < queue.length; index++) {
+    watcher = queue[index]
+    id = watcher.id
+    has[id] = null
+    watcher.run()
+    // in dev build, check and stop circular updates.
+    if (process.env.NODE_ENV !== 'production') {
+      circular[id] = (circular[id] || 0) + 1
+      if (circular[id] > MAX_UPDATE_COUNT) {
+        console.error(
+          `[MIP warn]:You may have an infinite update loop in watcher with expression "${watcher.exp}"`
+        )
+        break
+      }
+    }
+  }
+
+  resetState()
+}
+
+export function locker (status) {
+  // avoid flushing again, watcher had queued
+  if (queue.length && !status && flushing) {
+    return
+  }
+  // set lock status
+  lock = status
+  // when unlock, do flushing
+  if (!status) {
+    flushWatcherQueue()
+  }
+}

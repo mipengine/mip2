@@ -1,6 +1,6 @@
 {
   "name": "mip2",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "CLI for mip 2.0",
   "preferGlobal": true,
   "bin": {
@@ -60,9 +60,9 @@
     "livereload": "^0.7.0",
     "metalsmith": "^2.3.0",
     "minimatch": "^3.0.4",
-    "mip-component-validator": "^1.1.0",
+    "mip-component-validator": "^1.1.2",
     "mip-components-webpack-helpers": "^1.0.7",
-    "mip-sandbox": "^1.0.21",
+    "mip-sandbox": "^1.0.22",
     "mip-validator": "^1.5.15",
     "opn": "^5.3.0",
     "ora": "^2.1.0",
@@ -70,6 +70,8 @@
     "request": "^2.85.0",
     "rimraf": "^2.6.2",
     "semver": "^5.5.0",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2",
     "url-loader": "^1.0.1",
     "user-home": "^2.0.0",
     "vue": "2.5.16",
@@ -85,21 +87,9 @@
     "node": ">=8"
   },
   "devDependencies": {
-    "ava": "^0.25.0",
     "chai": "^4.1.2",
     "mocha": "^5.2.0",
     "nyc": "^11.7.3",
     "supertest": "^3.1.0"
-  },
-  "ava": {
-    "files": [
-      "test/**/*.js",
-      "!test/mock/**/*.js"
-    ],
-    "concurrency": 5,
-    "failFast": true,
-    "require": [
-      "babel-register"
-    ]
   }
 }

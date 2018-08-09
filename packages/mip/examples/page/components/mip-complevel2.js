@@ -36,15 +36,21 @@ MIP.registerVueCustomElement('mip-complevel2', {
     num: Number
   },
   mounted () {
+    MIP.watch('loading', function (newVal) {
+      console.log('watch loading ', newVal)
+    })
     MIP.watch('a', function (newVal) {
-      console.log(newVal)
       MIP.setData({
         loading: false
+        // a: +newVal + 1
       })
-      console.log(MIP.getData('loading'))
+      console.log('watch a:', newVal, ',set {loading:', MIP.getData('loading'), '}')
     })
-    MIP.watch('loading', function (newVal) {
-      console.log(MIP.getData('loading'))
-    })
+    // MIP.watch('loading', function (newVal) {
+    //   console.log('watch loading ', newVal)
+    // })
+    // MIP.watch('loading', function (newVal) {
+    //   console.log('watch loading ', newVal)
+    // }, {immediate: true})
   }
 })

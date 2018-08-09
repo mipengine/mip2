@@ -1,20 +1,45 @@
 /**
  * @file observer.js
- * @author huanghuiquan (huanghuiquan@baidu.com)
+ * @author qiusiqi (qiusiqi@baidu.com)
  */
 
 import Deps from './deps'
 
 class Observer {
-  _walk (data, depMap) {
+  /*
+   * start to defineProperty
+   * @param {Object} data target to be defined
+   */
+  start (data) {
+    // supporting dependencies map
+    this.depMap = this.depMap || {}
+    for (let key in data) {
+      this.depMap[key] = JSON.parse(JSON.stringify(data[key]))
+    }
+    this.walk(data, this.depMap)
+  }
+
+  /*
+   * to traverse
+   * @param {Object} data target to be defined
+   * @param {Object} depMap supporting dependencies map
+   */
+  walk (data, depMap) {
     if (typeof data !== 'object' || typeof depMap !== 'object') {
       return
     }
 
-    Object.keys(data).forEach(key => this._define(data, key, data[key], depMap))
+    Object.keys(data).forEach(key => this.define(data, key, data[key], depMap))
   }
 
-  _define (data, key, value, depMap) {
+  /*
+   * to define
+   * @param {Object} data target to be defined
+   * @param {string} key key
+   * @param {*} value value
+   * @param {Object} depMap supporting dependencies map
+   */
+  define (data, key, value, depMap) {
     if (typeof depMap[key] === 'undefined') {
       return
     }
@@ -23,7 +48,7 @@ class Observer {
     let deep = value && typeof value === 'object'
     // if value is object, define it's value
     if (deep) {
-      this._walk(value, depMap[key])
+      this.walk(value, depMap[key])
     }
 
     let property = Object.getOwnPropertyDescriptor(data, key)
@@ -70,7 +95,7 @@ class Observer {
         } else {
           value = newVal
         }
-        me._walk(newVal, depMap[key])
+        me.walk(newVal, depMap[key])
         if (depMap[key]._deps && typeof newVal !== 'object') {
           depMap[key] = depMap[key]._deps
         } else if (depMap[key].isDep && typeof newVal === 'object') {
@@ -79,14 +104,6 @@ class Observer {
         deps.notify(key)
       }
     })
-  }
-
-  start (data) {
-    this._depMap = this._depMap || {}
-    for (let key in data) {
-      this._depMap[key] = JSON.parse(JSON.stringify(data[key]))
-    }
-    this._walk(data, this._depMap)
   }
 }
 
