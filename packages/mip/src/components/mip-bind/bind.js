@@ -302,7 +302,7 @@ function assign (oldData, newData) {
 }
 /*
  * data inherit
-* @param {Object} oldObj oldObj
+ * @param {Object} oldObj oldObj
  * @param {Object} newObj newObj
  */
 function setProto (oldObj, newObj) {
@@ -321,7 +321,7 @@ function isSelfParent (win) {
   return page.isRootPage || /* istanbul ignore next */ page.isCrossOrigin
 }
 /*
- * get the unique global data store under rootpage
+ * get the unique global data stored under rootpage
  * @param {Object} win window
  */
 function getGlobalData (win) {

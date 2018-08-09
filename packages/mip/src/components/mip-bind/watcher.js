@@ -20,7 +20,7 @@ let uid = 0
 
 class Watcher {
   /*
-   * constructor
+   * @constructor
    * params {NODE} node DOM NODE
    * params {Object} data pageData
    * params {string} dir directive
