@@ -497,11 +497,11 @@ class MipShell extends CustomElement {
     /**
      * priority of header.title:
      * 1. <a mip-link data-title> (to.meta.title)
-     * 2. <mip-shell> route.meta.header.title (findMetaById(id).header.title)
+     * 2. <mip-shell> targetPageMeta.header.title (findMetaById(id).header.title)
      * 3. <a mip-link></a> innerText (to.meta.defaultTitle)
      */
     let targetPageMeta = fn.extend(true, {}, this.findMetaByPageId(targetPageId))
-    document.title = targetPageMeta.header.title = to.meta.title || targetPageMeta.header.title || to.meta.defaultTitle
+    document.title = targetPageMeta.header.title = to.meta.header.title || targetPageMeta.header.title || to.meta.header.defaultTitle
 
     // Transition direction
     let isForward
