@@ -39,6 +39,7 @@ describe('page.util', function () {
 
   describe('ease-scroll', function () {
     let spy
+    this.timeout(3000)
 
     afterEach(function () {
       if (spy && spy.restore) {

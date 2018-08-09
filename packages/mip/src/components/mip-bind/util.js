@@ -34,15 +34,23 @@ export function arrayToObject (arr) {
   return obj
 }
 
+/*
+ * parse class binding
+ * @param {Object|Array} classSpecs new classObject
+ * @param {Object|Array} oldSpecs old classObject
+ */
 export function parseClass (classSpecs, oldSpecs = {}) {
   if (typeof classSpecs === 'string') {
+    // reset old classes
     Object.keys(oldSpecs).forEach(k => {
       oldSpecs[k] = false
     })
+    // set new classes
     return Object.assign({}, oldSpecs, {
       [classSpecs]: true
     })
   }
+  // parse Object only
   if (isArray(classSpecs)) {
     classSpecs = arrayToObject(classSpecs)
   }
@@ -56,9 +64,14 @@ export function parseClass (classSpecs, oldSpecs = {}) {
   return newClasses
 }
 
+/*
+ * parse style binding
+ * @param {Object|Array} styleSpecs new styleObject
+ */
 export function parseStyle (styleSpecs) {
   let styles = {}
 
+  // parse Object only
   if (isArray(styleSpecs)) {
     styleSpecs.forEach(styleObj => {
       styles = Object.assign(styles, parseStyle(styleObj))
@@ -90,7 +103,10 @@ export function parseStyle (styleSpecs) {
   return styles
 }
 
-// autoprefixer
+/*
+ * autoprefixer
+ * @param {string} prop css prop needed to be prefixed
+ */
 export function normalize (prop) {
   emptyStyle = emptyStyle || document.createElement('div').style
   prop = prop.replace(/-(\w)/g, (_, c) => (c ? c.toUpperCase() : /* istanbul ignore next */ ''))
@@ -145,7 +161,7 @@ export function getter (ctx, exp) {
 
 export function getWithResult (exp) {
   exp = namespaced(exp) || ''
-  let matches = exp.match(/this\.[\w\d-._]+/gmi)
+  let matches = exp.match(/(this\.[\w\d-._]+|this\['[\w\d-._]+'\])/gmi)
   let read = ''
   if (matches && matches.length) {
     matches.forEach(function (e) {
@@ -238,14 +254,14 @@ export function namespaced (str) {
     let i = findChar(str, pointer, true)
     // not key of an obj or string warpped by quotes - vars
     if (i >= str.length || !/['`:]/.test(str[i])) {
-      newExp += 'this.' + match[0]
+      newExp += wrap(match[0])
     } else if (str[i] === ':') {
       i = findChar(str, index - 1, false)
       // tell if conditional operator ?:
       if (i < 0 || str[i] !== '?') {
         newExp += match[0]
       } else {
-        newExp += 'this.' + match[0]
+        newExp += wrap(match[0])
       }
     } else {
       newExp += match[0]
@@ -254,6 +270,13 @@ export function namespaced (str) {
   newExp += str.substr(pointer)
 
   return newExp
+}
+
+function wrap (exp) {
+  if (/-/.test(exp)) {
+    return `this['${exp}']`
+  }
+  return `this.${exp}`
 }
 
 function findChar (str, i, forward) {

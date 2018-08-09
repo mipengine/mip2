@@ -92,6 +92,6 @@
   },
   "dependencies": {
     "document-register-element": "^1.8.1",
-    "mip-sandbox": "^1.0.21"
+    "mip-sandbox": "^1.0.22"
   }
 }
