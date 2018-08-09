@@ -142,7 +142,7 @@ export default {
   setScrollTop (top) {
     if (setterElement) {
       setterElement.style.top = top + 'px'
-      setterElement.scrollIntoView(true)
+      setTimeout(() => setterElement.scrollIntoView(true), 0)
     } else {
       this.scrollingElement.scrollTop = top
     }
