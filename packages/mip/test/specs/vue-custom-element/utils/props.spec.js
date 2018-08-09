@@ -11,7 +11,7 @@ import {
   convertAttributeValue
 } from 'src/vue-custom-element/utils/props.js'
 
-describe.only('vue-custom-element/utils/props', function () {
+describe('vue-custom-element/utils/props', function () {
   describe('.getProps', function () {
     it('basic types', function () {
       expect(getProps({
