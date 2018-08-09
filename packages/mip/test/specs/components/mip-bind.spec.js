@@ -207,19 +207,27 @@ describe('mip-bind', function () {
     it('should shift data to a different type and still trace', function () {
       MIP.setData({
         global: {
-          data: 7,
           isGlobal: {
             bool: true
+          }
+        }
+      })
+      MIP.setData({
+        global: {
+          isGlobal: {
+            bool: false
           }
         }
       })
 
       MIP.setData({
         global: {
-          data: 8,
-          isGlobal: {
-            bool: false
-          }
+          data: 7
+        }
+      })
+      MIP.setData({
+        global: {
+          data: 8
         }
       })
 
@@ -249,6 +257,63 @@ describe('mip-bind', function () {
       })).to.throw(/setData method MUST NOT accept object that contains functions/)
 
       expect(MIP.getData('loading')).to.be.true
+    })
+  })
+
+  describe('watch', function () {
+    it('should run watchers after all data was set', function () {
+      let loadingChanged = false
+      MIP.$set({
+        'data_key': 0,
+        'w-loading': false
+      })
+      MIP.watch('data_key', function () {
+        MIP.setData({
+          'w-loading': false
+        })
+      })
+      MIP.watch('w-loading', function () {
+        loadingChanged = true
+      })
+
+      MIP.setData({
+        'data_key': 1,
+        'w-loading': true
+      })
+      expect(loadingChanged).to.be.false
+    })
+
+    it('should run watcher after all data was set according to order', function () {
+      let res = ''
+      MIP.$set({
+        'data_key2': 0,
+        'w-loading2': 'false'
+      })
+      MIP.watch('w-loading2', function (val) {
+        res += val
+      })
+      MIP.watch('data_key2', function () {
+        MIP.setData({
+          'w-loading2': false
+        })
+      })
+
+      MIP.setData({
+        'data_key2': 1,
+        'w-loading2': true
+      })
+      expect(res).to.equal('truefalse')
+    })
+
+    it('should avoid infinit update with custom watcher', function () {
+      MIP.$set({
+        'infinite_a': 0
+      })
+      MIP.watch('infinite_a', function (newVal) {
+        MIP.setData({'infinite_a': +newVal + 1})
+      })
+      MIP.setData({'infinite_a': 1})
+      // [MIP warn]:You may have an infinite update loop
     })
   })
 
