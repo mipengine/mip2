@@ -1,5 +1,5 @@
 /**
- * @file mip-complevel2
+ * @file mip-mask
  * @author sfe
  */
 /* global MIP */
@@ -15,6 +15,6 @@ MIP.registerVueCustomElement('mip-mask', {
     // console.log('mounted   ', this.loading)
   },
   updated () {
-    console.log(this.loading)
+    console.log('mip-mask updated:loading', this.loading)
   }
 })
