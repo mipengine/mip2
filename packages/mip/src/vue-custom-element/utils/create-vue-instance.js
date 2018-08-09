@@ -3,7 +3,7 @@
  * @author sfe
  */
 
-import {getPropsData, reactiveProps} from './props'
+import {getPropsData} from './props'
 import {toArray} from './helpers'
 import {customEmit} from '../../util/custom-event'
 import viewer from '../../viewer'
@@ -86,8 +86,6 @@ export default function createVueInstance (
       )
     }
   }
-
-  reactiveProps(element, props)
 
   return new Vue(rootElement)
 }

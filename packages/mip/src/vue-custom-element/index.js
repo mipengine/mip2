@@ -72,7 +72,14 @@ function install (Vue) {
         if (this.vueInstance) {
           const nameCamelCase = camelize(name)
           const type = this.props.types[nameCamelCase]
-          this.vueInstance[nameCamelCase] = convertAttributeValue(value, type)
+
+          if (name in this.element.attrValues) {
+            this.vueInstance[nameCamelCase] = this.element.attrValues[name]
+            // delete 该属性，避免干扰正常的修改 attribute 值触发 props 改变
+            delete this.element.attrValues[name]
+          } else {
+            this.vueInstance[nameCamelCase] = convertAttributeValue(value, type)
+          }
         }
       }
 

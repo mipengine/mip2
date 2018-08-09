@@ -10,7 +10,7 @@ import viewer from 'src/viewer'
 
 describe('vue-custom-element/utils/create-vue-instance', function () {
   describe('.createVueInstance', function () {
-    it('return vue instance', function (done) {
+    it('return vue instance', function () {
       let element = document.createElement('div')
       let component = {
         props: {
@@ -33,13 +33,6 @@ describe('vue-custom-element/utils/create-vue-instance', function () {
 
       expect(vm instanceof Vue).to.be.true
       expect(element.innerHTML).to.be.equal('<div>inner HTML</div>')
-
-      // reactive prop
-      element.name = 'haha'
-      vm.$nextTick(() => {
-        expect(element.innerHTML).to.be.equal('<div>haha</div>')
-        done()
-      })
     })
 
     it('slot', function () {
