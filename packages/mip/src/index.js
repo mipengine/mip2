@@ -106,7 +106,8 @@ let mip = {
     // MipShell 应该删除，不符合命名
     MipShell,
     MIPShell: MipShell
-  }
+  },
+  Vue
 }
 
 window.MIP = mip
