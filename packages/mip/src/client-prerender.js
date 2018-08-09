@@ -8,14 +8,10 @@ import util from './util'
 let parsePrender = ele => {
   let prerender = ele.getAttribute('prerender')
 
-  if (prerender === '' || prerender === 'true' || prerender === 'prerender') {
-    return true
-  } else {
-    return false
-  }
+  return prerender != null && prerender !== 'false'
 }
 
-class ClientPrerender {
+export default class ClientPrerender {
   constructor () {
     // 预渲染环境标记
     this.prerender = false
@@ -51,5 +47,3 @@ class ClientPrerender {
     }
   }
 }
-
-export default new ClientPrerender()
