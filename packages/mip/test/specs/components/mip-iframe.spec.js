@@ -18,7 +18,7 @@ describe('mip-iframe', function () {
   let iframe
 
   describe('iframe with default width and attrs', function () {
-    this.timeout(1000)
+    this.timeout(1200)
     before(function () {
       mipIframe = document.createElement('mip-iframe')
       mipIframe.setAttribute('srcdoc', '<p>Hello MIP!</p>')
