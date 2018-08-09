@@ -104,28 +104,6 @@ export function getProps (componentDefinition = {}) {
   return props
 }
 
-// If we get DOM node of element we could use it like this:
-// document.querySelector('widget-vue1').prop1 < --get prop
-// document.querySelector('widget-vue1').prop1 = 'new Value' < --set prop
-export function reactiveProps (element, props) {
-  // Handle param attributes
-  props.camelCase.forEach((name, index) => {
-    Object.defineProperty(element, name, {
-      get () {
-        if (element.customElement && element.customElement.vm) {
-          return element.customElement.vm[name]
-        }
-      },
-      set (value) {
-        let vm = element.customElement && element.customElement.vm
-        if (vm) {
-          vm[name] = value
-        }
-      }
-    })
-  })
-}
-
 // In root Vue instance we should initialize props as 'propsData'.
 export function getPropsData (element, componentDefinition, props) {
   let propsData = componentDefinition.propsData || {}
@@ -149,10 +127,12 @@ export function getPropsData (element, componentDefinition, props) {
     let propCamelCase = props.camelCase[index]
     let attrValue = element.getAttribute(name)
 
-    if (attrValue !== null) {
+    if (element.attrValues && name in element.attrValues) {
+      propsData[propCamelCase] = element.attrValues[name]
+      // delete 该属性，避免干扰正常的修改 attribute 值触发 props 改变
+      delete element.attrValues[name]
+    } else if (attrValue !== null) {
       propsData[propCamelCase] = convertAttributeValue(attrValue, props.types[propCamelCase])
-    } else if (propCamelCase in element) {
-      propsData[propCamelCase] = element[propCamelCase]
     }
   })
 

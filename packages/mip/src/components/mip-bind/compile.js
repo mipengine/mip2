@@ -180,6 +180,13 @@ class Compile {
         shouldRm && node.removeAttribute(directive)
       }
     } else {
+      // 存储 m-bind 的数据，不直接挂到 node 属性下，避免污染 node 属性
+      if (!node.attrValues) {
+        // key 和 属性名一致
+        node.attrValues = {}
+      }
+      node.attrValues[attr] = newVal
+
       if (typeof newVal === 'object') {
         newVal = JSON.stringify(newVal)
       }
