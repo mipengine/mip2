@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 /**
  * @file Hash Function. Support hash get function
  * @author zhangzhiqiang(zhiqiangzhang37@163.com)
@@ -6,7 +7,6 @@
 /* global top screen location */
 
 import event from './util/dom/event'
-import css from './util/dom/css'
 import Gesture from './util/gesture/index'
 import platform from './util/platform'
 import EventAction from './util/event-action'
@@ -70,17 +70,14 @@ let viewer = {
     // start rendering page
     this.page.start()
 
+    // notify internal performance module
+    this.isShow = true
+    this._showTiming = Date.now()
+    this.trigger('show', this._showTiming)
+
     // move <mip-fixed> to second <body>. see fixed-element.js
     this.fixedElement = fixedElement
     fixedElement.init()
-
-    // Only send at first time
-    if (win.MIP.viewer.page.isRootPage) {
-      this.sendMessage('mippageload', {
-        time: Date.now(),
-        title: encodeURIComponent(document.title)
-      })
-    }
 
     // proxy <a mip-link>
     this._proxyLink(this.page)
@@ -99,13 +96,16 @@ let viewer = {
    * Show contents of page. The contents will not be displayed until the components are registered.
    */
   show () {
-    css(document.body, {
-      opacity: 1,
-      animation: 'none'
-    })
-    this.isShow = true
-    this._showTiming = Date.now()
-    this.trigger('show', this._showTiming)
+    // Job complete! Hide the loading spinner
+    document.body.setAttribute('mip-ready', '')
+
+    // notify SF hide its loading
+    if (win.MIP.viewer.page.isRootPage) {
+      this.sendMessage('mippageload', {
+        time: Date.now(),
+        title: encodeURIComponent(document.title)
+      })
+    }
   },
 
   /**
@@ -139,7 +139,6 @@ let viewer = {
     let eventAction = this.eventAction = new EventAction()
     if (hasTouch) {
       // In mobile phone, bind Gesture-tap which listen to touchstart/touchend event
-      // istanbul ignore next
       this._gesture.on('tap', event => {
         eventAction.execute('tap', event.target, event)
       })
@@ -154,7 +153,6 @@ let viewer = {
       eventAction.execute('click', event.target, event)
     }, false)
 
-    // istanbul ignore next
     event.delegate(document, 'input', 'change', event => {
       eventAction.execute('change', event.target, event)
     })
@@ -189,8 +187,7 @@ let viewer = {
    * @param {boolean} options.replace If true, use `history.replace` instead of `history.push`. Defaults to `false`
    * @param {Object} options.state Target page info
    */
-  /* istanbul ignore next */
-  open (to, {isMipLink = true, replace = false, state} = {}) {
+  open (to, {isMipLink = true, replace = false, state, cacheFirst} = {}) {
     if (!state) {
       state = {click: undefined, title: undefined, defaultTitle: undefined}
     }
@@ -209,8 +206,15 @@ let viewer = {
     // Jump in top window directly
     // 1. Cross origin and NOT in SF
     // 2. Not MIP page and not only hash change
-    if ((this._isCrossOrigin(to) && window.MIP.standalone) ||
-      (!isMipLink && !isHashInCurrentPage)) {
+    if ((this._isCrossOrigin(to) && window.MIP.standalone)) {
+      if (replace) {
+        window.top.location.replace(to)
+      } else {
+        window.top.location.href = to
+      }
+      return
+    }
+    if (!isMipLink && !isHashInCurrentPage) {
       window.top.location.href = to
       return
     }
@@ -239,6 +243,7 @@ let viewer = {
       // Reload page even if it's already existed
       targetRoute.meta = {
         reload: true,
+        cacheFirst,
         header: {
           title: pushMessage.state.title,
           defaultTitle: pushMessage.state.defaultTitle
@@ -274,7 +279,6 @@ let viewer = {
    * @private
    */
   viewportScroll () {
-    /* istanbul ignore next */
     let self = this
     let dist = 0
     let direct = 0
@@ -292,7 +296,6 @@ let viewer = {
     function pagemove (e) {
       scrollTop = viewport.getScrollTop()
       scrollHeight = viewport.getScrollHeight()
-      /* istanbul ignore next */
       if (scrollTop > 0 && scrollTop < scrollHeight) {
         if (lastScrollTop < scrollTop) {
           // down
@@ -341,6 +344,7 @@ let viewer = {
       let to = $a.href
       let isMipLink = $a.hasAttribute('mip-link') || $a.getAttribute('data-type') === 'mip'
       let replace = $a.hasAttribute('replace')
+      let cacheFirst = $a.hasAttribute('cache-first')
       let state = self._getMipLinkData.call($a)
 
       /**
@@ -355,7 +359,7 @@ let viewer = {
         return
       }
 
-      self.open(to, {isMipLink, replace, state})
+      self.open(to, {isMipLink, replace, state, cacheFirst})
 
       event.preventDefault()
     }, false)
@@ -380,14 +384,12 @@ let viewer = {
   handleBrowserQuirks () {
     // add normal scroll class to body. except ios in iframe.
     // Patch for ios+iframe is default in mip.css
-    /* istanbul ignore next */
     if (!platform.needSpecialScroll) {
       document.documentElement.classList.add('mip-i-android-scroll')
       document.body.classList.add('mip-i-android-scroll')
     }
 
     // prevent bouncy scroll in iOS 7 & 8
-    /* istanbul ignore next */
     if (platform.isIos()) {
       let iosVersion = platform.getOsVersion()
       iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
@@ -408,7 +410,8 @@ let viewer = {
         // So we are forced to load the page in iphone 5s UC
         // and iOS 9 safari.
         let needBackReload = (iosVersion === '8' && platform.isUc() && screen.width === 320) ||
-          (iosVersion === '9' && platform.isSafari())
+          (iosVersion === '9' && platform.isSafari()) ||
+          (iosVersion === '10' && platform.isSafari())
         if (needBackReload) {
           window.addEventListener('pageshow', e => {
             if (e.persisted) {
@@ -424,7 +427,6 @@ let viewer = {
      * trigger layout to solve a strange bug in Android Superframe,
      * which will make page unscrollable
      */
-    /* istanbul ignore next */
     if (platform.isAndroid()) {
       setTimeout(() => {
         document.documentElement.classList.add('trigger-layout')
@@ -432,12 +434,10 @@ let viewer = {
       })
     }
 
-    /* istanbul ignore next */
     if (this.isIframed) {
       this.viewportScroll()
     }
 
-    /* istanbul ignore next */
     this.fixSoftKeyboard()
   },
 
@@ -448,16 +448,11 @@ let viewer = {
    * https://github.com/mipengine/mip2/issues/19
    */
   fixIOSPageFreeze () {
-    /* istanbul ignore next */
     let $style = document.createElement('style')
-    /* istanbul ignore next */
     let $head = document.head || document.getElementsByTagName('head')[0]
-    /* istanbul ignore next */
     $style.setAttribute('mip-bouncy-scrolling', '')
-    /* istanbul ignore next */
     $style.textContent = '* {-webkit-overflow-scrolling: auto!important;}'
 
-    /* istanbul ignore next */
     if (!platform.isSafari() && !platform.isChrome()) {
       window.addEventListener(CUSTOM_EVENT_SHOW_PAGE, (e) => {
         try {
@@ -476,14 +471,12 @@ let viewer = {
    * https://github.com/mipengine/mip2/issues/38
    */
   fixSoftKeyboard () {
-    /* istanbul ignore next */
     // reset iframe's height when input focus/blur
     event.delegate(document, 'input', 'focus', event => {
       this.page.notifyRootPage({
         type: MESSAGE_PAGE_RESIZE
       })
     }, true)
-    /* istanbul ignore next */
     event.delegate(document, 'input', 'blur', event => {
       this.page.notifyRootPage({
         type: MESSAGE_PAGE_RESIZE
@@ -498,7 +491,6 @@ let viewer = {
    * http://blog.christoffer.online/2015-06-10-six-things-i-learnt-about-ios-rubberband-overflow-scrolling/
    */
   lockBodyScroll () {
-    /* istanbul ignore next */
     viewport.on('scroll', () => {
       let scrollTop = viewport.getScrollTop()
       let totalScroll = viewport.getScrollHeight()
@@ -510,11 +502,8 @@ let viewer = {
     }, eventListenerOptions)
 
     // scroll 1px
-    /* istanbul ignore next */
     document.documentElement.classList.add('trigger-layout')
-    /* istanbul ignore next */
     document.body.classList.add('trigger-layout')
-    /* istanbul ignore next */
     viewport.setScrollTop(1)
   },
 

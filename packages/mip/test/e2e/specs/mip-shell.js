@@ -11,7 +11,7 @@
 
 module.exports = {
   'open index.html and click `More` button': function (browser) {
-    const INDEX_PAGE_URL = `${browser.globals.devServerURL}/examples/page/index.html`
+    const INDEX_PAGE_URL = `${browser.globals.devServerURL}/test/e2e/cases/index.html`
 
     browser
       // open index.html

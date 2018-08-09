@@ -3,12 +3,26 @@
  * @author huanghuiquan(huanghuiquan@baidu.com)
  */
 
-/* globals describe, it, expect */
+/* globals describe, it, expect, sinon */
 
 import MIP from 'src/index'
 
 describe('MIP', function () {
+  let prefix = 'mip-index-'
+
   it('should expose MIP.registerVueCustomElement', function () {
+    let name = prefix + 'vue-element'
+    let created = sinon.spy()
+
+    MIP.registerVueCustomElement(name, {
+      created
+    })
+
+    let ele = document.createElement(name)
+    document.body.appendChild(ele)
+    document.body.removeChild(ele)
+
+    sinon.assert.calledOnce(created)
     expect(MIP.registerVueCustomElement).to.be.a('function')
   })
 

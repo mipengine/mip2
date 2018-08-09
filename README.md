@@ -10,9 +10,9 @@
     <a href='https://coveralls.io/github/mipengine/mip2'>
         <img src='https://coveralls.io/repos/github/mipengine/mip2/badge.svg?branch=master' title='Coverage Status' alt='Coverage Status' />
     </a>
-	<a href='https://opensource.org/licenses/MIT'>
-		<img src='https://img.shields.io/github/license/mipengine/mip2.svg'  title='license' alt='license'>
-	</a>
+    <a href='https://opensource.org/licenses/MIT'>
+        <img src='https://img.shields.io/github/license/mipengine/mip2.svg'  title='license' alt='license'>
+    </a>
 </p>
 
 # MIP 2
@@ -37,4 +37,3 @@ $ npx eslint filename.js
 ```
 
 > **注意**: 这里 `eslint-config-standard` 作为 eslint 的规范配置引入, 在 `.eslintrc.json` 的 extends 配置项中使用，不需要安装 standard 工具，编辑器也不需要安装 standard 插件，只需要安装 eslint 的代码检查插件即可。
-

@@ -5,7 +5,7 @@
 
 import {getPropsData, reactiveProps} from './props'
 import {toArray} from './helpers'
-import {customEmit} from './custom-event'
+import {customEmit} from '../../util/custom-event'
 import viewer from '../../viewer'
 
 /**
@@ -23,9 +23,17 @@ function getNodeSlots (element) {
   return nodeSlots
 }
 
+/**
+ * Create new Vue instance
+ *
+ * @param {HTMLElement} element
+ * @param {Vue} Vue
+ * @param {Object} componentDefinition
+ * @param {Object} props
+ */
 export default function createVueInstance (
   element,
-  {Vue},
+  Vue,
   componentDefinition,
   props
 ) {

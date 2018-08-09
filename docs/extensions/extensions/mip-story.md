@@ -4,7 +4,7 @@
 
 `<mip-story>` 具有三个基本概念：段落（view），层（layer）和元素（element）。
 
-![](../../assets/intro-view-layer-element.jpg)
+![](./images/intro-view-layer-element.jpg)
 
 - 每个小故事可以包含多个段落（view），每个段落充满屏幕。用户操作翻页后，会看到下一个段落。
 - 每个段落又可以包含多个层（layer），单个层可以设置布局模式，如多行布局，左右布局，图片拉伸布局等。

@@ -4,7 +4,7 @@
 
 ## 视口尺寸信息
 
-**getHeight**
+### getHeight
 - 参数：无
 - 返回值：数值
 - 用法：
@@ -14,7 +14,7 @@
   let height = MIP.viewport.getHeight() // 640
   ```
 
-**getWidth**
+### getWidth
 - 参数：无
 - 返回值：数值
 - 用法：
@@ -24,7 +24,7 @@
   let width = MIP.viewport.getWidth() // 320
   ```
 
-**getRect**
+### getRect
 - 参数：无
 - 返回值：Rect 对象
 - 用法：
@@ -40,7 +40,7 @@
 
 ## 视口滚动信息
 
-**getScrollHeight**
+### getScrollHeight
 - 参数：无
 - 返回值：数值
 - 用法：
@@ -50,7 +50,7 @@
   let scrollHeight = MIP.viewport.getScrollHeight() // 2000
   ```
 
-**getScrollTop**
+### getScrollTop
 - 参数：无
 - 返回值：数值
 - 用法：
@@ -60,7 +60,7 @@
   let scrollTop = MIP.viewport.getScrollTop() // 100
   ```
 
-**setScrollTop**
+### setScrollTop
 - 参数：数值，垂直滚动距离
 - 返回值：无
 - 用法：
@@ -75,7 +75,7 @@
 除了直接获取视口相关信息，监听视口的改变事件，做出相应操作也是一个常见的需求。
 为此，viewport 在滚动过程以及自身尺寸发生改变时，会触发相应的事件，自定义组件可以监听这些事件，做出相应操作。
 
-**scroll**
+### scroll
 - 用法：
   监听 `scroll` 事件，在处理函数中可以使用 `getScrollTop` 获取当前的滚动距离。
 
@@ -86,7 +86,7 @@
   })
   ```
 
-**resize**
+### resize
 - 用法：
   监听 `resize` 事件，在处理函数中可以使用 `getWidth` 获取视口当前宽度。
 

@@ -11,7 +11,7 @@ window.MIP.util.fn
 
 ## 方法
 
-**throttle**
+### throttle
 
 - 参数：
   - {Function} fn 需要节流的函数
@@ -33,7 +33,7 @@ window.MIP.util.fn
   window.addEventListener('resize', fn)
   ```
 
-**values**
+### values _[deprecated]_
 
 - 参数：
   - {Object} obj
@@ -45,6 +45,10 @@ window.MIP.util.fn
 
 - 用法：
 
+  > info
+  >
+  > 请用 `Object.values` 代替
+
   获取 Object 的所有 value，和 `Object.values` 的效果一样
 
   ```javascript
@@ -52,7 +56,7 @@ window.MIP.util.fn
   MIP.util.fn.values({a: 1, b: 2})
   ```
 
-**isPlainObject**
+### isPlainObject
 
 - 参数：
   - {Object} obj
@@ -71,7 +75,7 @@ window.MIP.util.fn
   MIP.util.fn.isPlainObject(1)
   ```
 
-**extend**
+### extend _[deprecated]_
 
 - 参数：
   - {Object} target 目标 Object
@@ -82,6 +86,10 @@ window.MIP.util.fn
 
 - 用法：
 
+  > info
+  >
+  > 请用 `Object.assign` 代替
+
   效果和 Object.assign 一样，把源 Object 的 key-value pairs 复制到目标 Object 中，优先级递增，如果 key 有重复，会进行覆盖
 
   此函数有副作用，目标 Object 会被修改
@@ -91,7 +99,7 @@ window.MIP.util.fn
   MIP.util.fn.extend({a: 1}, {a: 2, b: 2})
   ```
 
-**pick**
+### pick
 
 - 参数:
   - {Object} obj 目标 Object
@@ -104,7 +112,7 @@ window.MIP.util.fn
 
 - 用法：
 
-  从目标 Object 中根据 keys 数组挑选出一些值，做成新的 Object，并返回，此函数没有副作用
+  从目标 Object 中根据 keys 数组挑选出一些值，组成新的 Object，并返回，此函数没有副作用
 
   ```javascript
   let source = {a: 1, b: 2, c: 3}
@@ -112,7 +120,7 @@ window.MIP.util.fn
   MIP.util.fn.pick(source, ['a', 'c'])
   ```
 
-**isString**
+### isString
 
 - 参数：
   - {string} string
@@ -131,7 +139,7 @@ window.MIP.util.fn
   MIP.util.fn.isString(1)
   ```
 
-**del**
+### del
 
 - 参数：
   - {Object} obj 目标 Object
@@ -146,7 +154,7 @@ window.MIP.util.fn
   MIP.util.fn.del(dest, 'b')
   ```
 
-**hasTouch**
+### hasTouch
 
 - 返回值
 

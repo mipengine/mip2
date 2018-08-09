@@ -4,8 +4,8 @@
 
     ```html
     <html>
-        <head></head>
-        <body></body>
+      <head></head>
+      <body></body>
     </html>
     ```
 
@@ -17,10 +17,10 @@
 
     ```html
     <body>
-        <!-- DOM or MIP Component -->
-        <script type="text/javascript" src="https://somecdn/mip.js"></script>
-        <script type="text/javascript" src="https://somecdn/mip-component-a.js"></script>
-        <script type="text/javascript" src="https://somecdn/mip-component-b.js"></script>
+      <!-- DOM or MIP Component -->
+      <script type="text/javascript" src="https://somecdn/mip.js"></script>
+      <script type="text/javascript" src="https://somecdn/mip-component-a.js"></script>
+      <script type="text/javascript" src="https://somecdn/mip-component-b.js"></script>
     </body>
     ```
 
@@ -45,6 +45,6 @@
 
     5. 默认情况下点击链接后会向 History 中 `push` 一条记录。如果想覆盖当前记录，可以在 `<a>` 元素上增加 `replace` 属性。
 
-    6. 通过 `data-title` 和 `innerHTML` 可以设置下一个页面的标题。(详情可见 [MIP Shell 相关章节](./5-mip-shell.md))
+    6. 通过 `data-title` 和 `innerHTML` 可以设置下一个页面的标题。(详情可见 [MIP Shell 相关章节](./mip-shell.md))
 
 4. 页面内元素的样式中 `z-index` 不能超过 10000，否则会引起页面切换时的样式遮盖问题。

@@ -55,6 +55,7 @@ let pageMeta
 let pageMetaConfirmed = false
 try {
   pageMeta = JSON.parse(window.name)
+  /* istanbul ignore next */
   pageMetaConfirmed = true
 } catch (e) {
   pageMeta = {
@@ -66,6 +67,7 @@ try {
 
 // 当前是否是独立站
 let standalone
+/* istanbul ignore if */
 if (pageMetaConfirmed) {
   standalone = pageMeta.standalone
 } else {
@@ -74,12 +76,14 @@ if (pageMetaConfirmed) {
       !viewer.isIframed ||
       typeof window.top.MIP !== 'undefined'
   } catch (e) {
+    /* istanbul ignore next */
     standalone = false
   }
   pageMeta.standalone = standalone
 }
 let extensions = window.MIP || []
 
+/* istanbul ignore next */
 function push (extension) {
   extensions.push(extension)
 }
@@ -130,6 +134,7 @@ util.dom.waitDocumentReady(() => {
   let mipTagReg = /mip-/i
 
   // Apply layout for default-hidden elements.
+  /* istanbul ignore next */
   hiddenElements.forEach(element => element.tagName.search(mipTagReg) > -1 && layout.applyLayout(element))
 
   // register buildin components

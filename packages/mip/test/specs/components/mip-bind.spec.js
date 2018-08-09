@@ -4,7 +4,7 @@
  */
 
 /* eslint-disable no-unused-expressions */
-/* globals describe, before, it, expect, MIP, after */
+/* globals describe, before, it, expect, MIP, after, sinon */
 
 describe('mip-bind', function () {
   let eleText
@@ -17,6 +17,8 @@ describe('mip-bind', function () {
     document.body.removeChild(eleBind)
     document.body.removeChild(eleObject)
     document.body.removeChild(iframe)
+    window.g = null
+    window.m = null
   })
 
   describe('init data', function () {
@@ -149,6 +151,8 @@ describe('mip-bind', function () {
     })
 
     it('should change global data correctly', function () {
+      let $set = sinon.spy(MIP, '$set')
+
       MIP.setData({
         '#global': {
           data: {
@@ -170,6 +174,7 @@ describe('mip-bind', function () {
       })
       expect(eleBind.getAttribute('data-active')).to.equal('false')
       expect(window.m.title).to.equal('changed')
+      sinon.assert.calledThrice($set)
     })
 
     it('should have watched the change of isGlobal and do cb', function () {
@@ -257,6 +262,7 @@ describe('mip-bind', function () {
       eles.push(createEle('p', ['class', '[{ loading: loading }, errorClass]'], 'bind'))
       eles.push(createEle('p', ['class', 'classText'], 'bind'))
       eles.push(createEle('p', ['class', `[loading ? loadingClass : '', errorClass]`], 'bind'))
+      eles.push(createEle('p', ['class', `{hide: tab!=='nav'}`], 'bind'))
       // some normal style bindings
       eles.push(createEle('p', ['style', 'styleObject'], 'bind'))
       eles.push(createEle('p', ['style', `{ display: ['-webkit-box', '-ms-flexbox', 'flex'] }`], 'bind'))
@@ -285,6 +291,10 @@ describe('mip-bind', function () {
         },
         fontSize: 12.5
       })
+
+      MIP.$set({
+        tab: 'nav'
+      })
     })
 
     it('should set class', function () {
@@ -292,15 +302,21 @@ describe('mip-bind', function () {
       expect(eles[1].getAttribute('class')).to.equal('m-error')
       expect(eles[2].getAttribute('class')).to.equal('class-text')
       expect(eles[3].getAttribute('class')).to.equal('m-error')
+      expect(eles[4].getAttribute('class')).to.be.empty
+
+      MIP.setData({
+        tab: 'test'
+      })
+      expect(eles[4].getAttribute('class')).to.equal('hide')
     })
 
     it('should set style', function () {
-      expect(eles[4].getAttribute('style')).to.equal('font-size:12px;-webkit-margin-before:1em;')
-      expect(eles[5].getAttribute('style')).to.equal('display:flex;')
-      expect(eles[6].getAttribute('style')).to.equal('font-size:13px;')
-      expect(eles[7].getAttribute('style')).to.equal('font-size:12.5px;')
-      expect(eles[8].getAttribute('style')).to.equal('color:red;font-size:12px;-webkit-margin-before:1em;')
-      expect(eles[9].getAttribute('style')).to.equal('border:2px;')
+      expect(eles[5].getAttribute('style')).to.equal('font-size:12px;-webkit-margin-before:1em;')
+      expect(eles[6].getAttribute('style')).to.equal('display:flex;')
+      expect(eles[7].getAttribute('style')).to.equal('font-size:13px;')
+      expect(eles[8].getAttribute('style')).to.equal('font-size:12.5px;')
+      expect(eles[9].getAttribute('style')).to.equal('color:red;font-size:12px;-webkit-margin-before:1em;')
+      expect(eles[10].getAttribute('style')).to.equal('border:2px;')
     })
 
     it('should update class', function () {
@@ -328,10 +344,10 @@ describe('mip-bind', function () {
         fontSize: 12.4
       })
 
-      expect(eles[4].getAttribute('style')).to.equal('font-size:16px;-webkit-margin-before:1em;width:50%;')
-      expect(eles[6].getAttribute('style')).to.equal('font-size:11.4px;')
-      expect(eles[7].getAttribute('style')).to.equal('font-size:12.4px;')
-      expect(eles[8].getAttribute('style')).to.equal('color:red;font-size:16px;-webkit-margin-before:1em;width:50%;')
+      expect(eles[5].getAttribute('style')).to.equal('font-size:16px;-webkit-margin-before:1em;width:50%;')
+      expect(eles[7].getAttribute('style')).to.equal('font-size:11.4px;')
+      expect(eles[8].getAttribute('style')).to.equal('font-size:12.4px;')
+      expect(eles[9].getAttribute('style')).to.equal('color:red;font-size:16px;-webkit-margin-before:1em;width:50%;')
     })
 
     after(function () {

@@ -34,7 +34,7 @@ class FixedElement {
      * @private
      * @type {boolean}
      */
-    this._isAndroidUc = platform.isUc() && !platform.isIos()
+    this._isAndroidUc = platform.isUc() && /* istanbul ignore next */!platform.isIos()
 
     /**
      * @private
@@ -71,9 +71,12 @@ class FixedElement {
             parentNode.appendChild(node)
           }
         }
-        this.moveToFixedLayer(fixedElem, i)
+        if (!fixedElem.element.hasAttribute('still')) {
+          this.moveToFixedLayer(fixedElem, i)
+        }
       }
     }
+    /* istanbul ignore if */
     if (isIframed) {
       this.doCustomElements()
     }
@@ -101,7 +104,7 @@ class FixedElement {
       if (fType === 'left' && !top && !bottom ||
             fType === 'gototop' && ele.firstElementChild.tagName.toLowerCase() !== 'mip-gototop' ||
             ele.tagName.toLowerCase() !== 'mip-semi-fixed' && ele.tagName.toLowerCase() !== 'mip-fixed') {
-        ele.parentElement.removeChild(ele)
+        ele.parentElement && ele.parentElement.removeChild(ele)
         continue
       }
       /* eslint-enable */
@@ -198,6 +201,7 @@ class FixedElement {
     if (element.parentElement === this._fixedLayer) {
       return
     }
+    /* istanbul ignore else */
     if (!fixedEle.placeholder) {
       css(element, {
         'pointer-events': 'initial'
@@ -216,6 +220,7 @@ class FixedElement {
    */
   doCustomElements () {
     let stylesheets = document.styleSheets
+    /* istanbul ignore if */
     if (!stylesheets) {
       return
     }
@@ -223,6 +228,7 @@ class FixedElement {
     // let fixedSelectors = [];
     for (let i = 0; i < stylesheets.length; i++) {
       let stylesheet = stylesheets[i]
+      /* istanbul ignore if */
       if (stylesheet.disabled || !stylesheet.ownerNode ||
                 stylesheet.ownerNode.tagName !== 'STYLE' ||
                 stylesheet.ownerNode.hasAttribute('mip-extension')) {
@@ -253,18 +259,20 @@ class FixedElement {
                * in `development` mode, CSS isn't extracted
                * and will be inserted in runtime, which will be removed by this func.
                */
+              /* istanbul ignore next */
               if (process.env.NODE_ENV === 'production') {
                 elements[j].parentElement.removeChild(elements[j])
               }
             }
           } catch (e) {
+            /* istanbul ignore next */
             console.warn('Cannot find the selector of custom fixed elements')
           }
         }
       } else if (rType === 4) {
         // CSSMediaRule
         this._findFixedSelectors(cssRule.cssRules)
-      } else if (rType === 12) {
+      }/* istanbul ignore next */ else if (rType === 12) {
         // CSSSupportsRule
         this._findFixedSelectors(cssRule.cssRules)
       }
@@ -323,6 +331,7 @@ class FixedElement {
    * @param {HTMLElement} layer layer
    */
   showFixedLayer (layer) {
+    /* istanbul ignore else */
     if (layer) {
       css(layer, {
         display: 'block'
@@ -336,6 +345,7 @@ class FixedElement {
    * @param {HTMLElement} layer layer
    */
   hideFixedLayer (layer) {
+    /* istanbul ignore else */
     if (layer) {
       css(layer, {
         display: 'none'

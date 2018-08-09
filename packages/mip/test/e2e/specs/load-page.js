@@ -8,7 +8,7 @@ module.exports = {
     const devServer = browser.globals.devServerURL
 
     browser
-      .url(devServer + '/examples/page/index.html')
+      .url(devServer + '/test/e2e/cases/index.html')
       .assert.title('MIP Index Page')
       .waitForElementVisible('.main-image', 2000)
   },

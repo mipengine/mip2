@@ -5,20 +5,24 @@
       "key": "basic"
     },
     {
-      "name": "MIP 组件开发",
-      "key": "mip-cli"
+      "name": "开发规范",
+      "key": "mip-standard"
     },
     {
       "name": "MIP 组件机制",
       "key": "component"
     },
     {
+      "name": "MIP 组件开发",
+      "key": "mip-cli"
+    },
+    {
       "name": "进阶教程",
       "key": "mip-advanced"
     },
     {
-      "name": "开发规范",
-      "key": "mip-standard"
+      "name": "MIP 源码解析",
+      "key": "mip-source-interpretation"
     },
     {
       "name": "可交互 MIP",
@@ -31,10 +35,6 @@
     {
       "name": "MIP 搜索生效",
       "key": "mip-in-search"
-    },
-    {
-      "name": "MIP 源码解析",
-      "key": "mip-source-interpretation"
     }
   ]
 }

@@ -20,18 +20,18 @@
 
 ```html
 <html>
-    <head></head>
-    <body>
-        <mip-shell>
-            <script type="application/json">
-                {
-                    key: value
-                }
-            </script>
-        </mip-shell>
+  <head></head>
+  <body>
+    <mip-shell>
+      <script type="application/json">
+        {
+            key: value
+        }
+      </script>
+    </mip-shell>
 
-        <!-- mip script -->
-    </body>
+    <!-- mip script -->
+  </body>
 </html>
 ```
 
@@ -47,23 +47,23 @@
 ```html
 <!-- 常见错误1：直接在mip-shell 标签中写 JSON -->
 <body>
-    <mip-shell>{key: value}</mip-shell>
+  <mip-shell>{key: value}</mip-shell>
 </body>
 
 <!-- 常见错误2：没有给 script 标签设置 type -->
 <body>
-    <mip-shell>
-        <script>{key: value}</script>
-    </mip-shell>
+  <mip-shell>
+    <script>{key: value}</script>
+  </mip-shell>
 </body>
 
 <!-- 常见错误3：mip-shell 嵌套在其他标签内部 -->
 <body>
-    <div class=”wrapper”>
-        <mip-shell>
-            <script type=”application/json”>{key: value}</script>
-        </mip-shell>
-    </div>
+  <div class=”wrapper”>
+    <mip-shell>
+      <script type=”application/json”>{key: value}</script>
+    </mip-shell>
+  </div>
 </body>
 
 ```
@@ -80,16 +80,16 @@ Shell 最基本的配置中必须包含 `routes` 数组。其中的每个元素�
 
 ```json
 {
-    "routes": [
-        {
-            "pattern": "/index.html",
-            "meta": {...}
-        },
-        {
-            "pattern": "*",
-            "meta": {...}
-        }
-    ]
+  "routes": [
+    {
+      "pattern": "/index.html",
+      "meta": {...}
+    },
+    {
+      "pattern": "*",
+      "meta": {...}
+    }
+  ]
 }
 ```
 

@@ -146,7 +146,7 @@ describe('mip-carousel', function () {
       document.body.appendChild(div)
     })
 
-    it('should autoplay', function () {
+    it('should autoplay', function (done) {
       let wrapBox = div.querySelector('.mip-carousel-wrapper')
       setTimeout(() => {
         expect(wrapBox.style.transform).to.equal('translate3d(-200px, 0px, 0px)')
@@ -560,7 +560,7 @@ describe('mip-carousel', function () {
     it('should go to last img by clicking preBtn', function (done) {
       eventClick.initEvent('click', true, true)
       preBtn.dispatchEvent(eventClick)
-      
+
       setTimeout(function () {
         expect(wrapBox.style.transform).to.equal('translate3d(-300px, 0px, 0px)')
         done()
@@ -620,6 +620,78 @@ describe('mip-carousel', function () {
 
       setTimeout(function () {
         expect(wrapBox.style.transform).to.equal('translate3d(-100px, 0px, 0px)')
+        done()
+      }, 330)
+    })
+
+    after(function () {
+      document.body.removeChild(div)
+    })
+  })
+
+  describe('with index and switchTo API', function () {
+    let div
+    let wrapBox
+    let indicatorDom
+    let dotsDom
+    let eventClick = document.createEvent('MouseEvents')
+    this.timeout(1000)
+
+    before(function () {
+      div = document.createElement('div')
+      div.innerHTML = `
+        <mip-carousel
+          id="carousel"
+          autoplay
+          defer="1000"
+          width="100"
+          height="80"
+          indicator
+          indicatorId="mip-carousel-example5"
+          buttonController
+          index="2"
+        >
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_01.jpg">
+          </mip-img>
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_02.jpg">
+          </mip-img>
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_03.jpg">
+          </mip-img>
+        </mip-carousel>
+        <div class="mip-carousel-indicator-wrapper">
+          <div class="mip-carousel-indicatorDot" id="mip-carousel-example5">
+            <div class="mip-carousel-activeitem mip-carousel-indecator-item"></div>
+            <div class="mip-carousel-indecator-item"></div>
+            <div class="mip-carousel-indecator-item"></div>
+          </div>
+        </div>
+        <div class="mip-carousel-switchBtn" on="tap:carousel.go(3)">
+          <p>跳转到第<span>3</span>页</p>
+        </div>
+      `
+      document.body.appendChild(div)
+    })
+
+    it('should start from index img', function () {
+      wrapBox = div.querySelector('div.mip-carousel-wrapper')
+      expect(wrapBox.style.transform).to.equal('translate3d(-200px, 0px, 0px)')
+
+      indicatorDom = div.querySelector('#mip-carousel-example5')
+      dotsDom = indicatorDom.querySelectorAll('.mip-carousel-indecator-item')
+      expect(dotsDom.length).to.equal(3)
+      expect(dotsDom[1].classList.contains('mip-carousel-activeitem')).to.be.true
+    })
+
+    it('should switch to certain img when emit tap event', function (done) {
+      let switchBtn = div.querySelector('div.mip-carousel-switchBtn')
+      eventClick.initEvent('click', true, true)
+      switchBtn.dispatchEvent(eventClick)
+
+      setTimeout(function () {
+        expect(wrapBox.style.transform).to.equal('translate3d(-300px, 0px, 0px)')
         done()
       }, 330)
     })

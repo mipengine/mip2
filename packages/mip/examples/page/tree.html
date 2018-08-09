@@ -127,23 +127,19 @@
         <input type="text">
     </p>
 
-    <mip-page-tree></mip-page-tree>
-
     <p>This is Page#2, using different component (mip-tree)</p>
 
 
     <a class="link" href="http://eason.baidu.com:8080/examples/page/index.html" mip-link>Back to Index (Cross Origin)</a>
     <a class="link" href="./index.html" mip-link>Back to Index</a>
-    <a class="link page-back" onclick="window.MIP.viewer.page.back()">page.back()</a>
+    <a class="link" href="./index.html" mip-link cache-first>Back to Index (Cache First)</a>
     <a class="link" href="./data.html" mip-link>Go to Data</a>
     <div id="broadcast" class="link">Broadcast</div>
-    <a class="link" href="https://m.baidu.com">Go to Baidu</a>
 
 
 
     <script src="../../dist/mip.js"></script>
     <script src="./components/mip-tree.js"></script>
-    <script src="./components/mip-page-tree.js"></script>
     <script>
         window.addEventListener('myEvent', e => {
             console.log('receive myEvent in tree.html', e)

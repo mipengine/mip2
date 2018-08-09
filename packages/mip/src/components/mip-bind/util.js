@@ -137,16 +137,50 @@ export function objectToStyle (obj) {
   return styles
 }
 
+export function getter (ctx, exp) {
+  let fn = getWithResult.bind(ctx, exp)
+  let get = fn.call(ctx.data)
+  return get.call(ctx.data, ctx.data)
+}
+
 export function getWithResult (exp) {
-  exp = namespaced(exp)
+  exp = namespaced(exp) || ''
+  let matches = exp.match(/this\.[\w\d-._]+/gmi)
+  let read = ''
+  if (matches && matches.length) {
+    matches.forEach(function (e) {
+      read += `;typeof ${e} === 'undefined' && (hadReadAll = false)`
+    })
+  }
   let func
   try {
-    func = new Function(`with(this){try {return ${exp}} catch(e) {}}`) // eslint-disable-line
+    /* eslint-disable */
+    func = new Function(`
+      with (this) {
+        try {
+          var hadReadAll = true
+          ${read}
+          return {
+            value: ${exp},
+            hadReadAll: hadReadAll
+          }
+        } catch (e) {
+          return {}
+        }
+      }
+    `)
+    /* eslint-enable */
   } catch (e) {
     /* istanbul ignore next */
-    func = () => ''
+    func = () => ({})
   }
   return func
+}
+
+export function setter (ctx, exp, value) {
+  let fn = setWithResult.bind(ctx, exp, value)
+  let set = fn.call(ctx.data)
+  set.call(ctx.data)
 }
 
 export function setWithResult (exp, value) {

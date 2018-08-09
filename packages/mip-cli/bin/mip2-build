@@ -13,7 +13,8 @@ cli.setup({
     ['-d, --dir <value>', '项目文件夹路径'],
     ['-o, --output <value>', '编译代码输出路径'],
     ['-c, --clean', '构建前先清空输出目录'],
-    ['-i, --ignore [value]', '忽略沙盒注入或校验，可选参数为 -i, -i sandbox, -i whitelist, -i sandbox,whitelist']
+    ['-i, --ignore [value]', '忽略沙盒注入或校验，可选参数为 -i, -i sandbox, -i whitelist, -i sandbox,whitelist'],
+    ['-e, --env <value>', 'NODE_ENV 环境变量，默认为 "production"', 'production']
   ],
   help: [
     '',
@@ -30,7 +31,19 @@ if (fs.existsSync(configPath)) {
   defaultConfig = require(configPath)
 }
 
-const conf = Object.assign(defaultConfig.build || {}, cli.program)
+// FIX ME
+const conf = Object.assign(
+  defaultConfig.build || {},
+  {
+    cliConfigPath: configPath,
+    asset: cli.program.asset,
+    dir: cli.program.dir,
+    output: cli.program.output,
+    clean: cli.program.clean,
+    ignore: cli.program.ignore,
+    env: cli.program.env
+  }
+)
 
 if (conf.ignore === true) {
   conf.ignore = 'sandbox'
@@ -42,7 +55,8 @@ if (conf.ignore && /(^|,)whitelist(,|$)/.test(conf.ignore)) {
   validator.whitelist(conf.dir).then(reporter => {
     if (reporter.errors.length) {
       cli.error(reporter.errors[0].message)
-      process.exit(1)
+      // 先把白名单校验过程改成非中断式的
+      // process.exit(1)
     }
   })
   .then(() => build(conf))
