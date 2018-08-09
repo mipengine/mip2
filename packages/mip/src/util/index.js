@@ -120,7 +120,7 @@ export function getOriginalUrl (url) {
  */
 export function isCacheUrl (pageUrl) {
   return /mipcache.bdstatic.com/.test(pageUrl) ||
-    /^(\/\/|http:\/\/|https:\/\/).*.mipcdn.com\/(stati)?c\//.test(pageUrl)
+    /^(\/\/|http:\/\/|https:\/\/)[^.]+.mipcdn.com\/(stati)?c\//.test(pageUrl)
 }
 
 export default {
