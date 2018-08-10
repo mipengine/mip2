@@ -36,4 +36,4 @@ MIP 开发工具还提供了页面规范的校验工具，来帮助开发者快�
 	> 代码规范需通过才能申请合入哦！
 
 
-如果要继续深入学习自定义组件的开发，开发者可以继续后续的[自定义组件开发的学习](../component-development/introduction.md)
+如果要继续深入学习自定义组件的开发，开发者可以继续后续的[如何开发自定义组件](../component-development/introduction.md)
