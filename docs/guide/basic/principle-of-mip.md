@@ -9,7 +9,7 @@
 JavaScript 引用原则：
 
 - 目前 MIP 不允许用户自定义 JavaScript ，需要用 MIP 组件的形式引进来，从而确保安全性和性能表现。
-- 可以引用 [`<mip-iframe>组件`](../extensions/builtin/mip-iframe.md) 来引入实现部分富交互的功能，这样，即使开发时使用最影响性能的 `document.write()` ，也不会影响主页面的渲染。
+- 可以引用 [`<mip-iframe>组件`](../../extensions/builtin/mip-iframe.md) 来引入实现部分富交互的功能，这样，即使开发时使用最影响性能的 `document.write()` ，也不会影响主页面的渲染。
 - MIP 组件是开源的，允许开发者自定义功能组件，项目也将持续提供多样的组件，以适应不同的需求。
 
 ## 所有静态资源需要标明尺寸
