@@ -74,7 +74,7 @@ MIP-Cache 常规更新机制也是页面最常规、最常用的更新机制。�
 - 图片缓存时间为10天。
 - MIP-JS 组件文件的缓存时间为10分钟。
 
-在当前文件过期后，MIP-Cache 会重新抓取资源。如果是 HTML 页面，MIP-Cache 还会对页面文件进行 [MIP 规范校验](https://www.mipengine.org/validator/preview)。如果此时页面内容不再符合 [MIP 规范](https://www.mipengine.org/doc/2-tech/2-validate-mip.html)，MIP-Cache 就不再缓存这个页面了。这样，所有 MIP-Cache 中的页面都是最新的，并且符合 MIP 规范。
+在当前文件过期后，MIP-Cache 会重新抓取资源。如果是 HTML 页面，MIP-Cache 还会对页面文件进行 [MIP 规范校验](https://www.mipengine.org/validator/preview)。如果此时页面内容不再符合 [MIP 规范](./mip-html-spec.md)，MIP-Cache 就不再缓存这个页面了。这样，所有 MIP-Cache 中的页面都是最新的，并且符合 MIP 规范。
 
 ### 2. MIP-Cache 快速更新机制
 
