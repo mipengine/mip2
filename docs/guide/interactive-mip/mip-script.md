@@ -156,7 +156,11 @@ https://www.npmjs.com/package/mip-sandbox#%E4%B8%A5%E6%A0%BC%E6%A8%A1%E5%BC%8F%E
 
 ### src
 
-说明：script 文件地址	  
+说明：script 文件地址	
+
 必选项：否 
+
 格式：字符串
+
 默认值：无
+
