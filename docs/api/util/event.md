@@ -41,7 +41,7 @@ window.MIP.util.event
   undelegate()
   ```
 
-### createEvent
+### create
 
 - 参数
   - {string} type Event name
@@ -57,7 +57,7 @@ window.MIP.util.event
   创建了 `event` 对象，`event.data = data`
 
   ```javascript
-  MIP.util.event.createEvent('click', data)
+  MIP.util.event.create('click', data)
   ```
 
 
