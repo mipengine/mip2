@@ -130,7 +130,7 @@ MIP（Mobile Instant Pages - 移动网页加速器）主要用于移动端页面
 
 在一个合法的 MIP 页面中，所有的交互通过引入 MIP 组件实现。MIP 组件可以理解为封装了 JS 的自定义 HTML 标签。上一步中的 `<mip-img>` 也是一个 MIP 组件，[点击这里](../../extensions/index.md) 查看更多组件。
 
-我们以分享组件为例，根据[分享组件文档](../../extensions/extentions/mip-share.md)，组件对应的 HTML 标签为 `<mip-share>` ，需要依赖 <https://c.mipcdn.com/static/v2/mip-share/mip-share.js> 脚本，用在页面里就是这样：
+我们以分享组件为例，根据[分享组件文档](../../extensions/extensions/mip-share.md)，组件对应的 HTML 标签为 `<mip-share>` ，需要依赖 <https://c.mipcdn.com/static/v2/mip-share/mip-share.js> 脚本，用在页面里就是这样：
 
 ```html
 <!DOCTYPE html>
