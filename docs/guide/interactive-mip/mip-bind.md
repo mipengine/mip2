@@ -85,6 +85,42 @@ MIP 中的 `mip-bind` 机制提供了两个指令给开发者用于在 HTML 元�
 >**注意：**
 >如果通过 `m-bind` 绑定的数据为空值，即 "" 时，则删除当前元素的该属性 attrs。
 
+### .sync 修饰符
+在有些情况下，我们可能需要对一个 prop 进行"双向绑定"。这里的双向绑定是指，开发者通过 `m-bind:prop="prop-x"` 语法将 `prop-x` 对应的值传入组件后，组件内部如果有 `this.prop = 'another-value'` 的操作，修改了组件内 `prop` 的值，需要同时把值同步到 `prop-x`。 从前面的介绍我们知道，普通的 `m-bind` 只用于绑定元素的属性信息，是做不到这样的"双向绑定"的。
+
+在此我们提供一个 `.sync` 修饰符跟 `m-bind` 配合使用：
+```html
+<mip-data>
+  <script type="application/json">
+    {
+      "title": "Hello World"
+    }
+  </script>
+</mip-data>
+<mip-element m-bind:msg.sync="title"></mip-element>
+```
+
+```javascript
+<template>
+  <p @click="change">{{ msg }}</p>
+</template>
+
+<script>
+export default {
+  props: {
+    msg: String
+  },
+  methods: {
+    change() {
+      this.msg = 'Hello from element inside'
+    }
+  }
+}
+</script>
+```
+
+这样，MIP 会默认为绑定的属性加上用于更新的 `on` 监听器，以实现"双向绑定"的需求。
+
 ## 绑定指令 `m-text`
 绑定元素 `textContent`。具体格式为 `m-text="value"`，即：将元素的 `textContent` 设置为 `value` 的值，同样 `value` 为数据源中的属性名，多层数据可以以 `.` 连接，如：
 
