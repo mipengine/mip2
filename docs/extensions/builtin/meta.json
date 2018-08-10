@@ -1,0 +1,28 @@
+{
+  "menu": [
+    {
+      "key": "mip-bind",
+      "preview": false
+    },
+    {
+      "key": "mip-carousel"
+    },
+    {
+      "key": "mip-iframe"
+    },
+    {
+      "key": "mip-img"
+    },
+    {
+      "key": "mip-pix",
+      "preview": false
+    },
+    {
+      "key": "mip-shell",
+      "preview": false
+    },
+    {
+      "key": "mip-video"
+    }
+  ]
+}
