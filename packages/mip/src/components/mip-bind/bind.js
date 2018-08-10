@@ -181,7 +181,7 @@ class Bind {
     }
 
     this.watcherIds.push(watcherId)
-    new Watcher(null, this.win.m, '', `Watch:${target}`, false, cb) // eslint-disable-line no-new
+    new Watcher(null, this.win.m, '', `Watch:${target}`, cb) // eslint-disable-line no-new
   }
 
   /*

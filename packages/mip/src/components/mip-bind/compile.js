@@ -77,7 +77,7 @@ class Compile {
 
   /*
    * compile directive that meet spec: m-text/m-bind
-   * @param {DOM.ELEMENT} node node
+   * @param {HTMLElement} node node
    * @param {string} directive m-xx directive
    * @param {string} exp expression to calculate value that needs to be bound
    */
@@ -107,7 +107,7 @@ class Compile {
       }
 
       isSync = fnName.slice(-5) === '.sync'
-      attrName = attrName.replace('.sync', '')
+      attrName = attrName.replace(/.sync$/, '')
       fnName = 'bind'
     }
     !data && (data = me.getMVal(node, attrName, expression))
@@ -116,7 +116,7 @@ class Compile {
         node,
         attrName,
         data,
-        expression: expression.replace(/(Class|Style):/, ''),
+        expression: expression.replace(/^(Class|Style):/, ''),
         shouldRm,
         isSync
       })
@@ -124,12 +124,11 @@ class Compile {
 
     this.listenerFormElement(node, directive, expression)
     /* eslint-disable */
-    new Watcher(node, me.data, attrName, expression, isSync, function (attr, newVal, isSync) {
+    new Watcher(node, me.data, attrName, expression, function (attr, newVal) {
       me[fnName] && me[fnName]({
         node,
         attrName: attr,
-        data: newVal,
-        isSync
+        data: newVal
       })
     })
     /* eslint-enable */
@@ -137,7 +136,7 @@ class Compile {
 
   /*
    * add eventlistener of form element
-   * @param {DOM.ELEMENT} node node
+   * @param {HTMLElement} node node
    * @param {string} directive m-xx directive
    * @param {string} exp expression to calculate value that needs to be bound
    */
@@ -157,16 +156,16 @@ class Compile {
 
   /*
    * directive m-text
-   * @param {NODE} node DOM NODE
+   * @param {HTMLElement} node DOM NODE
    * @param {*} data value to set as node.textContent
    */
-  text ({node, attrName, data}) {
+  text ({node, data}) {
     node.textContent = data
   }
 
   /*
    * directive m-bind
-   * @param {NODE} node DOM NODE
+   * @param {HTMLElement} node DOM NODE
    * @param {string} attrName directive
    * @param {*} data value to bind
    * @param {string} expression expression for binding value
@@ -232,7 +231,7 @@ class Compile {
 
   /*
    * to get value
-   * @param {DOM.ELEMENT} node node
+   * @param {HTMLElement} node node
    * @param {string} attrName attribute
    * @param {string} exp expression to calculate value that needs to be bound
    */

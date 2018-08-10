@@ -25,15 +25,13 @@ class Watcher {
    * @param {Object} data pageData
    * @param {string} attr attribute
    * @param {string} exp expression
-   * @param {string} isSync two-way binding
    * @param {Function} cb watcher callback
    */
-  constructor (node, data, attr, exp, isSync, cb) {
+  constructor (node, data, attr, exp, cb) {
     this.node = node
     this.data = data
     this.attr = attr
     this.exp = exp
-    this.isSync = isSync
     this.cb = cb
     this.id = uid++
     this.depIds = {}
@@ -54,6 +52,7 @@ class Watcher {
    * scheduler to update
    */
   update () {
+    // lock=true means don't flush watchers immediatly
     if (lock) {
       const id = this.id
       if (has[id] != null) {
