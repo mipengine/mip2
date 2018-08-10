@@ -119,7 +119,7 @@
 
 与 Vue 不同的是，当在一个自定义组件上使用 class 属性或 `m-bind:class` 绑定 class 属性时，这些类将 **不会** 被添加到该组件的根元素上面，只会被添加到自定义标签上。
 
-假如开发者有一个自定义组件 mip-a，如：
+假如开发者有一个自定义组件 mip-a，内部实现如下：
 ```javascript
 <template>
   <div class="mip-a-root"></div>

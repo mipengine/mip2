@@ -700,4 +700,60 @@ describe('mip-carousel', function () {
       document.body.removeChild(div)
     })
   })
+  // 图片又可能因为不在 viewport 所以一直没加载，所以又要放到 body 的最前面，时间不能设置太短，可能真的没加载
+  describe('with lazy loading', function () {
+    let div
+    this.timeout(2000)
+
+    before(function () {
+      div = document.createElement('div')
+      div.innerHTML = `
+        <mip-carousel
+          buttonController
+          width="100"
+          height="80"
+          index="1">
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_01.jpg">
+          </mip-img>
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_02.jpg">
+          </mip-img>
+          <mip-img
+            src="https://www.mipengine.org/static/img/P2x1_457e18b.jpg">
+          </mip-img>
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_03.jpg">
+          </mip-img>
+        </mip-carousel>
+      `
+      let theFirst = document.body.firstChild
+      document.body.insertBefore(div, theFirst)
+    })
+    // 一定要挑一张图片上面的代码都没用到过，并且不能在第一张和最后一张
+    it('should not load picture samplePX', function (done) {
+      setTimeout(() => {
+        let mipImg = div.querySelectorAll('mip-img')[3]
+        let img = mipImg.querySelector('img')
+        expect(img.getAttribute('src')).to.not.equal('https://www.mipengine.org/static/img/P2x1_457e18b.jpg')
+        done()
+      }, 500);
+    })
+    it('should load picture samplePX when swiping', function (done) {
+      let eventClick = document.createEvent('MouseEvents')
+      let nextBtn = div.querySelector('p.mip-carousel-nextBtn')
+      eventClick.initEvent('click', true, true)
+      nextBtn.dispatchEvent(eventClick)
+
+      setTimeout(() => {
+        let img = div.querySelectorAll('mip-img')[3].querySelector('img')
+        expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/P2x1_457e18b.jpg')
+        done()
+      }, 1500);
+    })
+
+    after(function () {
+      document.body.removeChild(div)
+    })
+  })
 })

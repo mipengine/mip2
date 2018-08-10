@@ -186,6 +186,7 @@ let viewer = {
    * @param {boolean} options.isMipLink Whether targetUrl is a MIP page. If not, use `top.location.href`. Defaults to `true`
    * @param {boolean} options.replace If true, use `history.replace` instead of `history.push`. Defaults to `false`
    * @param {Object} options.state Target page info
+   * @param {Object} options.cacheFirst If true, use cached iframe when available
    */
   open (to, {isMipLink = true, replace = false, state, cacheFirst} = {}) {
     if (!state) {

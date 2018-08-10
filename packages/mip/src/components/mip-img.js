@@ -42,7 +42,10 @@ let imgRatio = {
 function getPopupImgPos (imgWidth, imgHeight) {
   let width = viewport.getWidth()
   let height = Math.round(width * imgHeight / imgWidth)
-  let top = (viewport.getHeight() - height) / 2
+  let viewportH = viewport.getHeight()
+  let top = viewportH > height
+    ? (viewportH - height) / 2
+    : 0
   return {
     width: width,
     height: height,
@@ -74,19 +77,21 @@ function getImgOffset (img) {
   let imgOffset = rect.getElementOffset(img)
   return imgOffset
 }
-
+/**
+ * 获取所有图片的 src
+ * @return {Array.<HTMLElement>} 返回修改的元素集
+ */
+function getImgsSrc () {
+  return [...document.querySelectorAll('mip-img')].filter(value => value.hasAttribute('popup')).map(value => value.getAttribute('src'))
+}
 // 创建弹层 dom
 function createPopup (element, img) {
-  let mipPopWrap = document.querySelector('.mip-img-popUp-wrapper')
-  if (!!mipPopWrap && mipPopWrap.getAttribute('data-name') === 'mip-img-popUp-name' &&
-        mipPopWrap.parentNode.tagName.toLowerCase() === 'body'
-  ) {
-    mipPopWrap.querySelector('img').setAttribute('src', img.src)
-    return mipPopWrap
-  }
+  // 获取图片数组
+  let imgsSrcArray = getImgsSrc()
+  let index = parseInt(element.getAttribute('index'), 10) || 0
 
   let popup = document.createElement('div')
-
+  css(popup, 'display', 'block')
   // 阻止纵向滑动
   new Gesture(popup, {
     preventY: true
@@ -96,23 +101,39 @@ function createPopup (element, img) {
 
   // 创建图片预览图层
   let popUpBg = document.createElement('div')
-  let innerImg = new Image()
+  // 创建多图预览 wrapper
+  let carouselWrapper = document.createElement('div')
+  // 计算 wrapper 窗口大小
+  let imgOffset = getImgOffset(img)
+  let PopupImgPos = getPopupImgPos(imgOffset.width, imgOffset.height)
+  css(carouselWrapper, {
+    'position': 'absolute'
+  })
+  css(carouselWrapper, PopupImgPos)
+  // 创建 mip-carousel
+  let carousel = document.createElement('mip-carousel')
 
+  carousel.setAttribute('layout', 'height-fixed')
+  carousel.setAttribute('index', index + 1)
+  carousel.setAttribute('width', PopupImgPos.width)
+  carousel.setAttribute('height', PopupImgPos.height)
+
+  for (let i = 0; i < imgsSrcArray.length; i++) {
+    let mipImg = document.createElement('mip-img')
+    mipImg.setAttribute('src', imgsSrcArray[i])
+    carousel.appendChild(mipImg)
+  }
   popUpBg.className = 'mip-img-popUp-bg'
-  innerImg.className = 'mip-img-popUp-innerimg'
-  innerImg.src = img.src
 
+  carouselWrapper.appendChild(carousel)
   popup.appendChild(popUpBg)
-  popup.appendChild(innerImg)
+  popup.appendChild(carouselWrapper)
   document.body.appendChild(popup)
 
   return popup
 }
 
 function bindPopup (element, img) {
-  let popup
-  let popupBg
-  let popupImg
   // 图片点击时展现图片
   img.addEventListener('click', function (event) {
     event.stopPropagation()
@@ -127,10 +148,11 @@ function bindPopup (element, img) {
       skipTransition: true,
       extraClass: 'black'
     })
+    let popup = createPopup(element, img)
+    let popupBg = popup.querySelector('.mip-img-popUp-bg')
+    let popupImg = popup.querySelector('mip-carousel')
 
-    popup = createPopup(element, img)
-    popupBg = popup.querySelector('.mip-img-popUp-bg')
-    popupImg = popup.querySelector('img')
+    let imgOffset = getImgOffset(img)
 
     popup.addEventListener('click', imagePop, false)
 
@@ -146,11 +168,10 @@ function bindPopup (element, img) {
       naboo.animate(popupImg, getImgOffset(img)).start(function () {
         css(img, 'visibility', 'visible')
         css(popup, 'display', 'none')
+        popup.removeEventListener('click', imagePop, false)
+        popup.remove()
       })
-      popup.removeEventListener('click', imagePop, false)
     }
-
-    let imgOffset = getImgOffset(img)
 
     let onResize = function () {
       imgOffset = getImgOffset(img)
@@ -160,8 +181,8 @@ function bindPopup (element, img) {
     window.addEventListener('resize', onResize)
 
     css(popupImg, imgOffset)
+    css(popupImg, 'position', 'fixed')
     css(popupBg, 'opacity', 1)
-    css(popup, 'display', 'block')
 
     naboo.animate(popupImg, getPopupImgPos(imgOffset.width, imgOffset.height)).start()
     css(img, 'visibility', 'hidden')
@@ -275,7 +296,10 @@ class MipImg extends CustomElement {
   firstInviewCallback () {
     let ele = this.element
     let img = new Image()
-
+    if (ele.hasAttribute('popup')) {
+      let allMipImg = [...document.querySelectorAll('mip-img')].filter(value => value.hasAttribute('popup'))
+      ele.setAttribute('index', allMipImg.indexOf(ele))
+    }
     if (this.placeholder) {
       img.classList.add('mip-img-loading')
     }

@@ -36,6 +36,13 @@ module.exports = [
     ]
   },
   {
+    test: /\.styl(us)?$/,
+    use: [
+      ...commonStyleLoaders,
+      require.resolve('stylus-loader')
+    ]
+  },
+  {
     test: /\.css$/,
     use: commonStyleLoaders
   }

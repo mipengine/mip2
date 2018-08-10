@@ -105,7 +105,7 @@ class Resources {
    */
   remove (element) {
     let id = element._eid || element
-    if (Number.isFinite(+id) && resources[this._rid][id]) {
+    if (isFinite(+id) && resources[this._rid][id]) {
       delete resources[this._rid][id]
       return true
     }

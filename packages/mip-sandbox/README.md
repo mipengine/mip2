@@ -283,7 +283,11 @@ var ORIGINAL = [
   'Uint32Array',
   'Uint8Array',
   'Uint8ClampedArray',
+  // 1.0.17 新增 WebSocket
+  'WebSocket',
   'WritableStream',
+  // issue https://github.com/mipengine/mip2/issues/62
+  'crypto',
   'clearInterval',
   'clearTimeout',
   'console',
@@ -321,7 +325,9 @@ var ORIGINAL = [
   'undefined',
   'unescape',
   // mip1 polyfill
-  'fetchJsonp'
+  'fetchJsonp',
+  // mip-data ready status
+  'mipDataPromises'
 ]
 
 var RESERVED = [
@@ -330,7 +336,9 @@ var RESERVED = [
   'module',
   'exports',
   'define',
-  'import'
+  'import',
+  // process.env.NODE_ENV
+  'process'
 ]
 
 ```
@@ -344,6 +352,8 @@ var RESERVED = [
 var WHITELIST_ORIGINAL = [
   ...ORIGINAL,
   ...RESERVED,
+  // https://github.com/mipengine/mip2/issues/143
+  'CustomEvent',
   'File',
   'FileList',
   'FileReader',
@@ -374,6 +384,8 @@ var WHITELIST_CUSTOM = [
     name: 'document',
     // document 允许使用以下属性或方法
     properties: [
+      // https://github.com/mipengine/mip2/issues/95
+      'domain',
       'head',
       'body',
       'title',
@@ -426,7 +438,9 @@ var WHITELIST_STRICT_CUSTOM = [
   {
     name: 'document',
     properties: [
-      'cookie'
+      'cookie',
+      // https://github.com/mipengine/mip2/issues/95
+      'domain'
     ]
   },
   // location 只放开读权限
@@ -454,7 +468,18 @@ var WHITELIST_STRICT_CUSTOM = [
       'setData',
       'viewPort',
       'util',
-      'sandbox'
+      'sandbox',
+      {
+        name: 'viewer',
+        access: 'readonly',
+        properties: [
+          'isIframed',
+          'sendMessage',
+          'open'
+        ]
+      },
+      // 'viewer',
+      'MIP_ROOT_PAGE'
     ]
   },
   // 严格模式下的 window 对象指向 MIP.sandbox.strict

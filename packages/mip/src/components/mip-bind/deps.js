@@ -1,6 +1,6 @@
 /**
- * @file deps.js
- * @author huanghuiquan (huanghuiquan@baidu.com)
+ * @file deps.js denpendency store
+ * @author qiusiqi (qiusiqi@baidu.com)
  */
 
 // Record watcher id, avoid add repeatly
@@ -17,11 +17,15 @@ class Deps {
     Deps.target.addWatcher(this)
   }
 
+  /*
+   * to notify and call callbacks of related watchers
+   * @param {string} key key to trigger notify
+   */
   notify (key) {
     this.subs.forEach(function (sub) {
-      if (sub._specWatcher === 'Watch' && sub._exp.match(new RegExp(`.?${key}\\[?\\d*\\]?$`))) {
+      if (sub.specWatcher === 'Watch' && sub.exp.match(new RegExp(`.?${key}\\[?\\d*\\]?$`))) {
         sub.update()
-      } else if (sub._specWatcher !== 'Watch') {
+      } else if (sub.specWatcher !== 'Watch') {
         sub.update()
       }
     })

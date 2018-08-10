@@ -173,6 +173,8 @@ var SANDBOX = {
   host: 'window',
   mount: 'MIP.sandbox',
   properties: ORIGINAL.concat([
+    // https://github.com/mipengine/mip2/issues/143
+    'CustomEvent',
     'File',
     'FileList',
     'FileReader',

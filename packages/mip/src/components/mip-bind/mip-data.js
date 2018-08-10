@@ -1,3 +1,8 @@
+/**
+ * @file customeELement mip-data
+ * @author qiusiqi (qiusiqi@baidu.com)
+ */
+
 /* global fetch */
 /* global MIP */
 /* global mipDataPromises */
@@ -15,19 +20,15 @@ class MipData extends CustomElement {
       this.getData(src)
     } else if (ele) {
       let data = ele.textContent.toString()
-      let result
-      try {
-        result = jsonParse(data)
-      } catch (e) {
-        /* istanbul ignore next */
-        console.error(e)
-      }
-      if (result) {
-        MIP.$set(result)
+      if (data) {
+        MIP.$set(jsonParse(data))
       }
     }
   }
 
+  /*
+   * get initial data asynchronouslly
+   */
   /* istanbul ignore next */
   getData (url) {
     if (!url) {
