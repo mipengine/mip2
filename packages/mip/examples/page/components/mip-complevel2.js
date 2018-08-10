@@ -36,6 +36,7 @@ MIP.registerVueCustomElement('mip-complevel2', {
     num: Number
   },
   mounted () {
+    this.msg = 'msg changed from inside'
     MIP.watch('loading', function (newVal) {
       console.log('watch loading ', newVal)
     })

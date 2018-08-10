@@ -237,7 +237,6 @@ describe('mip-bind', function () {
         }
       })
 
-
       expect(eleBind.getAttribute('data-active')).to.equal('{"bool":false}')
       expect(eleObject.getAttribute('data')).to.equal('8')
     })
@@ -325,6 +324,19 @@ describe('mip-bind', function () {
       })
       MIP.setData({'infinite_a': 1})
       // [MIP warn]:You may have an infinite update loop
+    })
+  })
+
+  describe('two-way binding', function () {
+    it('should compile .sync and pass identifier', function () {
+      let twoWay = createEle('p', ['msg', 'msg-title'], 'bind', true)
+      MIP.$set({
+        'msg-title': 'msg-title-init'
+      })
+      expect(twoWay.attrValues.msg).to.eql({
+        sync: 'msg-title',
+        val: 'msg-title-init'
+      })
     })
   })
 
@@ -516,10 +528,10 @@ describe('mip-bind', function () {
   })
 })
 
-function createEle (tag, props, key) {
+function createEle (tag, props, key, isSync) {
   let ele = document.createElement(tag)
   if (key === 'bind') {
-    ele.setAttribute(`m-bind${props[0] ? ':' + props[0] : ''}`, props[1])
+    ele.setAttribute(`m-bind${props[0] ? (':' + props[0] + (isSync ? '.sync' : '')) : ''}`, props[1])
   } else if (key === 'text') {
     ele.setAttribute(`m-text`, props)
   } else if (key === 'else') {

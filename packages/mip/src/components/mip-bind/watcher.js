@@ -21,17 +21,22 @@ let uid = 0
 class Watcher {
   /*
    * @constructor
-   * params {NODE} node DOM NODE
-   * params {Object} data pageData
-   * params {string} dir directive
-   * params {string} exp expression
-   * params {Function} cb watcher callback
+   * @param {NODE} node DOM NODE
+   * @param {Object} data pageData
+   * @param {string} attr attribute
+   * @param {string} exp expression
+   * @param {string} isSync two-way binding
+   * @param {Function} cb watcher callback
    */
-  constructor (node, data, dir, exp, cb) {
+  constructor (node, data, attr, exp, isSync, cb) {
+    this.node = node
     this.data = data
-    this.dir = dir
+    this.attr = attr
     this.exp = exp
+    this.isSync = isSync
+    this.cb = cb
     this.id = uid++
+    this.depIds = {}
     let specPrefix
     if ((specPrefix = exp.slice(0, 6)) === 'Class:' ||
       specPrefix === 'Style:' ||
@@ -40,11 +45,8 @@ class Watcher {
       this.specWatcher = specPrefix.slice(0, 5)
       this.exp = exp = exp.slice(6)
     }
-    this.node = node
-    this.depIds = {}
     let fn = util.getWithResult.bind(this, this.exp)
     this.getter = fn.call(this.data)
-    this.cb = cb
     this.value = this.get()
   }
 
@@ -82,8 +84,8 @@ class Watcher {
     let newVal = this.get(oldVal)
     if (newVal !== oldVal) {
       this.value = newVal
-      if (this.dir) {
-        this.cb.call(this.data, this.dir, newVal)
+      if (this.attr) {
+        this.cb.call(this.data, this.attr, newVal)
       } else {
         this.cb.call(this.data, newVal)
       }

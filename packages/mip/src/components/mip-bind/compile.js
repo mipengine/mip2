@@ -10,6 +10,8 @@ let VALUE = /^value$/
 let TAGNAMES = /^(input|textarea|select)$/i
 let ATTRS = /^(checked|selected|autofocus|controls|disabled|hidden|multiple|readonly)$/i
 
+/* global MIP */
+
 class Compile {
   constructor () {
     this.el = document.documentElement
@@ -81,15 +83,16 @@ class Compile {
    */
   compileDirective (node, directive, expression) {
     let me = this
-    let fnName = directive.name.slice(2)
-    let attrName = directive.name
+    let fnName = directive.name.slice(2) // example => bind:msg.sync
+    let attrName = directive.name // example => m-bind:msg.sync
     let data
     let shouldRm
+    let isSync = false
 
-    // if is m-bind directive, check if binding class/style
-    // compile these two spectially
+    // if is m-bind directive, check first
     if (/^bind:.*/.test(fnName)) {
-      let attr = fnName.slice(5)
+      let attr = fnName.substr(5, 5)
+      // if binding class/style compile these two spectially
       if (attr === 'class' || attr === 'style') {
         let attrKey = attr.charAt(0).toUpperCase() + attr.slice(1)
         try {
@@ -102,17 +105,32 @@ class Compile {
         }
         expression = `${attrKey}:${expression}`
       }
+
+      isSync = fnName.slice(-5) === '.sync'
+      attrName = attrName.replace('.sync', '')
       fnName = 'bind'
     }
     !data && (data = me.getMVal(node, attrName, expression))
     if (typeof data !== 'undefined') {
-      me[fnName] && me[fnName](node, attrName, data, shouldRm)
+      me[fnName] && me[fnName]({
+        node,
+        attrName,
+        data,
+        expression: expression.replace(/(Class|Style):/, ''),
+        shouldRm,
+        isSync
+      })
     }
 
     this.listenerFormElement(node, directive, expression)
     /* eslint-disable */
-    new Watcher(node, me.data, attrName, expression, function (dir, newVal) {
-      me[fnName] && me[fnName](node, dir, newVal)
+    new Watcher(node, me.data, attrName, expression, isSync, function (attr, newVal, isSync) {
+      me[fnName] && me[fnName]({
+        node,
+        attrName: attr,
+        data: newVal,
+        isSync
+      })
     })
     /* eslint-enable */
   }
@@ -139,63 +157,70 @@ class Compile {
 
   /*
    * directive m-text
-   * params {NODE} node DOM NODE
-   * params {string} newVal value to set as node.textContent
+   * @param {NODE} node DOM NODE
+   * @param {*} data value to set as node.textContent
    */
-  text (node, directive, newVal) {
-    node.textContent = newVal
+  text ({node, attrName, data}) {
+    node.textContent = data
   }
 
   /*
    * directive m-bind
-   * params {NODE} node DOM NODE
-   * params {string} directive directive
-   * params {string} newVal value to bind
-   * params {boolean} shouldRm tell if should remove directive
+   * @param {NODE} node DOM NODE
+   * @param {string} attrName directive
+   * @param {*} data value to bind
+   * @param {string} expression expression for binding value
+   * @param {boolean} shouldRm tell if should remove directive
+   * @param {boolean} isSync two-way binding
    */
-  bind (node, directive, newVal, shouldRm) {
+  bind ({
+    node, attrName, data,
+    expression, shouldRm = false, isSync = false
+  }) {
     let reg = /bind:(.*)/
-    let result = reg.exec(directive)
+    let result = reg.exec(attrName)
     if (!result) {
       return
     }
     let attr = result[1]
+
     /* istanbul ignore if */
     if (attr !== 'disabled' && node.disabled) {
       Object.assign(window.m, this.origin)
       return
     }
+
     if (attr === 'class') {
-      if (util.objNotEmpty(newVal)) {
-        Object.keys(newVal).forEach(k => node.classList.toggle(k, newVal[k]))
-        shouldRm && node.removeAttribute(directive)
+      if (util.objNotEmpty(data)) {
+        Object.keys(data).forEach(k => node.classList.toggle(k, data[k]))
+        shouldRm && node.removeAttribute(attrName)
       }
     } else if (attr === 'style') {
-      if (util.objNotEmpty(newVal)) {
+      if (util.objNotEmpty(data)) {
         let staticStyle = util.styleToObject(node.getAttribute(attr) || '')
-        Object.keys(newVal).forEach(styleAttr => {
-          staticStyle[styleAttr] = newVal[styleAttr]
+        Object.keys(data).forEach(styleAttr => {
+          staticStyle[styleAttr] = data[styleAttr]
         })
         node.setAttribute(attr, util.objectToStyle(staticStyle))
-        shouldRm && node.removeAttribute(directive)
+        shouldRm && node.removeAttribute(attrName)
       }
     } else {
-      // 存储 m-bind 的数据，不直接挂到 node 属性下，避免污染 node 属性
-      if (!node.attrValues) {
-        // key 和 属性名一致
-        node.attrValues = {}
+      // 存储 m-bind 的数据，不直接挂到 node 属性下，避免污染 node 属性，key 和 属性名一致
+      node.attrValues = node.attrValues || {}
+      node.attrValues[attr] = {
+        sync: isSync ? expression : '',
+        val: data
       }
-      node.attrValues[attr] = newVal
 
-      if (typeof newVal === 'object') {
-        newVal = JSON.stringify(newVal)
+      if (typeof data === 'object') {
+        data = JSON.stringify(data)
       }
-      newVal !== '' ? node.setAttribute(attr, newVal) : node.removeAttribute(attr)
+      data !== '' ? node.setAttribute(attr, data) : node.removeAttribute(attr)
       if (TAGNAMES.test(node.tagName)) {
         if (ATTRS.test(attr)) {
-          node[attr] = !!newVal
+          node[attr] = !!data
         } else if (VALUE.test(attr)) {
-          node[attr] = newVal
+          node[attr] = data
         }
       }
     }
