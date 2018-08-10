@@ -405,11 +405,12 @@ let viewer = {
       if (this.isIframed) {
         this.lockBodyScroll()
 
-        // Fix iphone 5s UC and ios 9 safari bug.
         // While the back button is clicked,
         // the cached page has some problems.
-        // So we are forced to load the page in iphone 5s UC
-        // and iOS 9 safari.
+        // So we are forced to load the page in below conditions:
+        // 1. IOS 8 + UC
+        // 2. IOS 9 & 10 + Safari
+        // 3. IOS 8 & 9 & 10 + UC & BaiduApp
         let needBackReload = (iosVersion === '8' && platform.isUc() && screen.width === 320) ||
           ((iosVersion === '9' || iosVersion === '10') && platform.isSafari()) ||
           ((iosVersion === '8' || iosVersion === '9' || iosVersion === '10') && (platform.isUc() || platform.isBaiduApp()))
