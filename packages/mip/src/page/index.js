@@ -243,10 +243,12 @@ class Page {
       customEmit(window, event.name, event.data)
 
       this.children.forEach(pageMeta => {
-        pageMeta.targetWindow.postMessage({
-          type: MESSAGE_CROSS_ORIGIN,
-          data: event
-        }, '*')
+        if (pageMeta.targetWindow) {
+          pageMeta.targetWindow.postMessage({
+            type: MESSAGE_CROSS_ORIGIN,
+            data: event
+          }, '*')
+        }
       })
     } else {
       window.parent.postMessage({
