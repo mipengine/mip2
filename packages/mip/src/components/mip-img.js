@@ -84,6 +84,18 @@ function getImgOffset (img) {
 function getImgsSrc () {
   return [...document.querySelectorAll('mip-img')].filter(value => value.hasAttribute('popup')).map(value => value.getAttribute('src'))
 }
+/**
+ * 找出当前视口下的图片
+ * @param  {HTMLElement} carouselWrapper carouselWrapper
+ * @return {HTMLElement}                 img
+ */
+function getCurrentImg (carouselWrapper) {
+  // 例如：'translate3d(-90px,0,0)'
+  let str = carouselWrapper.style.webkitTransform
+  let result = /translate3d\(-?([0-9]+)/i.exec(str)
+  let number = parseInt(result[1]) / viewport.getWidth()
+  return carouselWrapper.querySelectorAll('mip-img')[number]
+}
 // 创建弹层 dom
 function createPopup (element, img) {
   // 获取图片数组
@@ -151,7 +163,10 @@ function bindPopup (element, img) {
     })
     let popup = createPopup(element, img)
     let popupBg = popup.querySelector('.mip-img-popUp-bg')
-    let popupImg = popup.querySelector('mip-carousel')
+    let mipCarousel = popup.querySelector('mip-carousel')
+    let popupImg = new Image()
+    popupImg.setAttribute('src', img.src)
+    popup.appendChild(popupImg)
 
     let imgOffset = getImgOffset(img)
 
@@ -163,6 +178,11 @@ function bindPopup (element, img) {
         skipTransition: true,
         extraClass: 'black'
       })
+      // 找出当前视口下的图片
+      let currentImg = getCurrentImg(popup.querySelector('.mip-carousel-wrapper'))
+      popupImg.setAttribute('src', currentImg.getAttribute('src'))
+      css(popupImg, 'display', 'block')
+      css(mipCarousel, 'display', 'none')
       naboo.animate(popupBg, {
         opacity: 0
       }).start()
@@ -182,9 +202,14 @@ function bindPopup (element, img) {
     window.addEventListener('resize', onResize)
 
     css(popupImg, imgOffset)
+    css(mipCarousel, getPopupImgPos(imgOffset.width, imgOffset.height))
+    css(mipCarousel, 'display', 'none')
     css(popupBg, 'opacity', 1)
 
-    naboo.animate(popupImg, getPopupImgPos(imgOffset.width, imgOffset.height)).start()
+    naboo.animate(popupImg, getPopupImgPos(imgOffset.width, imgOffset.height)).start(() => {
+      css(popupImg, 'display', 'none')
+      css(mipCarousel, 'display', 'block')
+    })
     css(img, 'visibility', 'hidden')
     css(img.parentNode, 'zIndex', 'inherit')
   }, false)
