@@ -106,6 +106,7 @@ function createPopup (element, img) {
   // 计算 wrapper 窗口大小
   let imgOffset = getImgOffset(img)
   let PopupImgPos = getPopupImgPos(imgOffset.width, imgOffset.height)
+  PopupImgPos.top = 0
   css(carouselWrapper, {
     'position': 'absolute'
   })
@@ -181,7 +182,6 @@ function bindPopup (element, img) {
     window.addEventListener('resize', onResize)
 
     css(popupImg, imgOffset)
-    css(popupImg, 'position', 'fixed')
     css(popupBg, 'opacity', 1)
 
     naboo.animate(popupImg, getPopupImgPos(imgOffset.width, imgOffset.height)).start()
