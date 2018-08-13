@@ -26,6 +26,7 @@ import {
 
 import {customEmit} from '../util/custom-event'
 import viewport from '../viewport'
+import performance from '../performance'
 import '../styles/mip.less'
 
 /**
@@ -170,8 +171,17 @@ class Page {
     ensureMIPShell()
     this.initPageId()
 
-    // scroll to current hash if exists
-    this.scrollToHash(window.location.hash)
+    /**
+     * scroll to anchor after all the elements loaded
+     * fix: https://github.com/mipengine/mip2/issues/125
+     */
+    performance.on('update', timing => {
+      if (timing.MIPFirstScreen) {
+        // scroll to current hash if exists
+        this.scrollToHash(window.location.hash)
+      }
+    })
+
     window.addEventListener(CUSTOM_EVENT_SCROLL_TO_ANCHOR, (e) => {
       this.scrollToHash(e.detail[0])
     })
