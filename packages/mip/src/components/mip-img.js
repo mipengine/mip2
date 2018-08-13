@@ -14,7 +14,6 @@ import viewer from '../viewer'
 const naboo = util.naboo
 
 let errHandle
-let Gesture = util.Gesture
 let css = util.css
 let rect = util.rect
 
@@ -104,10 +103,7 @@ function createPopup (element, img) {
 
   let popup = document.createElement('div')
   css(popup, 'display', 'block')
-  // 阻止纵向滑动
-  new Gesture(popup, {
-    preventY: true
-  })
+
   popup.className = 'mip-img-popUp-wrapper'
   popup.setAttribute('data-name', 'mip-img-popUp-name')
 
@@ -181,12 +177,19 @@ function bindPopup (element, img) {
       // 找出当前视口下的图片
       let currentImg = getCurrentImg(popup.querySelector('.mip-carousel-wrapper'))
       popupImg.setAttribute('src', currentImg.getAttribute('src'))
+      let previousPos = getImgOffset(img)
+      // 获取弹出图片滑动的距离，根据前面的设定，top大于0就不是长图，小于0才是滑动的距离
+      let currentImgPos = getImgOffset(currentImg)
+      currentImgPos.top < 0 && (previousPos.top -= currentImgPos.top)
+      currentImgPos.left < 0 && (previousPos.left -= currentImgPos.left)
       css(popupImg, 'display', 'block')
       css(mipCarousel, 'display', 'none')
       naboo.animate(popupBg, {
         opacity: 0
       }).start()
-      naboo.animate(popupImg, getImgOffset(img)).start(function () {
+
+      naboo.animate(popup, {'display': 'none'})
+      naboo.animate(popupImg, previousPos).start(function () {
         css(img, 'visibility', 'visible')
         css(popup, 'display', 'none')
         popup.removeEventListener('click', imagePop, false)
