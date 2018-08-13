@@ -4,6 +4,7 @@
  */
 
 import Deps from './deps'
+import {isObject} from './util'
 
 class Observer {
   /*
@@ -25,7 +26,7 @@ class Observer {
    * @param {Object} depMap supporting dependencies map
    */
   walk (data, depMap) {
-    if (typeof data !== 'object' || typeof depMap !== 'object') {
+    if (!isObject(data) || !isObject(depMap)) {
       return
     }
 

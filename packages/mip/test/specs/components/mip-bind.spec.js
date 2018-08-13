@@ -168,7 +168,7 @@ describe('mip-bind', function () {
         title: 'changed'
       })
 
-      MIP.$recompile()
+      // MIP.$recompile()
 
       expect(window.m.global).to.eql({
         data: {
@@ -264,6 +264,13 @@ describe('mip-bind', function () {
       })).to.throw(/setData method MUST NOT accept object that contains functions/)
 
       expect(MIP.getData('loading')).to.be.true
+    })
+
+    it('should compile smoothly even if data turn to null', function () {
+      MIP.setData({loc: null})
+      MIP.$recompile()
+
+      expect(window.m.loc).to.be.null
     })
   })
 
