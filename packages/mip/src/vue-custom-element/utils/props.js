@@ -128,7 +128,7 @@ export function getPropsData (element, componentDefinition, props) {
     let attrValue = element.getAttribute(name)
 
     if (element.attrValues && name in element.attrValues) {
-      propsData[propCamelCase] = element.attrValues[name]
+      propsData[propCamelCase] = element.attrValues[name].val
       // delete 该属性，避免干扰正常的修改 attribute 值触发 props 改变
       delete element.attrValues[name]
     } else if (attrValue !== null) {

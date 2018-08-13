@@ -69,8 +69,8 @@
     <!-- props example -->
     <mip-complevel1 m-bind:class="{loading: loading}" m-bind:user-info="userInfo"></mip-complevel1>
     <br />
-    <mip-complevel2 m-bind:user-info="userInfo" m-bind:msg="name" m-bind:loading="loading" m-bind:list="list" m-bind:num="num"></mip-complevel2>
-    
+    <mip-complevel2 m-bind:user-info.sync="userInfo" m-bind:msg.sync="name" m-bind:loading="loading" m-bind:list="list" m-bind:num="num"></mip-complevel2>
+
     <script src="../../dist/mip.js"></script>
     <!-- <script src="https://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script>  -->
     <script src="./components/mip-complevel2.js"></script>

@@ -36,7 +36,10 @@ MIP.registerVueCustomElement('mip-complevel2', {
     num: Number
   },
   mounted () {
-    this.msg = 'msg changed from inside'
+    setTimeout(() => {
+      this.$emit('update:msg', 'msg changed from inside')
+      this.$emit('update:userInfo', {name: 'fake'})
+    }, 10);
     MIP.watch('loading', function (newVal) {
       console.log('watch loading ', newVal)
     })

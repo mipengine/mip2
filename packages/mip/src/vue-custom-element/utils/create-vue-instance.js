@@ -3,8 +3,10 @@
  * @author sfe
  */
 
+/* globals MIP */
+
 import {getPropsData} from './props'
-import {toArray} from './helpers'
+import {toArray, camelize} from './helpers'
 import {customEmit} from '../../util/custom-event'
 import viewer from '../../viewer'
 
@@ -23,6 +25,22 @@ function getNodeSlots (element) {
   return nodeSlots
 }
 
+function getModifierSyncEvents (node) {
+  let attrValues = node.attrValues
+  if (!attrValues) return {}
+  return Object.keys(attrValues)
+    .filter(key => attrValues[key].sync)
+    .reduce((obj, key) => {
+      let name = attrValues[key].sync
+      obj['update:' + camelize(key)] = function (val) {
+        MIP.setData({
+          [name]: val
+        })
+      }
+      return obj
+    }, {})
+}
+
 /**
  * Create new Vue instance
  *
@@ -38,6 +56,7 @@ export default function createVueInstance (
   props
 ) {
   let ComponentDefinition = Vue.util.extend({}, componentDefinition)
+  let modifierSyncEvents = getModifierSyncEvents(element)
   let propsData = getPropsData(element, ComponentDefinition, props)
 
   // Auto event handling based on $emit
@@ -80,7 +99,8 @@ export default function createVueInstance (
       return createElement(
         ComponentDefinition,
         {
-          props: this.reactiveProps
+          props: this.reactiveProps,
+          on: modifierSyncEvents
         },
         nodeSlots
       )
