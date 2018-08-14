@@ -6,7 +6,7 @@
 
 一个最典型的 Shell 的例子就是头部标题栏：
 
-![头部标题栏](http://boscdn.bpc.baidu.com/assets/mip2/page/mip-shell.png)
+![头部标题栏](https://boscdn.baidu.com/assets/mip2/page/mip-shell.png)
 
 ## 内置 MIP Shell
 
@@ -123,14 +123,14 @@ Shell 最基本的配置中必须包含 `routes` 数组。其中的每个元素�
 
     配置头部中间的标题，这部分将显示在头部标题栏中，超长会自动截断。
 
-    ![MIP Shell header title](http://boscdn.bpc.baidu.com/assets/mip2/mip-title-2.png)
+    ![MIP Shell header title](https://boscdn.baidu.com/assets/mip2/mip-title-2.png)
 
 * header.logo
     __string__, 默认值：无
 
     配置头部左侧的 LOGO 的 URL，建议是一个正方形的图片，长宽不小于 64px。如果不配置则不显示 LOGO。
 
-    ![MIP Shell header logo](http://boscdn.bpc.baidu.com/assets/mip2/mip-logo-2.png)
+    ![MIP Shell header logo](https://boscdn.baidu.com/assets/mip2/mip-logo-2.png)
 
 * header.color
     __string__, 默认值：'#000000'
@@ -154,11 +154,11 @@ Shell 最基本的配置中必须包含 `routes` 数组。其中的每个元素�
 
     右侧的关闭按钮在百度搜索结果页中会自动展现，单独打开时不展现，不需要额外配置。
 
-    ![MIP Shell header button](http://boscdn.bpc.baidu.com/assets/mip2/mip-button-2.png)
+    ![MIP Shell header button](https://boscdn.baidu.com/assets/mip2/mip-button-2.png)
 
     点开“更多”按钮，会出现浮层展现 `buttonGroup` 中配置的按钮，效果如下：
 
-    ![Drop Down](http://boscdn.bpc.baidu.com/assets/mip2/page/dropdown-2.png)
+    ![Drop Down](https://boscdn.baidu.com/assets/mip2/page/dropdown-2.png)
 
     每一个配置对象由 3 个属性构成，分别是 `name`, `text` 和 `link`。这三个配置项均 __没有__ 默认值，如果缺少某个则被认为非法配置，__会被跳过而不进行渲染__。
 
@@ -195,7 +195,7 @@ Shell 最基本的配置中必须包含 `routes` 数组。其中的每个元素�
                        "header": {
                             "show": true,
                             "title": "MIP Index",
-                            "logo": "http://boscdn.bpc.baidu.com/assets/mip/codelab/shell/mashroom.jpg",
+                            "logo": "https://boscdn.baidu.com/assets/mip/codelab/shell/mashroom.jpg",
                             "buttonGroup": [
                                 {
                                     "name": "subscribe",
@@ -302,7 +302,7 @@ MIP 页面总共有 4 处可以配置头部标题，它们的生效顺序依次�
 
 * 除了头部，还有底部栏或者侧边栏需要额外渲染和绑定事件。例如下图：
 
-    ![Bottom Shell](http://boscdn.bpc.baidu.com/assets/mip2/page/bottom-shell-2.png)
+    ![Bottom Shell](https://boscdn.baidu.com/assets/mip2/page/bottom-shell-2.png)
 
 * 开发者需要控制站点的 Shell 配置，修改/禁用/忽略某些选项。
 
@@ -322,7 +322,7 @@ export default class MIPShellExample extends window.MIP.builtinComponents.MIPShe
 
 个性化 Shell 的编写规范和普通组件相同，同样在 mip2-extensions 项目中编写，如下：
 
-![MIP Shell Folder](http://boscdn.bpc.baidu.com/assets/mip/page/mip-shell-folder.PNG)
+![MIP Shell Folder](https://boscdn.baidu.com/assets/mip/page/mip-shell-folder.PNG)
 
 ### 使用个性化 Shell
 
@@ -339,7 +339,7 @@ export default class MIPShellExample extends window.MIP.builtinComponents.MIPShe
                        "header": {
                             "show": true,
                             "title": "MIP Index",
-                            "logo": "http://boscdn.bpc.baidu.com/assets/mip/codelab/shell/mashroom.jpg"
+                            "logo": "https://boscdn.baidu.com/assets/mip/codelab/shell/mashroom.jpg"
                         },
                     }
                 }
@@ -384,7 +384,7 @@ constructor (...args) {
 
 MIP Shell 的头部标题栏右侧的按钮区域会根据 MIP 页面当前所处的状态来决定是否展示关闭按钮。当处于百度搜索结果页中（即拥有 SuperFrame 环境时）会额外渲染一个关闭按钮，点击效果用以通知 SuperFrame 关闭自身，如下图所示：
 
-![Close Button](http://boscdn.bpc.baidu.com/assets/mip2/page/close-button.png)
+![Close Button](https://boscdn.baidu.com/assets/mip2/page/close-button.png)
 
 MIP 页面判断当前是否处于 SuperFrame 环境的判断依据是 `window.MIP.standalone` 值等于 `false`。
 
@@ -474,7 +474,7 @@ MIP Shell 进行的所谓“初步处理”包括：
     setTimeout(() => {
       // 通过 exampleUserId 获取到目标用户的标题和 LOGO，并固定按钮
       shellConfig.routes[0].meta.header.title = '蓝犀牛搬家'
-      shellConfig.routes[0].meta.header.logo = 'http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png'
+      shellConfig.routes[0].meta.header.logo = 'https://boscdn.baidu.com/assets/mip2/lanxiniu/logo.png'
       shellConfig.routes[0].meta.header.buttonGroup = [
         {
           name: 'share',
@@ -680,7 +680,7 @@ MIP Shell 基类的动画切换逻辑实现方法。但子类如有需要也可�
         console.log('Simulate async request with isId:', isId)
         setTimeout(() => {
           shellConfig.routes[0].meta.header.title = '蓝犀牛搬家'
-          shellConfig.routes[0].meta.header.logo = 'http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png'
+          shellConfig.routes[0].meta.header.logo = 'https://boscdn.baidu.com/assets/mip2/lanxiniu/logo.png'
           shellConfig.routes[0].meta.header.buttonGroup = [
             {
               name: 'share',

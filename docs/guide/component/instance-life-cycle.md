@@ -126,4 +126,4 @@ mip 组件是基于[Web Component](https://developer.mozilla.org/en-US/docs/Web/
 
 下图展示了通过 vue 编写 mip 组件实例的生命周期，其中红色框暴露给开发者的生命周期钩子，可以看到除了 firstInviewCallback / connectedCallback / disconnectCallback 钩子，其他钩子都是 vue 的生命周期，这么做也是为了降低学习成本，提高开发效率。
 
-![mip2 组件生命周期](http://bos.nj.bpc.baidu.com/v1/assets/mip/mip2-component-lifecycle.png)
+![mip2 组件生命周期](https://boscdn.baidu.com/v1/assets/mip/mip2-component-lifecycle.png)
