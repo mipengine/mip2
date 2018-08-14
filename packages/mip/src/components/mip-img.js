@@ -77,22 +77,18 @@ function getImgOffset (img) {
   let imgOffset = rect.getElementOffset(img)
   return imgOffset
 }
-// 根据元素element获取相邻图片的src
+/**
+ * 获取所有图片的 src
+ * @return {Array.<HTMLElement>} 返回修改的元素集
+ */
 function getImgsSrc () {
-  let imgsSrcArray = []
-  let imgs = Array.prototype.slice.call(document.querySelectorAll('mip-img'))
-  for (let i = 0; i < imgs.length; i++) {
-    if (imgs[i].hasAttribute('popup')) {
-      imgsSrcArray.push(imgs[i].getAttribute('src'))
-    }
-  }
-  return imgsSrcArray
+  return [...document.querySelectorAll('mip-img')].filter(value => value.hasAttribute('popup')).map(value => value.getAttribute('src'))
 }
 // 创建弹层 dom
 function createPopup (element, img) {
   // 获取图片数组
   let imgsSrcArray = getImgsSrc()
-  let index = parseInt(element.getAttribute('index'))
+  let index = parseInt(element.getAttribute('index'), 10) || 0
 
   let popup = document.createElement('div')
   css(popup, 'display', 'block')
@@ -147,6 +143,11 @@ function bindPopup (element, img) {
       return
     }
 
+    // Show page mask
+    window.MIP.viewer.page.togglePageMask(true, {
+      skipTransition: true,
+      extraClass: 'black'
+    })
     let popup = createPopup(element, img)
     let popupBg = popup.querySelector('.mip-img-popUp-bg')
     let popupImg = popup.querySelector('mip-carousel')

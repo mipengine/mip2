@@ -110,7 +110,7 @@ class Compile {
       attrName = attrName.replace(/.sync$/, '')
       fnName = 'bind'
     }
-    !data && (data = me.getMVal(node, attrName, expression))
+    !data && (data = me.getMVal(node, attrName, expression, isSync))
     if (typeof data !== 'undefined') {
       me[fnName] && me[fnName]({
         node,
@@ -234,8 +234,9 @@ class Compile {
    * @param {HTMLElement} node node
    * @param {string} attrName attribute
    * @param {string} exp expression to calculate value that needs to be bound
+   * @param {boolean} isSync two-way binding
    */
-  getMVal (node, attrName, exp) {
+  getMVal (node, attrName, exp, isSync) {
     if (!exp) {
       return
     }
@@ -243,7 +244,7 @@ class Compile {
     try {
       value = util.getter(this, exp).value
       if (value !== '' && typeof value !== 'undefined') {
-        node.removeAttribute(attrName)
+        node.removeAttribute(attrName + (isSync ? '.sync' : ''))
       }
     } catch (e) {
       // console.error(e)
