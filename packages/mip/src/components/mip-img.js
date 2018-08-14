@@ -189,7 +189,7 @@ function bindPopup (element, img) {
       }).start()
 
       naboo.animate(popup, {'display': 'none'})
-      naboo.animate(popupImg, previousPos).start(function () {
+      naboo.animate(popupImg, previousPos).start(() => {
         css(img, 'visibility', 'visible')
         css(popup, 'display', 'none')
         popup.removeEventListener('click', imagePop, false)

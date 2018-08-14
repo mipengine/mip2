@@ -50,16 +50,16 @@ function prerenderSetSrc (allMipImgs, index, num, arraySrc) {
 /**
  * 修改 src 为某张图的 src
  * @param  {NodeList} childList 一般是 mip-img 标签的集合
- * @param  {number} j         j
- * @param   {Array} arraySrc arraySrc
+ * @param  {number} imgIndex    imgIndex是显示的第一张图片的在arraySrc中的index
+ * @param   {Array} arraySrc    所有图片的src组成的数组
  * @return {NodeList}           返回 childList
  */
-function changeSrc (childList, j, arraySrc) {
+function changeSrc (childList, imgIndex, arraySrc) {
   for (let i = 0; i < childList.length; i++) {
     if (childList[i].tagName === 'MIP-IMG') {
-      childList[i].setAttribute('src', arraySrc[j])
+      childList[i].setAttribute('src', arraySrc[imgIndex])
     } else {
-      childList[i].querySelector('mip-img').setAttribute('src', arraySrc[j])
+      childList[i].querySelector('mip-img').setAttribute('src', arraySrc[imgIndex])
     }
   }
   return childList
