@@ -66,7 +66,8 @@ class Page {
     }
 
     try {
-      const anchor = document.getElementById(decodeURIComponent(hash.slice(1)))
+      const anchor = document.getElementById(hash.slice(1)) ||
+        document.getElementById(decodeURIComponent(hash.slice(1)))
 
       /* istanbul ignore next */
       if (anchor) {
