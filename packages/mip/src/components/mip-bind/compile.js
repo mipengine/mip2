@@ -194,7 +194,7 @@ class Compile {
     }
   }
 
-  upadteData (data) {
+  updateData (data) {
     this.origin = data
   }
 
