@@ -14,6 +14,8 @@
 let INDEX_PAGE_URL
 let SCROLL_PAGE_URL
 let positionY = 0 // anchor's position in Yaxis
+let positionY2 = 0
+let positionY3 = 0
 
 module.exports = {
   'open page': function (browser) {
@@ -27,16 +29,47 @@ module.exports = {
       .waitForElementVisible('body', 2000)
   },
   'scroll to correct position when click an anchor': function (browser) {
+    const anchor1 = '#anchor'
+    const anchor2 = '#anchor-%E8%AE'
+    const anchor3 = '#anchor-设置轮播时间间隔'
+    const hashOfAnchor3 = '#anchor-%E8%AE%BE%E7%BD%AE%E8%BD%AE%E6%92%AD%E6%97%B6%E9%97%B4%E9%97%B4%E9%9A%94'
+
     browser
       // save anchor's position
-      .getLocation('#anchor', function (result) {
+      .getLocation(anchor3, function (result) {
+        positionY2 = result.value.y
+      })
+      // click anchor
+      .waitForClick(anchor3)
+      .pause(1000)
+      // hash changed
+      .assert.urlContains(hashOfAnchor3)
+      .execute(function () {
+        // it should scroll to top
+        this.assert.equal(window.MIP.viewport.getScrollTop(), positionY3)
+      })
+      // save anchor's position
+      .getLocation('.encoded-anchor', function (result) {
+        positionY2 = result.value.y
+      })
+      // click anchor
+      .waitForClick('.encoded-anchor')
+      .pause(1000)
+      // hash changed
+      .assert.urlContains(anchor2)
+      .execute(function () {
+        // it should scroll to top
+        this.assert.equal(window.MIP.viewport.getScrollTop(), positionY2)
+      })
+      // save anchor's position
+      .getLocation(anchor1, function (result) {
         positionY = result.value.y
       })
       // click anchor
-      .waitForClick('#anchor')
+      .waitForClick(anchor1)
       .pause(1000)
       // hash changed
-      .assert.urlContains('#anchor')
+      .assert.urlContains(anchor1)
       .execute(function () {
         // it should scroll to top
         this.assert.equal(window.MIP.viewport.getScrollTop(), positionY)
