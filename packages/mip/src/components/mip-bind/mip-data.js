@@ -37,12 +37,7 @@ class MipData extends CustomElement {
   /*
    * get initial data asynchronouslly
    */
-  /* istanbul ignore next */
   getData (url) {
-    if (!url) {
-      return
-    }
-
     let stuckResolve
     let stuckReject
     // only resolve/reject when sth truly comes to a result
@@ -58,22 +53,22 @@ class MipData extends CustomElement {
         if (res.ok) {
           res.json().then(data => {
             MIP.$set(data)
+            dropPromise(mipDataPromises, stuckPromise)
             stuckResolve()
             stuckResolve = null
-            dropPromise(mipDataPromises, stuckPromise)
           })
         } else {
           console.error('Fetch request failed!')
+          dropPromise(mipDataPromises, stuckPromise)
           stuckReject()
           stuckReject = null
-          dropPromise(mipDataPromises, stuckPromise)
         }
       })
       .catch(e => {
         console.error(e)
+        dropPromise(mipDataPromises, stuckPromise)
         stuckReject()
         stuckReject = null
-        dropPromise(mipDataPromises, stuckPromise)
       })
   }
 
