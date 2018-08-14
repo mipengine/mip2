@@ -86,7 +86,7 @@ function getImgsSrc () {
 /**
  * 找出当前视口下的图片
  * @param  {HTMLElement} carouselWrapper carouselWrapper
- * @return {HTMLElement}                 img
+ * @return {HTMLElement} img
  */
 function getCurrentImg (carouselWrapper) {
   // 例如：'translate3d(-90px,0,0)'
@@ -113,19 +113,19 @@ function createPopup (element, img) {
   let carouselWrapper = document.createElement('div')
   // 计算 wrapper 窗口大小
   let imgOffset = getImgOffset(img)
-  let PopupImgPos = getPopupImgPos(imgOffset.width, imgOffset.height)
-  PopupImgPos.top = 0
+  let popupImgPos = getPopupImgPos(imgOffset.width, imgOffset.height)
+  popupImgPos.top = 0
   css(carouselWrapper, {
     'position': 'absolute'
   })
-  css(carouselWrapper, PopupImgPos)
+  css(carouselWrapper, popupImgPos)
   // 创建 mip-carousel
   let carousel = document.createElement('mip-carousel')
 
   carousel.setAttribute('layout', 'height-fixed')
   carousel.setAttribute('index', index + 1)
-  carousel.setAttribute('width', PopupImgPos.width)
-  carousel.setAttribute('height', PopupImgPos.height)
+  carousel.setAttribute('width', popupImgPos.width)
+  carousel.setAttribute('height', popupImgPos.height)
 
   for (let i = 0; i < imgsSrcArray.length; i++) {
     let mipImg = document.createElement('mip-img')

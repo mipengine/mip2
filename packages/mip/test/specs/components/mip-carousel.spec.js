@@ -727,8 +727,7 @@ describe('mip-carousel', function () {
           </mip-img>
         </mip-carousel>
       `
-      let theFirst = document.body.firstChild
-      document.body.insertBefore(div, theFirst)
+      document.body.insertBefore(div, document.body.firstChild)
     })
     // 一定要挑一张图片上面的代码都没用到过，并且不能在第一张和最后一张
     it('should not load picture samplePX', function (done) {
@@ -791,8 +790,7 @@ describe('mip-carousel', function () {
           </block>
         </mip-carousel>
       `
-      let theFirst = document.body.firstChild
-      document.body.insertBefore(div, theFirst)
+      document.body.insertBefore(div, document.body.firstChild)
     })
     // 一定要挑一张图片上面的代码都没用到过，并且不能在第一张和最后一张
     it('should not load picture samplePX', function (done) {

@@ -51,7 +51,7 @@ function prerenderSetSrc (allMipImgs, index, num, arraySrc) {
  * 修改 src 为某张图的 src
  * @param  {NodeList} childList 一般是 mip-img 标签的集合
  * @param  {number} j         j
- * param   {Array} arraySrc arraySrc
+ * @param   {Array} arraySrc arraySrc
  * @return {NodeList}           返回 childList
  */
 function changeSrc (childList, j, arraySrc) {
@@ -81,6 +81,7 @@ function getAllMipImgSrc (childNodes) {
       } else {
         // 没有mip-img的情况，理论上应该报错
         arr.push('')
+        console.warn(`childNodes[${i}] of mip-carousel can't find mip-img`)
       }
     }
   }
