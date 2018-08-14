@@ -487,7 +487,7 @@ class MIPCarousel extends CustomElement {
         setTimeout(function () {
           translateFn(curGestureClientx, '0ms', wrapBox)
           btnLock.stop = 1
-        }, 300)
+        }, 400)
       }
       btnLock.stop = 1
       indicatorChange(imgIndex)
