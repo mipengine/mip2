@@ -10,6 +10,14 @@
 import CustomElement from '../../custom-element'
 import jsonParse from '../../util/json-parse'
 
+function dropPromise (promiseArr, target) {
+  for (let i = 0; i < promiseArr.length; i++) {
+    if (promiseArr[i] === target) {
+      promiseArr.splice(i, 1)
+    }
+  }
+}
+
 class MipData extends CustomElement {
   build () {
     let src = this.element.getAttribute('src')
@@ -35,27 +43,37 @@ class MipData extends CustomElement {
       return
     }
 
-    let promise = fetch(url, {
-      credentials: 'include'
+    let stuckResolve
+    let stuckReject
+    // only resolve/reject when sth truly comes to a result
+    // such as only to resolve when res.json() done
+    let stuckPromise = new Promise(function (resolve, reject) {
+      stuckResolve = resolve
+      stuckReject = reject
     })
+    mipDataPromises.push(stuckPromise)
 
-    mipDataPromises.push(promise)
-
-    promise
+    fetch(url, {credentials: 'include'})
       .then(res => {
         if (res.ok) {
-          res.json().then(data => MIP.$set(data))
+          res.json().then(data => {
+            MIP.$set(data)
+            stuckResolve()
+            stuckResolve = null
+            dropPromise(mipDataPromises, stuckPromise)
+          })
         } else {
           console.error('Fetch request failed!')
+          stuckReject()
+          stuckReject = null
+          dropPromise(mipDataPromises, stuckPromise)
         }
       })
-      .catch(console.error)
-      .finally(() => {
-        for (let i = 0; i < mipDataPromises.length; i++) {
-          if (mipDataPromises[i] === promise) {
-            mipDataPromises.splice(i, 1)
-          }
-        }
+      .catch(e => {
+        console.error(e)
+        stuckReject()
+        stuckReject = null
+        dropPromise(mipDataPromises, stuckPromise)
       })
   }
 
