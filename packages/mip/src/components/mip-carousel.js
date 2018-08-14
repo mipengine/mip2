@@ -78,10 +78,6 @@ function getAllMipImgSrc (childNodes) {
       let node = childNodes[i].querySelector('mip-img')
       if (node) {
         arr.push(node.getAttribute('src'))
-      } else {
-        // 没有mip-img的情况，理论上应该报错
-        arr.push('')
-        console.warn(`childNodes[${i}] of mip-carousel can't find mip-img`)
       }
     }
   }
