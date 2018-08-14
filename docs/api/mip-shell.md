@@ -8,7 +8,7 @@
 
 * 除了头部，还有底部栏或者侧边栏需要额外渲染和绑定事件。例如下图：
 
-    ![Bottom Shell](http://boscdn.bpc.baidu.com/assets/mip2/page/bottom-shell-2.png)
+    ![Bottom Shell](https://boscdn.baidu.com/assets/mip2/page/bottom-shell-2.png)
 
 * 开发者需要控制站点的 Shell 配置，修改/禁用/忽略某些选项。
 
@@ -28,7 +28,7 @@ export default class MIPShellExample extends window.MIP.builtinComponents.MIPShe
 
 个性化 Shell 的编写规范和普通组件相同，同样在 mip2-extensions 项目中编写，如下：
 
-![MIP Shell Folder](http://boscdn.bpc.baidu.com/assets/mip/page/mip-shell-folder.PNG)
+![MIP Shell Folder](https://boscdn.baidu.com/assets/mip/page/mip-shell-folder.PNG)
 
 ## 使用个性化 Shell
 
@@ -45,7 +45,7 @@ export default class MIPShellExample extends window.MIP.builtinComponents.MIPShe
                        "header": {
                             "show": true,
                             "title": "MIP Index",
-                            "logo": "http://boscdn.bpc.baidu.com/assets/mip/codelab/shell/mashroom.jpg"
+                            "logo": "https://boscdn.baidu.com/assets/mip/codelab/shell/mashroom.jpg"
                         },
                     }
                 }
@@ -90,7 +90,7 @@ constructor (...args) {
 
 MIP Shell 的头部标题栏右侧的按钮区域会根据 MIP 页面当前所处的状态来决定是否展示关闭按钮。当处于百度搜索结果页中（即拥有 SuperFrame 环境时）会额外渲染一个关闭按钮，点击效果用以通知 SuperFrame 关闭自身，如下图所示：
 
-![Close Button](http://boscdn.bpc.baidu.com/assets/mip2/page/close-button.png)
+![Close Button](https://boscdn.baidu.com/assets/mip2/page/close-button.png)
 
 MIP 页面判断当前是否处于 SuperFrame 环境的判断依据是 `window.MIP.standalone` 值等于 `false`。
 
@@ -180,7 +180,7 @@ MIP Shell 进行的所谓“初步处理”包括：
     setTimeout(() => {
       // 通过 exampleUserId 获取到目标用户的标题和 LOGO，并固定按钮
       shellConfig.routes[0].meta.header.title = '蓝犀牛搬家'
-      shellConfig.routes[0].meta.header.logo = 'http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png'
+      shellConfig.routes[0].meta.header.logo = 'https://boscdn.baidu.com/assets/mip2/lanxiniu/logo.png'
       shellConfig.routes[0].meta.header.buttonGroup = [
         {
           name: 'share',
@@ -343,7 +343,7 @@ afterSwitchPage(options) {
         console.log('Simulate async request with isId:', isId)
         setTimeout(() => {
           shellConfig.routes[0].meta.header.title = '蓝犀牛搬家'
-          shellConfig.routes[0].meta.header.logo = 'http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png'
+          shellConfig.routes[0].meta.header.logo = 'https://boscdn.baidu.com/assets/mip2/lanxiniu/logo.png'
           shellConfig.routes[0].meta.header.buttonGroup = [
             {
               name: 'share',

@@ -86,7 +86,7 @@ module.exports = {
     <!-- 使用 mip-example 标签 -->
     <mip-example></mip-example>
     <!-- 引入 mip 脚本 -->
-    <script src="http://bos.nj.bpc.baidu.com/assets/mip/projects/mip.js"></script>
+    <script src="https://boscdn.baidu.com/assets/mip/projects/mip.js"></script>
     <!-- 引入 mip-example 脚本 -->
     <script src="http://127.0.0.1:8222/mip-example/mip-example.js"></script>
   </body>
