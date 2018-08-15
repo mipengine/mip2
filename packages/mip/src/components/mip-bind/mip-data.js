@@ -27,7 +27,7 @@ class MipData extends CustomElement {
     /* istanbul ignore if */
     if (src) {
       this.getData(src)
-    } else if (ele) {``
+    } else if (ele) {
       let data = ele.textContent.toString()
       if (data) {
         MIP.$set(jsonParse(data))
