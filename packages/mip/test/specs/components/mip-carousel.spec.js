@@ -510,7 +510,7 @@ describe('mip-carousel', function () {
     let div
     let wrapBox
     let eventClick = document.createEvent('MouseEvents')
-    this.timeout(1000)
+    this.timeout(1100)
 
     before(function () {
       div = document.createElement('div')
@@ -564,7 +564,7 @@ describe('mip-carousel', function () {
       setTimeout(function () {
         expect(wrapBox.style.transform).to.equal('translate3d(-300px, 0px, 0px)')
         done()
-      }, 330)
+      }, 430)
     })
 
     after(function () {
