@@ -72,6 +72,17 @@ describe('vue-custom-element/utils/props', function () {
           propB: Number
         }
       })
+
+      expect(getProps({
+        props: ['prop-a', 'prop-b', 'prop-b']
+      })).to.deep.equal({
+        camelCase: ['propA', 'propB'],
+        hyphenate: ['prop-a', 'prop-b'],
+        types: {
+          propA: String,
+          propB: String
+        }
+      })
     })
 
     it('not defined', function () {
@@ -153,6 +164,30 @@ describe('vue-custom-element/utils/props', function () {
       })
     })
 
+    it('mixins2', function () {
+      let mixins2 = {
+        props: {
+          attr: Boolean
+        }
+      }
+
+      let mixins1 = {
+        mixins: [mixins2]
+      }
+
+      let props = getProps({
+        mixins: [mixins1]
+      })
+
+      expect(props).to.deep.equal({
+        camelCase: ['attr'],
+        hyphenate: ['attr'],
+        types: {
+          attr: Boolean
+        }
+      })
+    })
+
     it('extends', function () {
       let props = getProps({
         extends: {
@@ -170,12 +205,12 @@ describe('vue-custom-element/utils/props', function () {
       })
 
       expect(props).to.deep.equal({
-        camelCase: ['propA', 'propB', 'propC'],
-        hyphenate: ['prop-a', 'prop-b', 'prop-c'],
+        camelCase: ['propB', 'propC', 'propA'],
+        hyphenate: ['prop-b', 'prop-c', 'prop-a'],
         types: {
+          propC: Number,
           propA: String,
-          propB: Number,
-          propC: Number
+          propB: Number
         }
       })
     })
