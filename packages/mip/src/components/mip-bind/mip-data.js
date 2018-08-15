@@ -15,12 +15,8 @@ import jsonParse from '../../util/json-parse'
  * @param {Promise} target promise need to be removed
  */
 function dropPromise (target) {
-  for (let i = 0; i < mipDataPromises.length; i++) {
-    if (mipDataPromises[i] === target) {
-      mipDataPromises.splice(i, 1)
-      break
-    }
-  }
+  let index = mipDataPromises.indexOf(target)
+  mipDataPromises.splice(index, ~index ? 1 : 0)
 }
 
 class MipData extends CustomElement {
@@ -31,7 +27,7 @@ class MipData extends CustomElement {
     /* istanbul ignore if */
     if (src) {
       this.getData(src)
-    } else if (ele) {
+    } else if (ele) {``
       let data = ele.textContent.toString()
       if (data) {
         MIP.$set(jsonParse(data))
@@ -58,20 +54,20 @@ class MipData extends CustomElement {
         if (res.ok) {
           res.json().then(data => {
             MIP.$set(data)
-            dropPromise(mipDataPromises, stuckPromise)
+            dropPromise(stuckPromise)
             stuckResolve()
             stuckResolve = null
           })
         } else {
           console.error('Fetch request failed!')
-          dropPromise(mipDataPromises, stuckPromise)
+          dropPromise(stuckPromise)
           stuckReject()
           stuckReject = null
         }
       })
       .catch(e => {
         console.error(e)
-        dropPromise(mipDataPromises, stuckPromise)
+        dropPromise(stuckPromise)
         stuckReject()
         stuckReject = null
       })
