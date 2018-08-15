@@ -510,7 +510,7 @@ describe('mip-carousel', function () {
     let div
     let wrapBox
     let eventClick = document.createEvent('MouseEvents')
-    this.timeout(1000)
+    this.timeout(1100)
 
     before(function () {
       div = document.createElement('div')
@@ -564,7 +564,7 @@ describe('mip-carousel', function () {
       setTimeout(function () {
         expect(wrapBox.style.transform).to.equal('translate3d(-300px, 0px, 0px)')
         done()
-      }, 330)
+      }, 430)
     })
 
     after(function () {
@@ -727,8 +727,7 @@ describe('mip-carousel', function () {
           </mip-img>
         </mip-carousel>
       `
-      let theFirst = document.body.firstChild
-      document.body.insertBefore(div, theFirst)
+      document.body.insertBefore(div, document.body.firstChild)
     })
     // 一定要挑一张图片上面的代码都没用到过，并且不能在第一张和最后一张
     it('should not load picture samplePX', function (done) {
@@ -755,5 +754,69 @@ describe('mip-carousel', function () {
     after(function () {
       document.body.removeChild(div)
     })
+  })
+
+  describe('with lazy loading when mip-img is nested inside of other element', function () {
+    let div
+    this.timeout(2000)
+
+    before(function () {
+      div = document.createElement('div')
+      div.innerHTML = `
+        <mip-carousel
+          buttonController
+          width="100"
+          height="80"
+          index="1">
+          <block>
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_01.jpg">
+          </mip-img>
+          </block>
+          <block>
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_02.jpg">
+          </mip-img>
+          </block>
+          <block>
+          <mip-img
+            src="https://www.mipengine.org/static/img/P2x1_457e18b.jpg">
+          </mip-img>
+          </block>
+          <block>
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_03.jpg">
+          </mip-img>
+          </block>
+        </mip-carousel>
+      `
+      document.body.insertBefore(div, document.body.firstChild)
+    })
+    // 一定要挑一张图片上面的代码都没用到过，并且不能在第一张和最后一张
+    it('should not load picture samplePX', function (done) {
+      setTimeout(() => {
+        let mipImg = div.querySelectorAll('mip-img')[3]
+        let img = mipImg.querySelector('img')
+        expect(img.getAttribute('src')).to.not.equal('https://www.mipengine.org/static/img/P2x1_457e18b.jpg')
+        done()
+      }, 500);
+    })
+    it('should load picture samplePX when swiping', function (done) {
+      let eventClick = document.createEvent('MouseEvents')
+      let nextBtn = div.querySelector('p.mip-carousel-nextBtn')
+      eventClick.initEvent('click', true, true)
+      nextBtn.dispatchEvent(eventClick)
+
+      setTimeout(() => {
+        let img = div.querySelectorAll('mip-img')[3].querySelector('img')
+        expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/P2x1_457e18b.jpg')
+        done()
+      }, 1500);
+    })
+
+    after(function () {
+      document.body.removeChild(div)
+    })
+
   })
 })
