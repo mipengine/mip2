@@ -10,10 +10,15 @@
 import CustomElement from '../../custom-element'
 import jsonParse from '../../util/json-parse'
 
-function dropPromise (promiseArr, target) {
-  for (let i = 0; i < promiseArr.length; i++) {
-    if (promiseArr[i] === target) {
-      promiseArr.splice(i, 1)
+/*
+ * Remove promise from global mipDataPromises array
+ * @param {Promise} target promise need to be removed
+ */
+function dropPromise (target) {
+  for (let i = 0; i < mipDataPromises.length; i++) {
+    if (mipDataPromises[i] === target) {
+      mipDataPromises.splice(i, 1)
+      break
     }
   }
 }
