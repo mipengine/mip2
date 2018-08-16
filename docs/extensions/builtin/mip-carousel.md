@@ -277,10 +277,10 @@
 
 说明：当每一页切换完成之后，会触发该事件，事件参数会返回当前展示的dom节点，carousel 子元素的总数，当前展示的carousel item的索引值。
 一个返回参数示例如下：
-``` json
-  {
-    currIndex: 2,  // 当前子元素的显示索引值
-    currCarouselItem: childNodes[imgIndex], // 当前子元素的dom节点
-    carouselChildrenLength: childNum // 当前 carousel 下的子节点个数
-  }
+``` js
+{
+  currIndex: 2,  // 当前子元素的显示索引值
+  currCarouselItem: childNodes[imgIndex], // 当前子元素的dom节点
+  carouselChildrenLength: childNum // 当前 carousel 下的子节点个数
+}
 ```
