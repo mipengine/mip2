@@ -286,9 +286,9 @@ class MipShell extends CustomElement {
       backgroundColor = '#ffffff'
     } = pageMeta.header
 
-    if (this.targetPageTitle && !this.alwaysUseTitleInShellConfig) {
-      title = pageMeta.header.title = this.targetPageTitle
-    }
+    // if (this.targetPageTitle && !this.alwaysUseTitleInShellConfig) {
+    //   title = pageMeta.header.title = this.targetPageTitle
+    // }
     let showBackIcon = !pageMeta.view.isIndex
 
     let headerHTML = `
