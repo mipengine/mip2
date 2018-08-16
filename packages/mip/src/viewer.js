@@ -478,6 +478,9 @@ let viewer = {
       this.page.notifyRootPage({
         type: MESSAGE_PAGE_RESIZE
       })
+      if (event.target && typeof event.target.scrollIntoView === 'function') {
+        setTimeout(() => event.target.scrollIntoView(), 500)
+      }
     }, true)
     event.delegate(document, 'input', 'blur', event => {
       this.page.notifyRootPage({
