@@ -56,20 +56,17 @@ class MipData extends CustomElement {
             MIP.$set(data)
             dropPromise(stuckPromise)
             stuckResolve()
-            stuckResolve = null
           })
         } else {
           console.error('Fetch request failed!')
           dropPromise(stuckPromise)
           stuckReject()
-          stuckReject = null
         }
       })
       .catch(e => {
         console.error(e)
         dropPromise(stuckPromise)
         stuckReject()
-        stuckReject = null
       })
   }
 
