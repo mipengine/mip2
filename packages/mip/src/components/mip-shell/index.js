@@ -286,8 +286,8 @@ class MipShell extends CustomElement {
       backgroundColor = '#ffffff'
     } = pageMeta.header
 
-    if (this.targetPageTitle && !this.alwaysUseTitleInShellConfig) {
-      title = pageMeta.header.title = this.targetPageTitle
+    if (this.priorTitle && !this.alwaysUseTitleInShellConfig) {
+      title = pageMeta.header.title = this.priorTitle
     }
     let showBackIcon = !pageMeta.view.isIndex
 
@@ -507,10 +507,11 @@ class MipShell extends CustomElement {
      * 3. <a mip-link></a> innerText (to.meta.defaultTitle)
      */
     let targetPageMeta = fn.extend(true, {}, this.findMetaByPageId(targetPageId))
-    this.targetPageTitle = to.meta.header
+
+    this.priorTitle = to.meta.header && to.meta.header.title
+    document.title = targetPageMeta.header.title = to.meta.header
       ? to.meta.header.title || targetPageMeta.header.title || to.meta.header.defaultTitle
       : targetPageMeta.header.title
-    document.title = targetPageMeta.header.title = this.targetPageTitle
 
     // Transition direction
     let isForward
