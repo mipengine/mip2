@@ -283,4 +283,4 @@
     currCarouselItem: childNodes[imgIndex], // 当前子元素的dom节点
     carouselChildrenLength: childNum // 当前 carousel 下的子节点个数
   }
-
+```
