@@ -8,7 +8,7 @@ MIP 开发工具还提供了页面规范的校验工具，来帮助开发者快�
 	$ mip2 validate -p example/index.html
 	```
 
-    ![validate0](http://bos.nj.bpc.baidu.com/assets/mip/codelab/validate0.png)
+    ![validate0](https://boscdn.baidu.com/assets/mip/codelab/validate0.png)
 
 	> 可以看到，出现了校验失败的结果，它提示我们需要将带有 canonical 属性的 link 指向原页面，并且将 mip-example.js 的引用地址替换成线上CDN（前提是已经提交上线了），诸如此类，只需按照提示进行相应的微调即可。
 
@@ -19,7 +19,7 @@ MIP 开发工具还提供了页面规范的校验工具，来帮助开发者快�
 	$ mip2 validate -c ./componets
 	```
 
-	![validate1](http://bos.nj.bpc.baidu.com/assets/mip/codelab/validate1.jpg)
+	![validate1](https://boscdn.baidu.com/assets/mip/codelab/validate1.jpg)
 
 
 3. 代码格式校验，安装依赖，代码必须遵守 JavaScript Standard Style [[CN](https://standardjs.com/rules-zhcn.html)/[EN](https://standardjs.com/rules-en.html)] 规范
@@ -36,4 +36,4 @@ MIP 开发工具还提供了页面规范的校验工具，来帮助开发者快�
 	> 代码规范需通过才能申请合入哦！
 
 
-如果要继续深入学习自定义组件的开发，开发者可以继续后续的[自定义组件开发的学习](../component-development/introduction.md)
+如果要继续深入学习自定义组件的开发，开发者可以继续后续的[如何开发自定义组件](../component-development/introduction.md)

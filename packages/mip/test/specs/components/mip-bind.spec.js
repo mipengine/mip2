@@ -325,7 +325,6 @@ describe('mip-bind', function () {
         }
       })
 
-
       expect(eleBind.getAttribute('data-active')).to.equal('{"bool":false}')
       expect(eleObject.getAttribute('data')).to.equal('8')
     })
@@ -363,7 +362,6 @@ describe('mip-bind', function () {
   })
 
   describe('watch', function () {
-
     it('should run watchers after all data was set', function () {
       let loadingChanged = false
       MIP.$set({
@@ -383,20 +381,17 @@ describe('mip-bind', function () {
         'data_key': 1,
         'w-loading': true
       })
-      // setTimeout(() => {
       expect(loadingChanged).to.be.false
-      //   done()
-      // }, 0)
     })
 
     it('should run watcher after all data was set according to order', function () {
-      let ct = 0
+      let res = ''
       MIP.$set({
         'data_key2': 0,
         'w-loading2': 'false'
       })
-      MIP.watch('w-loading2', function () {
-        ct++
+      MIP.watch('w-loading2', function (val) {
+        res += val
       })
       MIP.watch('data_key2', function () {
         MIP.setData({
@@ -408,7 +403,7 @@ describe('mip-bind', function () {
         'data_key2': 1,
         'w-loading2': true
       })
-      expect(ct).to.equal(2)
+      expect(res).to.equal('truefalse')
     })
 
     it('should avoid infinit update with custom watcher', function () {

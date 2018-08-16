@@ -126,11 +126,11 @@ MIP（Mobile Instant Pages - 移动网页加速器）主要用于移动端页面
 ```
 
 ## 6. 使用 MIP 组件
-[warning]出于对代码质量和性能的考虑，MIP 页中不允许自定义 JavaScript 代码。
+[warning]出于对代码质量和性能的考虑，MIP 页中不允许使用 `script` 标签自定义 JavaScript 代码。如有必要，开发者可以考虑使用 [`<mip-script>` 组件](../interactive-mip/mip-script.md)来编写受 MIP 限制的 JavaScript 代码。
 
 在一个合法的 MIP 页面中，所有的交互通过引入 MIP 组件实现。MIP 组件可以理解为封装了 JS 的自定义 HTML 标签。上一步中的 `<mip-img>` 也是一个 MIP 组件，[点击这里](../../extensions/index.md) 查看更多组件。
 
-我们以分享组件为例，根据[分享组件文档](../../extensions/extentions/mip-share.md)，组件对应的 HTML 标签为 `<mip-share>` ，需要依赖 <https://c.mipcdn.com/static/v2/mip-share/mip-share.js> 脚本，用在页面里就是这样：
+我们以分享组件为例，根据[分享组件文档](../../extensions/extensions/mip-share.md)，组件对应的 HTML 标签为 `<mip-share>` ，需要依赖 <https://c.mipcdn.com/static/v2/mip-share/mip-share.js> 脚本，用在页面里就是这样：
 
 ```html
 <!DOCTYPE html>

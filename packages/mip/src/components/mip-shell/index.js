@@ -285,6 +285,7 @@ class MipShell extends CustomElement {
       borderColor,
       backgroundColor = '#ffffff'
     } = pageMeta.header
+
     if (this.targetPageTitle && !this.alwaysUseTitleInShellConfig) {
       title = pageMeta.header.title = this.targetPageTitle
     }

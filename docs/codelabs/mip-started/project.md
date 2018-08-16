@@ -1,10 +1,10 @@
-# 3. 熟悉项目结构
+# 3. 项目初始化页面
 
 通过前面两步，开发者可以初步预览到初始化项目的一个页面，如果要更好的开发，我们还需要对初始化的项目结构有一定的了解
 
 1. 初始化项目结构
 
-    ![myproject](http://bos.nj.bpc.baidu.com/assets/mip/codelab/project.jpg)
+    ![myproject](https://boscdn.baidu.com/assets/mip/codelab/project.jpg)
 
 
 2. 如下图所示，初始化项目的预览页面 `example/index.html` 中给出了 MIP 页面的一个最基本的格式。
