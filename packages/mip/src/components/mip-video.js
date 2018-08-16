@@ -84,6 +84,12 @@ class MipVideo extends CustomElement {
     this.addEventAction('seekTo', (e, currentTime) => {
       this.videoElement.currentTime = currentTime
     })
+    this.addEventAction('play', (e) => {
+      this.videoElement.play()
+    })
+    this.addEventAction('pause', (e) => {
+      this.videoElement.pause()
+    })
 
     this.applyFillContent(this.videoElement, true)
   }
