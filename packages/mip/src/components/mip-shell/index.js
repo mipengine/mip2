@@ -69,6 +69,10 @@ class MipShell extends CustomElement {
     // If true, always load configures from `<mip-shell>` and overwrite shellConfig when opening new page
     this.alwaysReadConfigOnLoad = true
 
+    // If true, always use title in shell config of target page when switing page
+    // Otherwise, use title from last page (`data-title` and shell config and innerText)
+    this.alwaysUseTitleInShellConfig = false
+
     // If true, page switching transition contains header
     this.transitionContainsHeader = true
   }
@@ -269,8 +273,6 @@ class MipShell extends CustomElement {
 
     // Other parts
     this.renderOtherParts()
-
-    // window.MIP.viewer.fixedElement.init()
   }
 
   renderHeader (container) {
@@ -283,7 +285,7 @@ class MipShell extends CustomElement {
       borderColor,
       backgroundColor = '#ffffff'
     } = pageMeta.header
-    if (this.targetPageTitle) {
+    if (this.targetPageTitle && !this.alwaysUseTitleInShellConfig) {
       title = pageMeta.header.title = this.targetPageTitle
     }
     let showBackIcon = !pageMeta.view.isIndex
