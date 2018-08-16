@@ -232,7 +232,7 @@
 
 ### width
 
-说明：宽度，不是实际宽度，与高度属性配合来设置图片比例，详见[组件布局](../layout.md)  
+说明：宽度，不是实际宽度，与高度属性配合来设置图片比例，详见[组件布局](../../guide/component/layout.md)
 必选项：是  
 类型：数字  
 单位：无  
@@ -240,7 +240,7 @@
 
 ### height
 
-说明：高度，不是实际高度，与宽度属性配合来设置图片比例，详见[组件布局](../layout.md)  
+说明：高度，不是实际高度，与宽度属性配合来设置图片比例，详见[组件布局](../../guide/component/layout.md)
 必选项：是  
 类型：数字  
 单位：无  
@@ -277,10 +277,10 @@
 
 说明：当每一页切换完成之后，会触发该事件，事件参数会返回当前展示的dom节点，carousel 子元素的总数，当前展示的carousel item的索引值。
 一个返回参数示例如下：
-``` json
-  {
-    currIndex: 2,  // 当前子元素的显示索引值
-    currCarouselItem: childNodes[imgIndex], // 当前子元素的dom节点
-    carouselChildrenLength: childNum // 当前 carousel 下的子节点个数
-  }
-
+``` js
+{
+  currIndex: 2,  // 当前子元素的显示索引值
+  currCarouselItem: childNodes[imgIndex], // 当前子元素的dom节点
+  carouselChildrenLength: childNum // 当前 carousel 下的子节点个数
+}
+```

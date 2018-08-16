@@ -1,0 +1,34 @@
+{
+  "menu": [
+    {
+      "key": "mip-ad-baidu"
+    },
+    {
+      "key": "mip-ad-baidussp",
+      "preview": false
+    },
+    {
+      "key": "mip-ad-comm"
+    },
+    {
+      "key": "mip-ad-imageplus",
+      "preview": false
+    },
+    {
+      "key": "mip-ad-qwang",
+      "preview": false
+    },
+    {
+      "key": "mip-ad-ssp",
+      "preview": false
+    },
+    {
+      "key": "mip-ad",
+      "preview": false
+    },
+    {
+      "key": "mip-baidu-wm-ext",
+      "preview": false
+    }
+  ]
+}
