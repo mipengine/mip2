@@ -178,7 +178,7 @@ function hasTouch () {
  */
 function isCacheUrl (pageUrl) {
   return /mipcache.bdstatic.com/.test(pageUrl) ||
-    /^(\/\/|http:\/\/|https:\/\/)([A-Za-z0-9]{1,}-?){1,}.mipcdn.com\/(stati)?c\//.test(pageUrl)
+    /^(\/\/|http:\/\/|https:\/\/)[^.]+.mipcdn.com\/(stati)?c\//.test(pageUrl)
 }
 
 export default {

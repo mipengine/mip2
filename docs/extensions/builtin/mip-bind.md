@@ -206,7 +206,7 @@ export default {
 详情请阅读 [可交互 MIP - Class 与 Style 绑定](https://mip-project.github.io/guide/interactive-mip/class-style-binding.html)
 
 ### 修改数据
-MIP 提供了全局方法 `MIP.setData(data)` 来让开发者修改数据，以完成通过数据驱动 DOM元素更新的交互方案。重复数据会进行覆盖。
+MIP 提供了全局方法 `MIP.setData(data)` 来让开发者修改数据，以完成通过数据驱动 DOM 元素更新的交互方案。重复数据会进行覆盖。
 
 #### 用法
 
@@ -281,7 +281,7 @@ MIP 提供了全局方法 `MIP.setData(data)` 来让开发者修改数据，以�
 
 后者没有特殊要求，只需要开发者自行确认逻辑和数据即可。而前者的使用，对开发者的要求有两点：
 1.	使用单引号来引用字符串；
-2.	要修改的数据的值，如果是一个变量 `var`，需要是通过mip-data 组件设置的数据，并且通过 `m.var` 来获取
+2.	要修改的数据的值，如果是一个变量 `var`，需要是通过 mip-data 组件设置的数据，并且通过 `m.var` 来获取
 
 #### 支持数据表达式
 
@@ -438,7 +438,7 @@ export default {
 </script>
 ```
 >**注：**
->请留意上面例子中 HTML 与 mip-a 组件实现两段代码里面的 userinfo 和 anotherObject 的绑定示例。由于 m-bind 的基本原理是将动态数据绑定到指定 attribute 上，而我们知道，HTML 标签的 attribute 要求小写（即使写了大写也会转换为小写），因此如果开发者想要在组件里使用驼峰命名变量，请使用短横线的方式指定 attribute。
+>请留意上面例子中 HTML 与 mip-a 组件实现两段代码里面的 userinfo 和 anotherObject 的绑定示例。由于 m-bind 的基本原理是将动态数据绑定到指定 attribute 上，而我们知道，HTML 标签的 attribute 要求小写（即使写了大写也会转换为小写），因此如果开发者想要在组件里使用驼峰命名变量，请使用短横线(kebab-case)的方式指定 attribute。
 
 #### 在 `mip-script` 组件中
 `mip-script` 组件允许开发者编写自定义的 JavaScript 代码，作用类似于 script 标签。其具体用法和规范开发者将在后面的小节了解到。此处我们将借这个组件来向开发者介绍一个读取数据的 API：`MIP.getData(value)`。`value` 为数据源中的属性名，多层数据可以以` . `连接。注意，`getData` 方法在组件中并不开放使用，请开发者遵循前面的在组件中使用数据的规范。

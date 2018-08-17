@@ -26,6 +26,7 @@ import {
 
 import {customEmit} from '../util/custom-event'
 import viewport from '../viewport'
+import performance from '../performance'
 import '../styles/mip.less'
 
 /**
@@ -65,7 +66,8 @@ class Page {
     }
 
     try {
-      const anchor = document.getElementById(decodeURIComponent(hash.slice(1)))
+      const anchor = document.getElementById(hash.slice(1)) ||
+        document.getElementById(decodeURIComponent(hash.slice(1)))
 
       /* istanbul ignore next */
       if (anchor) {
@@ -170,8 +172,17 @@ class Page {
     ensureMIPShell()
     this.initPageId()
 
-    // scroll to current hash if exists
-    this.scrollToHash(window.location.hash)
+    /**
+     * scroll to anchor after all the elements loaded
+     * fix: https://github.com/mipengine/mip2/issues/125
+     */
+    performance.on('update', timing => {
+      if (timing.MIPFirstScreen) {
+        // scroll to current hash if exists
+        this.scrollToHash(window.location.hash)
+      }
+    })
+
     window.addEventListener(CUSTOM_EVENT_SCROLL_TO_ANCHOR, (e) => {
       this.scrollToHash(e.detail[0])
     })
@@ -243,10 +254,12 @@ class Page {
       customEmit(window, event.name, event.data)
 
       this.children.forEach(pageMeta => {
-        pageMeta.targetWindow.postMessage({
-          type: MESSAGE_CROSS_ORIGIN,
-          data: event
-        }, '*')
+        if (pageMeta.targetWindow) {
+          pageMeta.targetWindow.postMessage({
+            type: MESSAGE_CROSS_ORIGIN,
+            data: event
+          }, '*')
+        }
       })
     } else {
       window.parent.postMessage({

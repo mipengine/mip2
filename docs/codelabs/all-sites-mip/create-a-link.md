@@ -64,4 +64,4 @@ MIP 页面的链接采用和标准 HTML 相同的 `<a>` 标签，但进行了一
 
 点击 `index.html` 的下一页按钮，我们可以看到 `second.html` 以动画的形式流畅地侧滑进入屏幕，页面并没有常规的白屏，体验和单页应用完全相同。
 
-![切换效果](http://boscdn.bpc.baidu.com/assets/mip/codelab/shell/transition-forward.png)
+![切换效果](https://boscdn.baidu.com/assets/mip/codelab/shell/transition-forward.png)

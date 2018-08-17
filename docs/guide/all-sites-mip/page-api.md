@@ -25,7 +25,9 @@ if (isRootPage) {
 
 如果页面需要展现全页面级别的遮罩层（如弹出对话框时），因为 iframe 的关系，并不能遮挡头部，如下图左边所示。
 
-![Page Mask](http://boscdn.bpc.baidu.com/assets/mip2/page/page-mask.png)
+
+![Page Mask](http://boscdn.bpc.baidu.com/assets/mip2/page/page-mask-2.png)
+
 
 而调用 `togglePageMask` 方法可以就通知 Page 把头部也进行遮挡，从而完成全页面的遮罩，如上图右边所示。
 
@@ -47,7 +49,7 @@ window.MIP.viewer.page.togglePageMask(true, {skipTransition: true})
 
 展现/隐藏“更多”按钮的浮层。效果如图：
 
-![Drop Down](http://boscdn.bpc.baidu.com/assets/mip2/page/dropdown-2.png)
+![Drop Down](https://boscdn.baidu.com/assets/mip2/page/dropdown-2.png)
 
 这个方法接收一个参数，具体如下：
 

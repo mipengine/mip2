@@ -62,44 +62,50 @@ export function convertAttributeValue (value, type) {
  * 解析 vue 组件的 props
  *
  * @see https://vuejs.org/v2/guide/components-props.html#Prop-Casing-camelCase-vs-kebab-case
- * @param {Array|Object} propsDef props collection
+ * @param {Object} component definition
  * @param {Object} props extract props
  */
-function extractProps (propsDef, props) {
-  if (isArray(propsDef)) {
-    propsDef.forEach(prop => {
-      let camelCaseProp = camelize(prop)
-      props.camelCase.indexOf(camelCaseProp) === -1 && props.camelCase.push(camelCaseProp)
-      props.types[prop] = getPropType(propsDef[camelCaseProp])
+function extractProps (def, propTypes) {
+  if (isArray(def.props)) {
+    def.props.forEach(prop => {
+      let camelizeName = camelize(prop)
+      if (!propTypes[camelizeName]) {
+        propTypes[camelizeName] = getPropType(def.props[prop])
+      }
     })
-  } else if (propsDef && typeof propsDef === 'object') {
-    for (let prop in propsDef) {
-      let camelCaseProp = camelize(prop)
-      props.camelCase.indexOf(camelCaseProp) === -1 && props.camelCase.push(camelCaseProp)
-      props.types[prop] = getPropType(propsDef[camelCaseProp])
+  } else if (typeof def.props === 'object') {
+    for (let prop in def.props) {
+      let camelizeName = camelize(prop)
+      if (!propTypes[camelizeName]) {
+        propTypes[camelizeName] = getPropType(def.props[prop])
+      }
     }
   }
+
+  if (def.extends && def.extends.props) {
+    extractProps(def.extends, propTypes)
+  }
+
+  if (def.mixins) {
+    def.mixins.forEach(mixin => extractProps(mixin, propTypes))
+  }
+
+  return propTypes
 }
 
 // Extract props from component definition, no matter if it's array or object
-export function getProps (componentDefinition = {}) {
+export function getProps (def = {}) {
   let props = {
     camelCase: [],
     hyphenate: [],
     types: {}
   }
 
-  if (componentDefinition.mixins) {
-    componentDefinition.mixins.forEach(mixin => extractProps(mixin.props, props))
-  }
+  let propTypes = extractProps(def, {})
 
-  if (componentDefinition.extends && componentDefinition.extends.props) {
-    extractProps(componentDefinition.extends.props, props)
-  }
-
-  extractProps(componentDefinition.props, props)
-
-  props.camelCase.forEach(prop => props.hyphenate.push(hyphenate(prop)))
+  props.camelCase = Object.keys(propTypes)
+  props.hyphenate = Object.keys(propTypes).map(key => hyphenate(key))
+  props.types = propTypes
 
   return props
 }

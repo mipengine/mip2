@@ -42,31 +42,47 @@ function prerenderSetSrc (allMipImgs, index, num, arraySrc) {
       for (let j = 0; j < imgs.length; j++) {
         imgs[j].setAttribute('src', arraySrc[i])
       }
+    } else {
+      allMipImgs[i].querySelector('mip-img').setAttribute('src', arraySrc[i])
     }
   }
 }
 /**
  * 修改 src 为某张图的 src
  * @param  {NodeList} childList 一般是 mip-img 标签的集合
- * @param  {number } j         j
+ * @param  {number} imgIndex    imgIndex是显示的第一张图片的在arraySrc中的index
+ * @param   {Array} arraySrc    所有图片的src组成的数组
  * @return {NodeList}           返回 childList
  */
-function changeSrc (childList, j) {
-  let src = ''
-  // 考虑 mip-img 是被嵌套在 a 里面的情况
-  if (childList[j].tagName === 'MIP-IMG') {
-    src = childList[j].getAttribute('src')
-  } else {
-    src = childList[j].querySelector('mip-img').getAttribute('src')
-  }
+function changeSrc (childList, imgIndex, arraySrc) {
   for (let i = 0; i < childList.length; i++) {
     if (childList[i].tagName === 'MIP-IMG') {
-      childList[i].setAttribute('src', src)
+      childList[i].setAttribute('src', arraySrc[imgIndex])
+    } else {
+      childList[i].querySelector('mip-img').setAttribute('src', arraySrc[imgIndex])
     }
   }
   return childList
 }
-
+/**
+ * 获取carousel下所有mip-img的src，目前只处理一层和两层的，3层也当两层处理
+ * @param  {Array.<HTMLElement>} childNodes getChildNodes函数得出的数组
+ * @return {Array.<string>}                 mip-img中的src组成的数组
+ */
+function getAllMipImgSrc (childNodes) {
+  let arr = []
+  for (let i = 0; i < childNodes.length; i++) {
+    if (childNodes[i].tagName === 'MIP-IMG') {
+      arr.push(childNodes[i].getAttribute('src'))
+    } else {
+      let node = childNodes[i].querySelector('mip-img')
+      if (node) {
+        arr.push(node.getAttribute('src'))
+      }
+    }
+  }
+  return arr
+}
 // 按tagName创建一个固定class的tag
 function createTagWithClass (className, tagName) {
   tagName = tagName || 'div'
@@ -228,8 +244,8 @@ class MIPCarousel extends CustomElement {
     // 获取carousel下的所有节点
     let childNodes = getChildNodes(ele)
     // 获取所有的 src
-    let arraySrc = childNodes.map(value => value.getAttribute('src'))
-    childNodes = changeSrc(childNodes, imgIndex)
+    let arraySrc = getAllMipImgSrc(childNodes)
+    childNodes = changeSrc(childNodes, imgIndex, arraySrc)
 
     // 图片显示个数
     // 其实图片个数应该为实际个数+2.copy了头和尾的两部分
@@ -471,7 +487,7 @@ class MIPCarousel extends CustomElement {
         setTimeout(function () {
           translateFn(curGestureClientx, '0ms', wrapBox)
           btnLock.stop = 1
-        }, 300)
+        }, 400)
       }
       btnLock.stop = 1
       indicatorChange(imgIndex)

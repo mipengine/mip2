@@ -129,6 +129,94 @@ describe('mip-bind', function () {
     })
   })
 
+  describe('async mip-data', function () {
+    const json = (body, status) => {
+      const mockResponse = new window.Response(JSON.stringify(body), {
+        status: status,
+        headers: {
+          'Content-type': 'application/json'
+        }
+      })
+      return mockResponse
+    }
+
+    let fetchOrigin
+    before(function () {
+      fetchOrigin = window.fetch
+      sinon.stub(window, 'fetch')
+    })
+
+    after(function () {
+      window.fetch = fetchOrigin
+    })
+
+    it('should fetch async data', function (done) {
+      window.fetch.returns(
+        Promise.resolve(
+          json({tabs: [1, 2, 3]}, 200)
+        )
+      )
+
+      let mipData = new MipData()
+      let mipDataTag = document.createElement('mip-data')
+      mipDataTag.setAttribute('src', '/testData')
+      mipData.element = mipDataTag
+
+      mipData.build.bind(mipData)()
+      expect(window.mipDataPromises.length).to.equal(1)
+
+      Promise.all(window.mipDataPromises).then(function () {
+        expect(MIP.getData('tabs')).to.have.lengthOf(3)
+        expect(window.mipDataPromises.length).to.equal(0)
+        done()
+      })
+    })
+
+    it('should fetch async data 404', function (done) {
+      window.fetch.returns(
+        Promise.resolve(
+          json({status: 404}, 404)
+        )
+      )
+
+      let mipData = new MipData()
+      let mipDataTag = document.createElement('mip-data')
+      mipDataTag.setAttribute('src', '/testData')
+      mipData.element = mipDataTag
+
+      mipData.build.bind(mipData)()
+      expect(window.mipDataPromises.length).to.equal(1)
+
+      Promise.all(window.mipDataPromises).catch(function () {
+        expect(MIP.getData('status')).to.be.undefined
+        expect(window.mipDataPromises.length).to.equal(0)
+        done()
+      })
+    })
+
+    it('should fetch async data failed', function (done) {
+      window.fetch.returns(
+        Promise.reject(
+          json({status: 'failed'}, 200)
+        )
+      )
+
+      let mipData = new MipData()
+      let mipDataTag = document.createElement('mip-data')
+      mipDataTag.setAttribute('src', '/testData')
+      mipData.element = mipDataTag
+
+      mipData.build.bind(mipData)()
+      expect(window.mipDataPromises.length).to.equal(1)
+
+      Promise.all(window.mipDataPromises).catch(function () {
+        expect(MIP.getData('status')).to.be.undefined
+        expect(window.mipDataPromises.length).to.equal(0)
+        done()
+      })
+    })
+  })
+
   describe('setData', function () {
     let ct = 0
     before(function () {
@@ -168,7 +256,7 @@ describe('mip-bind', function () {
         title: 'changed'
       })
 
-      MIP.$recompile()
+      // MIP.$recompile()
 
       expect(window.m.global).to.eql({
         data: {
@@ -264,10 +352,16 @@ describe('mip-bind', function () {
 
       expect(MIP.getData('loading')).to.be.true
     })
+
+    it('should compile smoothly even if data turn to null', function () {
+      MIP.setData({loc: null})
+      MIP.$recompile()
+
+      expect(window.m.loc).to.be.null
+    })
   })
 
   describe('watch', function () {
-
     it('should run watchers after all data was set', function () {
       let loadingChanged = false
       MIP.$set({
@@ -287,20 +381,17 @@ describe('mip-bind', function () {
         'data_key': 1,
         'w-loading': true
       })
-      // setTimeout(() => {
       expect(loadingChanged).to.be.false
-      //   done()
-      // }, 0)
     })
 
     it('should run watcher after all data was set according to order', function () {
-      let ct = 0
+      let res = ''
       MIP.$set({
         'data_key2': 0,
         'w-loading2': 'false'
       })
-      MIP.watch('w-loading2', function () {
-        ct++
+      MIP.watch('w-loading2', function (val) {
+        res += val
       })
       MIP.watch('data_key2', function () {
         MIP.setData({
@@ -312,7 +403,7 @@ describe('mip-bind', function () {
         'data_key2': 1,
         'w-loading2': true
       })
-      expect(ct).to.equal(2)
+      expect(res).to.equal('truefalse')
     })
 
     it('should avoid infinit update with custom watcher', function () {

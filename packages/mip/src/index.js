@@ -27,6 +27,7 @@ import MipShell from './components/mip-shell/index'
 import registerCustomElement from './register-element'
 import sleepWakeModule from './sleep-wake-module'
 import performance from './performance'
+import templates from './util/templates'
 import mip1PolyfillInstall from './mip1-polyfill/index'
 
 import monitorInstall from './log/monitor'
@@ -101,6 +102,8 @@ let mip = {
   sandbox,
   css: {},
   push,
+  performance,
+  templates,
   prerenderElement: Resources.prerenderElement,
   builtinComponents: {
     // MipShell 应该删除，不符合命名
