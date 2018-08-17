@@ -16,7 +16,7 @@ import dom from './dom/dom'
  * @inner
  * @type {RegExp}
  */
-const PARSE_REG = /^(\w+):\s*([\w-]+)\.([\w-$]+)(?:\((.+)\))?$/
+const PARSE_REG = /^([\w-]+):\s*([\w-]+)\.([\w-$]+)(?:\((.+)\))?$/
 
 /**
  * Regular for checking elements.
