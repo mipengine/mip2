@@ -85,10 +85,12 @@ class MipVideo extends CustomElement {
       this.videoElement.currentTime = currentTime
     })
     this.addEventAction('play', (e) => {
-      this.videoElement.play()
+      // renderPlayElsewhere 的 videoElement 是 div，没有 play
+      this.videoElement.play && this.videoElement.play()
     })
     this.addEventAction('pause', (e) => {
-      this.videoElement.pause()
+      // renderPlayElsewhere 的 videoElement 是 div，没有 pause
+      this.videoElement.pause && this.videoElement.pause()
     })
 
     this.applyFillContent(this.videoElement, true)
