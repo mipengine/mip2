@@ -242,8 +242,9 @@ class Compile {
     }
     let value
     try {
-      value = util.getter(this, exp).value
-      if (value !== '' && typeof value !== 'undefined') {
+      let res = util.getter(this, exp)
+      value = res.value
+      if (res.shouldRm) {
         node.removeAttribute(attrName + (isSync ? '.sync' : ''))
       }
     } catch (e) {
