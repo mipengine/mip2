@@ -78,7 +78,12 @@ class MipVideo extends CustomElement {
     ) {
       this.videoElement = this.renderInView()
     } else {
-      this.videoElement = this.renderPlayElsewhere()
+      // 再细分为 iframe 外层页面是否为 MIP 独立站点，或者只是普通页面
+      if (window.parent.MIP && !window.parent.MIP.standalone) {
+        this.videoElement = this.renderPlayElsewhere()
+      } else {
+        this.videoElement = this.renderError()
+      }
     }
 
     this.addEventAction('seekTo', (e, currentTime) => {
@@ -122,7 +127,21 @@ class MipVideo extends CustomElement {
     this.element.appendChild(videoEl)
     return videoEl
   }
+  // 混合内容警告：出于安全因素的考虑，不予播放，显示一个 X
+  renderError () {
+    let videoEl = document.createElement('div')
+    videoEl.setAttribute('class', 'mip-video-poster')
+    if (this.attributes.poster) {
+      videoEl.style.backgroundImage = 'url(' + this.attributes.poster + ')'
+      videoEl.style.backgroundSize = 'cover'
+    }
 
+    let playBtn = document.createElement('span')
+    playBtn.setAttribute('class', 'mip-video-error')
+    videoEl.appendChild(playBtn)
+    this.element.appendChild(videoEl)
+    return videoEl
+  }
   // Render the `<div>` element with poster and play btn, and append to `this.element`
   renderPlayElsewhere () {
     let videoEl = document.createElement('div')
