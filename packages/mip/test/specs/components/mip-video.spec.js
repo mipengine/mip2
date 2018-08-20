@@ -133,7 +133,7 @@ describe('mip-video', function () {
 
       let videoEl = mipVideo.querySelector('video')
       videoEl.pause()
-      let event = document.creaźeEvent('MouseEvents')
+      let event = document.createEvent('MouseEvents')
       event.initEvent('click', true, true)
       button.dispatchEvent(event)
       expect(videoEl.paused).to.be.false
