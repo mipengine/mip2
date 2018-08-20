@@ -25,12 +25,14 @@ describe('mip-bind', function () {
 
   describe('init data', function () {
     let dumbDiv
+    let eleFalse
 
     before(function () {
       // some normal bindings
       eleText = createEle('p', ['loc.city'], 'text')
       eleBind = createEle('p', ['data-active', 'global.isGlobal'], 'bind')
       eleObject = createEle('p', ['data', 'global.data'], 'bind')
+      eleFalse = createEle('p', ['editing', '!editing'], 'bind')
 
       iframe = createEle('iframe', null)
 
@@ -102,8 +104,23 @@ describe('mip-bind', function () {
       expect(eleObject.getAttribute('data')).to.equal('{"name":"level-1","age":1}')
     })
 
+    it('should bind data with delayed "false"', function () {
+      MIP.$set({
+        editing: false
+      })
+
+      expect(eleFalse.getAttribute('editing')).to.equal('true')
+
+      MIP.setData({
+        editing: true
+      })
+
+      expect(eleFalse.getAttribute('editing')).to.equal('false')
+    })
+
     after(function () {
       document.body.removeChild(dumbDiv)
+      document.body.removeChild(eleFalse)
     })
   })
 
@@ -596,7 +613,7 @@ describe('mip-bind', function () {
       expect(eles[0].getAttribute('m-bind:num3')).to.be.empty
       expect(eles[0].getAttribute('num3')).to.be.null
 
-      expect(eles[1].getAttribute('m-bind')).to.be.null
+      expect(eles[1].getAttribute('m-bind')).to.equal('num3')
 
       expect(eles[2].getAttribute('m-bind:style')).to.equal('fontSize1')
       expect(eles[2].getAttribute('style')).to.be.null

@@ -214,6 +214,7 @@ class Compile {
       if (typeof data === 'object') {
         data = JSON.stringify(data)
       }
+      // node.setAttribute(attr, data)
       data !== '' ? node.setAttribute(attr, data) : node.removeAttribute(attr)
       if (TAGNAMES.test(node.tagName)) {
         if (ATTRS.test(attr)) {
