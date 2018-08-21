@@ -38,7 +38,7 @@ MIP 提供了一些很常用的组件，称为 “内置组件”，常用的如
 <body>
   <h2>这是我的第一个 MIP 页面</h2>
 
-  <mip-img src="https://boscdn.baidu.com/assets/mip/codelab/shell/mashroom.jpg" width="300" height="300" class="main-image"></mip-img>
+  <mip-img src="https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/codelab/shell/mashroom.jpg" width="300" height="300" class="main-image"></mip-img>
 
   <p>MIP 全称为 Mobile Instant Pages，因此是以页面 (Page) 为单位来运行的。开发者通过改造/提交一个个页面，继而被百度收录并展示。 </p>
   <p>但以页面为单位会带来一个问题：当一个 MIP 页面中存在往其他页面跳转的链接时，就会使浏览器使用加载页面的默认行为来加载新页面。这“第二跳”的体验比起从搜索结果页到 MIP 页面的“第一跳”来说相去甚远。 </p>
@@ -96,4 +96,4 @@ __注意__： `<style mip-custom>` 整个页面只能使用一次，不要遗漏
 
 至此一个独立的 MIP 页面已经完成了。我们可以使用一个静态服务器 (例如 [static-server](https://www.npmjs.com/package/static-server)) 来启动并通过浏览器访问这个 HTML 文件。预览效果如下：
 
-![use-shell](https://boscdn.baidu.com/assets/mip/codelab/shell/use-shell.png)
+![use-shell](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/codelab/shell/use-shell.png)

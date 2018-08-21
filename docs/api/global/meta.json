@@ -1,0 +1,22 @@
+{
+  "menu": [
+    {
+      "key": "mip"
+    },
+    {
+      "key": "base-custom-element"
+    },
+    {
+      "key": "vue-custom-element"
+    },
+    {
+      "key": "viewer"
+    },
+    {
+      "key": "viewport"
+    },
+    {
+      "key": "mip-shell"
+    }
+  ]
+}
