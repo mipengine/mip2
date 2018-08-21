@@ -17,7 +17,7 @@ import {supportsPassive} from './page/util/feature-detect'
 import {resolvePath} from './page/util/path'
 import viewport from './viewport'
 import Page from './page/index'
-import {MESSAGE_PAGE_RESIZE, CUSTOM_EVENT_SHOW_PAGE, CUSTOM_EVENT_HIDE_PAGE} from './page/const'
+import {CUSTOM_EVENT_SHOW_PAGE, CUSTOM_EVENT_HIDE_PAGE} from './page/const'
 import Messager from './messager'
 import fixedElement from './fixed-element'
 
@@ -440,7 +440,7 @@ let viewer = {
       this.viewportScroll()
     }
 
-    this.fixSoftKeyboard()
+    // this.fixSoftKeyboard()
   },
 
   /**
@@ -472,22 +472,22 @@ let viewer = {
    *
    * https://github.com/mipengine/mip2/issues/38
    */
-  fixSoftKeyboard () {
-    // reset iframe's height when input focus/blur
-    event.delegate(document, 'input', 'focus', event => {
-      this.page.notifyRootPage({
-        type: MESSAGE_PAGE_RESIZE
-      })
-      if (event.target && typeof event.target.scrollIntoView === 'function') {
-        setTimeout(() => event.target.scrollIntoView(), 500)
-      }
-    }, true)
-    event.delegate(document, 'input', 'blur', event => {
-      this.page.notifyRootPage({
-        type: MESSAGE_PAGE_RESIZE
-      })
-    }, true)
-  },
+  // fixSoftKeyboard () {
+  //   // reset iframe's height when input focus/blur
+  //   event.delegate(document, 'input', 'focus', event => {
+  //     this.page.notifyRootPage({
+  //       type: MESSAGE_PAGE_RESIZE
+  //     })
+  //     if (event.target && typeof event.target.scrollIntoView === 'function') {
+  //       setTimeout(() => event.target.scrollIntoView(), 500)
+  //     }
+  //   }, true)
+  //   event.delegate(document, 'input', 'blur', event => {
+  //     this.page.notifyRootPage({
+  //       type: MESSAGE_PAGE_RESIZE
+  //     })
+  //   }, true)
+  // },
 
   /**
    * lock body scroll in iOS
