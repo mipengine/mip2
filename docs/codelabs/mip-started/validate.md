@@ -21,7 +21,6 @@ MIP 开发工具还提供了页面规范的校验工具，来帮助开发者快�
 
 	![validate1](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/codelab/validate1.jpg)
 
-
 3. 代码格式校验，安装依赖，代码必须遵守 JavaScript Standard Style [[CN](https://standardjs.com/rules-zhcn.html)/[EN](https://standardjs.com/rules-en.html)] 规范
 
 	``` bash

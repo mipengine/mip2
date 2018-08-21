@@ -19,14 +19,15 @@
     ```bash
     mip2 init
     ```
-    ![mip2 init](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/codelab/mip-init0.jpg)
 
+    ![mip2 init](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/codelab/mip-init0.jpg)
 
 3. 进入目录并启动开发服务器
 
     ```bash
     mip2 dev
     ```
+
     ![mip2 dev](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/codelab/mip-dev0.jpg)
 
 4. 访问 `http://127.0.0.1:8111/example/index.html` 将看到初始 `example` 示例页面

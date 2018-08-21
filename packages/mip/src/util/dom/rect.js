@@ -142,7 +142,10 @@ export default {
   setScrollTop (top) {
     if (setterElement) {
       setterElement.style.top = top + 'px'
-      setterElement.scrollIntoView(true)
+      // 如果页面头部是一个图片（或者其他后续会改变高度的元素）
+      // 直接执行 scrollIntoView 会导致页面一打开就滚动到半当中，而不是头部
+      // setTimeout 0 可以解决这个问题
+      setTimeout(() => setterElement.scrollIntoView(true), 0)
     } else {
       this.scrollingElement.scrollTop = top
     }

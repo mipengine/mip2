@@ -45,7 +45,7 @@ export default class MIPShellExample extends window.MIP.builtinComponents.MIPShe
                        "header": {
                             "show": true,
                             "title": "MIP Index",
-                            "logo": "http://boscdn.bpc.baidu.com/assets/mip/codelab/shell/mashroom.jpg"
+                            "logo": "https://boscdn.baidu.com/assets/mip/codelab/shell/mashroom.jpg"
                         },
                     }
                 }
@@ -180,7 +180,7 @@ MIP Shell 进行的所谓“初步处理”包括：
     setTimeout(() => {
       // 通过 exampleUserId 获取到目标用户的标题和 LOGO，并固定按钮
       shellConfig.routes[0].meta.header.title = '蓝犀牛搬家'
-      shellConfig.routes[0].meta.header.logo = 'http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png'
+      shellConfig.routes[0].meta.header.logo = 'https://boscdn.baidu.com/assets/mip2/lanxiniu/logo.png'
       shellConfig.routes[0].meta.header.buttonGroup = [
         {
           name: 'share',
@@ -343,7 +343,7 @@ afterSwitchPage(options) {
         console.log('Simulate async request with isId:', isId)
         setTimeout(() => {
           shellConfig.routes[0].meta.header.title = '蓝犀牛搬家'
-          shellConfig.routes[0].meta.header.logo = 'http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png'
+          shellConfig.routes[0].meta.header.logo = 'https://boscdn.baidu.com/assets/mip2/lanxiniu/logo.png'
           shellConfig.routes[0].meta.header.buttonGroup = [
             {
               name: 'share',
