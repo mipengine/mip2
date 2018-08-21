@@ -107,7 +107,8 @@ module.exports = {
 更多的配置选项可以参考 [Workbox 配置项](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateswstring_mode)
 
 ## changelog
-
+- 1.2.3
+    1. 组件的 README.md 支持自动生成组件脚本地址
 - 1.2.2
     1. cli 沙盒注入提示信息增加对应文件提示以及白名单申请引导
     2. 修复 1.2.1 dev/build 模式下默认命令行参数失效的 bug
