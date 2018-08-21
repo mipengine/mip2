@@ -6,7 +6,7 @@
 import viewport from '../viewport'
 import CustomElement from '../custom-element'
 
-class MipFont extends CustomElement {
+class MipRem extends CustomElement {
   connectedCallback () {
     if (viewport.getWidth() <= 360) {
       // 通过 js 设置 !important
@@ -17,4 +17,4 @@ class MipFont extends CustomElement {
   }
 }
 
-export default MipFont
+export default MipRem

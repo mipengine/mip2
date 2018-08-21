@@ -6,7 +6,7 @@
 /* eslint-disable no-new */
 
 import MipImg from './mip-img'
-import MipFont from './mip-font'
+import MipRem from './mip-rem'
 import MipVideo from './mip-video'
 import MipCarousel from './mip-carousel'
 import MipIframe from './mip-iframe'
@@ -25,7 +25,7 @@ export default {
   register () {
     registerElement('mip-pix', MipPix)
     registerElement('mip-img', MipImg)
-    registerElement('mip-font', MipFont)
+    registerElement('mip-rem', MipRem)
     registerElement('mip-carousel', MipCarousel)
     registerElement('mip-iframe', MipIframe)
     registerElement('mip-video', MipVideo)
