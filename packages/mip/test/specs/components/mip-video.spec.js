@@ -219,6 +219,7 @@ describe('mip-video', function () {
       div.setAttribute('controls', 'true')
       div.setAttribute('width', '100px')
       div.setAttribute('height', '100px')
+      div.setAttribute('poster', 'https://www.mipengine.org/static/img/sample_04.jpg')
       div.setAttribute('src', 'https://mip-doc.bj.bcebos.com/sample_video.mp4')
 
       let _mipVideo = new MipVideo()
@@ -228,7 +229,7 @@ describe('mip-video', function () {
       let videoEl = _mipVideo.renderError()
 
       expect(videoEl.tagName).to.equal('DIV')
-      expect(videoEl.style.backgroundImage).to.be.empty
+      expect(videoEl.style.backgroundImage).to.equal('url("https://www.mipengine.org/static/img/sample_04.jpg")')
       expect(videoEl.querySelector('span').classList.contains('mip-video-error')).to.be.true
     })
 
