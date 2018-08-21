@@ -4,7 +4,7 @@
 
 1. 初始化项目结构
 
-    ![myproject](https://boscdn.baidu.com/assets/mip/codelab/project.jpg)
+    ![myproject](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/codelab/project.jpg)
 
 
 2. 如下图所示，初始化项目的预览页面 `example/index.html` 中给出了 MIP 页面的一个最基本的格式。

@@ -72,7 +72,7 @@ MIP.CustomElement 是所有 MIP 自定义组件的基类，该基类提供如下
   <button on="tap:example.show(1,2)"></button>
   ```
 
-- **参考**：[事件通信](../guide/component/actions-and-events.html)
+- **参考**：[事件通信](../../guide/component/actions-and-events.html)
 
 ## static 方法
 
