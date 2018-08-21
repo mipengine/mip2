@@ -107,6 +107,8 @@ module.exports = {
 更多的配置选项可以参考 [Workbox 配置项](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateswstring_mode)
 
 ## changelog
+- 1.2.4
+    1. 修复 node 版本低于 8.0 时不出现版本升级提示的 bug
 - 1.2.3
     1. 组件的 README.md 支持自动生成组件脚本地址
 - 1.2.2
