@@ -214,7 +214,7 @@ describe('mip-video', function () {
       expect(videoEl.querySelector('span').classList.contains('mip-video-playbtn')).to.be.true
     })
 
-    it('should renderError with message', function () {
+    it('should renderError with a picture', function () {
       let div = document.createElement('div')
       div.setAttribute('controls', 'true')
       div.setAttribute('width', '100px')
@@ -228,6 +228,7 @@ describe('mip-video', function () {
       let videoEl = _mipVideo.renderError()
 
       expect(videoEl.tagName).to.equal('DIV')
+      expect(videoEl.style.backgroundImage).to.be.empty
       expect(videoEl.querySelector('span').classList.contains('mip-video-error')).to.be.true
     })
 
