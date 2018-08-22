@@ -16,7 +16,7 @@ class MipRem extends CustomElement {
       document.documentElement.setAttribute('style', 'font-size: ' + fontSize + 'px !important')
     } else {
       fontSize = fontSize || 100
-      document.documentElement.style.fontSize = fontSize + 'px'
+      document.documentElement.setAttribute('style', 'font-size: ' + fontSize + 'px')
     }
   }
 }
