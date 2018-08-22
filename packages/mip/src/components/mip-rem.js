@@ -8,11 +8,15 @@ import CustomElement from '../custom-element'
 
 class MipRem extends CustomElement {
   connectedCallback () {
+    // 获取fontSize
+    let fontSize = this.element.getAttribute('font-size')
     if (viewport.getWidth() <= 360) {
       // 通过 js 设置 !important
-      document.documentElement.setAttribute('style', 'font-size: 90px !important')
+      fontSize = fontSize || 90
+      document.documentElement.setAttribute('style', 'font-size: ' + fontSize + 'px !important')
     } else {
-      document.documentElement.style.fontSize = '100px'
+      fontSize = fontSize || 100
+      document.documentElement.style.fontSize = fontSize + 'px'
     }
   }
 }
