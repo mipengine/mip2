@@ -114,6 +114,8 @@ class MipVideo extends CustomElement {
     }
     let currentTime = this.attributes['currenttime'] || 0
     videoEl.setAttribute('playsinline', 'playsinline')
+    // 兼容qq浏览器
+    videoEl.setAttribute('x5-playsinline', 'x5-playsinline')
     videoEl.setAttribute('webkit-playsinline', 'webkit-playsinline')
     videoEl.setAttribute('t7-video-player-type', 'inline')
     Array.prototype.slice.apply(this.element.childNodes).forEach(function (node) {

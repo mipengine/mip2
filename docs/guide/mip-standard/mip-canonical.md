@@ -1,6 +1,4 @@
-title: Canonical 使用规范
-layout: doc
----
+# Canonical 使用规范
 
 在某些情况下，站点对于同一个 HTML 页面，可能存在两种，一个是 MIP 页，一个是原页面。搜索引擎会抓取这两个页面，并利用 Canonical 标签将它们联系起来。
 

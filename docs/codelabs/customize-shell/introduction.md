@@ -8,7 +8,7 @@ MIP Shell 可以帮助开发者把多个单独的 MIP 页面串联起来，形�
 
 * 除了头部，还有底部栏或者侧边栏需要额外渲染和绑定事件。例如下图：
 
-    ![Bottom Shell](http://boscdn.bpc.baidu.com/assets/mip2/page/bottom-shell-2.png)
+    ![Bottom Shell](https://boscdn.baidu.com/assets/mip2/page/bottom-shell-2.png)
 
 * 开发者需要控制站点的 Shell 配置，修改/禁用/忽略某些选项。
 

@@ -1,0 +1,123 @@
+{
+  "ignore": [
+    "mip-sample"
+  ],
+  "menu": [
+    {
+      "key": "mip-access",
+      "preview": false
+    },
+    {
+      "key": "mip-accordion"
+    },
+    {
+      "key": "mip-analytics",
+      "preview": false
+    },
+    {
+      "key": "mip-anim"
+    },
+    {
+      "key": "mip-app-banner",
+      "preview": false
+    },
+    {
+      "key": "mip-appdl"
+    },
+    {
+      "key": "mip-audio"
+    },
+    {
+      "key": "mip-custom"
+    },
+    {
+      "key": "mip-experiment",
+      "preview": false
+    },
+    {
+      "key": "mip-filter"
+    },
+    {
+      "key": "mip-fixed"
+    },
+    {
+      "key": "mip-form"
+    },
+    {
+      "key": "mip-gototop"
+    },
+    {
+      "key": "mip-history"
+    },
+    {
+      "key": "mip-html-os",
+      "preview": false
+    },
+    {
+      "key": "mip-infinitescroll",
+      "preview": false
+    },
+    {
+      "key": "mip-install-serviceworker"
+    },
+    {
+      "key": "mip-lightbox"
+    },
+    {
+      "key": "mip-link"
+    },
+    {
+      "key": "mip-list"
+    },
+    {
+      "key": "mip-login-done",
+      "preview": false
+    },
+    {
+      "key": "mip-map"
+    },
+    {
+      "key": "mip-mustache",
+      "preview": false
+    },
+    {
+      "key": "mip-nav-slidedown"
+    },
+    {
+      "key": "mip-scrollbox"
+    },
+    {
+      "key": "mip-semi-fixed"
+    },
+    {
+      "key": "mip-share"
+    },
+    {
+      "key": "mip-showmore"
+    },
+    {
+      "key": "mip-sidebar"
+    },
+    {
+      "key": "mip-stats-baidu"
+    },
+    {
+      "key": "mip-stats-cnzz"
+    },
+    {
+      "key": "mip-stats-tianrun"
+    },
+    {
+      "key": "mip-story"
+    },
+    {
+      "key": "mip-toggle"
+    },
+    {
+      "key": "mip-vd-baidu"
+    },
+    {
+      "key": "mip-vd-tabs"
+    }
+  ]
+}
