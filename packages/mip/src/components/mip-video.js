@@ -92,10 +92,12 @@ class MipVideo extends CustomElement {
     })
     this.addEventAction('play', () => {
       // renderPlayElsewhere 的 videoElement 是 div，没有 play
+      /* istanbul ignore next */
       this.videoElement.play && this.videoElement.play()
     })
     this.addEventAction('pause', () => {
       // renderPlayElsewhere 的 videoElement 是 div，没有 pause
+      /* istanbul ignore next */
       this.videoElement.pause && this.videoElement.pause()
     })
 
