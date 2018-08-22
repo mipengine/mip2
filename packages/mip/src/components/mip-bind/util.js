@@ -5,7 +5,7 @@
 
 const regVar = /[\w\d-._]+/gmi
 const regTplLike = /`[^`]+`/gmi
-const regTpl = /(\${)([^}]+)(}.*)/gmi
+const regTpl = /(\${)([^}]+)(})/gmi
 const vendorNames = ['Webkit', 'Moz', 'ms']
 const RESERVED = ['Math', 'Number', 'String', 'Object', 'window']
 let emptyStyle
@@ -222,7 +222,7 @@ export function namespaced (str) {
 
   // deal with template-like str first and save results
   str = str.replace(regTplLike, (match) => {
-    match = match.replace(regTpl, '$1this.$2$3')
+    match = match.replace(regTpl, tplMatch => namespaced(tplMatch))
     tpls.push(match)
     return `MIP-STR-TPL${tpls.length - 1}`
   })
