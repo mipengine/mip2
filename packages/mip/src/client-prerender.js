@@ -11,6 +11,16 @@ let parsePrender = ele => {
   return prerender != null && prerender !== 'false'
 }
 
+let resetPrerenderHash = () => {
+  let win = window
+  let loc = win.location
+  let hash = loc.hash.replace(/prerender=1&?/, '')
+  win.history.replaceState(
+    '', document.title,
+    loc.pathname + loc.search + hash
+  )
+}
+
 export default class ClientPrerender {
   constructor () {
     // 预渲染环境标记
@@ -21,15 +31,16 @@ export default class ClientPrerender {
 
     if (util.hash.get('prerender') === '1') {
       this.prerender = true
-
       new Promise(resolve => {
-        window.addEventListener('hashchange', e => {
-          util.hash.refreshHashTree()
-          if (!util.hash.get('prerender')) {
+        let pageActivedCallback = e => {
+          if (e.data === 'pageActive') {
             this.prerender = false
+            resetPrerenderHash()
+            window.removeEventListener('message', pageActivedCallback)
             resolve()
           }
-        })
+        }
+        window.addEventListener('message', pageActivedCallback)
       }).then(() => {
         let fn
         while ((fn = this.queue.shift())) {

@@ -90,7 +90,7 @@
           container.appendChild(iframe)
         }
         else {
-          iframe.contentWindow.location.hash = ''
+          iframe.contentWindow.postMessage('pageActive', window.location.origin)
         }
       }, 500);
     }
