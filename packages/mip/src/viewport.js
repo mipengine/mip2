@@ -113,6 +113,7 @@ let viewport = {
    * @return {number}
    */
   getHeight () {
+    /* istanbul ignore next */
     return platform.isIOS() ? (docElem.clientHeight || win.innerHeight)
       : (win.innerHeight || docElem.clientHeight)
   },
