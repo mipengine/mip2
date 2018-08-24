@@ -3,17 +3,39 @@
  * @author chenyongle(chenyongle@baidu.com)
  */
 describe('mip-rem', function () {
-  describe('with font-size', function () {
+  describe('with correct font-size', function () {
     let mipRem
+    let origin
     before(function () {
+      origin = window.innerWidth
+      window.innerWidth = 400
       mipRem = document.createElement('mip-rem')
-      mipRem.setAttribute('font-size', 100)
+      mipRem.setAttribute('font-size', '[{"maxWidth": 360, "size": 80}, {"minWidth": 361, "maxWidth": 720, "size": 90}, {"minWidth": 721, "size": 100}]')
       document.body.appendChild(mipRem)
     })
-    it('should change html font-size to 100px', function () {
-      expect(document.documentElement.style.fontSize).to.equal('100px')
+    it('should change html font-size to 90px', function () {
+      expect(document.documentElement.style.fontSize).to.equal('90px')
     })
     after(function () {
+      window.innerWidth = origin
+      document.body.removeChild(mipRem)
+    })
+  })
+  describe('with incorrect font-size', function () {
+    let mipRem
+    let origin
+    before(function () {
+      origin = window.innerWidth
+      window.innerWidth = 200
+      mipRem = document.createElement('mip-rem')
+      mipRem.setAttribute('font-size', '[{"maxWidth": 360; "size": 80}]')
+      document.body.appendChild(mipRem)
+    })
+    it('should change html font-size to 90px', function () {
+      expect(document.documentElement.style.fontSize).to.equal('90px')
+    })
+    after(function () {
+      window.innerWidth = origin
       document.body.removeChild(mipRem)
     })
   })

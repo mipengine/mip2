@@ -15,13 +15,13 @@
 
   <h2>基本用法：font-size属性赋值</h2>
 
-  <pre class="code">&lt;mip-rem font-size=50&gt;&lt;/mip-rem&gt;
+  <pre class="code">&lt;mip-rem font-size='[{"maxWidth": 360, "size": 80}, {"minWidth": 361, "maxWidth": 720, "size": 90}, {"minWidth": 721, "size": 100}]'r&gt;&lt;/mip-rem&gt;
 &lt;div style="font-size: 14px;"&gt;这是14px&lt;/div&gt;
-&lt;div style="font-size: 1rem;"&gt;这是1rem&lt;/div&gt;</pre>
+&lt;div style="font-size: 0.5rem;"&gt;这是0.5rem&lt;/div&gt;</pre>
 
-  <mip-rem font-size=50></mip-rem>
+  <mip-rem font-size='[{"maxWidth": 360, "size": 80}, {"minWidth": 361, "maxWidth": 720, "size": 90}, {"minWidth": 721, "size": 100}]'></mip-rem>
   <div style="font-size: 14px;">这是14px</div>
-  <div style="font-size: 1rem;">这是1rem</div>
+  <div style="font-size: 0.5rem;">这是0.5rem</div>
 
 </body>
 <script src="../../dist/mip.js"></script>
