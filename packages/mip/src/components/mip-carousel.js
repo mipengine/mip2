@@ -43,7 +43,8 @@ function prerenderSetSrc (allMipImgs, index, num, arraySrc) {
         imgs[j].setAttribute('src', arraySrc[i])
       }
     } else {
-      allMipImgs[i].querySelector('mip-img').setAttribute('src', arraySrc[i])
+      let mipImg = allMipImgs[i].querySelector('mip-img')
+      mipImg && mipImg.setAttribute('src', arraySrc[i])
     }
   }
 }
@@ -55,11 +56,13 @@ function prerenderSetSrc (allMipImgs, index, num, arraySrc) {
  * @return {NodeList}           返回 childList
  */
 function changeSrc (childList, imgIndex, arraySrc) {
+  let src = arraySrc[imgIndex] || arraySrc[0]
   for (let i = 0; i < childList.length; i++) {
     if (childList[i].tagName === 'MIP-IMG') {
-      childList[i].setAttribute('src', arraySrc[imgIndex])
+      childList[i].setAttribute('src', src)
     } else {
-      childList[i].querySelector('mip-img').setAttribute('src', arraySrc[imgIndex])
+      let mipImg = childList[i].querySelector('mip-img')
+      mipImg && mipImg.setAttribute('src', src)
     }
   }
   return childList
@@ -78,6 +81,8 @@ function getAllMipImgSrc (childNodes) {
       let node = childNodes[i].querySelector('mip-img')
       if (node) {
         arr.push(node.getAttribute('src'))
+      } else {
+        arr.push('?mip_img_ori=1')
       }
     }
   }

@@ -817,6 +817,39 @@ describe('mip-carousel', function () {
     after(function () {
       document.body.removeChild(div)
     })
+  })
+  describe('with no mip-img in the first child of mip-carousel', function () {
+    let div
+    this.timeout(500)
 
+    before(function () {
+      div = document.createElement('div')
+      div.innerHTML = `
+        <mip-carousel
+          buttonController
+          width="100"
+          height="80"
+          index="1">
+          <div>1</div>
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_01.jpg">
+          </mip-img>
+        </mip-carousel>
+      `
+      document.body.insertBefore(div, document.body.firstChild)
+    })
+
+    it('should load picture correctly', function (done) {
+
+      setTimeout(() => {
+        let img = div.querySelectorAll('mip-img')[1].querySelector('img')
+        expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_01.jpg')
+        done()
+      }, 300);
+    })
+
+    after(function () {
+      document.body.removeChild(div)
+    })
   })
 })
