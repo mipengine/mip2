@@ -20,6 +20,7 @@ import Page from './page/index'
 import {MESSAGE_PAGE_RESIZE, CUSTOM_EVENT_SHOW_PAGE, CUSTOM_EVENT_HIDE_PAGE} from './page/const'
 import Messager from './messager'
 import fixedElement from './fixed-element'
+import clientPrerender from './client-prerender'
 
 /**
  * Save window.
@@ -120,13 +121,13 @@ let viewer = {
    * @param {Object} data Message body
    */
   sendMessage (eventName, data = {}) {
-    if (!win.MIP.standalone) {
+    if (!win.MIP.standalone && !clientPrerender.prerender) {
       this.messager.sendMessage(eventName, data)
     }
   },
 
   onMessage (eventName, callback) {
-    if (!win.MIP.standalone) {
+    if (!win.MIP.standalone && !clientPrerender.prerender) {
       this.messager.on(eventName, callback)
     }
   },
