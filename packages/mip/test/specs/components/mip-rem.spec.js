@@ -28,11 +28,32 @@ describe('mip-rem', function () {
       origin = window.innerWidth
       window.innerWidth = 200
       mipRem = document.createElement('mip-rem')
+      // test case 类型为 font-size 属性值格式错误
       mipRem.setAttribute('font-size', '[{"maxWidth": 360; "size": 80}]')
       document.body.appendChild(mipRem)
     })
     it('should change html font-size to 90px', function () {
       expect(document.documentElement.style.fontSize).to.equal('90px')
+    })
+    after(function () {
+      window.innerWidth = origin
+      document.body.removeChild(mipRem)
+    })
+  })
+  describe('with incorrect font-size where field size disappears', function () {
+    let mipRem
+    let origin
+    before(function () {
+      origin = window.innerWidth
+      window.innerWidth = 200
+      mipRem = document.createElement('mip-rem')
+      // test case 类型为 font-size 属性值中size字段错误
+      mipRem.setAttribute('font-size', '[{"maxWidth": 360, "asize": 80}]')
+      document.body.appendChild(mipRem)
+    })
+    // size字段错误触发容错后的默认值100
+    it('should change html font-size to 100px', function () {
+      expect(document.documentElement.style.fontSize).to.equal('100px')
     })
     after(function () {
       window.innerWidth = origin
