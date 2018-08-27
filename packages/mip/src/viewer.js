@@ -127,7 +127,7 @@ let viewer = {
   },
 
   onMessage (eventName, callback) {
-    if (!win.MIP.standalone && !clientPrerender.prerender) {
+    if (!win.MIP.standalone) {
       this.messager.on(eventName, callback)
     }
   },
