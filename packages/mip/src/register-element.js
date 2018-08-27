@@ -10,9 +10,7 @@ import layout from './layout'
 import performance from './performance'
 import customElementsStore from './custom-element-store'
 import cssLoader from './util/dom/css-loader'
-import ClientPrerender from './client-prerender'
-
-let prerender = new ClientPrerender()
+import prerender from './client-prerender'
 
 class BaseElement extends HTMLElement {
   constructor (element) {

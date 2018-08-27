@@ -8,9 +8,7 @@ import layout from '../layout'
 import performance from '../performance'
 import resources from '../resources'
 import customElementsStore from '../custom-element-store'
-import ClientPrerender from '../client-prerender'
-
-let prerender = new ClientPrerender()
+import prerender from '../client-prerender'
 
 /* globals HTMLElement */
 

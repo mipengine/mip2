@@ -21,7 +21,7 @@ let resetPrerenderHash = () => {
   )
 }
 
-export default class ClientPrerender {
+class ClientPrerender {
   constructor () {
     // 预渲染环境标记
     this.prerender = false
@@ -33,7 +33,7 @@ export default class ClientPrerender {
       this.prerender = true
       new Promise(resolve => {
         let pageActivedCallback = e => {
-          if (e.data === 'pageActive') {
+          if (e.data === 'PAGE_ACTIVE') {
             this.prerender = false
             resetPrerenderHash()
             window.removeEventListener('message', pageActivedCallback)
@@ -58,3 +58,5 @@ export default class ClientPrerender {
     }
   }
 }
+
+export default new ClientPrerender()

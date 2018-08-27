@@ -3,10 +3,12 @@
  * @author huanghuiquan (huanghuiquan@baidu.com)
  */
 
-import ClientPrerender from 'src/client-prerender'
+import prerenderInstance from 'src/client-prerender'
 import hash from 'src/util/hash'
 
-describe('client-prerender', function () {
+let ClientPrerender = prerenderInstance.constructor
+
+describe.only('client-prerender', function () {
   it('.execute fn should be delay if prerender === 1', function (done) {
     let get = sinon.stub(hash, 'get').callsFake(() => '1')
 
@@ -19,7 +21,8 @@ describe('client-prerender', function () {
     expect(fn.called).to.be.false
 
     get.callsFake(() => '')
-    window.dispatchEvent(new window.CustomEvent('hashchange'))
+    window.postMessage('PAGE_ACTIVE', window.location.origin)
+
     get.restore()
     setTimeout(() => {
       sinon.assert.calledOnce(fn)
@@ -37,7 +40,7 @@ describe('client-prerender', function () {
     sinon.assert.calledOnce(fn)
   })
 
-  it('wrong hashchange', function (done) {
+  it('wrong origin', function (done) {
     let get = sinon.stub(hash, 'get').callsFake(() => '1')
 
     let prerender = new ClientPrerender()
@@ -48,7 +51,7 @@ describe('client-prerender', function () {
 
     prerender.execute(fn, ele)
 
-    window.dispatchEvent(new window.CustomEvent('hashchange'))
+    window.postMessage('PAGE_ACTIVE', 'http://error:9876')
     get.restore()
     setTimeout(() => {
       expect(fn.called).to.be.false
