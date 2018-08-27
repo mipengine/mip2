@@ -6,43 +6,35 @@
 import viewport from '../viewport'
 import CustomElement from '../custom-element'
 
-function init () {
-  // 设置默认值
-  if (viewport.getWidth() <= 360) {
-    document.documentElement.setAttribute('style', 'font-size: 90px')
-  } else {
-    document.documentElement.setAttribute('style', 'font-size: 100px')
-  }
-}
+
 class MipRem extends CustomElement {
   connectedCallback () {
+    this.changeHtmlFontSize()
+    window.addEventListener('resize', this.changeHtmlFontSize.bind(this), false)
+  }
+  changeHtmlFontSize () {
     // 获取fontSize 格式类似于 [{"maxWidth": 360, "size": 80}, {"minWidth": 361, "maxWidth": 720, "size": 90}, {"minWidth": 721, "size": 100}]
-    let fontSize = this.element.getAttribute('font-size')
+    let init = '[{"maxWidth": 359, "size": 90}, {"minWidth": 360, "size": 100}]'
+    let fontSize = this.element.getAttribute('font-size') || init
     let width = viewport.getWidth()
-    if (fontSize) {
-      fontSize = '{"array":' + fontSize + '}'
-      try {
-        fontSize = JSON.parse(fontSize)
-        fontSize = fontSize.array
-      } catch (e) {
-        init()
-        console.warn('mip-rem 的 font-size 属性值格式不对！')
-        return
-      }
-      // 类似于 media query 的效果
-      for (let i = 0; i < fontSize.length; i++) {
-        if (fontSize[i]['maxWidth'] && fontSize[i]['maxWidth'] < width) {
-          continue
-        }
-        if (fontSize[i]['minWidth'] && fontSize[i]['minWidth'] > width) {
-          continue
-        }
-        let size = fontSize[i].size || 100
-        document.documentElement.setAttribute('style', 'font-size: ' + size + 'px')
-      }
-    } else {
-      init()
+    try {
+      fontSize = JSON.parse(fontSize)
+    } catch (e) {
+      fontSize = JSON.parse(init)
+      console.warn('mip-rem 的 font-size 属性值格式不对！')
     }
+    // 类似于 media query 的效果
+    let size = width < 360 ? 90 : 100
+    for (let i = 0; i < fontSize.length; i++) {
+      if (fontSize[i]['maxWidth'] && fontSize[i]['maxWidth'] < width) {
+        continue
+      }
+      if (fontSize[i]['minWidth'] && fontSize[i]['minWidth'] > width) {
+        continue
+      }
+      size = fontSize[i].size || (width < 360 ? 90 : 100)
+    }
+    document.documentElement.setAttribute('style', 'font-size: ' + size + 'px')
   }
 }
 
