@@ -51,9 +51,16 @@ describe('mip-rem', function () {
       mipRem.setAttribute('font-size', '[{"maxWidth": 360, "asize": 80}]')
       document.body.appendChild(mipRem)
     })
-    // size字段错误触发容错后的默认值100
+    // size字段错误触发容错后的默认值有两种
     it('should change html font-size to 90px', function () {
       expect(document.documentElement.style.fontSize).to.equal('90px')
+    })
+    it('should change html font-size to 100px', function () {
+      window.innerWidth = 400
+      let event = document.createEvent('Event')
+      event.initEvent('resize', true, true)
+      window.dispatchEvent(event)
+      expect(document.documentElement.style.fontSize).to.equal('100px')
     })
     after(function () {
       window.innerWidth = origin
