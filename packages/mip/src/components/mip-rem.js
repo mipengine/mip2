@@ -6,7 +6,6 @@
 import viewport from '../viewport'
 import CustomElement from '../custom-element'
 
-
 class MipRem extends CustomElement {
   connectedCallback () {
     this.changeHtmlFontSize()
@@ -24,15 +23,16 @@ class MipRem extends CustomElement {
       console.warn('mip-rem 的 font-size 属性值格式不对！')
     }
     // 类似于 media query 的效果
-    let size = width < 360 ? 90 : 100
-    for (let i = 0; i < fontSize.length; i++) {
+    let size = init = width < 360 ? 90 : 100
+    for (let i = fontSize.length - 1; i >= 0; i--) {
       if (fontSize[i]['maxWidth'] && fontSize[i]['maxWidth'] < width) {
         continue
       }
       if (fontSize[i]['minWidth'] && fontSize[i]['minWidth'] > width) {
         continue
       }
-      size = fontSize[i].size || (width < 360 ? 90 : 100)
+      size = fontSize[i].size || init
+      break
     }
     document.documentElement.setAttribute('style', 'font-size: ' + size + 'px')
   }
