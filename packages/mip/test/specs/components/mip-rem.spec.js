@@ -107,4 +107,21 @@ describe('mip-rem', function () {
       document.body.removeChild(mipRem)
     })
   })
+  describe('with mip-rem removed', function () {
+    let mipRem
+    let origin
+    before(function () {
+      origin = window.innerWidth
+      window.innerWidth = 200
+      mipRem = document.createElement('mip-rem')
+      document.body.appendChild(mipRem)
+    })
+    it('should not change html font-size to 90px ', function () {
+      document.body.removeChild(mipRem)
+      expect(document.documentElement.style.fontSize).to.not.equal('90px')
+    })
+    after(function () {
+      window.innerWidth = origin
+    })
+  })
 })
