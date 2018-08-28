@@ -133,7 +133,7 @@ export /* istanbul ignore next */ function toggleInner (element, toggle, {skipTr
  * 检查 MIP Shell Config 中的 routes 数组的每个元素是否把所有配置项都配齐了。
  * @param {*} route
  */
-export function checkRouteConfig (route) {
+export /* istanbul ignore next */ function checkRouteConfig (route) {
   if (!route) {
     console.warn('检测到空的路由配置，MIP 将跳过这条配置')
   } else if (!route.pattern) {

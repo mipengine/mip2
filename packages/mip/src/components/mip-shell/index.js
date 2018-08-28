@@ -456,10 +456,8 @@ class MipShell extends CustomElement {
         this.resizeAllPages()
       }
     }
-    // if (page.standalone) {
-      // viewport.on('resize', resizeHandler)
-      setInterval(resizeHandler, 250)
-    // }
+    viewport.on('resize', resizeHandler)
+    setInterval(resizeHandler, 250)
 
     // Listen events
     window.addEventListener('mipShellEvents', e => {
@@ -1156,7 +1154,7 @@ class MipShell extends CustomElement {
       }
     })
     // 3.notify SF to set the iframe outside
-    // viewer.sendMessage('resizeContainer', {height: this.currentViewportHeight})
+    viewer.sendMessage('resizeContainer', {height: this.currentViewportHeight})
   }
 
   bindHeaderEvents () {
