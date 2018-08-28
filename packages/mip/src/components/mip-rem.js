@@ -11,6 +11,9 @@ class MipRem extends CustomElement {
     this.changeHtmlFontSize()
     window.addEventListener('resize', this.changeHtmlFontSize.bind(this), false)
   }
+  disconnectedCallback () {
+    document.documentElement.setAttribute('style', 'font-size: ')
+  }
   changeHtmlFontSize () {
     // 获取fontSize 格式类似于 [{"maxWidth": 360, "size": 80}, {"minWidth": 361, "maxWidth": 720, "size": 90}, {"minWidth": 721, "size": 100}]
     let init = '[{"maxWidth": 359, "size": 90}, {"minWidth": 360, "size": 100}]'
