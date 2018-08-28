@@ -107,8 +107,11 @@
 
 
 ## api
+
 ### seekTo
+
 说明：指定当前视频跳转至某个时间点进行播放
+
 示例：
 ```
 <mip-video  id="test" width="1000" height="750" layout="responsive" autoplay controls currenttime=20 poster="http://img.alicdn.com/tfs/TB1I3qqqrGYBuNjy0FoXXciBFXa-1125-807.jpg_970x970Q90s50.jpg_.webp">
@@ -119,7 +122,9 @@
 ```
 
 ### play
+
 说明：当前视频开始播放
+
 示例：
 ```
 <mip-video  id="test" width="1000" height="750" layout="responsive" autoplay controls currenttime=20 poster="http://img.alicdn.com/tfs/TB1I3qqqrGYBuNjy0FoXXciBFXa-1125-807.jpg_970x970Q90s50.jpg_.webp">
@@ -129,7 +134,9 @@
 ```
 
 ### pause
+
 说明：当前视频暂停播放
+
 示例：
 ```
 <mip-video  id="test" width="1000" height="750" layout="responsive" autoplay controls currenttime=20 poster="http://img.alicdn.com/tfs/TB1I3qqqrGYBuNjy0FoXXciBFXa-1125-807.jpg_970x970Q90s50.jpg_.webp">
@@ -142,5 +149,5 @@
 
 1. 为防止视频加载造成页面抖动，指定视频的高度和宽度是一个好习惯。MIP 中，指定宽高是强制的。
 2. 如果定义了 `layout` 属性，`width` 和 `height` 属性将配合 `layout` 进行缩放。
-3. pause 方法在 IOS UC 浏览器、IOS 10/11 简单搜索 app 中无法使用。
-4. seekTo 方法在 IOS 10/11 简单搜索 app 中无法使用。
+3. pause 方法在 iOS UC 浏览器、iOS 10/11 简单搜索 app 中无法使用。
+4. seekTo 方法在 iOS 10/11 简单搜索 app 中无法使用。
