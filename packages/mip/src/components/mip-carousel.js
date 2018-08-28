@@ -82,7 +82,7 @@ function getAllMipImgSrc (childNodes) {
       if (node) {
         arr.push(node.getAttribute('src'))
       } else {
-        arr.push('?mip_img_ori=1')
+        arr.push('no-src')
       }
     }
   }
