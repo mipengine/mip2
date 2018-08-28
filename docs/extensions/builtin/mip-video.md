@@ -113,7 +113,7 @@
 说明：指定当前视频跳转至某个时间点进行播放
 
 示例：
-```
+```html
 <mip-video  id="test" width="1000" height="750" layout="responsive" autoplay controls currenttime=20 poster="http://img.alicdn.com/tfs/TB1I3qqqrGYBuNjy0FoXXciBFXa-1125-807.jpg_970x970Q90s50.jpg_.webp">
     <source src="https://gss0.bdstatic.com/-b1Caiqa0d9Bmcmop9aC2jh9h2w8e4_h7sED0YQ_t9iCPK/mda-gjkt21pkrsd8ae5y/mda-gjkt21pkrsd8ae5y.mp4" type="video/ogg">
 </mip-video>
@@ -126,7 +126,7 @@
 说明：当前视频开始播放
 
 示例：
-```
+```html
 <mip-video  id="test" width="1000" height="750" layout="responsive" autoplay controls currenttime=20 poster="http://img.alicdn.com/tfs/TB1I3qqqrGYBuNjy0FoXXciBFXa-1125-807.jpg_970x970Q90s50.jpg_.webp">
     <source src="https://gss0.bdstatic.com/-b1Caiqa0d9Bmcmop9aC2jh9h2w8e4_h7sED0YQ_t9iCPK/mda-gjkt21pkrsd8ae5y/mda-gjkt21pkrsd8ae5y.mp4" type="video/ogg">
 </mip-video>
@@ -138,7 +138,7 @@
 说明：当前视频暂停播放
 
 示例：
-```
+```html
 <mip-video  id="test" width="1000" height="750" layout="responsive" autoplay controls currenttime=20 poster="http://img.alicdn.com/tfs/TB1I3qqqrGYBuNjy0FoXXciBFXa-1125-807.jpg_970x970Q90s50.jpg_.webp">
     <source src="https://gss0.bdstatic.com/-b1Caiqa0d9Bmcmop9aC2jh9h2w8e4_h7sED0YQ_t9iCPK/mda-gjkt21pkrsd8ae5y/mda-gjkt21pkrsd8ae5y.mp4" type="video/ogg">
 </mip-video>
