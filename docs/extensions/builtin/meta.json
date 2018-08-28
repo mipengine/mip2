@@ -23,6 +23,9 @@
     },
     {
       "key": "mip-video"
+    },
+    {
+      "key": "mip-rem"
     }
   ]
 }
