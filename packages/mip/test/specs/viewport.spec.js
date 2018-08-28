@@ -77,7 +77,7 @@ describe('viewport', function () {
     window.innerWidth = old
   })
 
-  it('.getHeight', function () {
+  it.skip('.getHeight', function () {
     let old = window.innerHeight
 
     window.innerHeight = true

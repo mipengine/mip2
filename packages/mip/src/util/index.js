@@ -119,8 +119,7 @@ export function getOriginalUrl (url) {
  * @return {boolean} isCacheUrl.
  */
 export function isCacheUrl (pageUrl) {
-  return /mipcache.bdstatic.com/.test(pageUrl) ||
-    /^(\/\/|http:\/\/|https:\/\/)[^.]+.mipcdn.com\/(stati)?c\//.test(pageUrl)
+  return fn.isCacheUrl(pageUrl)
 }
 
 export default {
