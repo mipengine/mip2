@@ -6,8 +6,11 @@
 import util from './util'
 
 let parsePrender = ele => {
-  let prerender = ele.getAttribute('prerender')
+  if (!ele || !ele.getAttribute) {
+    return false
+  }
 
+  let prerender = ele.getAttribute('prerender')
   return prerender != null && prerender !== 'false'
 }
 

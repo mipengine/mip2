@@ -8,7 +8,7 @@ import hash from 'src/util/hash'
 
 let ClientPrerender = prerenderInstance.constructor
 
-describe.only('client-prerender', function () {
+describe('client-prerender', function () {
   it('.execute fn should be delay if prerender === 1', function (done) {
     let get = sinon.stub(hash, 'get').callsFake(() => '1')
 
@@ -18,6 +18,26 @@ describe.only('client-prerender', function () {
     let ele = document.createElement('div')
 
     prerender.execute(fn, ele)
+    expect(fn.called).to.be.false
+
+    get.callsFake(() => '')
+    window.postMessage('PAGE_ACTIVE', window.location.origin)
+
+    get.restore()
+    setTimeout(() => {
+      sinon.assert.calledOnce(fn)
+      done()
+    }, 100)
+  })
+
+  it('params ele maybe be null', function (done) {
+    let get = sinon.stub(hash, 'get').callsFake(() => '1')
+
+    let prerender = new ClientPrerender()
+
+    let fn = sinon.spy()
+
+    prerender.execute(fn)
     expect(fn.called).to.be.false
 
     get.callsFake(() => '')
