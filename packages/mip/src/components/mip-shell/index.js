@@ -456,7 +456,7 @@ class MipShell extends CustomElement {
         this.resizeAllPages()
       }
     }
-    viewport.on('resize', resizeHandler)
+    // viewport.on('resize', resizeHandler)
     setInterval(resizeHandler, 250)
 
     // Listen events
