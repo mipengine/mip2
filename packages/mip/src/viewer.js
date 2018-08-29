@@ -121,8 +121,10 @@ let viewer = {
    * @param {Object} data Message body
    */
   sendMessage (eventName, data = {}) {
-    if (!win.MIP.standalone && !clientPrerender.prerender) {
-      this.messager.sendMessage(eventName, data)
+    if (!win.MIP.standalone) {
+      // Send Message in normal case
+      // Save in queue and execute when PAGE_ACTIVE received
+      clientPrerender.execute(() => this.messager.sendMessage(eventName, data))
     }
   },
 
