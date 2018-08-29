@@ -1,18 +1,10 @@
 #!/usr/bin/env node
 
+require('../lib/utils/compat')
+
 const cli = require('../lib/cli')
-const semver = require('semver')
-const requiredNodeVersion = require('../package').engines.node
 const version = require('../package').version
 const checkVersion = require('../lib/check-version')
-
-if (!semver.satisfies(process.version, requiredNodeVersion)) {
-  console.log(cli.chalk.red(
-    `You are using Node ${process.version}, but this version of mip-cli ` +
-        `requires Node ${requiredNodeVersion}.\nPlease upgrade your Node version.`
-  ))
-  process.exit(1)
-}
 
 checkVersion().then(() => {
   cli.program

@@ -1,6 +1,6 @@
 {
   "name": "mip2",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "CLI for mip 2.0",
   "preferGlobal": true,
   "bin": {
@@ -37,6 +37,7 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-stage-2": "^6.24.1",
+    "babel-register": "^6.26.0",
     "babel-runtime": "^6.26.0",
     "chalk": "^2.4.1",
     "chokidar": "^2.0.3",
@@ -84,7 +85,7 @@
     "wrapper-webpack-plugin": "^2.0.0"
   },
   "engines": {
-    "node": ">=8"
+    "node": ">=7.6"
   },
   "devDependencies": {
     "chai": "^4.1.2",

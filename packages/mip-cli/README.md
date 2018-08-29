@@ -107,6 +107,8 @@ module.exports = {
 更多的配置选项可以参考 [Workbox 配置项](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateswstring_mode)
 
 ## changelog
+- 1.2.6
+    1. 增加低于 7.6 版本的 node 支持
 - 1.2.5
     1. 更新 mip-component-validator 依赖版本，修复白名单 bug
 - 1.2.4
