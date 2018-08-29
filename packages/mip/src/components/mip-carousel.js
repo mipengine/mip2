@@ -56,7 +56,8 @@ function prerenderSetSrc (allMipImgs, index, num, arraySrc) {
  * @return {NodeList}           返回 childList
  */
 function changeSrc (childList, imgIndex, arraySrc) {
-  let src = arraySrc[imgIndex] || arraySrc[0]
+  // 由于懒加载方案是修改 src，所以在第一次加载图片的时候需要修改所有图片的 src，如若不是图片('no-src')则重定向，防止404。
+  let src = arraySrc[imgIndex] !== 'no-src' ? arraySrc[imgIndex] : '?mip_img_ori=1'
   for (let i = 0; i < childList.length; i++) {
     if (childList[i].tagName === 'MIP-IMG') {
       childList[i].setAttribute('src', src)
