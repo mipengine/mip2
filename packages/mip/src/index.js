@@ -144,15 +144,9 @@ util.dom.waitDocumentReady(() => {
   builtinComponents.register()
   performance.start(window._mipStartTiming)
 
-  // send performance data until the data collection is completed
+  // send performance data
   performance.on('update', timing => {
-    if (timing.MIPDomContentLoaded &&
-      timing.MIPStart &&
-      timing.MIPPageShow &&
-      timing.MIPFirstScreen
-    ) {
-      viewer.sendMessage('performance_update', timing)
-    }
+    viewer.sendMessage('performance_update', timing)
   })
 
   // Show page
