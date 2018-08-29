@@ -214,6 +214,25 @@ describe('mip-video', function () {
       expect(videoEl.querySelector('span').classList.contains('mip-video-playbtn')).to.be.true
     })
 
+    it('should renderError with a picture', function () {
+      let div = document.createElement('div')
+      div.setAttribute('controls', 'true')
+      div.setAttribute('width', '100px')
+      div.setAttribute('height', '100px')
+      div.setAttribute('poster', 'https://www.mipengine.org/static/img/sample_04.jpg')
+      div.setAttribute('src', 'https://mip-doc.bj.bcebos.com/sample_video.mp4')
+
+      let _mipVideo = new MipVideo()
+      _mipVideo.attributes = getAttributeSet(div.attributes)
+      _mipVideo.element = document.body
+      _mipVideo.sourceDoms = []
+      let videoEl = _mipVideo.renderError()
+
+      expect(videoEl.tagName).to.equal('DIV')
+      expect(videoEl.style.backgroundImage).to.equal('url("https://www.mipengine.org/static/img/sample_04.jpg")')
+      expect(videoEl.querySelector('span').classList.contains('mip-video-error')).to.be.true
+    })
+
     after(function () {
       document.body.removeChild(mipVideo)
     })
