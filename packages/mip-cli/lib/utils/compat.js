@@ -10,7 +10,7 @@ const {resolveModule} = require('./helper')
 if (!semver.satisfies(process.version, requiredNodeVersion)) {
   require('babel-register')({
     babelrc: false,
-    ignore: /node_modules\/(?!(mip-component-validator|koa))/,
+    ignore: /node_modules\/(?!(mip-component-validator|mip-cli-|koa))/,
     presets: [
       [
         require.resolve('babel-preset-env'),
