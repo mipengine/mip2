@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+require('../lib/utils/compat')
 const cli = require('../lib/cli')
 const build = require('../lib/build')
 const validator = require('mip-component-validator')
