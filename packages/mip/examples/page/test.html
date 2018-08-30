@@ -11,13 +11,18 @@
     </style>
 </head>
 <body>
-    <mip-iframe
-        layout="fixed-height"
-        src="./not-mip.html"
-        allowfullscreen
-        width="400"
-        height="300"
-        allowtransparency="true">
-    </mip-iframe>
+    <mip-data>
+        <script type="application/json">
+            {
+              "items": [
+                {
+                  "iconClass": "grey   lighten1 white--text"
+                }
+              ],
+              "errorClass": "m-error"
+            }
+        </script>
+    </mip-data>
+    <div m-bind:class="[items[0].iconClass, errorClass]"></div>
     <script src="../../dist/mip.js"></script>
 </body>
