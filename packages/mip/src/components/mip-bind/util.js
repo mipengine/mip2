@@ -4,7 +4,6 @@
  */
 
 const regVar = /[\w\d-._]+/g
-const regTplLike = /`[^`]+`/g
 const regTpl = /(\${)([^}]+)(})/g
 const vendorNames = ['Webkit', 'Moz', 'ms']
 const RESERVED = ['Math', 'Number', 'String', 'Object', 'window']
@@ -223,8 +222,11 @@ export function namespaced (str) {
   let tpls = []
 
   // deal with template-like str first and save results
-  str = str.replace(regTplLike, (match) => {
-    match = match.replace(regTpl, tplMatch => namespaced(tplMatch))
+  str = str.replace(/(`[^`]+`|'[^']+')/g, match => {
+    // template need to recursively parse
+    if (match[0] === '`') {
+      match = match.replace(regTpl, tplMatch => namespaced(tplMatch))
+    }
     tpls.push(match)
     return `MIP-STR-TPL${tpls.length - 1}`
   })
