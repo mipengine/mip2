@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <title>mip-rem</title>
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <!-- <link rel="stylesheet" href="../../dist/mip.css"></link> -->
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <h1>mip-rem</h1>
+
+  <h2>基本用法：font-size属性赋值</h2>
+
+  <pre class="code">&lt;mip-rem font-size='[{"maxWidth": 360, "size": 80}, {"minWidth": 361, "maxWidth": 720, "size": 90}, {"minWidth": 721, "size": 100}]'r&gt;&lt;/mip-rem&gt;
+&lt;div style="font-size: 14px;"&gt;这是14px&lt;/div&gt;
+&lt;div style="font-size: 0.5rem;"&gt;这是0.5rem&lt;/div&gt;</pre>
+
+  <mip-rem font-size='[{"maxWidth": 360, "size": 80}, {"minWidth": 361, "maxWidth": 720, "size": 90}, {"minWidth": 721, "size": 100}]'></mip-rem>
+  <div style="font-size: 14px;">这是14px</div>
+  <div style="font-size: 0.5rem;">这是0.5rem</div>
+
+</body>
+<script src="../../dist/mip.js"></script>
+</html>

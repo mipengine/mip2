@@ -8,7 +8,8 @@ import {
   convertPatternToRegexp,
   createMoreButtonWrapper,
   createPageMask,
-  toggleInner
+  toggleInner,
+  checkRouteConfig
 } from './util'
 import {makeCacheUrl} from '../../util'
 import css from '../../util/dom/css'
@@ -75,6 +76,9 @@ class MipShell extends CustomElement {
 
     // If true, page switching transition contains header
     this.transitionContainsHeader = true
+
+    // If true, all MIP Shell Config warning won't be shown
+    this.ignoreWarning = false
   }
 
   build () {
@@ -94,13 +98,18 @@ class MipShell extends CustomElement {
         if (tmpShellConfig.transitionContainsHeader !== undefined) {
           this.transitionContainsHeader = tmpShellConfig.transitionContainsHeader
         }
+        if (tmpShellConfig.ignoreWarning !== undefined) {
+          this.ignoreWarning = tmpShellConfig.ignoreWarning
+        }
         if (!tmpShellConfig.routes) {
+          !this.ignoreWarning && this.console.warn('检测到 MIP Shell 配置没有包含 `routes` 数组，MIP 将自动生成一条默认的路由配置。')
           tmpShellConfig.routes = [{
             pattern: '*',
             meta: DEFAULT_SHELL_CONFIG
           }]
         }
       } catch (e) {
+        !this.ignoreWarning && console.warn('检测到格式非法的 MIP Shell 配置，MIP 将使用默认的配置代替。')
         tmpShellConfig = {
           routes: [{
             pattern: '*',
@@ -109,6 +118,7 @@ class MipShell extends CustomElement {
         }
       }
     } else {
+      !this.ignoreWarning && console.warn('没有检测到 MIP Shell 配置，MIP 将使用默认的配置代替。')
       tmpShellConfig = {
         routes: [{
           pattern: '*',
@@ -119,6 +129,7 @@ class MipShell extends CustomElement {
 
     if (page.isRootPage) {
       tmpShellConfig.routes.forEach(route => {
+        !this.ignoreWarning && checkRouteConfig(route)
         route.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, route.meta || {})
         route.regexp = convertPatternToRegexp(route.pattern || '*')
 
@@ -148,6 +159,7 @@ class MipShell extends CustomElement {
         // Read all config and save it in window.
         // Avoid find page meta from `window.parent`
         tmpShellConfig.routes.forEach(route => {
+          !this.ignoreWarning && checkRouteConfig(route)
           route.meta = fn.extend(true, {}, DEFAULT_SHELL_CONFIG, route.meta || {})
           route.regexp = convertPatternToRegexp(route.pattern || '*')
 
@@ -170,6 +182,7 @@ class MipShell extends CustomElement {
         pageMeta = DEFAULT_SHELL_CONFIG
         for (let i = 0; i < tmpShellConfig.routes.length; i++) {
           let config = tmpShellConfig.routes[i]
+          !this.ignoreWarning && checkRouteConfig(config)
           config.regexp = convertPatternToRegexp(config.pattern || '*')
 
           // Only process matched page meta
@@ -286,9 +299,9 @@ class MipShell extends CustomElement {
       backgroundColor = '#ffffff'
     } = pageMeta.header
 
-    // if (this.targetPageTitle && !this.alwaysUseTitleInShellConfig) {
-    //   title = pageMeta.header.title = this.targetPageTitle
-    // }
+    if (this.priorTitle && !this.alwaysUseTitleInShellConfig) {
+      title = pageMeta.header.title = this.priorTitle
+    }
     let showBackIcon = !pageMeta.view.isIndex
 
     let headerHTML = `
@@ -507,10 +520,11 @@ class MipShell extends CustomElement {
      * 3. <a mip-link></a> innerText (to.meta.defaultTitle)
      */
     let targetPageMeta = fn.extend(true, {}, this.findMetaByPageId(targetPageId))
-    // this.targetPageTitle = to.meta.header
-    //   ? to.meta.header.title || targetPageMeta.header.title || to.meta.header.defaultTitle
-    //   : targetPageMeta.header.title
-    // document.title = targetPageMeta.header.title = this.targetPageTitle
+
+    this.priorTitle = to.meta.header && to.meta.header.title
+    document.title = targetPageMeta.header.title = to.meta.header
+      ? to.meta.header.title || targetPageMeta.header.title || to.meta.header.defaultTitle
+      : targetPageMeta.header.title
 
     // Transition direction
     let isForward
