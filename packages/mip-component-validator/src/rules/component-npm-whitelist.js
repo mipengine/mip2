@@ -11,32 +11,42 @@ const fetch = require('node-fetch')
 
 async function searchPackageJSON (pathname) {
   let stats = await fs.stat(pathname)
-  if (stats.isDirectory()) {
-    // 找当前层级下的 package.json
-    let currPackagePath = path.resolve(pathname, 'package.json')
-    if (await fs.exists(currPackagePath)) {
-      return currPackagePath
-    }
-    // 找子层级下的 package.json
-    let childrenPackagePath = await globPify('!(node_modules)/package.json', {
-      cwd: pathname,
-      root: pathname
-    })
 
-    if (childrenPackagePath.length) {
-      return childrenPackagePath.map(p => path.resolve(pathname, p))
+  if (!stats.isDirectory()) {
+    if (!/package\.json$/.test(pathname)) {
+      return
+    }
+
+    if (await fs.exists(pathname)) {
+      return pathname
     }
   }
 
-  let parentPath = pathname
-  // 找父层级下的 package.json，最多往上找 3 层
-  for (let i = 0; i < 3; i++) {
-    parentPath = path.resolve(parentPath, '..')
-    let packagePath = path.resolve(parentPath, 'package.json')
-    if (await fs.exists(packagePath)) {
-      return packagePath
-    }
+  // 找当前层级下的 package.json
+  let currPackagePath = path.resolve(pathname, 'package.json')
+  if (await fs.exists(currPackagePath)) {
+    return currPackagePath
   }
+
+  // 找子层级下的 package.json
+  let childrenPackagePath = await globPify('!(node_modules)/package.json', {
+    cwd: pathname,
+    root: pathname
+  })
+
+  if (childrenPackagePath.length) {
+    return childrenPackagePath.map(p => path.resolve(pathname, p))
+  }
+
+  // let parentPath = pathname
+  // // 找父层级下的 package.json，最多往上找 3 层
+  // for (let i = 0; i < 3; i++) {
+  //   parentPath = path.resolve(parentPath, '..')
+  //   let packagePath = path.resolve(parentPath, 'package.json')
+  //   if (await fs.exists(packagePath)) {
+  //     return packagePath
+  //   }
+  // }
 }
 
 let whitelist
@@ -72,7 +82,7 @@ function getDependenciesFromFile (pathname) {
 
 function getDependencies (file) {
   let json = JSON.parse(file)
-  return json.dependencies && Object.keys(json.dependencies)
+  return json.dependencies && Object.keys(json.dependencies) || []
 }
 
 function compare (dependencies, whitelist) {
@@ -124,6 +134,7 @@ module.exports = {
     }
 
     let dependencies = getDependencies(file.content)
+
     let whitelist = await getWhitelist()
     let result = compare(dependencies, whitelist)
     if (result.length) {

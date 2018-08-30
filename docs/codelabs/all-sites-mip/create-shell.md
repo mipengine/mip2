@@ -75,18 +75,18 @@
 
 我们已经成功地为我们的两个页面添加了头部标题栏。打开 `index.html` 可以看到效果（虽然样式颇为简陋）：
 
-![带 Shell 的示例](https://boscdn.baidu.com/assets/mip/codelab/shell/use-shell-2.png)
+![带 Shell 的示例](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/codelab/shell/use-shell-2.png)
 
 注意到右上角的三个点，点击之后可以展现更多按钮，即我们配置过的“关注”和“发消息”（还包含一个动画效果）：
 
-![带 Shell 的示例下拉](https://boscdn.baidu.com/assets/mip/codelab/shell/use-shell-3.png)
+![带 Shell 的示例下拉](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/codelab/shell/use-shell-3.png)
 
 最后我们看一下页面的切换效果。在切换到第二页时，因为 Shell 独立于页面之外且配置完整，因此头部标题可以直接出现在目标页面加载之前，大大提升了体验：
 
-![带 Shell 的前进切换](https://boscdn.baidu.com/assets/mip/codelab/shell/transition-forward-2.png)
+![带 Shell 的前进切换](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/codelab/shell/transition-forward-2.png)
 
 页面后退和前进时的动画略有不同：前进时需要载入目标页面，因此需要 loading；而后退的目标页面已经存在，因此可以直接展现，效果更好：
 
-![带 Shell 的后退切换](https://boscdn.baidu.com/assets/mip/codelab/shell/transition-backward.png)
+![带 Shell 的后退切换](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/codelab/shell/transition-backward.png)
 
 您可以启动静态服务器自己体验一下动态的效果，和普通的浏览器切换页面相比在体验上可以说是天壤之别！
