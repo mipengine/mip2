@@ -64,6 +64,7 @@
     <mip-data>
         <script type="application/json">
             {
+              "iconClass": "grey lighten1 white--text",
               "loading": false,
               "danger": true,
               "loadingClass": "m-loading",
@@ -109,6 +110,8 @@
     <p>打开 Chrome-Elements 面板查看 class/style 变化情况</p>
 
     <!-- class example -->
+    <div m-bind:class="iconClass"></div>
+    <br />
     <div class="static" m-bind:class="{loading: loading, 'text-danger': danger }"></div>
     <br />
     <div m-bind:class="classObject"></div>

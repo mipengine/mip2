@@ -5,7 +5,7 @@
 
 const regVar = /[\w\d-._]+/gmi
 const regTplLike = /`[^`]+`/gmi
-const regTpl = /(\${)([^}]+)(}.*)/gmi
+const regTpl = /(\${)([^}]+)(})/gmi
 const vendorNames = ['Webkit', 'Moz', 'ms']
 const RESERVED = ['Math', 'Number', 'String', 'Object', 'window']
 let emptyStyle
@@ -41,14 +41,16 @@ export function arrayToObject (arr) {
  */
 export function parseClass (classSpecs, oldSpecs = {}) {
   if (typeof classSpecs === 'string') {
+    // deal with multiple class-defined case
+    let classes = classSpecs.split(' ')
+    classSpecs = {}
+    classes.forEach(c => { classSpecs[c] = true })
     // reset old classes
     Object.keys(oldSpecs).forEach(k => {
       oldSpecs[k] = false
     })
     // set new classes
-    return Object.assign({}, oldSpecs, {
-      [classSpecs]: true
-    })
+    return Object.assign({}, oldSpecs, classSpecs)
   }
   // parse Object only
   if (isArray(classSpecs)) {
@@ -222,7 +224,7 @@ export function namespaced (str) {
 
   // deal with template-like str first and save results
   str = str.replace(regTplLike, (match) => {
-    match = match.replace(regTpl, '$1this.$2$3')
+    match = match.replace(regTpl, tplMatch => namespaced(tplMatch))
     tpls.push(match)
     return `MIP-STR-TPL${tpls.length - 1}`
   })
