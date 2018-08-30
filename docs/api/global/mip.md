@@ -32,7 +32,7 @@ window.MIP
 
 - type: `Object`
 
-  util 工具，参考[工具](./util/index.md)
+  util 工具，参考[工具](../util/index.md)
 
 ### viewer
 
@@ -50,7 +50,7 @@ window.MIP
 
 - type: `Object`
 
-  hash 相关的工具，参考[hash](./util/hash.md)
+  hash 相关的工具，参考[hash](../util/hash.md)
 
 ### CustomElement
 
@@ -74,7 +74,7 @@ window.MIP
 
 - 用法：
 
-  `MIPShell` 为 [MIP Shell](../guide/all-sites-mip/mip-shell.md) 的自定义标签，暴露出来方便开发者进行继承并进行修改。
+  `MIPShell` 为 [MIP Shell](../../guide/all-sites-mip/mip-shell.md) 的自定义标签，暴露出来方便开发者进行继承并进行修改。
 
   ```javascript
   class MIPShellTest extends MIP.builtinComponents.MIPShell {
@@ -95,7 +95,7 @@ window.MIP
   - {*} component vue component
 - 用法：
 
-  注册用 Vue 编写的自定义组件，组件编写方式参考[使用 mip-cli 快速开始](../guide/mip-cli/start-writing-first-mip.md)
+  注册用 Vue 编写的自定义组件，组件编写方式参考[使用 mip-cli 快速开始](../../guide/mip-cli/start-writing-first-mip.md)
 
   ```javascript
   MIP.registerVueCustomElement('mip-test', {

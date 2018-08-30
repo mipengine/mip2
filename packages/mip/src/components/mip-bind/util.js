@@ -3,9 +3,8 @@
  * @author sfe
  */
 
-const regVar = /[\w\d-._]+/gmi
-const regTplLike = /`[^`]+`/gmi
-const regTpl = /(\${)([^}]+)(})/gmi
+const regVar = /[\w\d-._]+/g
+const regTpl = /(\${)([^}]+)(})/g
 const vendorNames = ['Webkit', 'Moz', 'ms']
 const RESERVED = ['Math', 'Number', 'String', 'Object', 'window']
 let emptyStyle
@@ -41,14 +40,16 @@ export function arrayToObject (arr) {
  */
 export function parseClass (classSpecs, oldSpecs = {}) {
   if (typeof classSpecs === 'string') {
+    // deal with multiple class-defined case
+    classSpecs = classSpecs.trim().split(/\s+/).reduce((res, target) => {
+      return Object.assign(res, {[target]: true})
+    }, {})
     // reset old classes
     Object.keys(oldSpecs).forEach(k => {
       oldSpecs[k] = false
     })
     // set new classes
-    return Object.assign({}, oldSpecs, {
-      [classSpecs]: true
-    })
+    return Object.assign({}, oldSpecs, classSpecs)
   }
   // parse Object only
   if (isArray(classSpecs)) {
@@ -221,8 +222,11 @@ export function namespaced (str) {
   let tpls = []
 
   // deal with template-like str first and save results
-  str = str.replace(regTplLike, (match) => {
-    match = match.replace(regTpl, tplMatch => namespaced(tplMatch))
+  str = str.replace(/(`[^`]+`|'[^']+')/g, match => {
+    // template need to recursively parse
+    if (match[0] === '`') {
+      match = match.replace(regTpl, tplMatch => namespaced(tplMatch))
+    }
     tpls.push(match)
     return `MIP-STR-TPL${tpls.length - 1}`
   })
@@ -253,6 +257,7 @@ export function namespaced (str) {
     // to get the next not blankspace char of matched, to tell its nature
     let i = findChar(str, pointer, true)
     // not key of an obj or string warpped by quotes - vars
+    /* istanbul ignore else */
     if (i >= str.length || !/['`:]/.test(str[i])) {
       newExp += wrap(match[0])
     } else if (str[i] === ':') {

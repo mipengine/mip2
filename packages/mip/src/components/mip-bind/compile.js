@@ -245,8 +245,8 @@ class Compile {
     try {
       let res = util.getter(this, exp)
       value = res.value
-      if (res.shouldRm) {
-        node.removeAttribute(attrName + (isSync ? '.sync' : ''))
+      if (res.hadReadAll) {
+        node.removeAttribute(attrName)
       }
     } catch (e) {
       // console.error(e)

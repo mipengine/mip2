@@ -43,7 +43,8 @@ function prerenderSetSrc (allMipImgs, index, num, arraySrc) {
         imgs[j].setAttribute('src', arraySrc[i])
       }
     } else {
-      allMipImgs[i].querySelector('mip-img').setAttribute('src', arraySrc[i])
+      let mipImg = allMipImgs[i].querySelector('mip-img')
+      mipImg && mipImg.setAttribute('src', arraySrc[i])
     }
   }
 }
@@ -55,11 +56,14 @@ function prerenderSetSrc (allMipImgs, index, num, arraySrc) {
  * @return {NodeList}           返回 childList
  */
 function changeSrc (childList, imgIndex, arraySrc) {
+  // 由于懒加载方案是修改 src，所以在第一次加载图片的时候需要修改所有图片的 src，如若不是图片('no-src')则重定向，防止404。
+  let src = arraySrc[imgIndex] !== 'no-src' ? arraySrc[imgIndex] : '?mip_img_ori=1'
   for (let i = 0; i < childList.length; i++) {
     if (childList[i].tagName === 'MIP-IMG') {
-      childList[i].setAttribute('src', arraySrc[imgIndex])
+      childList[i].setAttribute('src', src)
     } else {
-      childList[i].querySelector('mip-img').setAttribute('src', arraySrc[imgIndex])
+      let mipImg = childList[i].querySelector('mip-img')
+      mipImg && mipImg.setAttribute('src', src)
     }
   }
   return childList
@@ -78,6 +82,8 @@ function getAllMipImgSrc (childNodes) {
       let node = childNodes[i].querySelector('mip-img')
       if (node) {
         arr.push(node.getAttribute('src'))
+      } else {
+        arr.push('no-src')
       }
     }
   }

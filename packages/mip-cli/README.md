@@ -107,7 +107,14 @@ module.exports = {
 更多的配置选项可以参考 [Workbox 配置项](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateswstring_mode)
 
 ## changelog
-
+- 1.2.6
+    1. 增加低于 7.6 版本的 node 支持
+- 1.2.5
+    1. 更新 mip-component-validator 依赖版本，修复白名单 bug
+- 1.2.4
+    1. 修复 node 版本低于 8.0 时不出现版本升级提示的 bug
+- 1.2.3
+    1. 组件的 README.md 支持自动生成组件脚本地址
 - 1.2.2
     1. cli 沙盒注入提示信息增加对应文件提示以及白名单申请引导
     2. 修复 1.2.1 dev/build 模式下默认命令行参数失效的 bug

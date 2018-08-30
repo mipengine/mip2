@@ -1,19 +1,10 @@
 #!/usr/bin/env node
 
+require('../lib/utils/compat')
+
 const cli = require('../lib/cli')
-const semver = require('semver')
-const requiredNodeVersion = require('../package').engines.node
 const version = require('../package').version
 const checkVersion = require('../lib/check-version')
-const {showPluginCmdHelpInfo} = require('../lib/utils/plugin')
-
-if (!semver.satisfies(process.version, requiredNodeVersion)) {
-  console.log(cli.chalk.red(
-    `You are using Node ${process.version}, but this version of mip-cli ` +
-        `requires Node ${requiredNodeVersion}.\nPlease upgrade your Node version.`
-  ))
-  process.exit(1)
-}
 
 checkVersion().then(() => {
   cli.program
@@ -27,6 +18,7 @@ checkVersion().then(() => {
     .command('sw', cli.chalk.green('生成 Service Worker'))
     .command('addPlugin', 'default for add Plugin', {isDefault: true, noHelp: true})
     .on('--help', () => {
+      const {showPluginCmdHelpInfo} = require('../lib/utils/plugin')
       // only for user plugin command's help info
       showPluginCmdHelpInfo()
     })

@@ -26,6 +26,7 @@ describe('mip-bind', function () {
   describe('init data', function () {
     let dumbDiv
     let eleFalse
+    let eleElse
 
     before(function () {
       // some normal bindings
@@ -33,6 +34,7 @@ describe('mip-bind', function () {
       eleBind = createEle('p', ['data-active', 'global.isGlobal'], 'bind')
       eleObject = createEle('p', ['data', 'global.data'], 'bind')
       eleFalse = createEle('p', ['editing', '!editing'], 'bind')
+      eleElse = createEle('a', ['href', `'./content.html?id=' + id + '&name=user#hash'`], 'bind')
 
       iframe = createEle('iframe', null)
 
@@ -60,7 +62,8 @@ describe('mip-bind', function () {
                   "province": "广东",
                   "city": "广州"
                 },
-                "list": ["a", "b", {"item": 2}]
+                "list": ["a", "b", {"item": 2}],
+                "id": 1
               }
             </script>
           </mip-data>
@@ -86,7 +89,8 @@ describe('mip-bind', function () {
           province: '广东',
           city: '广州'
         },
-        list: ['a', 'b', {item: 2}]
+        list: ['a', 'b', {item: 2}],
+        id: 1
       })
       expect(window.g).to.eql({
         global: {
@@ -102,6 +106,21 @@ describe('mip-bind', function () {
       expect(eleText.textContent).to.equal('广州')
       expect(eleBind.getAttribute('data-active')).to.equal('true')
       expect(eleObject.getAttribute('data')).to.equal('{"name":"level-1","age":1}')
+      expect(eleElse.getAttribute('href')).to.equal('./content.html?id=1&name=user#hash')
+    })
+
+    it('should bind data with delayed "false"', function () {
+      MIP.$set({
+        editing: false
+      })
+
+      expect(eleFalse.getAttribute('editing')).to.equal('true')
+
+      MIP.setData({
+        editing: true
+      })
+
+      expect(eleFalse.getAttribute('editing')).to.equal('false')
     })
 
     it('should bind data with delayed "false"', function () {
@@ -121,6 +140,7 @@ describe('mip-bind', function () {
     after(function () {
       document.body.removeChild(dumbDiv)
       document.body.removeChild(eleFalse)
+      document.body.removeChild(eleElse)
     })
   })
 
@@ -466,9 +486,11 @@ describe('mip-bind', function () {
       eles.push(createEle('p', ['style', '{fontSize: `${fontSize}px`}'], 'bind')) // eslint-disable-line
       eles.push(createEle('p', ['style', '[baseStyles, styleObject]'], 'bind'))
       eles.push(createEle('p', ['style', `{border: list[2].item + 'px'}`], 'bind'))
+      eles.push(createEle('p', ['class', 'iconClass'], 'bind'))
 
       MIP.$set({
         loading: false,
+        iconClass: 'grey    lighten1 white--text',
         classObject: {
           'warning-class': true,
           'active-class': false,
@@ -499,6 +521,7 @@ describe('mip-bind', function () {
       expect(eles[2].getAttribute('class')).to.equal('class-text')
       expect(eles[3].getAttribute('class')).to.equal('m-error')
       expect(eles[4].getAttribute('class')).to.be.empty
+      expect(eles[11].getAttribute('class')).to.equal('grey lighten1 white--text')
 
       MIP.setData({
         tab: 'test'
@@ -522,13 +545,15 @@ describe('mip-bind', function () {
           'active-class': true,
           'loading-class': false
         },
-        classText: 'class-text-new'
+        classText: 'class-text-new',
+        iconClass: 'nothing'
       })
 
       expect(eles[0].getAttribute('class')).to.equal('default-class warning-class active-class')
       expect(eles[1].getAttribute('class')).to.equal('m-error loading')
       expect(eles[2].getAttribute('class')).to.equal('class-text-new')
       expect(eles[3].getAttribute('class')).to.equal('m-error m-loading')
+      expect(eles[11].getAttribute('class')).to.equal('nothing')
     })
 
     it('should update style', function () {

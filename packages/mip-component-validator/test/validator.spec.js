@@ -28,7 +28,7 @@ describe('validator.js', function () {
 
   it('whitelist validate in child folder', async function () {
     const result = await validator.whitelist('./test/mip-cases/static')
-    expect(result.errors[0].message).to.include('babel-core')
+    expect(result.errors.length).to.be.equal(0)
   })
 
   it('full validate', async function () {
@@ -54,5 +54,10 @@ describe('validator.js', function () {
     const result = await validator.validate('./test/mip-cases', {ignore: ['**/package.json']})
     let error = result.errors.map(e => e.message).join('\n')
     expect(error).to.not.include('babel-core')
+  })
+
+  it('no dependencies run success', async function () {
+    const result = await validator.whitelist('./test/mip-cases/no-dependencies-npm')
+    expect(result.errors.length).to.be.equal(0)
   })
 })

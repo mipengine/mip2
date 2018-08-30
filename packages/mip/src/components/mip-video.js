@@ -78,11 +78,27 @@ class MipVideo extends CustomElement {
     ) {
       this.videoElement = this.renderInView()
     } else {
-      this.videoElement = this.renderPlayElsewhere()
+      // 再细分为 iframe 外层页面是否为百度搜索结果页，如果是就 renderPlayElsewhere，否则就 renderError
+      // 考虑安全性，renderPlayElsewhere 可以在其他地方来打开视频，而renderError 则是直接显示X，不建议播放
+      if (window.parent.MIP && !window.parent.MIP.standalone) {
+        this.videoElement = this.renderPlayElsewhere()
+      } else {
+        this.videoElement = this.renderError()
+      }
     }
 
     this.addEventAction('seekTo', (e, currentTime) => {
       this.videoElement.currentTime = currentTime
+    })
+    this.addEventAction('play', () => {
+      // renderPlayElsewhere 的 videoElement 是 div，没有 play
+      /* istanbul ignore next */
+      this.videoElement.play && this.videoElement.play()
+    })
+    this.addEventAction('pause', () => {
+      // renderPlayElsewhere 的 videoElement 是 div，没有 pause
+      /* istanbul ignore next */
+      this.videoElement.pause && this.videoElement.pause()
     })
 
     this.applyFillContent(this.videoElement, true)
@@ -98,6 +114,8 @@ class MipVideo extends CustomElement {
     }
     let currentTime = this.attributes['currenttime'] || 0
     videoEl.setAttribute('playsinline', 'playsinline')
+    // 兼容qq浏览器
+    videoEl.setAttribute('x5-playsinline', 'x5-playsinline')
     videoEl.setAttribute('webkit-playsinline', 'webkit-playsinline')
     videoEl.setAttribute('t7-video-player-type', 'inline')
     Array.prototype.slice.apply(this.element.childNodes).forEach(function (node) {
@@ -114,7 +132,21 @@ class MipVideo extends CustomElement {
     this.element.appendChild(videoEl)
     return videoEl
   }
+  // 混合内容警告：出于安全因素的考虑，不予播放，显示一个 X
+  renderError () {
+    let videoEl = document.createElement('div')
+    videoEl.setAttribute('class', 'mip-video-poster')
+    if (this.attributes.poster) {
+      videoEl.style.backgroundImage = 'url(' + this.attributes.poster + ')'
+      videoEl.style.backgroundSize = 'cover'
+    }
 
+    let playBtn = document.createElement('span')
+    playBtn.setAttribute('class', 'mip-video-error')
+    videoEl.appendChild(playBtn)
+    this.element.appendChild(videoEl)
+    return videoEl
+  }
   // Render the `<div>` element with poster and play btn, and append to `this.element`
   renderPlayElsewhere () {
     let videoEl = document.createElement('div')

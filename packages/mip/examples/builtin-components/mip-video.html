@@ -1397,6 +1397,24 @@
     src=<span class="hljs-string">"https://mip-doc.bj.bcebos.com/sample_video.ogv"</span>
     <span class="hljs-built_in">type</span>=<span class="hljs-string">"video/ogg"</span>&gt;
 &lt;/mip-video&gt;</code></pre>
+
+<h3>增加控制视频的方法</h3>
+<pre><code class="hljs lang-html">&lt;mip-video controls id="testvideo"
+  layout="responsive" width="640" height="360"
+  src="https://mip-doc.bj.bcebos.com/sample_video.mp4"&gt;
+&lt;/mip-video&gt;
+&lt;button on="tap:testvideo.play"&gt;play&lt;/button&gt;
+&lt;button on="tap:testvideo.pause"&gt;pause&lt;/button&gt;
+&lt;button on="tap:testvideo.seekTo(10)"&gt;seekTo(10)&lt;/button&gt;
+</code></pre>
+<mip-video controls id="testvideo"
+  layout="responsive" width="640" height="360"
+  src="https://mip-doc.bj.bcebos.com/sample_video.mp4">
+</mip-video>
+<button on="tap:testvideo.play">play</button>
+<button on="tap:testvideo.pause">pause</button>
+<button on="tap:testvideo.seekTo(10)">seekTo(10)</button>
+
           <h2 id="markdown-doc-%E5%B1%9E%E6%80%A7">属性</h2>
           <p>下面是几个重要的
             <code>&lt;mip-video&gt;</code>属性。事实上，所有 HTML5

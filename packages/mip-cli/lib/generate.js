@@ -41,6 +41,9 @@ module.exports = function generate (dir, compName, done) {
       // 只渲染组件部分时(mip2 add)，不需要走 ask 流程，且使用 component name 作为 dest 路径
       if (compName) {
         metalsmith.destination(path.resolve('./components', compName))
+        // 读取项目名称，用于渲染 README.md 的脚本地址
+        let siteName = process.cwd().split(path.sep).pop()
+        metalsmith.metadata().name = siteName
         return done()
       }
 
