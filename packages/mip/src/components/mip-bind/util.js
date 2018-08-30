@@ -3,9 +3,9 @@
  * @author sfe
  */
 
-const regVar = /[\w\d-._]+/gmi
-const regTplLike = /`[^`]+`/gmi
-const regTpl = /(\${)([^}]+)(})/gmi
+const regVar = /[\w\d-._]+/g
+const regTplLike = /`[^`]+`/g
+const regTpl = /(\${)([^}]+)(})/g
 const vendorNames = ['Webkit', 'Moz', 'ms']
 const RESERVED = ['Math', 'Number', 'String', 'Object', 'window']
 let emptyStyle
