@@ -457,7 +457,7 @@ describe('mip-bind', function () {
 
       MIP.$set({
         loading: false,
-        iconClass: 'grey lighten1 white--text',
+        iconClass: 'grey    lighten1 white--text',
         classObject: {
           'warning-class': true,
           'active-class': false,

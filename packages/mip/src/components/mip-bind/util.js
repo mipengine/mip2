@@ -42,7 +42,7 @@ export function arrayToObject (arr) {
 export function parseClass (classSpecs, oldSpecs = {}) {
   if (typeof classSpecs === 'string') {
     // deal with multiple class-defined case
-    let classes = classSpecs.split(' ')
+    let classes = classSpecs.replace(/\s+/, ' ').split(' ')
     classSpecs = {}
     classes.forEach(c => { classSpecs[c] = true })
     // reset old classes
