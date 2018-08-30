@@ -257,6 +257,7 @@ export function namespaced (str) {
     // to get the next not blankspace char of matched, to tell its nature
     let i = findChar(str, pointer, true)
     // not key of an obj or string warpped by quotes - vars
+    /* istanbul ignore else */
     if (i >= str.length || !/['`:]/.test(str[i])) {
       newExp += wrap(match[0])
     } else if (str[i] === ':') {
