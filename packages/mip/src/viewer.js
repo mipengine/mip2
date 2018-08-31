@@ -397,6 +397,7 @@ let viewer = {
       if (!(iosVersion === '8' || iosVersion === '7')) {
         document.documentElement.classList.add('mip-i-ios-scroll')
       }
+      document.documentElement.classList.add('mip-i-ios-width')
 
       if (!this.page.isRootPage) {
         this.fixIOSPageFreeze()
