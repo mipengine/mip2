@@ -52,7 +52,7 @@ function registerVueCustomElement (tag, component) {
 let mip = {}
 
 // Ensure loaded only once
-/* istanbul ignore if */
+/* istanbul ignore next */
 if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefined') {
   monitorInstall()
 
