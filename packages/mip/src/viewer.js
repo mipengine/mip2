@@ -396,12 +396,6 @@ let viewer = {
       iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
       if (!(iosVersion === '8' || iosVersion === '7')) {
         document.documentElement.classList.add('mip-i-ios-scroll')
-        window.addEventListener('orientationchange', () => {
-          document.documentElement.classList.remove('mip-i-ios-scroll')
-          setTimeout(() => {
-            document.documentElement.classList.add('mip-i-ios-scroll')
-          })
-        })
       }
       document.documentElement.classList.add('mip-i-ios-width')
 
