@@ -394,9 +394,14 @@ let viewer = {
     if (platform.isIos()) {
       let iosVersion = platform.getOsVersion()
       iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
-      if (!(iosVersion === '8' || iosVersion === '7')) {
-        document.documentElement.classList.add('mip-i-ios-scroll')
-      }
+      document.documentElement.classList.add('mip-i-ios-scroll')
+      window.addEventListener('orientationchange', () => {
+        document.documentElement.classList.remove('mip-i-ios-scroll')
+        setTimeout(() => {
+          document.documentElement.classList.add('mip-i-ios-scroll')
+        })
+      })
+      document.documentElement.classList.add('mip-i-ios-width')
 
       if (!this.page.isRootPage) {
         this.fixIOSPageFreeze()
@@ -440,7 +445,7 @@ let viewer = {
       this.viewportScroll()
     }
 
-    this.fixSoftKeyboard()
+    // this.fixSoftKeyboard()
   },
 
   /**
@@ -472,19 +477,19 @@ let viewer = {
    *
    * https://github.com/mipengine/mip2/issues/38
    */
-  fixSoftKeyboard () {
-    // reset iframe's height when input focus/blur
-    event.delegate(document, 'input', 'focus', event => {
-      this.page.notifyRootPage({
-        type: MESSAGE_PAGE_RESIZE
-      })
-    }, true)
-    event.delegate(document, 'input', 'blur', event => {
-      this.page.notifyRootPage({
-        type: MESSAGE_PAGE_RESIZE
-      })
-    }, true)
-  },
+  // fixSoftKeyboard () {
+  //   // reset iframe's height when input focus/blur
+  //   event.delegate(document, 'input', 'focus', event => {
+  //     this.page.notifyRootPage({
+  //       type: MESSAGE_PAGE_RESIZE
+  //     })
+  //   }, true)
+  //   event.delegate(document, 'input', 'blur', event => {
+  //     this.page.notifyRootPage({
+  //       type: MESSAGE_PAGE_RESIZE
+  //     })
+  //   }, true)
+  // },
 
   /**
    * lock body scroll in iOS
