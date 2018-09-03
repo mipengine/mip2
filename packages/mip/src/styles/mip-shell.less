@@ -75,9 +75,22 @@ mip-shell * {
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
-      max-width: 100%;
+      max-width: 320px;
+
+      @media screen and (max-width: 375px) {
+        & {
+          max-width: 280px;
+        }
+      }
+
+      @media screen and (max-width: 320px) {
+        & {
+          max-width: 200px;
+        }
+      }
     }
   }
+
   .mip-shell-header-button-group {
     width: 87px;
     height: 30px;
