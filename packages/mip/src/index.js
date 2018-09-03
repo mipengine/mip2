@@ -53,7 +53,7 @@ let mip = {}
 
 // Ensure loaded only once
 /* istanbul ignore next */
-if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefined') {
+// if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefined') {
   monitorInstall()
 
   // pass meta through `window.name` in cross-origin scene
@@ -157,6 +157,6 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     let storage = util.customStorage(2)
     storage.delExceedCookie()
   })
-}
+// }
 
 export default mip
