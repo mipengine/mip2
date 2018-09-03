@@ -47,7 +47,13 @@ export function parseClass (classSpecs, oldSpecs = {}) {
   })
   if (typeof classSpecs === 'string') {
     // deal with multiple class-defined case
-    classSpecs = classSplit(classSpecs)
+    classSpecs = classSpecs.trim().split(/\s+/).reduce((res, target) => {
+      return Object.assign(res, {[target]: true})
+    }, {})
+    // reset old classes
+    Object.keys(oldSpecs).forEach(k => {
+      oldSpecs[k] = false
+    })
     // set new classes
     return Object.assign({}, oldSpecs, classSpecs)
   }

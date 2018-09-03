@@ -121,6 +121,7 @@ describe('mip-bind', function () {
       })
 
       expect(eleFalse.getAttribute('editing')).to.equal('false')
+<<<<<<< HEAD
     })
 
     it('should bind data with delayed "false"', function () {
@@ -135,6 +136,8 @@ describe('mip-bind', function () {
       })
 
       expect(eleFalse.getAttribute('editing')).to.equal('false')
+=======
+>>>>>>> 98fe04e1022f5c1d7117b2f1f48375e6c67063fe
     })
 
     after(function () {
@@ -486,12 +489,20 @@ describe('mip-bind', function () {
       eles.push(createEle('p', ['style', '{fontSize: `${fontSize}px`}'], 'bind')) // eslint-disable-line
       eles.push(createEle('p', ['style', '[baseStyles, styleObject]'], 'bind'))
       eles.push(createEle('p', ['style', `{border: list[2].item + 'px'}`], 'bind'))
+<<<<<<< HEAD
       eles.push(createEle('p', ['class', '[items[0].iconClass, errorClass]'], 'bind'))
       eles.push(createEle('p', ['class', '[classObject, [items[0].iconClass]]'], 'bind'))
 
       MIP.$set({
         loading: false,
         items: [{iconClass: 'grey    lighten1 white--text'}],
+=======
+      eles.push(createEle('p', ['class', 'iconClass'], 'bind'))
+
+      MIP.$set({
+        loading: false,
+        iconClass: 'grey    lighten1 white--text',
+>>>>>>> 98fe04e1022f5c1d7117b2f1f48375e6c67063fe
         classObject: {
           'warning-class': true,
           'active-class': false,
@@ -522,8 +533,12 @@ describe('mip-bind', function () {
       expect(eles[2].getAttribute('class')).to.equal('class-text')
       expect(eles[3].getAttribute('class')).to.equal('m-error')
       expect(eles[4].getAttribute('class')).to.be.empty
+<<<<<<< HEAD
       expect(eles[11].getAttribute('class')).to.equal('grey lighten1 white--text m-error')
       expect(eles[12].getAttribute('class')).to.equal('warning-class loading-class grey lighten1 white--text')
+=======
+      expect(eles[11].getAttribute('class')).to.equal('grey lighten1 white--text')
+>>>>>>> 98fe04e1022f5c1d7117b2f1f48375e6c67063fe
 
       MIP.setData({
         tab: 'test'
@@ -548,17 +563,25 @@ describe('mip-bind', function () {
           'loading-class': false
         },
         classText: 'class-text-new',
+<<<<<<< HEAD
         items: [{
           iconClass: 'nothing'
         }]
+=======
+        iconClass: 'nothing'
+>>>>>>> 98fe04e1022f5c1d7117b2f1f48375e6c67063fe
       })
 
       expect(eles[0].getAttribute('class')).to.equal('default-class warning-class active-class')
       expect(eles[1].getAttribute('class')).to.equal('m-error loading')
       expect(eles[2].getAttribute('class')).to.equal('class-text-new')
       expect(eles[3].getAttribute('class')).to.equal('m-error m-loading')
+<<<<<<< HEAD
       expect(eles[11].getAttribute('class')).to.equal('m-error nothing')
       expect(eles[12].getAttribute('class')).to.equal('warning-class active-class nothing')
+=======
+      expect(eles[11].getAttribute('class')).to.equal('nothing')
+>>>>>>> 98fe04e1022f5c1d7117b2f1f48375e6c67063fe
     })
 
     it('should update style', function () {
