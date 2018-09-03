@@ -32,8 +32,8 @@ describe('mip-rem', function () {
       mipRem.setAttribute('font-size', '[{"maxWidth": 360; "size": 80}]')
       document.body.appendChild(mipRem)
     })
-    it('should change html font-size to 90px', function () {
-      expect(document.documentElement.style.fontSize).to.equal('90px')
+    it('should change html font-size to ""', function () {
+      expect(document.documentElement.style.fontSize).to.equal('')
     })
     after(function () {
       window.innerWidth = origin
@@ -52,23 +52,17 @@ describe('mip-rem', function () {
       document.body.appendChild(mipRem)
     })
     // size字段错误触发容错后的默认值有两种
-    it('should change html font-size to 90px', function () {
-      expect(document.documentElement.style.fontSize).to.equal('90px')
+    it('should change html font-size to ""', function () {
+      expect(document.documentElement.style.fontSize).to.equal('')
     })
-    it('should change html font-size to 100px', function () {
-      window.innerWidth = 400
-      let event = document.createEvent('Event')
-      event.initEvent('resize', true, true)
-      window.dispatchEvent(event)
-      expect(document.documentElement.style.fontSize).to.equal('100px')
-    })
+
     after(function () {
       window.innerWidth = origin
       document.body.removeChild(mipRem)
     })
   })
   // 改掉的值 window.innerWidth 还需要改回去，不然其他模块的 test case 会通不过
-  describe('with no font-size when window.innerWidth = 400', function () {
+  describe('with no font-size', function () {
     let mipRem
     let origin
     before(function () {
@@ -77,36 +71,15 @@ describe('mip-rem', function () {
       mipRem = document.createElement('mip-rem')
       document.body.appendChild(mipRem)
     })
-    it('should change html font-size to 100px', function () {
-      expect(document.documentElement.style.fontSize).to.equal('100px')
+    it('should change html font-size to ""', function () {
+      expect(document.documentElement.style.fontSize).to.equal('')
     })
     after(function () {
       window.innerWidth = origin
       document.body.removeChild(mipRem)
     })
   })
-  describe('with no font-size when window.innerWidth = 200', function () {
-    let mipRem
-    let origin
-    before(function () {
-      origin = window.innerWidth
-      window.innerWidth = 200
-      mipRem = document.createElement('mip-rem')
-      document.body.appendChild(mipRem)
-    })
-    it('should change html font-size to 90px', function () {
-      expect(document.documentElement.style.fontSize).to.equal('90px')
-    })
-    it('should do sth when window dispatch resize', function () {
-      let event = document.createEvent('Event')
-      event.initEvent('resize', true, true)
-      window.dispatchEvent(event)
-    })
-    after(function () {
-      window.innerWidth = origin
-      document.body.removeChild(mipRem)
-    })
-  })
+
   describe('with mip-rem removed', function () {
     let mipRem
     let origin
