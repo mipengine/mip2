@@ -16,13 +16,13 @@ class MipRem extends CustomElement {
   }
   changeHtmlFontSize () {
     // 获取fontSize 格式类似于 [{"maxWidth": 360, "size": 80}, {"minWidth": 361, "maxWidth": 720, "size": 90}, {"minWidth": 721, "size": 100}]
-    let init = ' '
+    let init = ''
     let fontSize = this.element.getAttribute('font-size') || init
     let width = viewport.getWidth()
     try {
       fontSize = JSON.parse(fontSize)
     } catch (e) {
-      fontSize = ' '
+      fontSize = ''
       console.warn('mip-rem 的 font-size 属性值格式不对！')
     }
     // 类似于 media query 的效果
