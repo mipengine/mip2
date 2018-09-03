@@ -441,7 +441,7 @@ let viewer = {
       this.viewportScroll()
     }
 
-    this.fixSoftKeyboard()
+    // this.fixSoftKeyboard()
   },
 
   /**
@@ -473,19 +473,19 @@ let viewer = {
    *
    * https://github.com/mipengine/mip2/issues/38
    */
-  fixSoftKeyboard () {
-    // reset iframe's height when input focus/blur
-    event.delegate(document, 'input', 'focus', event => {
-      this.page.notifyRootPage({
-        type: MESSAGE_PAGE_RESIZE
-      })
-    }, true)
-    event.delegate(document, 'input', 'blur', event => {
-      this.page.notifyRootPage({
-        type: MESSAGE_PAGE_RESIZE
-      })
-    }, true)
-  },
+  // fixSoftKeyboard () {
+  //   // reset iframe's height when input focus/blur
+  //   event.delegate(document, 'input', 'focus', event => {
+  //     this.page.notifyRootPage({
+  //       type: MESSAGE_PAGE_RESIZE
+  //     })
+  //   }, true)
+  //   event.delegate(document, 'input', 'blur', event => {
+  //     this.page.notifyRootPage({
+  //       type: MESSAGE_PAGE_RESIZE
+  //     })
+  //   }, true)
+  // },
 
   /**
    * lock body scroll in iOS
