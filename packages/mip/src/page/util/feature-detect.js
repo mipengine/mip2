@@ -17,19 +17,23 @@ export const supportsPassive = supportsPassiveFlag
 /**
  * transition & animation end event
  */
-let transitionEndEventName = 'transitionend'
-let animationEndEventName = 'animationend'
+let transitionEndEventName
+let animationEndEventName
 
 /* istanbul ignore next */
-if (window.ontransitionend === undefined &&
-    window.onwebkittransitionend !== undefined) {
+if (window.ontransitionend !== undefined) {
+  transitionEndEventName = 'transitionend'
+} else if (window.onwebkittransitionend !== undefined) {
   transitionEndEventName = 'webkitTransitionEnd'
 }
+
 /* istanbul ignore next */
-if (window.onanimationend === undefined &&
-    window.onwebkitanimationend !== undefined) {
+if (window.onanimationend !== undefined) {
+  animationEndEventName = 'animationend'
+} else if (window.onwebkitanimationend !== undefined) {
   animationEndEventName = 'webkitAnimationEnd'
 }
+
 export const transitionEndEvent = transitionEndEventName
 export const animationEndEvent = animationEndEventName
 

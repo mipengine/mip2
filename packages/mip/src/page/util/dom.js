@@ -337,7 +337,13 @@ export function whenTransitionEnds (el, type, cb) {
     el.removeEventListener(event, onEnd)
     cb()
   }
-  el.addEventListener(event, onEnd)
+
+  /* istanbul ignore next */
+  if (event) {
+    el.addEventListener(event, onEnd)
+  } else {
+    setTimeout(cb, 250)
+  }
 }
 
 /**
