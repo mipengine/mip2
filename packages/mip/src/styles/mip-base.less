@@ -23,10 +23,16 @@ html,
 body {
   // height: 100% !important;
   overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   &.trigger-layout {
     height: 100% !important;
   }
+}
+
+html.mip-i-ios-width {
+  min-width: 100%;
+  width: 1px;
 }
 
 html.mip-i-ios-scroll,

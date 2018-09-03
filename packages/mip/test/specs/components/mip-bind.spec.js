@@ -460,10 +460,13 @@ describe('mip-bind', function () {
       eles.push(createEle('p', ['style', '[baseStyles, styleObject]'], 'bind'))
       eles.push(createEle('p', ['style', `{border: list[2].item + 'px'}`], 'bind'))
       eles.push(createEle('p', ['class', 'iconClass'], 'bind'))
+      eles.push(createEle('p', ['class', '[items[0].iconClass, errorClass]'], 'bind'))
+      eles.push(createEle('p', ['class', '[classObject, [items[0].iconClass]]'], 'bind'))
 
       MIP.$set({
         loading: false,
         iconClass: 'grey    lighten1 white--text',
+        items: [{iconClass: 'grey    lighten1 white--text'}],
         classObject: {
           'warning-class': true,
           'active-class': false,
@@ -495,6 +498,8 @@ describe('mip-bind', function () {
       expect(eles[3].getAttribute('class')).to.equal('m-error')
       expect(eles[4].getAttribute('class')).to.be.empty
       expect(eles[11].getAttribute('class')).to.equal('grey lighten1 white--text')
+      expect(eles[12].getAttribute('class')).to.equal('grey lighten1 white--text m-error')
+      expect(eles[13].getAttribute('class')).to.equal('warning-class loading-class grey lighten1 white--text')
 
       MIP.setData({
         tab: 'test'
@@ -519,7 +524,10 @@ describe('mip-bind', function () {
           'loading-class': false
         },
         classText: 'class-text-new',
-        iconClass: 'nothing'
+        iconClass: 'nothing',
+        items: [{
+          iconClass: 'nothing'
+        }]
       })
 
       expect(eles[0].getAttribute('class')).to.equal('default-class warning-class active-class')
@@ -527,6 +535,8 @@ describe('mip-bind', function () {
       expect(eles[2].getAttribute('class')).to.equal('class-text-new')
       expect(eles[3].getAttribute('class')).to.equal('m-error m-loading')
       expect(eles[11].getAttribute('class')).to.equal('nothing')
+      expect(eles[12].getAttribute('class')).to.equal('m-error nothing')
+      expect(eles[13].getAttribute('class')).to.equal('warning-class active-class nothing')
     })
 
     it('should update style', function () {
