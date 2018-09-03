@@ -17,6 +17,7 @@ module.exports = async function (options) {
   // options.dev = false
   // output = path.resolve(CWD, output)
   // dir = path.resolve(CWD, dir)
+  process.env.NODE_ENV = options.env
 
   const builder = new Builder(options)
 

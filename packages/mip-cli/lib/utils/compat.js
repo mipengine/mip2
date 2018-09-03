@@ -5,7 +5,6 @@
 
 const semver = require('semver')
 const requiredNodeVersion = require('../../package').engines.node
-const {resolveModule} = require('./helper')
 
 if (!semver.satisfies(process.version, requiredNodeVersion)) {
   require('babel-register')({
