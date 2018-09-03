@@ -22,7 +22,7 @@ class MipRem extends CustomElement {
     try {
       fontSize = JSON.parse(fontSize)
     } catch (e) {
-      fontSize = ''
+      fontSize = init
       console.warn('mip-rem 的 font-size 属性值格式不对！')
     }
     // 类似于 media query 的效果
@@ -37,7 +37,7 @@ class MipRem extends CustomElement {
       size = fontSize[i].size || init
       break
     }
-    document.documentElement.setAttribute('style', 'font-size: ' + size + 'px')
+    document.documentElement.style.fontSize = size + 'px'
   }
 }
 
