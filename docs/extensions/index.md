@@ -12,6 +12,7 @@
 [mip-pix](./builtin/mip-pix.md) | 统计|将 mip-pix 组件直接引入，可发送带有自定义参数的请求，用于统计页面访问情况。这些参数主要包括页面打开时间点、页面标题和当面页面地址。
 [mip-video](./builtin/mip-video.md) | -|mip-video 用来支持在 MIP 中增加视频内容，是 HTML `<video>` 的直接包装。功能和兼容性与 HTML5 `<video>` 一致。
 [mip-bind](./builtin/mip-bind.md) |数据驱动组件|在页面中以数据作为驱动源，做到随着数据变动页面界面也会随之变动的功能。
+[mip-rem](./builtin/mip-rem.md) |样式组件|用来设置文档根元素的 font-size，防止样式错乱问题。
 
 ## 2. 个性化组件
 
