@@ -26,8 +26,10 @@ export function arrayToObject (arr) {
   arr.forEach(item => {
     if (isObject(item)) {
       Object.assign(obj, item)
-    } else {
-      obj[item] = true
+    } else if (isArray(item)) {
+      Object.assign(obj, arrayToObject(item))
+    } else if (typeof item === 'string') {
+      Object.assign(obj, classSplit(item))
     }
   })
   return obj
@@ -39,15 +41,13 @@ export function arrayToObject (arr) {
  * @param {Object|Array} oldSpecs old classObject
  */
 export function parseClass (classSpecs, oldSpecs = {}) {
+  // reset old classes
+  Object.keys(oldSpecs).forEach(k => {
+    oldSpecs[k] = false
+  })
   if (typeof classSpecs === 'string') {
     // deal with multiple class-defined case
-    classSpecs = classSpecs.trim().split(/\s+/).reduce((res, target) => {
-      return Object.assign(res, {[target]: true})
-    }, {})
-    // reset old classes
-    Object.keys(oldSpecs).forEach(k => {
-      oldSpecs[k] = false
-    })
+    classSpecs = classSplit(classSpecs)
     // set new classes
     return Object.assign({}, oldSpecs, classSpecs)
   }
@@ -62,7 +62,13 @@ export function parseClass (classSpecs, oldSpecs = {}) {
       typeof classSpecs[k] !== 'undefined' && k && (newClasses[k] = classSpecs[k])
     })
   }
-  return newClasses
+  return Object.assign({}, oldSpecs, newClasses)
+}
+
+function classSplit (classSpecs) {
+  return classSpecs.trim().split(/\s+/).reduce((res, target) => {
+    return Object.assign(res, {[target]: true})
+  }, {})
 }
 
 /*
@@ -75,7 +81,7 @@ export function parseStyle (styleSpecs) {
   // parse Object only
   if (isArray(styleSpecs)) {
     styleSpecs.forEach(styleObj => {
-      styles = Object.assign(styles, parseStyle(styleObj))
+      Object.assign(styles, parseStyle(styleObj))
     })
     return styles
   }
