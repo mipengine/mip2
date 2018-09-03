@@ -1154,7 +1154,7 @@ class MipShell extends CustomElement {
       }
     })
     // 3.notify SF to set the iframe outside
-    viewer.sendMessage('resizeContainer', {height: this.currentViewportHeight})
+    // viewer.sendMessage('resizeContainer', {height: this.currentViewportHeight})
   }
 
   bindHeaderEvents () {
