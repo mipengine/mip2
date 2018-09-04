@@ -54,10 +54,6 @@ module.exports = {
    * @param {...string} args 参数
    */
   info (...args) {
-    if (process.env.NODE_ENV === 'test') {
-      return
-    }
-
     const msg = format.apply(format, args)
     console.log(chalk.green('INFO'), msg)
   },
