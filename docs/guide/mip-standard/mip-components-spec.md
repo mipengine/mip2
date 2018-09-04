@@ -64,7 +64,7 @@ MIP 扩展组件开发采用 [Forking工作流](https://github.com/oldratlee/tra
 
 第三方组件结构示例
 ```bash
-  mip2-extensions-plateform
+  mip2-extensions-platform
     ├── sites
           ├── baidu.com // 具体第三方站点名
                 ├── components
