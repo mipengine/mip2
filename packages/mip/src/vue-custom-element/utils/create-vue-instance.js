@@ -25,13 +25,33 @@ function getNodeSlots (element) {
   return nodeSlots
 }
 
-function structurize (key, val) {
+function structurizeToArr (key, val, level = key) {
+  let match = key.match(/([^[\]]+)\[([^\]]+)\]/)
+  if (match && match.length) {
+    level = level.replace(/\[[^\]]+\]$/, '')
+    let func = new Function(`with(this){try {return ${level}} catch (e) {}}`) // eslint-disable-line
+    let pos = +match[2]
+    let arr
+    try {
+      arr = JSON.parse(JSON.stringify(func.call(window.m)))
+      arr[pos] && (arr[pos] = val)
+    } catch (e) {
+    }
+    return {[match[1]]: arr}
+  }
+  return {[key]: val}
+}
+
+function structurizeToObj (key, val) {
   if (key.indexOf('.') === -1) {
-    return {[key]: val}
+    return structurizeToArr(key, val)
   }
   let ks = key.split('.').reverse()
   let name = ks.shift()
-  return ks.reduce((obj, key) => {
+  return ks.reduce((obj, key, index, arr) => {
+    if (key.indexOf('[') !== -1) {
+      return structurizeToArr(key, obj, arr.filter((item, i) => i >= index).reverse().join('.'))
+    }
     return {[key]: obj}
   }, {[name]: val})
 }
@@ -44,7 +64,7 @@ function getModifierSyncEvents (node) {
     .reduce((obj, key) => {
       let name = attrValues[key].sync
       obj['update:' + camelize(key)] = function (val) {
-        MIP.setData(structurize(name, val))
+        MIP.setData(structurizeToObj(name, val))
       }
       return obj
     }, {})
