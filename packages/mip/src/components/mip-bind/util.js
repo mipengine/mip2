@@ -81,7 +81,7 @@ export function parseStyle (styleSpecs) {
   // parse Object only
   if (isArray(styleSpecs)) {
     styleSpecs.forEach(styleObj => {
-      styles = Object.assign(styles, parseStyle(styleObj))
+      Object.assign(styles, parseStyle(styleObj))
     })
     return styles
   }

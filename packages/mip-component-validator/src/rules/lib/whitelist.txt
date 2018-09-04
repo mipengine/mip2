@@ -5,3 +5,4 @@ iscroll
 lodash
 mip-sandbox
 moment
+better-scroll

@@ -69,6 +69,7 @@
                   "iconClass": "grey   lighten1 white--text"
                 }
               ],
+              "iconClass": "grey   lighten1 white--text",
               "loading": false,
               "danger": true,
               "loadingClass": "m-loading",
@@ -115,6 +116,7 @@
 
     <!-- class example -->
     <div m-bind:class="[items[0].iconClass, errorClass]"></div>
+    <div m-bind:class="iconClass"></div>
     <br />
     <div class="static" m-bind:class="{loading: loading, 'text-danger': danger }"></div>
     <br />
