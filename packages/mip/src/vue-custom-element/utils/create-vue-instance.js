@@ -25,6 +25,17 @@ function getNodeSlots (element) {
   return nodeSlots
 }
 
+function structurize (key, val) {
+  if (key.indexOf('.') === -1) {
+    return {[key]: val}
+  }
+  let ks = key.split('.').reverse()
+  let name = ks.shift()
+  return ks.reduce((obj, key) => {
+    return {[key]: obj}
+  }, {[name]: val})
+}
+
 function getModifierSyncEvents (node) {
   let attrValues = node.attrValues
   if (!attrValues) return {}
@@ -33,9 +44,7 @@ function getModifierSyncEvents (node) {
     .reduce((obj, key) => {
       let name = attrValues[key].sync
       obj['update:' + camelize(key)] = function (val) {
-        MIP.setData({
-          [name]: val
-        })
+        MIP.setData(structurize(name, val))
       }
       return obj
     }, {})

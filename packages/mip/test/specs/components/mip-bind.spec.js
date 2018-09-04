@@ -457,11 +457,19 @@ describe('mip-bind', function () {
 
   describe('two-way binding', function () {
     it('should compile .sync and pass identifier', function () {
-      let twoWay = createEle('p', ['msg', 'msg-title'], 'bind', true)
+      let twoWay1 = createEle('p', ['title', 'doc.title'], 'bind', true)
+      let twoWay2 = createEle('p', ['msg', 'msg-title'], 'bind', true)
       MIP.$set({
-        'msg-title': 'msg-title-init'
+        'msg-title': 'msg-title-init',
+        'doc': {
+          'title': 'doc.title-init'
+        }
       })
-      expect(twoWay.attrValues.msg).to.eql({
+      expect(twoWay1.attrValues.title).to.eql({
+        sync: 'doc.title',
+        val: 'doc.title-init'
+      })
+      expect(twoWay2.attrValues.msg).to.eql({
         sync: 'msg-title',
         val: 'msg-title-init'
       })
@@ -648,7 +656,7 @@ describe('mip-bind', function () {
       expect(eles[0].getAttribute('m-bind:num3')).to.be.empty
       expect(eles[0].getAttribute('num3')).to.be.null
 
-      expect(eles[1].getAttribute('m-bind')).to.equal('num3')
+      expect(eles[1].getAttribute('m-bind')).to.be.null
 
       expect(eles[2].getAttribute('m-bind:style')).to.equal('fontSize1')
       expect(eles[2].getAttribute('style')).to.be.null

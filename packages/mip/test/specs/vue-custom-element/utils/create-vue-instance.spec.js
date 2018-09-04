@@ -55,6 +55,16 @@ describe('vue-custom-element/utils/create-vue-instance', function () {
 
     it('event action', function () {
       let element = document.createElement('div')
+      element.attrValues = {
+        value: {
+          sync: 'searchValue',
+          val: 'value-sync'
+        },
+        title: {
+          sync: 'doc.title',
+          val: 'doc.title-sync'
+        }
+      }
       let eventListener = sinon.spy()
       let execute = sinon.stub(viewer.eventAction, 'execute')
       let addEventAction = sinon.spy()
@@ -66,6 +76,8 @@ describe('vue-custom-element/utils/create-vue-instance', function () {
         mounted () {
           this.$on('customEvent', eventListener)
           this.$emit('customEvent')
+          this.$emit('update:value', 'value-sync-changed')
+          this.$emit('update:title', 'doc.title-sync-changed')
         }
       }
 
