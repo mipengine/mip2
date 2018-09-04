@@ -5,7 +5,7 @@
 ## 源文件仓库
 
 MIP 官方扩展组件仓库是 https://github.com/mipengine/mip2-extensions 。中央仓库 master 分支下的代码永远是稳定的。根目录下，每个 mip- 前缀的目录为一个扩展组件。
-MIP 第三方组件仓库是 https://github.com/mipengine/mip2-extensions-plateform。
+MIP 第三方组件仓库是 https://github.com/mipengine/mip2-extensions-platform。
 
 ## 开发方式
 
