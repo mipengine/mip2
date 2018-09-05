@@ -25,6 +25,49 @@ function getNodeSlots (element) {
   return nodeSlots
 }
 
+/**
+ * etc: structurize range[0] To Object {range: [val, ...otherItemsInRange]}
+ * @param {string} key
+ * @param {*} val
+ * @param {string} level key to get the full content of current array
+ */
+function structurizeToArr (key, val, level) {
+  let match = key.match(/([^[\]]+)\[([^\]]+)\]/)
+  if (match && match.length) {
+    level = level.replace(/\[[^\]]+\]$/, '')
+    let func = new Function(`with(this){try {return ${level}} catch (e) {}}`) // eslint-disable-line
+    let pos = +match[2]
+    let arr = []
+    try {
+      arr = JSON.parse(JSON.stringify(func.call(window.m)))
+      arr[pos] && (arr[pos] = val)
+    } catch (e) {
+    }
+    return {[match[1]]: arr}
+  }
+  return {[key]: val}
+}
+
+/**
+ * etc: structurize doc.title To Object {doc: {title: val}}
+ * @param {string} key
+ * @param {*} val
+ */
+function structurizeToObj (key, val) {
+  let ks = key.split('.').reverse()
+  let name = ks.shift()
+  return ks.reduce((obj, key, index, arr) => {
+    if (key.indexOf('[') !== -1) {
+      return structurizeToArr(key, obj, arr.filter((item, i) => i >= index).reverse().join('.'))
+    }
+    return {[key]: obj}
+  }, structurizeToArr(name, val, key))
+}
+
+/**
+ * Build up .sync on- event automatically
+ * @param {HTMLElement} node
+ */
 function getModifierSyncEvents (node) {
   let attrValues = node.attrValues
   if (!attrValues) return {}
@@ -33,9 +76,7 @@ function getModifierSyncEvents (node) {
     .reduce((obj, key) => {
       let name = attrValues[key].sync
       obj['update:' + camelize(key)] = function (val) {
-        MIP.setData({
-          [name]: val
-        })
+        MIP.setData(structurizeToObj(name, val))
       }
       return obj
     }, {})

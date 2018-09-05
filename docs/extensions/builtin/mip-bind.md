@@ -149,40 +149,56 @@ app.get('/data', function (req, res) {
 >如果通过 `m-bind` 绑定的数据为空值，即 "" 时，则删除当前元素的该属性 attrs。
 
 ##### .sync 修饰符
-在有些情况下，我们可能需要对一个 prop 进行"双向绑定"。这里的双向绑定是指，开发者通过 `m-bind:prop="prop-x"` 语法将 `prop-x` 对应的值传入组件后，组件内部如果有 `this.prop = 'another-value'` 的操作，修改了组件内 `prop` 的值，需要同时把值同步到 `prop-x`。 从前面的介绍我们知道，普通的 `m-bind` 只用于绑定元素的属性信息，是做不到这样的"双向绑定"的。
+在有些情况下，我们可能需要对一个 prop 进行"双向绑定"。这里的双向绑定是指，开发者通过 `m-bind:prop="prop-x"` 语法将 `prop-x` 对应的值传入组件后，组件内部如果想修改 `prop` 的值，需要去操作页面级别的 `prop-x` 这个值，并通过 页面 -> 组件 这个单向的数据通信过程来刷新组件。 从前面的介绍我们知道，普通的 `m-bind` 只用于绑定元素的属性信息到组件上，是做不到这样的"双向绑定"的，组件内部想获取 `prop-x` 这个 key 去操作数据也并不十分便利。
 
 在此我们提供一个 `.sync` 修饰符跟 `m-bind` 配合使用：
 ```html
 <mip-data>
   <script type="application/json">
     {
-      "title": "Hello World"
+      "title": "Hello World",
+      "doc": {
+        "title": "Hello World"
+      }
     }
   </script>
 </mip-data>
-<mip-element m-bind:msg.sync="title"></mip-element>
+<mip-element m-bind:title.sync="title" m-bind:msg.sync="doc.title"></mip-element>
 ```
 
+mip-element 内部实现:
 ```javascript
 <template>
-  <p @click="change">{{ msg }}</p>
+  <p @click="change">msg:{{ msg }}, title:{{ title }}</p>
 </template>
 
 <script>
 export default {
   props: {
-    msg: String
+    msg: String,
+    title: String
   },
   methods: {
     change() {
-      this.msg = 'Hello from element inside'
+      this.$emit('update:title', 'Hello title from inside')
+      this.$emit('update:msg', 'Hello msg from inside')
     }
   }
 }
 </script>
 ```
 
-这样，MIP 会默认为绑定的属性加上用于更新的 `on` 监听器，以实现"双向绑定"的需求。
+点击触发 `change` 事件后，页面数据预期被修改为：
+```json
+{
+  "title": "Hello title from inside",
+  "doc": {
+    "title": "Hello msg from inside"
+  }
+}
+```
+
+这样，MIP 会默认为绑定的属性加上用于更新的 `on` 监听器，以实现"双向通信"的需求。
 
 #### 绑定指令 `m-text`
 绑定元素 `textContent`。具体格式为 `m-text=value`，即：将元素的 `textContent` 设置为 `value` 的值，同样 `value` 为数据源中的属性名，多层数据可以以 `.` 连接，如：

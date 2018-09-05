@@ -327,7 +327,10 @@ describe('vue-custom-element/utils/props', function () {
     it('should get original data from attrValues if key in attrValues', function () {
       let props = getProps(componenntDef)
       let ele = document.createElement('mip-d')
-      ele.attrValues = {'prop-b': {a: 1}}
+      ele.attrValues = {'prop-b': {
+        sync: '',
+        val: {a: 1}
+      }}
       ele.setAttribute('prop-b', '{a: 1}')
 
       expect(getPropsData(ele, componenntDef, props)).to.deep.equal({

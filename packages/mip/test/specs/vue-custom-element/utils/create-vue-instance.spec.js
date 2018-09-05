@@ -54,7 +54,30 @@ describe('vue-custom-element/utils/create-vue-instance', function () {
     })
 
     it('event action', function () {
+      window.m = window.m || {}
+      window.m.range = [
+        {
+          test: 'range-test0'
+        },
+        {
+          test: 'range-test1'
+        }
+      ]
       let element = document.createElement('div')
+      element.attrValues = {
+        value: {
+          sync: 'searchValue',
+          val: 'value-sync'
+        },
+        title: {
+          sync: 'doc.title',
+          val: 'doc.title-sync'
+        },
+        range: {
+          sync: 'range[0].test',
+          val: 'range-sync'
+        }
+      }
       let eventListener = sinon.spy()
       let execute = sinon.stub(viewer.eventAction, 'execute')
       let addEventAction = sinon.spy()
@@ -66,6 +89,9 @@ describe('vue-custom-element/utils/create-vue-instance', function () {
         mounted () {
           this.$on('customEvent', eventListener)
           this.$emit('customEvent')
+          this.$emit('update:value', 'value-sync-changed')
+          this.$emit('update:title', 'doc.title-sync-changed')
+          this.$emit('update:range', 'range-sync-changed')
         }
       }
 
