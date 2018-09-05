@@ -4,7 +4,8 @@
 
 ## 源文件仓库
 
-MIP 扩展组件的中央仓库是 https://github.com/mipengine/mip2-extensions 。中央仓库 master 分支下的代码永远是稳定的。根目录下，每个 mip- 前缀的目录为一个扩展组件。
+MIP 官方扩展组件仓库是 https://github.com/mipengine/mip2-extensions 。中央仓库 master 分支下的代码永远是稳定的。根目录下，每个 mip- 前缀的目录为一个扩展组件。
+MIP 第三方组件仓库是 https://github.com/mipengine/mip2-extensions-platform。
 
 ## 开发方式
 
@@ -25,7 +26,7 @@ MIP 扩展组件开发采用 [Forking工作流](https://github.com/oldratlee/tra
   - <a href="#5">CSS 规范</a>
 
 
-<a name="1"></a>
+<a id="1"></a>
 ## 目录规范
 
 #### 1. 官方组件
@@ -47,11 +48,11 @@ MIP 扩展组件开发采用 [Forking工作流](https://github.com/oldratlee/tra
 - 站长组件目录结构与官方组件基本一致，规范参考上述第 1 点。
 - [MUST] （补充）站长组件命名需要加上站点名称标识，如 `mysite.com` 下的 tab 组件，可命名为 `mip-mysite-tab`
 
-示例：
+单个组件结构示例：
 
 ```bash
   components
-    ├── mip-mysite-example
+    ├── mip-mysite-example // 组件 1
           ├── mip-mysite-example.vue
           ├── README.md
           ├── example
@@ -60,13 +61,27 @@ MIP 扩展组件开发采用 [Forking工作流](https://github.com/oldratlee/tra
 ```
 
 
-<a name="2"></a>
+
+第三方组件结构示例
+```bash
+  mip2-extensions-platform
+    ├── sites
+          ├── baidu.com // 具体第三方站点名
+                ├── components
+                      ├── mip-baidu-header // 组件 1
+                      ├── mip-baidu-footer // 组件 2
+                      ├── mip-baidu-nav // 组件 3             
+```
+
+
+
+<a id="2"></a>
 ## 文档规范
 
 文档规范指的是各组件目录下的 README.md 文件的编写规范，MIP2 复用 [MIP1 的规范](https://github.com/mipengine/mip-extensions/blob/master/docs/spec-readme-md.md)
 
 
-<a name="3"></a>
+<a id="3"></a>
 ## 命名规范
 
 命名规范涵盖以下几个部分
@@ -104,7 +119,7 @@ MIP 自定义组件的配置项需符合 Camel 规范，不得采用中划线
 </mip-a>
 ```
 
-<a name="4"></a>
+<a id="4"></a>
 ## JavaScript 规范
 
 - [MUST] 组件的脚本开发必须遵守 JavaScript Standard Style [[CN](https://standardjs.com/rules-zhcn.html)/[EN](https://standardjs.com/rules-en.html)] 代码规范
@@ -115,7 +130,7 @@ MIP 自定义组件的配置项需符合 Camel 规范，不得采用中划线
 开发过程中可以通过 [ESLint](https://eslint.org/) 工具检查，在组件校验和审核环节要求所有代码必须通过 ESLint，一般不允许使用 `eslint-disable` 来豁免检测。
 
 
-<a name="5"></a>
+<a id="5"></a>
 ## CSS 规范
 
 - [MUST] 组件的样式必须遵循 Stylelint 中 [`stylelint-config-standard`](https://github.com/stylelint/stylelint-config-standard) 中包含的规范，且必须通过 Stylelint 工具审核之后才能提交。

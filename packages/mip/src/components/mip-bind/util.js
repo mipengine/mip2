@@ -47,13 +47,7 @@ export function parseClass (classSpecs, oldSpecs = {}) {
   })
   if (typeof classSpecs === 'string') {
     // deal with multiple class-defined case
-    classSpecs = classSpecs.trim().split(/\s+/).reduce((res, target) => {
-      return Object.assign(res, {[target]: true})
-    }, {})
-    // reset old classes
-    Object.keys(oldSpecs).forEach(k => {
-      oldSpecs[k] = false
-    })
+    classSpecs = classSplit(classSpecs)
     // set new classes
     return Object.assign({}, oldSpecs, classSpecs)
   }
@@ -87,7 +81,7 @@ export function parseStyle (styleSpecs) {
   // parse Object only
   if (isArray(styleSpecs)) {
     styleSpecs.forEach(styleObj => {
-      styles = Object.assign(styles, parseStyle(styleObj))
+      Object.assign(styles, parseStyle(styleObj))
     })
     return styles
   }
