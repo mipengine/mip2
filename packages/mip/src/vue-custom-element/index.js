@@ -8,12 +8,14 @@ import {getProps, convertAttributeValue} from './utils/props'
 import {camelize} from './utils/helpers'
 import CustomElement from '../custom-element'
 import registerElement from '../register-element'
+import Vue from 'vue'
 
-function install (Vue) {
+Vue.use(function (Vue) {
   Vue.config.ignoredElements = [/^mip-/i]
 
   Vue.customElement = (tag, componentDefinition) => {
     const props = getProps(componentDefinition)
+
     function callLifeCycle (ctx, name) {
       if (typeof componentDefinition[name] === 'function') {
         return componentDefinition[name].apply(ctx, [].slice.call(arguments, 2))
@@ -77,6 +79,14 @@ function install (Vue) {
 
     registerElement(tag, VueCustomElement)
   }
-}
+})
 
-export default install
+/**
+ * register vue as custom element v1
+ *
+ * @param {string} tag custom elment name, mip-*
+ * @param {*} component vue component
+ */
+export default function registerVueCustomElement (tag, component) {
+  Vue.customElement(tag, component)
+}

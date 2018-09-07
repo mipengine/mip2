@@ -60,7 +60,7 @@ let viewer = {
 
     this.setupEventAction()
     // handle preregistered  extensions
-    this.handlePreregisteredExtensions()
+    // this.handlePreregisteredExtensions()
 
     this.page = new Page()
 
