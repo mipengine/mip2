@@ -8,7 +8,7 @@ MIP 规范是高性能 MIP 页面的保证，其中最重要的规范是：MIP H
 
 由于规范长期更新，更多最新规范可查阅 MIP 官方网站 MIP HTML规范章节。
 
-<a name="1"></a>
+<a id="1"></a>
 ### 1. 头部使用规范
 下面简要列出MIP页头部的使用规范。头部是MIP页的声明、配置信息、资源引入的主要区域。
   - 页面起始标签使用 <!DOCTYPE html>
@@ -23,7 +23,7 @@ MIP 规范是高性能 MIP 页面的保证，其中最重要的规范是：MIP H
   - 必须在 `<body>` 标签底部包含 `<script src="<script src="https://c.mipcdn.com/static/v2/mip.js"></script>` ，如果包含在 `<head>` 标签中则须增加 `async` 属性。
 
 
-<a name="2"></a>
+<a id="2"></a>
 ### 2. 页面元素
 
 MIP-HTML 禁止使用对页面性能以及安全有较大影响的标签，同时也规定了元素的使用方式。
@@ -136,13 +136,13 @@ MIP-HTML 禁止使用对页面性能以及安全有较大影响的标签，同�
 |`type`|是|-|
 
 
-<a name="3"></a>
+<a id="3"></a>
 ### 3. HTML 属性
 - MIP-HTML 中所有 `on` 开头的属性都不允许使用，如：`onclick`，`onmouseover` 。
 - MIP-HTML 中允许使用 `on` 属性。
 - MIP-HTML 中不允许使用 `style` 属性。
 
-<a name="4"></a>
+<a id="4"></a>
 ### 4. 自定义样式使用规范
 出于性能考虑，HTML 中不允许使用内联 `style`，所有样式只能放到 `<head>` 的 `<style>` 标签里。
 
