@@ -102,7 +102,7 @@ class MipShell extends CustomElement {
           this.ignoreWarning = tmpShellConfig.ignoreWarning
         }
         if (!tmpShellConfig.routes) {
-          !this.ignoreWarning && this.console.warn('检测到 MIP Shell 配置没有包含 `routes` 数组，MIP 将自动生成一条默认的路由配置。')
+          !this.ignoreWarning && console.warn('检测到 MIP Shell 配置没有包含 `routes` 数组，MIP 将自动生成一条默认的路由配置。')
           tmpShellConfig.routes = [{
             pattern: '*',
             meta: DEFAULT_SHELL_CONFIG
