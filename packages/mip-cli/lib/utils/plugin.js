@@ -64,7 +64,12 @@ exports.resolve = pkg => {
     return dir
   }
 
-  return fix(require.resolve(pkg))
+  // handle: plugin package without index.js as main entry
+  try {
+    return fix(require.resolve(pkg))
+  } catch (e) {
+    return path.resolve(__dirname, '..', '..', '..', pkg)
+  }
 }
 
 exports.resolveCommand = pkg => {
