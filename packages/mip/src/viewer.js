@@ -17,7 +17,7 @@ import {supportsPassive} from './page/util/feature-detect'
 import {resolvePath} from './page/util/path'
 import viewport from './viewport'
 import Page from './page/index'
-import {MESSAGE_PAGE_RESIZE, CUSTOM_EVENT_SHOW_PAGE, CUSTOM_EVENT_HIDE_PAGE} from './page/const'
+import {CUSTOM_EVENT_SHOW_PAGE, CUSTOM_EVENT_HIDE_PAGE} from './page/const'
 import Messager from './messager'
 import fixedElement from './fixed-element'
 
@@ -59,8 +59,6 @@ let viewer = {
     })
 
     this.setupEventAction()
-    // handle preregistered  extensions
-    // this.handlePreregisteredExtensions()
 
     this.page = new Page()
 
@@ -156,27 +154,6 @@ let viewer = {
     event.delegate(document, 'input', 'change', event => {
       eventAction.execute('change', event.target, event)
     })
-  },
-
-  /**
-   * Setup event-action of viewer. To handle `on="tap:xxx"`.
-   */
-  handlePreregisteredExtensions () {
-    window.MIP = window.MIP || {}
-    window.MIP.push = extensions => {
-      if (extensions && typeof extensions.func === 'function') {
-        extensions.func()
-      }
-    }
-    let preregisteredExtensions = window.MIP.extensions
-    if (preregisteredExtensions && preregisteredExtensions.length) {
-      for (let i = 0; i < preregisteredExtensions.length; i++) {
-        let curExtensionObj = preregisteredExtensions[i]
-        if (curExtensionObj && typeof curExtensionObj.func === 'function') {
-          curExtensionObj.func()
-        }
-      }
-    }
   },
 
   /**

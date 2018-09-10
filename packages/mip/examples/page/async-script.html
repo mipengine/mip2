@@ -10,20 +10,23 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <!-- 顺序无关，支持 async，提前下载 js -->
+    <script async src="./components/mip-complevel1.js"></script>
+    <script async src="../../dist/mip.js"></script>
+    <script async src="./components/mip-complevel2.js"></script>
+    <script async src="https://c.mipcdn.com/static/v1/mip-form/mip-form.js"></script>
     <style mip-custom>
-    .main-content .link {
-        text-align: center;
-        margin-top: 20px;
-        display: block;
-    }
-    .main-content p,
-    .main-content .button {
-        width: 150px;
-        display: inline-block;
-        margin: 20px 0 0 20px;
-    }
-    </style>
-    <style>
+        .main-content .link {
+            text-align: center;
+            margin-top: 20px;
+            display: block;
+        }
+        .main-content p,
+        .main-content .button {
+            width: 150px;
+            display: inline-block;
+            margin: 20px 0 0 20px;
+        }
         body::before {
             display: block;
             content: '';
@@ -345,42 +348,5 @@
         }
         </script>
     </mip-shell>
-
-    <mip-script>
-        console.log('watched')
-        MIP.watch('lxndata.moveInAddress.location', function () {
-            console.log('lxndata.moveInAddress.location')
-        });
-        MIP.watch('lxndata.currentmap', function () {
-            console.log('lxndata.currentmap')
-        });
-        MIP.watch('lxndata.moveOutAddress.location.lat', function () {
-            console.log('lxndata.moveOutAddress.location.lat')
-        });
-        MIP.watch('lxndata.ordercity', function () {
-            console.log('lxndata.ordercity')
-        });
-        MIP.watch('lxndata', function () {
-            console.log('lxndata')
-        });
-        MIP.watch('ac', function (newVal) {
-            console.log('a changed to ', newVal)
-        });
-        MIP.watch('city', function () {
-            console.log('city changed')
-        });
-        MIP.watch('city1', function () {
-            console.log('city1 changed')
-        });
-    </mip-script>
-    <!-- <script async src="./components/mip-script.js"></script> -->
-    <script src="../../dist/mip.js"></script>
-    <script src="./components/mip-complevel1.js"></script>
-    <script src="./components/mip-complevel2.js"></script>
-    <script src="./components/mip-mask.js"></script>
-    <script src="https://c.mipcdn.com/static/v1/mip-form/mip-form.js"></script>
-    <!-- <script src="./components/mip-global.js"></script> -->
-    <script src="https://c.mipcdn.com/static/v2/mip-script/mip-script.js"></script>
-
 </body>
 </html>

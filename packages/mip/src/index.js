@@ -28,8 +28,9 @@ import sleepWakeModule from './sleep-wake-module'
 import performance from './performance'
 import templates from './util/templates'
 import mip1PolyfillInstall from './mip1-polyfill/index'
-
 import monitorInstall from './log/monitor'
+
+let mip = {}
 
 // Ensure loaded only once
 /* istanbul ignore next */
@@ -68,9 +69,8 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     pageMeta.standalone = standalone
   }
 
-  let extensions = window.MIP || []
   let push = ext => typeof ext.func === 'function' && ext.func()
-  window.MIP = {
+  mip = {
     version: '2',
     registerVueCustomElement,
     registerCustomElement,
@@ -92,18 +92,21 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
       MIPShell: MipShell
     }
   }
-  // 别跟上面合并
-  window.MIP.sandbox = sandbox()
 
   // init viewport
   viewport.init()
 
   // install mip1 polyfill
-  mip1PolyfillInstall(window.MIP)
+  mip1PolyfillInstall(mip)
 
   util.dom.waitDocumentReady(() => {
     // Initialize sleepWakeModule
     sleepWakeModule.init()
+
+    let extensions = window.MIP || []
+    window.MIP = mip
+    // Sandbox depends on window.MIP
+    window.MIP.sandbox = sandbox()
 
     // Initialize viewer
     viewer.pageMeta = pageMeta
@@ -123,9 +126,8 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     builtinComponents.register()
     // Handler preregister extensions
     extensions.forEach(ext => typeof ext.func === 'function' && ext.func())
-console.log('preregister ')
-    performance.start(window._mipStartTiming)
 
+    performance.start(window._mipStartTiming)
     // send performance data
     performance.on('update', timing => {
       viewer.sendMessage('performance_update', timing)
@@ -140,4 +142,4 @@ console.log('preregister ')
   })
 }
 
-export default window.MIP
+export default mip
