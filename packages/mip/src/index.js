@@ -92,7 +92,7 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
       MIPShell: MipShell
     }
   }
-
+  // 别跟上面合并
   window.MIP.sandbox = sandbox()
 
   // init viewport
