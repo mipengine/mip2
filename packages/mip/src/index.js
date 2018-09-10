@@ -80,7 +80,6 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     viewport,
     hash: util.hash,
     standalone,
-    sandbox,
     css: {},
     /* istanbul ignore next */
     push,
@@ -93,6 +92,8 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
       MIPShell: MipShell
     }
   }
+
+  window.MIP.sandbox = sandbox()
 
   // init viewport
   viewport.init()
