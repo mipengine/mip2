@@ -9,7 +9,9 @@
 
 const commonStyleLoaders = [
   require.resolve('vue-style-loader'),
-  require.resolve('css-loader'),
+  // require.resolve('css-loader'),
+  require.resolve('./css-loader'),
+
   {
     loader: require.resolve('postcss-loader'),
     options: {
