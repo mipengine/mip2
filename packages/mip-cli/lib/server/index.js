@@ -20,6 +20,8 @@ module.exports = class Server {
     Object.keys(options).forEach(key => {
       this[key] = options[key]
     })
+
+    this.router = new Router()
   }
 
   run () {
@@ -33,7 +35,6 @@ module.exports = class Server {
     let scriptMiddlewares = script(options)
     let htmlMiddlewares = html(options)
 
-    this.router = new Router()
     this.router
       .get(['/:id([^\\.]*)', '/:id([^\\.]+\\.html)'], ...htmlMiddlewares)
       .get('*', ...scriptMiddlewares, koaStatic(this.dir))
