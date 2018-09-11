@@ -207,16 +207,13 @@ let viewer = {
     // Jump in top window directly
     // 1. Cross origin and NOT in SF
     // 2. Not MIP page and not only hash change
-    if ((this._isCrossOrigin(to) && window.MIP.standalone)) {
+    if ((this._isCrossOrigin(to) && window.MIP.standalone)
+      || (!isMipLink && !isHashInCurrentPage)) {
       if (replace) {
         window.top.location.replace(to)
       } else {
         window.top.location.href = to
       }
-      return
-    }
-    if (!isMipLink && !isHashInCurrentPage) {
-      window.top.location.href = to
       return
     }
 
