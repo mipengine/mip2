@@ -25,6 +25,7 @@ module.exports = function checkVersion () {
           console.log('  当前版本: ' + chalk.red(localVersion))
           console.log()
           console.log(' 您可以使用 npm update -g mip2 进行更新')
+          console.log()
         }
       }
       resolve()
