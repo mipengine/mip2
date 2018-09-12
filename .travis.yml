@@ -12,7 +12,7 @@ before_install:
 - sh -e /etc/init.d/xvfb start
 - cd packages/mip
 install:
-- npm install
+- travis_retry npm install
 script:
 - npm run test:cover
 after_success:
