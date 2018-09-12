@@ -96,6 +96,12 @@ class MipShellNovel extends window.MIP.builtinComponents.MipShell {
     this.toggleDOM(this.$buttonMask, false)
     this.toggleDOM(this.$footerWrapper, false, {transitionName: 'slide'})
   }
+
+  bindRootEvents () {
+    super.bindRootEvents()
+
+    console.log('in mip-shell-novel bindRootEvents')
+  }
 }
 
 window.MIP.registerCustomElement('mip-shell-novel', MipShellNovel)
