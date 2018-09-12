@@ -6,6 +6,6 @@
 
 // only use in browser env
 
-var sandboxGenerate = require('sandbox-generate')
+var sandboxGenerate = require('./sandbox-generate')
 
 module.exports = sandboxGenerate()
