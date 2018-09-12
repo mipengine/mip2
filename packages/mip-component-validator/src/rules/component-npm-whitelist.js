@@ -69,6 +69,7 @@ function getWhitelist () {
     .then(txt => txt.split(/\s+/).filter(txt => !/^\s*$/.test(txt)))
     .then(list => {
       whitelist = list
+      return whitelist
     })
 }
 
