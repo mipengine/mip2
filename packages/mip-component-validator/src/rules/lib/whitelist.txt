@@ -6,3 +6,4 @@ lodash
 mip-sandbox
 moment
 better-scroll
+xzh-sdk
