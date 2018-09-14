@@ -184,16 +184,13 @@ let viewer = {
     // Jump in top window directly
     // 1. Cross origin and NOT in SF
     // 2. Not MIP page and not only hash change
-    if ((this._isCrossOrigin(to) && window.MIP.standalone)) {
+    if ((this._isCrossOrigin(to) && window.MIP.standalone)
+      || (!isMipLink && !isHashInCurrentPage)) {
       if (replace) {
         window.top.location.replace(to)
       } else {
         window.top.location.href = to
       }
-      return
-    }
-    if (!isMipLink && !isHashInCurrentPage) {
-      window.top.location.href = to
       return
     }
 
@@ -420,9 +417,9 @@ let viewer = {
 
     if (this.isIframed) {
       this.viewportScroll()
+      this.fixSoftKeyboard()
     }
 
-    // this.fixSoftKeyboard()
   },
 
   /**
@@ -450,23 +447,28 @@ let viewer = {
   },
 
   /**
-   * fix soft keyboard bug
-   *
-   * https://github.com/mipengine/mip2/issues/38
+   * 修复安卓手机软键盘遮挡的问题
+   * 在 iframe 内部点击输入框弹出软键盘后，浏览器不会自动聚焦到输入框，从而导致软键盘遮挡住输入框。输入一个字可以恢复。
    */
-  // fixSoftKeyboard () {
-  //   // reset iframe's height when input focus/blur
-  //   event.delegate(document, 'input', 'focus', event => {
-  //     this.page.notifyRootPage({
-  //       type: MESSAGE_PAGE_RESIZE
-  //     })
-  //   }, true)
-  //   event.delegate(document, 'input', 'blur', event => {
-  //     this.page.notifyRootPage({
-  //       type: MESSAGE_PAGE_RESIZE
-  //     })
-  //   }, true)
-  // },
+  fixSoftKeyboard () {
+    if (platform.isAndroid()) {
+      window.addEventListener('resize', () => {
+        let element = document.activeElement
+        let tagName = element.tagName.toLowerCase()
+
+        if (element && (tagName === 'input' || tagName === 'textarea')) {
+            setTimeout(() => {
+              if (typeof element.scrollIntoViewIfNeeded === 'function') {
+                element.scrollIntoViewIfNeeded()
+              } else if (typeof element.scrollIntoView === 'function') {
+                element.scrollIntoView()
+                document.body.scrollTop -= 44
+              }
+            }, 250)
+          }
+      })
+    }
+  },
 
   /**
    * lock body scroll in iOS

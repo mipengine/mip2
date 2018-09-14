@@ -62,12 +62,15 @@ function getWhitelist () {
   return fetch(url)
     .then(response => response.text())
     .then(async txt => {
-      await fs.writeFile(local, data, {encodeing: 'utf8'})
+      await fs.writeFile(local, txt, {encodeing: 'utf8'})
       return txt
     })
     .catch(() => fs.readFile(local, 'utf-8'))
     .then(txt => txt.split(/\s+/).filter(txt => !/^\s*$/.test(txt)))
-    .then(list => whitelist = list)
+    .then(list => {
+      whitelist = list
+      return whitelist
+    })
 }
 
 function getDependenciesFromFile (pathname) {
@@ -82,7 +85,12 @@ function getDependenciesFromFile (pathname) {
 
 function getDependencies (file) {
   let json = JSON.parse(file)
-  return json.dependencies && Object.keys(json.dependencies) || []
+
+  if (json.dependencies) {
+    return Object.keys(json.dependencies)
+  }
+
+  return []
 }
 
 function compare (dependencies, whitelist) {

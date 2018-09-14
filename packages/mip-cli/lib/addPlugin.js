@@ -71,7 +71,7 @@ module.exports = async function addPlugin ({pluginName, options = {}, context = 
     const cmdPath = resolveCmdPath(cliPath, options.args)
     commandModule = require(cmdPath)
   } catch (e) {
-    cli.error(`Cannot find command module`)
+    cli.error('Cannot find command module', e)
     return
   }
 
