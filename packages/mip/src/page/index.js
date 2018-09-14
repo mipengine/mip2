@@ -26,6 +26,7 @@ import {
 
 import {customEmit} from '../util/custom-event'
 import viewport from '../viewport'
+import performance from '../performance'
 import '../styles/mip.less'
 
 /**
@@ -64,8 +65,15 @@ class Page {
       return
     }
 
+    const hashContent = hash.slice(1)
+
     try {
-      const anchor = document.getElementById(decodeURIComponent(hash.slice(1)))
+      /**
+       * @see {@link http://w3c.github.io/html/browsers.html#navigating-to-a-fragment-identifier}
+       */
+      const anchor = document.getElementById(hashContent) ||
+        document.getElementById(decodeURIComponent(hashContent)) ||
+        document.querySelector(`a[name="${hashContent}"]`)
 
       /* istanbul ignore next */
       if (anchor) {
@@ -170,8 +178,17 @@ class Page {
     ensureMIPShell()
     this.initPageId()
 
-    // scroll to current hash if exists
-    this.scrollToHash(window.location.hash)
+    /**
+     * scroll to anchor after all the elements loaded
+     * fix: https://github.com/mipengine/mip2/issues/125
+     */
+    performance.on('update', timing => {
+      if (timing.MIPFirstScreen) {
+        // scroll to current hash if exists
+        this.scrollToHash(window.location.hash)
+      }
+    })
+
     window.addEventListener(CUSTOM_EVENT_SCROLL_TO_ANCHOR, (e) => {
       this.scrollToHash(e.detail[0])
     })
@@ -243,10 +260,12 @@ class Page {
       customEmit(window, event.name, event.data)
 
       this.children.forEach(pageMeta => {
-        pageMeta.targetWindow.postMessage({
-          type: MESSAGE_CROSS_ORIGIN,
-          data: event
-        }, '*')
+        if (pageMeta.targetWindow) {
+          pageMeta.targetWindow.postMessage({
+            type: MESSAGE_CROSS_ORIGIN,
+            data: event
+          }, '*')
+        }
       })
     } else {
       window.parent.postMessage({

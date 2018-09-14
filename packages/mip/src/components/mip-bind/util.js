@@ -3,9 +3,8 @@
  * @author sfe
  */
 
-const regVar = /[\w\d-._]+/gmi
-const regTplLike = /`[^`]+`/gmi
-const regTpl = /(\${)([^}]+)(}.*)/gmi
+const regVar = /[\w\d-._]+/g
+const regTpl = /(\${)([^}]+)(})/g
 const vendorNames = ['Webkit', 'Moz', 'ms']
 const RESERVED = ['Math', 'Number', 'String', 'Object', 'window']
 let emptyStyle
@@ -27,8 +26,10 @@ export function arrayToObject (arr) {
   arr.forEach(item => {
     if (isObject(item)) {
       Object.assign(obj, item)
-    } else {
-      obj[item] = true
+    } else if (isArray(item)) {
+      Object.assign(obj, arrayToObject(item))
+    } else if (typeof item === 'string') {
+      Object.assign(obj, classSplit(item))
     }
   })
   return obj
@@ -40,15 +41,15 @@ export function arrayToObject (arr) {
  * @param {Object|Array} oldSpecs old classObject
  */
 export function parseClass (classSpecs, oldSpecs = {}) {
+  // reset old classes
+  Object.keys(oldSpecs).forEach(k => {
+    oldSpecs[k] = false
+  })
   if (typeof classSpecs === 'string') {
-    // reset old classes
-    Object.keys(oldSpecs).forEach(k => {
-      oldSpecs[k] = false
-    })
+    // deal with multiple class-defined case
+    classSpecs = classSplit(classSpecs)
     // set new classes
-    return Object.assign({}, oldSpecs, {
-      [classSpecs]: true
-    })
+    return Object.assign({}, oldSpecs, classSpecs)
   }
   // parse Object only
   if (isArray(classSpecs)) {
@@ -61,7 +62,13 @@ export function parseClass (classSpecs, oldSpecs = {}) {
       typeof classSpecs[k] !== 'undefined' && k && (newClasses[k] = classSpecs[k])
     })
   }
-  return newClasses
+  return Object.assign({}, oldSpecs, newClasses)
+}
+
+function classSplit (classSpecs) {
+  return classSpecs.trim().split(/\s+/).reduce((res, target) => {
+    return Object.assign(res, {[target]: true})
+  }, {})
 }
 
 /*
@@ -74,7 +81,7 @@ export function parseStyle (styleSpecs) {
   // parse Object only
   if (isArray(styleSpecs)) {
     styleSpecs.forEach(styleObj => {
-      styles = Object.assign(styles, parseStyle(styleObj))
+      Object.assign(styles, parseStyle(styleObj))
     })
     return styles
   }
@@ -221,8 +228,11 @@ export function namespaced (str) {
   let tpls = []
 
   // deal with template-like str first and save results
-  str = str.replace(regTplLike, (match) => {
-    match = match.replace(regTpl, '$1this.$2$3')
+  str = str.replace(/(`[^`]+`|'[^']+')/g, match => {
+    // template need to recursively parse
+    if (match[0] === '`') {
+      match = match.replace(regTpl, tplMatch => namespaced(tplMatch))
+    }
     tpls.push(match)
     return `MIP-STR-TPL${tpls.length - 1}`
   })
@@ -253,6 +263,7 @@ export function namespaced (str) {
     // to get the next not blankspace char of matched, to tell its nature
     let i = findChar(str, pointer, true)
     // not key of an obj or string warpped by quotes - vars
+    /* istanbul ignore else */
     if (i >= str.length || !/['`:]/.test(str[i])) {
       newExp += wrap(match[0])
     } else if (str[i] === ':') {

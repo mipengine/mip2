@@ -27,11 +27,10 @@ import MipShell from './components/mip-shell/index'
 import registerCustomElement from './register-element'
 import sleepWakeModule from './sleep-wake-module'
 import performance from './performance'
+import templates from './util/templates'
 import mip1PolyfillInstall from './mip1-polyfill/index'
 
 import monitorInstall from './log/monitor'
-
-monitorInstall()
 
 /**
  * register vue as custom element v1
@@ -50,114 +49,115 @@ function registerVueCustomElement (tag, component) {
   Vue.customElement(tag, component)
 }
 
-// pass meta through `window.name` in cross-origin scene
-let pageMeta
-let pageMetaConfirmed = false
-try {
-  pageMeta = JSON.parse(window.name)
-  /* istanbul ignore next */
-  pageMetaConfirmed = true
-} catch (e) {
-  pageMeta = {
-    standalone: false,
-    isRootPage: true,
-    isCrossOrigin: false
-  }
-}
+let mip = {}
 
-// 当前是否是独立站
-let standalone
-/* istanbul ignore if */
-if (pageMetaConfirmed) {
-  standalone = pageMeta.standalone
-} else {
-  try {
-    standalone = pageMeta.standalone ||
-      !viewer.isIframed ||
-      typeof window.top.MIP !== 'undefined'
-  } catch (e) {
-    /* istanbul ignore next */
-    standalone = false
-  }
-  pageMeta.standalone = standalone
-}
-let extensions = window.MIP || []
-
+// Ensure loaded only once
 /* istanbul ignore next */
-function push (extension) {
-  extensions.push(extension)
-}
+if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefined') {
+  monitorInstall()
 
-let mip = {
-  version: '2',
-  registerVueCustomElement,
-  registerCustomElement,
-  CustomElement,
-  util,
-  viewer,
-  viewport,
-  hash: util.hash,
-  standalone,
-  sandbox,
-  css: {},
-  push,
-  prerenderElement: Resources.prerenderElement,
-  builtinComponents: {
-    // MipShell 应该删除，不符合命名
-    MipShell,
-    MIPShell: MipShell
-  }
-}
-
-window.MIP = mip
-
-// init viewport
-viewport.init()
-
-// install mip1 polyfill
-mip1PolyfillInstall(mip)
-// add custom element to Vue
-Vue.use(vueCustomElement)
-
-util.dom.waitDocumentReady(() => {
-  // Initialize sleepWakeModule
-  sleepWakeModule.init()
-
-  // Initialize viewer
-  viewer.pageMeta = pageMeta
-  viewer.init()
-
-  // Find the default-hidden elements.
-  let hiddenElements = Array.prototype.slice.call(document.getElementsByClassName('mip-hidden'))
-
-  // Regular for checking mip elements.
-  let mipTagReg = /mip-/i
-
-  // Apply layout for default-hidden elements.
-  /* istanbul ignore next */
-  hiddenElements.forEach(element => element.tagName.search(mipTagReg) > -1 && layout.applyLayout(element))
-
-  // register buildin components
-  builtinComponents.register()
-  performance.start(window._mipStartTiming)
-
-  // send performance data until the data collection is completed
-  performance.on('update', timing => {
-    if (timing.MIPDomContentLoaded &&
-      timing.MIPStart &&
-      timing.MIPPageShow &&
-      timing.MIPFirstScreen
-    ) {
-      viewer.sendMessage('performance_update', timing)
+  // pass meta through `window.name` in cross-origin scene
+  let pageMeta
+  let pageMetaConfirmed = false
+  try {
+    pageMeta = JSON.parse(window.name)
+    /* istanbul ignore next */
+    pageMetaConfirmed = true
+  } catch (e) {
+    pageMeta = {
+      standalone: false,
+      isRootPage: true,
+      isCrossOrigin: false
     }
+  }
+
+  // 当前是否是独立站
+  let standalone
+  /* istanbul ignore if */
+  if (pageMetaConfirmed) {
+    standalone = pageMeta.standalone
+  } else {
+    try {
+      standalone = pageMeta.standalone ||
+        !viewer.isIframed ||
+        typeof window.top.MIP !== 'undefined'
+    } catch (e) {
+      /* istanbul ignore next */
+      standalone = false
+    }
+    pageMeta.standalone = standalone
+  }
+
+  let extensions = window.MIP || []
+
+  mip = {
+    version: '2',
+    registerVueCustomElement,
+    registerCustomElement,
+    CustomElement,
+    util,
+    viewer,
+    viewport,
+    hash: util.hash,
+    standalone,
+    sandbox,
+    css: {},
+    /* istanbul ignore next */
+    push: extension => extensions.push(extension),
+    performance,
+    templates,
+    prerenderElement: Resources.prerenderElement,
+    builtinComponents: {
+      // MipShell 应该删除，不符合命名
+      MipShell,
+      MIPShell: MipShell
+    }
+  }
+
+  window.MIP = mip
+
+  // init viewport
+  viewport.init()
+
+  // install mip1 polyfill
+  mip1PolyfillInstall(mip)
+  // add custom element to Vue
+  Vue.use(vueCustomElement)
+
+  util.dom.waitDocumentReady(() => {
+    // Initialize sleepWakeModule
+    sleepWakeModule.init()
+
+    // Initialize viewer
+    viewer.pageMeta = pageMeta
+    viewer.init()
+
+    // Find the default-hidden elements.
+    let hiddenElements = Array.prototype.slice.call(document.getElementsByClassName('mip-hidden'))
+
+    // Regular for checking mip elements.
+    let mipTagReg = /mip-/i
+
+    // Apply layout for default-hidden elements.
+    /* istanbul ignore next */
+    hiddenElements.forEach(element => element.tagName.search(mipTagReg) > -1 && layout.applyLayout(element))
+
+    // register buildin components
+    builtinComponents.register()
+    performance.start(window._mipStartTiming)
+
+    // send performance data
+    performance.on('update', timing => {
+      viewer.sendMessage('performance_update', timing)
+    })
+
+    // Show page
+    viewer.show()
+
+    // clear cookie
+    let storage = util.customStorage(2)
+    storage.delExceedCookie()
   })
-
-  // Show page
-  viewer.show()
-
-  // clear cookie
-  let storage = util.customStorage(2)
-  storage.delExceedCookie()
-})
+}
 
 export default mip

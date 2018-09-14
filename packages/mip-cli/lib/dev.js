@@ -15,6 +15,8 @@ module.exports = function (options) {
   options.livereload = options.livereload || false
   options.env = 'development'
 
+  process.env.NODE_ENV = options.env
+
   if (options.asset) {
     options.asset = options.asset.replace(/\/$/, '').replace(/:\d+/, '') + ':' + options.port
   } else {

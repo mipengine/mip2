@@ -26,6 +26,34 @@ mip-video {
       top: 14px;
     }
   }
+  .mip-video-error {
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    border-radius: 100%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -30px;
+    margin-top: -30px;
+    background-color: rgba(255, 255, 255, 0.6);
+    -webkit-tap-highlight-color: rbga(255, 255, 255, 0.6);
+    &:before, &:after {
+      position: absolute;
+      top: 5px;
+      left: 26px;
+      content: ' ';
+      height: 50px;
+      width: 8px;
+      background-color: #333;
+    }
+    &:before {
+      transform: rotate(-45deg);
+    }
+    &:after {
+      transform: rotate(45deg);
+    }
+  }
   .mip-video-poster {
     min-height: 150px;
     background: #333;

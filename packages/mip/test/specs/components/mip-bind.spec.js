@@ -25,12 +25,16 @@ describe('mip-bind', function () {
 
   describe('init data', function () {
     let dumbDiv
+    let eleFalse
+    let eleElse
 
     before(function () {
       // some normal bindings
       eleText = createEle('p', ['loc.city'], 'text')
       eleBind = createEle('p', ['data-active', 'global.isGlobal'], 'bind')
       eleObject = createEle('p', ['data', 'global.data'], 'bind')
+      eleFalse = createEle('p', ['editing', '!editing'], 'bind')
+      eleElse = createEle('a', ['href', `'./content.html?id=' + id + '&name=user#hash'`], 'bind')
 
       iframe = createEle('iframe', null)
 
@@ -58,7 +62,8 @@ describe('mip-bind', function () {
                   "province": "广东",
                   "city": "广州"
                 },
-                "list": ["a", "b", {"item": 2}]
+                "list": ["a", "b", {"item": 2}],
+                "id": 1
               }
             </script>
           </mip-data>
@@ -84,7 +89,8 @@ describe('mip-bind', function () {
           province: '广东',
           city: '广州'
         },
-        list: ['a', 'b', {item: 2}]
+        list: ['a', 'b', {item: 2}],
+        id: 1
       })
       expect(window.g).to.eql({
         global: {
@@ -100,10 +106,27 @@ describe('mip-bind', function () {
       expect(eleText.textContent).to.equal('广州')
       expect(eleBind.getAttribute('data-active')).to.equal('true')
       expect(eleObject.getAttribute('data')).to.equal('{"name":"level-1","age":1}')
+      expect(eleElse.getAttribute('href')).to.equal('./content.html?id=1&name=user#hash')
+    })
+
+    it('should bind data with delayed "false"', function () {
+      MIP.$set({
+        editing: false
+      })
+
+      expect(eleFalse.getAttribute('editing')).to.equal('true')
+
+      MIP.setData({
+        editing: true
+      })
+
+      expect(eleFalse.getAttribute('editing')).to.equal('false')
     })
 
     after(function () {
       document.body.removeChild(dumbDiv)
+      document.body.removeChild(eleFalse)
+      document.body.removeChild(eleElse)
     })
   })
 
@@ -126,6 +149,94 @@ describe('mip-bind', function () {
     it('should not combine wrong formatted data with m', function () {
       expect(mipData.build.bind(mipData)).to.throw(/Content should be a valid JSON string!/)
       expect(window.m.wrongFormatData).to.be.undefined
+    })
+  })
+
+  describe('async mip-data', function () {
+    const json = (body, status) => {
+      const mockResponse = new window.Response(JSON.stringify(body), {
+        status: status,
+        headers: {
+          'Content-type': 'application/json'
+        }
+      })
+      return mockResponse
+    }
+
+    let fetchOrigin
+    before(function () {
+      fetchOrigin = window.fetch
+      sinon.stub(window, 'fetch')
+    })
+
+    after(function () {
+      window.fetch = fetchOrigin
+    })
+
+    it('should fetch async data', function (done) {
+      window.fetch.returns(
+        Promise.resolve(
+          json({tabs: [1, 2, 3]}, 200)
+        )
+      )
+
+      let mipData = new MipData()
+      let mipDataTag = document.createElement('mip-data')
+      mipDataTag.setAttribute('src', '/testData')
+      mipData.element = mipDataTag
+
+      mipData.build.bind(mipData)()
+      expect(window.mipDataPromises.length).to.equal(1)
+
+      Promise.all(window.mipDataPromises).then(function () {
+        expect(MIP.getData('tabs')).to.have.lengthOf(3)
+        expect(window.mipDataPromises.length).to.equal(0)
+        done()
+      })
+    })
+
+    it('should fetch async data 404', function (done) {
+      window.fetch.returns(
+        Promise.resolve(
+          json({status: 404}, 404)
+        )
+      )
+
+      let mipData = new MipData()
+      let mipDataTag = document.createElement('mip-data')
+      mipDataTag.setAttribute('src', '/testData')
+      mipData.element = mipDataTag
+
+      mipData.build.bind(mipData)()
+      expect(window.mipDataPromises.length).to.equal(1)
+
+      Promise.all(window.mipDataPromises).catch(function () {
+        expect(MIP.getData('status')).to.be.undefined
+        expect(window.mipDataPromises.length).to.equal(0)
+        done()
+      })
+    })
+
+    it('should fetch async data failed', function (done) {
+      window.fetch.returns(
+        Promise.reject(
+          json({status: 'failed'}, 200)
+        )
+      )
+
+      let mipData = new MipData()
+      let mipDataTag = document.createElement('mip-data')
+      mipDataTag.setAttribute('src', '/testData')
+      mipData.element = mipDataTag
+
+      mipData.build.bind(mipData)()
+      expect(window.mipDataPromises.length).to.equal(1)
+
+      Promise.all(window.mipDataPromises).catch(function () {
+        expect(MIP.getData('status')).to.be.undefined
+        expect(window.mipDataPromises.length).to.equal(0)
+        done()
+      })
     })
   })
 
@@ -168,7 +279,7 @@ describe('mip-bind', function () {
         title: 'changed'
       })
 
-      MIP.$recompile()
+      // MIP.$recompile()
 
       expect(window.m.global).to.eql({
         data: {
@@ -237,7 +348,6 @@ describe('mip-bind', function () {
         }
       })
 
-
       expect(eleBind.getAttribute('data-active')).to.equal('{"bool":false}')
       expect(eleObject.getAttribute('data')).to.equal('8')
     })
@@ -265,10 +375,16 @@ describe('mip-bind', function () {
 
       expect(MIP.getData('loading')).to.be.true
     })
+
+    it('should compile smoothly even if data turn to null', function () {
+      MIP.setData({loc: null})
+      MIP.$recompile()
+
+      expect(window.m.loc).to.be.null
+    })
   })
 
   describe('watch', function () {
-
     it('should run watchers after all data was set', function () {
       let loadingChanged = false
       MIP.$set({
@@ -288,20 +404,17 @@ describe('mip-bind', function () {
         'data_key': 1,
         'w-loading': true
       })
-      // setTimeout(() => {
       expect(loadingChanged).to.be.false
-      //   done()
-      // }, 0)
     })
 
     it('should run watcher after all data was set according to order', function () {
-      let ct = 0
+      let res = ''
       MIP.$set({
         'data_key2': 0,
         'w-loading2': 'false'
       })
-      MIP.watch('w-loading2', function () {
-        ct++
+      MIP.watch('w-loading2', function (val) {
+        res += val
       })
       MIP.watch('data_key2', function () {
         MIP.setData({
@@ -313,7 +426,7 @@ describe('mip-bind', function () {
         'data_key2': 1,
         'w-loading2': true
       })
-      expect(ct).to.equal(2)
+      expect(res).to.equal('truefalse')
     })
 
     it('should avoid infinit update with custom watcher', function () {
@@ -346,9 +459,14 @@ describe('mip-bind', function () {
       eles.push(createEle('p', ['style', '{fontSize: `${fontSize}px`}'], 'bind')) // eslint-disable-line
       eles.push(createEle('p', ['style', '[baseStyles, styleObject]'], 'bind'))
       eles.push(createEle('p', ['style', `{border: list[2].item + 'px'}`], 'bind'))
+      eles.push(createEle('p', ['class', 'iconClass'], 'bind'))
+      eles.push(createEle('p', ['class', '[items[0].iconClass, errorClass]'], 'bind'))
+      eles.push(createEle('p', ['class', '[classObject, [items[0].iconClass]]'], 'bind'))
 
       MIP.$set({
         loading: false,
+        iconClass: 'grey    lighten1 white--text',
+        items: [{iconClass: 'grey    lighten1 white--text'}],
         classObject: {
           'warning-class': true,
           'active-class': false,
@@ -379,6 +497,9 @@ describe('mip-bind', function () {
       expect(eles[2].getAttribute('class')).to.equal('class-text')
       expect(eles[3].getAttribute('class')).to.equal('m-error')
       expect(eles[4].getAttribute('class')).to.be.empty
+      expect(eles[11].getAttribute('class')).to.equal('grey lighten1 white--text')
+      expect(eles[12].getAttribute('class')).to.equal('grey lighten1 white--text m-error')
+      expect(eles[13].getAttribute('class')).to.equal('warning-class loading-class grey lighten1 white--text')
 
       MIP.setData({
         tab: 'test'
@@ -402,13 +523,20 @@ describe('mip-bind', function () {
           'active-class': true,
           'loading-class': false
         },
-        classText: 'class-text-new'
+        classText: 'class-text-new',
+        iconClass: 'nothing',
+        items: [{
+          iconClass: 'nothing'
+        }]
       })
 
       expect(eles[0].getAttribute('class')).to.equal('default-class warning-class active-class')
       expect(eles[1].getAttribute('class')).to.equal('m-error loading')
       expect(eles[2].getAttribute('class')).to.equal('class-text-new')
       expect(eles[3].getAttribute('class')).to.equal('m-error m-loading')
+      expect(eles[11].getAttribute('class')).to.equal('nothing')
+      expect(eles[12].getAttribute('class')).to.equal('m-error nothing')
+      expect(eles[13].getAttribute('class')).to.equal('warning-class active-class nothing')
     })
 
     it('should update style', function () {

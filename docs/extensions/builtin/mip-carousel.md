@@ -232,7 +232,7 @@
 
 ### width
 
-说明：宽度，不是实际宽度，与高度属性配合来设置图片比例，详见[组件布局](../layout.md)  
+说明：宽度，不是实际宽度，与高度属性配合来设置图片比例，详见[组件布局](../../guide/component/layout.md)
 必选项：是  
 类型：数字  
 单位：无  
@@ -240,7 +240,7 @@
 
 ### height
 
-说明：高度，不是实际高度，与宽度属性配合来设置图片比例，详见[组件布局](../layout.md)  
+说明：高度，不是实际高度，与宽度属性配合来设置图片比例，详见[组件布局](../../guide/component/layout.md)
 必选项：是  
 类型：数字  
 单位：无  
@@ -263,11 +263,29 @@
 单位：ms  
 默认值：2000
 
+### indicator
+
+说明：下方默认提供的数字指示器。  
+必选项：否  
+类型：字符串 或空 
+取值："", `indicator`
+单位：无  
+默认值：无
+
 ### indicatorId
 
 说明：下方指示器功能字段，和指示器的父节点的 `id` 取值请保持一致，指示器的个数和轮播的 `item` 个数必须保持一致，指示器这块对 `id` 是强依赖，样式可以自行修改，示例中是官方默认样式，指示器可点击定位。  
 必选项：否  
 类型：字符串  
+单位：无  
+默认值：无
+
+### buttonController
+
+说明：翻页按钮功能字段，使用这个字段之后，轮播页左右侧会出现前进后退的翻页按钮，点击可执行相应的操作。  
+必选项：否  
+类型：字符串 或空 
+取值："", `buttonController`
 单位：无  
 默认值：无
 
@@ -277,10 +295,10 @@
 
 说明：当每一页切换完成之后，会触发该事件，事件参数会返回当前展示的dom节点，carousel 子元素的总数，当前展示的carousel item的索引值。
 一个返回参数示例如下：
-``` json
-  {
-    currIndex: 2,  // 当前子元素的显示索引值
-    currCarouselItem: childNodes[imgIndex], // 当前子元素的dom节点
-    carouselChildrenLength: childNum // 当前 carousel 下的子节点个数
-  }
-
+``` js
+{
+  currIndex: 2,  // 当前子元素的显示索引值
+  currCarouselItem: childNodes[imgIndex], // 当前子元素的dom节点
+  carouselChildrenLength: childNum // 当前 carousel 下的子节点个数
+}
+```

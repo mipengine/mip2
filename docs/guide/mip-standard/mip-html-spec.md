@@ -8,7 +8,7 @@ MIP 规范是高性能 MIP 页面的保证，其中最重要的规范是：MIP H
 
 由于规范长期更新，更多最新规范可查阅 MIP 官方网站 MIP HTML规范章节。
 
-<a name="1"></a>
+<a id="1"></a>
 ### 1. 头部使用规范
 下面简要列出MIP页头部的使用规范。头部是MIP页的声明、配置信息、资源引入的主要区域。
   - 页面起始标签使用 <!DOCTYPE html>
@@ -23,7 +23,7 @@ MIP 规范是高性能 MIP 页面的保证，其中最重要的规范是：MIP H
   - 必须在 `<body>` 标签底部包含 `<script src="<script src="https://c.mipcdn.com/static/v2/mip.js"></script>` ，如果包含在 `<head>` 标签中则须增加 `async` 属性。
 
 
-<a name="2"></a>
+<a id="2"></a>
 ### 2. 页面元素
 
 MIP-HTML 禁止使用对页面性能以及安全有较大影响的标签，同时也规定了元素的使用方式。
@@ -46,7 +46,7 @@ MIP-HTML 禁止使用对页面性能以及安全有较大影响的标签，同�
 |`<svg>`    |<span class="mipengine-doc-green">允许使用</span>||
 |`<button>` |<span class="mipengine-doc-green">允许使用</span>||
 |`<link>`   |<span class="mipengine-doc-green">允许使用</span>|<ul><li>`<link>` 必须在 `<head>` 中<br></li><li>必须存在 `rel="miphtml"` 或 `rel="canonical"` 的 `<link>` 标签</li><li>拥有 `rel="miphtml"` 或 rel=`"canonical"` 的标签之间或自身不能重复</li><li>如果 `rel="miphtml"` 或 `rel="canonical"` ，则 `href` 必须以 `https` 、`http` 或 `//` 开头</li><li>如果非 `rel="miphtml"` 或 `rel="canonical"` ，则 `href` 必须以非 `/` 开头（除 `//`）</li><li>**注：支持引入外链 CSS**</li></ul>|
-|`<a>`      |<span class="mipengine-doc-green">允许使用</span> | <ul><li>`href` 属性必填，同时其值不可以 `href="javascript:"`</li><li>MIP 页之间跳转推荐使用 [`<a data-type="mip">`](/examples/mip-extensions/mip-link.html)</li></ul>|
+|`<a>`      |<span class="mipengine-doc-green">允许使用</span> | <ul><li>`href` 属性必填，同时其值不可以 `href="javascript:"`</li><li>MIP 页之间跳转推荐使用 [`<a data-type="mip">`](../../extensions/extensions/mip-link.md)</li></ul>|
 |`<source>`|<span class="mipengine-doc-green">允许使用</span>|其父元素必须是 `<mip-video>`、`<mip-audio>`、`<picutre>`，其他均不可|
 |`<base>`|<span class="mipengine-doc-green">允许使用</span>|<ul><li>不能存在多个</li><li>必须在 `<head>` 标签中</li><li>属性必须存在 `target` 或 `href` 属性之一</li><li>`target` 必须为 `_top` 、`_self` 或 `_blank`</li><li>`href` 必须 `/`</li></ul>|
 |input elements |<span class="mipengine-doc-green">允许使用</span>|<ul><li>包括: `<select>` 、`<option>` 、 `<textarea>` 、`<input>`</li><li>父元素必须是 `<mip-form>`</li><li>`<source>` 的 `src` 必须存在且非 `/` 开头的相对路径</li></ul>|
@@ -136,13 +136,13 @@ MIP-HTML 禁止使用对页面性能以及安全有较大影响的标签，同�
 |`type`|是|-|
 
 
-<a name="3"></a>
+<a id="3"></a>
 ### 3. HTML 属性
 - MIP-HTML 中所有 `on` 开头的属性都不允许使用，如：`onclick`，`onmouseover` 。
 - MIP-HTML 中允许使用 `on` 属性。
 - MIP-HTML 中不允许使用 `style` 属性。
 
-<a name="4"></a>
+<a id="4"></a>
 ### 4. 自定义样式使用规范
 出于性能考虑，HTML 中不允许使用内联 `style`，所有样式只能放到 `<head>` 的 `<style>` 标签里。
 

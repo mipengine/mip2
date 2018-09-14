@@ -194,7 +194,7 @@ class Compile {
     }
   }
 
-  upadteData (data) {
+  updateData (data) {
     this.origin = data
   }
 
@@ -210,8 +210,9 @@ class Compile {
     }
     let value
     try {
-      value = util.getter(this, exp).value
-      if (value !== '' && typeof value !== 'undefined') {
+      let res = util.getter(this, exp)
+      value = res.value
+      if (res.hadReadAll) {
         node.removeAttribute(attrName)
       }
     } catch (e) {
