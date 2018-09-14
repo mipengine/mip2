@@ -46,7 +46,8 @@ import {
   MESSAGE_ROUTER_FORWARD,
   MESSAGE_CROSS_ORIGIN,
   MESSAGE_BROADCAST_EVENT,
-  MESSAGE_PAGE_RESIZE
+  MESSAGE_PAGE_RESIZE,
+  MESSAGE_LOAD_FROM_MIP1
 } from '../../page/const/index'
 import viewport from '../../viewport'
 import {customEmit} from '../../util/custom-event'
@@ -443,6 +444,10 @@ class MipShell extends CustomElement {
         page.broadcastCustomEvent(data)
       } else if (type === MESSAGE_PAGE_RESIZE) {
         this.resizeAllPages()
+      } else if (type === MESSAGE_LOAD_FROM_MIP1) {
+        css(this.$loading, 'display', 'none')
+        css(this.$fadeHeader, 'display', 'none')
+        this.$wrapper.classList.add('hide')
       }
     })
 
