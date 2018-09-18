@@ -42,12 +42,13 @@ let viewer = {
      */
   init () {
     /**
-     * Send Message
+     * Send Message, keep messager only one if prerender have created
      *
      * @inner
      * @type {Object}
      */
-    this.messager = new Messager()
+    const messager = clientPrerender.messager
+    this.messager =  messager ? messager : new Messager()
 
     /**
      * The gesture of document.Used by the event-action of Viewer.

@@ -21,7 +21,10 @@ describe('client-prerender', function () {
     expect(fn.called).to.be.false
 
     get.callsFake(() => '')
-    window.postMessage('PAGE_ACTIVE', window.location.origin)
+    window.postMessage({
+      name: window.name,
+      event: 'PAGE_ACTIVE'
+    }, window.location.origin)
 
     get.restore()
     setTimeout(() => {
@@ -41,7 +44,10 @@ describe('client-prerender', function () {
     expect(fn.called).to.be.false
 
     get.callsFake(() => '')
-    window.postMessage('PAGE_ACTIVE', window.location.origin)
+    window.postMessage({
+      name: window.name,
+      event: 'PAGE_ACTIVE'
+    }, window.location.origin)
 
     get.restore()
     setTimeout(() => {
@@ -71,7 +77,10 @@ describe('client-prerender', function () {
 
     prerender.execute(fn, ele)
 
-    window.postMessage('PAGE_ACTIVE', 'http://error:9876')
+    window.postMessage({
+      name: window.name,
+      event: 'PAGE_ACTIVE'
+    }, 'http://error:9876')
     get.restore()
     setTimeout(() => {
       expect(fn.called).to.be.false

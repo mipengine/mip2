@@ -4,6 +4,8 @@
  */
 
 import util from './util'
+import Messager from './messager'
+import performance from './performance'
 
 let parsePrender = ele => {
   if (!ele || !ele.getAttribute) {
@@ -32,23 +34,29 @@ class ClientPrerender {
     // 延迟执行的的函数队列
     this.queue = []
 
+    this.messager = new Messager()
+
     if (util.hash.get('prerender') === '1') {
       this.prerender = true
       new Promise(resolve => {
-        let pageActivedCallback = e => {
-          if (e.data === 'PAGE_ACTIVE') {
-            this.prerender = false
-            resetPrerenderHash()
-            window.removeEventListener('message', pageActivedCallback)
-            resolve()
-          }
-        }
-        window.addEventListener('message', pageActivedCallback)
+        // set client prerender event
+        this.messager.on('PAGE_ACTIVE', () => {
+          this.prerender = false
+          resetPrerenderHash()
+          resolve()
+        })
+        // can interact with container
+        this.messager.sendMessage('PRERENDER_INTERACTIVE', {
+          time: Date.now()
+        })
       }).then(() => {
+        performance.recordTiming('MIPElementBuildStart')
         let fn
         while ((fn = this.queue.shift())) {
           fn()
         }
+      }).then(() => {
+        performance.recordTiming('MIPElementBuildEnd')
       })
     }
   }
