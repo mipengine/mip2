@@ -3,16 +3,11 @@
  * @author huanghuiquan (huanghuiquan@baidu.com)
  */
 
-import installVueCustomElement from 'src/vue-custom-element/index'
 import Vue from 'vue'
 
 let prefix = 'vue-custom-element-index-'
 
 describe('vue custom element', function () {
-  before(function () {
-    installVueCustomElement(Vue)
-  })
-
   it('install customElment to Vue', function () {
     expect(typeof Vue.customElement).to.equal('function')
   })

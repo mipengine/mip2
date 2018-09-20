@@ -1,5 +1,7 @@
 # CHANGELOG
 
+- 1.3.2
+    1. 编译生成的组件代码支持 script 异步加载
 - 1.3.1
     1. 修复 plugin 删除 index 入口抛出的异常
     2. 优化 plugin 错误信息输出

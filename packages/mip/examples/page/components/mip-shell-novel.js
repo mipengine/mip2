@@ -15,7 +15,7 @@ class MipShellNovel extends window.MIP.builtinComponents.MipShell {
     this.catalog = shellConfig.catalog
   }
 
-  renderOtherParts () {
+  renderOtherPartsAsync () {
     this.$footerWrapper = document.createElement('mip-fixed')
     this.$footerWrapper.setAttribute('type', 'bottom')
     this.$footerWrapper.classList.add('mip-shell-footer-wrapper')

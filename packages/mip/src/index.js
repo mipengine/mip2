@@ -13,8 +13,7 @@ import 'deps/object-assign'
 import 'deps/mip-components-webpack-helpers'
 /* eslint-enable import/no-webpack-loader-syntax */
 
-import Vue from 'vue'
-import vueCustomElement from './vue-custom-element/index'
+import registerVueCustomElement from './vue-custom-element/index'
 import CustomElement from './custom-element'
 import util from './util/index'
 import sandbox from './sandbox'
@@ -29,25 +28,7 @@ import sleepWakeModule from './sleep-wake-module'
 import performance from './performance'
 import templates from './util/templates'
 import mip1PolyfillInstall from './mip1-polyfill/index'
-
 import monitorInstall from './log/monitor'
-
-/**
- * register vue as custom element v1
- *
- * @param {string} tag custom elment name, mip-*
- * @param {*} component vue component
- */
-function registerVueCustomElement (tag, component) {
-  // // 对于组件需要暴露一些子组件到外部的情况，可以通过组件的 components 定义 mip-xxx 格式的组件
-  // // 这样就可以在组件外部使用 mip-xxx 啦，内部还是照常跟原来一样作为一个 vue 组件使用
-  // if (component.components) {
-  //   Object.keys(component.components)
-  //     .filter(key => key.slice(0, 4) === 'mip-')
-  //     .forEach(key => registerVueCustomElement(key, component.components[key]))
-  // }
-  Vue.customElement(tag, component)
-}
 
 let mip = {}
 
@@ -88,8 +69,7 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     pageMeta.standalone = standalone
   }
 
-  let extensions = window.MIP || []
-
+  let push = ext => typeof ext.func === 'function' && ext.func()
   mip = {
     version: '2',
     registerVueCustomElement,
@@ -100,10 +80,9 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     viewport,
     hash: util.hash,
     standalone,
-    sandbox,
     css: {},
     /* istanbul ignore next */
-    push: extension => extensions.push(extension),
+    push,
     performance,
     templates,
     prerenderElement: Resources.prerenderElement,
@@ -114,19 +93,20 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     }
   }
 
-  window.MIP = mip
-
   // init viewport
   viewport.init()
 
   // install mip1 polyfill
   mip1PolyfillInstall(mip)
-  // add custom element to Vue
-  Vue.use(vueCustomElement)
 
   util.dom.waitDocumentReady(() => {
     // Initialize sleepWakeModule
     sleepWakeModule.init()
+
+    let extensions = window.MIP || []
+    window.MIP = mip
+    // Sandbox depends on window.MIP
+    window.MIP.sandbox = sandbox()
 
     // Initialize viewer
     viewer.pageMeta = pageMeta
@@ -144,8 +124,10 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
 
     // register buildin components
     builtinComponents.register()
-    performance.start(window._mipStartTiming)
+    // Handler preregister extensions
+    extensions.forEach(ext => typeof ext.func === 'function' && ext.func())
 
+    performance.start(window._mipStartTiming)
     // send performance data
     performance.on('update', timing => {
       viewer.sendMessage('performance_update', timing)

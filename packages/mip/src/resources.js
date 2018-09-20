@@ -61,7 +61,7 @@ class Resources {
      */
     this._viewport = viewport
 
-    this._gesture = new Gesture(document.body, {
+    this._gesture = new Gesture(document, {
       preventX: false
     })
     this._bindEvent()

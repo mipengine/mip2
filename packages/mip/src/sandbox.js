@@ -3,4 +3,4 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-export {default} from 'mip-sandbox'
+export {default} from 'mip-sandbox/lib/sandbox-generate'
