@@ -90,7 +90,9 @@
           container.appendChild(iframe)
         }
         else {
-          iframe.contentWindow.postMessage('page-active', window.location.origin)
+          iframe.contentWindow.postMessage({
+            event: 'page-active'
+          }, window.location.origin)
         }
       }, 500);
     }
