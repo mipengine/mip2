@@ -7,7 +7,7 @@ import util from './util'
 import Messager from './messager'
 import performance from './performance'
 
-let parsePrender = ele => {
+let parsePrerender = ele => {
   if (!ele || !ele.getAttribute) {
     return false
   }
@@ -40,13 +40,13 @@ class ClientPrerender {
       this.prerender = true
       new Promise(resolve => {
         // set client prerender event
-        this.messager.on('PAGE_ACTIVE', () => {
+        this.messager.on('page-active', () => {
           this.prerender = false
           resetPrerenderHash()
           resolve()
         })
         // can interact with container
-        this.messager.sendMessage('PRERENDER_INTERACTIVE', {
+        this.messager.sendMessage('prerender-interactive', {
           time: Date.now()
         })
       }).then(() => {
@@ -62,7 +62,7 @@ class ClientPrerender {
   }
 
   execute (fn, ele) {
-    if (this.prerender && !parsePrender(ele)) {
+    if (this.prerender && !parsePrerender(ele)) {
       this.queue.push(fn)
     } else {
       fn()

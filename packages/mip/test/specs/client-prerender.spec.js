@@ -23,7 +23,7 @@ describe('client-prerender', function () {
     get.callsFake(() => '')
     window.postMessage({
       name: window.name,
-      event: 'PAGE_ACTIVE'
+      event: 'page-active'
     }, window.location.origin)
 
     get.restore()
@@ -46,7 +46,7 @@ describe('client-prerender', function () {
     get.callsFake(() => '')
     window.postMessage({
       name: window.name,
-      event: 'PAGE_ACTIVE'
+      event: 'page-active'
     }, window.location.origin)
 
     get.restore()
@@ -79,7 +79,7 @@ describe('client-prerender', function () {
 
     window.postMessage({
       name: window.name,
-      event: 'PAGE_ACTIVE'
+      event: 'page-active'
     }, 'http://error:9876')
     get.restore()
     setTimeout(() => {
