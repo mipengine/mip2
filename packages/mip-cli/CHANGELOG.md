@@ -1,4 +1,6 @@
 # CHANGELOG
+- 1.3.2
+    1. 更新 mip-component-validator 依赖版本，修复 validator 无法获取最新白名单的 bug
 
 - 1.3.1
     1. 修复 plugin 删除 index 入口抛出的异常
