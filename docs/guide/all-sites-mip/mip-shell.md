@@ -356,15 +356,26 @@ export default class MIPShellExample extends window.MIP.builtinComponents.MIPShe
 
 #### constructor
 
-构造函数中有两个属性可以被子类修改，他们分别是：
+构造函数中有几个属性可以被子类修改，他们分别是：
 
 * __alwaysReadConfigOnLoad__, 默认值 `true`
     因为每个页面都有全部的配置，因此在页面切换时，目标页面的配置同时存在于当前页面和目标页面两处（正常情况下两处配置应该相同）。这个属性可以控制以哪一份配置为准。
 
     如果确认每个页面的配置是严格相同的，或者为了性能考虑，则应该使用 `false`，从而保证只有第一次读入配置，后续均不读取。反之如果需要每次均读取覆盖，则应该使用 `true`。
 
+* __alwaysUseTitleInShellConfig__, 默认值 `false`
+    上面提过页面标题拥有一个优先级，分别从前一个页面 a 链接的 `data-title`，Shell 的配置以及前一个页面 a 链接的 `innerText` 获取。无论哪一种都是从前一个页面的信息中获取。但考虑到某些站点的不同页面使用的是不同的 Shell 配置（虽然我们不建议这么做），如果目标页面的 Shell 配置和源页面并不相同，则 MIP 以这个配置项决定究竟使用哪个页面的配置来显示标题。详见 [ISSUE#187](https://github.com/mipengine/mip2/issues/187)。
+
+    如果为 `true`，则使用目标页面的 Shell 配置；否则（也是默认情况）使用前一个页面的 Shell 配置。
+
 * __transitionContainsHeader__, 默认值 `true`
     默认的页面切换动画会连同头部一起进行侧向滑动。如果这个值设置为 `false`，则头部不参与侧滑动画，转而使用 fade (渐隐渐现) 效果取代。
+
+* __ignoreWarning__，默认值 `false`
+    MIP Shell 拥有强力的纠错功能。如果 JSON 格式错误，或者遗漏了某些配置项等，Shell 都会尽量纠正补全，以页面正常运行为第一优先。在纠正补全的同时，MIP Shell 会在 Console 给出警告，希望开发者修复。
+
+    如果不想看到这些警告，可以设置为 `true`
+
 
 开发者可以在构造函数中修改这两个属性，也可以初始化自己之后将要使用的其他属性和变量。__注意在初始化时，必须要调用 `super` 并且带上参数__，如下：
 
@@ -505,6 +516,21 @@ MIP Shell 进行的所谓“初步处理”包括：
   }
 
   ```
+#### processShellConfigInLeaf
+
+* __参数__：
+    * `shellConfig`, __Object__, 经过处理的 Shell 配置对象。
+    * `index`, __number__, 当前页面匹配的 Shell 配置对象的序号
+* __返回值__：无。
+
+`processShellConfig()` 只作用于第一个页面 (rootPage)，但某些情况开发者还需要在后续页面修改 Shell 配置，这时候就需要使用 `processShellConfigInLeaf()` 进行修改。仅在 `alwaysReadConfigOnLoad` 为 `true` 时生效。详见 [ISSUE#132](https://github.com/mipengine/mip2/issues/132)
+
+```javascript
+processShellConfigInLeaf(shellConfig, index) {
+    let matchedShellConfig = shellConfig.routes[i]
+    matchedShellConfig.meta.header.bouncy = false
+}
+```
 
 #### renderOtherParts
 
@@ -538,6 +564,22 @@ renderFooter() {
 ```
 
 建议把 `this.renderFooter()` 抽象成一个单独的方法，因为这个方法也会在后面 update 时被调用。
+
+#### renderOtherPartsAsync
+
+* __参数__：无。
+* __返回值__：无。
+
+如果一个 MIP 页面在大搜环境打开（即 SF 环境下），首屏时间取决于给 SF 发送 `mip-page-load` 消息。我们可以粗略地把流程做如下理解：
+
+1. 进行各类初始化工作，包括注册各类内置组件
+2. 内置组件的同步渲染方法执行完毕
+3. 给 SF 发送 `mip-page-load` 消息
+4. 内置组件的异步渲染方法执行完毕
+
+MIP Shell 是内置组件，又提供继承，因此个性化 Shell 也会很大程度地影响 MIP 页面的首屏性能。因此，Shell 给子类提供了同步和异步两套渲染方法。两套方法的差别仅在执行时机。
+
+开发者应当尽量减少同步方法的操作，把非必要首屏渲染的内容移动到异步方法中去。例如可以在同步方法中渲染一些占位符，占位模块等内容，在异步方法中渲染真实内容。这对于 MIP 页面的首屏性能提升是非常有帮助的，详见 [ISSUE#280](https://github.com/mipengine/mip2/issues/280)
 
 #### updateOtherParts
 
