@@ -12,6 +12,7 @@ import 'deps/promise'
 import 'deps/object-assign'
 import 'deps/mip-components-webpack-helpers'
 /* eslint-enable import/no-webpack-loader-syntax */
+import Vue from 'vue'
 
 import registerVueCustomElement from './vue-custom-element/index'
 import CustomElement from './custom-element'

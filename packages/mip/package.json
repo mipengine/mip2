@@ -9,8 +9,8 @@
   "scripts": {
     "dev": "node examples/server.js",
     "build": "node build/build.rollup.js",
-    "uploadjs": "baidubce bos --put-object dist/mip.js bos://assets/mip/projects/mip.js",
-    "uploadcss": "baidubce bos --put-object dist/mip.css bos://assets/mip/projects/mip.css",
+    "uploadjs": "baidubce bos --put-object dist/mip.js bos://assets/mip/projects/vuetify/mip.js",
+    "uploadcss": "baidubce bos --put-object dist/mip.css bos://assets/mip/projects/vuetify/mip.css",
     "deploy:dev": "npm run build && npm run uploadjs && npm run uploadcss",
     "test:dev": "cross-env NODE_ENV=test karma start test/karma.dev.conf.js",
     "test:cover": "cross-env NODE_ENV=test karma start test/karma.cover.conf.js",
