@@ -65,9 +65,15 @@ class Page {
       return
     }
 
+    const hashContent = hash.slice(1)
+
     try {
-      const anchor = document.getElementById(hash.slice(1)) ||
-        document.getElementById(decodeURIComponent(hash.slice(1)))
+      /**
+       * @see {@link http://w3c.github.io/html/browsers.html#navigating-to-a-fragment-identifier}
+       */
+      const anchor = document.getElementById(hashContent) ||
+        document.getElementById(decodeURIComponent(hashContent)) ||
+        document.querySelector(`a[name="${hashContent}"]`)
 
       /* istanbul ignore next */
       if (anchor) {

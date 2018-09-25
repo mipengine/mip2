@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <title>MIP Data Page</title>
+  <meta name="keywords" content="vue,mip,store">
+  <meta name="description" content="mip-store">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <!-- 顺序无关，支持 async，提前下载 js -->
+  <script async src="./components/mip-complevel1.js"></script>
+  <script async src="../../dist/mip.js"></script>
+  <script async src="./components/mip-complevel2.js"></script>
+  <script async src="https://c.mipcdn.com/static/v1/mip-form/mip-form.js"></script>
+  <style mip-custom>
+    .main-content .link {
+      text-align: center;
+      margin-top: 20px;
+      display: block;
+    }
+
+    .main-content p,
+    .main-content .button {
+      width: 150px;
+      display: inline-block;
+      margin: 20px 0 0 20px;
+    }
+
+    body::before {
+      display: block;
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #fff;
+      z-index: 99999;
+    }
+
+    body::after,
+    .mip-page-loading::after {
+      content: '';
+      background-size: 100% 100%;
+      width: 34px;
+      height: 34px;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      margin: -17px 0 0 -17px;
+      z-index: 100000;
+      animation: loading-rotate 1s linear infinite
+    }
+
+    @keyframes loading-rotate {
+      from {
+        transform: rotate(0deg)
+      }
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    body.mip-fixedlayer::before,
+    body.mip-fixedlayer::after,
+    body[mip-ready]::before,
+    body[mip-ready]::after,
+    .mip-page-loading.only-header::after {
+      display: none;
+    }
+
+    .num-button {
+      background: black;
+      color: white;
+      padding: 20px 6px;
+    }
+
+    .mip-mask {
+      position: fixed;
+      top: 450px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.5)
+    }
+
+    .mip-mask.hide {
+      display: none;
+    }
+
+    .global-data {
+      margin: 30px 0;
+      border: 1px solid #e1e1e1;
+      padding: 10px;
+    }
+
+    .mip-complevel1 {
+      border: 1px solid red;
+      padding: 4px;
+    }
+
+    .mip-complevel2 {
+      border: 1px solid blue;
+      padding: 4px;
+      margin: 6px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <mip-data>
+    <script type="application/json">
+      {
+        "#empty_str": "",
+        "num": 0,
+        "a": 0,
+        "loading": false,
+        "title": "Apple/苹果 iPhone X",
+        "basePrice": "9688.00",
+        "price": "9688.00",
+        "#comments": 5855,
+        "integral": 968,
+        "network": {
+          "nocontract": 1
+        },
+        "color": {
+          "silver": 0,
+          "grey": 1
+        },
+        "#size": {
+          "small": 0,
+          "big": 1
+        },
+        "staging": {
+          "three": 0,
+          "six": 0,
+          "twelve": 0
+        },
+        "#sp": {
+          "three": "¥3303.60",
+          "six": "¥1687.32",
+          "twelve": "¥867.88"
+        },
+        "img": {
+          "first": 0,
+          "second": 0,
+          "third": 0,
+          "four": 0,
+          "five": 0
+        },
+        "time": 1,
+        "src": "https://img.alicdn.com/bao/uploaded/i4/1917047079/TB2ZpydmPihSKJjy0FeXXbJtpXa_!!1917047079.png_430x430q90.jpg"
+      }
+
+    </script>
+  </mip-data>
+  <mip-data src="./data/testData.json"></mip-data>
+  <mip-data>
+    <script type="application/json">
+      {
+        "userInfo": {
+          "name": "sfe",
+          "age": 5,
+          "members": []
+        },
+        "#city": "上海",
+        "city1": "厦门",
+        "#test": "ckkkk2",
+        "#lxndata": {
+          "user": "未登录",
+          "ordercity": "北京",
+          "carType": 3,
+          "orderTime": "",
+          "kilometer": 0,
+          "moveOutNum": "",
+          "moveInNum": "",
+          "moveInAddress": {
+            "location": {
+              "address": "in",
+              "city": "",
+              "province": "",
+              "lat": "",
+              "lng": "",
+              "title": ""
+            },
+            "address": "",
+            "phone": ""
+          },
+          "currentmap": "out",
+          "moveOutAddress": {
+            "location": {
+              "address": "out",
+              "city": "",
+              "province": "",
+              "lat": "",
+              "lng": "",
+              "title": ""
+            },
+            "address": "",
+            "phone": ""
+          },
+          "order": ""
+        }
+      }
+
+    </script>
+  </mip-data>
+
+  <mip-complevel1 m-bind:user-info="userInfo" m-bind:loading="loading"></mip-complevel1>
+  <mip-complevel2></mip-complevel2>
+  <mip-mask m-bind:loading="loading"></mip-mask>
+
+  <div class="global-data main-content">
+    <h3>共享数据 checklist:</h3>
+    <pre>
+    {
+        "#city": "上海",
+        "city1": "厦门",
+        "#test": "ckkkk2"
+    }
+        </pre>
+    <p>#group.info.name (initial in index.html):
+      <span m-text="group.info.name" style="color: red;"></span>
+    </p>
+    <div on="tap:MIP.setData({group:{info:{name:'sfe2018'}}})" class="button">click change global group.info.name</div>
+
+    <p>全局数据#city => <span m-text="city" style="color: red;"></span></p>
+    <div on="tap:MIP.setData({'city':'深圳'})" class="button">click change city</div>
+
+    <p>页面数据city1 => <span m-text="city1" style="color: red;"></span></p>
+    <div on="tap:MIP.setData({'#city1':'成都'})" class="button">click change #city1</div>
+
+    <p>全局数据#test => <span m-text="test" style="color: red;"></span></p>
+    <div on="tap:MIP.setData({'test':'haha'})" class="button">click change #test</div>
+  </div>
+  <div class="main-content">
+    <!-- <mip-global></mip-global> -->
+
+    <h1 m-text="title" style="margin-left: 20px;"></h1>
+
+    <p m-text="size.small"></p>
+    <div on="tap:MIP.setData({size:{small:2}})" class="button">click change size.small</div>
+
+    <p m-text="num"></p>
+    <div on="tap:MIP.setData({num:2})" class="button">click change num</div>
+
+    <p m-text="lxndata.moveInAddress.location"></p>
+    <div on="tap:MIP.setData({lxndata:{moveInAddress:{location:12}}})" class="button">lxndata</div>
+
+    <p m-text="sp.three"></p>
+    <div on="tap:MIP.setData({sp:{three:'¥0'}})" class="button">click change sp.three</div>
+
+    <p m-text="comments"></p>
+    <div on="tap:MIP.setData({comments:'ckkk'})" class="button">click change comments</div>
+
+    <p m-text="img.first"></p>
+    <div on="tap:MIP.setData({img:{first:1}})" class="button">click change img.first</div>
+
+    <mip-data>
+      <script type="application/json">
+        {
+          "price": 20,
+          "value": 1
+        }
+
+      </script>
+    </mip-data>
+    <p id="form">
+      DOM.value*m.price =
+      <span m-text="price"></span>
+    </p>
+    <mip-form url="https://www.mipengine.org/" class="button">
+      <input type='text' on="change:MIP.setData({price:DOM.value*m.price})" style="width:150px;">
+    </mip-form>
+
+    <mip-data>
+      <script type="application/json">
+        {
+          "no": 1,
+          "weekFull": "",
+          "imgList": [
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1528885552093&di=f389f5c948e9a33c75c686e2ea369feb&imgtype=0&src=http%3A%2F%2Fimg4.duitang.com%2Fuploads%2Fitem%2F201606%2F22%2F20160622112305_UtPZk.jpeg",
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1528885547550&di=40c9bbdbfba487a0b2d8df2892353364&imgtype=0&src=http%3A%2F%2Fimg3.duitang.com%2Fuploads%2Fitem%2F201608%2F04%2F20160804182714_xC3M8.jpeg",
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1528887674999&di=e76c57e62e193d0995406d132b9e25b6&imgtype=0&src=http%3A%2F%2Fimg4.duitang.com%2Fuploads%2Fitem%2F201607%2F21%2F20160721131933_MthPy.thumb.700_0.jpeg"
+          ]
+        }
+
+      </script>
+    </mip-data>
+    <mip-form url="https://www.mipengine.org/" width="150px">
+      input to change pics:
+      <input type='text' on="change:MIP.setData({no:DOM.value})">
+    </mip-form>
+    <mip-img m-bind:src="imgList[no]" style="width:150px;height:150px;"></mip-img>
+
+    <br><br>
+    <a href="./index.html" class="link" mip-link>Back to Index</a>
+    <a class="link" href="./tree.html" mip-link>Go to Tree</a>
+    <a class="link" href="./test.html" mip-link>Go to Test</a>
+  </div>
+  <br><br>
+
+  <mip-shell>
+    <script type="application/json">
+      {
+        "routes": [{
+            "pattern": "./index.html",
+            "meta": {
+              "header": {
+                "show": true,
+                "title": "MIP",
+                "logo": "http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png",
+                "buttonGroup": [{
+                    "name": "subscribe",
+                    "text": "关注",
+                    "link": "/examples/page/tree.html"
+                  },
+                  {
+                    "name": "chat",
+                    "text": "发消息"
+                  },
+                  {
+                    "name": "cancel",
+                    "text": "取消"
+                  }
+                ]
+              },
+              "view": {
+                "isIndex": true
+              }
+            }
+          },
+          {
+            "pattern": "./tree.html",
+            "meta": {
+              "header": {
+                "show": true,
+                "title": "MIP Tree"
+              }
+            }
+          },
+          {
+            "pattern": "*",
+            "meta": {
+              "header": {
+                "show": true,
+                "title": "MIP Other Page"
+              },
+              "view": {
+                "isIndex": false
+              }
+            }
+          }
+        ]
+      }
+
+    </script>
+  </mip-shell>
+</body>
+
+</html>

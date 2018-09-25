@@ -15,7 +15,7 @@ class MipShellNovel extends window.MIP.builtinComponents.MipShell {
     this.catalog = shellConfig.catalog
   }
 
-  renderOtherParts () {
+  renderOtherPartsAsync () {
     this.$footerWrapper = document.createElement('mip-fixed')
     this.$footerWrapper.setAttribute('type', 'bottom')
     this.$footerWrapper.classList.add('mip-shell-footer-wrapper')
@@ -95,6 +95,12 @@ class MipShellNovel extends window.MIP.builtinComponents.MipShell {
     console.log('click on footer:', buttonName)
     this.toggleDOM(this.$buttonMask, false)
     this.toggleDOM(this.$footerWrapper, false, {transitionName: 'slide'})
+  }
+
+  bindRootEvents () {
+    super.bindRootEvents()
+
+    console.log('in mip-shell-novel bindRootEvents')
   }
 }
 

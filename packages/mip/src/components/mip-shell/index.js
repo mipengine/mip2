@@ -17,7 +17,7 @@ import fn from '../../util/fn'
 import platform from '../../util/platform'
 import event from '../../util/dom/event'
 import CustomElement from '../../custom-element'
-import {supportsPassive, isPortrait} from '../../page/util/feature-detect'
+import {supportsPassive, isPortrait, idleCallback} from '../../page/util/feature-detect'
 import {isSameRoute, getFullPath} from '../../page/util/route'
 import {
   createIFrame,
@@ -102,7 +102,7 @@ class MipShell extends CustomElement {
           this.ignoreWarning = tmpShellConfig.ignoreWarning
         }
         if (!tmpShellConfig.routes) {
-          !this.ignoreWarning && this.console.warn('检测到 MIP Shell 配置没有包含 `routes` 数组，MIP 将自动生成一条默认的路由配置。')
+          !this.ignoreWarning && console.warn('检测到 MIP Shell 配置没有包含 `routes` 数组，MIP 将自动生成一条默认的路由配置。')
           tmpShellConfig.routes = [{
             pattern: '*',
             meta: DEFAULT_SHELL_CONFIG
@@ -226,10 +226,10 @@ class MipShell extends CustomElement {
       page.pageMeta = this.currentPageMeta
       this.initShell()
       this.initRouter()
-      this.bindRootEvents()
+      idleCallback(() => this.bindRootEvents())
     }
 
-    this.bindAllEvents()
+    idleCallback(() => this.bindAllEvents())
   }
 
   disconnectedCallback () {
@@ -267,25 +267,30 @@ class MipShell extends CustomElement {
 
     document.body.insertBefore(this.$wrapper, document.body.firstChild)
 
-    // Button wrapper & mask
-    let buttonGroup = this.currentPageMeta.header.buttonGroup
-    let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup)
-    this.$buttonMask = mask
-    this.$buttonWrapper = buttonWrapper
-
-    // Page mask
-    this.$pageMask = createPageMask()
-
-    // Loading
-    this.$loading = createLoading(this.currentPageMeta)
-
-    // Fade header
-    if (!this.transitionContainsHeader) {
-      this.$fadeHeader = createFadeHeader(this.currentPageMeta)
-    }
-
-    // Other parts
+    // Other sync parts
     this.renderOtherParts()
+
+    idleCallback(() => {
+      // Button wrapper & mask
+      let buttonGroup = this.currentPageMeta.header.buttonGroup
+      let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup)
+      this.$buttonMask = mask
+      this.$buttonWrapper = buttonWrapper
+
+      // Page mask
+      this.$pageMask = createPageMask()
+
+      // Loading
+      this.$loading = createLoading(this.currentPageMeta)
+
+      // Fade header
+      if (!this.transitionContainsHeader) {
+        this.$fadeHeader = createFadeHeader(this.currentPageMeta)
+      }
+
+      // Other async parts
+      this.renderOtherPartsAsync()
+    })
   }
 
   renderHeader (container) {
@@ -507,6 +512,7 @@ class MipShell extends CustomElement {
       return
     }
 
+    this.bindHeaderEventsFlag = false
     // Render target page
     let sourcePage = page.getPageById(page.currentPageId)
     let targetFullPath = getFullPath(to)
@@ -1159,6 +1165,10 @@ class MipShell extends CustomElement {
 
   bindHeaderEvents () {
     let me = this
+    if (this.bindHeaderEventsFlag) {
+      return
+    }
+    this.bindHeaderEventsFlag = true
     // Delegate header
     this.headerEventHandler = event.delegate(this.$el, '[mip-header-btn]', 'click', function (e) {
       let buttonName = this.dataset.buttonName
@@ -1480,6 +1490,12 @@ class MipShell extends CustomElement {
 
   renderOtherParts () {
     // Render other shell parts (except header)
+    // Use `this.currentPageMeta` to get page config
+    // E.g. footer, sidebar
+  }
+
+  renderOtherPartsAsync () {
+    // Render other shell parts (async version for performance's sake)
     // Use `this.currentPageMeta` to get page config
     // E.g. footer, sidebar
   }

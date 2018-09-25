@@ -105,3 +105,15 @@ module.exports = {
 ```
 
 更多的配置选项可以参考 [Workbox 配置项](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateswstring_mode)
+
+## 常用插件
+
+本地启动 SF 调试环境
+
+``` bash
+$ mip2 sf
+```
+
+运行命令后，会在本地启动一个服务器，可以通过 `http://localhost:8210/sf` 进行访问，对页面嵌入 SF 的情况进行调试和验证。
+
+详情可以查看插件项目仓库 [mip-cli-plugin-sf](https://github.com/mipengine/mip-cli-plugin-sf)

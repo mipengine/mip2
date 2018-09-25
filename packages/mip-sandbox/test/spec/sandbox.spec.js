@@ -5,9 +5,16 @@
 
 /* globals describe, it */
 
+window.MIP = {
+  watch: function () {
+    return 'fall'
+  }
+}
+
 // var chai = require('chai')
 // var expect = chai.expect
-var sandbox = require('../../lib/sandbox')
+var oldSandbox = require('../../lib/sandbox')
+var generate = require('../../lib/sandbox-generate')
 
 // 假定 MIP 在 sandbox 后定义
 window.MIP = {
@@ -15,6 +22,8 @@ window.MIP = {
     return 'watch'
   }
 }
+
+var sandbox = generate()
 
 describe('sandbox', function () {
   it('keys', function () {
@@ -51,5 +60,7 @@ describe('sandbox', function () {
   it('sandbox.watch', function () {
     expect(sandbox.MIP.watch()).to.be.equal('watch')
     expect(sandbox.strict.MIP.watch()).to.be.equal('watch')
+    expect(oldSandbox.MIP.watch()).to.be.equal('fall')
+    expect(oldSandbox.strict.MIP.watch()).to.be.equal('fall')
   })
 })

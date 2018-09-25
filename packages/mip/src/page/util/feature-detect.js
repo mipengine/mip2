@@ -33,9 +33,6 @@ if (window.onanimationend === undefined &&
 export const transitionEndEvent = transitionEndEventName
 export const animationEndEvent = animationEndEventName
 
-/**
- * raf
- */
 export const raf = window.requestAnimationFrame
   ? window.requestAnimationFrame.bind(window)
   : /* istanbul ignore next */setTimeout
@@ -43,3 +40,7 @@ export const raf = window.requestAnimationFrame
 export function isPortrait () {
   return window.innerHeight > window.innerWidth
 }
+
+export const idleCallback = window.requestIdleCallback
+  ? window.requestIdleCallback.bind(window)
+  : /* istanbul ignore next */setTimeout

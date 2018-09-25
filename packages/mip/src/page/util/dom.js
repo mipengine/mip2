@@ -310,7 +310,7 @@ export function ensureMIPShell () {
     let shell = document.createElement('mip-shell')
     let script = document.createElement('script')
     script.setAttribute('type', 'application/json')
-    script.innerHTML = '{}'
+    script.innerHTML = '{"ignoreWarning": true}'
     shell.appendChild(script)
     document.body.appendChild(shell)
   }
