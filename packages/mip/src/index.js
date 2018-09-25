@@ -130,7 +130,7 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     performance.start(window._mipStartTiming)
     // send performance data
     performance.on('update', timing => {
-      viewer.sendMessage('performance_update', timing)
+      viewer.sendMessage('performance-update', timing)
     })
 
     // Show page

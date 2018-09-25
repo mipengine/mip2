@@ -114,7 +114,7 @@ let viewer = {
    * 1. `pushState` when clicking a `<a mip-link>` element (called 'loadiframe')
    * 2. `mipscroll` when scrolling inside an iframe, try to let parent page hide its header.
    * 3. `mippageload` when current page loaded
-   * 4. `performance_update`
+   * 4. `performance-update`
    *
    * @param {string} eventName
    * @param {Object} data Message body
@@ -211,7 +211,7 @@ let viewer = {
       url: parseCacheUrl(completeUrl),
       state
     }
-    this.sendMessage(replace ? 'replaceState' : 'pushState', pushMessage)
+    this.sendMessage(replace ? 'replace-state' : 'push-state', pushMessage)
 
     // Create target route
     let targetRoute = {
