@@ -6,6 +6,10 @@
 import util from './util'
 import Messager from './messager'
 import performance from './performance'
+import {
+  MESSAGE_PAGE_ACTIVE,
+  MESSAGE_PRERENDER_INTERACTIVE
+} from './page/const/index'
 
 let parsePrerender = ele => {
   if (!ele || !ele.getAttribute) {
@@ -40,13 +44,13 @@ class ClientPrerender {
       this.prerender = true
       new Promise(resolve => {
         // set client prerender event
-        this.messager.on('page-active', () => {
+        this.messager.on(MESSAGE_PAGE_ACTIVE, () => {
           this.prerender = false
           resetPrerenderHash()
           resolve()
         })
         // can interact with container
-        this.messager.sendMessage('prerender-interactive', {
+        this.messager.sendMessage(MESSAGE_PRERENDER_INTERACTIVE, {
           time: Date.now()
         })
       }).then(() => {
