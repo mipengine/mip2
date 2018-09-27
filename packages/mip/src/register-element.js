@@ -116,12 +116,15 @@ class BaseElement extends HTMLElement {
   }
 
   /**
-   * Check whether the element need to be rendered in advance.
+   * Check whether the element need to be rendered in advance
+   *
+   * @param {Object} elementRect element rect
+   * @param {Object} viewportRect viewport rect
    *
    * @return {boolean}
    */
-  prerenderAllowed () {
-    return this.customElement.prerenderAllowed()
+  prerenderAllowed (elementRect, viewportRect) {
+    return this.customElement.prerenderAllowed(elementRect, viewportRect)
   }
 
   /**
