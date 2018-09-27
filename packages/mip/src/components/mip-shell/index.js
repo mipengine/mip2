@@ -284,11 +284,6 @@ class MipShell extends CustomElement {
     // Loading
     this.$loading = createLoading(this.currentPageMeta)
 
-    // Fade header
-    if (!this.transitionContainsHeader) {
-      this.$fadeHeader = createFadeHeader(this.currentPageMeta)
-    }
-
     idleCallback(() => {
       // Other async parts
       this.renderOtherPartsAsync()
