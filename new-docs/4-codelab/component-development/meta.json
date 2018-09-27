@@ -1,0 +1,31 @@
+
+{
+  "menu": [
+    {
+      "name": "概述",
+      "key": "introduction"
+    },
+    {
+      "name": "准备环境",
+      "key": "preparation"
+    },
+    {
+      "name": "开发组件",
+      "key": "development"
+    },
+    {
+      "name": "预览 & 校验",
+      "key": "preview"
+    },
+    {
+      "name": "提交组件",
+      "key": "submit"
+    }
+  ],
+  "info": {
+    "name": "如何开发自定义组件",
+    "description": "本教程将用一个简单的自定义组件作为示例，演示如何开发自定义组件，并提交到组件仓库。",
+    "tag": ["MIP 2.0", "组件开发教程"],
+    "duration": "30 分钟"
+  }
+}

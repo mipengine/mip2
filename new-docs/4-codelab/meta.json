@@ -1,0 +1,16 @@
+{
+    "menu": [
+        {
+            "key": "mip-started"
+        },
+        {
+            "key": "all-sites-mip"
+        }
+    ],
+    "ignore": [
+        "README"
+    ],
+    "info": {
+        "name": "CODELAB"
+    }
+}

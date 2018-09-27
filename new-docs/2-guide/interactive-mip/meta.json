@@ -1,0 +1,36 @@
+{
+  "menu": [
+    {
+      "name": "可交互 MIP - 概况",
+      "key": "introduction"
+    },
+    {
+      "name": "mip-data 设置数据",
+      "key": "mip-data"
+    },
+    {
+      "name": "mip-bind 绑定数据",
+      "key": "mip-bind"
+    },
+    {
+      "name": "Class 与 Style 绑定",
+      "key": "class-style-binding"
+    },
+    {
+      "name": "MIP.setData 修改数据",
+      "key": "set-data"
+    },
+    {
+      "name": "MIP.watch 观察数据",
+      "key": "watch"
+    },
+    {
+      "name": "全局共享数据",
+      "key": "global-data"
+    },
+    {
+      "name": "mip-script 自定义 JS",
+      "key": "mip-script"
+    }
+  ]
+}

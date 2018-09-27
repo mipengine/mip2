@@ -1,0 +1,30 @@
+{
+  "menu": [
+    {
+      "name": "概述",
+      "key": "introduction"
+    },
+  {
+      "name": "准备环境",
+      "key": "prepare"
+    },
+    {
+      "name": "项目初始化页面",
+      "key": "project"
+    },
+    {
+      "name": "使用内置组件",
+      "key": "components-in"
+    },
+    {
+      "name": "页面校验",
+      "key": "validate"
+    }
+  ],
+  "info": {
+    "name": "如何开发一个 MIP 页面",
+    "description": "本示例针对初次尝试开发 MIP 页面的开发者，将演示如何利用官方提供的一系列工具快速搭建一个 MIP 项目，开发一个 MIP 页面。",
+    "tag": ["MIP 2.0", "起步教程"],
+    "duration": "20分钟"
+  }
+}

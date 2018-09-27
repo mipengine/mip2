@@ -1,0 +1,30 @@
+{
+  "menu": [
+      {
+          "name": "概述",
+          "key": "introduction"
+      },
+      {
+          "name": "初始化数据",
+          "key": "initialize-data"
+      },
+      {
+          "name": "绑定数据",
+          "key": "bind-data"
+      },
+      {
+        "name": "修改数据",
+        "key": "set-data"
+    },
+      {
+          "name": "完整示例代码",
+          "key": "sample-code"
+      }
+  ],
+  "info": {
+      "name": "如何打造可交互的 MIP 站点",
+      "description": "本示例针对在 HTML 页面有通过数据驱动更新 DOM 节点需求的开发者",
+      "tag": ["MIP 2.0", "mip-bind"],
+      "duration": "20分钟"
+  }
+}

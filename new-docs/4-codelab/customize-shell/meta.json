@@ -1,0 +1,31 @@
+
+{
+  "menu": [
+    {
+      "name": "概述",
+      "key": "introduction"
+    },
+    {
+      "name": "创建自定义 Shell",
+      "key": "create-shell"
+    },
+    {
+      "name": "添加方法",
+      "key": "add-function"
+    },
+    {
+      "name": "使用自定义 Shell",
+      "key": "use-shell"
+    },
+    {
+      "name": "完整示例代码",
+      "key": "sample-code"
+    }
+  ],
+  "info": {
+    "name": "如何定制并使用个性化 Shell",
+    "description": "有些站点的特殊需求无法使用默认的 MIP Shell 解决，本示例演示如何通过继承并定制个性化 Shell 来实现这些需求。",
+    "tag": ["MIP", "Shell"],
+    "duration": "45分钟"
+  }
+}

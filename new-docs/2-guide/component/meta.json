@@ -1,0 +1,36 @@
+{
+  "menu": [
+    {
+      "name": "MIP 组件化介绍",
+      "key": "introduction"
+    },
+    {
+      "name": "MIP 组件和 Vue 的关系",
+      "key": "relationship-between-mip-component-and-vue"
+    },
+    {
+      "name": "MIP 2.0 组件实例的生命周期和回调钩子",
+      "key": "instance-life-cycle"
+    },
+    {
+      "name": "MIP-HTML 语法和对应 MIP 组件开发介绍",
+      "key": "syntax"
+    },
+    {
+      "name": "插槽",
+      "key": "slots"
+    },
+    {
+      "name": "组件布局",
+      "key": "layout"
+    },
+    {
+      "name": "沙盒机制",
+      "key": "sandbox"
+    },
+    {
+      "name": "事件通信",
+      "key": "actions-and-events"
+    }
+  ]
+}
