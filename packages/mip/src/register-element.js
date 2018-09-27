@@ -75,7 +75,7 @@ class BaseElement extends HTMLElement {
   attributeChangedCallback () {
     let ele = this.customElement
     prerender.execute(() => {
-      ele.attributeChangedCallback.apply(ele, arguments)
+      ele.attributeChangedCallback(...arguments)
     }, this)
   }
 

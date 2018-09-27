@@ -107,7 +107,7 @@ function createBaseElementProto () {
   proto.attributeChangedCallback = function (attributeName, oldValue, newValue, namespace) {
     let ele = this.customElement
     prerender.execute(() => {
-      ele.attributeChangedCallback.apply(ele, arguments)
+      ele.attributeChangedCallback(...arguments)
     }, this)
   }
 
