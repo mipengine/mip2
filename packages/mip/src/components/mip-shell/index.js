@@ -226,10 +226,12 @@ class MipShell extends CustomElement {
       page.pageMeta = this.currentPageMeta
       this.initShell()
       this.initRouter()
-      idleCallback(() => this.bindRootEvents())
+      this.bindRootEvents()
+      // idleCallback(() => this.bindRootEvents())
     }
 
-    idleCallback(() => this.bindAllEvents())
+    this.bindAllEvents()
+    // idleCallback(() => this.bindAllEvents())
   }
 
   disconnectedCallback () {
@@ -270,24 +272,19 @@ class MipShell extends CustomElement {
     // Other sync parts
     this.renderOtherParts()
 
+    // Button wrapper & mask
+    let buttonGroup = this.currentPageMeta.header.buttonGroup
+    let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup)
+    this.$buttonMask = mask
+    this.$buttonWrapper = buttonWrapper
+
+    // Page mask
+    this.$pageMask = createPageMask()
+
+    // Loading
+    this.$loading = createLoading(this.currentPageMeta)
+
     idleCallback(() => {
-      // Button wrapper & mask
-      let buttonGroup = this.currentPageMeta.header.buttonGroup
-      let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup)
-      this.$buttonMask = mask
-      this.$buttonWrapper = buttonWrapper
-
-      // Page mask
-      this.$pageMask = createPageMask()
-
-      // Loading
-      this.$loading = createLoading(this.currentPageMeta)
-
-      // Fade header
-      if (!this.transitionContainsHeader) {
-        this.$fadeHeader = createFadeHeader(this.currentPageMeta)
-      }
-
       // Other async parts
       this.renderOtherPartsAsync()
     })
