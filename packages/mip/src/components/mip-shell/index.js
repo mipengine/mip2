@@ -509,7 +509,7 @@ class MipShell extends CustomElement {
       return
     }
 
-    this.bindHeaderEventsFlag = false
+    // this.bindHeaderEventsFlag = false
     // Render target page
     let sourcePage = page.getPageById(page.currentPageId)
     let targetFullPath = getFullPath(to)
@@ -1162,10 +1162,10 @@ class MipShell extends CustomElement {
 
   bindHeaderEvents () {
     let me = this
-    if (this.bindHeaderEventsFlag) {
-      return
-    }
-    this.bindHeaderEventsFlag = true
+    // if (this.bindHeaderEventsFlag) {
+    //   return
+    // }
+    // this.bindHeaderEventsFlag = true
     // Delegate header
     this.headerEventHandler = event.delegate(this.$el, '[mip-header-btn]', 'click', function (e) {
       let buttonName = this.dataset.buttonName
