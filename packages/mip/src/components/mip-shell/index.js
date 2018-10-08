@@ -226,10 +226,12 @@ class MipShell extends CustomElement {
       page.pageMeta = this.currentPageMeta
       this.initShell()
       this.initRouter()
-      idleCallback(() => this.bindRootEvents())
+      this.bindRootEvents()
+      // idleCallback(() => this.bindRootEvents())
     }
 
-    idleCallback(() => this.bindAllEvents())
+    this.bindAllEvents()
+    // idleCallback(() => this.bindAllEvents())
   }
 
   disconnectedCallback () {
@@ -270,24 +272,19 @@ class MipShell extends CustomElement {
     // Other sync parts
     this.renderOtherParts()
 
+    // Button wrapper & mask
+    let buttonGroup = this.currentPageMeta.header.buttonGroup
+    let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup)
+    this.$buttonMask = mask
+    this.$buttonWrapper = buttonWrapper
+
+    // Page mask
+    this.$pageMask = createPageMask()
+
+    // Loading
+    this.$loading = createLoading(this.currentPageMeta)
+
     idleCallback(() => {
-      // Button wrapper & mask
-      let buttonGroup = this.currentPageMeta.header.buttonGroup
-      let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup)
-      this.$buttonMask = mask
-      this.$buttonWrapper = buttonWrapper
-
-      // Page mask
-      this.$pageMask = createPageMask()
-
-      // Loading
-      this.$loading = createLoading(this.currentPageMeta)
-
-      // Fade header
-      if (!this.transitionContainsHeader) {
-        this.$fadeHeader = createFadeHeader(this.currentPageMeta)
-      }
-
       // Other async parts
       this.renderOtherPartsAsync()
     })
@@ -512,7 +509,7 @@ class MipShell extends CustomElement {
       return
     }
 
-    this.bindHeaderEventsFlag = false
+    // this.bindHeaderEventsFlag = false
     // Render target page
     let sourcePage = page.getPageById(page.currentPageId)
     let targetFullPath = getFullPath(to)
@@ -1165,10 +1162,10 @@ class MipShell extends CustomElement {
 
   bindHeaderEvents () {
     let me = this
-    if (this.bindHeaderEventsFlag) {
-      return
-    }
-    this.bindHeaderEventsFlag = true
+    // if (this.bindHeaderEventsFlag) {
+    //   return
+    // }
+    // this.bindHeaderEventsFlag = true
     // Delegate header
     this.headerEventHandler = event.delegate(this.$el, '[mip-header-btn]', 'click', function (e) {
       let buttonName = this.dataset.buttonName

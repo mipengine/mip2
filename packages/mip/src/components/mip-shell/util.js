@@ -57,14 +57,11 @@ export /* istanbul ignore next */ function createMoreButtonWrapper (buttonGroup,
     css(buttonWrapper, 'height', 48 * buttonGroupHTMLArray.length)
     buttonWrapper.innerHTML = buttonGroupHTMLArray.join('')
   }
-  let mask
-  let buttonWrapper
 
-  if (options.update) {
-    mask = document.querySelector('.mip-shell-more-button-mask')
-    buttonWrapper = document.querySelector('.mip-shell-more-button-wrapper')
-    renderButtonWrapper(buttonWrapper)
-  } else {
+  let mask = document.querySelector('.mip-shell-more-button-mask')
+  let buttonWrapper = document.querySelector('.mip-shell-more-button-wrapper')
+
+  if (!mask && !buttonWrapper) {
     mask = document.createElement('mip-fixed')
     mask.classList.add('mip-shell-more-button-mask')
     document.body.appendChild(mask)
@@ -73,6 +70,8 @@ export /* istanbul ignore next */ function createMoreButtonWrapper (buttonGroup,
     buttonWrapper.classList.add('mip-shell-more-button-wrapper')
     renderButtonWrapper(buttonWrapper)
     document.body.appendChild(buttonWrapper)
+  } else {
+    renderButtonWrapper(buttonWrapper)
   }
 
   return {mask, buttonWrapper}

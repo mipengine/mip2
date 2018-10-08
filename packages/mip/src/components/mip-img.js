@@ -325,6 +325,20 @@ class MipImg extends CustomElement {
     }
   }
 
+  /**
+   * Check whether the element need to be rendered in advance
+   *
+   * @param {Object} elementRect element rect
+   * @param {Object} viewportRect viewport rect
+   *
+   * @return {boolean}
+   */
+  prerenderAllowed (elementRect, viewportRect) {
+    let threshold = viewportRect.height
+    return viewportRect.top + viewportRect.height + threshold >= elementRect.top &&
+      elementRect.top + elementRect.height + threshold >= viewportRect.top
+  }
+
   firstInviewCallback () {
     let ele = this.element
     let img = new Image()

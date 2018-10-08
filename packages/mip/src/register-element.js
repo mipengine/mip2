@@ -10,6 +10,7 @@ import layout from './layout'
 import performance from './performance'
 import customElementsStore from './custom-element-store'
 import cssLoader from './util/dom/css-loader'
+import prerender from './client-prerender'
 
 class BaseElement extends HTMLElement {
   constructor (element) {
@@ -60,8 +61,9 @@ class BaseElement extends HTMLElement {
     this._layout = layout.applyLayout(this)
     this.customElement.connectedCallback()
 
-    // Add to resource manager.
-    this._resources && this._resources.add(this)
+    prerender.execute(() => {
+      this._resources.add(this)
+    }, this)
   }
 
   disconnectedCallback () {
@@ -72,7 +74,9 @@ class BaseElement extends HTMLElement {
 
   attributeChangedCallback () {
     let ele = this.customElement
-    ele.attributeChangedCallback.apply(ele, arguments)
+    prerender.execute(() => {
+      ele.attributeChangedCallback(...arguments)
+    }, this)
   }
 
   build () {
@@ -116,12 +120,15 @@ class BaseElement extends HTMLElement {
   }
 
   /**
-   * Check whether the element need to be rendered in advance.
+   * Check whether the element need to be rendered in advance
+   *
+   * @param {Object} elementRect element rect
+   * @param {Object} viewportRect viewport rect
    *
    * @return {boolean}
    */
-  prerenderAllowed () {
-    return this.customElement.prerenderAllowed()
+  prerenderAllowed (elementRect, viewportRect) {
+    return this.customElement.prerenderAllowed(elementRect, viewportRect)
   }
 
   /**

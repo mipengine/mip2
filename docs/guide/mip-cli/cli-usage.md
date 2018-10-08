@@ -211,3 +211,23 @@ module.exports = {
 ```
 
 更多的配置选项可以参考 [Workbox 配置项](https://developers.google.com/web/tools/workbox/modules/workbox-build#generateswstring_mode)
+
+## mip2 CLI 实用插件
+
+### mip2 sf
+
+启动 SuperFrame 线下调试环境，帮助预览 MIP 页面在搜索结果页 SF 环境中的效果，尽早发现问题和确认效果。
+
+启动命令： `mip2 sf`，更多信息查看[这里](https://github.com/mipengine/mip-cli-plugin-sf)
+
+### mip2 site
+
+将 MIP 组件开发和 MIP 页面开发融合成一个项目，并启动一个同时包含多个功能的集成服务器：
+
+* 组件开发服务器，效果同 `mip2 dev`
+
+* SF 线下调试服务器，效果同 `mip2 sf`
+
+* 使用 nodejs 发送请求，整理数据和拼装 MIP 页面
+
+启动命令： `mip2 site init`， `mip2 site dev` 等等，更多信息查看[这里](https://github.com/mipengine/mip-cli-plugin-site)
