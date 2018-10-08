@@ -8,6 +8,7 @@ import layout from '../layout'
 import performance from '../performance'
 import resources from '../resources'
 import customElementsStore from '../custom-element-store'
+import prerender from '../client-prerender'
 
 /* globals HTMLElement */
 
@@ -87,8 +88,11 @@ function createBaseElementProto () {
     // Apply layout for this.
     this._layout = layout.applyLayout(this)
     this.customElement.attachedCallback()
-    // Add to resource manager.
-    this._resources.add(this)
+
+    prerender.execute(() => {
+      // Add to resource manager.
+      this._resources.add(this)
+    }, this)
   }
 
   /**
@@ -102,7 +106,9 @@ function createBaseElementProto () {
 
   proto.attributeChangedCallback = function (attributeName, oldValue, newValue, namespace) {
     let ele = this.customElement
-    ele.attributeChangedCallback.apply(ele, arguments)
+    prerender.execute(() => {
+      ele.attributeChangedCallback(...arguments)
+    }, this)
   }
 
   /**
