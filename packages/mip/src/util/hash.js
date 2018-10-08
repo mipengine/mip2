@@ -129,7 +129,7 @@ class Hash {
     for (let key in hashTree) {
       // dont not storage prerender hash
       if (key === 'prerender') {
-        break
+        continue
       }
       if (hashTree.hasOwnProperty(key)) {
         let val = hashTree[key].value
