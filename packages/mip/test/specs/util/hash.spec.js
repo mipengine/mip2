@@ -75,4 +75,11 @@ describe('hash', function () {
     hash.refreshHashTree()
     expect(hash.get('word')).to.be.equal('')
   })
+
+  it('case: not storage prerender', function () {
+    window.location.hash = 'word=123&prerender=1&id=456'
+    hash.refreshHashTree()
+    expect(hash.get('prerender')).to.equal('1')
+    expect(hash._getHashValue()).to.equal('word=123&id=456')
+  })
 })

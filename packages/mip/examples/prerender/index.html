@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <title>mip prefetch</title>
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <style>
+    #load, #show {
+      display: block;
+      height: 100px;
+      width: 100%;
+      line-height: 100px;
+      background-color: #eee;
+      margin-top: 10px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      padding: 0;
+      margin: 0;
+    }
+    iframe {
+      border: 0;
+      width: 1px;
+      min-width: 100%;
+      height: 100%;
+      -webkit-overflow-scrolling: touch;
+      overflow-y: scroll;
+      overflow-x: hidden;
+    }
+    #page-container {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      transform: translateX(100%);
+      transition: .5s;
+      background: #eee;
+    }
+  </style>
+</head>
+<body>
+  <div id="load">Click to prerender mip page</div>
+  <div id="show">Click to show mip page</div>
+  <div id="page-container"></div>
+  <script>
+    var btnLoad = document.querySelector('#load')
+    var btnShow = document.querySelector('#show')
+    var iframe
+    var container = document.querySelector('#page-container')
+    // var mipPageUrl = '/examples/prefetch/mip-page.html'
+    var mipPageUrl = '/examples/builtin-components/mip-img.html'
+    function createPage() {
+      iframe = document.createElement('iframe')
+      iframe.scrolling = 'no'
+      iframe.referrerpolicy = 'always'
+      iframe.sandbox = 'allow-top-navigation allow-popups allow-scripts allow-forms allow-pointer-lock allow-popups-to-escape-sandbox allow-same-origin allow-modals'
+      iframe.frameBorder = 0
+    }
+
+    function loadMipPage() {
+      console.log('loadMipPage')
+      createPage()
+      iframe.src = mipPageUrl + '#prerender=1'
+      container.appendChild(iframe)
+    }
+
+    function showMipPage() {
+      console.log('showMipPage')
+      container.style.display = 'block'
+
+      setTimeout(function () {
+        container.style.transform = 'translateX(0)'
+      }, 1)
+
+      setTimeout(function () {
+        if (!iframe) {
+          createPage()
+          iframe.src = mipPageUrl + '#prerender=0'
+          container.appendChild(iframe)
+        }
+        else {
+          iframe.contentWindow.postMessage({
+            event: 'page-active'
+          }, window.location.origin)
+        }
+      }, 500);
+    }
+
+    btnLoad.addEventListener('click', loadMipPage)
+    btnShow.addEventListener('click', showMipPage)
+  </script>
+</body>
+</html>
+
+

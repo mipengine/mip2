@@ -20,6 +20,7 @@ import Page from './page/index'
 import {CUSTOM_EVENT_SHOW_PAGE, CUSTOM_EVENT_HIDE_PAGE} from './page/const'
 import Messager from './messager'
 import fixedElement from './fixed-element'
+import clientPrerender from './client-prerender'
 
 /**
  * Save window.
@@ -41,12 +42,13 @@ let viewer = {
      */
   init () {
     /**
-     * Send Message
+     * Send Message, keep messager only one if prerender have created
      *
      * @inner
      * @type {Object}
      */
-    this.messager = new Messager()
+    const messager = clientPrerender.messager
+    this.messager =  messager ? messager : new Messager()
 
     /**
      * The gesture of document.Used by the event-action of Viewer.
@@ -119,7 +121,9 @@ let viewer = {
    */
   sendMessage (eventName, data = {}) {
     if (!win.MIP.standalone) {
-      this.messager.sendMessage(eventName, data)
+      // Send Message in normal case
+      // Save in queue and execute when page-active received
+      clientPrerender.execute(() => this.messager.sendMessage(eventName, data))
     }
   },
 

@@ -22,7 +22,7 @@ class Hash {
       hash = ssHash + hash
     }
     this.hashTree = this._getHashObj(hash)
-    // if hash is exist, try storage the value into sessionStroage
+    // if hash is exist, try storage the value into sessionStorage
     if (hash) {
       let curHash = this._getHashValue()
       if (this.ssEnabled) {
@@ -127,6 +127,10 @@ class Hash {
     let hash = []
     let hashTree = this.hashTree
     for (let key in hashTree) {
+      // dont not storage prerender hash
+      if (key === 'prerender') {
+        continue
+      }
       if (hashTree.hasOwnProperty(key)) {
         let val = hashTree[key].value
         let sep = hashTree[key].sep
