@@ -17,7 +17,12 @@ import {supportsPassive} from './page/util/feature-detect'
 import {resolvePath} from './page/util/path'
 import viewport from './viewport'
 import Page from './page/index'
-import {CUSTOM_EVENT_SHOW_PAGE, CUSTOM_EVENT_HIDE_PAGE} from './page/const'
+import {
+  CUSTOM_EVENT_SHOW_PAGE,
+  CUSTOM_EVENT_HIDE_PAGE,
+  OUTER_MESSAGE_PUSH_STATE,
+  OUTER_MESSAGE_REPLACE_STATE
+} from './page/const'
 import Messager from './messager'
 import fixedElement from './fixed-element'
 import clientPrerender from './client-prerender'
@@ -211,7 +216,7 @@ let viewer = {
       url: parseCacheUrl(completeUrl),
       state
     }
-    this.sendMessage(replace ? 'replace-state' : 'push-state', pushMessage)
+    this.sendMessage(replace ? OUTER_MESSAGE_REPLACE_STATE : OUTER_MESSAGE_PUSH_STATE, pushMessage)
 
     // Create target route
     let targetRoute = {
