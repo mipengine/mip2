@@ -7,6 +7,7 @@
 import util from '../util/index'
 import viewer from '../viewer'
 import CustomElement from '../custom-element'
+// import {OUTER_MESSAGE_CHANGE_STATE} from '../page/const/index'
 
 let windowInIframe = viewer.isIframed
 
@@ -182,7 +183,8 @@ class MipVideo extends CustomElement {
       /* istanbul ignore if */
       if (windowInIframe) {
         // mip_video_jump is written outside iframe
-        viewer.sendMessage('mip_video_jump', {
+        // TODO 改成 OUTER_MESSAGE_VIDEO_JUMP
+        viewer.sendMessage('mip-video-jump', {
           poster: videoEl.dataset.videoPoster,
           src: urlSrc
         })

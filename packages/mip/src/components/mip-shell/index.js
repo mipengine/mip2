@@ -25,7 +25,6 @@ import {
   hideAllIFrames,
   createLoading,
   getLoading,
-  createFadeHeader,
   getFadeHeader,
   toggleFadeHeader,
   nextFrame,
@@ -46,7 +45,9 @@ import {
   MESSAGE_ROUTER_FORWARD,
   MESSAGE_CROSS_ORIGIN,
   MESSAGE_BROADCAST_EVENT,
-  MESSAGE_PAGE_RESIZE
+  MESSAGE_PAGE_RESIZE,
+  OUTER_MESSAGE_CHANGE_STATE,
+  OUTER_MESSAGE_CLOSE
 } from '../../page/const/index'
 import viewport from '../../viewport'
 import {customEmit} from '../../util/custom-event'
@@ -391,7 +392,11 @@ class MipShell extends CustomElement {
     this.router = router
 
     // Handle events emitted by SF
+    // DELETE ME
     viewer.onMessage('changeState', ({url}) => {
+      router.replace(makeCacheUrl(url, 'url', true))
+    })
+    viewer.onMessage(OUTER_MESSAGE_CHANGE_STATE, ({url}) => {
       router.replace(makeCacheUrl(url, 'url', true))
     })
 
@@ -1226,7 +1231,7 @@ class MipShell extends CustomElement {
     } else if (buttonName === 'more') {
       this.toggleDropdown(true)
     } else if (buttonName === 'close') {
-      window.MIP.viewer.sendMessage('close')
+      window.MIP.viewer.sendMessage(OUTER_MESSAGE_CLOSE)
     } else if (buttonName === 'cancel') {
       this.toggleDropdown(false)
     }

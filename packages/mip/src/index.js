@@ -29,6 +29,7 @@ import performance from './performance'
 import templates from './util/templates'
 import mip1PolyfillInstall from './mip1-polyfill/index'
 import monitorInstall from './log/monitor'
+import {OUTER_MESSAGE_PERFORMANCE_UPDATE} from './page/const/index'
 
 let mip = {}
 
@@ -130,7 +131,7 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     performance.start(window._mipStartTiming)
     // send performance data
     performance.on('update', timing => {
-      viewer.sendMessage('performance_update', timing)
+      viewer.sendMessage(OUTER_MESSAGE_PERFORMANCE_UPDATE, timing)
     })
 
     // Show page
