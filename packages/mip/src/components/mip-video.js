@@ -187,7 +187,6 @@ class MipVideo extends CustomElement {
           src: urlSrc
         }
         viewer.sendMessage('mip-video-jump', message)
-        viewer.sendMessage('video-jump', message)
       }
     }
     this.element.appendChild(videoEl)
