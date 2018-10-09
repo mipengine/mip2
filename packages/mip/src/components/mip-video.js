@@ -182,10 +182,12 @@ class MipVideo extends CustomElement {
       /* istanbul ignore if */
       if (windowInIframe) {
         // mip_video_jump is written outside iframe
-        viewer.sendMessage('mip-video-jump', {
+        let message = {
           poster: videoEl.dataset.videoPoster,
           src: urlSrc
-        })
+        }
+        viewer.sendMessage('mip-video-jump', message)
+        viewer.sendMessage('video-jump', message)
       }
     }
     this.element.appendChild(videoEl)

@@ -394,6 +394,9 @@ class MipShell extends CustomElement {
     viewer.onMessage('changeState', ({url}) => {
       router.replace(makeCacheUrl(url, 'url', true))
     })
+    viewer.onMessage('change-state', ({url}) => {
+      router.replace(makeCacheUrl(url, 'url', true))
+    })
 
     window.MIP_SHELL_OPTION = {
       allowTransition: false,

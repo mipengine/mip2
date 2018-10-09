@@ -101,10 +101,12 @@ let viewer = {
 
     // notify SF hide its loading
     if (win.MIP.viewer.page.isRootPage) {
-      this.sendMessage('mippageload', {
+      let message = {
         time: Date.now(),
         title: encodeURIComponent(document.title)
-      })
+      }
+      this.sendMessage('mippageload', message)
+      this.sendMessage('page-load', message)
     }
   },
 
