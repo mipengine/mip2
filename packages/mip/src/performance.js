@@ -150,6 +150,7 @@ export default {
   addFsElement,
   fsElementLoaded,
   getTiming,
+  recordTiming,
   on () {
     performanceEvent.on.apply(performanceEvent, arguments)
   }
