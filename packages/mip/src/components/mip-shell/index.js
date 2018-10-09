@@ -17,7 +17,7 @@ import fn from '../../util/fn'
 import platform from '../../util/platform'
 import event from '../../util/dom/event'
 import CustomElement from '../../custom-element'
-import {supportsPassive, isPortrait, idleCallback} from '../../page/util/feature-detect'
+import {supportsPassive, isPortrait} from '../../page/util/feature-detect'
 import {isSameRoute, getFullPath} from '../../page/util/route'
 import {
   createIFrame,
@@ -226,12 +226,11 @@ class MipShell extends CustomElement {
       page.pageMeta = this.currentPageMeta
       this.initShell()
       this.initRouter()
-      this.bindRootEvents()
-      // idleCallback(() => this.bindRootEvents())
+      // 绑定事件改为异步，不阻塞发送 mippageload 事件，下同
+      setTimeout(() => this.bindRootEvents(), 0)
     }
 
-    this.bindAllEvents()
-    // idleCallback(() => this.bindAllEvents())
+    setTimeout(() => this.bindAllEvents(), 0)
   }
 
   disconnectedCallback () {
@@ -272,22 +271,22 @@ class MipShell extends CustomElement {
     // Other sync parts
     this.renderOtherParts()
 
-    // Button wrapper & mask
-    let buttonGroup = this.currentPageMeta.header.buttonGroup
-    let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup)
-    this.$buttonMask = mask
-    this.$buttonWrapper = buttonWrapper
+    setTimeout(() => {
+      // Button wrapper & mask
+      let buttonGroup = this.currentPageMeta.header.buttonGroup
+      let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup)
+      this.$buttonMask = mask
+      this.$buttonWrapper = buttonWrapper
 
-    // Page mask
-    this.$pageMask = createPageMask()
+      // Page mask
+      this.$pageMask = createPageMask()
 
-    // Loading
-    this.$loading = createLoading(this.currentPageMeta)
+      // Loading
+      this.$loading = createLoading(this.currentPageMeta)
 
-    idleCallback(() => {
       // Other async parts
       this.renderOtherPartsAsync()
-    })
+    }, 0)
   }
 
   renderHeader (container) {
@@ -1156,8 +1155,6 @@ class MipShell extends CustomElement {
         height: this.currentViewportHeight
       }
     })
-    // 3.notify SF to set the iframe outside
-    // viewer.sendMessage('resizeContainer', {height: this.currentViewportHeight})
   }
 
   bindHeaderEvents () {
