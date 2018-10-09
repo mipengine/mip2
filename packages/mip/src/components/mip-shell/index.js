@@ -985,9 +985,57 @@ class MipShell extends CustomElement {
    * @param {Function} options.onComplete complete callback
    */
   forwardTransition (options) {
-    // Currently act the same as forwardTransitionAndCreate
-    // This can be extended by sub-shell which executes different operations
-    this.forwardTransitionAndCreate(options)
+    let {sourcePageId, targetPageId, targetPageMeta, onComplete} = options
+    let iframe = getIFrame(targetPageId)
+    let rootPageScrollPosition = 0
+    if (sourcePageId === page.pageId) {
+      rootPageScrollPosition = this.rootPageScrollPosition
+    }
+    css(iframe, {
+      display: 'block',
+      opacity: 1,
+      'z-index': activeZIndex++,
+      top: rootPageScrollPosition + 'px'
+    })
+    iframe.classList.add('slide-enter', 'slide-enter-active')
+
+    let headerLogoTitle
+    let fadeHeader
+    if (!this.transitionContainsHeader) {
+      headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
+      headerLogoTitle && headerLogoTitle.classList.add('fade-out')
+      fadeHeader = getFadeHeader(targetPageMeta)
+      fadeHeader.classList.add('fade-enter', 'fade-enter-active')
+      css(fadeHeader, 'display', 'block')
+    }
+
+    // trigger layout
+    /* eslint-disable no-unused-expressions */
+    // iframe.offsetWidth
+    /* eslint-enable no-unused-expressions */
+
+    whenTransitionEnds(iframe, 'transition', () => {
+      iframe.classList.remove('slide-enter-to', 'slide-enter-active')
+      if (!this.transitionContainsHeader) {
+        fadeHeader.classList.remove('fade-enter-to', 'fade-enter-active')
+      }
+
+      hideAllIFrames()
+      this.fixRootPageScroll({sourcePageId, targetPageId})
+      css(iframe, 'top', 0)
+      onComplete && onComplete()
+
+      this.afterSwitchPage(options)
+    })
+
+    nextFrame(() => {
+      iframe.classList.add('slide-enter-to')
+      iframe.classList.remove('slide-enter')
+      if (!this.transitionContainsHeader) {
+        fadeHeader.classList.add('fade-enter-to')
+        fadeHeader.classList.remove('fade-enter')
+      }
+    })
   }
 
   /**
