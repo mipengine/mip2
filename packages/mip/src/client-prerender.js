@@ -32,8 +32,11 @@ let resetPrerenderHash = () => {
 
 class ClientPrerender {
   constructor () {
-    // 预渲染环境标记
+    // 预渲染环境标记, 是否是预渲染状态
     this.prerender = false
+
+    // 是否执行过预渲染
+    this.isPrerendered = false
 
     // 延迟执行的的函数队列
     this.queue = []
@@ -54,6 +57,7 @@ class ClientPrerender {
           time: Date.now()
         })
       }).then(() => {
+        this.isPrerendered = true
         performance.recordTiming('MIPElementBuildStart')
         let fn
         while ((fn = this.queue.shift())) {
