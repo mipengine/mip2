@@ -513,7 +513,6 @@ class MipShell extends CustomElement {
       return
     }
 
-    // this.bindHeaderEventsFlag = false
     // Render target page
     let sourcePage = page.getPageById(page.currentPageId)
     let targetFullPath = getFullPath(to)
@@ -564,10 +563,12 @@ class MipShell extends CustomElement {
 
     if (!targetPage || (to.meta && to.meta.reload && !to.meta.cacheFirst)) {
       // Iframe will be created in following situation:
-      // 1. `!targetPage` means target iframe doesn't exists.
-      // 2. `to.meta && to.meta.reload` means target iframe MUST be recreated even it exists.
-      //    `to.meta.reload` will be set when click `<a mip-link>`
-      // 2.1 `cacheFirst` uses cached page first, thus `newPage` will be `false` if cached page exists
+      // 1. If target iframe doesn't exist (`!targetPage`), create it.
+      // 2. If target iframe exists:
+      // 2.1 Target iframe MUST be recreated (`to.meta.reload`, which will be set when click `<a mip-link>`)
+      // 2.2 Not a cache first strategy (`to.meta.cacheFirst`)
+      //     Cache first strategy uses cached page when target page has already existed
+      // expression = 1 || (2.1 && 2.2)
 
       // If target page is root page
       if (page.pageId === targetPageId) {
@@ -682,7 +683,12 @@ class MipShell extends CustomElement {
 
       this.switchPage(params)
     } else {
-      // Use existing iframe without recreating
+      // Use existing iframe without recreating in following situations:
+      // 1. Target iframe has already existed
+      // 2.1 Don't need recreating iframe (`to.meta.reload = false`, which maybe come from a popstate event)
+      // 2.2 Cache first strategy (`to.meta.cacheFirst = true`)
+      // expression = 1 && (2.1 || 2.2)
+
       if (platform.isQQ() || platform.isQQApp()) {
         window.MIP_SHELL_OPTION.allowTransition = false
       }
@@ -825,11 +831,6 @@ class MipShell extends CustomElement {
       fadeHeader.classList.add('fade-enter', 'fade-enter-active')
       css(fadeHeader, 'display', 'block')
     }
-
-    // trigger layout
-    /* eslint-disable no-unused-expressions */
-    loading.offsetWidth
-    /* eslint-enable no-unused-expressions */
 
     whenTransitionEnds(loading, 'transition', () => {
       loading.classList.remove('slide-enter-to', 'slide-enter-active')
@@ -1008,11 +1009,6 @@ class MipShell extends CustomElement {
       fadeHeader.classList.add('fade-enter', 'fade-enter-active')
       css(fadeHeader, 'display', 'block')
     }
-
-    // trigger layout
-    /* eslint-disable no-unused-expressions */
-    // iframe.offsetWidth
-    /* eslint-enable no-unused-expressions */
 
     whenTransitionEnds(iframe, 'transition', () => {
       iframe.classList.remove('slide-enter-to', 'slide-enter-active')
@@ -1212,10 +1208,6 @@ class MipShell extends CustomElement {
 
   bindHeaderEvents () {
     let me = this
-    // if (this.bindHeaderEventsFlag) {
-    //   return
-    // }
-    // this.bindHeaderEventsFlag = true
     // Delegate header
     this.headerEventHandler = event.delegate(this.$el, '[mip-header-btn]', 'click', function (e) {
       let buttonName = this.dataset.buttonName
