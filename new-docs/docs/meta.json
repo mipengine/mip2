@@ -1,0 +1,24 @@
+{
+  "menu": [
+    {
+      "name": "起步",
+      "key": "basic"
+    },
+    {
+      "name": "开发规范",
+      "key": "mip-standard"
+    },
+    {
+      "name": "交互式设计",
+      "key": "interactive-mip"
+    },
+    {
+      "name": "全站 MIP",
+      "key": "all-sites-mip"
+    },
+    {
+      "name": "进阶教程",
+      "key": "advanced"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "menu": [
+    {
+      "name": "什么是 MIP",
+      "key": "what-is-mip"
+    },
+    {
+      "name": "MIP 是如何运作的",
+      "key": "principle-of-mip"
+    },
+    {
+      "name": "MIP 使用场景",
+      "key": "what-is-mip-for"
+    },
+    {
+      "name": "Showcases 案例",
+      "key": "showcases"
+    },
+    {
+      "name": "小故事",
+      "key": "mip-stories"
+    }
+  ]
+}
