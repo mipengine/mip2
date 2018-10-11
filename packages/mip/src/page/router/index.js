@@ -1,4 +1,5 @@
 import HTML5History from './history'
+import {OUTER_MESSAGE_HISTORY_NAVIGATE} from '../const/index'
 
 export default class Router {
   constructor (options = {}) {
@@ -34,7 +35,7 @@ export default class Router {
       this.history.go(n)
     } else {
       // SF can help to navigate by 'changeState' when standalone = false
-      window.MIP.viewer.sendMessage('historyNavigate', {step: n})
+      window.MIP.viewer.sendMessage(OUTER_MESSAGE_HISTORY_NAVIGATE, {step: n})
     }
   }
 
