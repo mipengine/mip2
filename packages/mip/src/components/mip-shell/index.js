@@ -46,6 +46,7 @@ import {
   MESSAGE_CROSS_ORIGIN,
   MESSAGE_BROADCAST_EVENT,
   MESSAGE_PAGE_RESIZE,
+  MESSAGE_PAGE_ACTIVE,
   OUTER_MESSAGE_CHANGE_STATE,
   OUTER_MESSAGE_CLOSE
 } from '../../page/const/index'
@@ -698,6 +699,18 @@ class MipShell extends CustomElement {
         this.refreshShell({pageMeta: targetPageMeta})
       }
 
+      let targetIFrame = getIFrame(targetPageId)
+      // Root Page 不存在预渲染
+      if (targetPageId !== page.pageId &&
+        (targetPage.isPrerender || targetIFrame.getAttribute('prerender') === '1')) {
+        targetIFrame.contentWindow.postMessage({
+          name: window.name,
+          event: MESSAGE_PAGE_ACTIVE
+        }, '*')
+        targetPage.isPrerender = false
+        targetIFrame.removeAttribute('prerender')
+      }
+
       params.newPage = false
       params.cacheFirst = to.meta && to.meta.cacheFirst
       this.beforeSwitchPage(params)
@@ -709,10 +722,11 @@ class MipShell extends CustomElement {
 
         window.MIP.$recompile()
 
-        css(getIFrame(targetPageId), {
+        css(targetIFrame, {
           display: 'block',
           opacity: 1
         })
+
         if (this.transitionContainsHeader) {
           css(this.$loading, 'display', 'none')
         } else {
