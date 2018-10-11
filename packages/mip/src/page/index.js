@@ -511,6 +511,11 @@ class Page {
     }
 
     return Promise.all(urls.map(fullpath => {
+      if (window.MIP.viewer._isCrossOrigin(fullpath)) {
+        console.warn('跨域 MIP 页面暂不支持预渲染', fullpath)
+        return Promise.resolve()
+      }
+
       let pageId = getCleanPageId(fullpath)
       return createPrerenderIFrame({fullpath, pageId})
     }))

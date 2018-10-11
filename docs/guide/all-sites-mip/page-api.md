@@ -123,6 +123,40 @@ window.addEventListener('myShellEvent', e => {
 })
 ```
 
+### prerender
+
+请求 MIP 核心对部分页面进行预渲染，供之后切换使用。和普通的页面切换相比，加载预渲染的 MIP 页面有如下特点：
+
+1. 不发送网络请求，因此没有网络延时，__速度更快__
+2. 切换时，因为目标页面已经存在，所以 __没有 Loading__ 图标，体验更加顺畅
+
+详细内容可以参考 [提升性能](./performance.md) 的预渲染章节。接收参数如下：
+
+* urls: __Array|string__, 需要预渲染的页面 URL，__必须是包含协议，域名，端口号等的完整 URL 而不是相对或者绝对路径，不支持跨域__。如果是单个页面，可以是字符串，否则是字符串组成的数组。
+
+示例代码：
+
+```javascript
+window.MIP.viewer.page.prerender([
+    'http://localhost:8080/examples/page/tree.html',
+    'http://localhost:8080/examples/page/data.html'
+])
+```
+
+在预渲染之后，可以通过跳转时添加特定的参数表示从预渲染中获取页面并展示，如下：
+
+```html
+<a mip-link cache-first href="http://localhost:8080/examples/page/tree.html">Go to Tree</a>
+```
+
+或者使用编码形式：
+
+```javascript
+window.MIP.viewer.open('http://localhost:8080/examples/page/tree.html', {
+    cacheFirst: true
+})
+```
+
 ### 页面切换事件
 
 在页面切换，也就是 `<iframe>` 展现/隐藏时，会在页面中触发切换事件，各个自定义组件可以监听这两个事件：
