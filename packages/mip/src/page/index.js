@@ -4,6 +4,7 @@
  */
 
 import {
+  createIFrame,
   ensureMIPShell,
   getIFrame,
   toggleFadeHeader
@@ -21,9 +22,10 @@ import {
   MESSAGE_ROUTER_BACK,
   MESSAGE_ROUTER_FORWARD,
   MESSAGE_CROSS_ORIGIN,
-  MESSAGE_BROADCAST_EVENT
+  MESSAGE_BROADCAST_EVENT,
+  DEFAULT_SHELL_CONFIG
 } from './const/index'
-
+import fn from '../util/fn'
 import {customEmit} from '../util/custom-event'
 import viewport from '../viewport'
 import performance from '../performance'
@@ -41,11 +43,11 @@ class Page {
     this.pageId = undefined
     this.fullpath = undefined
     this.pageMeta = undefined
-
-    // root page
-    this.children = []
     this.currentPageId = undefined
     this.targetWindow = window
+
+    // 记录 iframe 内的 page 对象。Root Page 这个属性才有意义，但 Root Page 本身不计入。
+    this.children = []
   }
 
   initPageId () {
@@ -297,6 +299,24 @@ class Page {
     })
   }
 
+  /**
+   * Create and prerender iframe(s) sliently
+   * Cross Origin is now allowed
+   * Each page can invoke this function
+   *
+   * @param {Array|string} urls
+   * @returns {Promise}
+   */
+  prerender (urls) {
+    if (this.isCrossOrigin) {
+      console.warn('跨域 MIP 页面暂不支持预渲染')
+      return
+    }
+
+    let target = this.isRootPage ? this : window.parent.MIP.viewer.page
+    return target.prerenderPages(urls)
+  }
+
   // =============================== Root Page methods ===============================
 
   /**
@@ -325,25 +345,47 @@ class Page {
   }
 
   /**
-   * check if children.length exceeds MAX_PAGE_NUM
-   * if so, remove the first child
+   * Check if children.length exceeds MAX_PAGE_NUM
+   * If so, remove one
+   *
+   * @param {string} targetPageId targetPageId
    */
   /* istanbul ignore next */
   checkIfExceedsMaxPageNum (targetPageId) {
     if (this.children.length >= MAX_PAGE_NUM) {
       let currentPage
+      let prerenderIFrames = []
+      let found = false
       for (let i = 0; i < this.children.length; i++) {
         currentPage = this.children[i]
-        // find first removable page, which can't be target page or current page
+        // Find first removable page, which can't be target page or current page
         if (currentPage.pageId !== targetPageId &&
           currentPage.pageId !== this.currentPageId) {
           const firstRemovableIframe = getIFrame(currentPage.pageId)
+
+          // If prerendered, skip it first
+          if (firstRemovableIframe.getAttribute('prerender') === '1') {
+            prerenderIFrames.push({iframe: firstRemovableIframe, index: i})
+            continue
+          }
+
           if (firstRemovableIframe && firstRemovableIframe.parentNode) {
             firstRemovableIframe.parentNode.removeChild(firstRemovableIframe)
+            this.children.splice(i, 1)
+            found = true
           }
-          // remove from children list
-          this.children.splice(i, 1)
           return
+        }
+      }
+
+      if (!found) {
+        // Find one in prerendered iframe
+        for (let i = 0; i < prerenderIFrames.length; i++) {
+          const firstRemovableIframe = prerenderIFrames[i].iframe
+          if (firstRemovableIframe && firstRemovableIframe.parentNode) {
+            firstRemovableIframe.parentNode.removeChild(firstRemovableIframe)
+            this.children.splice(prerenderIFrames[i].index, 1)
+          }
         }
       }
     }
@@ -390,6 +432,88 @@ class Page {
     ]
     let notInWhitelistSelector = whitelist.map(selector => `:not(${selector})`).join('')
     return [...document.querySelectorAll(`body > ${notInWhitelistSelector}`)]
+  }
+
+  /**
+   * Create and prerender iframe(s) sliently
+   * Cross Origin is now allowed
+   *
+   * @param {Array|string} urls
+   * @returns {Promise}
+   */
+  prerenderPages (urls) {
+    if (typeof urls === 'string') {
+      urls = [urls]
+    }
+
+    if (!Array.isArray(urls)) {
+      reject()
+      return
+    }
+
+    let createPrerenderIFrame = ({fullpath, pageId}) => {
+      return new Promise((innerResolve, innerReject) => {
+        let me = this
+        let iframe = getIFrame(pageId)
+        if (iframe) {
+          // 预加载前已经存在，直接返回即可
+          innerResolve(iframe)
+          return
+        }
+
+        createIFrame({fullpath: fullpath + '#prerender=1', pageId}, {
+          onLoad (newIframe) {
+            newIframe.setAttribute('prerender', '1')
+            let targetPageInfo = {
+              pageId,
+              pageMeta: fn.extend(true, {}, findMetaByPageId(pageId)),
+              fullpath,
+              standalone: window.MIP.standalone,
+              isRootPage: false,
+              isCrossOrigin: false,
+              isPrerender: true
+            }
+            targetPageInfo.targetWindow = newIframe.contentWindow
+            me.addChild(targetPageInfo)
+            me.checkIfExceedsMaxPageNum(pageId)
+
+            innerResolve(newIframe)
+          },
+          onError (newIframe) {
+            innerReject(newIframe)
+          }
+        })
+      })
+    }
+
+    let findMetaByPageId = pageId => {
+      let target
+      if (!this.isRootPage && !this.isCrossOrigin) {
+        target = window.parent
+      } else {
+        target = window
+      }
+
+      if (target.MIP_PAGE_META_CACHE[pageId]) {
+        return target.MIP_PAGE_META_CACHE[pageId]
+      } else {
+        for (let i = 0; i < target.MIP_SHELL_CONFIG.length; i++) {
+          let route = target.MIP_SHELL_CONFIG[i]
+          if (route.regexp.test(pageId)) {
+            target.MIP_PAGE_META_CACHE[pageId] = route.meta
+            return route.meta
+          }
+        }
+      }
+
+      console.warn('Cannot find MIP Shell Config for current page. Use default instead.')
+      return Object.assign({}, DEFAULT_SHELL_CONFIG)
+    }
+
+    return Promise.all(urls.map(fullpath => {
+      let pageId = getCleanPageId(fullpath)
+      return createPrerenderIFrame({fullpath, pageId})
+    }))
   }
 }
 

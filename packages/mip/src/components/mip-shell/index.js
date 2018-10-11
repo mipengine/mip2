@@ -686,7 +686,7 @@ class MipShell extends CustomElement {
       // Use existing iframe without recreating in following situations:
       // 1. Target iframe has already existed
       // 2.1 Don't need recreating iframe (`to.meta.reload = false`, which maybe come from a popstate event)
-      // 2.2 Cache first strategy (`to.meta.cacheFirst = true`)
+      // 2.2 Cache first strategy (`to.meta.cacheFirst = true`) (including prerender)
       // expression = 1 && (2.1 || 2.2)
 
       if (platform.isQQ() || platform.isQQApp()) {
@@ -699,6 +699,7 @@ class MipShell extends CustomElement {
       }
 
       params.newPage = false
+      params.cacheFirst = to.meta && to.meta.cacheFirst
       this.beforeSwitchPage(params)
 
       params.onComplete = () => {

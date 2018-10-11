@@ -22,10 +22,10 @@ export function createIFrame ({fullpath, pageId}, {onLoad, onError} = {}) {
 
   container = document.createElement('iframe')
   container.onload = () => {
-    typeof onLoad === 'function' && onLoad()
+    typeof onLoad === 'function' && onLoad(container)
   }
   container.onerror = () => {
-    typeof onError === 'function' && onError()
+    typeof onError === 'function' && onError(container)
   }
   // TODO: use XHR to load iframe so that we can get httpRequest.status 404
   let targetOrigin = normalizeLocation(pageId).origin
