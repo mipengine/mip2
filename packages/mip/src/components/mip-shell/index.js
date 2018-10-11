@@ -282,6 +282,9 @@ class MipShell extends CustomElement {
       // Page mask
       this.$pageMask = createPageMask()
 
+      // Page mask
+      this.$pageMask = createPageMask()
+
       // Loading
       this.$loading = createLoading(this.currentPageMeta)
 
