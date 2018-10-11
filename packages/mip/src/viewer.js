@@ -127,8 +127,13 @@ let viewer = {
   sendMessage (eventName, data = {}) {
     if (!win.MIP.standalone) {
       // Send Message in normal case
-      // Save in queue and execute when page-active received
-      clientPrerender.execute(() => this.messager.sendMessage(eventName, data))
+      // Save in queue and execute when page-active received, and update recoreded event time if prerendered
+      clientPrerender.execute(() => {
+        if (clientPrerender.isPrerendered && data.time) {
+          data.time = Date.now()
+        }
+        this.messager.sendMessage(eventName, data)
+      })
     }
   },
 
