@@ -6,7 +6,7 @@
 (function () {
   function processor (event) {
     var data = event.data
-    if (data.event === 'performance_update') {
+    if (data.event === 'performance-update') {
       // @TODO: MIP2 暂时有 bug
       if (data.data && data.data.data) {
         data = data.data.data

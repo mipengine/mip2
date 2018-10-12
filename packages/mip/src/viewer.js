@@ -17,7 +17,12 @@ import {supportsPassive} from './page/util/feature-detect'
 import {resolvePath} from './page/util/path'
 import viewport from './viewport'
 import Page from './page/index'
-import {CUSTOM_EVENT_SHOW_PAGE, CUSTOM_EVENT_HIDE_PAGE} from './page/const'
+import {
+  CUSTOM_EVENT_SHOW_PAGE,
+  CUSTOM_EVENT_HIDE_PAGE,
+  OUTER_MESSAGE_PUSH_STATE,
+  OUTER_MESSAGE_REPLACE_STATE
+} from './page/const'
 import Messager from './messager'
 import fixedElement from './fixed-element'
 import clientPrerender from './client-prerender'
@@ -114,7 +119,7 @@ let viewer = {
    * 1. `pushState` when clicking a `<a mip-link>` element (called 'loadiframe')
    * 2. `mipscroll` when scrolling inside an iframe, try to let parent page hide its header.
    * 3. `mippageload` when current page loaded
-   * 4. `performance_update`
+   * 4. `performance-update`
    *
    * @param {string} eventName
    * @param {Object} data Message body
@@ -122,8 +127,13 @@ let viewer = {
   sendMessage (eventName, data = {}) {
     if (!win.MIP.standalone) {
       // Send Message in normal case
-      // Save in queue and execute when page-active received
-      clientPrerender.execute(() => this.messager.sendMessage(eventName, data))
+      // Save in queue and execute when page-active received, and update recoreded event time if prerendered
+      clientPrerender.execute(() => {
+        if (clientPrerender.isPrerendered && data.time) {
+          data.time = Date.now()
+        }
+        this.messager.sendMessage(eventName, data)
+      })
     }
   },
 
@@ -211,7 +221,7 @@ let viewer = {
       url: parseCacheUrl(completeUrl),
       state
     }
-    this.sendMessage(replace ? 'replaceState' : 'pushState', pushMessage)
+    this.sendMessage(replace ? OUTER_MESSAGE_REPLACE_STATE : OUTER_MESSAGE_PUSH_STATE, pushMessage)
 
     // Create target route
     let targetRoute = {

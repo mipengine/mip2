@@ -126,13 +126,13 @@ describe('router', function () {
     spy = sinon.stub(window.MIP.viewer, 'sendMessage').returns(true)
 
     router.back()
-    expect(spy).to.have.been.calledWith('historyNavigate', {step: -1})
+    expect(spy).to.have.been.calledWith('history-navigate', {step: -1})
   })
 
   it('.forward will sendMessage to SF in SF mode', function () {
     spy = sinon.stub(window.MIP.viewer, 'sendMessage').returns(true)
 
     router.forward()
-    expect(spy).to.have.been.calledWith('historyNavigate', {step: 1})
+    expect(spy).to.have.been.calledWith('history-navigate', {step: 1})
   })
 })
