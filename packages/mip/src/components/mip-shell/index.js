@@ -17,7 +17,7 @@ import fn from '../../util/fn'
 import platform from '../../util/platform'
 import event from '../../util/dom/event'
 import CustomElement from '../../custom-element'
-import {supportsPassive, isPortrait, idleCallback} from '../../page/util/feature-detect'
+import {supportsPassive, isPortrait} from '../../page/util/feature-detect'
 import {isSameRoute, getFullPath} from '../../page/util/route'
 import {
   createIFrame,
@@ -25,7 +25,6 @@ import {
   hideAllIFrames,
   createLoading,
   getLoading,
-  createFadeHeader,
   getFadeHeader,
   toggleFadeHeader,
   nextFrame,
@@ -46,7 +45,9 @@ import {
   MESSAGE_ROUTER_FORWARD,
   MESSAGE_CROSS_ORIGIN,
   MESSAGE_BROADCAST_EVENT,
-  MESSAGE_PAGE_RESIZE
+  MESSAGE_PAGE_RESIZE,
+  OUTER_MESSAGE_CHANGE_STATE,
+  OUTER_MESSAGE_CLOSE
 } from '../../page/const/index'
 import viewport from '../../viewport'
 import {customEmit} from '../../util/custom-event'
@@ -226,12 +227,11 @@ class MipShell extends CustomElement {
       page.pageMeta = this.currentPageMeta
       this.initShell()
       this.initRouter()
-      this.bindRootEvents()
-      // idleCallback(() => this.bindRootEvents())
+      // 绑定事件改为异步，不阻塞发送 mippageload 事件，下同
+      setTimeout(() => this.bindRootEvents(), 0)
     }
 
-    this.bindAllEvents()
-    // idleCallback(() => this.bindAllEvents())
+    setTimeout(() => this.bindAllEvents(), 0)
   }
 
   disconnectedCallback () {
@@ -272,22 +272,25 @@ class MipShell extends CustomElement {
     // Other sync parts
     this.renderOtherParts()
 
-    // Button wrapper & mask
-    let buttonGroup = this.currentPageMeta.header.buttonGroup
-    let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup)
-    this.$buttonMask = mask
-    this.$buttonWrapper = buttonWrapper
+    setTimeout(() => {
+      // Button wrapper & mask
+      let buttonGroup = this.currentPageMeta.header.buttonGroup
+      let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup)
+      this.$buttonMask = mask
+      this.$buttonWrapper = buttonWrapper
 
-    // Page mask
-    this.$pageMask = createPageMask()
+      // Page mask
+      this.$pageMask = createPageMask()
 
-    // Loading
-    this.$loading = createLoading(this.currentPageMeta)
+      // Page mask
+      this.$pageMask = createPageMask()
 
-    idleCallback(() => {
+      // Loading
+      this.$loading = createLoading(this.currentPageMeta)
+
       // Other async parts
       this.renderOtherPartsAsync()
-    })
+    }, 0)
   }
 
   renderHeader (container) {
@@ -392,7 +395,11 @@ class MipShell extends CustomElement {
     this.router = router
 
     // Handle events emitted by SF
+    // DELETE ME
     viewer.onMessage('changeState', ({url}) => {
+      router.replace(makeCacheUrl(url, 'url', true))
+    })
+    viewer.onMessage(OUTER_MESSAGE_CHANGE_STATE, ({url}) => {
       router.replace(makeCacheUrl(url, 'url', true))
     })
 
@@ -1156,8 +1163,6 @@ class MipShell extends CustomElement {
         height: this.currentViewportHeight
       }
     })
-    // 3.notify SF to set the iframe outside
-    // viewer.sendMessage('resizeContainer', {height: this.currentViewportHeight})
   }
 
   bindHeaderEvents () {
@@ -1229,7 +1234,7 @@ class MipShell extends CustomElement {
     } else if (buttonName === 'more') {
       this.toggleDropdown(true)
     } else if (buttonName === 'close') {
-      window.MIP.viewer.sendMessage('close')
+      window.MIP.viewer.sendMessage(OUTER_MESSAGE_CLOSE)
     } else if (buttonName === 'cancel') {
       this.toggleDropdown(false)
     }

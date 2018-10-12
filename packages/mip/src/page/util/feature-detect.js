@@ -40,7 +40,3 @@ export const raf = window.requestAnimationFrame
 export function isPortrait () {
   return window.innerHeight > window.innerWidth
 }
-
-export const idleCallback = window.requestIdleCallback
-  ? window.requestIdleCallback.bind(window)
-  : /* istanbul ignore next */setTimeout

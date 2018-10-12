@@ -7,6 +7,7 @@
 import util from '../util/index'
 import viewer from '../viewer'
 import CustomElement from '../custom-element'
+// import {OUTER_MESSAGE_CHANGE_STATE} from '../page/const/index'
 
 let windowInIframe = viewer.isIframed
 
@@ -80,7 +81,7 @@ class MipVideo extends CustomElement {
     } else {
       // 再细分为 iframe 外层页面是否为百度搜索结果页，如果是就 renderPlayElsewhere，否则就 renderError
       // 考虑安全性，renderPlayElsewhere 可以在其他地方来打开视频，而renderError 则是直接显示X，不建议播放
-      if (window.parent.MIP && !window.parent.MIP.standalone) {
+      if (!window.MIP.standalone) {
         this.videoElement = this.renderPlayElsewhere()
       } else {
         this.videoElement = this.renderError()
@@ -182,7 +183,8 @@ class MipVideo extends CustomElement {
       /* istanbul ignore if */
       if (windowInIframe) {
         // mip_video_jump is written outside iframe
-        viewer.sendMessage('mip_video_jump', {
+        // TODO 改成 OUTER_MESSAGE_VIDEO_JUMP
+        viewer.sendMessage('mip-video-jump', {
           poster: videoEl.dataset.videoPoster,
           src: urlSrc
         })
