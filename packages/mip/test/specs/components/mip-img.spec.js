@@ -270,6 +270,41 @@ describe('mip-img', function () {
     })
   })
 
+  describe('with special image popuping', function () {
+    // 针对长图的大图浏览代码测试，其实只需要设置一张特殊的图即可。
+    let mipImg
+    before(function () {
+      mipImg = document.createElement('mip-img')
+      mipImg.setAttribute('width', '100px')
+      mipImg.setAttribute('height', '100px')
+      mipImg.setAttribute('src', 'https://boscdn.baidu.com/v1/assets/mip/mip2-component-lifecycle.png')
+      mipImg.setAttribute('popup', 'true')
+      mipImg.setAttribute('alt', 'baidu mip img')
+      let theFirst = document.body.firstChild
+      document.body.insertBefore(mipImg, theFirst)
+    })
+
+    it('should popup', function () {
+      let img = mipImg.querySelector('img')
+      let event = document.createEvent('MouseEvents')
+      event.initEvent('click', true, true)
+      img.dispatchEvent(event)
+
+      let mipPopWrap = document.querySelector('.mip-img-popUp-wrapper')
+      mipPopWrap.dispatchEvent(event)
+
+      expect(mipPopWrap.getAttribute('data-name')).to.equal('mip-img-popUp-name')
+      expect(mipPopWrap.parentNode.tagName).to.equal('BODY')
+      expect(mipPopWrap.tagName).to.equal('DIV')
+      expect(mipPopWrap.querySelector('.mip-img-popUp-bg')).to.be.exist
+      expect(mipPopWrap.querySelector('mip-carousel')).to.be.exist
+      expect(mipPopWrap.querySelector('mip-carousel').getAttribute('index')).to.equal('1')
+    })
+
+    after(function () {
+      document.body.removeChild(mipImg)
+    })
+  })
   after(function () {
     document.body.removeChild(document.querySelector('.mip-img-popUp-wrapper'))
   })

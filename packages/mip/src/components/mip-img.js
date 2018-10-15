@@ -57,18 +57,18 @@ function getPopupImgPos (imgWidth, imgHeight) {
     left = (viewportW - width) / 2
     return {
       height: viewportH,
-      width: width,
-      left: left,
+      width,
+      left,
       top: 0
     }
   }
   let height = Math.round(viewportW * imgHeight / imgWidth)
   top = (viewportH - height) / 2
   return {
-    height: height,
+    height,
     width: viewportW,
     left: 0,
-    top: top
+    top
   }
 }
 /**
@@ -109,6 +109,7 @@ function getImgsSrc () {
 /**
  * 找出当前视口下的图片
  * @param  {HTMLElement} carouselWrapper carouselWrapper
+ * @param  {HTMLElement} mipCarousel mipCarousel
  * @return {HTMLElement} img
  */
 function getCurrentImg (carouselWrapper, mipCarousel) {
