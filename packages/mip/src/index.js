@@ -70,7 +70,43 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     pageMeta.standalone = standalone
   }
 
-  let push = ext => typeof ext.func === 'function' && ext.func()
+  // Order list
+  let extSeq = [...document.querySelectorAll('script[order]')]
+    .map(script => {
+      let matched = script.src.match(/\/([^/]+?)\.js(?:$|[?#])/)
+      if (matched != null) {
+        return matched[1]
+      }
+    })
+    .filter(name => name && name.indexOf('mip-') === 0)
+
+  // Hold a list which need to wait deps ready
+  let waitingMap = {}
+  let push = ext => {
+    if (!ext || typeof ext.func !== 'function') {
+      return
+    }
+
+    if (extSeq[0] === ext.name) {
+      extSeq.shift()
+      ext.func()
+
+      while (extSeq.length) {
+        let name = extSeq[0]
+        if (waitingMap[name]) {
+          waitingMap[name].func()
+          extSeq.shift()
+        } else {
+          break
+        }
+      }
+    } else if (extSeq.indexOf(ext.name) > 0) {
+      waitingMap[ext.name] = ext
+    } else {
+      ext.func()
+    }
+  }
+
   mip = {
     version: '2',
     registerVueCustomElement,
@@ -126,7 +162,7 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     // register buildin components
     builtinComponents.register()
     // Handler preregister extensions
-    extensions.forEach(ext => typeof ext.func === 'function' && ext.func())
+    extensions.forEach(push)
 
     performance.start(window._mipStartTiming)
     // send performance data
