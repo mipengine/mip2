@@ -519,6 +519,7 @@ class MipShell extends CustomElement {
     let targetFullPath = getFullPath(to)
     let targetPageId = getCleanPageId(targetFullPath)
     let targetPage = page.getPageById(targetPageId)
+    let targetIFrame = getIFrame(targetPageId)
 
     /**
      * priority of header.title:
@@ -562,9 +563,9 @@ class MipShell extends CustomElement {
       this.saveScrollPosition()
     }
 
-    if (!targetPage || (to.meta && to.meta.reload && !to.meta.cacheFirst)) {
+    if (!targetIFrame || (to.meta && to.meta.reload && !to.meta.cacheFirst)) {
       // Iframe will be created in following situation:
-      // 1. If target iframe doesn't exist (`!targetPage`), create it.
+      // 1. If target iframe doesn't exist (`!targetIFrame`), create it.
       // 2. If target iframe exists:
       // 2.1 Target iframe MUST be recreated (`to.meta.reload`, which will be set when click `<a mip-link>`)
       // 2.2 Not a cache first strategy (`to.meta.cacheFirst`)
@@ -699,7 +700,6 @@ class MipShell extends CustomElement {
         this.refreshShell({pageMeta: targetPageMeta})
       }
 
-      let targetIFrame = getIFrame(targetPageId)
       // Root Page 不存在预渲染
       if (targetPageId !== page.pageId &&
         (targetPage.isPrerender || targetIFrame.getAttribute('prerender') === '1')) {
