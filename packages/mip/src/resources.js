@@ -64,6 +64,7 @@ class Resources {
     this._gesture = new Gesture(document, {
       preventX: false
     })
+
     this._bindEvent()
   }
 
@@ -71,18 +72,15 @@ class Resources {
    * Bind the events of current object.
    */
   _bindEvent () {
-    let self = this
     let timer
     this._viewport.on('changed resize', this.updateState)
-    this._gesture.on('swipe', function (e, data) {
+    this._gesture.on('swipe', (e, data) => {
       let delay = Math.round(data.velocity * 600)
       delay < 100 && (delay = 100)
       delay > 600 && (delay = 600)
       clearTimeout(timer)
-      timer = setTimeout(self.updateState, delay)
+      timer = setTimeout(this.updateState, delay)
     })
-
-    this.updateState()
   }
 
   /**
@@ -152,7 +150,7 @@ class Resources {
     for (let i in resources) {
       // Compute the viewport state of current element.
       // If current element`s prerenderAllowed returns `true` always set the state to be `true`.
-      let elementRect = rect.getElementRect(resources[i])
+      let elementRect = this._viewport.getElementRect(resources[i])
       let inViewport = resources[i].prerenderAllowed(elementRect, viewportRect) ||
         rect.overlapping(elementRect, viewportRect)
       this.setInViewport(resources[i], inViewport)

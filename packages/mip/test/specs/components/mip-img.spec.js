@@ -3,9 +3,6 @@
  * @author qiusiqi(qiusiqi@baidu.com)
  */
 
-/* eslint-disable no-unused-expressions */
-/* globals describe, before, it, expect, after, Event */
-
 describe('mip-img', function () {
   describe('with holding src', function () {
     let mipImgWrapper

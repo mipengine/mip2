@@ -22,6 +22,7 @@ describe('viewport', function () {
     spy = sinon.stub(util.rect, 'getScrollTop')
     spy.returns(true)
 
+    viewport.updateCachedScroll()
     expect(viewport.getScrollTop()).to.be.true
     expect(spy).to.have.been.calledWith()
   })
@@ -30,6 +31,7 @@ describe('viewport', function () {
     spy = sinon.stub(util.rect, 'getScrollLeft')
     spy.returns(true)
 
+    viewport.updateCachedScroll()
     expect(viewport.getScrollLeft()).to.be.true
     expect(spy).to.have.been.calledWith()
   })
@@ -38,6 +40,7 @@ describe('viewport', function () {
     spy = sinon.stub(util.rect, 'getScrollWidth')
     spy.returns(true)
 
+    viewport.updateCachedScroll()
     expect(viewport.getScrollWidth()).to.be.true
     expect(spy).to.have.been.calledWith()
   })
@@ -46,6 +49,7 @@ describe('viewport', function () {
     spy = sinon.stub(util.rect, 'getScrollHeight')
     spy.returns(true)
 
+    viewport.updateCachedScroll()
     expect(viewport.getScrollHeight()).to.be.true
     expect(spy).to.have.been.calledWith()
   })
@@ -53,6 +57,7 @@ describe('viewport', function () {
   it('.setScrollTop', function () {
     spy = sinon.spy(util.rect, 'setScrollTop')
 
+    viewport.updateCachedScroll()
     expect(viewport.setScrollTop(true)).to.be.undefined
     expect(spy).to.have.been.calledOnce
     expect(spy).to.have.been.calledWith(true)
@@ -71,22 +76,34 @@ describe('viewport', function () {
     window.innerWidth = true
     expect(viewport.getWidth()).to.be.true
 
-    window.innerWidth = false
-    expect(viewport.getWidth()).to.be.a('number')
-
     window.innerWidth = old
   })
 
-  it.skip('.getHeight', function () {
+  it('.getHeight', function () {
     let old = window.innerHeight
 
     window.innerHeight = true
     expect(viewport.getHeight()).to.be.true
 
-    window.innerHeight = false
-    expect(viewport.getHeight()).to.be.a('number')
-
     window.innerHeight = old
+  })
+
+  it('.getElementRect', function () {
+    let node = util.dom.create([
+      '<div style="width: 10px; height: 10px; left: 10px; top: 10px; position: absolute"></div>'
+    ].join(''))
+
+    document.body.appendChild(node)
+
+    expect(viewport.getElementRect(node)).to.deep.equal({
+      left: 10,
+      top: 10,
+      width: 10,
+      height: 10,
+      right: 20,
+      bottom: 20
+    })
+    document.body.removeChild(node)
   })
 
   describe('event', function () {

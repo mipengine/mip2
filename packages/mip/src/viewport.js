@@ -7,35 +7,66 @@ import EventEmitter from './util/event-emitter'
 import rect from './util/dom/rect'
 import fn from './util/fn'
 import platform from './util/platform'
-// import fixedElement from './fixed-element'
 
 // Native objects.
 const docElem = document.documentElement
 const win = window
 
-/**
- * 触发 scroll 事件
- */
-let scrollEvent = fn.throttle(function (event) {
-  this.trigger('scroll', event)
-}, 1000 / 60)
+let getHeight = () => platform.isIOS()
+  ? (docElem.clientHeight || win.innerHeight)
+  : (win.innerHeight || docElem.clientHeight)
+let getWidth = () => win.innerWidth || docElem.clientWidth
 
-/**
- * 触发 changed 事件
- */
-let changedEvent = fn.throttle(function (event) {
-  this.trigger('changed', event)
-}, 200)
+let cachedScrollLeft
+let cachedScrollTop
+let cachedScrollHeight
+let cachedScrollWidth
+let cachedWidth
+let cachedHeight
+
+let updateCachedScroll = () => {
+  cachedScrollLeft = rect.getScrollLeft()
+  cachedScrollTop = rect.getScrollTop()
+  cachedScrollHeight = rect.getScrollHeight()
+  cachedScrollWidth = rect.getScrollWidth()
+}
+
+let updateCachedSize = () => {
+  cachedWidth = getWidth()
+  cachedHeight = getHeight()
+}
+
+updateCachedScroll()
+updateCachedSize()
+
+// 给测试环境使用
+if (process.env.NODE_ENV !== 'production') {
+  /* eslint-disable */
+  Object.defineProperty(win, 'innerWidth', {
+    set (val) {
+      cachedWidth = val
+    }
+  })
+
+  Object.defineProperty(win, 'innerHeight', {
+    set(val) {
+      cachedHeight = val
+    }
+  })
+  /* eslint-enable */
+}
 
 /**
  * 滚动事件回调
  *
  * @param {Object} event 事件对象
  */
-let scrollHandle = function (event) {
-  scrollEvent.call(this, event)
-  changedEvent.call(this, event)
-}
+let scrollHandle = fn.throttle(function (event) {
+  updateCachedScroll()
+
+  this.trigger('scroll', event)
+  this.trigger('changed', event)
+}, 1000 / 60)
 
 /**
  * 窗口改变事件回调
@@ -43,15 +74,13 @@ let scrollHandle = function (event) {
  *
  * @param {Object} event 事件对象
  */
-let savedWindowWidth = win.innerWidth || docElem.clientWidth
-let currentWindowWidth
 let resizeEvent = fn.throttle(function (event) {
-  currentWindowWidth = this.getWidth()
-  if (currentWindowWidth !== savedWindowWidth) {
+  let width = getWidth()
+  if (cachedWidth !== width) {
     this.trigger('resize', event)
-    savedWindowWidth = currentWindowWidth
+    cachedWidth = width
   }
-}, 200)
+}, 1000 / 60)
 
 /**
  * The object is to solve a series of problems when the page in an iframe and
@@ -65,11 +94,19 @@ let viewport = {
    */
   init () {
     this.scroller = platform.needSpecialScroll ? document.body : win
-
     this.scroller.addEventListener('scroll', scrollHandle.bind(this), false)
-
     win.addEventListener('resize', resizeEvent.bind(this))
   },
+
+  /**
+   * Update cache of size immediate
+   */
+  updateCachedSize,
+
+  /**
+   * Update cache of scroll rect data immediate
+   */
+  updateCachedScroll,
 
   /**
    * Get the current vertical position of the page
@@ -77,7 +114,7 @@ let viewport = {
    * @return {number}
    */
   getScrollTop () {
-    return rect.getScrollTop()
+    return cachedScrollTop
   },
 
   /**
@@ -86,7 +123,7 @@ let viewport = {
    * @return {number}
    */
   getScrollLeft () {
-    return rect.getScrollLeft()
+    return cachedScrollLeft
   },
 
   /**
@@ -104,7 +141,7 @@ let viewport = {
    * @return {number}
    */
   getWidth () {
-    return win.innerWidth || docElem.clientWidth
+    return cachedWidth
   },
 
   /**
@@ -114,8 +151,7 @@ let viewport = {
    */
   getHeight () {
     /* istanbul ignore next */
-    return platform.isIOS() ? (docElem.clientHeight || win.innerHeight)
-      : (win.innerHeight || docElem.clientHeight)
+    return cachedHeight
   },
 
   /**
@@ -124,7 +160,7 @@ let viewport = {
    * @return {number}
    */
   getScrollWidth () {
-    return rect.getScrollWidth()
+    return cachedScrollWidth
   },
 
   /**
@@ -133,7 +169,7 @@ let viewport = {
    * @return {number}
    */
   getScrollHeight () {
-    return rect.getScrollHeight()
+    return cachedScrollHeight
   },
 
   /**
@@ -143,11 +179,23 @@ let viewport = {
    */
   getRect () {
     return rect.get(
-      this.getScrollLeft(),
-      this.getScrollTop(),
-      this.getWidth(),
-      this.getHeight()
+      cachedScrollLeft,
+      cachedScrollTop,
+      cachedWidth,
+      cachedHeight
     )
+  },
+
+  /**
+   * Get an element's rect.
+   *
+   * @param {HTMLElement} element element
+   * @return {Object}
+   */
+  getElementRect (element) {
+    let clientRect = element.getBoundingClientRect()
+    return rect.get(clientRect.left + cachedScrollLeft, clientRect.top + cachedScrollTop,
+      clientRect.width, clientRect.height)
   }
 }
 

@@ -37,7 +37,7 @@ describe('resources', function () {
       app._bindEvent()
       viewport.trigger('changed')
 
-      expect(spy).to.have.been.calledTwice
+      expect(spy).to.have.been.calledOnce
     })
 
     it('resize event', function () {
@@ -45,19 +45,11 @@ describe('resources', function () {
       app._bindEvent()
       viewport.trigger('resize')
 
-      expect(spy).to.have.been.calledTwice
+      expect(spy).to.have.been.calledOnce
     })
 
     // Verify that the delay event was successful
     describe('swipe event', function () {
-      it('first call', function () {
-        let spy = sinon.spy(app, 'updateState')
-        app._bindEvent()
-
-        expect(spy).to.have.been.calledOnce
-        expect(spy).to.have.been.calledWith
-      })
-
       it('velocity min', function (done) {
         let spy = sinon.spy(app, 'updateState')
         app._bindEvent()
@@ -66,14 +58,9 @@ describe('resources', function () {
         })
 
         setTimeout(function () {
-          let count = spy.callCount
-          expect(spy).to.have.been.calledOnce
-
-          setTimeout(function () {
-            expect(spy.callCount).to.be.above(count)
-            done()
-          }, 100)
-        }, 90)
+          expect(spy.callCount).to.be.above(1)
+          done()
+        }, 200)
       })
 
       it('velocity max', function (done) {
@@ -84,14 +71,9 @@ describe('resources', function () {
         })
 
         setTimeout(function () {
-          let count = spy.callCount
-          expect(spy).to.have.been.calledOnce
-
-          setTimeout(function () {
-            expect(spy.callCount).to.be.above(count)
-            done()
-          }, 100)
-        }, 590)
+          expect(spy.callCount).to.be.above(1)
+          done()
+        }, 700)
       })
     })
   })
@@ -229,7 +211,7 @@ describe('resources', function () {
         expect(viewportRect).to.be.a('object')
         return true
       })
-      sinon.stub(rect, 'getElementRect').callsFake(function () {
+      sinon.stub(viewport, 'getElementRect').callsFake(function () {
         return 'getElementRect'
       })
 
@@ -240,7 +222,7 @@ describe('resources', function () {
 
       app._update()
       rect.overlapping.restore()
-      rect.getElementRect.restore()
+      viewport.getElementRect.restore()
     })
   })
 

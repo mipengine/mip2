@@ -29,24 +29,6 @@ describe('rect', function () {
     expect(rect.scrollingElement).to.not.be.null
   })
 
-  it('.getElementRect', function () {
-    let node = util.dom.create([
-      '<div style="width: 10px; height: 10px; left: 10px; top: 10px; position: absolute"></div>'
-    ].join(''))
-
-    document.body.appendChild(node)
-
-    expect(rect.getElementRect(node)).to.deep.equal({
-      left: 10,
-      top: 10,
-      width: 10,
-      height: 10,
-      right: 20,
-      bottom: 20
-    })
-    document.body.removeChild(node)
-  })
-
   it('.getElementOffset', function () {
     let node = util.dom.create([
       '<div style="width: 10px; height: 10px; left: 10px; top: 10px; position: absolute"></div>'

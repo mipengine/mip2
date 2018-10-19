@@ -85,18 +85,6 @@ export default {
     docElem,
 
   /**
-   * Get an element's rect.
-   *
-   * @param {HTMLElement} element element
-   * @return {Object}
-   */
-  getElementRect (element) {
-    let clientRect = element.getBoundingClientRect()
-    return this.get(clientRect.left + this.getScrollLeft(), clientRect.top + this.getScrollTop(),
-      clientRect.width, clientRect.height)
-  },
-
-  /**
    * Get an element's offset.
    *
    * @param {HTMLElement} element element

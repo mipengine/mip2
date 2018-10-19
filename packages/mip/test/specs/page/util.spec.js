@@ -10,6 +10,15 @@ import {scrollTo} from 'src/page/util/ease-scroll'
 /* globals describe, it, expect, afterEach, sinon */
 
 describe('page.util', function () {
+  let placeholder = document.createElement('div')
+  placeholder.style = 'height: 10000px;width: 100px;'
+  before(() => {
+    document.body.appendChild(placeholder)
+  })
+  after(() => {
+    document.body.removeChild(placeholder)
+  })
+
   describe('_isCrossOrigin', function () {
     let isCrossOrigin = window.MIP.viewer._isCrossOrigin
 
