@@ -227,11 +227,10 @@ class MipShell extends CustomElement {
       page.pageMeta = this.currentPageMeta
       this.initShell()
       this.initRouter()
-      // 绑定事件改为异步，不阻塞发送 mippageload 事件，下同
-      setTimeout(() => this.bindRootEvents(), 0)
+      this.bindRootEvents()
     }
 
-    setTimeout(() => this.bindAllEvents(), 0)
+    this.bindAllEvents()
   }
 
   disconnectedCallback () {
@@ -272,25 +271,23 @@ class MipShell extends CustomElement {
     // Other sync parts
     this.renderOtherParts()
 
-    setTimeout(() => {
-      // Button wrapper & mask
-      let buttonGroup = this.currentPageMeta.header.buttonGroup
-      let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup)
-      this.$buttonMask = mask
-      this.$buttonWrapper = buttonWrapper
+    // Button wrapper & mask
+    let buttonGroup = this.currentPageMeta.header.buttonGroup
+    let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup)
+    this.$buttonMask = mask
+    this.$buttonWrapper = buttonWrapper
 
-      // Page mask
-      this.$pageMask = createPageMask()
+    // Page mask
+    this.$pageMask = createPageMask()
 
-      // Page mask
-      this.$pageMask = createPageMask()
+    // Page mask
+    this.$pageMask = createPageMask()
 
-      // Loading
-      this.$loading = createLoading(this.currentPageMeta)
+    // Loading
+    this.$loading = createLoading(this.currentPageMeta)
 
-      // Other async parts
-      this.renderOtherPartsAsync()
-    }, 0)
+    // Other async parts
+    this.renderOtherPartsAsync()
   }
 
   renderHeader (container) {
