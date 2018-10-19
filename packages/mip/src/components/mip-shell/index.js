@@ -227,11 +227,10 @@ class MipShell extends CustomElement {
       page.pageMeta = this.currentPageMeta
       this.initShell()
       this.initRouter()
-      // 绑定事件改为异步，不阻塞发送 mippageload 事件，下同
-      setTimeout(() => this.bindRootEvents(), 0)
+      this.bindRootEvents()
     }
 
-    setTimeout(() => this.bindAllEvents(), 0)
+    this.bindAllEvents()
   }
 
   disconnectedCallback () {
@@ -272,22 +271,19 @@ class MipShell extends CustomElement {
     // Other sync parts
     this.renderOtherParts()
 
+    // Button wrapper & mask
+    let buttonGroup = this.currentPageMeta.header.buttonGroup
+    let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup)
+    this.$buttonMask = mask
+    this.$buttonWrapper = buttonWrapper
+
+    // Page mask
+    this.$pageMask = createPageMask()
+
+    // Loading
+    this.$loading = createLoading(this.currentPageMeta)
+
     setTimeout(() => {
-      // Button wrapper & mask
-      let buttonGroup = this.currentPageMeta.header.buttonGroup
-      let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup)
-      this.$buttonMask = mask
-      this.$buttonWrapper = buttonWrapper
-
-      // Page mask
-      this.$pageMask = createPageMask()
-
-      // Page mask
-      this.$pageMask = createPageMask()
-
-      // Loading
-      this.$loading = createLoading(this.currentPageMeta)
-
       // Other async parts
       this.renderOtherPartsAsync()
     }, 0)
@@ -516,7 +512,6 @@ class MipShell extends CustomElement {
       return
     }
 
-    // this.bindHeaderEventsFlag = false
     // Render target page
     let sourcePage = page.getPageById(page.currentPageId)
     let targetFullPath = getFullPath(to)
@@ -1167,10 +1162,6 @@ class MipShell extends CustomElement {
 
   bindHeaderEvents () {
     let me = this
-    // if (this.bindHeaderEventsFlag) {
-    //   return
-    // }
-    // this.bindHeaderEventsFlag = true
     // Delegate header
     this.headerEventHandler = event.delegate(this.$el, '[mip-header-btn]', 'click', function (e) {
       let buttonName = this.dataset.buttonName
