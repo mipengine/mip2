@@ -53,7 +53,7 @@ let viewer = {
      * @type {Object}
      */
     const messager = clientPrerender.messager
-    this.messager =  messager ? messager : new Messager()
+    this.messager = messager || new Messager()
 
     /**
      * The gesture of document.Used by the event-action of Viewer.
@@ -127,8 +127,13 @@ let viewer = {
   sendMessage (eventName, data = {}) {
     if (!win.MIP.standalone) {
       // Send Message in normal case
-      // Save in queue and execute when page-active received
-      clientPrerender.execute(() => this.messager.sendMessage(eventName, data))
+      // Save in queue and execute when page-active received, and update recoreded event time if prerendered
+      clientPrerender.execute(() => {
+        if (clientPrerender.isPrerendered && data.time) {
+          data.time = Date.now()
+        }
+        this.messager.sendMessage(eventName, data)
+      })
     }
   },
 
@@ -193,8 +198,8 @@ let viewer = {
     // Jump in top window directly
     // 1. Cross origin and NOT in SF
     // 2. Not MIP page and not only hash change
-    if ((this._isCrossOrigin(to) && window.MIP.standalone)
-      || (!isMipLink && !isHashInCurrentPage)) {
+    if ((this._isCrossOrigin(to) && window.MIP.standalone) ||
+      (!isMipLink && !isHashInCurrentPage)) {
       if (replace) {
         window.top.location.replace(to)
       } else {
@@ -428,7 +433,6 @@ let viewer = {
       this.viewportScroll()
       this.fixSoftKeyboard()
     }
-
   },
 
   /**
@@ -466,15 +470,15 @@ let viewer = {
         let tagName = element.tagName.toLowerCase()
 
         if (element && (tagName === 'input' || tagName === 'textarea')) {
-            setTimeout(() => {
-              if (typeof element.scrollIntoViewIfNeeded === 'function') {
-                element.scrollIntoViewIfNeeded()
-              } else if (typeof element.scrollIntoView === 'function') {
-                element.scrollIntoView()
-                document.body.scrollTop -= 44
-              }
-            }, 250)
-          }
+          setTimeout(() => {
+            if (typeof element.scrollIntoViewIfNeeded === 'function') {
+              element.scrollIntoViewIfNeeded()
+            } else if (typeof element.scrollIntoView === 'function') {
+              element.scrollIntoView()
+              document.body.scrollTop -= 44
+            }
+          }, 250)
+        }
       })
     }
   },

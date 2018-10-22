@@ -38,21 +38,39 @@ let imgRatio = {
   other: 1
 }
 
+/**
+ * 获取弹出图片的位置
+ * 2018-10-11 增加：由于浏览效果改为了 contain 效果，所以 carousel 内部采用 div 的 background-image 来显示图片。
+ * 所以 carousel 必须设置的高宽都固定成了视口的高宽。保留这个函数只是为了动画效果。
+ *
+ * @param  {number} imgWidth  原始图片的宽度
+ * @param  {number} imgHeight 原始图片的高度
+ * @return {Object}           包含定位信息的对象
+ */
 function getPopupImgPos (imgWidth, imgHeight) {
-  let width = viewport.getWidth()
-  let height = Math.round(width * imgHeight / imgWidth)
+  let viewportW = viewport.getWidth()
   let viewportH = viewport.getHeight()
-  let top = viewportH > height
-    ? (viewportH - height) / 2
-    : 0
+  let top = 0
+  let left = 0
+  if (viewportH / viewportW < imgHeight / imgWidth) {
+    let width = Math.round(viewportH * imgWidth / imgHeight)
+    left = (viewportW - width) / 2
+    return {
+      height: viewportH,
+      width,
+      left,
+      top: 0
+    }
+  }
+  let height = Math.round(viewportW * imgHeight / imgWidth)
+  top = (viewportH - height) / 2
   return {
-    width: width,
-    height: height,
+    height,
+    width: viewportW,
     left: 0,
-    top: top
+    top
   }
 }
-
 /**
  * 从mip-img属性列表里获取属性
  *
@@ -71,7 +89,12 @@ function getAttributeSet (attributes) {
   })
   return attrs
 }
-
+/**
+ * 获取图片的offset
+ *
+ * @param  {HTNMLElement} img img
+ * @return {Object}     一个包含offset信息的对象
+ */
 function getImgOffset (img) {
   let imgOffset = rect.getElementOffset(img)
   return imgOffset
@@ -86,16 +109,25 @@ function getImgsSrc () {
 /**
  * 找出当前视口下的图片
  * @param  {HTMLElement} carouselWrapper carouselWrapper
+ * @param  {HTMLElement} mipCarousel mipCarousel
  * @return {HTMLElement} img
  */
-function getCurrentImg (carouselWrapper) {
+function getCurrentImg (carouselWrapper, mipCarousel) {
   // 例如：'translate3d(-90px,0,0)'
   let str = carouselWrapper.style.webkitTransform
   let result = /translate3d\(-?([0-9]+)/i.exec(str)
-  let number = parseInt(result[1]) / viewport.getWidth()
-  return carouselWrapper.querySelectorAll('mip-img')[number]
+  // 原先宽度是视口宽度，现在需要的是图片本身宽度。最后还是一样的。。。
+  let width = mipCarousel.getAttribute('width')
+  let number = parseInt(result[1], 10) / width
+  return carouselWrapper.querySelectorAll('.div-mip-img')[number]
 }
-// 创建弹层 dom
+/**
+ * 创建图片弹层
+ *
+ * @param  {HTMLElement} element mip-img组件元素
+ * @param  {HTMLElment} img     mip-img元素包裹的img
+ * @return {HTMLElment}         图片弹层的div
+ */
 function createPopup (element, img) {
   // 获取图片数组
   let imgsSrcArray = getImgsSrc()
@@ -111,25 +143,32 @@ function createPopup (element, img) {
   let popUpBg = document.createElement('div')
   // 创建多图预览 wrapper
   let carouselWrapper = document.createElement('div')
-  // 计算 wrapper 窗口大小
-  let imgOffset = getImgOffset(img)
-  let popupImgPos = getPopupImgPos(imgOffset.width, imgOffset.height)
-  popupImgPos.top = 0
+  // 计算 wrapper 窗口大小，变为视口大小
   css(carouselWrapper, {
-    'position': 'absolute'
+    'position': 'absolute',
+    'width': viewport.getWidth(),
+    'height': viewport.getHeight(),
+    'left': 0,
+    'top': 0
   })
-  css(carouselWrapper, popupImgPos)
   // 创建 mip-carousel
   let carousel = document.createElement('mip-carousel')
 
-  carousel.setAttribute('layout', 'height-fixed')
+  carousel.setAttribute('layout', 'responsive')
   carousel.setAttribute('index', index + 1)
-  carousel.setAttribute('width', popupImgPos.width)
-  carousel.setAttribute('height', popupImgPos.height)
+  carousel.setAttribute('width', viewport.getWidth())
+  carousel.setAttribute('height', viewport.getHeight())
 
   for (let i = 0; i < imgsSrcArray.length; i++) {
-    let mipImg = document.createElement('mip-img')
-    mipImg.setAttribute('src', imgsSrcArray[i])
+    let mipImg = document.createElement('div')
+    mipImg.className = 'div-mip-img'
+    mipImg.setAttribute('data-src', imgsSrcArray[i])
+    css(mipImg, {
+      'background-image': `url(${imgsSrcArray[i]})`,
+      'background-repeat': 'no-repeat',
+      'background-size': 'contain',
+      'background-position': 'center'
+    })
     carousel.appendChild(mipImg)
   }
   popUpBg.className = 'mip-img-popUp-bg'
@@ -141,7 +180,13 @@ function createPopup (element, img) {
 
   return popup
 }
-
+/**
+ * 将图片与弹层绑定
+ *
+ * @param  {HTMLElement} element mip-img
+ * @param  {HTMLElement} img     mip-img下的img
+ * @return {void}         无
+ */
 function bindPopup (element, img) {
   // 图片点击时展现图片
   img.addEventListener('click', function (event) {
@@ -175,13 +220,14 @@ function bindPopup (element, img) {
         extraClass: 'black'
       })
       // 找出当前视口下的图片
-      let currentImg = getCurrentImg(popup.querySelector('.mip-carousel-wrapper'))
-      popupImg.setAttribute('src', currentImg.getAttribute('src'))
+      let currentImg = getCurrentImg(popup.querySelector('.mip-carousel-wrapper'), mipCarousel)
+      popupImg.setAttribute('src', currentImg.getAttribute('data-src'))
       let previousPos = getImgOffset(img)
-      // 获取弹出图片滑动的距离，根据前面的设定，top大于0就不是长图，小于0才是滑动的距离
+      // 获取弹出图片滑动的距离，根据前面的设定，top大于0就不是长图，小于0才是滑动的距离。
       let currentImgPos = getImgOffset(currentImg)
       currentImgPos.top < 0 && (previousPos.top -= currentImgPos.top)
       currentImgPos.left < 0 && (previousPos.left -= currentImgPos.left)
+      css(popupImg, getPopupImgPos(popupImg.naturalWidth, popupImg.naturalHeight))
       css(popupImg, 'display', 'block')
       css(mipCarousel, 'display', 'none')
       naboo.animate(popupBg, {
@@ -200,16 +246,15 @@ function bindPopup (element, img) {
     let onResize = function () {
       imgOffset = getImgOffset(img)
       css(popupImg, imgOffset)
-      naboo.animate(popupImg, getPopupImgPos(imgOffset.width, imgOffset.height)).start()
+      naboo.animate(popupImg, getPopupImgPos(img.naturalWidth, img.naturalHeight)).start()
     }
     window.addEventListener('resize', onResize)
 
     css(popupImg, imgOffset)
-    css(mipCarousel, getPopupImgPos(imgOffset.width, imgOffset.height))
     css(mipCarousel, 'display', 'none')
     css(popupBg, 'opacity', 1)
 
-    naboo.animate(popupImg, getPopupImgPos(imgOffset.width, imgOffset.height)).start(() => {
+    naboo.animate(popupImg, getPopupImgPos(img.naturalWidth, img.naturalHeight)).start(() => {
       css(popupImg, 'display', 'none')
       css(mipCarousel, 'display', 'block')
     })

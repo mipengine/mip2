@@ -1,6 +1,6 @@
 {
   "name": "mip2",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "description": "CLI for mip 2.0",
   "preferGlobal": true,
   "bin": {
@@ -61,7 +61,7 @@
     "livereload": "^0.7.0",
     "metalsmith": "^2.3.0",
     "minimatch": "^3.0.4",
-    "mip-component-validator": "^1.1.3",
+    "mip-component-validator": "^1.1.4",
     "mip-components-webpack-helpers": "^1.0.7",
     "mip-sandbox": "^1.0.22",
     "mip-validator": "^1.5.15",

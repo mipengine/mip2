@@ -228,11 +228,18 @@ class MipShell extends CustomElement {
       page.pageMeta = this.currentPageMeta
       this.initShell()
       this.initRouter()
+<<<<<<< HEAD
       // 绑定事件改为异步，不阻塞发送 mippageload 事件，下同
       setTimeout(() => this.bindRootEvents(), 0)
     }
 
     setTimeout(() => this.bindAllEvents(), 0)
+=======
+      this.bindRootEvents()
+    }
+
+    this.bindAllEvents()
+>>>>>>> a13d9df59ab2ef0090154a8c5fc880a7ecd158ea
   }
 
   disconnectedCallback () {
@@ -283,9 +290,16 @@ class MipShell extends CustomElement {
       // Page mask
       this.$pageMask = createPageMask()
 
+      // Page mask
+      this.$pageMask = createPageMask()
+
       // Loading
       this.$loading = createLoading(this.currentPageMeta)
 
+<<<<<<< HEAD
+=======
+    setTimeout(() => {
+>>>>>>> a13d9df59ab2ef0090154a8c5fc880a7ecd158ea
       // Other async parts
       this.renderOtherPartsAsync()
     }, 0)
