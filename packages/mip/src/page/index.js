@@ -325,6 +325,10 @@ class Page {
    * @param {Object} event event
    */
   emitEventInCurrentPage (event) {
+    if (!this.isRootPage) {
+      console.warn('该方法只能在 rootPage 调用')
+      return
+    }
     let currentPage = this.getPageById(this.currentPageId)
     this.emitCustomEvent(currentPage.targetWindow, currentPage.isCrossOrigin, event)
   }
@@ -335,6 +339,10 @@ class Page {
    * @param {Page} page page
    */
   addChild (page) {
+    if (!this.isRootPage) {
+      console.warn('该方法只能在 rootPage 调用')
+      return
+    }
     for (let i = 0; i < this.children.length; i++) {
       if (this.children[i].pageId === page.pageId) {
         this.children.splice(i, 1)
@@ -352,6 +360,10 @@ class Page {
    */
   /* istanbul ignore next */
   checkIfExceedsMaxPageNum (targetPageId) {
+    if (!this.isRootPage) {
+      console.warn('该方法只能在 rootPage 调用')
+      return
+    }
     if (this.children.length >= MAX_PAGE_NUM) {
       let currentPage
       let prerenderIFrames = []
@@ -398,6 +410,10 @@ class Page {
    * @return {Page} page
    */
   getPageById (pageId) {
+    if (!this.isRootPage) {
+      console.warn('该方法只能在 rootPage 调用')
+      return
+    }
     if (!pageId || pageId === this.pageId) {
       return this
     }
@@ -417,6 +433,10 @@ class Page {
    * @return {Array<HTMLElement>} elements
    */
   getElementsInRootPage () {
+    if (!this.isRootPage) {
+      console.warn('该方法只能在 rootPage 调用')
+      return
+    }
     let whitelist = [
       '.mip-page__iframe',
       '.mip-page-loading-wrapper',
@@ -442,22 +462,25 @@ class Page {
    * @returns {Promise}
    */
   prerenderPages (urls) {
+    if (!this.isRootPage) {
+      console.warn('该方法只能在 rootPage 调用')
+      return Promise.reject()
+    }
     if (typeof urls === 'string') {
       urls = [urls]
     }
 
     if (!Array.isArray(urls)) {
-      reject()
-      return
+      return Promise.reject('预渲染参数必须是一个数组')
     }
 
     let createPrerenderIFrame = ({fullpath, pageId}) => {
-      return new Promise((innerResolve, innerReject) => {
+      return new Promise((resolve, reject) => {
         let me = this
         let iframe = getIFrame(pageId)
         if (iframe) {
           // 预加载前已经存在，直接返回即可
-          innerResolve(iframe)
+          resolve(iframe)
           return
         }
 
@@ -477,10 +500,10 @@ class Page {
             me.addChild(targetPageInfo)
             me.checkIfExceedsMaxPageNum(pageId)
 
-            innerResolve(newIframe)
+            resolve(newIframe)
           },
           onError (newIframe) {
-            innerReject(newIframe)
+            reject(newIframe)
           }
         })
       })
