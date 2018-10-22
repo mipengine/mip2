@@ -5,6 +5,7 @@
 
 /* eslint-disable no-new */
 
+import MipImageSlider from './mip-image-slider'
 import MipImg from './mip-img'
 import MipRem from './mip-rem'
 import MipVideo from './mip-video'
@@ -23,6 +24,7 @@ export default {
    * Register the builtin components.
    */
   register () {
+    registerElement('mip-image-slider', MipImageSlider)
     registerElement('mip-pix', MipPix)
     registerElement('mip-img', MipImg)
     registerElement('mip-rem', MipRem)

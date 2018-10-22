@@ -1,0 +1,211 @@
+<!--htmlcs-disable-->
+<!DOCTYPE html>
+<html mip>
+
+<head>
+  <meta charset="utf-8">
+  <title>mip-image-slider</title>
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <link rel="stylesheet" href="../../dist/mip.css"></link>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+<h1>mip-image-slider</h1>
+
+<h2>基本使用</h2>
+<pre class="code">
+&lt;mip-image-slider
+  layout="responsive"
+  width="600"
+  height="400"&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_01.jpg"&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_02.jpg"&gt;
+  &lt;/mip-img&gt;
+&lt;/mip-image-slider&gt;
+</pre>
+<mip-image-slider tabindex="0" layout="responsive" width="600" height="400">
+  <mip-img src="https://www.mipengine.org/static/img/sample_01.jpg">
+  </mip-img>
+  <mip-img src="https://www.mipengine.org/static/img/sample_02.jpg">
+  </mip-img>
+</mip-image-slider>
+
+<h2>添加说明内容</h2>
+<pre class="code">
+&lt;mip-image-slider
+    layout="responsive"
+    width="600"
+    height="400"&gt;
+    &lt;mip-img
+        src="https://www.mipengine.org/static/img/sample_01.jpg"&gt;
+    &lt;/mip-img&gt;
+    &lt;mip-img
+        src="https://www.mipengine.org/static/img/sample_02.jpg"&gt;
+    &lt;/mip-img&gt;
+    &lt;div first&gt;this is the first&lt;/div&gt;
+    &lt;div second style="position: absolute;right: 0;top: 0;"&gt;this is the second&lt;/div&gt;
+&lt;/mip-image-slider&gt;
+</pre>
+<mip-image-slider layout="responsive" width="600" height="400">
+  <mip-img src="https://www.mipengine.org/static/img/sample_01.jpg">
+  </mip-img>
+  <mip-img src="https://www.mipengine.org/static/img/sample_02.jpg">
+  </mip-img>
+  <div first>this is the first</div>
+  <div second style="position: absolute;right: 0;top: 0;">this is the second</div>
+</mip-image-slider>
+
+<h2>添加自定义箭头</h2>
+<pre class="code">
+&lt;style type="text/css"&gt;
+.special .mip-image-slider-arrow-left {
+  width: 56px;
+  height: 20px;
+  background-size: 56px 20px;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 8'%3E%3Cpath d='M4 5h12V3H4V0L0 4l4 4z' fill='%23fff'/%3E%3C/svg%3E")
+}
+
+.special .mip-image-slider-arrow-right {
+  width: 56px;
+  height: 20px;
+  background-size: 56px 20px;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 8'%3E%3Cpath d='M24 5H12V3h12V0l4 4-4 4z' fill='%23fff'/%3E%3C/svg%3E")
+}
+&lt;/style&gt;
+&lt;mip-image-slider
+  class="special"
+  layout="responsive"
+  width="600"
+  height="400"&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_01.jpg"&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_02.jpg"&gt;
+  &lt;/mip-img&gt;
+&lt;/mip-image-slider&gt;
+</pre>
+<style type="text/css">
+.special .mip-image-slider-arrow-left {
+  width: 56px;
+  height: 20px;
+  background-size: 56px 20px;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 8'%3E%3Cpath d='M4 5h12V3H4V0L0 4l4 4z' fill='%23fff'/%3E%3C/svg%3E")
+}
+
+.special .mip-image-slider-arrow-right {
+  width: 56px;
+  height: 20px;
+  background-size: 56px 20px;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 8'%3E%3Cpath d='M24 5H12V3h12V0l4 4-4 4z' fill='%23fff'/%3E%3C/svg%3E")
+}
+
+</style>
+<mip-image-slider class="special" layout="responsive" width="600" height="400">
+  <mip-img src="https://www.mipengine.org/static/img/sample_01.jpg">
+  </mip-img>
+  <mip-img src="https://www.mipengine.org/static/img/sample_02.jpg">
+  </mip-img>
+</mip-image-slider>
+
+<h2>初始化移动条的位置</h2>
+<pre class="code">
+&lt;mip-image-slider
+  layout="responsive"
+  width="600"
+  height="400"
+  initial-slider-position="0.2"&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_01.jpg"&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+    src="https://www.mipengine.org/static/img/sample_02.jpg"&gt;
+  &lt;/mip-img&gt;
+&lt;/mip-image-slider&gt;
+</pre>
+<mip-image-slider
+  layout="responsive"
+  width="600"
+  height="400"
+  initial-slider-position="0.2">
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_01.jpg">
+  </mip-img>
+  <mip-img
+    src="https://www.mipengine.org/static/img/sample_02.jpg">
+  </mip-img>
+</mip-image-slider>
+
+<h2>设置步幅大小（使用键盘控制移动）</h2>
+<pre class="code">
+&lt;mip-image-slider
+  tabindex="0"
+  layout="responsive"
+  width="600"
+  height="400"
+  step-size="0.2"&gt;
+  &lt;mip-img
+      src="https://www.mipengine.org/static/img/sample_01.jpg"&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+      src="https://www.mipengine.org/static/img/sample_02.jpg"&gt;
+  &lt;/mip-img&gt;
+&lt;/mip-image-slider&gt;
+</pre>
+<mip-image-slider
+  tabindex="0"
+  layout="responsive"
+  width="600"
+  height="400"
+  step-size="0.2">
+  <mip-img
+      src="https://www.mipengine.org/static/img/sample_01.jpg">
+  </mip-img>
+  <mip-img
+      src="https://www.mipengine.org/static/img/sample_02.jpg">
+  </mip-img>
+</mip-image-slider>
+
+<h2>跳转到指定位置</h2>
+<pre class="code">
+&lt;mip-image-slider
+  layout="responsive"
+  width="600"
+  height="400"&gt;
+  &lt;mip-img
+      src="https://www.mipengine.org/static/img/sample_01.jpg"&gt;
+  &lt;/mip-img&gt;
+  &lt;mip-img
+      src="https://www.mipengine.org/static/img/sample_02.jpg"&gt;
+  &lt;/mip-img&gt;
+&lt;/mip-image-slider&gt;
+&lt;div on="tap:slider.seekTo(0.4)" style="margin: 10px;&gt;
+  &lt;button style="border: 1px solid #e1e2e3;padding: 5px;"&gt;跳转到 40% 的位置&lt;/button&gt;
+&lt;/div&gt;
+</pre>
+<mip-image-slider
+  layout="responsive"
+  width="600"
+  height="400"
+  id="slider">
+  <mip-img
+      src="https://www.mipengine.org/static/img/sample_01.jpg">
+  </mip-img>
+  <mip-img
+      src="https://www.mipengine.org/static/img/sample_02.jpg">
+  </mip-img>
+</mip-image-slider>
+<div on="tap:slider.seekTo(0.4)" style="margin: 10px;">
+  <button style="border: 1px solid #e1e2e3;padding: 5px;">跳转到 40% 的位置</button>
+</div>
+
+</body>
+<script src="../../dist/mip.js"></script>
+</html>

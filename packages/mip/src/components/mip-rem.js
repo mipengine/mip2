@@ -1,5 +1,5 @@
 /**
- * @file       mip-font-size
+ * @file       mip-rem
  * @author     chenyongle(chenyongle@baidu.com)
  * @description 设置页面文档根元素的 font-size
  */
@@ -12,7 +12,7 @@ class MipRem extends CustomElement {
     window.addEventListener('resize', this.changeHtmlFontSize.bind(this), false)
   }
   disconnectedCallback () {
-    document.documentElement.setAttribute('style', 'font-size: ')
+    document.documentElement.style.fontSize = ''
   }
   changeHtmlFontSize () {
     // 获取fontSize 格式类似于 [{"maxWidth": 360, "size": 80}, {"minWidth": 361, "maxWidth": 720, "size": 90}, {"minWidth": 721, "size": 100}]
