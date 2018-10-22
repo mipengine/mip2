@@ -35,18 +35,26 @@ export default class HTML5History {
     window.history.go(n)
   }
 
-  push (location) {
-    this.transitionTo(location, route => {
-      /* istanbul ignore next */
-      pushState(route.fullPath)
-    })
+  push (location, skipRender) {
+    /* istanbul ignore next */
+    if (skipRender) {
+      pushState(location)
+    } else {
+      this.transitionTo(location, route => {
+        pushState(route.fullPath)
+      })
+    }
   }
 
-  replace (location) {
-    this.transitionTo(location, route => {
-      /* istanbul ignore next */
-      replaceState(route.fullPath)
-    })
+  replace (location, skipRender) {
+    /* istanbul ignore next */
+    if (skipRender) {
+      replaceState(location)
+    } else {
+      this.transitionTo(location, route => {
+        replaceState(route.fullPath)
+      })
+    }
   }
 
   getCurrentLocation () {

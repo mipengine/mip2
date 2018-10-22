@@ -18,16 +18,16 @@ export default class Router {
     this.history.listen(cb)
   }
 
-  push (location) {
+  push (location, skipRender) {
     if (!window.MIP.standalone) {
-      this.history.replace(location)
+      this.history.replace(location, skipRender)
     } else {
-      this.history.push(location)
+      this.history.push(location, skipRender)
     }
   }
 
-  replace (location) {
-    this.history.replace(location)
+  replace (location, skipRender) {
+    this.history.replace(location, skipRender)
   }
 
   go (n) {

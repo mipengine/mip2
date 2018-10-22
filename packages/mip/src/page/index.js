@@ -285,6 +285,14 @@ class Page {
     this.notifyRootPage({type: MESSAGE_ROUTER_FORWARD})
   }
 
+  /**
+   * 向历史记录 push 一条新的记录
+   *
+   * @param {string} route 目标页面 URL
+   * @param {Object} options
+   * @param {boolean} options.allowTransition 是否包含切换动画，默认 false
+   * @param {boolean} options.skipRender 是否只修改 URL 不渲染页面，默认 false
+   */
   push (route, options = {}) {
     this.notifyRootPage({
       type: MESSAGE_ROUTER_PUSH,
@@ -292,6 +300,14 @@ class Page {
     })
   }
 
+  /**
+   * 将当前历史记录 replace 成新的记录
+   *
+   * @param {string} route 目标页面 URL
+   * @param {Object} options
+   * @param {boolean} options.allowTransition 是否包含切换动画，默认 false
+   * @param {boolean} options.skipRender 是否只修改 URL 不渲染页面，默认 false
+   */
   replace (route, options = {}) {
     this.notifyRootPage({
       type: MESSAGE_ROUTER_REPLACE,
@@ -305,16 +321,18 @@ class Page {
    * Each page can invoke this function
    *
    * @param {Array|string} urls
+   * @param {Object} options
+   * @param {boolean} ignoreIframeMaxNum If true, ignore checkIfExceedsMaxPageNum after create iframe. Default to false.
    * @returns {Promise}
    */
-  prerender (urls) {
+  prerender (urls, options = {}) {
     if (this.isCrossOrigin) {
       console.warn('跨域 MIP 页面暂不支持预渲染')
       return
     }
 
     let target = this.isRootPage ? this : window.parent.MIP.viewer.page
-    return target.prerenderPages(urls)
+    return target.prerenderPages(urls, options)
   }
 
   // =============================== Root Page methods ===============================
@@ -459,9 +477,10 @@ class Page {
    * Cross Origin is now allowed
    *
    * @param {Array|string} urls
+   * @param {boolean} ignoreIframeMaxNum If true, ignore checkIfExceedsMaxPageNum after create iframe. Default to false.
    * @returns {Promise}
    */
-  prerenderPages (urls) {
+  prerenderPages (urls, options = {}) {
     if (!this.isRootPage) {
       console.warn('该方法只能在 rootPage 调用')
       return Promise.reject()
@@ -498,7 +517,7 @@ class Page {
             }
             targetPageInfo.targetWindow = newIframe.contentWindow
             me.addChild(targetPageInfo)
-            me.checkIfExceedsMaxPageNum(pageId)
+            !options.ignoreIframeMaxNum && me.checkIfExceedsMaxPageNum(pageId)
 
             resolve(newIframe)
           },
@@ -542,6 +561,14 @@ class Page {
       let pageId = getCleanPageId(fullpath)
       return createPrerenderIFrame({fullpath, pageId})
     }))
+  }
+
+  getIFrame (pageId) {
+    if (!this.isRootPage) {
+      console.warn('该方法只能在 rootPage 调用')
+      return
+    }
+    return getIFrame(pageId)
   }
 }
 
