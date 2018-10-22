@@ -227,11 +227,18 @@ class MipShell extends CustomElement {
       page.pageMeta = this.currentPageMeta
       this.initShell()
       this.initRouter()
+<<<<<<< HEAD
       // 绑定事件改为异步，不阻塞发送 mippageload 事件，下同
       setTimeout(() => this.bindRootEvents(), 0)
     }
 
     setTimeout(() => this.bindAllEvents(), 0)
+=======
+      this.bindRootEvents()
+    }
+
+    this.bindAllEvents()
+>>>>>>> a13d9df59ab2ef0090154a8c5fc880a7ecd158ea
   }
 
   disconnectedCallback () {
@@ -288,6 +295,10 @@ class MipShell extends CustomElement {
       // Loading
       this.$loading = createLoading(this.currentPageMeta)
 
+<<<<<<< HEAD
+=======
+    setTimeout(() => {
+>>>>>>> a13d9df59ab2ef0090154a8c5fc880a7ecd158ea
       // Other async parts
       this.renderOtherPartsAsync()
     }, 0)
@@ -516,7 +527,6 @@ class MipShell extends CustomElement {
       return
     }
 
-    // this.bindHeaderEventsFlag = false
     // Render target page
     let sourcePage = page.getPageById(page.currentPageId)
     let targetFullPath = getFullPath(to)
@@ -1167,10 +1177,6 @@ class MipShell extends CustomElement {
 
   bindHeaderEvents () {
     let me = this
-    // if (this.bindHeaderEventsFlag) {
-    //   return
-    // }
-    // this.bindHeaderEventsFlag = true
     // Delegate header
     this.headerEventHandler = event.delegate(this.$el, '[mip-header-btn]', 'click', function (e) {
       let buttonName = this.dataset.buttonName
