@@ -308,12 +308,13 @@ class Page {
    * @returns {Promise}
    */
   prerender (urls) {
+    /* istanbul ignore next */
     if (this.isCrossOrigin) {
       console.warn('跨域 MIP 页面暂不支持预渲染')
       return
     }
 
-    let target = this.isRootPage ? this : window.parent.MIP.viewer.page
+    let target = this.isRootPage ? this : /* istanbul ignore next */ window.parent.MIP.viewer.page
     return target.prerenderPages(urls)
   }
 
@@ -325,6 +326,7 @@ class Page {
    * @param {Object} event event
    */
   emitEventInCurrentPage (event) {
+    /* istanbul ignore next */
     if (!this.isRootPage) {
       console.warn('该方法只能在 rootPage 调用')
       return
@@ -339,6 +341,7 @@ class Page {
    * @param {Page} page page
    */
   addChild (page) {
+    /* istanbul ignore next */
     if (!this.isRootPage) {
       console.warn('该方法只能在 rootPage 调用')
       return
@@ -360,6 +363,7 @@ class Page {
    */
   /* istanbul ignore next */
   checkIfExceedsMaxPageNum (targetPageId) {
+    /* istanbul ignore next */
     if (!this.isRootPage) {
       console.warn('该方法只能在 rootPage 调用')
       return
@@ -410,6 +414,7 @@ class Page {
    * @return {Page} page
    */
   getPageById (pageId) {
+    /* istanbul ignore next */
     if (!this.isRootPage) {
       console.warn('该方法只能在 rootPage 调用')
       return
@@ -433,6 +438,7 @@ class Page {
    * @return {Array<HTMLElement>} elements
    */
   getElementsInRootPage () {
+    /* istanbul ignore next */
     if (!this.isRootPage) {
       console.warn('该方法只能在 rootPage 调用')
       return
@@ -462,6 +468,7 @@ class Page {
    * @returns {Promise}
    */
   prerenderPages (urls) {
+    /* istanbul ignore next */
     if (!this.isRootPage) {
       console.warn('该方法只能在 rootPage 调用')
       return Promise.reject()
@@ -478,6 +485,7 @@ class Page {
       return new Promise((resolve, reject) => {
         let me = this
         let iframe = getIFrame(pageId)
+        /* istanbul ignore next */
         if (iframe) {
           // 预加载前已经存在，直接返回即可
           resolve(iframe)
@@ -503,6 +511,7 @@ class Page {
             resolve(newIframe)
           },
           onError (newIframe) {
+            /* istanbul ignore next */
             reject(newIframe)
           }
         })
@@ -511,12 +520,14 @@ class Page {
 
     let findMetaByPageId = pageId => {
       let target
+      /* istanbul ignore next */
       if (!this.isRootPage && !this.isCrossOrigin) {
         target = window.parent
       } else {
         target = window
       }
 
+      /* istanbul ignore next */
       if (target.MIP_PAGE_META_CACHE[pageId]) {
         return target.MIP_PAGE_META_CACHE[pageId]
       } else {
@@ -529,11 +540,14 @@ class Page {
         }
       }
 
+      /* istanbul ignore next */
       console.warn('Cannot find MIP Shell Config for current page. Use default instead.')
+      /* istanbul ignore next */
       return Object.assign({}, DEFAULT_SHELL_CONFIG)
     }
 
     return Promise.all(urls.map(fullpath => {
+      /* istanbul ignore next */
       if (window.MIP.viewer._isCrossOrigin(fullpath)) {
         console.warn('跨域 MIP 页面暂不支持预渲染', fullpath)
         return Promise.resolve()
