@@ -2,6 +2,7 @@
  * @file render 方法
  * @author wangyisheng@baidu.com (wangyisheng)
  */
+/* istanbul ignore file */
 
 import platform from '../../util/platform'
 import fn from '../../util/fn'

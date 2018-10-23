@@ -2,6 +2,7 @@
  * @file 处理过场动画
  * @author wangyisheng@baidu.com (wangyisheng)
  */
+/* istanbul ignore file */
 
 import {isPortrait} from '../../page/util/feature-detect'
 import css from '../../util/dom/css'
