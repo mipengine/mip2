@@ -41,6 +41,18 @@ describe('mip-image-slider', () => {
         <div first class="test">this is the first</div>
         <div second class="test">this is the second</div>
       </mip-image-slider>
+      <mip-image-slider
+        layout="responsive"
+        width="500"
+        height="400"
+        disable-hint-reappear>
+        <mip-img
+            src="https://www.mipengine.org/static/img/sample_01.jpg">
+        </mip-img>
+        <mip-img
+            src="https://www.mipengine.org/static/img/sample_02.jpg">
+        </mip-img>
+      </mip-image-slider>
       <button on="tap:slider.seekTo(0.3)">button</button>
     `
     sliderForArrow = document.createElement('div')
@@ -255,14 +267,14 @@ describe('mip-image-slider', () => {
 
   describe('arrow behavior', function () {
     let event
-    this.timeout(2000)
+    this.timeout(1500)
     it('should hide arrow with user interacting', () => {
       event = createEvent('mousedown', testPosition.position20)
       slider.dispatchEvent(event)
       expect(checkArrowHide(slider)).to.be.true
     })
-    // TODO 下面的两个测试有点问题：两个一起测，绝对会有一个报错；只留一个，时间设置太短也会报错。所以只能 skip 了。
-    it.skip('should toggle arrow when in view and out of viewport', (done) => {
+    // TODO 下面的测试似乎有点问题，但是测试又基本都通过了。
+    it('should toggle arrow when in view and out of viewport', (done) => {
       event = createEvent('mousedown', testPosition.position20)
       slider.dispatchEvent(event)
       expect(checkArrowHide(slider)).to.be.true
@@ -272,12 +284,12 @@ describe('mip-image-slider', () => {
         setTimeout(() => {
           expect(checkArrowHide(slider)).to.be.false
           done()
-        }, 1100)
+        }, 1000)
       }, 100)
     })
-    it.skip('should not show arrow with disable-hint-reappear when in and out of view', (done) => {
-      slider.setAttribute('disable-hint-reappear', true)
+    it('should not show arrow with disable-hint-reappear when in and out of view', (done) => {
       event = createEvent('mousedown', testPosition.position20)
+      let slider = sliderWrapper.querySelectorAll('mip-image-slider')[1]
       slider.dispatchEvent(event)
       expect(checkArrowHide(slider)).to.be.true
       window.scrollTo(0, document.body.scrollHeight)
@@ -286,7 +298,7 @@ describe('mip-image-slider', () => {
         setTimeout(() => {
           expect(checkArrowHide(slider)).to.be.true
           done()
-        }, 1100)
+        }, 1000)
       }, 100)
     })
   })
