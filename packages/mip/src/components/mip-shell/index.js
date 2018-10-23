@@ -6,39 +6,29 @@
 
 import {
   convertPatternToRegexp,
+  checkRouteConfig
+} from './util'
+import {
   createMoreButtonWrapper,
   createPageMask,
   toggleInner,
-  checkRouteConfig
-} from './util'
+  renderHeader,
+  bindHeaderEvents,
+  unbindHeaderEvents
+} from './dom'
+import {render} from './render'
 import {makeCacheUrl} from '../../util'
 import css from '../../util/dom/css'
 import fn from '../../util/fn'
-import platform from '../../util/platform'
-import event from '../../util/dom/event'
 import CustomElement from '../../custom-element'
-import {supportsPassive, isPortrait} from '../../page/util/feature-detect'
-import {isSameRoute, getFullPath} from '../../page/util/route'
 import {
-  createIFrame,
-  getIFrame,
-  hideAllIFrames,
   createLoading,
-  getLoading,
-  getFadeHeader,
-  toggleFadeHeader,
-  nextFrame,
-  whenTransitionEnds
+  toggleFadeHeader
 } from '../../page/util/dom'
-import {getCleanPageId} from '../../page/util/path'
 import Router from '../../page/router/index'
 import {
   DEFAULT_SHELL_CONFIG,
-  NON_EXISTS_PAGE_ID,
-  CUSTOM_EVENT_SCROLL_TO_ANCHOR,
   CUSTOM_EVENT_RESIZE_PAGE,
-  CUSTOM_EVENT_SHOW_PAGE,
-  CUSTOM_EVENT_HIDE_PAGE,
   MESSAGE_ROUTER_PUSH,
   MESSAGE_ROUTER_REPLACE,
   MESSAGE_ROUTER_BACK,
@@ -54,10 +44,8 @@ import {customEmit} from '../../util/custom-event'
 
 let viewer = null
 let page = null
-let activeZIndex = 10000
 let isHeaderShown = false
-let innerBodyHeight
-let innerBodyFreezeTime
+
 window.MIP_PAGE_META_CACHE = Object.create(null)
 window.MIP_SHELL_CONFIG = null
 
@@ -289,100 +277,6 @@ class MipShell extends CustomElement {
     }, 0)
   }
 
-  renderHeader (container) {
-    let pageMeta = this.currentPageMeta
-    let {
-      buttonGroup,
-      title = '',
-      logo,
-      color = '#000000',
-      borderColor,
-      backgroundColor = '#ffffff'
-    } = pageMeta.header
-
-    if (this.priorTitle && !this.alwaysUseTitleInShellConfig) {
-      title = pageMeta.header.title = this.priorTitle
-    }
-    let showBackIcon = !pageMeta.view.isIndex
-
-    let headerHTML = `
-      ${showBackIcon ? `<a href="javascript:void(0)" class="back-button" mip-header-btn
-        data-button-name="back">
-        <svg t="1530857979993" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3173"
-          xmlns:xlink="http://www.w3.org/1999/xlink">
-          <path  fill="currentColor" d="M348.949333 511.829333L774.250667 105.728C783.978667 96 789.333333 83.712 789.333333 71.104c0-12.629333-5.354667-24.917333-15.082666-34.645333-9.728-9.728-22.037333-15.082667-34.645334-15.082667-12.586667 0-24.917333 5.333333-34.624 15.082667L249.557333 471.616A62.570667 62.570667 0 0 0 234.666667 512c0 10.410667 1.130667 25.408 14.890666 40.042667l455.424 435.605333c9.706667 9.728 22.016 15.082667 34.624 15.082667s24.917333-5.354667 34.645334-15.082667c9.728-9.728 15.082667-22.037333 15.082666-34.645333 0-12.608-5.354667-24.917333-15.082666-34.645334L348.949333 511.829333z"
-            p-id="3174"></path>
-        </svg>
-      </a>` : ''}
-      <div class="mip-shell-header-logo-title">
-        ${logo ? `<img class="mip-shell-header-logo" src="${logo}">` : ''}
-        <span class="mip-shell-header-title">${title}</span>
-      </div>
-    `
-
-    let moreFlag = Array.isArray(buttonGroup) && buttonGroup.length > 0
-    let closeFlag = !window.MIP.standalone && this.showHeaderCloseButton()
-
-    if (moreFlag && closeFlag) {
-      // more & close
-      headerHTML += `
-        <div class="mip-shell-header-button-group">
-          <div class="button more" mip-header-btn data-button-name="more">
-            <svg t="1530857985972" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3393"
-              xmlns:xlink="http://www.w3.org/1999/xlink">
-              <path d="M128 512m-128 0a128 128 0 1 0 256 0 128 128 0 1 0-256 0Z" p-id="3394" fill="currentColor"></path>
-              <path d="M512 512m-128 0a128 128 0 1 0 256 0 128 128 0 1 0-256 0Z" p-id="3395" fill="currentColor"></path>
-              <path d="M896 512m-128 0a128 128 0 1 0 256 0 128 128 0 1 0-256 0Z" p-id="3396" fill="currentColor"></path>
-            </svg>
-          </div>
-          <div class="split"></div>
-          <div class="button close" mip-header-btn data-button-name="close">
-            <svg t="1530857971603" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2953"
-              xmlns:xlink="http://www.w3.org/1999/xlink">
-              <path  fill="currentColor" d="M586.026667 533.248l208.789333-208.576c9.856-8.874667 15.488-21.248 15.850667-34.858667a53.717333 53.717333 0 0 0-15.829334-39.146666 48.042667 48.042667 0 0 0-36.224-15.872c-14.165333 0-27.584 5.632-37.802666 15.850666L512 459.221333l-208.789333-208.576a48.042667 48.042667 0 0 0-36.245334-15.850666c-14.144 0-27.562667 5.632-37.781333 15.850666A48.085333 48.085333 0 0 0 213.333333 285.504a53.717333 53.717333 0 0 0 15.850667 39.168l208.789333 208.576-208.576 208.853333a48.085333 48.085333 0 0 0-15.850666 34.88 53.717333 53.717333 0 0 0 15.850666 39.146667c9.194667 10.24 22.058667 15.872 36.224 15.872 14.144 0 27.562667-5.632 37.802667-15.850667L512 607.274667l208.597333 208.853333c9.216 10.24 22.08 15.872 36.224 15.872s27.584-5.632 37.802667-15.850667c9.856-8.874667 15.488-21.269333 15.850667-34.88a53.717333 53.717333 0 0 0-15.850667-39.146666l-208.597333-208.853334z"
-                p-id="2954"></path>
-            </svg>
-          </div>
-        </div>
-     `
-    } else if (moreFlag && !closeFlag) {
-      // only more
-      headerHTML += `
-        <div class="mip-shell-header-button-group-standalone more" mip-header-btn data-button-name="more">
-          <svg t="1530857985972" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3393"
-            xmlns:xlink="http://www.w3.org/1999/xlink">
-            <path d="M128 512m-128 0a128 128 0 1 0 256 0 128 128 0 1 0-256 0Z" p-id="3394" fill="currentColor"></path>
-            <path d="M512 512m-128 0a128 128 0 1 0 256 0 128 128 0 1 0-256 0Z" p-id="3395" fill="currentColor"></path>
-            <path d="M896 512m-128 0a128 128 0 1 0 256 0 128 128 0 1 0-256 0Z" p-id="3396" fill="currentColor"></path>
-          </svg>
-        </div>
-     `
-    } else if (!moreFlag && closeFlag) {
-      // only close
-      headerHTML += `
-        <div class="mip-shell-header-button-group-standalone">
-          <div class="button close" mip-header-btn data-button-name="close">
-            <svg t="1530857971603" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2953"
-              xmlns:xlink="http://www.w3.org/1999/xlink">
-              <path  fill="currentColor" d="M586.026667 533.248l208.789333-208.576c9.856-8.874667 15.488-21.248 15.850667-34.858667a53.717333 53.717333 0 0 0-15.829334-39.146666 48.042667 48.042667 0 0 0-36.224-15.872c-14.165333 0-27.584 5.632-37.802666 15.850666L512 459.221333l-208.789333-208.576a48.042667 48.042667 0 0 0-36.245334-15.850666c-14.144 0-27.562667 5.632-37.781333 15.850666A48.085333 48.085333 0 0 0 213.333333 285.504a53.717333 53.717333 0 0 0 15.850667 39.168l208.789333 208.576-208.576 208.853333a48.085333 48.085333 0 0 0-15.850666 34.88 53.717333 53.717333 0 0 0 15.850666 39.146667c9.194667 10.24 22.058667 15.872 36.224 15.872 14.144 0 27.562667-5.632 37.802667-15.850667L512 607.274667l208.597333 208.853333c9.216 10.24 22.08 15.872 36.224 15.872s27.584-5.632 37.802667-15.850667c9.856-8.874667 15.488-21.269333 15.850667-34.88a53.717333 53.717333 0 0 0-15.850667-39.146666l-208.597333-208.853334z"
-                p-id="2954"></path>
-            </svg>
-          </div>
-        </div>
-      `
-    }
-
-    container.innerHTML = headerHTML
-
-    // Set color & borderColor & backgroundColor
-    css(container, 'background-color', backgroundColor)
-    css(container.querySelectorAll('svg'), 'fill', color)
-    css(container.querySelector('.mip-shell-header-title'), 'color', color)
-    css(container.querySelector('.mip-shell-header-logo'), 'border-color', borderColor)
-    css(container.querySelector('.mip-shell-header-button-group'), 'border-color', borderColor)
-    css(container.querySelector('.mip-shell-header-button-group .split'), 'background-color', borderColor)
-  }
-
   initRouter () {
     // Init router
     let router = new Router()
@@ -404,17 +298,7 @@ class MipShell extends CustomElement {
       isForward: true
     }
 
-    window.addEventListener('message', e => {
-      let type
-      let data
-      try {
-        type = e.data.type
-        data = e.data.data
-      } catch (e) {
-        // Ignore other messages
-        return
-      }
-
+    this.messageHandlers.push((type, data) => {
       // Deal message and operate router
       if (type === MESSAGE_ROUTER_PUSH) {
         if (data.options.allowTransition) {
@@ -434,7 +318,7 @@ class MipShell extends CustomElement {
         window.MIP_SHELL_OPTION.allowTransition = true
         router.forward()
       }
-    }, false)
+    })
   }
 
   bindRootEvents () {
@@ -494,657 +378,39 @@ class MipShell extends CustomElement {
   }
 
   /**
-   * render with current route
+   * Render with current route
    *
    * @param {Route} from route
    * @param {Route} to route
    */
   render (from, to) {
-    this.resizeAllPages()
-
-    // If `to` route is the same with `from` route in path & query, scroll in current page
-    if (isSameRoute(from, to, true)) {
-      // Emit event to current active page
-      page.emitEventInCurrentPage({
-        name: CUSTOM_EVENT_SCROLL_TO_ANCHOR,
-        data: to.hash
-      })
-      return
-    }
-
-    // Render target page
-    let sourcePage = page.getPageById(page.currentPageId)
-    let targetFullPath = getFullPath(to)
-    let targetPageId = getCleanPageId(targetFullPath)
-    let targetPage = page.getPageById(targetPageId)
-
-    /**
-     * priority of header.title:
-     * 1. <a mip-link data-title> (to.meta.title)
-     * 2. <mip-shell> targetPageMeta.header.title (findMetaById(id).header.title)
-     * 3. <a mip-link></a> innerText (to.meta.defaultTitle)
-     */
-    let targetPageMeta = fn.extend(true, {}, this.findMetaByPageId(targetPageId))
-
-    this.priorTitle = to.meta.header && to.meta.header.title
-    document.title = targetPageMeta.header.title = to.meta.header
-      ? to.meta.header.title || targetPageMeta.header.title || to.meta.header.defaultTitle
-      : targetPageMeta.header.title
-
-    // Transition direction
-    let isForward
-    if (targetPageMeta.view.isIndex) {
-      isForward = false
-    } else {
-      isForward = window.MIP_SHELL_OPTION.isForward
-    }
-
-    // Hide page mask and skip transition
-    this.togglePageMask(false, {skipTransition: true})
-
-    // Show header
-    this.toggleTransition(false)
-    this.slideHeader('down')
-    this.pauseBouncyHeader = true
-
-    let params = {
-      targetPageId,
-      targetPageMeta,
-      sourcePageId: page.currentPageId,
-      sourcePageMeta: sourcePage.pageMeta,
-      isForward
-    }
-
-    // Leave from root page, save scroll position
-    if (page.currentPageId === page.pageId) {
-      this.saveScrollPosition()
-    }
-
-    if (!targetPage || (to.meta && to.meta.reload && !to.meta.cacheFirst)) {
-      // Iframe will be created in following situation:
-      // 1. `!targetPage` means target iframe doesn't exists.
-      // 2. `to.meta && to.meta.reload` means target iframe MUST be recreated even it exists.
-      //    `to.meta.reload` will be set when click `<a mip-link>`
-      // 2.1 `cacheFirst` uses cached page first, thus `newPage` will be `false` if cached page exists
-
-      // If target page is root page
-      if (page.pageId === targetPageId) {
-        // Clear root pageId and destroy root page (Root page will exist in newly created iframe)
-        page.pageId = NON_EXISTS_PAGE_ID
-        if (targetPage) {
-          targetPage.destroy()
-        }
-        // Delete DOM & trigger disconnectedCallback in root page
-        page.getElementsInRootPage().forEach(el => el.parentNode && el.parentNode.removeChild(el))
-      }
-
-      if (!targetPage) {
-        page.checkIfExceedsMaxPageNum(targetPageId)
-      }
-
-      let targetPageInfo = {
-        pageId: targetPageId,
-        pageMeta: targetPageMeta,
-        fullpath: targetFullPath,
-        standalone: window.MIP.standalone,
-        isRootPage: false,
-        isCrossOrigin: to.origin !== window.location.origin
-      }
-
-      let iframeCreated = false
-      let targetIFrame
-      innerBodyHeight = 0
-      innerBodyFreezeTime = 0
-      let initHackForAndroidScroll = () => {
-        let mask = document.createElement('div')
-        mask.classList.add('hack-for-android-scroll-mask')
-        document.body.appendChild(mask)
-        return mask
-      }
-      let executeHackForAndroidScroll = mask => {
-        css(mask, {
-          opacity: '0.01',
-          display: 'block'
-        })
-        setTimeout(() => {
-          css(mask, {
-            display: 'none',
-            opacity: ''
-          })
-        }, 20)
-      }
-      let iframeOnLoad = () => {
-        if (!targetPageInfo.isCrossOrigin && platform.isAndroid()) {
-          let doc = targetIFrame.contentWindow.document
-          let intervalTimes = 0
-          let hackMask = initHackForAndroidScroll()
-          let checkInterval = setInterval(() => {
-            intervalTimes++
-            let currentHeight = doc.body.clientHeight
-            if (doc.body.clientHeight !== innerBodyHeight) {
-              innerBodyHeight = currentHeight
-              innerBodyFreezeTime = 0
-              executeHackForAndroidScroll(hackMask)
-            } else {
-              innerBodyFreezeTime++
-            }
-
-            if (innerBodyFreezeTime >= 10 || intervalTimes >= 20) {
-              clearInterval(checkInterval)
-            }
-          }, 500)
-        }
-      }
-      // Bugs appear in QQBrowser when [pushState] and [create iframe] invoked together
-      // Ensure [create iframe] before [pushState] and eliminate async operations can help
-      // Thus, disable transition in QQBrowser
-      if (platform.isQQ() || platform.isQQApp()) {
-        targetIFrame = createIFrame(targetPageInfo, {onLoad: iframeOnLoad})
-        targetPageInfo.targetWindow = targetIFrame.contentWindow
-        iframeCreated = true
-        window.MIP_SHELL_OPTION.allowTransition = false
-      }
-
-      page.addChild(targetPageInfo)
-      params.newPage = true
-
-      this.beforeSwitchPage(params)
-
-      params.onComplete = () => {
-        this.currentPageMeta = targetPageMeta
-        window.MIP_SHELL_OPTION.allowTransition = false
-        window.MIP_SHELL_OPTION.isForward = true
-
-        if (!iframeCreated) {
-          targetIFrame = createIFrame(targetPageInfo, {onLoad: iframeOnLoad})
-          targetPageInfo.targetWindow = targetIFrame.contentWindow
-        }
-        css(targetIFrame, {
-          display: 'block',
-          opacity: 1
-        })
-        this.toggleTransition(true)
-        this.pauseBouncyHeader = false
-
-        // Get <mip-shell> from root page
-        let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
-        if (shellDOM) {
-          viewer.eventAction.execute('active', shellDOM, {})
-        }
-
-        // Emit show/hide event to both pages
-        page.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
-        page.currentPageId = targetPageId
-        page.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
-      }
-
-      this.switchPage(params)
-    } else {
-      // Use existing iframe without recreating
-      if (platform.isQQ() || platform.isQQApp()) {
-        window.MIP_SHELL_OPTION.allowTransition = false
-      }
-      // When transition contains header, fadeHeader won't appear
-      // Thus updating shell of target page first is required
-      if (this.transitionContainsHeader) {
-        this.refreshShell({pageMeta: targetPageMeta})
-      }
-
-      params.newPage = false
-      this.beforeSwitchPage(params)
-
-      params.onComplete = () => {
-        this.currentPageMeta = targetPageMeta
-        window.MIP_SHELL_OPTION.allowTransition = false
-        window.MIP_SHELL_OPTION.isForward = true
-
-        window.MIP.$recompile()
-
-        css(getIFrame(targetPageId), {
-          display: 'block',
-          opacity: 1
-        })
-        if (this.transitionContainsHeader) {
-          css(this.$loading, 'display', 'none')
-        } else {
-          this.refreshShell({pageMeta: targetPageMeta})
-        }
-        this.toggleTransition(true)
-        this.pauseBouncyHeader = false
-
-        // Get <mip-shell> from root page
-        let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
-        if (shellDOM) {
-          viewer.eventAction.execute('active', shellDOM, {})
-        }
-
-        // Emit show/hide event to both pages
-        page.emitEventInCurrentPage({name: CUSTOM_EVENT_HIDE_PAGE})
-        page.currentPageId = targetPageId
-        page.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
-      }
-
-      this.switchPage(params)
-    }
+    render(this, from, to)
   }
 
   /**
-   * save scroll position in root page
+   * Render shell header
+   * @param {HTMLElement} container container of shell header
+   */
+  renderHeader (container) {
+    renderHeader(this, container)
+  }
+
+  /**
+   * Save scroll position in root page
    */
   saveScrollPosition () {
     this.rootPageScrollPosition = viewport.getScrollTop()
   }
 
   /**
-   * restore scroll position in root page
+   * Restore scroll position in root page
    */
   restoreScrollPosition () {
     viewport.setScrollTop(this.rootPageScrollPosition)
   }
 
   /**
-   * Apply transition effect when switching page
-   *
-   * @param {Object} options
-   * @param {string} options.targetPageId targetPageId
-   * @param {Object} options.targetPageMeta pageMeta of target page
-   * @param {string} options.sourcePageId sourcePageId
-   * @param {Object} options.sourcePageMeta pageMeta of source page
-   * @param {boolean} options.newPage whether a new iframe should be created
-   * @param {boolean} options.isForward whether transition direction is forward
-   * @param {Function} options.onComplete complete callback
-   */
-  switchPage (options) {
-    if (isPortrait() && window.MIP_SHELL_OPTION.allowTransition) {
-      // enable transition
-      if (options.newPage) {
-        if (options.isForward) {
-          this.forwardTransitionAndCreate(options)
-        } else {
-          this.backwardTransitionAndCreate(options)
-        }
-      } else {
-        if (options.isForward) {
-          this.forwardTransition(options)
-        } else {
-          this.backwardTransition(options)
-        }
-      }
-    } else {
-      // disable transition
-      if (options.newPage) {
-        this.skipTransitionAndCreate(options)
-      } else {
-        this.skipTransition(options)
-      }
-    }
-  }
-
-  fixRootPageScroll ({sourcePageId, targetPageId} = {}) {
-    /**
-     * Disable scrolling of root page when covered by an iframe
-     * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
-     */
-    if (sourcePageId === page.pageId) {
-      document.documentElement.classList.add('mip-no-scroll')
-      page.getElementsInRootPage().forEach(e => e.classList.add('hide'))
-    }
-    if (targetPageId === page.pageId) {
-      document.documentElement.classList.remove('mip-no-scroll')
-      page.getElementsInRootPage().forEach(e => e.classList.remove('hide'))
-      this.restoreScrollPosition()
-    }
-  }
-
-  /**
-   * Forward transition and create new iframe
-   *
-   * @param {Object} options
-   * @param {string} options.targetPageId targetPageId
-   * @param {Object} options.targetPageMeta pageMeta of target page
-   * @param {string} options.sourcePageId sourcePageId
-   * @param {Object} options.sourcePageMeta pageMeta of source page
-   * @param {boolean} options.newPage whether a new iframe should be created (true)
-   * @param {boolean} options.isForward whether transition direction is forward (true)
-   * @param {Function} options.onComplete complete callback
-   */
-  forwardTransitionAndCreate (options) {
-    let {sourcePageId, targetPageId, targetPageMeta, onComplete} = options
-    let loading = getLoading(targetPageMeta, {transitionContainsHeader: this.transitionContainsHeader})
-    loading.classList.add('slide-enter', 'slide-enter-active')
-    css(loading, 'display', 'block')
-
-    let headerLogoTitle
-    let fadeHeader
-    if (!this.transitionContainsHeader) {
-      headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
-      headerLogoTitle && headerLogoTitle.classList.add('fade-out')
-      fadeHeader = getFadeHeader(targetPageMeta)
-      fadeHeader.classList.add('fade-enter', 'fade-enter-active')
-      css(fadeHeader, 'display', 'block')
-    }
-
-    // trigger layout
-    /* eslint-disable no-unused-expressions */
-    loading.offsetWidth
-    /* eslint-enable no-unused-expressions */
-
-    whenTransitionEnds(loading, 'transition', () => {
-      loading.classList.remove('slide-enter-to', 'slide-enter-active')
-      if (!this.transitionContainsHeader) {
-        fadeHeader.classList.remove('fade-enter-to', 'fade-enter-active')
-      }
-
-      hideAllIFrames()
-      this.fixRootPageScroll({sourcePageId, targetPageId})
-      onComplete && onComplete()
-
-      let iframe = getIFrame(targetPageId)
-      css(iframe, 'z-index', activeZIndex++)
-
-      this.afterSwitchPage(options)
-    })
-
-    nextFrame(() => {
-      loading.classList.add('slide-enter-to')
-      loading.classList.remove('slide-enter')
-      if (!this.transitionContainsHeader) {
-        fadeHeader.classList.add('fade-enter-to')
-        fadeHeader.classList.remove('fade-enter')
-      }
-    })
-  }
-
-  /**
-   * Backward transition and create new iframe
-   *
-   * @param {Object} options
-   * @param {string} options.targetPageId targetPageId
-   * @param {Object} options.targetPageMeta pageMeta of target page
-   * @param {string} options.sourcePageId sourcePageId
-   * @param {Object} options.sourcePageMeta pageMeta of source page
-   * @param {boolean} options.newPage whether a new iframe should be created (true)
-   * @param {boolean} options.isForward whether transition direction is forward (false)
-   * @param {Function} options.onComplete complete callback
-   */
-  backwardTransitionAndCreate (options) {
-    let {
-      targetPageId,
-      targetPageMeta,
-      sourcePageId,
-      sourcePageMeta,
-      onComplete
-    } = options
-    // Goto root page, resume scroll position (Only appears in backward)
-    let rootPageScrollPosition = 0
-    this.fixRootPageScroll({targetPageId})
-    if (targetPageId === page.pageId) {
-      rootPageScrollPosition = this.rootPageScrollPosition
-    }
-
-    let iframe = getIFrame(sourcePageId)
-    // If source page is root page, skip transition
-    if (!iframe) {
-      document.documentElement.classList.add('mip-no-scroll')
-      page.getElementsInRootPage().forEach(e => e.classList.add('hide'))
-
-      onComplete && onComplete()
-
-      let targetIFrame = getIFrame(targetPageId)
-      if (targetIFrame) {
-        activeZIndex -= 2
-        css(targetIFrame, 'z-index', activeZIndex++)
-      }
-
-      this.afterSwitchPage(options)
-      return
-    }
-
-    // Moving out only needs header, not loading body
-    let loading = getLoading(sourcePageMeta, {
-      onlyHeader: true,
-      transitionContainsHeader: this.transitionContainsHeader
-    })
-    let headerLogoTitle
-    let fadeHeader
-
-    if (this.transitionContainsHeader) {
-      css(loading, 'display', 'block')
-    } else {
-      headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
-      headerLogoTitle && headerLogoTitle.classList.add('fade-out')
-      fadeHeader = getFadeHeader(targetPageMeta, sourcePageMeta)
-      css(fadeHeader, 'display', 'block')
-    }
-
-    iframe.classList.add('slide-leave', 'slide-leave-active')
-    if (this.transitionContainsHeader) {
-      loading.classList.add('slide-leave', 'slide-leave-active')
-    } else {
-      fadeHeader.classList.add('fade-enter', 'fade-enter-active')
-    }
-
-    // trigger layout and move current iframe to correct position
-    /* eslint-disable no-unused-expressions */
-    css(iframe, {
-      opacity: 1,
-      top: rootPageScrollPosition + 'px'
-    })
-    /* eslint-enable no-unused-expressions */
-
-    whenTransitionEnds(iframe, 'transition', () => {
-      css(iframe, {
-        display: 'none',
-        'z-index': 10000,
-        top: 0
-      })
-      iframe.classList.remove('slide-leave-to', 'slide-leave-active')
-      if (this.transitionContainsHeader) {
-        loading.classList.remove('slide-leave-to', 'slide-leave-active')
-        css(loading, 'display', 'none')
-      } else {
-        fadeHeader.classList.remove('fade-enter-to', 'fade-enter')
-      }
-
-      onComplete && onComplete()
-
-      let targetIFrame = getIFrame(targetPageId)
-      if (targetIFrame) {
-        activeZIndex -= 2
-        css(targetIFrame, 'z-index', activeZIndex++)
-      }
-
-      this.afterSwitchPage(options)
-    })
-
-    nextFrame(() => {
-      iframe.classList.add('slide-leave-to')
-      iframe.classList.remove('slide-leave')
-      if (this.transitionContainsHeader) {
-        loading.classList.add('slide-leave-to')
-        loading.classList.remove('slide-leave')
-      } else {
-        fadeHeader.classList.add('fade-enter-to')
-        fadeHeader.classList.remove('fade-enter')
-      }
-    })
-  }
-
-  /**
-   * Forward transition
-   *
-   * @param {Object} options
-   * @param {string} options.targetPageId targetPageId
-   * @param {Object} options.targetPageMeta pageMeta of target page
-   * @param {string} options.sourcePageId sourcePageId
-   * @param {Object} options.sourcePageMeta pageMeta of source page
-   * @param {boolean} options.newPage whether a new iframe should be created (false)
-   * @param {boolean} options.isForward whether transition direction is forward (true)
-   * @param {Function} options.onComplete complete callback
-   */
-  forwardTransition (options) {
-    // Currently act the same as forwardTransitionAndCreate
-    // This can be extended by sub-shell which executes different operations
-    this.forwardTransitionAndCreate(options)
-  }
-
-  /**
-   * Backward transition
-   *
-   * @param {Object} options
-   * @param {string} options.targetPageId targetPageId
-   * @param {Object} options.targetPageMeta pageMeta of target page
-   * @param {string} options.sourcePageId sourcePageId
-   * @param {Object} options.sourcePageMeta pageMeta of source page
-   * @param {boolean} options.newPage whether a new iframe should be created (false)
-   * @param {boolean} options.isForward whether transition direction is forward (true)
-   * @param {Function} options.onComplete complete callback
-   */
-  backwardTransition (options) {
-    let {
-      targetPageId,
-      targetPageMeta,
-      sourcePageId,
-      sourcePageMeta,
-      onComplete
-    } = options
-
-    let targetIFrame = getIFrame(targetPageId)
-    if (targetIFrame) {
-      activeZIndex -= 2
-      css(targetIFrame, {
-        opacity: 1,
-        display: 'block',
-        'z-index': activeZIndex++
-      })
-    }
-
-    // Goto root page, resume scroll position (Only appears in backward)
-    let rootPageScrollPosition = 0
-    this.fixRootPageScroll({targetPageId})
-    if (targetPageId === page.pageId) {
-      rootPageScrollPosition = this.rootPageScrollPosition
-    }
-
-    let iframe = getIFrame(sourcePageId)
-    // If source page is root page, skip transition
-    if (!iframe) {
-      document.documentElement.classList.add('mip-no-scroll')
-      page.getElementsInRootPage().forEach(e => e.classList.add('hide'))
-
-      onComplete && onComplete()
-      this.afterSwitchPage(options)
-      return
-    }
-
-    // Moving out only needs header, not loading body
-    let loading = getLoading(sourcePageMeta, {
-      onlyHeader: true,
-      transitionContainsHeader: this.transitionContainsHeader
-    })
-    let headerLogoTitle
-    let fadeHeader
-
-    if (this.transitionContainsHeader) {
-      css(loading, 'display', 'block')
-    } else {
-      headerLogoTitle = document.querySelector('.mip-shell-header-wrapper .mip-shell-header-logo-title')
-      headerLogoTitle && headerLogoTitle.classList.add('fade-out')
-      fadeHeader = getFadeHeader(targetPageMeta, sourcePageMeta)
-      css(fadeHeader, 'display', 'block')
-    }
-
-    iframe.classList.add('slide-leave', 'slide-leave-active')
-    if (this.transitionContainsHeader) {
-      loading.classList.add('slide-leave', 'slide-leave-active')
-    } else {
-      fadeHeader.classList.add('fade-enter', 'fade-enter-active')
-    }
-
-    // trigger layout and move current iframe to correct position
-    /* eslint-disable no-unused-expressions */
-    css(iframe, {
-      opacity: 1,
-      top: rootPageScrollPosition + 'px'
-    })
-    /* eslint-enable no-unused-expressions */
-
-    whenTransitionEnds(iframe, 'transition', () => {
-      css(iframe, {
-        display: 'none',
-        'z-index': 10000,
-        top: 0
-      })
-      iframe.classList.remove('slide-leave-to', 'slide-leave-active')
-      if (this.transitionContainsHeader) {
-        loading.classList.remove('slide-leave-to', 'slide-leave-active')
-        css(loading, 'display', 'none')
-      } else {
-        fadeHeader.classList.remove('fade-enter-to', 'fade-enter')
-      }
-
-      onComplete && onComplete()
-      this.afterSwitchPage(options)
-    })
-
-    nextFrame(() => {
-      iframe.classList.add('slide-leave-to')
-      iframe.classList.remove('slide-leave')
-      if (this.transitionContainsHeader) {
-        loading.classList.add('slide-leave-to')
-        loading.classList.remove('slide-leave')
-      } else {
-        fadeHeader.classList.add('fade-enter-to')
-        fadeHeader.classList.remove('fade-enter')
-      }
-    })
-  }
-
-  /**
-   * Skip transition and create new iframe
-   *
-   * @param {Object} options
-   * @param {string} options.targetPageId targetPageId
-   * @param {Object} options.targetPageMeta pageMeta of target page
-   * @param {string} options.sourcePageId sourcePageId
-   * @param {Object} options.sourcePageMeta pageMeta of source page
-   * @param {boolean} options.newPage whether a new iframe should be created (false)
-   * @param {boolean} options.isForward whether transition direction is forward (true)
-   * @param {Function} options.onComplete complete callback
-   */
-  skipTransitionAndCreate (options) {
-    let {sourcePageId, targetPageId, onComplete} = options
-
-    hideAllIFrames()
-    this.fixRootPageScroll({sourcePageId, targetPageId})
-    onComplete && onComplete()
-
-    let iframe = getIFrame(targetPageId)
-    css(iframe, 'z-index', activeZIndex++)
-
-    this.afterSwitchPage(options)
-  }
-
-  /**
-   * Skip transition
-   *
-   * @param {Object} options
-   * @param {string} options.targetPageId targetPageId
-   * @param {Object} options.targetPageMeta pageMeta of target page
-   * @param {string} options.sourcePageId sourcePageId
-   * @param {Object} options.sourcePageMeta pageMeta of source page
-   * @param {boolean} options.newPage whether a new iframe should be created (false)
-   * @param {boolean} options.isForward whether transition direction is forward (true)
-   * @param {Function} options.onComplete complete callback
-   */
-  skipTransition (options) {
-    // Currently act the same as skipTransitionAndCreate
-    // This can be extended by sub-shell which executes different operations
-    this.skipTransitionAndCreate(options)
-  }
-
-  /**
-   * handle resize event
+   * Handle resize event
    */
   resizeAllPages () {
     // 1.set every page's iframe
@@ -1161,59 +427,11 @@ class MipShell extends CustomElement {
   }
 
   bindHeaderEvents () {
-    let me = this
-    // Delegate header
-    this.headerEventHandler = event.delegate(this.$el, '[mip-header-btn]', 'click', function (e) {
-      let buttonName = this.dataset.buttonName
-      me.handleClickHeaderButton(buttonName)
-    })
-
-    // Delegate dropdown button
-    this.buttonEventHandler = event.delegate(this.$buttonWrapper, '[mip-header-btn]', 'click', function (e) {
-      let buttonName = this.dataset.buttonName
-      me.handleClickHeaderButton(buttonName)
-
-      // Fix buttonGroup with 'link' config
-      let children = this.children && this.children[0]
-      if (children && children.tagName.toLowerCase() === 'a' && children.hasAttribute('mip-link')) {
-        me.toggleDropdown(false)
-      }
-    })
-
-    let fadeHeader = document.querySelector('#mip-page-fade-header-wrapper')
-    if (fadeHeader) {
-      this.fadeHeaderEventHandler = event.delegate(fadeHeader, '[mip-header-btn]', 'click', function (e) {
-        if (this.dataset.buttonName === 'back') {
-          window.MIP_SHELL_OPTION.allowTransition = true
-          window.MIP_SHELL_OPTION.isForward = false
-          page.back()
-        }
-      })
-    }
-
-    if (this.$buttonMask) {
-      this.$buttonMask.addEventListener('click', () => this.toggleDropdown(false))
-      this.$buttonMask.addEventListener('touchmove',
-        e => e.preventDefault(),
-        supportsPassive ? {passive: false} : false)
-    }
+    bindHeaderEvents(this)
   }
 
   unbindHeaderEvents () {
-    if (this.headerEventHandler) {
-      this.headerEventHandler()
-      this.headerEventHandler = undefined
-    }
-
-    if (this.buttonEventHandler) {
-      this.buttonEventHandler()
-      this.buttonEventHandler = undefined
-    }
-
-    if (this.fadeHeaderEventHandler) {
-      this.fadeHeaderEventHandler()
-      this.fadeHeaderEventHandler = undefined
-    }
+    unbindHeaderEvents(this)
   }
 
   handleClickHeaderButton (buttonName) {
