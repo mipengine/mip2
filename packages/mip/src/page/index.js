@@ -345,10 +345,6 @@ class Page {
    * @param {Object} event event
    */
   emitEventInCurrentPage (event) {
-    if (!this.isRootPage) {
-      console.warn('该方法只能在 rootPage 调用')
-      return
-    }
     let currentPage = this.getPageById(this.currentPageId)
     this.emitCustomEvent(currentPage.targetWindow, currentPage.isCrossOrigin, event)
   }
@@ -359,10 +355,6 @@ class Page {
    * @param {Page} page page
    */
   addChild (page) {
-    if (!this.isRootPage) {
-      console.warn('该方法只能在 rootPage 调用')
-      return
-    }
     for (let i = 0; i < this.children.length; i++) {
       if (this.children[i].pageId === page.pageId) {
         this.children.splice(i, 1)
@@ -453,10 +445,6 @@ class Page {
    * @return {Array<HTMLElement>} elements
    */
   getElementsInRootPage () {
-    if (!this.isRootPage) {
-      console.warn('该方法只能在 rootPage 调用')
-      return
-    }
     let whitelist = [
       '.mip-page__iframe',
       '.mip-page-loading-wrapper',
