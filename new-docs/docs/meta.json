@@ -2,23 +2,27 @@
   "menu": [
     {
       "name": "起步",
-      "key": "basic"
+      "key": "getting-start"
     },
     {
       "name": "开发规范",
       "key": "mip-standard"
     },
     {
+      "name": "样式与布局",
+      "key": "style-and-layout"
+    },
+    {
       "name": "交互式设计",
       "key": "interactive-mip"
     },
     {
-      "name": "全站 MIP",
+      "name": "全站 MIP 开发",
       "key": "all-sites-mip"
     },
     {
-      "name": "进阶教程",
-      "key": "advanced"
+      "name": "用户行为统计与分析",
+      "key": "analytics"
     }
   ]
 }

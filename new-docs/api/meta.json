@@ -1,0 +1,16 @@
+{
+  "menu": [
+    {
+      "name": "API",
+      "key": "index"
+    },
+    {
+      "key": "global",
+      "name": "全局 API"
+    },
+    {
+      "name": "工具",
+      "key": "util"
+    }
+  ]
+}

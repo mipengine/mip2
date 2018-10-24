@@ -1,155 +1,187 @@
-# 使用 mip-cli 快速开始
+# 新手指南
 
-- [编写第一个 MIP 页面](#编写-mip-页面)
-- [编写第一个 MIP 组件](#编写-mip-组件)
+MIP（Mobile Instant Pages - 移动网页加速器）主要用于移动端页面加速。
 
-## 编写 MIP 页面
+这篇文档将带你快速创建一个 MIP 页面。
 
-下面的步骤将带我们使用 [mip2 CLI](./cli-usage.md) 来快速创建一个 MIP 页面
+## 1. 创建 HTML 文件
+首先创建一个标准的 HTML 文件，注意：
 
-### 1. 安装 mip2 CLI
-
-打开终端输入
-
-```bash
-$ npm install -g mip2
-```
-
-### 2. 项目初始化
-
-```bash
-$ mip2 init
-```
-
-根据提示，输入项目名称等信息
-
-### 3. 编辑页面模板
-
-进入项目目录，使用编辑器打开 `example/index.html`，生成的模板已经为我们写好了 MIP 页面所需的最基本元素，如 `mip.js` 运行时，默认样式 `mip.css` 等。下面我们在页面中写入简单的内容，并使用内置 `mip-img` 组件。注意，如果使用其他非内置组件，需要在页面底部使用 `script` 标签引入相应的脚本文件。
+- 在 `<html>` 标签中增加 `mip` 属性标识。
+- 编码为 `utf-8` 。
+- 添加 `meta-viewport`，用于移动端展现。
 
 ```html
 <!DOCTYPE html>
 <html mip>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-  <title>MIP page</title>
-  <link rel="canonical" href="对应的原页面地址">
-  <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
-  <style mip-custom>
-    /* 自定义样式 */
-    .wrapper {
-      padding: 20px;
-    }
-    p {
-      line-height: 24px;
-      padding: 10px 0;
-    }
-  </style>
-</head>
-<body>
-  <div class="wrapper">
-    <h2>Hello World</h2>
-    <p>This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.This is my first MIP page.</p>
-    <mip-img popup src="https://i3.meishichina.com/attachment/recipe/2014/10/27/c640_20141027211913820385989.jpg@!c640"></mip-img>
-  </div>
-  <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <title>Hello World</title>
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+  </body>
 </html>
 ```
 
-### 4. 启动调试服务器预览
-
-在项目根目录运行
-
-```bash
-$ mip2 dev
-```
-
-服务启动后，打开浏览器访问 `http://127.0.0.1:8111/example`，就能看到上面我们编写的页面的效果了。
-
-## 编写 MIP 组件
-
-下面的步骤将带我们使用 [mip2 CLI](./cli-usage.md) 来快速创建一个 MIP 自定义组件
-
-### 1. 初始化项目
-
-同上面的步骤类似，安装 `mip2 CLI` 工具后，我们运行 `mip2 init`，并创建一个名为 `my-project` 的项目。
-
-### 2. 新建一个自定义组件
-
-在项目根目录运行 `mip2 add` 命令，即可快速添加一个新组件
-
-```bash
-# 快速添加名为 mip-hello-world 的组件
-$ mip2 add mip-hello-world
-
-# 使用 -f 或 --force 参数强制覆盖同名组件
-$ mip2 add mip-hello-world -f
-```
-
-可以在 `components` 目录下看到，新增组件结构如下：
-
-```bash
-── mip-hello-world
-    ├── README.md
-    ├── mip-hello-world.vue
-    └── example
-        └── mip-hello-world.html
-```
-
-编辑器打开 `mip-hello-world.vue`，进行一定的修改
+## 2. 添加 MIP 运行环境
+在 HTML 代码中，添加 MIP 依赖的 `mip.js` 和 `mip.css` 。
 
 ```html
-<template>
-  <div class="wrapper">
-    <h1>MIP 2.0 component example</h1>
-    <h3>This is my first custom component !</h3>
-  </div>
-</template>
-
-<style scoped>
-  .wrapper {
-    margin: 0 auto;
-    text-align: center;
-    color: red;
-  }
-</style>
-
-<script>
-  export default {
-    mounted() {
-      console.log('This is my first custom component !');
-    }
-  }
-</script>
-
-```
-
-### 3. 引用组件脚本
-
-编辑器打开 `example/index.html`, 修改 `body` 部分的代码，引用组件脚本
-
-```html
-...
-<body>
-    <div class="wrapper">
-        <h2>Hello World</h2>
-        <mip-hello-world></mip-hello-world>
-    </div>
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="https://c.mipcdn.com/static/v2/mip.css">
+    <title>Hello World</title>
+  </head>
+  <body>
+    <h1>Hello World!</h1>
     <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
-    <script src="/mip-hello-world/mip-hello-world.js"></script>
-</body>
-
-...
+  </body>
+</html>
 ```
 
-### 4. 启动服务器预览
+## 3. 添加 MIP 关联标签
+`<link rel="miphtml">` 和 `<link rel="canonical">` 主要用于告知搜索引擎页面间的关系。添加关联标签后，MIP 页的会继承 **原页面**(移动端) 的点击权重，同时 **MIP 页** 将作为搜索引擎的首选导流页面。
 
-在项目根目录运行
+使用规则：
 
-```bash
-$ mip2 dev
+- `<link rel="miphtml">` 在移动端页面（H5）使用，指向对应内容的 MIP 页，方便搜索引擎发现对应的 MIP 页。
+- `<link rel="canonical">` 在 MIP 页中使用，指向内容对应的移动端页面（H5）。
+- 若没有移动端页面（H5），则指向内容对应的 PC 页。
+- 若直接在原链接修改 MIP，则 Canonical 指向当前 URL 。
+
+```html
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="https://c.mipcdn.com/static/v2/mip.css">
+    <!-- canonical 中的链接优先填写对应内容的移动端页面（H5）地址 -->
+    <link rel="canonical" href="https://www.example.com/your/path.html">
+    <title>Hello World</title>
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  </body>
+</html>
 ```
 
-服务启动后，打开浏览器访问 `http://127.0.0.1:8111/example`，可以看到，刚才编写的组件已经运行在页面中。开发工作完成后，可以根据组件类型，选择将组件提交至[第三方组件仓库](https://github.com/mipengine/mip2-extensions-platform)或[官方组件仓库](https://github.com/mipengine/mip2-extensions)。
+## 4. 添加样式
+出于速度考虑，建议內联使用 CSS 样式。所有样式写在 `<style mip-custom></style>` 中，注意：`style` 标签仅允许出现一次。
+
+```html
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="https://c.mipcdn.com/static/v2/mip.css">
+    <!-- canonical 中的链接优先填写对应内容的移动端页面（H5）地址 -->
+    <link rel="canonical" href="https://www.example.com/your/path.html">
+    <title>Hello World</title>
+    <style mip-custom>
+      h1 {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  </body>
+</html>
+```
+
+## 5. 替换禁用 HTML 标签
+[notice]MIP 十分关注页面速度，也因此禁用了一些引起拖慢速度的 HTML 标签（[禁用列表](../mip-standard/mip-html-spec.md)）。例如，`<img>` 标签会引起浏览器的 repaint 和 reflow，为了避免这些，MIP 提供了替代标签 `<mip-img>` ，详见 [`<mip-img>`使用文档](../../extensions/builtin/mip-img.md) 。
+
+```html
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="https://c.mipcdn.com/static/v2/mip.css">
+    <!-- canonical 中的链接优先填写对应内容的移动端页面（H5）地址 -->
+    <link rel="canonical" href="https://www.example.com/your/path.html">
+    <title>Hello World</title>
+    <style mip-custom>
+      h1 {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+    <mip-img layout="responsive" width="350" height="263" src="https://www.mipengine.org/static/img/mip_logo_3b722d7.png" alt="MIP LOGO"></mip-img>
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+  </body>
+</html>
+```
+
+## 6. 使用 MIP 组件
+[warning]出于对代码质量和性能的考虑，MIP 页中不允许使用 `script` 标签自定义 JavaScript 代码。如有必要，开发者可以考虑使用 [`<mip-script>` 组件](../interactive-mip/mip-script.md)来编写受 MIP 限制的 JavaScript 代码。
+
+在一个合法的 MIP 页面中，所有的交互通过引入 MIP 组件实现。MIP 组件可以理解为封装了 JS 的自定义 HTML 标签。上一步中的 `<mip-img>` 也是一个 MIP 组件，[点击这里](../../extensions/index.md) 查看更多组件。
+
+我们以分享组件为例，根据[分享组件文档](../../extensions/extensions/mip-share.md)，组件对应的 HTML 标签为 `<mip-share>` ，需要依赖 <https://c.mipcdn.com/static/v2/mip-share/mip-share.js> 脚本，用在页面里就是这样：
+
+```html
+<!DOCTYPE html>
+<html mip>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="https://c.mipcdn.com/static/v2/mip.css">
+    <!-- canonical 中的链接优先填写对应内容的移动端页面（H5）地址 -->
+    <link rel="canonical" href="https://www.example.com/your/path.html">
+    <title>Hello World</title>
+    <style mip-custom>
+      h1 {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Hello World!</h1>
+    <mip-img layout="responsive" width="350" height="263" src="https://www.mipengine.org/static/img/mip_logo_3b722d7.png" alt="MIP LOGO"></mip-img>
+    <mip-share title="分享：我的第一个 MIP 页面 "></mip-share>
+    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
+    <script src="https://c.mipcdn.com/static/v2/mip-share/mip-share.js"></script>
+  </body>
+</html>
+```
+
+在使用组件时，请注意阅读组件文档，查看组件是否依赖所需脚本。如果依赖，请在 `mip.js` 之后引入脚本。
+
+## 7. 预览
+开发完成后，可以使用 [MIP 校验工具](//www.mipengine.org/validator/validate) 保证代码规范。
+
+[info] 校验代码，使用 [MIP 校验工具](//www.mipengine.org/validator/validate)。<br> 预览线上 URL 异步打开效果，使用 [MIP 预览工具](//www.mipengine.org/validator/preview)。
+
+MIP 页文件可以直接运行，你可以选择如下方式，像预览普通 HTML 站点一样预览 MIP-HTML 页面：
+
+- 直接在浏览器中打开（由于 XML HTTP Requests 失败可能会导致某些元素预览失败）。
+- 在本地部署一个服务，如 Apache，Nginx 等。
+- 使用 MIP-CLI 辅助预览，使用方法见 MIP 博客：[开发教程一](http://www.cnblogs.com/mipengine/p/mip_cli_1_install.html)。
+
+
+## 8. 起飞
+到目前为止，你已经创建好了一个 MIP 页面。这个页面有图、有文、能分享，可以在浏览器中运行。
+
+进阶的内容，请参考：
+
+- [MIP-HTML 规范](../mip-standard/mip-html-spec.md)
+- [MIP 加速原理](./principle-of-mip.md)
+- [自定义组件](../component/introduction.md)
+- [组件布局](../component/layout.md)
+- [可交互 MIP](../interactive-mip/introduction.md)
+- [全站 MIP](../all-sites-mip/introduction.md)
+
+[info] MIP 开发系列视频教程：https://bit.baidu.com/course/datalist/column/120.html

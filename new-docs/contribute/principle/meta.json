@@ -1,0 +1,25 @@
+{
+  "menu": [
+    {
+      "key": "mip-component"
+    },
+    {
+      "key": "relationship-between-mip-component"
+    },
+    {
+      "key": "instance-life-cycle"
+    },
+    {
+      "key": "props"
+    },
+    {
+      "key": "event-and-action"
+    },
+    {
+      "key": "slot"
+    },
+    {
+      "key": "sandbox"
+    }
+  ]
+}

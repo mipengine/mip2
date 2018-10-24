@@ -1,0 +1,20 @@
+{
+  "menu": [
+    {
+      "name": "搜索识别 MIP 页",
+      "key": "introduction"
+    },
+    {
+      "name": "MIP 搜索生效流程",
+      "key": "process"
+    },
+    {
+      "name": "MIP-Cache",
+      "key": "mip-cache"
+    },
+    {
+      "name": "类原生的 MIP 页面体验",
+      "key": "native-like-mip"
+    }
+  ]
+}

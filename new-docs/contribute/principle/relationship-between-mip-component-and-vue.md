@@ -1,0 +1,1 @@
+relationship-between-mip-component-and-vue.md

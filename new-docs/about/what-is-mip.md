@@ -46,7 +46,7 @@ MIP-HTML 规范中有两类标签，一类是 HTML 常规标签，另一类是 M
 
 例如：`<mip-img>`标签，它使得图片只在需要时才进行加载，减少了页面渲染时间，节省了用户的流量。
 
-阅读 [**MIP-HTML 规范 **](../mip-standard/mip-html-spec.md) 了解更多信息。
+阅读 **[MIP-HTML 规范](../mip-standard/mip-html-spec.md)** 了解更多信息。
 
 ## 2. MIP-JS
 

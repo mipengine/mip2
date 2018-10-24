@@ -1,19 +1,16 @@
 {
   "menu": [
     {
-      "name": "事件机制",
-      "key": "event"
+      "key": "introduction",
     },
     {
-      "name": "数据定义与操作",
-      "key": "data-defination"
+      "key": "event-and-action"
     },
     {
       "name": "数据绑定",
       "key": "data-binding"
     },
     {
-      "name": "自定义 JS",
       "key": "custom-js"
     }
   ]
