@@ -92,7 +92,6 @@ export function render (shell, from, to) {
 
   if ((!targetIFrame || !targetPage)
     || (to.meta && to.meta.reload && !to.meta.cacheFirst)) {
-    console.log('ready to create iframe')
     // 进入这个分支表示需要创建新的 iframe，有以下情况：
     // 1. 目标页面的 iframe 不存在或者 page 对象不存在，需要创建
     //    之所以要判断两个，是因为预渲染情况在 iframe load 之后才添加 page，所以可能 page=null 但是 iframe 已经有了
@@ -212,7 +211,6 @@ export function render (shell, from, to) {
 
     switchPage(shell, params)
   } else {
-    console.log('ready to reuse iframe')
     // 进到这个分支表示复用已有的 iframe，不重新创建。需要满足：
     // 1. 目标页面的 iframe 和 page 对象都已经存在
     // 2. 并且可能是后退来的（to.meta.reload = false）或者指明从缓存读取（to.meta.cacheFirst = true）
