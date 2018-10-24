@@ -183,7 +183,7 @@ describe('page API #root page', function () {
     spy = sinon.stub(window.MIP.viewer, '_isCrossOrigin').returns(false)
     let server = sinon.fakeServer.create()
     server.respondWith('GET', '/prerender.html', [200, {
-      'Content-Type': 'text/html',
+      'Content-Type': 'text/html'
     }, '<html mip><body><script src="https://c.mipcdn.com/static/v2/mip.js"></body></html>'])
     setTimeout(function () {
       server.respond()

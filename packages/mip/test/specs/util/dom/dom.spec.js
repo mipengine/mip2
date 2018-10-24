@@ -38,7 +38,20 @@ let insertEle = dom.create(
 )
 document.body.appendChild(element)
 document.body.appendChild(insertEle)
-describe('dom', function () {
+describe('dom', () => {
+  /**
+   * @type {sinon.SinonSandbox}
+   */
+  let sandbox
+
+  beforeEach(() => {
+    sandbox = sinon.createSandbox()
+  })
+
+  afterEach(() => {
+    sandbox.restore()
+  })
+
   it('matches', function () {
     expect(dom.matches(element, 'div.dom-test')).to.be.true
     expect(dom.matches('', 'div')).to.be.false
@@ -131,6 +144,110 @@ describe('dom', function () {
     it('complete', function (done) {
       dom.waitDocumentReady(done, {
         readyState: 'complete'
+      })
+    })
+  })
+
+  describe('waitFor', () => {
+    let parent
+    let child
+
+    beforeEach(() => {
+      parent = document.createElement('div')
+      child = document.createElement('div')
+    })
+
+    function contains () {
+      return parent.contains(child)
+    }
+
+    it('should immediately return if child is available', () => {
+      parent.appendChild(child)
+      return dom.waitForChild(parent, contains)
+    })
+
+    it('should wait until child is available', () => {
+      const waiting = dom.waitForChild(parent, contains)
+      parent.appendChild(child)
+      return waiting
+    })
+
+    it('should prefer MutationObserver and disconnect when done', () => {
+      let mutationCallback
+      const mutationObserver = {
+        observe: sandbox.spy(),
+        disconnect: sandbox.spy()
+      }
+      function MutationObserver (callback) {
+        mutationCallback = callback
+        this.observe = mutationObserver.observe
+        this.disconnect = mutationObserver.disconnect
+      }
+      const parent = {
+        ownerDocument: {
+          defaultView: {
+            MutationObserver
+          }
+        }
+      }
+      let checkFuncValue = false
+      const checkFunc = () => checkFuncValue
+
+      const waiting = dom.waitForChild(parent, checkFunc)
+      expect(mutationObserver.observe).to.be.calledOnce
+      expect(mutationObserver.observe.firstCall.args[0]).to.equal(parent)
+      expect(mutationObserver.observe.firstCall.args[1])
+        .to.deep.equal({childList: true})
+      expect(mutationCallback).to.exist
+
+      // False callback.
+      mutationCallback()
+      expect(mutationObserver.disconnect).to.have.not.been.called
+
+      // True callback.
+      checkFuncValue = true
+      mutationCallback()
+      return waiting.then(() => {
+        expect(mutationObserver.disconnect).to.be.calledOnce
+      })
+    })
+
+    it('should fallback to polling without MutationObserver', () => {
+      let intervalCallback
+      const win = {
+        setInterval: callback => {
+          intervalCallback = callback
+          return 1
+        },
+        clearInterval: sandbox.spy()
+      }
+      const parent = {
+        ownerDocument: {
+          defaultView: win
+        }
+      }
+      let checkFuncValue = false
+      const checkFunc = () => checkFuncValue
+
+      const waiting = dom.waitForChild(parent, checkFunc)
+      expect(intervalCallback).to.exist
+
+      // False callback.
+      intervalCallback()
+      expect(win.clearInterval).to.have.not.been.called
+
+      // True callback.
+      checkFuncValue = true
+      intervalCallback()
+
+      return waiting.then(() => {
+        expect(win.clearInterval).to.be.calledOnce
+      })
+    })
+
+    it('should wait for body', () => {
+      return dom.waitForBody(document).then(() => {
+        expect(document.body).to.exist
       })
     })
   })
