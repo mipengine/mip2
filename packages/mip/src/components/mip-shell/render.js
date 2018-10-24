@@ -229,7 +229,7 @@ export function render (shell, from, to) {
 
     // Root Page 不存在预渲染
     // if (targetPageId !== page.pageId &&
-    if (targetPage.isPrerender || targetIFrame.getAttribute('prerender') === '1') {
+    if (targetPage.isPrerender || (targetIFrame && targetIFrame.getAttribute('prerender') === '1')) {
       targetIFrame.contentWindow.postMessage({
         name: window.name,
         event: MESSAGE_PAGE_ACTIVE
