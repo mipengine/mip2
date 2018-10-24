@@ -45,6 +45,7 @@ class Page {
     this.pageMeta = undefined
     this.currentPageId = undefined
     this.targetWindow = window
+    this.MAX_PAGE_NUM = MAX_PAGE_NUM
 
     // 记录 iframe 内的 page 对象。Root Page 这个属性才有意义，但 Root Page 本身不计入。
     this.children = []
