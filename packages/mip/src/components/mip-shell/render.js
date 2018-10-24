@@ -103,9 +103,9 @@ export function render (shell, from, to) {
     if (page.pageId === targetPageId) {
       // Clear root pageId and destroy root page (Root page will exist in newly created iframe)
       page.pageId = NON_EXISTS_PAGE_ID
-      if (targetPage) {
-        targetPage.destroy()
-      }
+      // if (targetPage) {
+      //   targetPage.destroy()
+      // }
       // Delete DOM & trigger disconnectedCallback in root page
       page.getElementsInRootPage().forEach(el => el.parentNode && el.parentNode.removeChild(el))
     }
@@ -212,8 +212,8 @@ export function render (shell, from, to) {
 
     switchPage(shell, params)
   } else {
-    // Use existing iframe without recreating in following situations:
-    // 1. Target iframe has already existed
+    // Use existing iframe/page without recreating in following situations:
+    // 1. Target iframe/page has already existed
     // 2.1 Don't need recreating iframe (`to.meta.reload = false`, which maybe come from a popstate event)
     // 2.2 Cache first strategy (`to.meta.cacheFirst = true`) (including prerender)
     // expression = 1 && (2.1 || 2.2)
@@ -228,14 +228,24 @@ export function render (shell, from, to) {
     }
 
     // Root Page 不存在预渲染
-    if (targetPageId !== page.pageId &&
-      (targetPage.isPrerender || targetIFrame.getAttribute('prerender') === '1')) {
+    // if (targetPageId !== page.pageId &&
+    if (targetPage.isPrerender || targetIFrame.getAttribute('prerender') === '1') {
       targetIFrame.contentWindow.postMessage({
         name: window.name,
         event: MESSAGE_PAGE_ACTIVE
       }, '*')
       targetPage.isPrerender = false
       targetIFrame.removeAttribute('prerender')
+
+      if (targetPageId === page.pageId) {
+        // Clear root pageId and destroy root page (Root page will exist in newly created iframe)
+        page.pageId = NON_EXISTS_PAGE_ID
+        // if (targetPage) {
+        //   targetPage.destroy()
+        // }
+        // Delete DOM & trigger disconnectedCallback in root page
+        page.getElementsInRootPage().forEach(el => el.parentNode && el.parentNode.removeChild(el))
+      }
     }
 
     params.newPage = false

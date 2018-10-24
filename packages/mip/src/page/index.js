@@ -404,7 +404,7 @@ class Page {
    * @return {Page} page
    */
   getPageById (pageId) {
-    if (!pageId || pageId === this.pageId) {
+    if (!pageId) {
       return this
     }
 
@@ -412,6 +412,10 @@ class Page {
       if (this.children[i].pageId === pageId) {
         return this.children[i]
       }
+    }
+
+    if (pageId === this.pageId) {
+      return this
     }
 
     return null
