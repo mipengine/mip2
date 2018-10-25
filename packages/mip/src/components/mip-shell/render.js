@@ -90,16 +90,15 @@ export function render (shell, from, to) {
     shell.saveScrollPosition()
   }
 
-  // 如果是 rootPage，则目标页面存在（以为 isTargetRootPage 本身就是用 targetPage 判断的
+  // 目标页面是否存在。这是下面决定是否创建 iframe 时要用到的重要判断指标。
+  // 如果是 rootPage，要求 page 存在。但因为 isTargetRootPage 本身就是用 targetPage 判断的，所以直接等价于目标页存在。
   // 如果不是 rootPage，则要求 iframe 和 page 同时存在
-  // 之所以要判断两个，是因为预渲染情况在 iframe load 之后才添加 page，所以可能 page=null 但是 iframe 已经有了
+  // 之所以要判断两个都存在，是因为预渲染情况在 iframe load 之后才添加 page，所以可能 page=null 但是 iframe 已经有了
   let targetExists = isTargetRootPage || (targetIFrame && targetPage)
-  console.log(targetExists) // TODO HERE 下面的判断有问题
-  if ((!targetIFrame || !targetPage)
-    || (to.meta && to.meta.reload && !to.meta.cacheFirst)) {
+
+  if (!targetExists || (to.meta && to.meta.reload && !to.meta.cacheFirst)) {
     // 进入这个分支表示需要创建新的 iframe，有以下情况：
-    // 1. 目标页面的 iframe 不存在或者 page 对象不存在，需要创建
-    //    之所以要判断两个，是因为预渲染情况在 iframe load 之后才添加 page，所以可能 page=null 但是 iframe 已经有了
+    // 1. 目标页面不存在
     // 2. 目标页面的 iframe 和 page 虽然都存在，但是因为是点击链接跳转的（to.meta.reload = true)，因此为了实时性需要重新加载。
     //    但是 cacheFirst 时还是应该优先使用已有的 iframe，因此不要创建
 
