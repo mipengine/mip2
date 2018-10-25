@@ -16,6 +16,7 @@ let docElem = document.documentElement
  * @inner
  * @type {Function}
  */
+/* istanbul ignore next */
 let nativeMatches = docElem.matches ||
     docElem.webkitMatchesSelector ||
     docElem.mozMatchesSelector ||
@@ -46,7 +47,7 @@ function matches (element, selector) {
  */
 let closest = docElem.closest
   ? (element, selector) => element.closest(selector)
-  : (element, selector) => {
+  : /* istanbul ignore next */ (element, selector) => {
     while (element) {
       if (matches(element, selector)) {
         return element
@@ -67,7 +68,7 @@ let contains = docElem.contains
   ? function (element, child) {
     return element && element.contains(child)
   }
-  : function (element, child) {
+  : /* istanbul ignore next */ function (element, child) {
     if (element === document) {
       element = document.documentElement || document.body.parentElement
     }
@@ -150,6 +151,7 @@ function waitDocumentReady (cb) {
     cb()
     return
   }
+  /* istanbul ignore next */
   let interval = window.setInterval(() => {
     if (document.body) {
       window.clearInterval(interval)

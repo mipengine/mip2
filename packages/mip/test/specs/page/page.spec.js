@@ -178,6 +178,29 @@ describe('page API #root page', function () {
   it('.getElementsInRootPage', function () {
     expect(page.getElementsInRootPage().length > 0).to.be.true
   })
+
+  it('.prerender', function () {
+    spy = sinon.stub(window.MIP.viewer, '_isCrossOrigin').returns(false)
+    let server = sinon.fakeServer.create()
+    server.respondWith('GET', '/prerender.html', [200, {
+      'Content-Type': 'text/html',
+    }, '<html mip><body><script src="https://c.mipcdn.com/static/v2/mip.js"></body></html>'])
+    setTimeout(function () {
+      server.respond()
+    }, 100)
+    page.prerender('http://localhost:3000/prerender.html').then(iframe => {
+      expect(document.querySelector('.mip-page__iframe[data-page-id="http://localhost:3000"]')).to.not.be.null
+      expect(iframe.getAttribute('prerender'), '1')
+      expect(iframe.getAttribute('data-page-id'), 'http://localhost:3000')
+      iframe.remove()
+    })
+
+    page.prerender().then(iframe => {
+      expect(false, 'should goto reject').to.be.true
+    }, message => {
+      expect(message).to.be.equal('预渲染参数必须是一个数组')
+    })
+  })
 })
 
 // =============================== UI methods ===============================
