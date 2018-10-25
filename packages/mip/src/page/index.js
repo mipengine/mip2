@@ -351,7 +351,6 @@ class Page {
    *
    * @param {string} targetPageId targetPageId
    */
-  /* istanbul ignore next */
   checkIfExceedsMaxPageNum (targetPageId) {
     /* istanbul ignore next */
     if (!this.isRootPage) {
