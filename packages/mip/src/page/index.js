@@ -390,6 +390,7 @@ class Page {
           if (firstRemovableIframe && firstRemovableIframe.parentNode) {
             firstRemovableIframe.parentNode.removeChild(firstRemovableIframe)
             this.children.splice(prerenderIFrames[i].index, 1)
+            return
           }
         }
       }
