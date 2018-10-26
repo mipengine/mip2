@@ -343,6 +343,11 @@ let viewer = {
       if (platform.isUc() && telRegexp.test(to)) {
         return
       }
+
+      if ($a.hasAttribute('mip-link-disabled')) {
+        return
+      }
+
       if (!httpRegexp.test(to)) {
         this.setAttribute('target', '_top')
         return
