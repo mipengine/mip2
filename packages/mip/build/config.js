@@ -66,7 +66,7 @@ function genConfig (name) {
       format: opts.format,
       banner: opts.banner,
       intro: opts.intro,
-      name: opts.moduleName || 'MIP'
+      // name: opts.moduleName || 'MIP'
     }
   }
 

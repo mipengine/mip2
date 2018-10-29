@@ -8,13 +8,14 @@
 import sinon from 'sinon'
 import resources from 'src/resources'
 import viewport from 'src/viewport'
-import MIP from 'src/index'
+import 'src/index'
 import rect from 'src/util/dom/rect'
 import MIPTestCustomElement from '../util/custom-element'
 
 describe('resources', function () {
   let Resources = resources.constructor
   let app
+  let MIP = window.MIP
 
   beforeEach(function () {
     app = new Resources()

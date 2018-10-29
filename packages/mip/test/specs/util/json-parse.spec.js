@@ -134,6 +134,11 @@ describe('jsonParse comments', () => {
   it('parses multi-line comments', () => {
     expect(jsonParse('{/*comment** */}')).to.deep.equal({})
   })
+
+  it('parses // in quote', () => {
+    expect(jsonParse('{"a": "//---"}')).to.deep.equal({a: '//---'})
+    expect(jsonParse('{"link": "<a href=\\"https://baidu.com\\">"}')).to.deep.equal({link: '<a href="https://baidu.com">'})
+  })
 })
 
 describe('jsonParse error', () => {
