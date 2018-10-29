@@ -5,10 +5,11 @@
 
 /* globals describe, it, expect, sinon */
 
-import MIP from 'src/index'
+import 'src/index'
 
 describe('MIP', function () {
   let prefix = 'mip-index-'
+  let MIP = window.MIP
 
   it('should expose MIP.registerVueCustomElement', function () {
     let name = prefix + 'vue-element'
