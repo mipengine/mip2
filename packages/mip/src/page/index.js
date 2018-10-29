@@ -9,7 +9,7 @@ import {
   getIFrame,
   toggleFadeHeader
 } from './util/dom'
-import {getCleanPageId} from './util/path'
+import {getCleanPageId, parsePath} from './util/path'
 import Debouncer from './util/debounce'
 import {supportsPassive} from './util/feature-detect'
 import {scrollTo} from './util/ease-scroll'
@@ -30,6 +30,7 @@ import {customEmit} from '../util/custom-event'
 import viewport from '../viewport'
 import performance from '../performance'
 import '../styles/mip.less'
+import {stringifyQuery, resolveQuery} from './util/query';
 
 /**
  * use passive event listeners if supported
@@ -390,6 +391,7 @@ class Page {
           if (firstRemovableIframe && firstRemovableIframe.parentNode) {
             firstRemovableIframe.parentNode.removeChild(firstRemovableIframe)
             this.children.splice(prerenderIFrames[i].index, 1)
+            return
           }
         }
       }
@@ -534,6 +536,24 @@ class Page {
       if (window.MIP.viewer._isCrossOrigin(fullpath)) {
         console.warn('跨域 MIP 页面暂不支持预渲染', fullpath)
         return Promise.resolve()
+      }
+
+      // 处理 URL 的 query 中带有可转义字符的问题
+      // 小说资源方存在一些链接如 http://some-site.com/read?bkid=189169121&crid=1&fr=bdgfh&mip=1?novel&pg=3 (有 2 个问号)
+      // viewer.open 跳转时，内部的 normalizeLocation 会把 mip=1?novel 转化为 mip=1%3Fnovel
+      // 而 prerender 不处理的话，依然是 mip=1?novel
+      // 从而导致两端匹配不上，跳转页面时虽然 cache-first，依然找不到目标从而重新开一个新页面
+      // 为了解决这个问题，在 prerender 也要对 query 做相同处理
+      let parsedPath = parsePath(fullpath)
+      /* istanbul ignore next */
+      if (parsedPath.query) {
+        // parsedPath.query = 'a=1&b=2&mip=1?novel'
+        let query = resolveQuery(parsedPath.query) // query = {a: '1', b: '2', mip: '1?novel'}
+        let queryAfterProcess = stringifyQuery(query) // queryAfterProcess = '?a=1&b=2&mip=1%3Fnovel
+        if (queryAfterProcess.charAt(0) === '?') {
+          queryAfterProcess = queryAfterProcess.substring(1, queryAfterProcess.length)
+        }
+        fullpath = fullpath.replace(parsedPath.query, queryAfterProcess)
       }
 
       let pageId = getCleanPageId(fullpath)

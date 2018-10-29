@@ -9,11 +9,7 @@
     </html>
     ```
 
-2. 所有页面 __必须__ 在 `<body>` 的 __最后__ 编写或引用 mip 相关的 js。其中顺序是：
-    1. mip.js
-    2. 各组件的 js。如有相互依赖，把被依赖项写在前面。
-
-    举例来说，一个页面引用了两个组件 `component-a` 和 `component-b`，并且 `component-b` 依赖 `component-a` （例如在 `component-b` 的模板中出现了 `<mip-component-a>`），那么这个页面的组织结构应该是：
+2. 所有页面 __必须__ 在 `<body>` 的 __最后__ 编写或引用 mip 相关的 js。js 之间顺序可以随意。
 
     ```html
     <body>
