@@ -121,7 +121,7 @@ describe('jsonParse strings', () => {
   })
 })
 
-describe('jsonParse comments', () => {
+describe.only('jsonParse comments', () => {
   it('parses single-line comments', () => {
     expect(jsonParse('{//comment\n}')).to.deep.equal({})
     expect(jsonParse('["/*comment*/"]')).to.deep.equal(['/*comment*/'])
@@ -133,6 +133,11 @@ describe('jsonParse comments', () => {
 
   it('parses multi-line comments', () => {
     expect(jsonParse('{/*comment** */}')).to.deep.equal({})
+  })
+
+  it('parses // in quote', () => {
+    expect(jsonParse('{"a": "//---"}')).to.deep.equal({a: '//---'})
+    expect(jsonParse('{"link": "<a href=\\"https://baidu.com\\">"}')).to.deep.equal({link: '<a href="https://baidu.com">'})
   })
 })
 
