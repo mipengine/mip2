@@ -1,6 +1,6 @@
 {
   "name": "mip2",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "CLI for mip 2.0",
   "preferGlobal": true,
   "bin": {
@@ -43,6 +43,7 @@
     "chokidar": "^2.0.3",
     "commander": "^2.15.1",
     "css-loader": "^0.28.11",
+    "cssnano": "^4.1.7",
     "deepmerge": "^2.1.1",
     "download-git-repo": "^1.0.2",
     "etpl": "^3.2.0",
