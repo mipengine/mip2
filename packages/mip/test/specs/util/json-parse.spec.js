@@ -121,7 +121,7 @@ describe('jsonParse strings', () => {
   })
 })
 
-describe.only('jsonParse comments', () => {
+describe('jsonParse comments', () => {
   it('parses single-line comments', () => {
     expect(jsonParse('{//comment\n}')).to.deep.equal({})
     expect(jsonParse('["/*comment*/"]')).to.deep.equal(['/*comment*/'])
