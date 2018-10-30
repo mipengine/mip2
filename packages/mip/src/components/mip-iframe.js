@@ -16,13 +16,20 @@ let attrList = ['allowfullscreen', 'allowtransparency', 'sandbox']
 
 class MipIframe extends CustomElement {
   build () {
-    this.handlePageResize = this.handlePageResize.bind(this)
-    this.notifyRootPage = this.notifyRootPage.bind(this)
+    this.bindedHandlePageResize = this.handlePageResize.bind(this)
+    this.bindedHnotifyRootPage = this.notifyRootPage.bind(this)
+
     let element = this.element
-    let src = element.getAttribute('src')
+
+    let src
     let srcdoc = element.getAttribute('srcdoc')
     if (srcdoc) {
       src = 'data:text/html;charset=utf-8;base64,' + window.btoa(srcdoc)
+    } else {
+      src = element.getAttribute('src') || ''
+      if ('https://' !== src.slice(0, 8)) {
+        return
+      }
     }
 
     let height = element.getAttribute('height')
