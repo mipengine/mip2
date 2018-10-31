@@ -3,198 +3,243 @@
  * @author huanghuiquan (huanghuiquan@baidu.com)
  */
 
-import layout from 'src/layout'
-import util from 'src/util'
+import {applyLayout, parseLength, LAYOUT} from 'src/layout'
 
 describe('Layout', function () {
-  it('.parseLayout', function () {
-    let whilelist = 'nodisplay fixed fixed-height responsive container fill flex-item'.split(' ')
-
-    whilelist.forEach(s => expect(layout.parseLayout(s)).to.equal(s))
-    expect(layout.parseLayout('unknown-type')).to.be.undefined
-  })
-
-  it('.getLayoutClass', function () {
-    expect(layout.getLayoutClass('responsive')).to.equal('mip-layout-responsive')
-  })
-
-  it('.isLayoutSizeDefined', function () {
-    let whilelist = 'fixed fixed-height responsive fill flex-item'.split(' ')
-    let blacklist = 'nodisplay container'.split(' ')
-
-    whilelist.forEach(s => expect(layout.isLayoutSizeDefined(s)).to.be.true)
-    blacklist.forEach(s => expect(layout.isLayoutSizeDefined(s)).to.be.false)
-  })
-
   it('.parseLength', function () {
-    expect(layout.parseLength(1)).to.equal('1px')
-    expect(layout.parseLength('')).to.be.undefined
-    expect(layout.parseLength('1px')).to.equal('1px')
+    expect(parseLength(1)).to.equal('1px')
+    expect(parseLength('')).to.be.undefined
+    expect(parseLength('1px')).to.equal('1px')
 
-    expect(layout.parseLength(10)).to.equal('10px')
-    expect(layout.parseLength('10')).to.equal('10px')
-    expect(layout.parseLength('10px')).to.equal('10px')
-    expect(layout.parseLength('10em')).to.equal('10em')
-    expect(layout.parseLength('10vmin')).to.equal('10vmin')
-    expect(layout.parseLength('10cm')).to.equal('10cm')
-    expect(layout.parseLength('10mm')).to.equal('10mm')
-    expect(layout.parseLength('10in')).to.equal('10in')
-    expect(layout.parseLength('10pt')).to.equal('10pt')
-    expect(layout.parseLength('10pc')).to.equal('10pc')
-    expect(layout.parseLength('10q')).to.equal('10q')
+    expect(parseLength(10)).to.equal('10px')
+    expect(parseLength('10')).to.equal('10px')
+    expect(parseLength('10px')).to.equal('10px')
+    expect(parseLength('10em')).to.equal('10em')
+    expect(parseLength('10vmin')).to.equal('10vmin')
+    expect(parseLength('10cm')).to.equal('10cm')
+    expect(parseLength('10mm')).to.equal('10mm')
+    expect(parseLength('10in')).to.equal('10in')
+    expect(parseLength('10pt')).to.equal('10pt')
+    expect(parseLength('10pc')).to.equal('10pc')
+    expect(parseLength('10q')).to.equal('10q')
 
-    expect(layout.parseLength(10.1)).to.equal('10.1px')
-    expect(layout.parseLength('10.2')).to.equal('10.2px')
-    expect(layout.parseLength('10.1px')).to.equal('10.1px')
-    expect(layout.parseLength('10.1em')).to.equal('10.1em')
-    expect(layout.parseLength('10.1vmin')).to.equal('10.1vmin')
+    expect(parseLength(10.1)).to.equal('10.1px')
+    expect(parseLength('10.2')).to.equal('10.2px')
+    expect(parseLength('10.1px')).to.equal('10.1px')
+    expect(parseLength('10.1em')).to.equal('10.1em')
+    expect(parseLength('10.1vmin')).to.equal('10.1vmin')
 
-    expect(layout.parseLength(undefined)).to.equal(undefined)
-    expect(layout.parseLength(null)).to.equal(undefined)
-    expect(layout.parseLength('')).to.equal(undefined)
+    expect(parseLength('x1n2')).to.equal(undefined)
+    expect(parseLength(undefined)).to.equal(undefined)
+    expect(parseLength(null)).to.equal(undefined)
+    expect(parseLength('')).to.equal(undefined)
   })
 
-  describe('.getNaturalDimensions', function () {
-    it('exist', function () {
-      let pix = document.createElement('mip-pix')
-      let stats = document.createElement('mip-stats')
-      expect(layout.getNaturalDimensions(pix)).to.be.a('object')
-      expect(layout.getNaturalDimensions(stats)).to.be.a('object')
-    })
-
-    it('not exist', function () {
-      let test = document.createElement('mip-test-div')
-      let div = document.createElement('div')
-      expect(layout.getNaturalDimensions(test)).to.be.a('object')
-      expect(layout.getNaturalDimensions(div)).to.be.a('object')
-    })
-  })
-
-  describe('.isLoadingAllowed', function () {
-    describe('check the whitelist', function () {
-      [
-        'mip-anim',
-        'mip-brightcove',
-        'mip-embed',
-        'mip-iframe',
-        'mip-img',
-        'mip-list',
-        'mip-video'
-      ].forEach(function (key) {
-        it(key, function () {
-          expect(layout.isLoadingAllowed(key)).to.be.true
-        })
-      })
-    })
-
-    it('error key', function () {
-      expect(layout.isLoadingAllowed('')).to.be.false
-      expect(layout.isLoadingAllowed('MIP')).to.be.false
-    })
-  })
   describe('.applyLayout', function () {
-    it('inited', function () {
-      let node = util.dom.create('<div layout="fixed"></div>')
-
-      expect(layout.applyLayout(node)).to.equal('fixed')
-      expect(layout.applyLayout(node)).to.be.undefined
+    let div
+    beforeEach(() => {
+      div = document.createElement('div')
     })
 
-    it('className has mip-layout-size-defined', function () {
-      let node = util.dom.create('<div layout="fixed"></div>')
-      layout.applyLayout(node)
+    it('layout=nodisplay', function () {
+      div.setAttribute('layout', 'nodisplay')
+      expect(applyLayout(div)).to.equal(LAYOUT.NODISPLAY)
+      expect(div.style.width).to.equal('')
+      expect(div.style.height).to.equal('')
+      expect(div.style.display).to.equal('none')
+      expect(div.classList.contains('mip-layout-nodisplay')).to.be.true
+      expect(div.classList.contains('mip-layout-size-defined')).to.be.false
+      expect(div.children.length).to.equal(0)
+    })
 
-      expect(node.classList.contains('mip-layout-size-defined')).to.be.true
+    it('layout=fixed', () => {
+      div.setAttribute('layout', 'fixed')
+      div.setAttribute('width', 100)
+      div.setAttribute('height', 200)
+      expect(applyLayout(div)).to.equal(LAYOUT.FIXED)
+      expect(div.style.width).to.equal('100px')
+      expect(div.style.height).to.equal('200px')
+      expect(div.classList.contains('mip-layout-fixed')).to.be.true
+      expect(div.classList.contains('mip-layout-size-defined')).to.be.true
+      expect(div.children.length).to.equal(0)
+    })
+
+    it('layout=fixed - default with width/height', () => {
+      div.setAttribute('width', 100)
+      div.setAttribute('height', 200)
+      expect(applyLayout(div)).to.equal(LAYOUT.FIXED)
+      expect(div.style.width).to.equal('100px')
+      expect(div.style.height).to.equal('200px')
+    })
+
+    it('layout=fixed-height', () => {
+      div.setAttribute('layout', 'fixed-height')
+      div.setAttribute('height', 200)
+      expect(applyLayout(div)).to.equal(LAYOUT.FIXED_HEIGHT)
+      expect(div.style.width).to.equal('')
+      expect(div.style.height).to.equal('200px')
+      expect(div.classList.contains('mip-layout-fixed-height')).to.be.true
+      expect(div.classList.contains('mip-layout-size-defined')).to.be.true
+      expect(div.children.length).to.equal(0)
+    })
+
+    it('layout=fixed-height, with width=auto', () => {
+      div.setAttribute('layout', 'fixed-height')
+      div.setAttribute('height', 200)
+      div.setAttribute('width', 'auto')
+      expect(applyLayout(div)).to.equal(LAYOUT.FIXED_HEIGHT)
+      expect(div.style.width).to.equal('')
+      expect(div.style.height).to.equal('200px')
+      expect(div.classList.contains('mip-layout-fixed-height')).to.be.true
+      expect(div.classList.contains('mip-layout-size-defined')).to.be.true
+      expect(div.children.length).to.equal(0)
+    })
+
+    it('layout=fixed-height - default with height', () => {
+      div.setAttribute('height', 200)
+      expect(applyLayout(div)).to.equal(LAYOUT.FIXED_HEIGHT)
+      expect(div.style.height).to.equal('200px')
+      expect(div.style.width).to.equal('')
+    })
+
+    it('layout=fixed-height - default with height and width=auto', () => {
+      div.setAttribute('height', 200)
+      div.setAttribute('width', 'auto')
+      expect(applyLayout(div)).to.equal(LAYOUT.FIXED_HEIGHT)
+      expect(div.style.height).to.equal('200px')
+      expect(div.style.width).to.equal('')
+    })
+
+    it('layout=responsive', () => {
+      div.setAttribute('layout', 'responsive')
+      div.setAttribute('width', 100)
+      div.setAttribute('height', 200)
+      expect(applyLayout(div)).to.equal(LAYOUT.RESPONSIVE)
+      expect(div.style.width).to.equal('')
+      expect(div.style.height).to.equal('')
+      expect(div.classList.contains('mip-layout-responsive')).to.be.true
+      expect(div.classList.contains('mip-layout-size-defined')).to.be.true
+      expect(div.children.length).to.equal(1)
+      expect(div.children[0].tagName.toLowerCase()).to.equal('mip-i-space')
+      expect(div.children[0].style.paddingTop).to.equal('200%')
+    })
+
+    it('layout=responsive - default with sizes', () => {
+      div.setAttribute('sizes', '50vw')
+      div.setAttribute('width', 100)
+      div.setAttribute('height', 200)
+      expect(applyLayout(div)).to.equal(LAYOUT.RESPONSIVE)
+      expect(div.style.width).to.equal('')
+      expect(div.style.height).to.equal('')
+      expect(div.classList.contains('mip-layout-responsive')).to.be.true
+      expect(div.classList.contains('mip-layout-size-defined')).to.be.true
+      expect(div.children.length).to.equal(1)
+      expect(div.children[0].tagName.toLowerCase()).to.equal('mip-i-space')
+      expect(div.children[0].style.paddingTop).to.equal('200%')
+    })
+
+    it('layout=intrinsic', () => {
+      div.setAttribute('layout', 'intrinsic')
+      div.setAttribute('width', 100)
+      div.setAttribute('height', 200)
+      expect(applyLayout(div)).to.equal(LAYOUT.INTRINSIC)
+      expect(div.style.width).to.equal('')
+      expect(div.style.height).to.equal('')
+      expect(div.classList.contains('mip-layout-intrinsic')).to.be.true
+      expect(div.classList.contains('mip-layout-size-defined')).to.be.true
+      expect(div.children.length).to.equal(1)
+      expect(div.children[0].tagName.toLowerCase()).to.equal('mip-i-space')
+      expect(div.children[0].children.length).to.equal(1)
+      expect(div.children[0].children[0].tagName.toLowerCase()).to.equal('img')
+      expect(div.children[0].children[0].src).to.equal('data:image/svg+xml;charset=utf-8,<svg height="200px" width="100px" xmlns="http://www.w3.org/2000/svg" version="1.1"/>')
+    })
+
+    it('layout=intrinsic - default with sizes', () => {
+      div.setAttribute('layout', 'intrinsic')
+      div.setAttribute('sizes', '50vw')
+      div.setAttribute('width', 100)
+      div.setAttribute('height', 200)
+      expect(applyLayout(div)).to.equal(LAYOUT.INTRINSIC)
+      expect(div.style.width).to.equal('')
+      expect(div.style.height).to.equal('')
+      expect(div.classList.contains('mip-layout-intrinsic')).to.be.true
+      expect(div.classList.contains('mip-layout-size-defined')).to.be.true
+      expect(div.children.length).to.equal(1)
+      expect(div.children[0].tagName.toLowerCase()).to.equal('mip-i-space')
+      expect(div.children[0].children.length).to.equal(1)
+      expect(div.children[0].children[0].tagName.toLowerCase()).to.equal('img')
+      expect(div.children[0].children[0].src).to.equal('data:image/svg+xml;charset=utf-8,<svg height="200px" width="100px" xmlns="http://www.w3.org/2000/svg" version="1.1"/>')
+    })
+
+    it('layout=fill', () => {
+      div.setAttribute('layout', 'fill')
+      expect(applyLayout(div)).to.equal(LAYOUT.FILL)
+      expect(div.style.width).to.equal('')
+      expect(div.style.height).to.equal('')
+      expect(div.classList.contains('mip-layout-fill')).to.be.true
+      expect(div.classList.contains('mip-layout-size-defined')).to.be.true
+      expect(div.children.length).to.equal(0)
+    })
+
+    it('layout=container', () => {
+      div.setAttribute('layout', 'container')
+      expect(applyLayout(div)).to.equal(LAYOUT.CONTAINER)
+      expect(div.style.width).to.equal('')
+      expect(div.style.height).to.equal('')
+      expect(div.classList.contains('mip-layout-container')).to.be.true
+      expect(div.classList.contains('mip-layout-size-defined')).to.be.false
+      expect(div.children.length).to.equal(0)
+    })
+
+    it('layout=flex-item', () => {
+      div.setAttribute('layout', 'flex-item')
+      div.setAttribute('width', 100)
+      div.setAttribute('height', 200)
+      expect(applyLayout(div)).to.equal(LAYOUT.FLEX_ITEM)
+      expect(div.style.width).to.equal('100px')
+      expect(div.style.height).to.equal('200px')
+      expect(div.classList.contains('mip-layout-flex-item')).to.be.true
+      expect(div.classList.contains('mip-layout-size-defined')).to.be.true
+      expect(div.children.length).to.equal(0)
+    })
+
+    it('layout=unknown', () => {
+      div.setAttribute('layout', 'foo')
+      expect(applyLayout(div)).to.equal(LAYOUT.CONTAINER)
+      expect(div.style.width).to.equal('')
+      expect(div.style.height).to.equal('')
+      expect(div.classList.contains('mip-layout-container')).to.be.true
+      expect(div.classList.contains('mip-layout-size-defined')).to.be.false
+      expect(div.children.length).to.equal(0)
+    })
+
+    it('layout default', () => {
+      div.setAttribute('layout', 'foo')
+      expect(applyLayout(div)).to.equal(LAYOUT.CONTAINER)
+      expect(div.style.width).to.equal('')
+      expect(div.style.height).to.equal('')
+      expect(div.classList.contains('mip-layout-container')).to.be.true
+      expect(div.classList.contains('mip-layout-size-defined')).to.be.false
+      expect(div.children.length).to.equal(0)
+    })
+
+    it('should configure natural dimensions; default layout', () => {
+      let pix = document.createElement('mip-pix')
+      expect(applyLayout(pix)).to.equal(LAYOUT.FIXED)
+      expect(pix.style.width).to.equal('1px')
+      expect(pix.style.height).to.equal('1px')
+
+      let audio = document.createElement('mip-audio')
+      expect(applyLayout(audio)).to.equal(LAYOUT.FIXED)
+
+      // expect(audio.style.width).to.equal('1px')
+      // expect(audio.style.height).to.equal('1px')
     })
 
     it('className has mip-hidden', function () {
-      let node = util.dom.create('<div class="mip-hidden"></div>')
-      layout.applyLayout(node)
-
-      expect(node.classList.contains('mip-hidden')).to.be.false
-    })
-
-    describe('attr layout', function () {
-      it('null', function () {
-        let node = util.dom.create('<mip-img></mip-img>')
-        expect(layout.applyLayout(node)).to.equal('container')
-      })
-
-      it('error auto fix', function () {
-        let node = util.dom.create('<mip-img layout="MIP" width="10" height="10"></mip-img>')
-
-        expect(layout.applyLayout(node)).to.not.equal('MIP')
-        expect(node.classList.contains(layout.getLayoutClass('MIP'))).to.be.false
-      })
-
-      it('fixed', function () {
-        let node = util.dom.create('<div layout="fixed"></div>')
-        expect(layout.applyLayout(node)).to.equal('fixed')
-      })
-
-      it('fixed-height', function () {
-        let node = util.dom.create('<div height="10px" layout="fixed-height"></div>')
-        expect(layout.applyLayout(node)).to.equal('fixed-height')
-        expect(node.style.height).to.equal('10px')
-      })
-
-      it('fill', function () {
-        let node = util.dom.create('<div layout="fill"></div>')
-        expect(layout.applyLayout(node)).to.equal('fill')
-      })
-
-      it('responsive', function () {
-        let node = util.dom.create('<div layout="responsive"></div>')
-        expect(layout.applyLayout(node)).to.equal('responsive')
-      })
-
-      it('container', function () {
-        let node = util.dom.create('<div layout="container"></div>')
-        expect(layout.applyLayout(node)).to.equal('container')
-      })
-
-      it('nodisplay', function () {
-        let node = util.dom.create('<div layout="nodisplay"></div>')
-        expect(layout.applyLayout(node)).to.equal('nodisplay')
-        expect(node.style.display).to.equal('none')
-      })
-
-      it('flex-item', function () {
-        let node = util.dom.create('<div layout="flex-item" width="10" height="10"></div>')
-        expect(layout.applyLayout(node)).to.equal('flex-item')
-        expect(node.style.height).to.equal('10px')
-        expect(node.style.width).to.equal('10px')
-      })
-    })
-
-    describe('attr', function () {
-      it('width, height is null', function () {
-        let node = util.dom.create('<div layout="flex-item"></div>')
-        expect(layout.applyLayout(node)).to.equal('flex-item')
-      })
-
-      it('width, height is auto', function () {
-        let node = util.dom.create('<div width="auto" height="auto"></div>')
-        expect(layout.applyLayout(node)).to.equal('fixed-height')
-      })
-
-      it('height and width is auto', function () {
-        let node = util.dom.create('<div width="auto" height="10px"></div>')
-        expect(layout.applyLayout(node)).to.equal('fixed-height')
-      })
-
-      it('height', function () {
-        let node = util.dom.create('<mip-img height="10px"></mip-img>')
-        expect(layout.applyLayout(node)).to.equal('fixed-height')
-        expect(node.style.height).to.equal('10px')
-      })
-
-      it('sizes', function () {
-        let node = util.dom.create('<div width="10px" height="10px" sizes="on"><span>MIP</span></div>')
-        expect(layout.applyLayout(node)).to.equal('responsive')
-        expect(node.querySelector('mip-i-space')).to.not.be.null
-        expect(node.firstChild).to.deep.equal(node.querySelector('mip-i-space'))
-      })
+      div.classList.add('mip-hidden')
+      applyLayout(div)
+      expect(div.classList.contains('mip-hidden')).to.be.false
     })
   })
 })

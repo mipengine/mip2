@@ -11,7 +11,7 @@ describe('MIP', function () {
   let prefix = 'mip-index-'
   let MIP = window.MIP
 
-  it('should expose MIP.registerVueCustomElement', function () {
+  it('should expose MIP.registerVueCustomElement', function (done) {
     let name = prefix + 'vue-element'
     let created = sinon.spy()
 
@@ -23,8 +23,11 @@ describe('MIP', function () {
     document.body.appendChild(ele)
     document.body.removeChild(ele)
 
-    sinon.assert.calledOnce(created)
-    expect(MIP.registerVueCustomElement).to.be.a('function')
+    setTimeout(() => {
+      sinon.assert.calledOnce(created)
+      expect(MIP.registerVueCustomElement).to.be.a('function')
+      done()
+    }, 1)
   })
 
   it('should expose MIP.registerCustomElement', function () {

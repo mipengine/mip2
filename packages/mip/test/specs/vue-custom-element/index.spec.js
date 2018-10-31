@@ -4,8 +4,13 @@
  */
 
 import Vue from 'vue'
+import registerVueCustomElement from 'src/vue-custom-element/index'
 
 let prefix = 'vue-custom-element-index-'
+
+let delay = (fn, t) => {
+  setTimeout(fn, t || 1)
+}
 
 describe('vue custom element', function () {
   it('install customElment to Vue', function () {
@@ -16,7 +21,7 @@ describe('vue custom element', function () {
     let name = prefix + 'regist'
     let created = sinon.spy()
     let connectedCallback = sinon.spy()
-    Vue.customElement(name, {
+    registerVueCustomElement(name, {
       created,
       connectedCallback
     })
@@ -27,8 +32,10 @@ describe('vue custom element', function () {
     document.body.appendChild(ele)
     document.body.removeChild(ele)
 
-    sinon.assert.calledOnce(created)
-    sinon.assert.calledTwice(connectedCallback)
+    setTimeout(() => {
+      sinon.assert.calledOnce(created)
+      sinon.assert.calledTwice(connectedCallback)
+    }, 1)
   })
 
   it('lifecycle', function (done) {
@@ -75,18 +82,19 @@ describe('vue custom element', function () {
       return sinon.spy(comp, name)
     })
 
-    Vue.customElement(name, comp)
+    registerVueCustomElement(name, comp)
     let ele = document.createElement(name)
-
     document.body.appendChild(ele)
-    ele.setAttribute('str', 'fake')
 
-    Vue.nextTick(function () {
-      document.body.removeChild(ele)
+    delay(() => {
+      ele.setAttribute('str', 'fake')
 
-      sinon.assert.callOrder(...lifecycSpies)
-      expect(ele.innerHTML).to.be.equal('<div>fakehaha</div>')
-      done()
+      delay(() => {
+        document.body.removeChild(ele)
+        sinon.assert.callOrder(...lifecycSpies)
+        expect(ele.innerHTML).to.be.equal('<div>fakehaha</div>')
+        done()
+      })
     })
   })
 
@@ -124,7 +132,7 @@ describe('vue custom element', function () {
       return sinon.spy(comp, name)
     })
 
-    Vue.customElement(name, comp)
+    registerVueCustomElement(name, comp)
 
     let ele = document.createElement(name)
     let viewportCallback = sinon.stub(ele, 'viewportCallback')
@@ -147,7 +155,7 @@ describe('vue custom element', function () {
     expect(ele.innerHTML).to.equal('<div>hah</div>')
   })
 
-  it('prerenderAllowed', function () {
+  it('prerenderAllowed', function (done) {
     let name = prefix + 'prerender-allowed'
 
     let lifecycs = [
@@ -174,22 +182,25 @@ describe('vue custom element', function () {
       return sinon.spy(comp, name)
     })
 
-    Vue.customElement(name, comp)
+    registerVueCustomElement(name, comp)
 
     let ele = document.createElement(name)
     let viewportCallback = sinon.stub(ele, 'viewportCallback')
     document.body.appendChild(ele)
-    document.body.removeChild(ele)
+    delay(() => {
+      document.body.removeChild(ele)
 
-    sinon.assert.calledOnce(comp.connectedCallback)
-    sinon.assert.calledOnce(comp.disconnectedCallback)
-    sinon.assert.calledOnce(comp.created)
-    sinon.assert.notCalled(comp.firstInviewCallback)
+      sinon.assert.calledOnce(comp.connectedCallback)
+      sinon.assert.calledOnce(comp.disconnectedCallback)
+      sinon.assert.calledOnce(comp.created)
+      sinon.assert.notCalled(comp.firstInviewCallback)
 
-    viewportCallback.restore()
-    ele.viewportCallback(true)
+      viewportCallback.restore()
+      ele.viewportCallback(true)
 
-    sinon.assert.calledOnce(comp.created)
-    sinon.assert.calledOnce(comp.firstInviewCallback)
+      sinon.assert.calledOnce(comp.created)
+      sinon.assert.calledOnce(comp.firstInviewCallback)
+      done()
+    })
   })
 })

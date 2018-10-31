@@ -20,36 +20,36 @@ describe('mip-img', function () {
       document.body.appendChild(mipImgWrapper)
     })
 
-    it('should be loading with placeholder', function () {
-      let mipImg = mipImgWrapper.querySelector('mip-img')
-      let img = mipImg.querySelector('img')
+    it('should be loading with placeholder', function (done) {
+      setTimeout(() => {
+        let mipImg = mipImgWrapper.querySelector('mip-img')
+        let img = mipImg.querySelector('img')
 
-      // ask to popup before loaded
-      let event = document.createEvent('MouseEvents')
-      event.initEvent('click', true, true)
-      img.dispatchEvent(event)
+        // ask to popup before loaded
+        let event = document.createEvent('MouseEvents')
+        event.initEvent('click', true, true)
+        img.dispatchEvent(event)
 
-      // expect popup to be created
-      let mipPopWrap = document.querySelector('.mip-img-popUp-wrapper')
-      expect(mipPopWrap.getAttribute('data-name')).to.equal('mip-img-popUp-name')
-      expect(mipPopWrap.parentNode.tagName).to.equal('BODY')
-      expect(mipPopWrap.tagName).to.equal('DIV')
-      expect(mipPopWrap.querySelector('.mip-img-popUp-bg')).to.be.exist
-      expect(mipPopWrap.querySelector('mip-carousel')).to.be.exist
+        // expect popup to be created
+        let mipPopWrap = document.querySelector('.mip-img-popUp-wrapper')
+        expect(mipPopWrap.getAttribute('data-name')).to.equal('mip-img-popUp-name')
+        expect(mipPopWrap.parentNode.tagName).to.equal('BODY')
+        expect(mipPopWrap.tagName).to.equal('DIV')
+        expect(mipPopWrap.querySelector('.mip-img-popUp-bg')).to.be.exist
+        expect(mipPopWrap.querySelector('mip-carousel')).to.be.exist
 
-      // img
-      expect(img.classList.contains('mip-img-loading')).to.equal(true)
-      expect(img.classList.contains('mip-replaced-content')).to.equal(true)
-      expect(img.getAttribute('src')).to.equal('https://www.wrong.org?mip_img_ori=1')
+        // img
+        expect(img.classList.contains('mip-replaced-content')).to.equal(true)
+        expect(img.getAttribute('src')).to.equal('https://www.wrong.org?mip_img_ori=1')
 
-      img.addEventListener('error', () => {
-        expect(img.src).to.equal('https://www.wrong.org/?mip_img_ori=1')
-      }, false)
-      let errEvent = new Event('error')
-      img.dispatchEvent(errEvent)
+        img.addEventListener('error', () => {
+          expect(img.src).to.equal('https://www.wrong.org/?mip_img_ori=1')
+        }, false)
+        let errEvent = new Event('error')
+        img.dispatchEvent(errEvent)
 
-      let placeholder = mipImg.querySelector('div.mip-placeholder')
-      expect(placeholder.classList.contains('mip-placeholder-other')).to.equal(true)
+        done()
+      }, 1)
     })
 
     after(function () {
@@ -71,22 +71,21 @@ describe('mip-img', function () {
       document.body.appendChild(mipImgWrapper)
     })
 
-    it('should be loading with placeholder', function () {
+    it('should be loading with placeholder', function (done) {
       let mipImg = mipImgWrapper.querySelector('mip-img')
       let img = mipImg.querySelector('img')
 
-      expect(img.classList.contains('mip-img-loading')).to.equal(true)
       expect(img.classList.contains('mip-replaced-content')).to.equal(true)
       expect(img.getAttribute('src')).to.equal('https://www.wrong.org?test=1')
 
       img.addEventListener('error', () => {
-        expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1')
+        setTimeout(() => {
+          expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1')
+          done()
+        }, 1)
       }, false)
       let errEvent = new Event('error')
       img.dispatchEvent(errEvent)
-
-      let placeholder = mipImg.querySelector('div.mip-placeholder')
-      expect(placeholder.classList.contains('mip-placeholder-other')).to.equal(true)
     })
 
     after(function () {
@@ -111,11 +110,7 @@ describe('mip-img', function () {
       let mipImg = mipImgWrapper.querySelector('mip-img')
       let img = mipImg.querySelector('img')
       expect(img.getAttribute('src')).to.be.null
-      expect(img.classList.contains('mip-img-loading')).to.equal(true)
       expect(img.classList.contains('mip-replaced-content')).to.equal(true)
-
-      let placeholder = mipImg.querySelector('div.mip-placeholder')
-      expect(placeholder.classList.contains('mip-placeholder-jpg')).to.equal(true)
     })
 
     after(function () {
@@ -133,12 +128,8 @@ describe('mip-img', function () {
 
     it('should be loading with placeholder', function () {
       let img = mipImg.querySelector('img')
-      expect(img.classList.contains('mip-img-loading')).to.equal(true)
       expect(img.classList.contains('mip-replaced-content')).to.equal(true)
       expect(img.getAttribute('src')).to.be.null
-
-      let placeholder = mipImg.querySelector('div.mip-placeholder')
-      expect(placeholder.classList.contains('mip-placeholder-other')).to.equal(true)
     })
 
     after(function () {
@@ -159,24 +150,11 @@ describe('mip-img', function () {
       document.body.appendChild(mipImgWrapper)
     })
 
-    it('should load img with placeholder', function (done) {
+    it('should load img with placeholder', function () {
       let mipImg = mipImgWrapper.querySelector('mip-img')
       let img = mipImg.querySelector('img')
-      expect(img.classList.contains('mip-img-loading')).to.equal(true)
       expect(img.classList.contains('mip-replaced-content')).to.equal(true)
       expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_01.jpg')
-
-      let placeholder = mipImg.querySelector('div.mip-placeholder')
-      expect(placeholder.classList.contains('mip-placeholder-jpg')).to.equal(true)
-
-      img.addEventListener('load', function () {
-        expect(img.classList.contains('mip-img-loading')).to.equal(false)
-        expect(mipImg.classList.contains('mip-img-loaded')).to.equal(true)
-        expect(mipImg.querySelector('div.mip-placeholder')).to.be.null
-        done()
-      }, false)
-      let errEvent = new Event('load')
-      img.dispatchEvent(errEvent)
     })
 
     after(function () {

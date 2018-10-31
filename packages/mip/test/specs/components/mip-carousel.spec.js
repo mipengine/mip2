@@ -736,7 +736,7 @@ describe('mip-carousel', function () {
         let img = mipImg.querySelector('img')
         expect(img.getAttribute('src')).to.not.equal('https://www.mipengine.org/static/img/P2x1_457e18b.jpg')
         done()
-      }, 500);
+      }, 500)
     })
     it('should load picture samplePX when swiping', function (done) {
       let eventClick = document.createEvent('MouseEvents')
@@ -748,7 +748,7 @@ describe('mip-carousel', function () {
         let img = div.querySelectorAll('mip-img')[3].querySelector('img')
         expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/P2x1_457e18b.jpg')
         done()
-      }, 1500);
+      }, 1500)
     })
 
     after(function () {
@@ -799,7 +799,7 @@ describe('mip-carousel', function () {
         let img = mipImg.querySelector('img')
         expect(img.getAttribute('src')).to.not.equal('https://www.mipengine.org/static/img/P2x1_457e18b.jpg')
         done()
-      }, 500);
+      }, 500)
     })
     it('should load picture samplePX when swiping', function (done) {
       let eventClick = document.createEvent('MouseEvents')
@@ -811,7 +811,7 @@ describe('mip-carousel', function () {
         let img = div.querySelectorAll('mip-img')[3].querySelector('img')
         expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/P2x1_457e18b.jpg')
         done()
-      }, 1500);
+      }, 1500)
     })
 
     after(function () {
@@ -840,12 +840,11 @@ describe('mip-carousel', function () {
     })
 
     it('should load picture correctly', function (done) {
-
       setTimeout(() => {
         let img = div.querySelectorAll('mip-img')[1].querySelector('img')
         expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_01.jpg')
         done()
-      }, 300);
+      }, 300)
     })
 
     after(function () {

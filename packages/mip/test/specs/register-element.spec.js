@@ -52,7 +52,7 @@ describe('Register element', function () {
     expect(insertStyleElement.calledOnce).to.be.true
   })
 
-  it('should call customElement life cycle hooks in order', function () {
+  it('should call customElement life cycle hooks in order', function (done) {
     let name = prefix + 'custom-element'
     let lifecycs = [
       // 'constuctor'
@@ -72,10 +72,13 @@ describe('Register element', function () {
     ele.setAttribute('name', 'fake')
 
     document.body.appendChild(ele)
-    document.body.removeChild(ele)
+    setTimeout(() => {
+      document.body.removeChild(ele)
 
-    lifecycSpies.forEach(spy => spy.restore())
-    sinon.assert.callOrder(...lifecycSpies)
+      lifecycSpies.forEach(spy => spy.restore())
+      sinon.assert.callOrder(...lifecycSpies)
+      done()
+    }, 1)
   })
 
   it('should has a mip-element class in dom', function () {
@@ -90,7 +93,7 @@ describe('Register element', function () {
     expect(ele.classList.contains('mip-element')).to.be.true
   })
 
-  it('should warning built error if build throw an error', function () {
+  it('should warning built error if build throw an error', function (done) {
     let name = prefix + '-build-error'
     let warn = sinon.stub(console, 'warn')
 
@@ -106,10 +109,12 @@ describe('Register element', function () {
     document.body.appendChild(ele)
     document.body.removeChild(ele)
 
-    warn.restore()
-    sinon.assert.calledOnce(warn)
-
-    delete MIPExample.prototype.build
+    setTimeout(() => {
+      warn.restore()
+      sinon.assert.calledOnce(warn)
+      delete MIPExample.prototype.build
+      done()
+    }, 1)
   })
 
   it('should add element to performance if has resource', function () {

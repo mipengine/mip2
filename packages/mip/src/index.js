@@ -17,7 +17,7 @@ import registerVueCustomElement from './vue-custom-element/index'
 import CustomElement from './custom-element'
 import util from './util/index'
 import sandbox from './sandbox'
-import layout from './layout'
+import {applyLayout} from './layout'
 import viewer from './viewer'
 import viewport from './viewport'
 import Resources from './resources'
@@ -121,7 +121,7 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
 
     // Apply layout for default-hidden elements.
     /* istanbul ignore next */
-    hiddenElements.forEach(element => element.tagName.search(mipTagReg) > -1 && layout.applyLayout(element))
+    hiddenElements.forEach(element => element.tagName.search(mipTagReg) > -1 && applyLayout(element))
 
     // register buildin components
     builtinComponents.register()

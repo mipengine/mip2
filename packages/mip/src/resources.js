@@ -81,8 +81,6 @@ class Resources {
       clearTimeout(timer)
       timer = setTimeout(self.updateState, delay)
     })
-
-    this.updateState()
   }
 
   /**
@@ -94,6 +92,7 @@ class Resources {
     element._eid = this._eid++
     resources[this._rid][element._eid] = element
     element.build()
+
     this.updateState()
   }
 
@@ -106,6 +105,7 @@ class Resources {
   remove (element) {
     let id = element._eid || element
     if (isFinite(+id) && resources[this._rid][id]) {
+      element.unlayoutCallback && element.unlayoutCallback()
       delete resources[this._rid][id]
       return true
     }
@@ -150,6 +150,8 @@ class Resources {
     let viewportRect = this._viewport.getRect()
 
     for (let i in resources) {
+      // 兼容 mip1 的组件
+      resources[i].applySizesAndMediaQuery && resources[i].applySizesAndMediaQuery()
       // Compute the viewport state of current element.
       // If current element`s prerenderAllowed returns `true` always set the state to be `true`.
       let elementRect = rect.getElementRect(resources[i])

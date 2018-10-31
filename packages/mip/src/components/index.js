@@ -15,6 +15,7 @@ import MipBind from './mip-bind/bind'
 import MipData from './mip-bind/mip-data'
 import MipShell from './mip-shell/index'
 import MipFixed from './mip-fixed'
+import MipLayout from './mip-layout'
 import registerElement from '../register-element'
 
 export default {
@@ -23,6 +24,7 @@ export default {
    * Register the builtin components.
    */
   register () {
+    registerElement('mip-layout', MipLayout)
     registerElement('mip-pix', MipPix)
     registerElement('mip-img', MipImg)
     registerElement('mip-rem', MipRem)

@@ -8,6 +8,10 @@
 
 import MipVideo from 'src/components/mip-video'
 
+function delay (fn, t) {
+  return setTimeout(fn, t || 1)
+}
+
 function getAttributeSet (attributes) {
   let attrs = {}
   Array.prototype.slice.apply(attributes).forEach(function (attr) {
@@ -27,14 +31,17 @@ describe('mip-video', function () {
       document.body.appendChild(mipVideo)
     })
 
-    it('produce video 1', function () {
-      let video = mipVideo.querySelector('video')
-      expect(video.classList.contains('mip-replaced-content')).to.equal(true)
-      expect(video.getAttribute('playsinline')).to.equal('playsinline')
-      expect(video.getAttribute('webkit-playsinline')).to.equal('webkit-playsinline')
-      expect(video.getAttribute('t7-video-player-type')).to.equal('inline')
-      expect(video.getAttribute('width')).to.equal('100px')
-      expect(video.getAttribute('height')).to.equal('100px')
+    it('produce video 1', function (done) {
+      delay(() => {
+        let video = mipVideo.querySelector('video')
+        expect(video.classList.contains('mip-replaced-content')).to.equal(true)
+        expect(video.getAttribute('playsinline')).to.equal('playsinline')
+        expect(video.getAttribute('webkit-playsinline')).to.equal('webkit-playsinline')
+        expect(video.getAttribute('t7-video-player-type')).to.equal('inline')
+        expect(video.getAttribute('width')).to.equal('100px')
+        expect(video.getAttribute('height')).to.equal('100px')
+        done()
+      })
     })
 
     after(function () {
@@ -72,43 +79,52 @@ describe('mip-video', function () {
       document.body.appendChild(mipVideo)
     })
 
-    it('produce video 2', function () {
-      let video = mipVideo.querySelector('video')
-      expect(video.classList.contains('mip-replaced-content')).to.equal(true)
-      expect(video.getAttribute('playsinline')).to.equal('playsinline')
-      expect(video.getAttribute('webkit-playsinline')).to.equal('webkit-playsinline')
-      expect(video.getAttribute('t7-video-player-type')).to.equal('inline')
-      expect(video.getAttribute('controls')).to.equal('true')
-      expect(video.getAttribute('loop')).to.equal('true')
-      expect(video.getAttribute('muted')).to.equal('true')
-      expect(video.getAttribute('currenttime')).to.equal('2')
-      expect(video.getAttribute('autoplay')).to.equal('true')
-      expect(video.getAttribute('width')).to.equal('100px')
-      expect(video.getAttribute('height')).to.equal('100px')
-      expect(video.getAttribute('poster')).to.equal('https://www.mipengine.org/static/img/sample_04.jpg')
+    it('produce video 2', function (done) {
+      delay(() => {
+        let video = mipVideo.querySelector('video')
+        expect(video.classList.contains('mip-replaced-content')).to.equal(true)
+        expect(video.getAttribute('playsinline')).to.equal('playsinline')
+        expect(video.getAttribute('webkit-playsinline')).to.equal('webkit-playsinline')
+        expect(video.getAttribute('t7-video-player-type')).to.equal('inline')
+        expect(video.getAttribute('controls')).to.equal('true')
+        expect(video.getAttribute('loop')).to.equal('true')
+        expect(video.getAttribute('muted')).to.equal('true')
+        expect(video.getAttribute('currenttime')).to.equal('2')
+        expect(video.getAttribute('autoplay')).to.equal('true')
+        expect(video.getAttribute('width')).to.equal('100px')
+        expect(video.getAttribute('height')).to.equal('100px')
+        expect(video.getAttribute('poster')).to.equal('https://www.mipengine.org/static/img/sample_04.jpg')
 
-      let sources = video.querySelectorAll('source')
-      expect(sources.length).to.equal(3)
+        let sources = video.querySelectorAll('source')
+        expect(sources.length).to.equal(3)
+        done()
+      })
     })
 
-    it('should change current time by loadedmetadata event', function () {
-      let video = mipVideo.querySelector('video')
-      let event = new Event('loadedmetadata')
-      video.dispatchEvent(event)
+    it('should change current time by loadedmetadata event', function (done) {
+      delay(() => {
+        let video = mipVideo.querySelector('video')
+        let event = new Event('loadedmetadata')
+        video.dispatchEvent(event)
+        done()
+      })
     })
 
-    it('should change current time by seekTo API', function () {
-      let p = document.createElement('p')
-      p.setAttribute('on', 'click:mip-video-test.seekTo(2)')
-      p.textContent = 'click me'
-      document.body.appendChild(p)
+    it('should change current time by seekTo API', function (done) {
+      delay(() => {
+        let p = document.createElement('p')
+        p.setAttribute('on', 'click:mip-video-test.seekTo(2)')
+        p.textContent = 'click me'
+        document.body.appendChild(p)
 
-      let event = document.createEvent('MouseEvents')
-      event.initEvent('click', true, true)
-      p.dispatchEvent(event)
+        let event = document.createEvent('MouseEvents')
+        event.initEvent('click', true, true)
+        p.dispatchEvent(event)
 
-      let videoEl = mipVideo.querySelector('video')
-      expect(videoEl.currentTime).to.equal(2)
+        let videoEl = mipVideo.querySelector('video')
+        expect(videoEl.currentTime).to.equal(2)
+        done()
+      })
     })
     // 由于谷歌浏览器对video播放有严格的限制（只能人为play，不能js模拟），所以跳过测试。
     it.skip('should pause when the pause button is clicked', function () {

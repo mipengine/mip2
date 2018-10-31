@@ -7,7 +7,6 @@
 /* globals describe, it, expect, before, beforeEach, afterEach, sinon */
 
 import cssLoader from 'src/util/dom/css-loader'
-import layout from 'src/layout'
 import registerElement from 'src/mip1-polyfill/element'
 import customElement from 'src/mip1-polyfill/customElement'
 import performance from 'src/performance'
@@ -128,41 +127,34 @@ describe('mip1 element', function () {
   })
 
   describe('#attachedCallback', function () {
-    it('the layout method applyLayout is called', function () {
-      let spy = sinon.spy(layout, 'applyLayout')
-      let name = 'mip-test-attachedCallback-applyLayout'
-      registerElement(name, MipTestElement)
-      let node = createDomByTag(name)
-      node.attachedCallback()
-
-      expect(spy).to.have.been.called
-      expect(spy).to.deep.have.been.calledWith(node)
-
-      spy.restore()
-    })
-
-    it('the customElement method attachedCallback is called', function () {
+    it('the customElement method attachedCallback is called', function (done) {
       let spy = MipTestElement.prototype.attachedCallback = sinon.spy()
       let name = 'mip-test-method-attachedCallback'
       registerElement(name, MipTestElement)
       let node = createDomByTag(name)
-      node.attachedCallback()
+      setTimeout(() => {
+        node.attachedCallback()
 
-      expect(spy).to.have.been.called
-      expect(spy).to.have.been.calledWith()
+        expect(spy).to.have.been.called
+        expect(spy).to.have.been.calledWith()
+        done()
+      }, 1)
     })
 
-    it('the resources method add is called', function () {
+    it('the resources method add is called', function (done) {
       let name = 'mip-test-attachedCallback-add'
       registerElement(name, MipTestElement)
       let node = createDomByTag(name)
       let spy = sinon.spy(node._resources, 'add')
-      node.attachedCallback()
+      setTimeout(() => {
+        node.attachedCallback()
 
-      expect(spy).to.have.been.calledOnce
-      expect(spy).to.deep.have.been.calledWith(node)
+        expect(spy).to.have.been.calledOnce
+        expect(spy).to.deep.have.been.calledWith(node)
 
-      spy.restore()
+        spy.restore()
+        done()
+      }, 1)
     })
   })
 
@@ -340,10 +332,10 @@ describe('mip1 element', function () {
     registerElement(name, MipTestElement)
     let node = createDomByTag(name)
     node.setAttribute('name', 'MIP')
-    document.body.removeChild(node)
 
     // reserved point DOM rendering time
     setTimeout(function () {
+      document.body.removeChild(node)
       expect(queue).to.deep.equal(['createdCallback', 'attachedCallback', 'build', 'detachedCallback'])
       done()
     }, 100)
