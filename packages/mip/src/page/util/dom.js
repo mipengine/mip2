@@ -32,7 +32,8 @@ export function createIFrame ({fullpath, pageId}, {onLoad, onError} = {}) {
   let pageMeta = JSON.stringify({
     standalone: window.MIP.standalone,
     isRootPage: false,
-    isCrossOrigin: targetOrigin !== window.location.origin
+    isCrossOrigin: targetOrigin !== window.location.origin,
+    rootName: window.MIP.viewer.rootName
   })
   container.setAttribute('name', pageMeta)
 

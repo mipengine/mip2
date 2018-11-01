@@ -25,7 +25,8 @@ describe('util', function () {
       'Gesture',
       'customStorage',
       'naboo',
-      'jsonParse'
+      'jsonParse',
+      'getRootName'
     ].forEach(function (key) {
       it('.' + key, function () {
         expect(util[key]).to.be.not.undefined
@@ -223,6 +224,26 @@ describe('util', function () {
     expect(util.isCacheUrl('https://c.mipcdn.com/static/v2/internal/instantService-mip-duliangheng/font/wendu-bda6817d452d4a204e4371b3c6c06715.svg')).to.be.true
     expect(util.isCacheUrl('https://yjmtpt-xx--motor-com.mipcdn.com/c/s/yjmtpt.xx-motor.com/xmdcwbaidu.com/example/mip-xmd-illegal-index.html')).to.be.true
     expect(util.isCacheUrl('http://ab.c.mipcdn.com/c/www.mipengine.com/docs/index.html')).to.be.false
+  })
+
+  describe('.getRootName', function () {
+    it('.getRootName in root page', function () {
+      expect(util.getRootName('iframe-shell-vhn7s9y6hu9')).to.be.equal('iframe-shell-vhn7s9y6hu9')
+    })
+
+    it('.getRootName in sub page', function () {
+      expect(util.getRootName('{"standalone":false,"isRootPage":false,"isCrossOrigin":false, "rootName":"iframe-shell-vhn7s9y6hu9"}'))
+        .to.be.equal('iframe-shell-vhn7s9y6hu9')
+    })
+
+    it('.getRootName with undefined params', function () {
+      expect(util.getRootName()).to.be.equal('')
+    })
+
+    it('.getRootName in other cases', function () {
+      expect(util.getRootName('some other name'))
+        .to.be.equal('some other name')
+    })
   })
 })
 
