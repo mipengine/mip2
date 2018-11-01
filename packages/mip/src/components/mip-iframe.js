@@ -23,8 +23,8 @@ const ATTR_LIST = [
 
 function encode (str) {
   let arr
-  if (typeof TextEncoder !== 'undefined') {
-    arr = new TextEncoder('utf-8').encode(str)
+  if (typeof window.TextEncoder !== 'undefined') {
+    arr = new window.TextEncoder('utf-8').encode(str)
   } else {
     arr = new Uint8Array(str.length)
     str = unescape(encodeURIComponent(str))
@@ -79,7 +79,8 @@ class MipIframe extends CustomElement {
     } else if (this._srcdoc !== value) {
       this._srcdoc = value
       // 兼容 mip1
-      if (this.element.getAttribute('encode')) {
+      let needEncode = this.element.getAttribute('encode')
+      if (needEncode === 'true' || needEncode === '') {
         value = encode(value)
       }
       this._src = 'data:text/html;charset=utf-8;base64,' + window.btoa(value)
