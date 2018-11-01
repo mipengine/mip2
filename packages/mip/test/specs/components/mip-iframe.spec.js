@@ -13,11 +13,11 @@ import {
 
 import viewport from 'src/viewport'
 
-describe('mip-iframe', function () {
-  let mipIframe
-  let iframe
-
+describe.only('mip-iframe', function () {
   describe('iframe with default width and attrs', function () {
+    let mipIframe
+    let iframe
+
     this.timeout(1200)
     before(function () {
       mipIframe = document.createElement('mip-iframe')
@@ -50,6 +50,9 @@ describe('mip-iframe', function () {
   })
 
   describe('iframe with set width and height', function () {
+    let mipIframe
+    let iframe
+
     before(function () {
       mipIframe = document.createElement('mip-iframe')
       mipIframe.setAttribute('srcdoc', '<p>Hello MIP!</p>')
@@ -107,6 +110,9 @@ describe('mip-iframe', function () {
   })
 
   describe('iframe with no src and height', function () {
+    let mipIframe
+    let iframe
+
     before(function () {
       mipIframe = document.createElement('mip-iframe')
       document.body.appendChild(mipIframe)
@@ -115,6 +121,55 @@ describe('mip-iframe', function () {
     it('should not produce iframe', function () {
       iframe = mipIframe.querySelector('iframe')
       expect(iframe).to.be.null
+    })
+
+    after(function () {
+      document.body.removeChild(mipIframe)
+    })
+  })
+
+  describe('iframe src is HTTP', function () {
+    let mipIframe
+    let iframe
+
+    before(function () {
+      mipIframe = document.createElement('mip-iframe')
+      mipIframe.setAttribute('width', '300px')
+      mipIframe.setAttribute('height', '400px')
+      mipIframe.setAttribute('layout', 'fixed')
+      mipIframe.setAttribute('src', 'http://www.baidu.com')
+      document.body.appendChild(mipIframe)
+    })
+
+    it('should alert HTTPS request', function () {
+      iframe = mipIframe.querySelector('iframe')
+      expect(iframe.src).to.equal('data:text/html;charset=utf-8;base64,' + window.btoa('Invalid &lt;mip-iframe&gt; src. Must start with https://'))
+    })
+
+    after(function () {
+      document.body.removeChild(mipIframe)
+    })
+  })
+
+
+  describe('iframe srcdoc with Chinese', function () {
+    this.timeout(1200)
+    let mipIframe
+
+    it('should show chinese words', function (done) {
+      expect(
+        function () {
+          mipIframe = document.createElement('mip-iframe')
+          mipIframe.setAttribute('width', '300px')
+          mipIframe.setAttribute('height', '400px')
+          mipIframe.setAttribute('layout', 'fixed')
+          mipIframe.setAttribute('srcdoc', '<p>你好</p>')
+          mipIframe.setAttribute('encode', 'true')
+          document.body.appendChild(mipIframe)
+
+          setTimeout(done, 1000)
+        }
+      ).to.not.throw()
     })
 
     after(function () {

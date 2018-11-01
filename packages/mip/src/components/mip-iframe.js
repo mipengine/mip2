@@ -1,9 +1,11 @@
 /**
  * @file mip-iframe
  * @author zhangzhiqiang(zhiqiangzhang37@163.com)
+ *         clark-t (clarktanglei@163.com)
  */
 
 import util from '../util/index'
+import fn from '../util/fn'
 import CustomElement from '../custom-element'
 import viewport from '../viewport'
 import {
@@ -12,50 +14,106 @@ import {
   MESSAGE_PAGE_RESIZE
 } from '../page/const'
 
-let attrList = ['allowfullscreen', 'allowtransparency', 'sandbox']
+const ATTR_LIST = [
+  'allowfullscreen',
+  'allowtransparency',
+  'sandbox',
+  'referrerpolicy'
+]
+
+function encode (str) {
+  let arr
+  if (typeof TextEncoder !== 'undefined') {
+    arr = new TextEncoder('utf-8').encode(str)
+  } else {
+    arr = new Uint8Array(str.length)
+    str = unescape(encodeURIComponent(str))
+    for (let i = 0; i < str.length; i++) {
+      arr[i] = str.charCodeAt(i)
+    }
+  }
+  // 不能直接 arr.map().join()
+  let output = new Array(arr.length)
+  for (let i = 0; i < arr.length; i++) {
+    output[i] = String.fromCharCode(arr[i])
+  }
+  return output.join('')
+}
 
 class MipIframe extends CustomElement {
-  build () {
-    this.bindedHandlePageResize = this.handlePageResize.bind(this)
-    this.bindedHnotifyRootPage = this.notifyRootPage.bind(this)
+  constructor (...args) {
+    super(...args)
 
-    let element = this.element
+    this._src = null
+    this.updateIframeSrc = fn.throttle(this.setIframeSrc.bind(this))
+  }
 
-    let src
-    let srcdoc = element.getAttribute('srcdoc')
-    if (srcdoc) {
-      src = 'data:text/html;charset=utf-8;base64,' + window.btoa(srcdoc)
-    } else {
-      src = element.getAttribute('src') || ''
-      if ('https://' !== src.slice(0, 8)) {
-        return
-      }
+  static get observedAttributes () {
+    return ['src', 'srcdoc']
+  }
+
+  attributeChangedCallback (name, oldValue, newValue) {
+    if (this.isBuilt) {
+      this[name] = newValue
+      this.updateIframeSrc()
     }
+  }
 
-    let height = element.getAttribute('height')
-    let width = element.getAttribute('width') || '100%'
+  set src (value) {
+    // 当 srcdoc 存在时，优先展示 srcdoc 的内容
+    if (this.element.getAttribute('srcdoc')) {
+      return
+    }
+    // url 必须是 https
+    if (value == null || value.slice(0, 8) === 'https://') {
+      this._src = value
+    } else {
+      this.srcdoc = `Invalid &lt;mip-iframe&gt; src. Must start with https://`
+    }
+  }
 
-    if (!src || !height) {
+  set srcdoc (value) {
+    // 当删除 srcdoc 属性时，显示 src 的内容
+    if (value == null) {
+      this.src = this.element.getAttribute('src')
+    } else if (this._srcdoc !== value) {
+      this._srcdoc = value
+      // 兼容 mip1
+      if (this.element.getAttribute('encode')) {
+        value = encode(value)
+      }
+      this._src = 'data:text/html;charset=utf-8;base64,' + window.btoa(value)
+    }
+  }
+
+  setIframeSrc () {
+    if (!this._src) {
       return
     }
 
-    // window.addEventListener('message', )
-    window.addEventListener('message', this.notifyRootPage.bind(this))
+    if (this.iframe) {
+      if (this.iframe.src !== this._src) {
+        this.iframe.src = this._src
+      }
+      return
+    }
+
+    let height = this.element.getAttribute('height')
+    let width = this.element.getAttribute('width') || '100%'
 
     let iframe = document.createElement('iframe')
     iframe.frameBorder = '0'
     iframe.scrolling = util.platform.isIos() ? /* istanbul ignore next */ 'no' : 'yes'
+
     util.css(iframe, {
       width,
       height
     })
 
     this.applyFillContent(iframe)
-    iframe.src = src
-
-    this.expendAttr(attrList, iframe)
-    element.appendChild(iframe)
-
+    this.expendAttr(ATTR_LIST, iframe)
+    iframe.src = this._src
+    this.element.appendChild(iframe)
     this.iframe = iframe
 
     /**
@@ -77,13 +135,24 @@ class MipIframe extends CustomElement {
     }
   }
 
+  build () {
+    this.bindedHandlePageResize = this.handlePageResize.bind(this)
+    this.bindedNotifyRootPage = this.notifyRootPage.bind(this)
+
+    window.addEventListener('message', this.bindedNotifyRootPage)
+
+    this.srcdoc = this.element.getAttribute('srcdoc')
+    this.setIframeSrc()
+    this.isBuilt = true
+  }
+
   firstInviewCallback () {
-    window.addEventListener(CUSTOM_EVENT_RESIZE_PAGE, this.handlePageResize.bind(this))
+    window.addEventListener(CUSTOM_EVENT_RESIZE_PAGE, this.bindedHandlePageResize)
   }
 
   disconnectedCallback () {
-    window.removeEventListener(CUSTOM_EVENT_RESIZE_PAGE, this.handlePageResize.bind(this))
-    window.removeEventListener('message', this.notifyRootPage.bind(this))
+    window.removeEventListener(CUSTOM_EVENT_RESIZE_PAGE, this.bindedHandlePageResize)
+    window.removeEventListener('message', this.bindedNotifyRootPage)
   }
 
   notifyRootPage ({data}) {
