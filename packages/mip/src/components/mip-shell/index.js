@@ -17,7 +17,7 @@ import {
   unbindHeaderEvents
 } from './dom'
 import {render} from './render'
-import {makeCacheUrl} from '../../util'
+import {makeCacheUrl, parseCacheUrl} from '../../util'
 import css from '../../util/dom/css'
 import fn from '../../util/fn'
 import CustomElement from '../../custom-element'
@@ -36,6 +36,8 @@ import {
   MESSAGE_CROSS_ORIGIN,
   MESSAGE_BROADCAST_EVENT,
   MESSAGE_PAGE_RESIZE,
+  OUTER_MESSAGE_PUSH_STATE,
+  OUTER_MESSAGE_REPLACE_STATE,
   OUTER_MESSAGE_CHANGE_STATE,
   OUTER_MESSAGE_CLOSE
 } from '../../page/const/index'
@@ -304,10 +306,23 @@ class MipShell extends CustomElement {
         if (data.options.allowTransition) {
           window.MIP_SHELL_OPTION.allowTransition = true
         }
+        if (data.options.skipRender) {
+          // 通过 page.push(route, {skipRender: true}) 没有经过 viewer.open，因此还需要发消息通知 SF 去操作 URL
+          let pushMessage = {
+            url: parseCacheUrl(data.route)
+          }
+          viewer.sendMessage(OUTER_MESSAGE_PUSH_STATE, pushMessage)
+        }
         router.push(data.route, data.options.skipRender)
       } else if (type === MESSAGE_ROUTER_REPLACE) {
         if (data.options.allowTransition) {
           window.MIP_SHELL_OPTION.allowTransition = true
+        }
+        if (data.options.skipRender) {
+          let pushMessage = {
+            url: parseCacheUrl(data.route)
+          }
+          viewer.sendMessage(OUTER_MESSAGE_REPLACE_STATE, pushMessage)
         }
         router.replace(data.route, data.options.skipRender)
       } else if (type === MESSAGE_ROUTER_BACK) {
