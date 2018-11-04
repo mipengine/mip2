@@ -23,6 +23,14 @@
     {
       "name": "用户行为统计与分析",
       "key": "analytics"
+    },
+    {
+      "name": "渐进增强式设计",
+      "key": "progressive-enhancement-design"
+    },
+    {
+      "name": "辅助开发工具",
+      "key": "assistant-development-tools"
     }
   ]
 }
