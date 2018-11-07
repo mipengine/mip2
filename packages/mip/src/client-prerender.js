@@ -41,7 +41,9 @@ class ClientPrerender {
     // 延迟执行的的函数队列
     this.queue = []
 
-    this.messager = new Messager()
+    this.messager = new Messager({
+      name: util.fn.getRootName(window.name)
+    })
 
     if (util.hash.get('prerender') === '1') {
       this.prerender = true

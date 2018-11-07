@@ -46,7 +46,7 @@ export function render (shell, from, to) {
   let targetPageId = getCleanPageId(targetFullPath)
   let targetPage = page.getPageById(targetPageId)
   let targetIFrame = getIFrame(targetPageId)
-  let isTargetRootPage = targetPageId === page.pageId
+  let isTargetRootPage = targetPage ? targetPage.isRootPage : false
 
   /**
    * priority of header.title:
@@ -90,14 +90,17 @@ export function render (shell, from, to) {
     shell.saveScrollPosition()
   }
 
-  if ((!targetIFrame && !isTargetRootPage) || (to.meta && to.meta.reload && !to.meta.cacheFirst)) {
-    // Iframe will be created in following situation:
-    // 1. If target iframe doesn't exist (`!targetIFrame`) and not rootPage (!isTargetRootPage), create it.
-    // 2. If target iframe exists:
-    // 2.1 Target iframe MUST be recreated (`to.meta.reload`, which will be set when click `<a mip-link>`)
-    // 2.2 Not a cache first strategy (`to.meta.cacheFirst`)
-    //     Cache first strategy uses cached page when target page has already existed
-    // expression = 1 || (2.1 && 2.2)
+  // 目标页面是否存在。这是下面决定是否创建 iframe 时要用到的重要判断指标。
+  // 如果是 rootPage，要求 page 存在。但因为 isTargetRootPage 本身就是用 targetPage 判断的，所以直接等价于目标页存在。
+  // 如果不是 rootPage，则要求 iframe 和 page 同时存在
+  // 之所以要判断两个都存在，是因为预渲染情况在 iframe load 之后才添加 page，所以可能 page=null 但是 iframe 已经有了
+  let targetExists = isTargetRootPage || (targetIFrame && targetPage)
+
+  if (!targetExists || (to.meta && to.meta.reload && !to.meta.cacheFirst)) {
+    // 进入这个分支表示需要创建新的 iframe，有以下情况：
+    // 1. 目标页面不存在
+    // 2. 目标页面的 iframe 和 page 虽然都存在，但是因为是点击链接跳转的（to.meta.reload = true)，因此为了实时性需要重新加载。
+    //    但是 cacheFirst 时还是应该优先使用已有的 iframe，因此不要创建
 
     // If target page is root page
     if (page.pageId === targetPageId) {
@@ -212,11 +215,9 @@ export function render (shell, from, to) {
 
     switchPage(shell, params)
   } else {
-    // Use existing iframe/page without recreating in following situations:
-    // 1. Target iframe/page has already existed
-    // 2.1 Don't need recreating iframe (`to.meta.reload = false`, which maybe come from a popstate event)
-    // 2.2 Cache first strategy (`to.meta.cacheFirst = true`) (including prerender)
-    // expression = 1 && (2.1 || 2.2)
+    // 进到这个分支表示复用已有的 iframe，不重新创建。需要满足：
+    // 1. 目标页面的 iframe 和 page 对象都已经存在
+    // 2. 并且可能是后退来的（to.meta.reload = false）或者指明从缓存读取（to.meta.cacheFirst = true）
 
     if (platform.isQQ() || platform.isQQApp()) {
       window.MIP_SHELL_OPTION.allowTransition = false
