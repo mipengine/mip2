@@ -11,6 +11,8 @@ var ORIGINAL = [
   'Boolean',
   'DOMError',
   'DOMException',
+  // https://github.com/mipengine/mip2/issues/336
+  'DataView',
   'Date',
   'Error',
   'Float32Array',
