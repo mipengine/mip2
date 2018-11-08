@@ -62,7 +62,7 @@
     "livereload": "^0.7.0",
     "metalsmith": "^2.3.0",
     "minimatch": "^3.0.4",
-    "mip-component-validator": "^1.1.4",
+    "mip-component-validator": "^1.1.5",
     "mip-components-webpack-helpers": "^1.0.7",
     "mip-sandbox": "^1.0.25",
     "mip-validator": "^1.5.15",
