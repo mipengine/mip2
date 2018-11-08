@@ -181,6 +181,28 @@ function isCacheUrl (pageUrl) {
     /^(\/\/|http:\/\/|https:\/\/)[^.]+.mipcdn.com\/(stati)?c\//.test(pageUrl)
 }
 
+/**
+ * 获取 SF 创建的第一个 iframe 的 name，在实例化 messager 时会使用到。
+ * 如果是 MIP2 的子页面，通过 window.name 由父页面传递下来。
+ * 格式如 iframe-shell-xxxxxx
+ */
+function getRootName (name) {
+  if (!name) {
+    return ''
+  }
+
+  if (/^iframe-shell/.test(name)) {
+    return name
+  }
+
+  try {
+    let info = JSON.parse(name)
+    return info.rootName
+  } catch (e) {
+    return name
+  }
+}
+
 export default {
   throttle,
   values,
@@ -190,5 +212,6 @@ export default {
   isString,
   del,
   hasTouch,
-  isCacheUrl
+  isCacheUrl,
+  getRootName
 }

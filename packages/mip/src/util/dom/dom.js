@@ -145,6 +145,7 @@ function create (str) {
  * callback is executed.
  *
  * @param {Function} cb callback
+ * @deprecated Use {@link Mipdoc#whenBodyAvailable} instead.
  */
 function waitDocumentReady (cb) {
   if (document.body) {
@@ -158,6 +159,61 @@ function waitDocumentReady (cb) {
       cb()
     }
   }, 5)
+}
+
+/**
+ * Returns a promise that resolve when `predicate(parent)` returns `true`.
+ *
+ * @param {!HTMLElement} parent element.
+ * @param {function(!HTMLElement):boolean} predicate function.
+ * @returns {!Promise<void>}
+ */
+function waitForChild (parent, predicate) {
+  return new Promise(resolve => {
+    if (predicate(parent)) {
+      resolve()
+
+      return
+    }
+
+    const win = parent.ownerDocument.defaultView
+
+    if (win.MutationObserver) {
+      /**
+       * @type {!MutationObserver}
+       */
+      const observer = new win.MutationObserver(() => {
+        if (predicate(parent)) {
+          observer.disconnect()
+          resolve()
+        }
+      })
+
+      observer.observe(parent, {childList: true})
+
+      return
+    }
+
+    const intervalId = win.setInterval(() => {
+      if (predicate(parent)) {
+        win.clearInterval(intervalId)
+        resolve()
+      }
+    }, 5)
+  })
+}
+
+/**
+ * Returns a promise that resolve when `document.body` is available.
+ *
+ * @param {!Document} doc document.
+ * @returns {!Promise<!HTMLBodyElement>}
+ */
+function waitForBody (doc) {
+  return waitForChild(
+    doc.documentElement,
+    documentElement => !!documentElement.ownerDocument.body
+  )
 }
 
 /**
@@ -191,5 +247,7 @@ export default {
   contains,
   create,
   insert,
-  waitDocumentReady
+  waitDocumentReady,
+  waitForChild,
+  waitForBody
 }
