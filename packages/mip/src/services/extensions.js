@@ -63,7 +63,8 @@ export class Extensions {
     if (!holder) {
       const extension = {
         elements: {},
-        services: {}
+        services: {},
+        instances: []
       }
 
       holder = this.extensions[extensionId] = {
@@ -173,20 +174,52 @@ export class Extensions {
       this.currentExtensionId = extensionId
       factory(...args)
       holder.loaded = true
-
-      if (holder.resolve) {
-        holder.resolve(holder.extension)
-      }
+      Promise.resolve().then(() => this.tryResolveExtension(extensionId))
     } catch (err) {
       holder.error = err
-
-      if (holder.reject) {
-        holder.reject(err)
-      }
+      this.tryRejectExtension(extensionId, err)
 
       throw err
     } finally {
       this.currentExtensionId = null
+    }
+  }
+
+  /**
+   * Try to resolve extension.
+   *
+   * @param {string} extensionId of extension
+   */
+  tryResolveExtension (extensionId) {
+    const {resolve, extension} = this.getExtensionHolder(extensionId)
+
+    if (resolve && extension.instances.every(ins => ins.isBuilt())) {
+      resolve(extension)
+    }
+  }
+
+  /**
+   * Add instance for extension
+   *
+   * @param {string} extensionId of extension
+   * @param {*} instance extension instance
+   */
+  addInstanceForExtension (extensionId, instance) {
+    let {extension} = this.getExtensionHolder(extensionId)
+    extension.instances.push(instance)
+  }
+
+  /**
+   * Try to reject extension.
+   *
+   * @param {string} extensionId of extension
+   * @param {Error} error to reject
+   */
+  tryRejectExtension (extensionId, error) {
+    const {reject} = this.getExtensionHolder(extensionId)
+
+    if (reject) {
+      reject(error)
     }
   }
 

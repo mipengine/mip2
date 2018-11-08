@@ -9,6 +9,7 @@ import performance from '../performance'
 import resources from '../resources'
 import customElementsStore from '../custom-element-store'
 import prerender from '../client-prerender'
+import Services from '../services'
 
 /* globals HTMLElement */
 
@@ -68,6 +69,12 @@ function createBaseElementProto () {
      * @public
      */
     let customElement = this.customElement = new CustomElement(this)
+
+    /** @private {!Extensions} {@link ./../services/extensions} */
+    this._extensions = Services.getService(window, 'extensions')
+
+    // Add instance to extension holder
+    this._extensions.addInstanceForExtension(this.tagName.toLowerCase(), this)
 
     customElement.createdCallback()
 
@@ -159,11 +166,16 @@ function createBaseElementProto () {
     if (this.isBuilt()) {
       return
     }
+
+    let tagName = this.tagName.toLowerCase()
+
     // Add `try ... catch` avoid the executing build list being interrupted by errors.
     try {
       this.customElement.build()
       this._built = true
+      this._extensions.tryResolveExtension(tagName)
     } catch (e) {
+      this._extensions.tryRejectExtension(tagName, e)
       console.warn('build error:', e)
     }
   }

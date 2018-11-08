@@ -10,12 +10,10 @@ import {LAYOUT, applyLayout} from './layout'
 import performance from './performance'
 import customElementsStore from './custom-element-store'
 import cssLoader from './util/dom/css-loader'
-import prerender from './client-prerender'
 import dom from './util/dom/dom'
 import css from './util/dom/css'
 import {parseSizeList} from './size-list'
-
-const COMPONENTS_NEED_DELAY = ['MIP-IMG', 'MIP-CAROUSEL', 'MIP-DATA']
+import Services from './services'
 
 /** @param {!Element} element */
 function isInputPlaceholder (element) {
@@ -93,6 +91,12 @@ class BaseElement extends HTMLElement {
     /** @private {?Element|undefined} */
     this.spaceElement = undefined
 
+    /** @private {!Extensions} {@link ./../services/extensions} */
+    this._extensions = Services.getService(window, 'extensions')
+
+    // Add instance to extension holder
+    this._extensions.addInstanceForExtension(this.tagName.toLowerCase(), this)
+
     // get mip2 clazz from custom elements store
     let CustomElement = customElementsStore.get(this.tagName.toLowerCase(), 'mip2')
 
@@ -114,15 +118,7 @@ class BaseElement extends HTMLElement {
     this.classList.add('mip-element')
     this._layout = applyLayout(this)
     this.customElement.connectedCallback()
-
-    let func = () => {
-      // Add to resource manager.
-      prerender.execute(() => {
-        this._resources.add(this)
-      }, this)
-    }
-
-    COMPONENTS_NEED_DELAY.indexOf(this.tagName) !== -1 ? func() : setTimeout(func, 0)
+    this._resources.add(this)
   }
 
   disconnectedCallback () {
@@ -133,9 +129,7 @@ class BaseElement extends HTMLElement {
 
   attributeChangedCallback () {
     let ele = this.customElement
-    prerender.execute(() => {
-      ele.attributeChangedCallback(...arguments)
-    }, this)
+    ele.attributeChangedCallback(...arguments)
   }
 
   /**
@@ -301,6 +295,9 @@ class BaseElement extends HTMLElement {
     if (this.isBuilt()) {
       return
     }
+
+    let tagName = this.tagName.toLowerCase()
+
     // Add `try ... catch` avoid the executing build list being interrupted by errors.
     try {
       if (!this.getPlaceholder()) {
@@ -311,7 +308,9 @@ class BaseElement extends HTMLElement {
       }
       this.customElement.build()
       this._built = true
+      this._extensions.tryResolveExtension(tagName)
     } catch (e) {
+      this._extensions.tryRejectExtension(tagName)
       console.warn('build error:', e)
     }
   }

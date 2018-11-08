@@ -7,6 +7,9 @@ import fn from './util/fn'
 import Gesture from './util/gesture/index'
 import viewport from './viewport'
 import rect from './util/dom/rect'
+import prerender from './client-prerender'
+
+const COMPONENTS_NEED_DELAY = ['MIP-IMG', 'MIP-CAROUSEL', 'MIP-DATA']
 
 /**
  * Store the resources.
@@ -61,6 +64,9 @@ class Resources {
      */
     this._viewport = viewport
 
+    /** @private @type {boolean} */
+    this._needUpdate = false
+
     this._gesture = new Gesture(document, {
       preventX: false
     })
@@ -71,15 +77,14 @@ class Resources {
    * Bind the events of current object.
    */
   _bindEvent () {
-    let self = this
     let timer
     this._viewport.on('changed resize', this.updateState)
-    this._gesture.on('swipe', function (e, data) {
+    this._gesture.on('swipe', (e, data) => {
       let delay = Math.round(data.velocity * 600)
       delay < 100 && (delay = 100)
       delay > 600 && (delay = 600)
       clearTimeout(timer)
-      timer = setTimeout(self.updateState, delay)
+      timer = setTimeout(this.updateState, delay)
     })
   }
 
@@ -91,9 +96,14 @@ class Resources {
   add (element) {
     element._eid = this._eid++
     resources[this._rid][element._eid] = element
-    element.build()
 
-    this.updateState()
+    let fn = () => {
+      prerender.execute(() => {
+        element.build()
+        this.updateState()
+      })
+    }
+    COMPONENTS_NEED_DELAY.indexOf(element.tagName) === -1 ? setTimeout(fn, 0) : fn()
   }
 
   /**
@@ -143,22 +153,36 @@ class Resources {
   }
 
   /**
-   * Update elements's viewport state.
+   * Deffered update elements's viewport state.
    */
   _update () {
+    if (!this._needUpdate) {
+      this._needUpdate = true
+      Promise.resolve().then(() => this._doRealUpdate())
+    }
+  }
+
+  /**
+   * Do real update elements's viewport state with performance
+   */
+  _doRealUpdate () {
     let resources = this.getResources()
     let viewportRect = this._viewport.getRect()
 
     for (let i in resources) {
-      // 兼容 mip1 的组件
-      resources[i].applySizesAndMediaQuery && resources[i].applySizesAndMediaQuery()
-      // Compute the viewport state of current element.
-      // If current element`s prerenderAllowed returns `true` always set the state to be `true`.
-      let elementRect = rect.getElementRect(resources[i])
-      let inViewport = resources[i].prerenderAllowed(elementRect, viewportRect) ||
-        rect.overlapping(elementRect, viewportRect)
-      this.setInViewport(resources[i], inViewport)
+      if (resources[i].isBuilt()) {
+        // 兼容 mip1 的组件
+        resources[i].applySizesAndMediaQuery && resources[i].applySizesAndMediaQuery()
+        // Compute the viewport state of current element.
+        // If current element`s prerenderAllowed returns `true` always set the state to be `true`.
+        let elementRect = rect.getElementRect(resources[i])
+        let inViewport = resources[i].prerenderAllowed(elementRect, viewportRect) ||
+          rect.overlapping(elementRect, viewportRect)
+        this.setInViewport(resources[i], inViewport)
+      }
     }
+
+    this._needUpdate = false
   }
 
   /**
