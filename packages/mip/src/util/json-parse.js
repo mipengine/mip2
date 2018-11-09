@@ -6,7 +6,7 @@
  */
 export default function (jsonStr) {
   jsonStr = jsonStr
-    .replace(/(['"]).*?\1/g, item => item.replace(/[/*]/g, s => '\\' + s))
+    .replace(/(["'])((\\{2})*|(.*?[^\\](\\{2})*))\1/g, item => item.replace(/[/*]/g, s => '\\' + s))
     .replace(/\/\/.*\n?/g, '')
     .replace(/\/\*.*\*\//g, '')
 
@@ -16,7 +16,7 @@ export default function (jsonStr) {
   let rxfour = /(?:^|:|,)(?:\s*\[)+/g
   let validate = jsonStr
     .replace(rxtwo, '@')
-    .replace(rxthree, item => (']' + /:$/.test(item) ? ':' : ''))
+    .replace(rxthree, item => (']' + (/:$/.test(item) ? ':' : '')))
     .replace(rxfour, '')
 
   if (rxone.test(validate)) {

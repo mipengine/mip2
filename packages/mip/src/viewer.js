@@ -46,6 +46,12 @@ let viewer = {
      * The initialise method of viewer
      */
   init () {
+
+    /**
+     * SF 创建的第一个页面的 window.name
+     */
+    this.rootName = fn.getRootName(window.name)
+
     /**
      * Send Message, keep messager only one if prerender have created
      *
@@ -53,7 +59,7 @@ let viewer = {
      * @type {Object}
      */
     const messager = clientPrerender.messager
-    this.messager = messager || new Messager()
+    this.messager = messager || new Messager({name: this.rootName})
 
     /**
      * The gesture of document.Used by the event-action of Viewer.
@@ -343,6 +349,7 @@ let viewer = {
       if (platform.isUc() && telRegexp.test(to)) {
         return
       }
+
       if (!httpRegexp.test(to)) {
         this.setAttribute('target', '_top')
         return

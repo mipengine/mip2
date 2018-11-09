@@ -142,5 +142,3 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     storage.delExceedCookie()
   })
 }
-
-export default mip

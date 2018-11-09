@@ -3,13 +3,8 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-/* eslint-disable */
-// const {resolveModule} = require('../../../utils/helper');
-/* eslint-enable */
-
 const commonStyleLoaders = [
   require.resolve('vue-style-loader'),
-  // require.resolve('css-loader'),
   require.resolve('./css-loader'),
 
   {
@@ -23,6 +18,12 @@ const commonStyleLoaders = [
             'last 2 versions',
             'ie 9-10'
           ]
+        }),
+        require('cssnano')({
+          autoprefixer: false,
+          discardUnused: false,
+          reduceIdents: false,
+          zindex: false
         })
       ]
     }
