@@ -174,7 +174,8 @@ export class Extensions {
       this.currentExtensionId = extensionId
       factory(...args)
       holder.loaded = true
-      Promise.resolve().then(() => this.tryResolveExtension(extensionId))
+      // Resolve if extension has't instance
+      this.tryResolveExtension(extensionId)
     } catch (err) {
       holder.error = err
       this.tryRejectExtension(extensionId, err)
@@ -196,6 +197,15 @@ export class Extensions {
     if (resolve && extension.instances.every(ins => ins.isBuilt())) {
       resolve(extension)
     }
+  }
+
+  /**
+   * Returns extensionId for extension which is currently being registered.
+   *
+   * @return {string} current extensionId
+   */
+  getCurrentExtensionId () {
+    return this.currentExtensionId
   }
 
   /**

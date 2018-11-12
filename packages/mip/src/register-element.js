@@ -94,8 +94,11 @@ class BaseElement extends HTMLElement {
     /** @private {!Extensions} {@link ./../services/extensions} */
     this._extensions = Services.getService(window, 'extensions')
 
+    /** @private {string} */
+    this._extensionId = this._extensions.getCurrentExtensionId()
+
     // Add instance to extension holder
-    this._extensions.addInstanceForExtension(this.tagName.toLowerCase(), this)
+    this._extensions.addInstanceForExtension(this._extensionId, this)
 
     // get mip2 clazz from custom elements store
     let CustomElement = customElementsStore.get(this.tagName.toLowerCase(), 'mip2')
@@ -296,8 +299,6 @@ class BaseElement extends HTMLElement {
       return
     }
 
-    let tagName = this.tagName.toLowerCase()
-
     // Add `try ... catch` avoid the executing build list being interrupted by errors.
     try {
       if (!this.getPlaceholder()) {
@@ -308,9 +309,9 @@ class BaseElement extends HTMLElement {
       }
       this.customElement.build()
       this._built = true
-      this._extensions.tryResolveExtension(tagName)
+      this._extensions.tryResolveExtension(this._extensionId)
     } catch (e) {
-      this._extensions.tryRejectExtension(tagName)
+      this._extensions.tryRejectExtension(this._extensionId)
       console.warn('build error:', e)
     }
   }
