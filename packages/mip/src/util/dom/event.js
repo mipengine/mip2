@@ -114,5 +114,6 @@ export default {
   delegate,
   create: createEvent,
   loadPromise,
-  listenOnce
+  listenOnce,
+  listen
 }

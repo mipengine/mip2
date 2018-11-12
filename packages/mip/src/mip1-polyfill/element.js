@@ -9,9 +9,12 @@ import performance from '../performance'
 import resources from '../resources'
 import customElementsStore from '../custom-element-store'
 import prerender from '../client-prerender'
-import Services from '../services'
+import {customEmit} from '../util/custom-event'
 
 /* globals HTMLElement */
+
+/** @type {Array<BaseElement>} */
+let customElementInstances = []
 
 /**
  * Save the base element prototype to avoid duplicate initialization.
@@ -69,22 +72,14 @@ function createBaseElementProto () {
      * @public
      */
     let customElement = this.customElement = new CustomElement(this)
-
-    /** @private {!Extensions} {@link ./../services/extensions} */
-    this._extensions = Services.extensionsFor(window)
-
-    /** @private {string} */
-    this._extensionId = this._extensions.getCurrentExtensionId()
-
-    // Add instance to extension holder
-    this._extensions.adoptElementInstance(this._extensionId, this.tagName.toLowerCase(), this)
-
     customElement.createdCallback()
 
     // Add first-screen element to performance.
     if (customElement.hasResources()) {
       performance.addFsElement(this)
     }
+
+    customElementInstances.push(this)
   }
 
   /**
@@ -170,15 +165,13 @@ function createBaseElementProto () {
       return
     }
 
-    let tagName = this.tagName.toLowerCase()
-
     // Add `try ... catch` avoid the executing build list being interrupted by errors.
     try {
       this.customElement.build()
       this._built = true
-      this._extensions.tryResolveExtension(tagName)
+      customEmit(this, 'build')
     } catch (e) {
-      this._extensions.tryRejectExtension(tagName, e)
+      customEmit(this, 'builderror', e)
       console.warn('build error:', e)
     }
   }
@@ -247,6 +240,8 @@ function registerElement (name, elementClass, css) {
   document.registerElement(name, {
     prototype: createMipElementProto(name)
   })
+
+  return customElementInstances
 }
 
 export default registerElement

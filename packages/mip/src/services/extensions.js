@@ -1,8 +1,10 @@
 import Services from './services'
-import {templates, Deferred} from '../util'
+import util from '../util'
 import registerMip1Element from '../mip1-polyfill/element'
 import registerCustomElement from '../register-element'
 import registerVueCustomElement from '../vue-custom-element'
+
+const {templates, Deferred, event: {listen}} = util
 
 const UNKNOWN_EXTENSION_ID = 'unknown'
 
@@ -70,6 +72,7 @@ export class Extensions {
 
       holder = this.extensions[extensionId] = {
         extension,
+        instances: [],
         promise: null,
         resolve: null,
         reject: null,
@@ -179,27 +182,13 @@ export class Extensions {
       this.currentExtensionId = extensionId
       factory(...args)
       // Resolve if extension has't instance
-      this.tryResolveExtension(extensionId)
+      this.mipdoc.whenBodyAvailable().then(() => this.tryResolveExtension(extensionId))
     } catch (err) {
-      this.tryRejectExtension(extensionId, err)
-
+      this.mipdoc.whenBodyAvailable().then(() => this.tryRejectExtension(extensionId, err))
       throw err
     } finally {
       this.currentExtensionId = null
     }
-  }
-
-  /**
-   * Adopts instance of element on `holder`.
-   *
-   * @param {string} extensionId of extension.
-   * @param {string} name of element.
-   * @param {!Object} instance of element.
-   */
-  adoptElementInstance (extensionId, name, instance) {
-    const holder = this.getExtensionHolder(extensionId)
-
-    holder.extension.elements[name].instance = instance
   }
 
   /**
@@ -209,16 +198,13 @@ export class Extensions {
    */
   tryResolveExtension (extensionId) {
     const holder = this.getExtensionHolder(extensionId)
-    const {elements} = holder.extension
-    const names = Object.keys(elements)
 
-    for (const name of names) {
-      const {instance} = elements[name]
-
-      if (!instance || !instance.isBuilt()) {
-        return
-      }
+    if (!holder.instances.every(el => el.isBuilt())) {
+      return
     }
+
+    // Delete reference.
+    holder.instances.length = 0
 
     holder.loaded = true
 
@@ -291,6 +277,8 @@ export class Extensions {
    * @param {Object=} options
    */
   registerElement (name, implementation, css, options) {
+    // Cache currentExtensionId while it will change
+    const extensionId = this.currentExtensionId
     const holder = this.getCurrentExtensionHolder()
     const element = {implementation, css}
     const version = options && options.version && '' + options.version
@@ -301,7 +289,22 @@ export class Extensions {
 
     holder.extension.elements[name] = element
 
-    this.getElementRegistrator(element)(name, implementation, css)
+    let instances = this.getElementRegistrator(element)(name, implementation, css)
+
+    instances.forEach(el => {
+      let unlistenBuild = listen(el, 'build', () => {
+        this.tryResolveExtension(extensionId)
+        unlistenBuild()
+        unlistenBuildError()
+      })
+      let unlistenBuildError = listen(el, 'builderror', event => {
+        this.tryRejectExtension(extensionId, event.detail)
+        unlistenBuild()
+        unlistenBuildError()
+      })
+    })
+
+    holder.instances = holder.instances.concat(instances)
 
     /**
      * Registers an empty service to resolve the possible pending promise.

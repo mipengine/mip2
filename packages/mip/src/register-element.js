@@ -13,7 +13,10 @@ import cssLoader from './util/dom/css-loader'
 import dom from './util/dom/dom'
 import css from './util/dom/css'
 import {parseSizeList} from './size-list'
-import Services from './services'
+import {customEmit} from './util/custom-event'
+
+/** @type {Array<BaseElement>} */
+let customElementInstances = []
 
 /** @param {!Element} element */
 function isInputPlaceholder (element) {
@@ -94,15 +97,6 @@ class BaseElement extends HTMLElement {
     /** @private {?Element|undefined} */
     this.spaceElement = undefined
 
-    /** @private {!Extensions} {@link ./../services/extensions} */
-    this._extensions = Services.extensionsFor(window)
-
-    /** @private {string} */
-    this._extensionId = this._extensions.getCurrentExtensionId()
-
-    // Add instance to extension holder
-    this._extensions.adoptElementInstance(this._extensionId, this._name, this)
-
     // get mip2 clazz from custom elements store
     let CustomElement = customElementsStore.get(this._name, 'mip2')
 
@@ -117,6 +111,8 @@ class BaseElement extends HTMLElement {
     if (this.customElement.hasResources()) {
       performance.addFsElement(this)
     }
+
+    customElementInstances.push(this)
   }
 
   connectedCallback () {
@@ -312,9 +308,11 @@ class BaseElement extends HTMLElement {
       }
       this.customElement.build()
       this._built = true
-      this._extensions.tryResolveExtension(this._extensionId)
+
+      // emit build event
+      customEmit(this, 'build')
     } catch (e) {
-      this._extensions.tryRejectExtension(this._extensionId, e)
+      customEmit(this, 'builderror', e)
       console.warn('build error:', e)
     }
   }
@@ -450,6 +448,7 @@ function loadCss (css, name) {
  * @param {string} name Name of a MIPElement.
  * @param {Class} elementClass element class
  * @param {string} css The csstext of the MIPElement.
+ * @return {Array<BaseElement>}
  */
 function registerElement (name, elementClass, css) {
   if (customElementsStore.get(name)) {
@@ -465,6 +464,8 @@ function registerElement (name, elementClass, css) {
       return elementClass.observedAttributes
     }
   })
+
+  return customElementInstances
 }
 
 export default registerElement
