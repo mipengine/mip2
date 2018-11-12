@@ -71,10 +71,13 @@ function createBaseElementProto () {
     let customElement = this.customElement = new CustomElement(this)
 
     /** @private {!Extensions} {@link ./../services/extensions} */
-    this._extensions = Services.getService(window, 'extensions')
+    this._extensions = Services.extensionsFor(window)
+
+    /** @private {string} */
+    this._extensionId = this._extensions.getCurrentExtensionId()
 
     // Add instance to extension holder
-    this._extensions.addInstanceForExtension(this.tagName.toLowerCase(), this)
+    this._extensions.adoptElementInstance(this._extensionId, this.tagName.toLowerCase(), this)
 
     customElement.createdCallback()
 

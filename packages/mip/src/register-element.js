@@ -58,6 +58,9 @@ class BaseElement extends HTMLElement {
   constructor (element) {
     super(element)
 
+    /** @private {string} */
+    this._name = this.tagName.toLowerCase()
+
     /** @private {boolean} */
     this._inViewport = false
 
@@ -92,16 +95,16 @@ class BaseElement extends HTMLElement {
     this.spaceElement = undefined
 
     /** @private {!Extensions} {@link ./../services/extensions} */
-    this._extensions = Services.getService(window, 'extensions')
+    this._extensions = Services.extensionsFor(window)
 
     /** @private {string} */
     this._extensionId = this._extensions.getCurrentExtensionId()
 
     // Add instance to extension holder
-    this._extensions.addInstanceForExtension(this._extensionId, this)
+    this._extensions.adoptElementInstance(this._extensionId, this._name, this)
 
     // get mip2 clazz from custom elements store
-    let CustomElement = customElementsStore.get(this.tagName.toLowerCase(), 'mip2')
+    let CustomElement = customElementsStore.get(this._name, 'mip2')
 
     /**
      * Instantiated the custom element.
@@ -311,7 +314,7 @@ class BaseElement extends HTMLElement {
       this._built = true
       this._extensions.tryResolveExtension(this._extensionId)
     } catch (e) {
-      this._extensions.tryRejectExtension(this._extensionId)
+      this._extensions.tryRejectExtension(this._extensionId, e)
       console.warn('build error:', e)
     }
   }

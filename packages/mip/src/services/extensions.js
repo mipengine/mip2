@@ -4,6 +4,8 @@ import registerMip1Element from '../mip1-polyfill/element'
 import registerCustomElement from '../register-element'
 import registerVueCustomElement from '../vue-custom-element'
 
+const UNKNOWN_EXTENSION_ID = 'unknown'
+
 export class Extensions {
   /**
    * @param {!Window} win
@@ -63,8 +65,7 @@ export class Extensions {
     if (!holder) {
       const extension = {
         elements: {},
-        services: {},
-        instances: []
+        services: {}
       }
 
       holder = this.extensions[extensionId] = {
@@ -81,21 +82,29 @@ export class Extensions {
   }
 
   /**
+   * Returns extensionId for extension which is currently being registered.
+   *
+   * @returns {string}
+   */
+  getCurrentExtensionId () {
+    return this.currentExtensionId || UNKNOWN_EXTENSION_ID
+  }
+
+  /**
    * Returns holder for extension which is currently being registered.
    *
    * @returns {!Object}
    * @private
    */
   getCurrentExtensionHolder () {
-    return this.getExtensionHolder(this.currentExtensionId)
+    return this.getExtensionHolder(this.getCurrentExtensionId())
   }
 
   /**
    * Returns or creates a promise waiting for extension loaded.
    *
-   * @template T typeof extension.
    * @param {!Object} holder of extension.
-   * @returns {!Promise<T>}
+   * @returns {!Promise<!Object>}
    * @private
    */
   waitFor (holder) {
@@ -119,9 +128,8 @@ export class Extensions {
   /**
    * Returns or creates a promise waiting for extension loaded.
    *
-   * @template T typeof extension.
    * @param {string} extensionId of extension.
-   * @returns {!Promise<T>}
+   * @returns {!Promise<!Object>}
    */
   waitForExtension (extensionId) {
     return this.waitFor(this.getExtensionHolder(extensionId))
@@ -130,9 +138,8 @@ export class Extensions {
   /**
    * Preloads an extension as a dependency of others.
    *
-   * @template T typeof extension.
    * @param {string} extensionId of extension.
-   * @returns {!Promise<T>}
+   * @returns {!Promise<!Object>}
    */
   preloadExtension (extensionId) {
     return this.waitForExtension(extensionId)
@@ -141,7 +148,7 @@ export class Extensions {
   /**
    * Loads dependencies before the extension itself.
    *
-   * @param {!Object} extension
+   * @param {!Extension} extension
    * @returns {!Promise<Object>}
    * @private
    */
@@ -168,16 +175,12 @@ export class Extensions {
    * @private
    */
   registerExtension (extensionId, factory, ...args) {
-    const holder = this.getExtensionHolder(extensionId)
-
     try {
       this.currentExtensionId = extensionId
       factory(...args)
-      holder.loaded = true
       // Resolve if extension has't instance
       this.tryResolveExtension(extensionId)
     } catch (err) {
-      holder.error = err
       this.tryRejectExtension(extensionId, err)
 
       throw err
@@ -187,36 +190,41 @@ export class Extensions {
   }
 
   /**
+   * Adopts instance of element on `holder`.
+   *
+   * @param {string} extensionId of extension.
+   * @param {string} name of element.
+   * @param {!Object} instance of element.
+   */
+  adoptElementInstance (extensionId, name, instance) {
+    const holder = this.getExtensionHolder(extensionId)
+
+    holder.extension.elements[name].instance = instance
+  }
+
+  /**
    * Try to resolve extension.
    *
    * @param {string} extensionId of extension
    */
   tryResolveExtension (extensionId) {
-    const {resolve, extension} = this.getExtensionHolder(extensionId)
+    const holder = this.getExtensionHolder(extensionId)
+    const {elements} = holder.extension
+    const names = Object.keys(elements)
 
-    if (resolve && extension.instances.every(ins => ins.isBuilt())) {
-      resolve(extension)
+    for (const name of names) {
+      const {instance} = elements[name]
+
+      if (!instance || !instance.isBuilt()) {
+        return
+      }
     }
-  }
 
-  /**
-   * Returns extensionId for extension which is currently being registered.
-   *
-   * @return {string} current extensionId
-   */
-  getCurrentExtensionId () {
-    return this.currentExtensionId
-  }
+    holder.loaded = true
 
-  /**
-   * Add instance for extension
-   *
-   * @param {string} extensionId of extension
-   * @param {*} instance extension instance
-   */
-  addInstanceForExtension (extensionId, instance) {
-    let {extension} = this.getExtensionHolder(extensionId)
-    extension.instances.push(instance)
+    if (holder.resolve) {
+      holder.resolve(holder.extension)
+    }
   }
 
   /**
@@ -226,10 +234,12 @@ export class Extensions {
    * @param {Error} error to reject
    */
   tryRejectExtension (extensionId, error) {
-    const {reject} = this.getExtensionHolder(extensionId)
+    const holder = this.getExtensionHolder(extensionId)
 
-    if (reject) {
-      reject(error)
+    holder.error = error
+
+    if (holder.reject) {
+      holder.reject(error)
     }
   }
 
@@ -241,7 +251,10 @@ export class Extensions {
    */
   installExtension (extension) {
     return Promise.all([
-      this.preloadDepsOf(extension),
+      /**
+       * Disables `extension.deps` temporarily.
+       */
+      // this.preloadDepsOf(extension),
       this.mipdoc.whenBodyAvailable()
     ]).then(
       () => this.registerExtension(extension.name, extension.func, this.win.MIP)
