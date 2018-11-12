@@ -84,7 +84,7 @@ Vue.use(function (Vue) {
       }
     }
 
-    registerElement(tag, VueCustomElement)
+    return registerElement(tag, VueCustomElement)
   }
 })
 
@@ -93,7 +93,8 @@ Vue.use(function (Vue) {
  *
  * @param {string} tag custom elment name, mip-*
  * @param {*} component vue component
+ * @return {Array<HTMLElement>|undefined}
  */
 export default function registerVueCustomElement (tag, component) {
-  Vue.customElement(tag, component)
+  return Vue.customElement(tag, component)
 }

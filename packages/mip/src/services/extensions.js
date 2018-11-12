@@ -291,20 +291,21 @@ export class Extensions {
 
     let instances = this.getElementRegistrator(element)(name, implementation, css)
 
-    instances.forEach(el => {
-      let unlistenBuild = listen(el, 'build', () => {
-        this.tryResolveExtension(extensionId)
-        unlistenBuild()
-        unlistenBuildError()
+    if (instances && instances.length) {
+      instances.forEach(el => {
+        let unlistenBuild = listen(el, 'build', () => {
+          this.tryResolveExtension(extensionId)
+          unlistenBuild()
+          unlistenBuildError()
+        })
+        let unlistenBuildError = listen(el, 'builderror', event => {
+          this.tryRejectExtension(extensionId, event.detail)
+          unlistenBuild()
+          unlistenBuildError()
+        })
       })
-      let unlistenBuildError = listen(el, 'builderror', event => {
-        this.tryRejectExtension(extensionId, event.detail)
-        unlistenBuild()
-        unlistenBuildError()
-      })
-    })
-
-    holder.instances = holder.instances.concat(instances)
+      holder.instances = holder.instances.concat(instances)
+    }
 
     /**
      * Registers an empty service to resolve the possible pending promise.
