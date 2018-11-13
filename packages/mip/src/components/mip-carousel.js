@@ -9,6 +9,8 @@
 import CustomElement from '../custom-element'
 import resources from '../resources'
 import viewer from '../viewer'
+import util from '../util'
+
 let prerenderElement = resources.prerenderElement
 
 let carouselParas = {
@@ -67,6 +69,59 @@ function changeSrc (childList, imgIndex, arraySrc) {
     }
   }
   return childList
+}
+/**
+ * 求 carousel 的高度，这是 autoheight 的需求，即宽度 100%，高度自适应时的高度。
+ *
+ * @param {number} containerWidth 主要是 carousel 的宽度
+ * @param {HTMLImageElement} img img
+ * @returns {number} 求得 carousel 的高度
+ */
+function getcarouselBoxHeight (containerWidth, img) {
+  return containerWidth * img.naturalHeight / img.naturalWidth
+}
+/**
+ * 高度变化的动画
+ *
+ * @param {number} value 高度值
+ * @param {number} time 耗时
+ * @param {HTMLElement} dom
+ */
+function translateHeight (value, time, dom) {
+  util.css(dom, {
+    height: value,
+    transition: `height ${time}s;`
+  })
+}
+/**
+ * 改变 carousel 高度，因为 carousel 的 layout 是 container ， 所以高度由 carouselBox 的高度决定。
+ *
+ * @param {HTMLElement} carouselBox
+ * @param {number} index
+ * @param {number} time
+ */
+function changeCarouselHeight (carouselBox, index, time) {
+  let img = carouselBox.querySelectorAll('.mip-carousel-slideBox')[index].querySelector('img')
+  let containerWidth = parseInt(window.getComputedStyle(carouselBox, null).getPropertyValue('width'), 10)
+  translateHeight(getcarouselBoxHeight(containerWidth, img), time, carouselBox)
+}
+/**
+ * 针对 autoheight 需求，carousel 第一次改变高度，由于一开始高度没有设定，所以是0，因此第一次是从 0 到某个值，动画时间也是 0 。
+ * 由于 mip-img 的渲染问题，首尾的 slider 内部依然有 mip-placeholder ，这个需要删除。
+ * TODO: 1. 找出 mip-placeholder 的原因；2. 目前宽度是 100%，如果后续需求要定宽，则需要针对 50% 200px 1rem 这些情况进行区分
+ *
+ * @param {HTMLElement} carouselBox carousel 的子孩子
+ * @param {number} index 第几个 slider ，即求第几张图片对应的 carousel 高度
+ */
+function initHeight (carouselBox, index) {
+  carouselBox.style.position = 'relative'
+  /* global Image */
+  let newImage = new Image()
+  newImage.src = carouselBox.querySelectorAll('.mip-carousel-slideBox')[index].querySelector('img').src
+  newImage.onload = () => {
+    [...carouselBox.querySelectorAll('.mip-placeholder')].map(value => value.parentNode.removeChild(value))
+    changeCarouselHeight(carouselBox, index, 0)
+  }
 }
 /**
  * 获取carousel下所有mip-img的src，目前只处理一层和两层的，3层也当两层处理
@@ -298,7 +353,11 @@ class MIPCarousel extends CustomElement {
     curGestureClientx = initPostion
     prerenderSetSrc(childNodes, indexNum, NUM, arraySrc)
     wrapBox.style.webkitTransform = 'translate3d(' + initPostion + 'px, 0, 0)'
-
+    // 针对 autoHeight 需求
+    let autoHeight = ele.hasAttribute('autoheight')
+    if (autoHeight) {
+      initHeight(carouselBox, indexNum)
+    }
     // 绑定wrapBox的手势事件
     // 手势移动的距离
     let diffNum = 0
@@ -504,6 +563,12 @@ class MIPCarousel extends CustomElement {
       })
       // 加载需要的图片
       prerenderSetSrc(childNodes, imgIndex, NUM, arraySrc)
+      // autoHeight
+      if (autoHeight) {
+        let time = 0.3
+        if (Duration) time = 0
+        changeCarouselHeight(wrapBox.parentNode, imgIndex, time)
+      }
     }
 
     // 处理圆点型指示器

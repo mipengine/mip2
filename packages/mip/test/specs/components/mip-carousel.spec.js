@@ -736,7 +736,7 @@ describe('mip-carousel', function () {
         let img = mipImg.querySelector('img')
         expect(img.getAttribute('src')).to.not.equal('https://www.mipengine.org/static/img/P2x1_457e18b.jpg')
         done()
-      }, 500);
+      }, 500)
     })
     it('should load picture samplePX when swiping', function (done) {
       let eventClick = document.createEvent('MouseEvents')
@@ -748,7 +748,7 @@ describe('mip-carousel', function () {
         let img = div.querySelectorAll('mip-img')[3].querySelector('img')
         expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/P2x1_457e18b.jpg')
         done()
-      }, 1500);
+      }, 1500)
     })
 
     after(function () {
@@ -799,7 +799,7 @@ describe('mip-carousel', function () {
         let img = mipImg.querySelector('img')
         expect(img.getAttribute('src')).to.not.equal('https://www.mipengine.org/static/img/P2x1_457e18b.jpg')
         done()
-      }, 500);
+      }, 500)
     })
     it('should load picture samplePX when swiping', function (done) {
       let eventClick = document.createEvent('MouseEvents')
@@ -811,7 +811,7 @@ describe('mip-carousel', function () {
         let img = div.querySelectorAll('mip-img')[3].querySelector('img')
         expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/P2x1_457e18b.jpg')
         done()
-      }, 1500);
+      }, 1500)
     })
 
     after(function () {
@@ -845,9 +845,50 @@ describe('mip-carousel', function () {
         let img = div.querySelectorAll('mip-img')[1].querySelector('img')
         expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_01.jpg')
         done()
-      }, 300);
+      }, 300)
     })
 
+    after(function () {
+      document.body.removeChild(div)
+    })
+  })
+
+  describe('with width 100%, height auto', function () {
+    let div
+    this.timeout(1500)
+    before(() => {
+      div = document.createElement('div')
+      div.innerHTML = `
+      <mip-carousel
+        layout="container"
+        buttonController
+        autoheight>
+        <mip-img
+          src="https://www.mipengine.org/static/img/sample_01.jpg">
+        </mip-img>
+        <mip-img
+          src="https://www.mipengine.org/static/img/sample_02.jpg">
+        </mip-img>
+        <mip-img
+          src="https://www.mipengine.org/static/img/sample_03.jpg">
+        </mip-img>
+      </mip-carousel>
+      `
+      document.body.insertBefore(div, document.body.firstChild)
+    })
+    it('should change height when swipe', (done) => {
+      let height = window.getComputedStyle(div, null).getPropertyValue('height')
+      let eventClick = document.createEvent('MouseEvents')
+      let nextBtn = div.querySelector('p.mip-carousel-nextBtn')
+      eventClick.initEvent('click', true, true)
+      nextBtn.dispatchEvent(eventClick)
+
+      setTimeout(() => {
+        expect(window.getComputedStyle(div, null).getPropertyValue('height')).not.equal(height)
+        done()
+      }, 1200)
+
+    })
     after(function () {
       document.body.removeChild(div)
     })
