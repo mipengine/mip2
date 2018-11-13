@@ -1,4 +1,9 @@
-import Services, {installMipdocService, installExtensionsService, Extensions} from 'src/services'
+import Services, {
+  installMipdocService,
+  installTimerService,
+  installExtensionsService,
+  Extensions
+} from 'src/services'
 import CustomElement from 'src/custom-element'
 import customElement from 'src/mip1-polyfill/customElement'
 import templates from 'src/util/templates'
@@ -14,11 +19,18 @@ describe('extensions', () => {
    */
   let extensions
 
+  /**
+   * @type {import('src/services/timer').Timer}
+   */
+  let timer
+
   beforeEach(() => {
     sandbox = sinon.createSandbox()
     window.services = {}
     installMipdocService(window)
+    installTimerService(window)
     installExtensionsService(window)
+    timer = Services.timerFor(window)
     extensions = Services.extensionsFor(window)
   })
 
@@ -30,6 +42,10 @@ describe('extensions', () => {
     expect(extensions).instanceof(Extensions)
   })
 
+  /**
+   * Recover this test case when `extension.deps` enabled.
+   */
+  /*
   it('should install extensions with dependencies', () => {
     const extensionIds = ['mip-a', 'mip-b', 'mip-c', 'mip-d']
     const tagNames = extensionIds
@@ -99,6 +115,7 @@ describe('extensions', () => {
       expect(orders).to.deep.equal(['mip-d', 'mip-c', 'mip-b', 'mip-a'])
     })
   })
+  */
 
   it('should call extension factory synchronously', () => {
     let factoryExecuted = false
@@ -119,20 +136,22 @@ describe('extensions', () => {
     expect(currentHolder).to.equal(holder)
   })
 
-  it('should register successfully', () => {
+  it('should register successfully', async () => {
     extensions.registerExtension('mip-ext', (...args) => {
       expect(args[0]).to.equal(MIP)
       expect(extensions.currentExtensionId).to.equal('mip-ext')
     }, MIP)
     expect(extensions.currentExtensionId).to.be.null
 
-    const holder = extensions.extensions['mip-ext']
-    expect(extensions.getExtensionHolder('mip-ext')).to.equal(holder)
-    expect(holder.promise).to.be.null
-    expect(holder.resolve).to.be.null
-    expect(holder.reject).to.be.null
-    expect(holder.loaded).to.be.true
-    expect(holder.error).to.be.null
+    await timer.then(() => {
+      const holder = extensions.extensions['mip-ext']
+      expect(extensions.getExtensionHolder('mip-ext')).to.equal(holder)
+      expect(holder.promise).to.be.null
+      expect(holder.resolve).to.be.null
+      expect(holder.reject).to.be.null
+      expect(holder.loaded).to.be.true
+      expect(holder.error).to.be.null
+    })
 
     return extensions.waitForExtension('mip-ext').then((extension) => {
       expect(extension).to.exist
@@ -141,19 +160,21 @@ describe('extensions', () => {
     })
   })
 
-  it('should register successfully with promise', () => {
+  it('should register successfully with promise', async () => {
     const waiting = extensions.waitForExtension('mip-ext')
     const holder = extensions.getExtensionHolder('mip-ext')
     holder.resolve = sinon.spy(holder.resolve)
     extensions.registerExtension('mip-ext', () => {}, MIP)
     expect(extensions.currentExtensionId).to.be.null
 
-    expect(holder.promise).to.equal(waiting)
-    expect(holder.resolve).to.exist
-    expect(holder.reject).to.exist
-    expect(holder.loaded).to.be.true
-    expect(holder.error).to.be.null
-    expect(holder.resolve).to.be.calledWith(holder.extension)
+    await timer.then(() => {
+      expect(holder.promise).to.equal(waiting)
+      expect(holder.resolve).to.exist
+      expect(holder.reject).to.exist
+      expect(holder.loaded).to.be.true
+      expect(holder.error).to.be.null
+      expect(holder.resolve).to.be.calledWith(holder.extension)
+    })
 
     return waiting.then((extension) => {
       expect(extension).to.exist
@@ -162,7 +183,7 @@ describe('extensions', () => {
     })
   })
 
-  it('should fail registration', () => {
+  it('should fail registration', async () => {
     expect(() => extensions.registerExtension('mip-ext', () => {
       throw new Error('intentional')
     }, MIP)).to.throw(/intentional/)
@@ -171,12 +192,14 @@ describe('extensions', () => {
     const holder = extensions.extensions['mip-ext']
     expect(extensions.getExtensionHolder('mip-ext')).to.equal(holder)
 
-    expect(holder.promise).to.be.null
-    expect(holder.resolve).to.be.null
-    expect(holder.reject).to.be.null
-    expect(holder.loaded).to.be.null
-    expect(holder.error).to.exist
-    expect(holder.error.message).to.equal('intentional')
+    await timer.then(() => {
+      expect(holder.promise).to.be.null
+      expect(holder.resolve).to.be.null
+      expect(holder.reject).to.be.null
+      expect(holder.loaded).to.be.null
+      expect(holder.error).to.exist
+      expect(holder.error.message).to.equal('intentional')
+    })
 
     return extensions.waitForExtension('mip-ext').then(() => {
       throw new Error('It must have been rejected')
@@ -185,7 +208,7 @@ describe('extensions', () => {
     })
   })
 
-  it('should fail registration with promise', () => {
+  it('should fail registration with promise', async () => {
     const waiting = extensions.waitForExtension('mip-ext')
     expect(() => extensions.registerExtension('mip-ext', () => {
       throw new Error('intentional')
@@ -195,12 +218,14 @@ describe('extensions', () => {
     const holder = extensions.extensions['mip-ext']
     expect(extensions.getExtensionHolder('mip-ext')).to.equal(holder)
 
-    expect(holder.promise).to.equal(waiting)
-    expect(holder.resolve).to.exist
-    expect(holder.reject).to.exist
-    expect(holder.loaded).to.be.null
-    expect(holder.error).to.exist
-    expect(holder.error.message).to.equal('intentional')
+    await timer.then(() => {
+      expect(holder.promise).to.equal(waiting)
+      expect(holder.resolve).to.exist
+      expect(holder.reject).to.exist
+      expect(holder.loaded).to.be.null
+      expect(holder.error).to.exist
+      expect(holder.error.message).to.equal('intentional')
+    })
 
     return waiting.then(() => {
       throw new Error('It must have been rejected')
@@ -209,7 +234,7 @@ describe('extensions', () => {
     })
   })
 
-  it('should register element in registration', () => {
+  it('should register synchronous element in registration', async () => {
     const buildCallback = sinon.spy()
     const implementation = class MIPCustom extends CustomElement {
       build () {
@@ -225,9 +250,13 @@ describe('extensions', () => {
     const ele = document.createElement('mip-custom')
 
     document.body.appendChild(ele)
-    document.body.removeChild(ele)
 
-    expect(buildCallback).to.be.calledOnce
+    await new Promise(resolve => timer.delay(() => {
+      expect(buildCallback).to.be.calledOnce
+      resolve()
+    }))
+
+    document.body.removeChild(ele)
 
     return extensions.waitForExtension('mip-ext').then((extension) => {
       const element = extension.elements['mip-custom']
@@ -238,7 +267,7 @@ describe('extensions', () => {
     })
   })
 
-  it('should register vue custom element in registration', () => {
+  it('should register vue custom element in registration', async () => {
     const mountedCallback = sinon.spy()
     const implementation = {
       mounted () {
@@ -257,9 +286,13 @@ describe('extensions', () => {
     const ele = document.createElement('mip-vue-custom')
 
     document.body.appendChild(ele)
-    document.body.removeChild(ele)
 
-    expect(mountedCallback).to.be.calledOnce
+    await new Promise(resolve => timer.delay(() => {
+      expect(mountedCallback).to.be.calledOnce
+      resolve()
+    }))
+
+    document.body.removeChild(ele)
 
     return extensions.waitForExtension('mip-ext').then((extension) => {
       const element = extension.elements['mip-vue-custom']
@@ -270,7 +303,7 @@ describe('extensions', () => {
     })
   })
 
-  it('should register mip1 custom element in registration', () => {
+  it('should register mip1 custom element in registration', async () => {
     const attachedCallback = sinon.spy()
     const implementation = customElement.create()
     implementation.prototype.attachedCallback = attachedCallback
@@ -283,9 +316,13 @@ describe('extensions', () => {
     const ele = document.createElement('mip-legacy')
 
     document.body.appendChild(ele)
-    document.body.removeChild(ele)
 
-    expect(attachedCallback).to.be.calledOnce
+    await new Promise(resolve => timer.delay(() => {
+      expect(attachedCallback).to.be.calledOnce
+      resolve()
+    }))
+
+    document.body.removeChild(ele)
 
     return extensions.waitForExtension('mip-ext').then((extension) => {
       const element = extension.elements['mip-legacy']

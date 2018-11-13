@@ -1,10 +1,10 @@
 import Services from './services'
-import util from '../util'
+import {templates, Deferred, event} from '../util'
 import registerMip1Element from '../mip1-polyfill/element'
 import registerCustomElement from '../register-element'
 import registerVueCustomElement from '../vue-custom-element'
 
-const {templates, Deferred, event: {listen}} = util
+const {listen} = event
 
 const UNKNOWN_EXTENSION_ID = 'unknown'
 
@@ -44,6 +44,12 @@ export class Extensions {
      * @const
      */
     this.mipdoc = Services.mipdocFor(win)
+
+    /**
+     * @private
+     * @const
+     */
+    this.timer = Services.timerFor(win)
 
     /**
      * Binds methods exposed to `MIP`.
@@ -139,14 +145,19 @@ export class Extensions {
   }
 
   /**
+   * Disables `extension.deps` temporarily.
+   */
+  /**
    * Preloads an extension as a dependency of others.
    *
    * @param {string} extensionId of extension.
    * @returns {!Promise<!Object>}
    */
+  /*
   preloadExtension (extensionId) {
     return this.waitForExtension(extensionId)
   }
+  /*
 
   /**
    * Loads dependencies before the extension itself.
@@ -155,6 +166,7 @@ export class Extensions {
    * @returns {!Promise<Object>}
    * @private
    */
+  /*
   preloadDepsOf (extension) {
     if (Array.isArray(extension.deps)) {
       return Promise.all(extension.deps.map(dep => this.preloadExtension(dep)))
@@ -166,6 +178,7 @@ export class Extensions {
 
     return Promise.resolve()
   }
+  */
 
   /**
    * Registers an extension in extension holder.
@@ -178,14 +191,19 @@ export class Extensions {
    * @private
    */
   registerExtension (extensionId, factory, ...args) {
+    const holder = this.getExtensionHolder(extensionId)
+
     try {
       this.currentExtensionId = extensionId
       factory(...args)
-      // Push tryResolveExtension task to microtask queue.
-      // Resolve if extension has't instance.
-      this.mipdoc.whenBodyAvailable().then(() => this.tryResolveExtension(extensionId))
+
+      /**
+       * It still possible that all element instances in current extension call lifecycle `build` synchronously.
+       * Executes callback in microtask to make sure all these elements are built.
+       */
+      this.timer.then(() => this.tryResolveExtension(holder))
     } catch (err) {
-      this.mipdoc.whenBodyAvailable().then(() => this.tryRejectExtension(extensionId, err))
+      this.timer.then(() => this.tryRejectExtension(holder, err))
       throw err
     } finally {
       this.currentExtensionId = null
@@ -193,18 +211,16 @@ export class Extensions {
   }
 
   /**
-   * Try to resolve extension.
+   * To see if all elements registered in current extension are built.
    *
-   * @param {string} extensionId of extension
+   * @param {!Object} holder of extension.
+   * @private
    */
-  tryResolveExtension (extensionId) {
-    const holder = this.getExtensionHolder(extensionId)
-
+  tryResolveExtension (holder) {
     if (!holder.elementInstances.every(el => el.isBuilt())) {
       return
     }
 
-    // Delete element instance reference to free memory.
     holder.elementInstances.length = 0
 
     holder.loaded = true
@@ -215,14 +231,13 @@ export class Extensions {
   }
 
   /**
-   * Try to reject extension.
+   * An error occurs in registeration of current extension.
    *
-   * @param {string} extensionId of extension
-   * @param {Error} error to reject
+   * @param {!Object} holder of extension.
+   * @param {Error} error to reject.
+   * @private
    */
-  tryRejectExtension (extensionId, error) {
-    const holder = this.getExtensionHolder(extensionId)
-
+  tryRejectExtension (holder, error) {
     holder.error = error
 
     if (holder.reject) {
@@ -278,8 +293,6 @@ export class Extensions {
    * @param {Object=} options
    */
   registerElement (name, implementation, css, options) {
-    // Cache currentExtensionId while it will change
-    const extensionId = this.currentExtensionId
     const holder = this.getCurrentExtensionHolder()
     const element = {implementation, css}
     const version = options && options.version && '' + options.version
@@ -290,18 +303,22 @@ export class Extensions {
 
     holder.extension.elements[name] = element
 
-    /** @type {HTMLElement} */
+    /** @type {HTMLElement[]} */
     let elementInstances = this.getElementRegistrator(element)(name, implementation, css)
 
     if (elementInstances && elementInstances.length) {
       elementInstances.forEach(el => {
+        /**
+         * Lifecycle `build` of element instances is probably delayed with `setTimeout`.
+         * If they are not, these event listeners would not be registered before they emit events.
+         */
         let unlistenBuild = listen(el, 'build', () => {
-          this.tryResolveExtension(extensionId)
+          this.tryResolveExtension(holder)
           unlistenBuild()
           unlistenBuildError()
         })
         let unlistenBuildError = listen(el, 'build-error', event => {
-          this.tryRejectExtension(extensionId, event.detail)
+          this.tryRejectExtension(holder, event.detail)
           unlistenBuild()
           unlistenBuildError()
         })

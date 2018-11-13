@@ -126,6 +126,7 @@ export function isCacheUrl (pageUrl) {
 
 export {
   dom,
+  event,
   templates,
   Deferred
 }

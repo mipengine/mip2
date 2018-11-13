@@ -40,22 +40,24 @@ describe('timer', () => {
     }, 100)
   })
 
-  it('should be a micro task when delay 0ms', (done) => {
+  it('should exceute callback in microtask', () => {
+    const callback = sinon.spy()
     timer.resolved.then = sinon.spy(timer.resolved.then)
-    expect(timer.delay(done)).to.equal('1')
-    expect(timer.resolved.then).to.be.calledOnce
+    return timer.then(callback).then(() => {
+      expect(callback).to.be.calledOnce
+      expect(timer.resolved.then).to.be.calledOnce
+    })
   })
 
-  it('should delay with `setTimeout`', (done) => {
-    window.setTimeout = sinon.spy(setTimeout)
-    expect(timer.delay(done, 100)).to.be.a('number')
-    expect(setTimeout).to.be.calledOnce
-    expect(setTimeout.args[0][1]).to.equal(100)
+  it('should be a cancellable microtask', (done) => {
+    timer.resolved.then = sinon.spy(timer.resolved.then)
+    expect(timer.cancelableThen(done)).to.equal('1')
+    expect(timer.resolved.then).to.be.calledOnce
   })
 
   it('should not exceute callback in micro task', (done) => {
     const callback = sinon.spy()
-    const timeoutId = timer.delay(callback)
+    const timeoutId = timer.cancelableThen(callback)
     expect(timer.canceled[timeoutId]).to.be.undefined
     timer.cancel(timeoutId)
     expect(timer.canceled[timeoutId]).to.be.true
@@ -64,6 +66,13 @@ describe('timer', () => {
       expect(timer.canceled[timeoutId]).to.be.undefined
       done()
     })
+  })
+
+  it('should delay with `setTimeout`', (done) => {
+    window.setTimeout = sinon.spy(setTimeout)
+    expect(timer.delay(done, 100)).to.be.a('number')
+    expect(setTimeout).to.be.calledOnce
+    expect(setTimeout.args[0][1]).to.equal(100)
   })
 
   it('should cancel with `clearTimeout`', (done) => {

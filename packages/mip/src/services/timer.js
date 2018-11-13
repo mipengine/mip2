@@ -49,38 +49,55 @@ export class Timer {
   }
 
   /**
-   * Executes callback after specified milliseconds. Uses a micro task for non-delay callback.
+   * Executes non-delay callback in microtask queue. Returns a promise.
+   *
+   * @template T typeof return value from callback.
+   * @param {function():T} callback function to be executed in microtask queue.
+   * @returns {Promise<T>}
+   */
+  then (callback) {
+    return this.resolved.then(callback)
+  }
+
+  /**
+   * Executes non-delay callback in microtask queue. Returns a `timeoutId` for cancellation.
+   *
+   * @param {Function} callback function to be executed in microtask queue.
+   * @returns {string}
+   */
+  cancelableThen (callback) {
+    this.timeoutId++
+
+    this.resolved.then(() => {
+      if (this.canceled[this.timeoutId]) {
+        delete this.canceled[this.timeoutId]
+
+        return
+      }
+      callback()
+    })
+
+    /**
+     * Returns a string to distinguish from `setTimeout`.
+     */
+    return '' + this.timeoutId
+  }
+
+  /**
+   * Executes callback after specified milliseconds.
    *
    * @param {Function} callback function to be executed after the timer expires.
    * @param {number=} ms delay milliseconds.
-   * @returns {string | number}
+   * @returns {number}
    */
   delay (callback, ms) {
-    if (!ms) {
-      this.timeoutId++
-
-      this.resolved.then(() => {
-        if (this.canceled[this.timeoutId]) {
-          delete this.canceled[this.timeoutId]
-
-          return
-        }
-        callback()
-      })
-
-      /**
-       * Returns a string to distinguish from `setTimeout`.
-       */
-      return '' + this.timeoutId
-    }
-
     return this.win.setTimeout(callback, ms)
   }
 
   /**
-   * Cancels a specified `delay` callback.
+   * Cancels a specified `delay` or `cancelableThen` callback.
    *
-   * @param {string | number} timeoutId returns from `delay`.
+   * @param {string | number} timeoutId returns from `delay` or `cancelableThen`.
    */
   cancel (timeoutId) {
     if (typeof timeoutId === 'string') {
