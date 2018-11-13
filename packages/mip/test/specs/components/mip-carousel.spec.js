@@ -860,9 +860,11 @@ describe('mip-carousel', function () {
       div = document.createElement('div')
       div.innerHTML = `
       <mip-carousel
-        layout="container"
         buttonController
-        autoheight>
+        layout="responsive"
+        autoheight
+        width="600"
+        height="400">
         <mip-img
           src="https://www.mipengine.org/static/img/sample_01.jpg">
         </mip-img>
