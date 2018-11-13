@@ -9,7 +9,7 @@ import viewport from './viewport'
 import rect from './util/dom/rect'
 import prerender from './client-prerender'
 
-const COMPONENTS_NEED_DELAY = ['MIP-IMG', 'MIP-CAROUSEL', 'MIP-DATA']
+const COMPONENTS_NEED_NOT_DELAY = ['MIP-IMG', 'MIP-CAROUSEL', 'MIP-DATA', 'MIP-VIDEO']
 
 /**
  * Store the resources.
@@ -64,8 +64,8 @@ class Resources {
      */
     this._viewport = viewport
 
-    /** @private @type {boolean} */
-    this._needUpdate = false
+    /** @private @type {Promise} */
+    this._updatePromise = null
 
     this._gesture = new Gesture(document, {
       preventX: false
@@ -103,7 +103,7 @@ class Resources {
         this.updateState()
       })
     }
-    COMPONENTS_NEED_DELAY.indexOf(element.tagName) === -1 ? setTimeout(fn, 0) : fn()
+    COMPONENTS_NEED_NOT_DELAY.indexOf(element.tagName) === -1 ? setTimeout(fn, 0) : fn()
   }
 
   /**
@@ -154,12 +154,13 @@ class Resources {
 
   /**
    * Deffered update elements's viewport state.
+   * @return {Promise<undefined>}
    */
   _update () {
-    if (!this._needUpdate) {
-      this._needUpdate = true
-      Promise.resolve().then(() => this._doRealUpdate())
+    if (!this._updatePromise) {
+      this._updatePromise = Promise.resolve().then(() => this._doRealUpdate())
     }
+    return this._updatePromise
   }
 
   /**
@@ -182,7 +183,7 @@ class Resources {
       }
     }
 
-    this._needUpdate = false
+    this._updatePromise = null
   }
 
   /**

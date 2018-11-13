@@ -83,14 +83,8 @@ function createBaseElementProto () {
   proto.attachedCallback = function () {
     // Apply layout for this.
     this._layout = applyLayout(this)
-
-    setTimeout(() => {
-      this.customElement.attachedCallback()
-      prerender.execute(() => {
-        // Add to resource manager.
-        this._resources.add(this)
-      }, this)
-    }, 0)
+    this.customElement.attachedCallback()
+    this._resources.add(this)
   }
 
   /**

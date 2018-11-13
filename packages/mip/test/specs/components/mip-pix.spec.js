@@ -6,10 +6,6 @@
 /* eslint-disable no-unused-expressions */
 /* globals describe, before, it, expect, after */
 
-function delay (fn, t) {
-  return setTimeout(fn, t || 1)
-}
-
 describe('mip-pix', function () {
   let pixExperiment
   let pixDefault
@@ -56,7 +52,7 @@ describe('mip-pix', function () {
 
   it('should send by default', function () {
     pixDefault = createPix('https://www.mipengine.org/a.gif')
-    delay(() => {
+    return pixDefault._resources.updateState(() => {
       let src = pixDefault.querySelector('img').getAttribute('src')
       let params = parseUrl(src)
       let keys = Object.keys(params)
@@ -73,7 +69,7 @@ describe('mip-pix', function () {
 
   it('should send by arguments', function () {
     pixSetParam = createPix('https://www.mipengine.org/a.gif?t=${TIME}&title=${TITLE}&host=${HOST}') // eslint-disable-line
-    delay(() => {
+    return pixDefault._resources.updateState(() => {
       let src = pixSetParam.querySelector('img').getAttribute('src')
       let params = parseUrl(src)
       let keys = Object.keys(params)
@@ -90,7 +86,7 @@ describe('mip-pix', function () {
 
   it('should send with extra args', function () {
     pixExtraParam = createPix('https://www.mipengine.org/a.gif?t=${TIME}&title=${TITLE}&host=${HOST}&area=A') // eslint-disable-line
-    delay(() => {
+    return pixDefault._resources.updateState(() => {
       let src = pixExtraParam.querySelector('img').getAttribute('src')
       let params = parseUrl(src)
       let keys = Object.keys(params)
@@ -109,7 +105,7 @@ describe('mip-pix', function () {
 
   it('should send by experiment', function () {
     pixExperiment = createPix('https://www.mipengine.org/a.gif?mip-x-button-color=${MIP-X-BUTTON-COLOR}&mip-x-font-color=${MIP-X-FONT-COLOR}') // eslint-disable-line
-    delay(() => {
+    return pixDefault._resources.updateState(() => {
       let src = pixExperiment.querySelector('img').getAttribute('src')
       let params = parseUrl(src)
       let keys = Object.keys(params)

@@ -7,9 +7,9 @@
 /* globals describe, before, it, expect, after */
 
 describe('mip-carousel', function () {
+  let mipCarousel
   describe('no pics', function () {
     let div
-
     before(function () {
       div = document.createElement('div')
       div.innerHTML = `
@@ -24,7 +24,10 @@ describe('mip-carousel', function () {
     })
 
     it('should render nothing', function () {
-      expect(div.querySelector('mip-carousel').children.length).to.equal(0)
+      let carousel = div.querySelector('mip-carousel')
+      return carousel._resources.updateState().then(() => {
+        expect(carousel.children.length).to.equal(0)
+      })
     })
 
     after(function () {
@@ -63,22 +66,26 @@ describe('mip-carousel', function () {
           </mip-img>
         </mip-carousel>
       `
+      mipCarousel = div.querySelector('mip-carousel')
       document.body.appendChild(div)
     })
 
     it('should produce mip-carousel correctly', function () {
-      let mipCarouselContainer = div.querySelector('div.mip-carousel-container')
-      wrapBox = div.querySelector('div.mip-carousel-wrapper')
-      slideBoxs = wrapBox.querySelectorAll('div.mip-carousel-slideBox')
-      expect(mipCarouselContainer).to.be.exist
-      expect(wrapBox).to.be.exist
-      expect(wrapBox.parentNode.classList.contains('mip-carousel-container')).to.be.true
-      expect(slideBoxs.length).to.equal(5)
-      expect(slideBoxs[0].querySelector('img').getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_03.jpg')
-      expect(slideBoxs[4].querySelector('img').getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_01.jpg')
+      return mipCarousel._resources.updateState().then(() => {
+        let mipCarouselContainer = div.querySelector('div.mip-carousel-container')
+        wrapBox = div.querySelector('div.mip-carousel-wrapper')
+        slideBoxs = wrapBox.querySelectorAll('div.mip-carousel-slideBox')
+        expect(mipCarouselContainer).to.be.exist
+        expect(wrapBox).to.be.exist
+        expect(wrapBox.parentNode.classList.contains('mip-carousel-container')).to.be.true
+        expect(slideBoxs.length).to.equal(5)
+        expect(slideBoxs[0].querySelector('img').getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_03.jpg')
+        expect(slideBoxs[4].querySelector('img').getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_01.jpg')
+      })
     })
 
     it('should autoplay', function (done) {
+      // 定时播放，所以使用 setTimeout 定时检查
       setTimeout(() => {
         expect(wrapBox.style.transform).to.equal('translate3d(-200px, 0px, 0px)')
         done()
@@ -164,6 +171,7 @@ describe('mip-carousel', function () {
     let wrapBox
     let event = document.createEvent('Events')
     let indicator
+    let carousel
     this.timeout(2000)
 
     before(function () {
@@ -184,18 +192,21 @@ describe('mip-carousel', function () {
           </mip-img>
         </mip-carousel>
       `
+      carousel = div.querySelector('mip-carousel')
       document.body.appendChild(div)
     })
 
     it('should show default indicator', function () {
-      let indicatorbox = div.querySelector('div.mip-carousel-indicatorbox')
-      let indicatorBoxwrap = indicatorbox.querySelector('p.mip-carousel-indicatorBoxwrap')
-      indicator = indicatorBoxwrap.querySelectorAll('span')[0]
-      expect(indicatorbox).to.be.exist
-      expect(indicatorBoxwrap).to.be.exist
-      expect(indicatorBoxwrap.querySelectorAll('span').length).to.equal(2)
-      expect(indicator.innerHTML).to.equal('1')
-      expect(indicatorBoxwrap.querySelectorAll('span')[1].innerHTML).to.equal('/3')
+      return carousel._resources.updateState().then(() => {
+        let indicatorbox = div.querySelector('div.mip-carousel-indicatorbox')
+        let indicatorBoxwrap = indicatorbox.querySelector('p.mip-carousel-indicatorBoxwrap')
+        indicator = indicatorBoxwrap.querySelectorAll('span')[0]
+        expect(indicatorbox).to.be.exist
+        expect(indicatorBoxwrap).to.be.exist
+        expect(indicatorBoxwrap.querySelectorAll('span').length).to.equal(2)
+        expect(indicator.innerHTML).to.equal('1')
+        expect(indicatorBoxwrap.querySelectorAll('span')[1].innerHTML).to.equal('/3')
+      })
     })
 
     it('should not move when vertically scrolling', function (done) {
@@ -335,8 +346,9 @@ describe('mip-carousel', function () {
         </mip-carousel>
       `
       document.body.appendChild(divNo)
-
-      expect(divNo.querySelector('#mip-carousel-example1')).to.be.null
+      return divNo.querySelector('mip-carousel')._resources.updateState().then(() => {
+        expect(divNo.querySelector('#mip-carousel-example1')).to.be.null
+      })
     })
 
     it('should be not ok with wrong indicator', function () {
@@ -363,10 +375,11 @@ describe('mip-carousel', function () {
         </div>
       `
       document.body.appendChild(divWrong)
-
-      let indicatorDom = divWrong.querySelector('#mip-carousel-example2')
-      expect(indicatorDom.classList.contains('hide')).to.be.true
-      expect(window.getComputedStyle(indicatorDom, null).display).to.include('none')
+      return divNo.querySelector('mip-carousel')._resources.updateState().then(() => {
+        let indicatorDom = divWrong.querySelector('#mip-carousel-example2')
+        expect(indicatorDom.classList.contains('hide')).to.be.true
+        expect(window.getComputedStyle(indicatorDom, null).display).to.include('none')
+      })
     })
 
     it('should be ok with correct setting', function () {
@@ -396,11 +409,13 @@ describe('mip-carousel', function () {
       `
       document.body.appendChild(divOk)
 
-      // render indicator
-      indicatorDom = divOk.querySelector('#mip-carousel-example3')
-      dotsDom = indicatorDom.querySelectorAll('.mip-carousel-indecator-item')
-      expect(dotsDom.length).to.equal(3)
-      expect(dotsDom[0].classList.contains('mip-carousel-activeitem')).to.be.true
+      return divNo.querySelector('mip-carousel')._resources.updateState().then(() => {
+        // render indicator
+        indicatorDom = divOk.querySelector('#mip-carousel-example3')
+        dotsDom = indicatorDom.querySelectorAll('.mip-carousel-indecator-item')
+        expect(dotsDom.length).to.equal(3)
+        expect(dotsDom[0].classList.contains('mip-carousel-activeitem')).to.be.true
+      })
     })
 
     it('should change dot indicator by carousel moving', function (done) {
@@ -510,6 +525,7 @@ describe('mip-carousel', function () {
     let div
     let wrapBox
     let eventClick = document.createEvent('MouseEvents')
+    let preBtn
     this.timeout(1100)
 
     before(function () {
@@ -530,41 +546,52 @@ describe('mip-carousel', function () {
           </mip-img>
         </mip-carousel>
       `
+      mipCarousel = div.querySelector('mip-carousel')
       document.body.appendChild(div)
     })
 
-    it('should go to next img when click btn', function (done) {
-      let nextBtn = div.querySelector('p.mip-carousel-nextBtn')
-      eventClick.initEvent('click', true, true)
-      nextBtn.dispatchEvent(eventClick)
+    it('should go to next img when click btn', function () {
+      return mipCarousel._resources.updateState(() => {
+        let nextBtn = div.querySelector('p.mip-carousel-nextBtn')
+        eventClick.initEvent('click', true, true)
+        nextBtn.dispatchEvent(eventClick)
 
-      wrapBox = div.querySelector('div.mip-carousel-wrapper')
-      setTimeout(function () {
-        expect(wrapBox.style.transform).to.equal('translate3d(-200px, 0px, 0px)')
-        done()
-      }, 330)
+        wrapBox = div.querySelector('div.mip-carousel-wrapper')
+
+        return new Promise(resolve => {
+          setTimeout(function () {
+            expect(wrapBox.style.transform).to.equal('translate3d(-200px, 0px, 0px)')
+            resolve()
+          }, 330)
+        })
+      })
     })
 
-    let preBtn
-    it('should go to pre img when click btn', function (done) {
-      preBtn = div.querySelector('p.mip-carousel-preBtn')
-      eventClick.initEvent('click', true, true)
-      preBtn.dispatchEvent(eventClick)
-
-      setTimeout(function () {
-        expect(wrapBox.style.transform).to.equal('translate3d(-100px, 0px, 0px)')
-        done()
-      }, 330)
+    it('should go to pre img when click btn', function () {
+      return mipCarousel._resources.updateState(() => {
+        preBtn = div.querySelector('p.mip-carousel-preBtn')
+        eventClick.initEvent('click', true, true)
+        preBtn.dispatchEvent(eventClick)
+        return new Promise(resolve => {
+          setTimeout(function () {
+            expect(wrapBox.style.transform).to.equal('translate3d(-100px, 0px, 0px)')
+            resolve()
+          }, 330)
+        })
+      })
     })
 
-    it('should go to last img by clicking preBtn', function (done) {
-      eventClick.initEvent('click', true, true)
-      preBtn.dispatchEvent(eventClick)
+    it('should go to last img by clicking preBtn', function () {
+      return mipCarousel._resources.updateState(() => {
+        eventClick.initEvent('click', true, true)
+        preBtn.dispatchEvent(eventClick)
 
-      setTimeout(function () {
-        expect(wrapBox.style.transform).to.equal('translate3d(-300px, 0px, 0px)')
-        done()
-      }, 430)
+        return new Promise(resolve => {
+          setTimeout(function () {
+            expect(wrapBox.style.transform).to.equal('translate3d(-300px, 0px, 0px)')
+          }, 430)
+        })
+      })
     })
 
     after(function () {
@@ -598,30 +625,38 @@ describe('mip-carousel', function () {
           </mip-img>
         </mip-carousel>
       `
+      mipCarousel = div.querySelector('mip-carousel')
       document.body.appendChild(div)
     })
 
-    it('should go to next img when click btn', function (done) {
-      let nextBtn = div.querySelector('p.mip-carousel-nextBtn')
-      eventClick.initEvent('click', true, true)
-      nextBtn.dispatchEvent(eventClick)
+    it('should go to next img when click btn', function () {
+      return mipCarousel._resources.updateState(() => {
+        let nextBtn = div.querySelector('p.mip-carousel-nextBtn')
+        eventClick.initEvent('click', true, true)
+        nextBtn.dispatchEvent(eventClick)
 
-      wrapBox = div.querySelector('div.mip-carousel-wrapper')
-      setTimeout(function () {
-        expect(wrapBox.style.transform).to.equal('translate3d(-200px, 0px, 0px)')
-        done()
-      }, 330)
+        wrapBox = div.querySelector('div.mip-carousel-wrapper')
+        return new Promise(resolve => {
+          setTimeout(function () {
+            expect(wrapBox.style.transform).to.equal('translate3d(-200px, 0px, 0px)')
+            resolve()
+          }, 330)
+        })
+      })
     })
 
-    it('should go to pre img when click btn', function (done) {
-      let preBtn = div.querySelector('p.mip-carousel-preBtn')
-      eventClick.initEvent('click', true, true)
-      preBtn.dispatchEvent(eventClick)
-
-      setTimeout(function () {
-        expect(wrapBox.style.transform).to.equal('translate3d(-100px, 0px, 0px)')
-        done()
-      }, 330)
+    it('should go to pre img when click btn', function () {
+      return mipCarousel._resources.updateState(() => {
+        let preBtn = div.querySelector('p.mip-carousel-preBtn')
+        eventClick.initEvent('click', true, true)
+        preBtn.dispatchEvent(eventClick)
+        return new Promise(resolve => {
+          setTimeout(function () {
+            expect(wrapBox.style.transform).to.equal('translate3d(-100px, 0px, 0px)')
+            resolve()
+          }, 330)
+        })
+      })
     })
 
     after(function () {
@@ -672,28 +707,34 @@ describe('mip-carousel', function () {
           <p>跳转到第<span>3</span>页</p>
         </div>
       `
+      mipCarousel = div.querySelector('mip-carousel')
       document.body.appendChild(div)
     })
 
     it('should start from index img', function () {
-      wrapBox = div.querySelector('div.mip-carousel-wrapper')
-      expect(wrapBox.style.transform).to.equal('translate3d(-200px, 0px, 0px)')
+      return mipCarousel._resources.updateState(() => {
+        wrapBox = div.querySelector('div.mip-carousel-wrapper')
+        expect(wrapBox.style.transform).to.equal('translate3d(-200px, 0px, 0px)')
 
-      indicatorDom = div.querySelector('#mip-carousel-example5')
-      dotsDom = indicatorDom.querySelectorAll('.mip-carousel-indecator-item')
-      expect(dotsDom.length).to.equal(3)
-      expect(dotsDom[1].classList.contains('mip-carousel-activeitem')).to.be.true
+        indicatorDom = div.querySelector('#mip-carousel-example5')
+        dotsDom = indicatorDom.querySelectorAll('.mip-carousel-indecator-item')
+        expect(dotsDom.length).to.equal(3)
+        expect(dotsDom[1].classList.contains('mip-carousel-activeitem')).to.be.true
+      })
     })
 
-    it('should switch to certain img when emit tap event', function (done) {
-      let switchBtn = div.querySelector('div.mip-carousel-switchBtn')
-      eventClick.initEvent('click', true, true)
-      switchBtn.dispatchEvent(eventClick)
-
-      setTimeout(function () {
-        expect(wrapBox.style.transform).to.equal('translate3d(-300px, 0px, 0px)')
-        done()
-      }, 330)
+    it('should switch to certain img when emit tap event', function () {
+      return mipCarousel._resources.updateState(() => {
+        let switchBtn = div.querySelector('div.mip-carousel-switchBtn')
+        eventClick.initEvent('click', true, true)
+        switchBtn.dispatchEvent(eventClick)
+        return new Promise(resolve => {
+          setTimeout(function () {
+            expect(wrapBox.style.transform).to.equal('translate3d(-300px, 0px, 0px)')
+            resolve()
+          }, 330)
+        })
+      })
     })
 
     after(function () {
@@ -839,12 +880,12 @@ describe('mip-carousel', function () {
       document.body.insertBefore(div, document.body.firstChild)
     })
 
-    it('should load picture correctly', function (done) {
-      setTimeout(() => {
+    it('should load picture correctly', function () {
+      let mipCarousel = div.querySelector('mip-carousel')
+      return mipCarousel._resources.updateState().then(() => {
         let img = div.querySelectorAll('mip-img')[1].querySelector('img')
         expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_01.jpg')
-        done()
-      }, 300)
+      })
     })
 
     after(function () {

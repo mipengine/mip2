@@ -10,6 +10,11 @@ import cssLoader from 'src/util/dom/css-loader'
 import registerElement from 'src/mip1-polyfill/element'
 import customElement from 'src/mip1-polyfill/customElement'
 import performance from 'src/performance'
+import Services, {
+  installMipdocService,
+  installExtensionsService,
+  installTimerService
+} from 'src/services'
 
 let $
 
@@ -30,6 +35,24 @@ let createDomByTag = function (tagName) {
 describe('mip1 element', function () {
   let MipTestElement
 
+  /**
+   * @type {sinon.SinonSandbox}
+   */
+  let sandbox
+
+  /**
+   * @type {Extensions}
+   */
+  let extensions
+
+  // register a mip1 element by extension service
+  let registerMIP1Element = (name, clazz) => {
+    extensions.installExtension({
+      name,
+      func: () => extensions.registerElement(name, clazz, '', {version: '1'})
+    })
+  }
+
   before(() => {
     return new Promise(resolve => {
       // load zepto
@@ -40,14 +63,22 @@ describe('mip1 element', function () {
     })
   })
 
-  beforeEach(function () {
+  beforeEach(() => {
+    sandbox = sinon.createSandbox()
     MipTestElement = customElement.create()
+    window.services = {}
+    installMipdocService(window)
+    installExtensionsService(window)
+    installTimerService(window)
+    extensions = Services.extensionsFor(window)
   })
 
   afterEach(function () {
     MipTestElement = null
     $('.mip-element').remove()
     $('.mip-test-mock-node').remove()
+    MipTestElement = customElement.create()
+    sandbox.restore()
   })
 
   describe('registerElement', function () {
@@ -127,34 +158,32 @@ describe('mip1 element', function () {
   })
 
   describe('#attachedCallback', function () {
-    it('the customElement method attachedCallback is called', function (done) {
+    it('the customElement method attachedCallback is called', function () {
       let spy = MipTestElement.prototype.attachedCallback = sinon.spy()
       let name = 'mip-test-method-attachedCallback'
-      registerElement(name, MipTestElement)
+      registerMIP1Element(name, MipTestElement)
       let node = createDomByTag(name)
-      setTimeout(() => {
+      return extensions.waitForExtension(name).then(() => {
         node.attachedCallback()
 
         expect(spy).to.have.been.called
         expect(spy).to.have.been.calledWith()
-        done()
-      }, 1)
+      })
     })
 
-    it('the resources method add is called', function (done) {
+    it('the resources method add is called', function () {
       let name = 'mip-test-attachedCallback-add'
-      registerElement(name, MipTestElement)
+      registerMIP1Element(name, MipTestElement)
       let node = createDomByTag(name)
-      let spy = sinon.spy(node._resources, 'add')
-      setTimeout(() => {
+      return extensions.waitForExtension(name).then(() => {
+        let spy = sinon.spy(node._resources, 'add')
         node.attachedCallback()
 
         expect(spy).to.have.been.calledOnce
         expect(spy).to.deep.have.been.calledWith(node)
 
         spy.restore()
-        done()
-      }, 1)
+      })
     })
   })
 
@@ -200,11 +229,13 @@ describe('mip1 element', function () {
     let name = 'mip-test-method-attributeChangedCallback'
     let spy = MipTestElement.prototype.attributeChangedCallback = sinon.spy()
 
-    registerElement(name, MipTestElement)
-    createDomByTag(name).attributeChangedCallback()
+    registerMIP1Element(name, MipTestElement)
 
-    expect(spy).to.have.been.called
-    expect(spy).to.have.been.calledWith()
+    return extensions.waitForExtension(name).then(() => {
+      createDomByTag(name).attributeChangedCallback()
+      expect(spy).to.have.been.called
+      expect(spy).to.have.been.calledWith()
+    })
   })
 
   it('#inViewport', function () {
@@ -260,19 +291,18 @@ describe('mip1 element', function () {
   })
 
   describe('#build', function () {
-    it('the customElement method build is called', function (done) {
+    it('the customElement method build is called', function () {
       let name = 'mip-test-method-build'
       let spy = MipTestElement.prototype.build = sinon.spy()
-      registerElement(name, MipTestElement)
+
+      registerMIP1Element(name, MipTestElement)
       let node = createDomByTag(name)
 
-      setTimeout(function () {
+      return extensions.waitForExtension(name).then(() => {
         expect(spy).to.have.been.calledOnce
         expect(spy).to.have.been.calledWith()
         expect(node.isBuilt()).to.be.true
         expect(node.build()).to.be.undefined
-
-        done()
       })
     })
 
@@ -315,7 +345,7 @@ describe('mip1 element', function () {
     })
   })
 
-  it('life cycle', function (done) {
+  it('life cycle', function () {
     let queue = []
     let name = 'mip-test-life-cycle';
 
@@ -329,16 +359,14 @@ describe('mip1 element', function () {
         queue.push(key)
       }
     })
-    registerElement(name, MipTestElement)
+    registerMIP1Element(name, MipTestElement)
     let node = createDomByTag(name)
     node.setAttribute('name', 'MIP')
 
-    // reserved point DOM rendering time
-    setTimeout(function () {
+    return extensions.waitForExtension(name).then(function () {
       document.body.removeChild(node)
       expect(queue).to.deep.equal(['createdCallback', 'attachedCallback', 'build', 'detachedCallback'])
-      done()
-    }, 100)
+    })
   })
 })
 

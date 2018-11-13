@@ -8,10 +8,6 @@ import registerVueCustomElement from 'src/vue-custom-element/index'
 
 let prefix = 'vue-custom-element-index-'
 
-let delay = (fn, t) => {
-  setTimeout(fn, t || 1)
-}
-
 describe('vue custom element', function () {
   it('install customElment to Vue', function () {
     expect(typeof Vue.customElement).to.equal('function')
@@ -32,13 +28,14 @@ describe('vue custom element', function () {
     document.body.appendChild(ele)
     document.body.removeChild(ele)
 
-    setTimeout(() => {
+    return ele._resources.updateState().then(() => {
+      ele.viewportCallback(true)
       sinon.assert.calledOnce(created)
       sinon.assert.calledTwice(connectedCallback)
-    }, 1)
+    })
   })
 
-  it('lifecycle', function (done) {
+  it('lifecycle', function () {
     let name = prefix + 'lifecycle'
 
     let lifecycs = [
@@ -56,6 +53,9 @@ describe('vue custom element', function () {
     ]
 
     let comp = {
+      prerenderAllowed () {
+        return true
+      },
       props: {
         str: String
       },
@@ -86,14 +86,19 @@ describe('vue custom element', function () {
     let ele = document.createElement(name)
     document.body.appendChild(ele)
 
-    delay(() => {
+    return ele._resources.updateState().then(() => {
       ele.setAttribute('str', 'fake')
 
-      delay(() => {
-        document.body.removeChild(ele)
-        sinon.assert.callOrder(...lifecycSpies)
-        expect(ele.innerHTML).to.be.equal('<div>fakehaha</div>')
-        done()
+      return new Promise(resolve => {
+        ele.addEventListener('build', () => {
+          // beforeUpdate called after Vue.nextTick()
+          Vue.nextTick().then(() => {
+            document.body.removeChild(ele)
+            expect(ele.innerHTML).to.be.equal('<div>fakehaha</div>')
+            sinon.assert.callOrder(...lifecycSpies)
+            resolve()
+          })
+        })
       })
     })
   })
@@ -137,25 +142,30 @@ describe('vue custom element', function () {
     let ele = document.createElement(name)
     let viewportCallback = sinon.stub(ele, 'viewportCallback')
     document.body.appendChild(ele)
-    document.body.removeChild(ele)
-    ele.setAttribute('str', 'hah')
+    return new Promise(resolve => {
+      ele.addEventListener('build', () => {
+        document.body.removeChild(ele)
+        ele.setAttribute('str', 'hah')
 
-    sinon.assert.calledOnce(comp.connectedCallback)
-    sinon.assert.calledOnce(comp.disconnectedCallback)
-    sinon.assert.notCalled(comp.created)
-    sinon.assert.notCalled(comp.firstInviewCallback)
+        sinon.assert.calledOnce(comp.connectedCallback)
+        sinon.assert.calledOnce(comp.disconnectedCallback)
+        sinon.assert.notCalled(comp.created)
+        sinon.assert.notCalled(comp.firstInviewCallback)
 
-    expect(ele.innerHTML).to.be.empty
+        expect(ele.innerHTML).to.be.empty
 
-    viewportCallback.restore()
-    ele.viewportCallback(true)
-    sinon.assert.calledOnce(comp.created)
-    sinon.assert.calledOnce(comp.firstInviewCallback)
+        viewportCallback.restore()
+        ele.viewportCallback(true)
+        sinon.assert.calledOnce(comp.created)
+        sinon.assert.calledOnce(comp.firstInviewCallback)
 
-    expect(ele.innerHTML).to.equal('<div>hah</div>')
+        expect(ele.innerHTML).to.equal('<div>hah</div>')
+        resolve()
+      })
+    })
   })
 
-  it('prerenderAllowed', function (done) {
+  it('prerenderAllowed', function () {
     let name = prefix + 'prerender-allowed'
 
     let lifecycs = [
@@ -187,20 +197,20 @@ describe('vue custom element', function () {
     let ele = document.createElement(name)
     let viewportCallback = sinon.stub(ele, 'viewportCallback')
     document.body.appendChild(ele)
-    delay(() => {
-      document.body.removeChild(ele)
+    return new Promise(resolve => {
+      ele.addEventListener('build', () => {
+        document.body.removeChild(ele)
+        sinon.assert.calledOnce(comp.connectedCallback)
+        sinon.assert.calledOnce(comp.disconnectedCallback)
+        sinon.assert.calledOnce(comp.created)
+        sinon.assert.notCalled(comp.firstInviewCallback)
 
-      sinon.assert.calledOnce(comp.connectedCallback)
-      sinon.assert.calledOnce(comp.disconnectedCallback)
-      sinon.assert.calledOnce(comp.created)
-      sinon.assert.notCalled(comp.firstInviewCallback)
+        viewportCallback.restore()
+        ele.viewportCallback(true)
 
-      viewportCallback.restore()
-      ele.viewportCallback(true)
-
-      sinon.assert.calledOnce(comp.created)
-      sinon.assert.calledOnce(comp.firstInviewCallback)
-      done()
+        sinon.assert.calledOnce(comp.firstInviewCallback)
+        resolve()
+      })
     })
   })
 })

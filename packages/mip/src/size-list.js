@@ -4,15 +4,15 @@
  */
 
 /**
+ * SizeList options definition
+ * @typedef {Object} SizeListOptDef
+ * @property {string|undefined} mediaQuery
+ * @property {string} size
+ */
+
+/**
  * Parses the text representation of "sizes" into SizeList object.
  *
- * There could be any number of size options within the SizeList. They are tried
- * in the order they were defined. The final size option must not have "media"
- * condition specified. All other size options must have "media" condition
- * specified.
- *
- * See https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#Attributes
- * See http://www.w3.org/html/wg/drafts/html/master/semantics.html#attr-img-sizes
  * @param {string} s
  * @return {!SizeList}
  */
@@ -50,6 +50,7 @@ export function parseSizeList (s) {
       }
 
       // Then, skip to the begining to the function's name.
+      let funcEnd = div - 1
       if (div > 0) {
         div--
         for (; div >= 0; div--) {
@@ -61,6 +62,9 @@ export function parseSizeList (s) {
             break
           }
         }
+      }
+      if (div >= funcEnd) {
+        throw new Error(`Invalid CSS function in "${sSize}"`)
       }
     } else {
       // Value is the length or a percent: accept a wide range of values,
@@ -95,31 +99,38 @@ export function parseSizeList (s) {
 /**
  * A SizeList object contains one or more sizes as typically seen in "sizes"
  * attribute.
- *
- * See "select" method for details on how the size selection is performed.
- *
- * See https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#Attributes
- * See http://www.w3.org/html/wg/drafts/html/master/semantics.html#attr-img-sizes
  */
 export class SizeList {
-  /**
-   * @param {!Array<!SizeListOptionDef>} sizes
-   */
   constructor (sizes) {
-    /** @private @const {!Array<!SizeListOptionDef>} */
-    this._size = sizes
+    if (sizes.length > 0) {
+      /** @private @type {SizeListOptDef} */
+      this._sizes = sizes
+    } else {
+      throw new Error('SizeList must have at least one option')
+    }
+
+    // All sources except for last must have a media query. The last one must not.
+    for (let i = 0; i < sizes.length; i++) {
+      const option = sizes[i]
+      if (i < sizes.length - 1) {
+        if (!option.mediaQuery) {
+          throw new Error('All options except for the last must have a media condition')
+        }
+      } else if (option.mediaQuery) {
+        throw new Error('The last option must not have a media condition')
+      }
+    }
   }
 
   /**
    * Selects the first size that matches media conditions. If no options match,
    * the last option is returned.
    *
-   * See http://www.w3.org/html/wg/drafts/html/master/semantics.html#attr-img-sizes
    * @param {!Window} win
-   * @return {!./layout.LengthDef|string}
+   * @return {string}
    */
   select (win) {
-    let sizes = this._size
+    let sizes = this._sizes
     let length = sizes.length - 1
 
     // Iterate all but the last size
