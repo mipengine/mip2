@@ -15,9 +15,6 @@ import css from './util/dom/css'
 import {parseSizeList} from './size-list'
 import {customEmit} from './util/custom-event'
 
-/** @type {Array<BaseElement>} */
-let customElementInstances = []
-
 /** @param {!Element} element */
 function isInputPlaceholder (element) {
   return 'placeholder' in element
@@ -111,8 +108,6 @@ class BaseElement extends HTMLElement {
     if (this.customElement.hasResources()) {
       performance.addFsElement(this)
     }
-
-    customElementInstances.push(this)
   }
 
   connectedCallback () {
@@ -312,7 +307,7 @@ class BaseElement extends HTMLElement {
       // emit build event
       customEmit(this, 'build')
     } catch (e) {
-      customEmit(this, 'builderror', e)
+      customEmit(this, 'build-error', e)
       console.warn('build error:', e)
     }
   }
@@ -458,10 +453,19 @@ function registerElement (name, elementClass, css) {
   // store the name-clazz pair
   customElementsStore.set(name, elementClass, 'mip2')
 
+  /** @type {Array<BaseElement>} */
+  let customElementInstances = []
+
   loadCss(css, name)
   window.customElements.define(name, class extends BaseElement {
     static get observedAttributes () {
       return elementClass.observedAttributes
+    }
+
+    constructor (...args) {
+      super(...args)
+
+      customElementInstances.push(this)
     }
   })
 

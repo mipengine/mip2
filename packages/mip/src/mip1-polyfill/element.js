@@ -13,9 +13,6 @@ import {customEmit} from '../util/custom-event'
 
 /* globals HTMLElement */
 
-/** @type {Array<BaseElement>} */
-let customElementInstances = []
-
 /**
  * Save the base element prototype to avoid duplicate initialization.
  * @inner
@@ -78,8 +75,6 @@ function createBaseElementProto () {
     if (customElement.hasResources()) {
       performance.addFsElement(this)
     }
-
-    customElementInstances.push(this)
   }
 
   /**
@@ -171,7 +166,7 @@ function createBaseElementProto () {
       this._built = true
       customEmit(this, 'build')
     } catch (e) {
-      customEmit(this, 'builderror', e)
+      customEmit(this, 'build-error', e)
       console.warn('build error:', e)
     }
   }
@@ -237,9 +232,20 @@ function registerElement (name, elementClass, css) {
   // store the name-clazz pair
   customElementsStore.set(name, elementClass, 'mip1')
 
+  /** @type {Array<BaseElement>} */
+  let customElementInstances = []
+
+  // Override createdCallback to count element instances
+  let mipElementProto = createMipElementProto(name)
+  let createdCallback = mipElementProto.createdCallback
+  mipElementProto.createdCallback = function () {
+    createdCallback.call(this)
+    customElementInstances.push(this)
+  }
+
   loadCss(css, name)
   document.registerElement(name, {
-    prototype: createMipElementProto(name)
+    prototype: mipElementProto
   })
 
   return customElementInstances

@@ -72,7 +72,7 @@ export class Extensions {
 
       holder = this.extensions[extensionId] = {
         extension,
-        instances: [],
+        elementInstances: [],
         promise: null,
         resolve: null,
         reject: null,
@@ -181,7 +181,8 @@ export class Extensions {
     try {
       this.currentExtensionId = extensionId
       factory(...args)
-      // Resolve if extension has't instance
+      // Push tryResolveExtension task to microtask queue.
+      // Resolve if extension has't instance.
       this.mipdoc.whenBodyAvailable().then(() => this.tryResolveExtension(extensionId))
     } catch (err) {
       this.mipdoc.whenBodyAvailable().then(() => this.tryRejectExtension(extensionId, err))
@@ -199,12 +200,12 @@ export class Extensions {
   tryResolveExtension (extensionId) {
     const holder = this.getExtensionHolder(extensionId)
 
-    if (!holder.instances.every(el => el.isBuilt())) {
+    if (!holder.elementInstances.every(el => el.isBuilt())) {
       return
     }
 
-    // Delete reference.
-    holder.instances.length = 0
+    // Delete element instance reference to free memory.
+    holder.elementInstances.length = 0
 
     holder.loaded = true
 
@@ -289,22 +290,23 @@ export class Extensions {
 
     holder.extension.elements[name] = element
 
-    let instances = this.getElementRegistrator(element)(name, implementation, css)
+    /** @type {HTMLElement} */
+    let elementInstances = this.getElementRegistrator(element)(name, implementation, css)
 
-    if (instances && instances.length) {
-      instances.forEach(el => {
+    if (elementInstances && elementInstances.length) {
+      elementInstances.forEach(el => {
         let unlistenBuild = listen(el, 'build', () => {
           this.tryResolveExtension(extensionId)
           unlistenBuild()
           unlistenBuildError()
         })
-        let unlistenBuildError = listen(el, 'builderror', event => {
+        let unlistenBuildError = listen(el, 'build-error', event => {
           this.tryRejectExtension(extensionId, event.detail)
           unlistenBuild()
           unlistenBuildError()
         })
       })
-      holder.instances = holder.instances.concat(instances)
+      holder.elementInstances = holder.elementInstances.concat(elementInstances)
     }
 
     /**
