@@ -7,3 +7,5 @@ mip-sandbox
 moment
 better-scroll
 xzh-sdk
+nib
+fe-siteopen-sdk
