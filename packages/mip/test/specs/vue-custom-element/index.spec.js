@@ -213,4 +213,39 @@ describe('vue custom element', function () {
       })
     })
   })
+
+  it('should camelize attribute name', () => {
+    const name = prefix + 'camelize-attribute-name'
+
+    const comp = {
+      props: {
+        fakeStr: String
+      },
+      prerenderAllowed () {
+        return true
+      },
+      render (h) {
+        return h('div', {
+          domProps: {
+            innerHTML: this.fakeStr
+          }
+        })
+      }
+    }
+
+    registerVueCustomElement(name, comp)
+
+    const ele = document.createElement(name)
+
+    return new Promise((resolve) => {
+      ele.addEventListener('build', () => {
+        document.body.appendChild(ele)
+        ele.setAttribute('fake-str', 'hah')
+        expect(ele.customElement.vueInstance.fakeStr).to.equal('hah')
+        expect(ele.customElement.vueInstance['fake-str']).to.be.undefined
+        document.body.removeChild(ele)
+        resolve()
+      })
+    })
+  })
 })
