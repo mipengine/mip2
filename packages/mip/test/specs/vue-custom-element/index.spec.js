@@ -236,10 +236,10 @@ describe('vue custom element', function () {
     registerVueCustomElement(name, comp)
 
     const ele = document.createElement(name)
+    document.body.appendChild(ele)
 
     return new Promise((resolve) => {
       ele.addEventListener('build', () => {
-        document.body.appendChild(ele)
         ele.setAttribute('fake-str', 'hah')
         expect(ele.customElement.vueInstance.fakeStr).to.equal('hah')
         expect(ele.customElement.vueInstance['fake-str']).to.be.undefined
