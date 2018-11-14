@@ -118,45 +118,41 @@ function create (str) {
 }
 
 /**
- * Dom Ready Callback
- * @param {Function} callback
- * @param {Object} doc document
- * @param {Object} win window
- */
-// function domready(callback, doc, win) {
-//     doc = doc || document;
-//     win = win || window;
-
-//     if (doc.readyState !== 'loading') {
-//         setTimeout(callback);
-//         return;
-//     }
-//     var handler = function() {
-//         doc.removeEventListener('DOMContentLoaded', handler, false);
-//         win.removeEventListener('load', handler, false);
-//         callback();
-//     }
-//     doc.addEventListener('DOMContentLoaded', handler, false);
-//     win.addEventListener('load', handler, false);
-// }
-
-/**
- * Waits until the Document is ready. Then the
- * callback is executed.
+ * Executes `callback` when `predicate(parent)` returns `true`.
  *
- * @param {Function} cb callback
- * @deprecated Use {@link Mipdoc#whenBodyAvailable} instead.
+ * @param {!HTMLElement} parent element.
+ * @param {function(!HTMLElement):boolean} predicate function.
+ * @param {Function} callback function.
  */
-function waitDocumentReady (cb) {
-  if (document.body) {
-    cb()
+function waitForChildCallback (parent, predicate, callback) {
+  if (predicate(parent)) {
+    callback()
+
     return
   }
-  /* istanbul ignore next */
-  let interval = window.setInterval(() => {
-    if (document.body) {
-      window.clearInterval(interval)
-      cb()
+
+  const win = parent.ownerDocument.defaultView
+
+  if (win.MutationObserver) {
+    /**
+     * @type {!MutationObserver}
+     */
+    const observer = new win.MutationObserver(() => {
+      if (predicate(parent)) {
+        observer.disconnect()
+        callback()
+      }
+    })
+
+    observer.observe(parent, {childList: true})
+
+    return
+  }
+
+  const intervalId = win.setInterval(() => {
+    if (predicate(parent)) {
+      win.clearInterval(intervalId)
+      callback()
     }
   }, 5)
 }
@@ -169,38 +165,7 @@ function waitDocumentReady (cb) {
  * @returns {!Promise<void>}
  */
 function waitForChild (parent, predicate) {
-  return new Promise(resolve => {
-    if (predicate(parent)) {
-      resolve()
-
-      return
-    }
-
-    const win = parent.ownerDocument.defaultView
-
-    if (win.MutationObserver) {
-      /**
-       * @type {!MutationObserver}
-       */
-      const observer = new win.MutationObserver(() => {
-        if (predicate(parent)) {
-          observer.disconnect()
-          resolve()
-        }
-      })
-
-      observer.observe(parent, {childList: true})
-
-      return
-    }
-
-    const intervalId = win.setInterval(() => {
-      if (predicate(parent)) {
-        win.clearInterval(intervalId)
-        resolve()
-      }
-    }, 5)
-  })
+  return new Promise(resolve => waitForChildCallback(parent, predicate, resolve))
 }
 
 /**
@@ -213,6 +178,21 @@ function waitForBody (doc) {
   return waitForChild(
     doc.documentElement,
     documentElement => !!documentElement.ownerDocument.body
+  )
+}
+
+/**
+ * Waits until the Document is ready. Then the
+ * callback is executed.
+ *
+ * @param {Function} callback callback
+ * @deprecated Use {@link Mipdoc#whenBodyAvailable} instead.
+ */
+function waitDocumentReady (callback) {
+  return waitForChildCallback(
+    document.documentElement,
+    documentElement => !!documentElement.ownerDocument.body,
+    callback
   )
 }
 
@@ -247,7 +227,7 @@ export default {
   contains,
   create,
   insert,
-  waitDocumentReady,
   waitForChild,
-  waitForBody
+  waitForBody,
+  waitDocumentReady
 }
