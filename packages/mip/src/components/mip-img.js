@@ -307,7 +307,10 @@ class MipImg extends CustomElement {
     if (ele.hasAttribute('popup')) {
       bindPopup(ele, img)
     }
-    return event.loadPromise(img).catch(reason => {
+    return event.loadPromise(img).then(() => {
+      // 标识资源已加载完成
+      this.customElement.resourcesComplete()
+    }).catch(reason => {
       /* istanbul ignore if */
       if (!viewer.isIframed) {
         return Promise.reject(reason)
