@@ -176,6 +176,7 @@ function createBaseElementProto () {
 
   /**
    * Called by customElement. And tell the performance that element is loaded.
+   * @deprecated
    */
   proto.resourcesComplete = function () {
     performance.fsElementLoaded(this)

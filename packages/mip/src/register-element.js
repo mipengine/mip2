@@ -184,6 +184,7 @@ class BaseElement extends HTMLElement {
       return
     }
 
+    // istanbul ignore next
     if (show) {
       placeholder.classList.remove('mip-hidden')
     } else {
@@ -191,13 +192,13 @@ class BaseElement extends HTMLElement {
     }
   }
 
-  /**
-   * Returns an optional fallback element for this custom element.
-   * @return {?Element}
-   */
-  getFallback () {
-    return lastChildElement(this, el => el.hasAttribute('fallback'))
-  }
+  // /**
+  //  * Returns an optional fallback element for this custom element.
+  //  * @return {?Element}
+  //  */
+  // getFallback () {
+  //   return lastChildElement(this, el => el.hasAttribute('fallback'))
+  // }
 
   /**
    * Hides or shows the fallback, if available.
@@ -419,8 +420,10 @@ class BaseElement extends HTMLElement {
 
   /**
    * Called by customElement. And tell the performance that element is loaded.
+   * @deprecated
    */
   resourcesComplete () {
+    // istanbul ignore next
     performance.fsElementLoaded(this)
   }
 }

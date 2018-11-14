@@ -93,6 +93,30 @@ describe('SizeList parseSizeList', () => {
       parseSizeList('screen calc((111vw + 10px) \n, 10px ')
     }).to.throw(/Invalid CSS function/)
   })
+
+  it('should accept percent when allowed', () => {
+    const res = parseSizeList(' \n 111% \n ',
+      /* allowPercent */ true)
+    expect(res._sizes.length).to.equal(1)
+    expect(res._sizes[0].mediaQuery).to.equal(undefined)
+    expect(res._sizes[0].size).to.equal('111%')
+  })
+
+  it('should not accept percent', () => {
+    expect(() => {
+      parseSizeList(' \n 111% \n ', /* allowPercent */ false)
+    }).to.throw(/Invalid length value/)
+  })
+
+  it('should fail bad length', () => {
+    expect(() => {
+      parseSizeList(' \n 111 \n ')
+    }).to.throw(/Invalid length value/)
+
+    expect(() => {
+      parseSizeList(' \n 111x% \n ', /* allowPercent */ true)
+    }).to.throw(/Invalid length or percent value/)
+  })
 })
 
 describe('SizeList construct', () => {

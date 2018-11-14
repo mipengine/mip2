@@ -77,7 +77,6 @@ describe('mip1 element', function () {
     MipTestElement = null
     $('.mip-element').remove()
     $('.mip-test-mock-node').remove()
-    MipTestElement = customElement.create()
     sandbox.restore()
   })
 

@@ -14,13 +14,15 @@
  * Parses the text representation of "sizes" into SizeList object.
  *
  * @param {string} s
+ * @param {boolean} allowPercent
  * @return {!SizeList}
  */
-export function parseSizeList (s) {
+export function parseSizeList (s, allowPercent) {
   const sSizes = s.split(',')
   const sizes = []
   sSizes.forEach(sSize => {
     sSize = sSize.replace(/\s+/g, ' ').trim()
+    // istanbul ignore next
     if (sSize.length === 0) {
       return
     }
@@ -31,8 +33,10 @@ export function parseSizeList (s) {
     // Process the expression from the end.
     let lastChar = sSize.charAt(sSize.length - 1)
     let div
+    let func = false
     if (lastChar === ')') {
       // Value is the CSS function, e.g. `calc(50vw + 10px)`.
+      func = true
 
       // First, skip to the opening paren.
       let parens = 1
@@ -88,6 +92,17 @@ export function parseSizeList (s) {
       sizeStr = sSize
       mediaStr = undefined
     }
+
+    if (!func) {
+      if (allowPercent && !/^\d+(\.\d+)?(px|em|rem|vh|vw|vmin|vmax|%)$/.test(sizeStr)) {
+        throw new Error(`Invalid length or percent value: ${sizeStr}`)
+      }
+
+      if (!allowPercent && !/^\d+(\.\d+)?(px|em|rem|vh|vw|vmin|vmax|cm|mm|q|in|pc|pt)$/.test(sizeStr)) {
+        throw new Error(`Invalid length value: ${sizeStr}`)
+      }
+    }
+
     sizes.push({
       mediaQuery: mediaStr,
       size: sizeStr

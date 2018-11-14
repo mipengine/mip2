@@ -17,6 +17,17 @@ describe('mip-iframe', function () {
   let mipIframe
   let iframe
 
+  it('empty mip-iframe src wont create iframe', async function () {
+    mipIframe = document.createElement('mip-iframe')
+    document.body.appendChild(mipIframe)
+
+    await mipIframe._resources.updateState()
+    mipIframe.viewportCallback(true)
+    iframe = mipIframe.querySelector('iframe')
+    expect(iframe).to.be.null
+    document.body.removeChild(mipIframe)
+  })
+
   describe('iframe with default width and attrs', function () {
     this.timeout(1200)
     before(function () {

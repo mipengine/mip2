@@ -191,8 +191,10 @@ class CustomElement {
 
   /**
    * Notice that resources are loaded.
+   * @deprecated
    */
   resourcesComplete () {
+    // istanbul ignore next
     this.element.resourcesComplete()
   }
 }

@@ -9,7 +9,7 @@ import viewport from './viewport'
 import rect from './util/dom/rect'
 import prerender from './client-prerender'
 
-const COMPONENTS_NEED_NOT_DELAY = ['MIP-IMG', 'MIP-CAROUSEL', 'MIP-DATA', 'MIP-VIDEO']
+const COMPONENTS_NEED_NOT_DELAY = ['MIP-IMG', 'MIP-CAROUSEL', 'MIP-DATA', 'MIP-VIDEO', 'MIP-LAYOUT']
 
 /**
  * Store the resources.

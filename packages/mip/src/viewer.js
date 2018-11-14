@@ -46,7 +46,6 @@ let viewer = {
      * The initialise method of viewer
      */
   init () {
-
     /**
      * SF 创建的第一个页面的 window.name
      */
