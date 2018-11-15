@@ -8,7 +8,7 @@ import dom from 'src/util/dom/dom'
 /* eslint-disable no-unused-expressions */
 /* globals describe, before, it, expect, after, Event */
 
-describe.only('mip-img', function () {
+describe('mip-img', function () {
   let mipImgWrapper
 
   beforeEach(() => {
