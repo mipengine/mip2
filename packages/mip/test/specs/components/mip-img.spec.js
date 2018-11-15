@@ -8,7 +8,7 @@ import dom from 'src/util/dom/dom'
 /* eslint-disable no-unused-expressions */
 /* globals describe, before, it, expect, after, Event */
 
-describe('mip-img', function () {
+describe.only('mip-img', function () {
   let mipImgWrapper
 
   beforeEach(() => {
@@ -64,26 +64,24 @@ describe('mip-img', function () {
     })
   })
 
-  it('should be loading with placeholder', function () {
+  it('should replace src if load img error', async function () {
     mipImgWrapper.innerHTML = `<mip-img popup src="https://www.wrong.org?test=1"></mip-img>`
     let mipImg = mipImgWrapper.querySelector('mip-img')
-    return mipImg._resources.updateState().then(() => {
-      let img = mipImg.querySelector('img')
+    await mipImg._resources.updateState()
+    let img = mipImg.querySelector('img')
 
-      expect(img.classList.contains('mip-replaced-content')).to.equal(true)
-      expect(img.getAttribute('src')).to.equal('https://www.wrong.org?test=1')
+    expect(img.classList.contains('mip-replaced-content')).to.equal(true)
+    expect(img.getAttribute('src')).to.equal('https://www.wrong.org?test=1')
 
-      let promise = new Promise(resolve => img.addEventListener('error', resolve))
+    await new Promise(resolve => {
+      img.addEventListener('error', resolve)
       let errEvent = new Event('error')
       img.dispatchEvent(errEvent)
-
-      return promise.then(() => {
-        expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1')
-      })
     })
+    expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1')
   })
 
-  it('should be loading with placeholder', function () {
+  it('should work with srcset', function () {
     mipImgWrapper.innerHTML = `
       <mip-img srcset="https://www.mipengine.org/static/img/wrong_address1.jpg 1x,
         https://www.mipengine.org/static/img/swrong_address2.jpg 2x,
@@ -99,7 +97,7 @@ describe('mip-img', function () {
     })
   })
 
-  it('should be loading with placeholder', function () {
+  it('should build without src', function () {
     mipImgWrapper.innerHTML = `<mip-img></mip-img>`
     let mipImg = mipImgWrapper.querySelector('mip-img')
 
@@ -110,7 +108,7 @@ describe('mip-img', function () {
     })
   })
 
-  it('should load img with placeholder', function () {
+  it('should load img with normal src', function () {
     mipImgWrapper.innerHTML = `
       <mip-img src="https://www.mipengine.org/static/img/sample_01.jpg"></mip-img>
     `
