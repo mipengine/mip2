@@ -309,7 +309,7 @@ class MipImg extends CustomElement {
     }
     return event.loadPromise(img).then(() => {
       // 标识资源已加载完成
-      this.customElement.resourcesComplete()
+      this.resourcesComplete()
     }).catch(reason => {
       /* istanbul ignore if */
       if (!viewer.isIframed) {
