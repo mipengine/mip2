@@ -9,22 +9,11 @@ import install from 'src/mip1-polyfill'
 import customElement from 'src/mip1-polyfill/customElement'
 import templates from 'src/util/templates'
 
-/**
- * use the tag name to create dom to the body
- *
- * @param  {string} tagName html tag name
- *
- * @return {HTMLElement}
- */
-let createDomByTag = function (tagName) {
-  let node = document.createElement(tagName)
-  node.classList.add('mip-test-mock-node')
-  document.body.appendChild(node)
-  return node
-}
-
 describe('mip1-polyfill', function () {
-  let mip = {}
+  let mip = {
+    registerElement: sinon.spy(),
+    registerTemplate: sinon.spy()
+  }
   let MipTestElement
 
   beforeEach(function () {
@@ -54,11 +43,15 @@ describe('mip1-polyfill', function () {
 
   it('register mip element', function () {
     mip.registerMipElement('mip-test-register-element', MipTestElement)
-    createDomByTag('mip-test-register-element')
-    expect(document.querySelectorAll('mip-test-register-element').length).to.equal(1)
+    expect(mip.registerElement).to.be.calledOnceWithExactly(
+      'mip-test-register-element',
+      MipTestElement,
+      undefined,
+      {version: '1'}
+    )
   })
 
-  it('register mip template', function (done) {
+  it('register mip template', function () {
     let MipTestTemplate = templates.inheritTemplate()
     MipTestTemplate.prototype.cache = function (html) {
       return html
@@ -67,19 +60,10 @@ describe('mip1-polyfill', function () {
       return html.replace('{{title}}', data.title)
     }
     mip.registerMipElement('mip-test-template', MipTestTemplate)
-
-    let element = document.createElement('div')
-    element.innerHTML = `
-      <template type="mip-test-template">
-        {{title}}
-      </template>
-    `
-
-    templates.render(element, {title: 'mip'})
-      .then(res => {
-        res = res.trim()
-        expect(res).to.equal('mip')
-        done()
-      })
+    expect(mip.registerTemplate).to.be.calledOnceWithExactly(
+      'mip-test-template',
+      MipTestTemplate,
+      {version: '1'}
+    )
   })
 })

@@ -12,10 +12,16 @@ import {
   MESSAGE_PAGE_RESIZE
 } from '../page/const'
 
+const {platform, css, event} = util
+
 let attrList = ['allowfullscreen', 'allowtransparency', 'sandbox']
 
 class MipIframe extends CustomElement {
-  build () {
+  isLoadingEnabled () {
+    return true
+  }
+
+  layoutCallback () {
     this.handlePageResize = this.handlePageResize.bind(this)
     this.notifyRootPage = this.notifyRootPage.bind(this)
     let element = this.element
@@ -29,7 +35,7 @@ class MipIframe extends CustomElement {
     let width = element.getAttribute('width') || '100%'
 
     if (!src || !height) {
-      return
+      return Promise.resolve()
     }
 
     // window.addEventListener('message', )
@@ -37,8 +43,8 @@ class MipIframe extends CustomElement {
 
     let iframe = document.createElement('iframe')
     iframe.frameBorder = '0'
-    iframe.scrolling = util.platform.isIos() ? /* istanbul ignore next */ 'no' : 'yes'
-    util.css(iframe, {
+    iframe.scrolling = platform.isIos() ? /* istanbul ignore next */ 'no' : 'yes'
+    css(iframe, {
       width,
       height
     })
@@ -68,6 +74,12 @@ class MipIframe extends CustomElement {
         clearInterval(timer)
       }, 500)
     }
+
+    return event.loadPromise(iframe)
+  }
+
+  build () {
+
   }
 
   firstInviewCallback () {
@@ -100,7 +112,7 @@ class MipIframe extends CustomElement {
     }
 
     if (height !== this.height) {
-      util.css(this.iframe, {
+      css(this.iframe, {
         height
       })
       this.height = height

@@ -17,6 +17,17 @@ describe('mip-iframe', function () {
   let mipIframe
   let iframe
 
+  it('empty mip-iframe src wont create iframe', async function () {
+    mipIframe = document.createElement('mip-iframe')
+    document.body.appendChild(mipIframe)
+
+    await mipIframe._resources.updateState()
+    mipIframe.viewportCallback(true)
+    iframe = mipIframe.querySelector('iframe')
+    expect(iframe).to.be.null
+    document.body.removeChild(mipIframe)
+  })
+
   describe('iframe with default width and attrs', function () {
     this.timeout(1200)
     before(function () {
@@ -29,19 +40,20 @@ describe('mip-iframe', function () {
     })
 
     it('should produce iframe with height 100%', function (done) {
-      iframe = mipIframe.querySelector('iframe')
       setTimeout(() => {
-        expect(iframe.style.height).to.equal(viewport.getHeight() + 'px')
-        done()
-      }, 600)
-      expect(iframe.frameBorder).to.equal('0')
-      expect(iframe.style.width).to.equal('100%')
-      expect(iframe.style.height).to.equal('100%')
-      expect(iframe.classList.contains('mip-fill-content')).to.equal(true)
-      expect(iframe.src).to.equal('data:text/html;charset=utf-8;base64,' + window.btoa('<p>Hello MIP!</p>'))
-      expect(iframe.getAttribute('allowfullscreen')).to.equal('true')
-      expect(iframe.getAttribute('allowtransparency')).to.equal('true')
-      expect(iframe.getAttribute('sandbox')).to.be.null
+        iframe = mipIframe.querySelector('iframe')
+        setTimeout(() => {
+          expect(iframe.frameBorder).to.equal('0')
+          expect(iframe.style.width).to.equal('100%')
+          expect(iframe.classList.contains('mip-fill-content')).to.equal(true)
+          expect(iframe.src).to.equal('data:text/html;charset=utf-8;base64,' + window.btoa('<p>Hello MIP!</p>'))
+          expect(iframe.getAttribute('allowfullscreen')).to.equal('true')
+          expect(iframe.getAttribute('allowtransparency')).to.equal('true')
+          expect(iframe.getAttribute('sandbox')).to.be.null
+          expect(iframe.style.height).to.equal(viewport.getHeight() + 'px')
+          done()
+        }, 600)
+      }, 1)
     })
 
     after(function () {
@@ -58,16 +70,19 @@ describe('mip-iframe', function () {
       document.body.appendChild(mipIframe)
     })
 
-    it('should produce iframe', function () {
-      iframe = mipIframe.querySelector('iframe')
-      expect(iframe.frameBorder).to.equal('0')
-      expect(iframe.style.width).to.equal('200px')
-      expect(iframe.style.height).to.equal('100px')
-      expect(iframe.classList.contains('mip-fill-content')).to.equal(true)
-      expect(iframe.src).to.equal('data:text/html;charset=utf-8;base64,' + window.btoa('<p>Hello MIP!</p>'))
-      expect(iframe.getAttribute('allowfullscreen')).to.be.null
-      expect(iframe.getAttribute('allowtransparency')).to.be.null
-      expect(iframe.getAttribute('sandbox')).to.be.null
+    it('should produce iframe', function (done) {
+      setTimeout(() => {
+        iframe = mipIframe.querySelector('iframe')
+        expect(iframe.frameBorder).to.equal('0')
+        expect(iframe.style.width).to.equal('200px')
+        expect(iframe.style.height).to.equal('100px')
+        expect(iframe.classList.contains('mip-fill-content')).to.equal(true)
+        expect(iframe.src).to.equal('data:text/html;charset=utf-8;base64,' + window.btoa('<p>Hello MIP!</p>'))
+        expect(iframe.getAttribute('allowfullscreen')).to.be.null
+        expect(iframe.getAttribute('allowtransparency')).to.be.null
+        expect(iframe.getAttribute('sandbox')).to.be.null
+        done()
+      }, 1)
     })
 
     it('should resize with detail', function () {

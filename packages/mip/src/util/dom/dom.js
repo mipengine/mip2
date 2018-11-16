@@ -118,46 +118,82 @@ function create (str) {
 }
 
 /**
- * Dom Ready Callback
- * @param {Function} callback
- * @param {Object} doc document
- * @param {Object} win window
+ * Executes `callback` when `predicate(parent)` returns `true`.
+ *
+ * @param {!HTMLElement} parent element.
+ * @param {function(!HTMLElement):boolean} predicate function.
+ * @param {Function} callback function.
  */
-// function domready(callback, doc, win) {
-//     doc = doc || document;
-//     win = win || window;
+function waitForChildCallback (parent, predicate, callback) {
+  if (predicate(parent)) {
+    callback()
 
-//     if (doc.readyState !== 'loading') {
-//         setTimeout(callback);
-//         return;
-//     }
-//     var handler = function() {
-//         doc.removeEventListener('DOMContentLoaded', handler, false);
-//         win.removeEventListener('load', handler, false);
-//         callback();
-//     }
-//     doc.addEventListener('DOMContentLoaded', handler, false);
-//     win.addEventListener('load', handler, false);
-// }
+    return
+  }
+
+  const win = parent.ownerDocument.defaultView
+
+  if (win.MutationObserver) {
+    /**
+     * @type {!MutationObserver}
+     */
+    const observer = new win.MutationObserver(() => {
+      if (predicate(parent)) {
+        observer.disconnect()
+        callback()
+      }
+    })
+
+    observer.observe(parent, {childList: true})
+
+    return
+  }
+
+  const intervalId = win.setInterval(() => {
+    if (predicate(parent)) {
+      win.clearInterval(intervalId)
+      callback()
+    }
+  }, 5)
+}
+
+/**
+ * Returns a promise that resolve when `predicate(parent)` returns `true`.
+ *
+ * @param {!HTMLElement} parent element.
+ * @param {function(!HTMLElement):boolean} predicate function.
+ * @returns {!Promise<void>}
+ */
+function waitForChild (parent, predicate) {
+  return new Promise(resolve => waitForChildCallback(parent, predicate, resolve))
+}
+
+/**
+ * Returns a promise that resolve when `document.body` is available.
+ *
+ * @param {!Document} doc document.
+ * @returns {!Promise<!HTMLBodyElement>}
+ */
+function waitForBody (doc) {
+  return waitForChild(
+    doc.documentElement,
+    documentElement => !!documentElement.ownerDocument.body
+  )
+}
 
 /**
  * Waits until the Document is ready. Then the
  * callback is executed.
  *
- * @param {Function} cb callback
+ * @param {Function} callback callback
+ * @deprecated Use {@link Mipdoc#whenBodyAvailable} instead.
  */
-function waitDocumentReady (cb) {
-  if (document.body) {
-    cb()
-    return
-  }
-  /* istanbul ignore next */
-  let interval = window.setInterval(() => {
-    if (document.body) {
-      window.clearInterval(interval)
-      cb()
-    }
-  }, 5)
+function waitDocumentReady (callback) {
+  return waitForChildCallback(
+    document.documentElement,
+    documentElement => !!documentElement.ownerDocument.body,
+    callback
+  )
 }
 
 /**
@@ -191,5 +227,7 @@ export default {
   contains,
   create,
   insert,
+  waitForChild,
+  waitForBody,
   waitDocumentReady
 }

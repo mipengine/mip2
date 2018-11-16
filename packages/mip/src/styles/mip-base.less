@@ -70,10 +70,10 @@ a {
   color: #333;
 }
 
-img {
-  width: 100%;
-  margin: 0 auto;
-}
+// img {
+//   width: 100%;
+//   margin: 0 auto;
+// }
 
 template {
   display: none;
@@ -118,6 +118,21 @@ mip-i-space {
   position: relative;
 }
 
+.mip-layout-intrinsic {
+  display: inline-block;
+  position: relative;
+  max-width: 100%;
+
+  .mip-i-space {
+    max-width: 100%;
+  }
+}
+
+.mip-i-intrinsic-space {
+  max-width: 100%;
+  display: block !important;
+}
+
 .mip-layout-fixed-height {
   display: block;
   position: relative;
@@ -144,12 +159,12 @@ mip-i-space {
   flex: 1 1 auto;
 }
 
-.mip-layout-size-defined {
-  overflow: hidden !important;
+.mip-hidden-by-media-query {
+  display: none !important;
 }
 
-imip-sizer {
-  display: block !important;
+.mip-layout-size-defined {
+  overflow: hidden !important;
 }
 
 .mip-fill-content {
@@ -185,3 +200,30 @@ imip-sizer {
 mip-script {
   display: none !important;
 }
+
+// placeholder fallback
+.mip-element>[placeholder],[layout]:not(.mip-element)>[placeholder] {
+  display: block;
+}
+
+.mip-element.mip-notsupported>.mip-replaced-content {
+  visibility: hidden !important;
+}
+
+.mip-element>[placeholder].mip-hidden,.mip-element>[placeholder].hidden {
+  visibility: hidden;
+}
+
+.mip-element:not(.mip-notsupported)>[fallback] {
+  display: none;
+}
+
+.mip-layout-size-defined>[fallback],.mip-layout-size-defined>[placeholder] {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 1;
+}
+
