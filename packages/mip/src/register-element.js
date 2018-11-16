@@ -386,24 +386,18 @@ class BaseElement extends HTMLElement {
   viewportCallback (inViewport) {
     this.customElement.viewportCallback(inViewport)
     this._inViewport = inViewport
+    // It not support `finaly` in huawei honner h
+    let onFinally = () => {
+      this.togglePlaceholder(false)
+      this.toggleLoading(false, {
+        cleanup: true
+      })
+    }
     if (inViewport && !this._firstInViewport) {
       this.layoutCallback().then(
-        () => {
-          this.customElement.firstLayoutCompleted()
-          // It not support `finaly` in huawei honner h
-          this.togglePlaceholder(false)
-          this.toggleLoading(false, {
-            cleanup: true
-          })
-        },
-        () => {
-          this.toggleFallback(true)
-          this.togglePlaceholder(false)
-          this.toggleLoading(false, {
-            cleanup: true
-          })
-        }
-      )
+        () => this.customElement.firstLayoutCompleted(),
+        () => this.toggleFallback(true)
+      ).then(onFinally, onFinally)
 
       this._firstInViewport = true
       this.customElement.firstInviewCallback()

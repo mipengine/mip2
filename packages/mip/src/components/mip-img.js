@@ -237,12 +237,12 @@ function bindPopup (element, img) {
     window.addEventListener('resize', onResize)
 
     css(popupImg, imgOffset)
-    css(mipCarousel, 'display', 'none')
+    css(mipCarousel, 'visibility', 'hidden')
     css(popupBg, 'opacity', 1)
 
     naboo.animate(popupImg, getPopupImgPos(img.naturalWidth, img.naturalHeight)).start(() => {
       css(popupImg, 'display', 'none')
-      css(mipCarousel, 'display', 'block')
+      css(mipCarousel, 'visibility', 'visible')
     })
     css(img, 'visibility', 'hidden')
     css(img.parentNode, 'zIndex', 'inherit')
