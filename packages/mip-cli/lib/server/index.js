@@ -11,6 +11,7 @@ const html = require('./middleware/html')
 const livereload = require('livereload')
 const cli = require('../cli')
 const koaStatic = require('koa-static')
+const directory = require('./middleware/directory')
 
 module.exports = class Server {
   constructor (options) {
@@ -34,10 +35,12 @@ module.exports = class Server {
 
     let scriptMiddlewares = script(options)
     let htmlMiddlewares = html(options)
+    let dirMiddlewares = directory(options)
 
     this.router
-      .get(['/:id([^\\.]*)', '/:id([^\\.]+\\.html)'], ...htmlMiddlewares)
-      .get('*', ...scriptMiddlewares, koaStatic(this.dir))
+      .get('/:id([^\\.]+\\.html)', ...htmlMiddlewares)
+      .get(/[\w,\s-]+\.[A-Za-z]{1,4}/, ...scriptMiddlewares, koaStatic(this.dir))
+      .get('*', ...dirMiddlewares)
 
     this.app
       .use(record)
