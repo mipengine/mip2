@@ -29,10 +29,6 @@ body::after,
 
 body::after {
   display: none;
-
-  .show-loading {
-    display: block;
-  }
 }
 
 @keyframes loading-rotate {
@@ -49,7 +45,7 @@ body.mip-fixedlayer::after,
 body[mip-ready]::before,
 body[mip-ready]::after,
 .mip-page-loading-wrapper.only-header::after {
-  display: none!important;
+  display: none;
 }
 
 body.with-header {

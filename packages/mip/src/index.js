@@ -101,16 +101,6 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
   mip1PolyfillInstall(mip)
 
   util.dom.waitDocumentReady(() => {
-    try {
-      // SF 环境下首次打开页面不需要展现 Loading，否则会和 SF 的 Loading 重叠（且样式不同）
-      // 因此单独打开或者后续页面，均需要展现 Loading
-      if (!viewer.isIframed || typeof window.parent.MIP !== 'undefined') {
-        document.body.classList.add('show-loading')
-      }
-    } catch (e) {
-      // 跨域表示外层是 SF，且默认是隐藏，所以什么都不做。
-    }
-
     // Initialize sleepWakeModule
     sleepWakeModule.init()
 
