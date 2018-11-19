@@ -24,7 +24,15 @@ body::after,
   left: 50%;
   margin: -17px 0 0 -17px;
   z-index: 100000;
-  animation: loading-rotate 1s linear infinite
+  animation: loading-rotate 1s linear infinite;
+}
+
+body::after {
+  display: none;
+
+  .show-loading {
+    display: block;
+  }
 }
 
 @keyframes loading-rotate {
@@ -41,7 +49,7 @@ body.mip-fixedlayer::after,
 body[mip-ready]::before,
 body[mip-ready]::after,
 .mip-page-loading-wrapper.only-header::after {
-  display: none;
+  display: none!important;
 }
 
 body.with-header {
