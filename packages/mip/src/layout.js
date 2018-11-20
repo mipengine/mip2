@@ -245,7 +245,7 @@ export function applyLayout (element) {
       })
       break
     case LAYOUT.RESPONSIVE:
-      let space = element.ownerDocument.createElement(SPACE_TAG_NAME)
+      let space = element.spaceElement || element.ownerDocument.createElement(SPACE_TAG_NAME)
       // 简单搜索会把space误判为广告，把display设置为none，加内容跳过这个坑
       space.innerHTML = 'space'
       css(space, {
@@ -256,7 +256,7 @@ export function applyLayout (element) {
       element.spaceElement = space
       break
     case LAYOUT.INTRINSIC:
-      let ispace = dom.create(`
+      let ispace = element.spaceElement || dom.create(`
         <mip-i-space class="mip-i-space">
           <img class="mip-i-intrinsic-space" />
         </mip-i-space>`)
