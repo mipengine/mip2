@@ -1,5 +1,11 @@
 # CHANGELOG
 
+- 1.4.3
+    1. 更新 mip-sandbox 和 mip-component-validator 依赖版本，新增 `atob` `TextEncoder` `TextDecoder` 白名单
+
+- 1.4.2
+    1. 更新 mip-sandbox 依赖版本，添加 `DataView` 白名单
+
 - 1.4.1
     1. 增加 css 压缩功能
 

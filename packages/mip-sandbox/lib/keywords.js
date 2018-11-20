@@ -11,6 +11,8 @@ var ORIGINAL = [
   'Boolean',
   'DOMError',
   'DOMException',
+  // https://github.com/mipengine/mip2/issues/336
+  'DataView',
   'Date',
   'Error',
   'Float32Array',
@@ -39,6 +41,9 @@ var ORIGINAL = [
   'String',
   'Symbol',
   'SyntaxError',
+  // https://github.com/mipengine/mip2/issues/347
+  'TextDecoder',
+  'TextEncoder',
   'TypeError',
   'URIError',
   'URL',
@@ -50,6 +55,8 @@ var ORIGINAL = [
   // 1.0.17 新增 WebSocket
   'WebSocket',
   'WritableStream',
+  // https://github.com/mipengine/mip2/issues/347
+  'atob',
   // issue https://github.com/mipengine/mip2/issues/62
   'crypto',
   'clearInterval',
