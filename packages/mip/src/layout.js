@@ -246,6 +246,8 @@ export function applyLayout (element) {
       break
     case LAYOUT.RESPONSIVE:
       let space = element.ownerDocument.createElement(SPACE_TAG_NAME)
+      // 简单搜索会把space误判为广告，把display设置为none，加内容跳过这个坑
+      space.innerHTML = 'space'
       css(space, {
         display: 'block',
         paddingTop: getLengthNumeral(height) / getLengthNumeral(width) * 100 + '%'
