@@ -64,6 +64,10 @@ class MipIframe extends CustomElement {
 
     this.iframe.src = src
 
+    if (srcdoc) {
+      this.iframe.srcdoc = srcdoc
+    }
+
     this.expendAttr(attrList, this.iframe)
     element.appendChild(this.iframe)
 
