@@ -215,11 +215,15 @@ class MipShell extends CustomElement {
       page.pageMeta = this.currentPageMeta
       this.initShell()
       this.initRouter()
-      // 绑定事件改为异步，不阻塞发送 mippageload 事件，下同
-      setTimeout(() => this.bindRootEvents(), 0)
     }
 
-    setTimeout(() => this.bindAllEvents(), 0)
+    // 绑定事件改为异步，不阻塞发送 mippageload 事件，下同
+    setTimeout(() => {
+      if (page.isRootPage) {
+        this.bindRootEvents()
+      }
+      this.bindAllEvents()
+    }, 0)
   }
 
   disconnectedCallback () {
