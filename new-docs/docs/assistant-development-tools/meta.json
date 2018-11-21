@@ -1,6 +1,9 @@
 {
   "menu": [
     {
+      "key": "cli-user-plugin"
+    },
+    {
       "key": "introduction"
     },
     {

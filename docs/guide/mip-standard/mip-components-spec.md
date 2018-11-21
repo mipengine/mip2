@@ -57,7 +57,7 @@ MIP 扩展组件开发采用 [Forking工作流](https://github.com/oldratlee/tra
           ├── README.md
           ├── example
                 ├── mip-mysite-example.html
-       
+
 ```
 
 
