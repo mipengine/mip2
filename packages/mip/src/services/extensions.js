@@ -2,11 +2,12 @@ import Services from './services'
 import {templates, Deferred, event} from '../util'
 import registerMip1Element from '../mip1-polyfill/element'
 import registerCustomElement from '../register-element'
-import registerVueCustomElement from '../vue-custom-element'
 
 const {listen} = event
 
 const UNKNOWN_EXTENSION_ID = 'unknown'
+
+// const LATEST_MIP_VERSION = '2'
 
 export class Extensions {
   /**
@@ -20,6 +21,12 @@ export class Extensions {
     this.win = win
 
     /**
+     * @private
+     * @const
+     */
+    this.doc = win.document
+
+    /**
      * @type {!Object}
      * @private
      */
@@ -30,14 +37,6 @@ export class Extensions {
      * @private
      */
     this.currentExtensionId = null
-
-    /**
-     * An empty constructor, only used as a placeholder in `registerElement`.
-     *
-     * @private
-     * @const
-     */
-    this.emptyService = class {}
 
     /**
      * @private
@@ -83,20 +82,12 @@ export class Extensions {
         resolve: null,
         reject: null,
         loaded: null,
-        error: null
+        error: null,
+        script: null
       }
     }
 
     return holder
-  }
-
-  /**
-   * Returns extensionId for extension which is currently being registered.
-   *
-   * @returns {string}
-   */
-  getCurrentExtensionId () {
-    return this.currentExtensionId || UNKNOWN_EXTENSION_ID
   }
 
   /**
@@ -106,8 +97,98 @@ export class Extensions {
    * @private
    */
   getCurrentExtensionHolder () {
-    return this.getExtensionHolder(this.getCurrentExtensionId())
+    return this.getExtensionHolder(this.currentExtensionId || UNKNOWN_EXTENSION_ID)
   }
+
+  /**
+   * Creates a script element with specified url.
+   *
+   * @param {string} url of script.
+   * @return {!HTMLScriptElement}
+   * @private
+   */
+  createScript (url) {
+    const script = this.doc.createElement('script')
+
+    script.async = true
+    script.src = url
+
+    return script
+  }
+
+  /**
+   * Returns the script url of extension.
+   *
+   * @param {string} extensionId of extension.
+   * @param {string=} version of extension.
+   * @returns {string}
+   * @private
+   */
+  /*
+  getExtensionScriptUrl (extensionId, version = LATEST_MIP_VERSION) {
+    return `https://c.mipcdn.com/static/v${version}/${extensionId}/${extensionId}.js`
+  }
+  */
+
+  /**
+   * Returns the script element of extension or null.
+   *
+   * @param {string} extensionId of extension.
+   * @param {string=} version of extension.
+   * @returns {?HTMLScriptElement}
+   * @private
+   */
+  /*
+  findExtensionScript (extensionId, version = LATEST_MIP_VERSION) {
+    const holder = this.getExtensionHolder(extensionId)
+
+    if (holder.script) {
+      return holder.script
+    }
+
+    const url = this.getExtensionScriptUrl(extensionId, version)
+
+    holder.script = this.doc.querySelector(`script[src="${url}"]`)
+
+    return holder.script
+  }
+  */
+
+  /**
+   * Creates the missing script element of extension.
+   *
+   * @param {string} extensionId of extension.
+   * @param {string=} version of extension.
+   * @returns {!HTMLScriptElement}
+   * @private
+   */
+  /*
+  createExtensionScript (extensionId, version = LATEST_MIP_VERSION) {
+    return this.createScript(this.getExtensionScriptUrl(extensionId, version))
+  }
+  */
+
+  /**
+   * Appends the extension script in head if there's no existing script element of extension.
+   *
+   * @param {string} extensionId of extension.
+   * @param {string=} version of extension.
+   * @private
+   */
+  /*
+  insertExtensionScriptIfNeeded (extensionId, version = LATEST_MIP_VERSION) {
+    const holder = this.getExtensionHolder(extensionId)
+
+    if (holder.loaded || holder.error || this.findExtensionScript(extensionId, version)) {
+      return
+    }
+
+    const script = this.createExtensionScript(extensionId, version)
+
+    this.doc.head.appendChild(script)
+    holder.script = script
+  }
+  */
 
   /**
    * Returns or creates a promise waiting for extension loaded.
@@ -155,6 +236,8 @@ export class Extensions {
    */
   /*
   preloadExtension (extensionId) {
+    this.insertExtensionScriptIfNeeded(extensionId)
+
     return this.waitForExtension(extensionId)
   }
   /*
@@ -197,13 +280,30 @@ export class Extensions {
       this.currentExtensionId = extensionId
       factory(...args)
 
+      if (
+        this.doc.documentElement.hasAttribute('mip-vue') &&
+        !Services.getServiceOrNull(this.win, 'mip-vue')
+      ) {
+        if (!this.doc.querySelector('script[src*="mip-vue.js"]')) {
+          const baseUrl = this.doc.querySelector('script[src*="mip.js"]').src.replace(/\/[^/]+$/, '')
+
+          this.doc.head.appendChild(this.createScript(`${baseUrl}/mip-vue.js`))
+        }
+
+        Services.getServicePromise(this.win, 'mip-vue')
+          .then(() => this.registerExtension(extensionId, factory, ...args))
+
+        return
+      }
+
       /**
        * It still possible that all element instances in current extension call lifecycle `build` synchronously.
        * Executes callback in microtask to make sure all these elements are built.
        */
-      this.timer.then(() => this.tryResolveExtension(holder))
+      this.timer.then(() => this.tryToResolveExtension(holder))
     } catch (err) {
-      this.timer.then(() => this.tryRejectExtension(holder, err))
+      this.tryToRejectExtension(holder, err)
+
       throw err
     } finally {
       this.currentExtensionId = null
@@ -216,7 +316,7 @@ export class Extensions {
    * @param {!Object} holder of extension.
    * @private
    */
-  tryResolveExtension (holder) {
+  tryToResolveExtension (holder) {
     if (!holder.elementInstances.every(el => el.isBuilt())) {
       return
     }
@@ -237,7 +337,7 @@ export class Extensions {
    * @param {Error} error to reject.
    * @private
    */
-  tryRejectExtension (holder, error) {
+  tryToRejectExtension (holder, error) {
     holder.error = error
 
     if (holder.reject) {
@@ -269,16 +369,20 @@ export class Extensions {
    * If `element.version === '1'`, then it will fallback to the registration of MIP1 elements.
    *
    * @param {!Object} element contains implementation, css and version.
-   * @returns {!function(string, !Function | !Object, string)}
+   * @returns {?function(string, !Function | !Object, string):?HTMLElement[]}
    * @private
    */
   getElementRegistrator (element) {
-    if (element.version && element.version.split('.')[0] === '1') {
-      return registerMip1Element
+    if (typeof element.implementation === 'object') {
+      const vue = Services.getServiceOrNull(this.win, 'mip-vue')
+
+      this.doc.documentElement.setAttribute('mip-vue', '')
+
+      return vue && vue.registerElement
     }
 
-    if (typeof element.implementation === 'object') {
-      return registerVueCustomElement
+    if (element.version && element.version.split('.')[0] === '1') {
+      return registerMip1Element
     }
 
     return registerCustomElement
@@ -293,6 +397,16 @@ export class Extensions {
    * @param {Object=} options
    */
   registerElement (name, implementation, css, options) {
+    if (!this.currentExtensionId) {
+      this.registerExtension(
+        UNKNOWN_EXTENSION_ID,
+        () => this.registerElement(name, implementation, css, options),
+        this.win.MIP
+      )
+
+      return
+    }
+
     const holder = this.getCurrentExtensionHolder()
     const element = {implementation, css}
     const version = options && options.version && '' + options.version
@@ -301,10 +415,18 @@ export class Extensions {
       element.version = version
     }
 
-    holder.extension.elements[name] = element
+    const registrator = this.getElementRegistrator(element)
 
-    /** @type {HTMLElement[]} */
-    let elementInstances = this.getElementRegistrator(element)(name, implementation, css)
+    if (!registrator) {
+      return
+    }
+
+    if (!holder.extension.elements[name]) {
+      holder.extension.elements[name] = element
+    }
+
+    /** @type {?HTMLElement[]} */
+    let elementInstances = registrator(name, implementation, css)
 
     if (elementInstances && elementInstances.length) {
       elementInstances.forEach(el => {
@@ -313,23 +435,18 @@ export class Extensions {
          * If they are not, these event listeners would not be registered before they emit events.
          */
         let unlistenBuild = listen(el, 'build', () => {
-          this.tryResolveExtension(holder)
+          this.tryToResolveExtension(holder)
           unlistenBuild()
           unlistenBuildError()
         })
         let unlistenBuildError = listen(el, 'build-error', event => {
-          this.tryRejectExtension(holder, event.detail)
+          this.tryToRejectExtension(holder, event.detail)
           unlistenBuild()
           unlistenBuildError()
         })
       })
       holder.elementInstances = holder.elementInstances.concat(elementInstances)
     }
-
-    /**
-     * Registers an empty service to resolve the possible pending promise.
-     */
-    Services.registerService(this.win, name, this.emptyService)
   }
 
   /**

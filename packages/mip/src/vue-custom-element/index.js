@@ -6,9 +6,13 @@
 import createVueInstance from './utils/create-vue-instance'
 import {getProps, convertAttributeValue} from './utils/props'
 import {camelize} from './utils/helpers'
-import CustomElement from '../custom-element'
-import registerElement from '../register-element'
 import Vue from 'vue'
+
+const {
+  CustomElement,
+  Services,
+  registerElement
+} = window.MIP
 
 Vue.use(function (Vue) {
   Vue.config.ignoredElements = [/^mip-/i]
@@ -84,17 +88,20 @@ Vue.use(function (Vue) {
       }
     }
 
-    return registerElement(tag, VueCustomElement)
+    registerElement(tag, VueCustomElement)
   }
 })
 
-/**
- * register vue as custom element v1
- *
- * @param {string} tag custom elment name, mip-*
- * @param {*} component vue component
- * @return {Array<HTMLElement>|undefined}
- */
-export default function registerVueCustomElement (tag, component) {
-  return Vue.customElement(tag, component)
+class MipVue {
+  /**
+   * Registers Vue custom element.
+   *
+   * @param {string} tag name of custom element.
+   * @param {!Object} component definition.
+   */
+  registerElement (tag, component) {
+    Vue.customElement(tag, component)
+  }
 }
+
+Services.registerService(window, 'mip-vue', MipVue)

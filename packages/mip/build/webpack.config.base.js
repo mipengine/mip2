@@ -16,7 +16,7 @@ module.exports = {
 
   output: {
     path: resolve('dist'),
-    filename: 'mip.js',
+    filename: '[name].js',
     publicPath: '/dist/'
     // chunkFilename: '[id].chunk.js'
   },
@@ -73,7 +73,8 @@ module.exports = {
     }),
     new webpack.BannerPlugin({
       banner: 'window._mipStartTiming=Date.now();',
-      raw: true
+      raw: true,
+      include: 'mip.js'
     })
   ]
 }
