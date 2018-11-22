@@ -818,21 +818,26 @@ describe('mip-carousel', function () {
   })
   describe('with no mip-img in the first child of mip-carousel', function () {
     let div
-    this.timeout(500)
-
-    before(function () {
+    this.timeout(1500)
+    before(() => {
       div = document.createElement('div')
       div.innerHTML = `
-        <mip-carousel
-          buttonController
-          width="100"
-          height="80"
-          index="1">
-          <div>1</div>
-          <mip-img
-            src="https://www.mipengine.org/static/img/sample_01.jpg">
-          </mip-img>
-        </mip-carousel>
+      <mip-carousel
+        buttonController
+        layout="responsive"
+        autoheight
+        width="600"
+        height="400">
+        <mip-img
+          src="https://www.mipengine.org/static/img/sample_01.jpg">
+        </mip-img>
+        <mip-img
+          src="https://www.mipengine.org/static/img/sample_03.jpg">
+        </mip-img>
+        <mip-img
+          src="https://www.mipengine.org/static/img/sample_02.jpg">
+        </mip-img>
+      </mip-carousel>
       `
       document.body.insertBefore(div, document.body.firstChild)
     })
@@ -844,6 +849,18 @@ describe('mip-carousel', function () {
       expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_01.jpg')
     })
 
+    it('should change height when swipe', async () => {
+      let mipCarousel = div.querySelector('mip-carousel')
+      await mipCarousel._resources.updateState()
+      let height = window.getComputedStyle(div, null).getPropertyValue('height')
+      let eventClick = document.createEvent('MouseEvents')
+      let nextBtn = div.querySelector('p.mip-carousel-nextBtn')
+      eventClick.initEvent('click', true, true)
+      nextBtn.dispatchEvent(eventClick)
+
+      await sleep(1200)
+      expect(window.getComputedStyle(div, null).getPropertyValue('height')).not.equal(height)
+    })
     after(function () {
       document.body.removeChild(div)
     })
