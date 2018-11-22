@@ -139,6 +139,7 @@ customElement.prototype.executeEventAction = function (action) {
 
 /**
  * Notice that resources are loaded.
+ * @deprecated
  */
 customElement.prototype.resourcesComplete = function () {
   this.element.resourcesComplete()
