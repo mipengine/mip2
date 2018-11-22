@@ -848,17 +848,6 @@ describe('mip-carousel', function () {
       let img = div.querySelectorAll('mip-img')[1].querySelector('img')
       expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_01.jpg')
     })
-    it('should change height when swipe', (done) => {
-      let height = window.getComputedStyle(div, null).getPropertyValue('height')
-      let eventClick = document.createEvent('MouseEvents')
-      let nextBtn = div.querySelector('p.mip-carousel-nextBtn')
-      eventClick.initEvent('click', true, true)
-      nextBtn.dispatchEvent(eventClick)
-
-      setTimeout(() => {
-        expect(window.getComputedStyle(div, null).getPropertyValue('height')).not.equal(height)
-        done()
-      }, 1200)
 
     it('should change height when swipe', async () => {
       let mipCarousel = div.querySelector('mip-carousel')
