@@ -178,7 +178,11 @@ class Resources {
         // If current element`s prerenderAllowed returns `true` always set the state to be `true`.
         let elementRect = rect.getElementRect(resources[i])
         let inViewport = resources[i].prerenderAllowed(elementRect, viewportRect) ||
-          rect.overlapping(elementRect, viewportRect)
+          rect.overlapping(elementRect, viewportRect) ||
+          // 在 ios 有个设置滚动${@link ./viewer.lockBodyScroll} 会设置 scrollTop=1
+          // 如果部分元素在顶部而且没有设置高度，会导致 elementRect 和 viewportRect 不重叠，
+          // 进而导致无法执行元素的生命周期，针对这种情况做特殊处理
+          (elementRect.bottom === 0 && elementRect.top === 0 && viewportRect.top === 1)
         this.setInViewport(resources[i], inViewport)
       }
     }
