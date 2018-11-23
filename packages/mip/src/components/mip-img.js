@@ -310,6 +310,7 @@ class MipImg extends CustomElement {
     return event.loadPromise(img).then(() => {
       // 标识资源已加载完成
       this.resourcesComplete()
+      this.element.classList.add('mip-img-loaded')
     }).catch(reason => {
       /* istanbul ignore if */
       if (!viewer.isIframed) {
