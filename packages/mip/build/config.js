@@ -64,8 +64,7 @@ function genConfig (name) {
     output: {
       file: opts.dest,
       format: opts.format,
-      banner: opts.banner,
-      intro: opts.intro
+      banner: opts.banner
       // name: opts.moduleName || 'MIP'
     }
   }
