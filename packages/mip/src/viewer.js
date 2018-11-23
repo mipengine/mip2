@@ -91,7 +91,8 @@ let viewer = {
     fixedElement.init()
 
     // proxy <a mip-link>
-    this._proxyLink(this.page)
+    setTimeout(() => this._proxyLink(this.page), 0)
+
   },
 
   /**

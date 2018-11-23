@@ -38,7 +38,7 @@ let mip = {}
 if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefined') {
   monitorInstall()
 
-  // pass meta through `window.name` in cross-origin scene
+  // 通过 window.name 传递信息，可用于跨域情况
   let pageMeta
   let pageMetaConfirmed = false
   try {

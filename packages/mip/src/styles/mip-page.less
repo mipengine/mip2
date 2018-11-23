@@ -24,7 +24,11 @@ body::after,
   left: 50%;
   margin: -17px 0 0 -17px;
   z-index: 100000;
-  animation: loading-rotate 1s linear infinite
+  animation: loading-rotate 1s linear infinite;
+}
+
+body::after {
+  display: none;
 }
 
 @keyframes loading-rotate {
