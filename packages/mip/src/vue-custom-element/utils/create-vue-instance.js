@@ -5,8 +5,11 @@
 
 import {getPropsData, reactiveProps} from './props'
 import {toArray} from './helpers'
-import {customEmit} from '../../util/custom-event'
-import viewer from '../../viewer'
+
+const {
+  util: {customEmit},
+  viewer
+} = window.MIP
 
 /**
  * 获取 element 的 slot content，并将 slot content element 从父元素中移除

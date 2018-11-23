@@ -4,7 +4,8 @@
  */
 
 import {camelize, hyphenate, isArray, isFunction} from './helpers'
-import jsonParse from '../../util/json-parse'
+
+const {util: {jsonParse}} = window.MIP
 
 /**
  * 从 vue 组件定义的 prop 中获取类型，如果没有定义类型，默认返回 String

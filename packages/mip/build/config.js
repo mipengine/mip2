@@ -28,7 +28,13 @@ const builds = {
     dest: resolve('dist/mip.js'),
     format: 'umd',
     env: 'production',
-    intro: 'window._mipStartTiming=Date.now();'
+    banner: 'window._mipStartTiming=Date.now();'
+  },
+  'mip-vue': {
+    entry: resolve('mip-vue'),
+    dest: resolve('dist/mip-vue.js'),
+    format: 'umd',
+    env: 'production'
   }
 }
 
@@ -64,8 +70,7 @@ function genConfig (name) {
     output: {
       file: opts.dest,
       format: opts.format,
-      banner: opts.banner,
-      intro: opts.intro,
+      banner: opts.banner
       // name: opts.moduleName || 'MIP'
     }
   }

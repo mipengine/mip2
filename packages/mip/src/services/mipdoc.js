@@ -2,91 +2,16 @@ import Services from './services'
 
 import {dom} from '../util'
 
-/* istanbul ignore next */
-class BaseMipdoc {
+export class Mipdoc {
   /**
    * @param {!Window} win
    */
   constructor (win) {
     /**
-     * @type {!Window}
      * @private
      * @const
      */
     this.win = win
-  }
-
-  /**
-   * Returns the URL for this mipdoc.
-   *
-   * @returns {string}
-   * @abstract
-   */
-  getUrl () {}
-
-  /**
-   * Returns the root node for this mipdoc.
-   *
-   * @returns {!Document}
-   * @abstract
-   */
-  getRootNode () {}
-
-  /**
-   * Returns the head element for this mipdoc.
-   *
-   * @returns {!HTMLHeadElement}
-   * @abstract
-   */
-  getHead () {}
-
-  /**
-   * Returns the body element for this mipdoc.
-   *
-   * @returns {!HTMLBodyElement}
-   * @abstract
-   */
-  getBody () {}
-
-  /**
-   * Whether `document.body` is available.
-   *
-   * @returns {boolean}
-   * @abstract
-   */
-  isBodyAvailable () {}
-
-  /**
-   * Whether the `document` is ready.
-   *
-   * @returns {boolean}
-   * @abstract
-   */
-  isDocumentReady () {}
-
-  /**
-   * Returns a promise that resolve when `document.body` is avaliable.
-   *
-   * @returns {!Promise<HTMLBodyElement>}
-   * @abstract
-   */
-  whenBodyAvailable () {}
-
-  /**
-   * Returns a promise that resolve when `document` is ready.
-   *
-   * @returns {!Promise<void>}
-   * @abstract
-   */
-  whenDocumentReady () {}
-}
-
-export class Mipdoc extends BaseMipdoc {
-  /**
-   * @param {!Window} win
-   */
-  constructor (win) {
-    super(win)
 
     /**
      * @private
@@ -105,42 +30,54 @@ export class Mipdoc extends BaseMipdoc {
   }
 
   /**
-   * @override
+   * Returns the URL for this mipdoc.
+   *
+   * @returns {string}
    */
   getUrl () {
     return this.win.location.href
   }
 
   /**
-   * @override
+   * Returns the root node for this mipdoc.
+   *
+   * @returns {!Document}
    */
   getRootNode () {
     return this.doc
   }
 
   /**
-   * @override
+   * Returns the head element for this mipdoc.
+   *
+   * @returns {!HTMLHeadElement}
    */
   getHead () {
     return this.doc.head
   }
 
   /**
-   * @override
+   * Returns the body element for this mipdoc.
+   *
+   * @returns {!HTMLBodyElement}
    */
   getBody () {
     return this.doc.body
   }
 
   /**
-   * @override
+   * Whether `document.body` is available.
+   *
+   * @returns {boolean}
    */
   isBodyAvailable () {
     return !!this.doc.body
   }
 
   /**
-   * @override
+   * Returns a promise that resolve when `document.body` is avaliable.
+   *
+   * @returns {!Promise<HTMLBodyElement>}
    */
   whenBodyAvailable () {
     return this.bodyAvailable

@@ -17,6 +17,7 @@ module.exports = {
   web: resolve('src/vue/platforms/web'),
   sfc: resolve('src/vue/sfc'),
   'deps': resolve('deps'),
+  'mip-vue': resolve('src/vue-custom-element/index.js'),
   'script-loader!deps': resolve('deps'),
   'script-loader!document-register-element': resolve('node_modules/document-register-element')
 }

@@ -280,16 +280,26 @@ export class Extensions {
       this.currentExtensionId = extensionId
       factory(...args)
 
+      /**
+       * This extension needs `mip-vue` service.
+       */
       if (
         this.doc.documentElement.hasAttribute('mip-vue') &&
         !Services.getServiceOrNull(this.win, 'mip-vue')
       ) {
+        /**
+         * Inserts script of `mip-vue` service if needed.
+         */
         if (!this.doc.querySelector('script[src*="mip-vue.js"]')) {
           const baseUrl = this.doc.querySelector('script[src*="mip.js"]').src.replace(/\/[^/]+$/, '')
 
           this.doc.head.appendChild(this.createScript(`${baseUrl}/mip-vue.js`))
         }
 
+        /**
+         * Interrupts current registration.
+         * Reregisters this extension while `mip-vue` service is loaded.
+         */
         Services.getServicePromise(this.win, 'mip-vue')
           .then(() => this.registerExtension(extensionId, factory, ...args))
 
@@ -397,16 +407,6 @@ export class Extensions {
    * @param {Object=} options
    */
   registerElement (name, implementation, css, options) {
-    if (!this.currentExtensionId) {
-      this.registerExtension(
-        UNKNOWN_EXTENSION_ID,
-        () => this.registerElement(name, implementation, css, options),
-        this.win.MIP
-      )
-
-      return
-    }
-
     const holder = this.getCurrentExtensionHolder()
     const element = {implementation, css}
     const version = options && options.version && '' + options.version
@@ -415,14 +415,14 @@ export class Extensions {
       element.version = version
     }
 
+    if (!holder.extension.elements[name]) {
+      holder.extension.elements[name] = element
+    }
+
     const registrator = this.getElementRegistrator(element)
 
     if (!registrator) {
       return
-    }
-
-    if (!holder.extension.elements[name]) {
-      holder.extension.elements[name] = element
     }
 
     /** @type {?HTMLElement[]} */
