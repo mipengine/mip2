@@ -101,17 +101,19 @@ export class Extensions {
   }
 
   /**
-   * Creates a script element with specified url.
+   * Inserts a script element in `<head>` with specified url. Returns that script element.
    *
    * @param {string} url of script.
-   * @return {!HTMLScriptElement}
+   * @returns {!HTMLScriptElement}
    * @private
    */
-  createScript (url) {
+  insertScript (url) {
     const script = this.doc.createElement('script')
 
     script.async = true
     script.src = url
+
+    this.doc.head.appendChild(script)
 
     return script
   }
@@ -155,21 +157,7 @@ export class Extensions {
   */
 
   /**
-   * Creates the missing script element of extension.
-   *
-   * @param {string} extensionId of extension.
-   * @param {string=} version of extension.
-   * @returns {!HTMLScriptElement}
-   * @private
-   */
-  /*
-  createExtensionScript (extensionId, version = LATEST_MIP_VERSION) {
-    return this.createScript(this.getExtensionScriptUrl(extensionId, version))
-  }
-  */
-
-  /**
-   * Appends the extension script in head if there's no existing script element of extension.
+   * Appends the extension script in `<head>` if there's no existing script element of extension.
    *
    * @param {string} extensionId of extension.
    * @param {string=} version of extension.
@@ -183,10 +171,7 @@ export class Extensions {
       return
     }
 
-    const script = this.createExtensionScript(extensionId, version)
-
-    this.doc.head.appendChild(script)
-    holder.script = script
+    holder.script = this.insertScript(this.getExtensionScriptUrl(extensionId, version))
   }
   */
 
@@ -293,7 +278,7 @@ export class Extensions {
         if (!this.doc.querySelector('script[src*="mip-vue.js"]')) {
           const baseUrl = this.doc.querySelector('script[src*="mip.js"]').src.replace(/\/[^/]+$/, '')
 
-          this.doc.head.appendChild(this.createScript(`${baseUrl}/mip-vue.js`))
+          this.insertScript(`${baseUrl}/mip-vue.js`)
         }
 
         /**
@@ -312,7 +297,7 @@ export class Extensions {
        */
       this.timer.then(() => this.tryToResolveExtension(holder))
     } catch (err) {
-      this.tryToRejectExtension(holder, err)
+      this.tryToRejectError(holder, err)
 
       throw err
     } finally {
@@ -347,7 +332,7 @@ export class Extensions {
    * @param {Error} error to reject.
    * @private
    */
-  tryToRejectExtension (holder, error) {
+  tryToRejectError (holder, error) {
     holder.error = error
 
     if (holder.reject) {
@@ -440,7 +425,7 @@ export class Extensions {
           unlistenBuildError()
         })
         let unlistenBuildError = listen(el, 'build-error', event => {
-          this.tryToRejectExtension(holder, event.detail)
+          this.tryToRejectError(holder, event.detail[0])
           unlistenBuild()
           unlistenBuildError()
         })
