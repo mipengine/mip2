@@ -28,7 +28,7 @@ const builds = {
     dest: resolve('dist/mip.js'),
     format: 'umd',
     env: 'production',
-    intro: 'window._mipStartTiming=Date.now();'
+    banner: 'window._mipStartTiming=Date.now();'
   }
 }
 
@@ -64,8 +64,7 @@ function genConfig (name) {
     output: {
       file: opts.dest,
       format: opts.format,
-      banner: opts.banner,
-      intro: opts.intro,
+      banner: opts.banner
       // name: opts.moduleName || 'MIP'
     }
   }
