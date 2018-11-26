@@ -244,7 +244,7 @@ function changeIndicatorStyle (startDot, endDot, className) {
 
 class MIPCarousel extends CustomElement {
   /* eslint-disable fecs-max-statements */
-  build () {
+  layoutCallback () {
     let ele = this.element
     let self = this
     let eleWidth = ele.clientWidth
@@ -314,7 +314,7 @@ class MIPCarousel extends CustomElement {
 
     // length 等于0时，不做任何处理
     if (childNum === 0) {
-      return
+      return Promise.resolve()
     }
     // 将getChildNodes获取的元素拼装轮播dom
     let carouselBox = createTagWithClass(carouselParas.boxClass)
@@ -621,6 +621,7 @@ class MIPCarousel extends CustomElement {
         autoPlay()
       }
     })
+    return Promise.resolve()
   }
 }
 

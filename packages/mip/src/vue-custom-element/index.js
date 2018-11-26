@@ -12,7 +12,6 @@ import Vue from 'vue'
 
 Vue.use(function (Vue) {
   Vue.config.ignoredElements = [/^mip-/i]
-
   Vue.customElement = (tag, componentDefinition) => {
     const props = getProps(componentDefinition)
 
@@ -23,14 +22,16 @@ Vue.use(function (Vue) {
     }
 
     class VueCustomElement extends CustomElement {
-      prerenderAllowed () {
+      /** @override */
+      prerenderAllowed (elementRect, viewportRect) {
         if (typeof componentDefinition.prerenderAllowed === 'function') {
-          return componentDefinition.prerenderAllowed()
+          return componentDefinition.prerenderAllowed(elementRect, viewportRect)
         }
 
         return false
       }
 
+      /** @private */
       _build () {
         let vueInstance = this.vueInstance = createVueInstance(
           this.element,
@@ -42,20 +43,24 @@ Vue.use(function (Vue) {
         this.vm = vueInstance.$children[0]
       }
 
+      /** @override */
       build () {
         if (this.prerenderAllowed()) {
           this._build()
         }
       }
 
+      /** @override */
       connectedCallback () {
         callLifeCycle(this, 'connectedCallback', this.element)
       }
 
+      /** @override */
       disconnectedCallback () {
         callLifeCycle(this, 'disconnectedCallback', this.element)
       }
 
+      /** @override */
       firstInviewCallback () {
         if (!this.prerenderAllowed()) {
           this._build()
@@ -64,6 +69,7 @@ Vue.use(function (Vue) {
         callLifeCycle(this.vm, 'firstInviewCallback', this.element)
       }
 
+      /** @override */
       attributeChangedCallback (name, oldValue, value) {
         if (this.vueInstance) {
           const nameCamelCase = camelize(name)
@@ -72,12 +78,13 @@ Vue.use(function (Vue) {
         }
       }
 
+      /** @override */
       static get observedAttributes () {
-        return props.hyphenate || []
+        return props.hyphenate
       }
     }
 
-    registerElement(tag, VueCustomElement)
+    return registerElement(tag, VueCustomElement)
   }
 })
 
@@ -86,7 +93,8 @@ Vue.use(function (Vue) {
  *
  * @param {string} tag custom elment name, mip-*
  * @param {*} component vue component
+ * @return {Array<HTMLElement>|undefined}
  */
 export default function registerVueCustomElement (tag, component) {
-  Vue.customElement(tag, component)
+  return Vue.customElement(tag, component)
 }

@@ -48,7 +48,7 @@ function getAttributeSet (attributes) {
 }
 
 class MipVideo extends CustomElement {
-  firstInviewCallback () {
+  layoutCallback () {
     this.attributes = getAttributeSet(this.element.attributes)
     this.sourceDoms = this.element.querySelectorAll('source')
     this.src = this.attributes.src
@@ -103,6 +103,7 @@ class MipVideo extends CustomElement {
     })
 
     this.applyFillContent(this.videoElement, true)
+    return Promise.resolve()
   }
 
   // Render the `<video>` element, and append to `this.element`

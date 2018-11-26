@@ -7,10 +7,7 @@ import EventEmitter from './util/event-emitter'
 
 class CustomElement {
   constructor (element) {
-    /**
-     * @type {MIPElement}
-     * @public
-     */
+    /** @public @type {MIPElement} */
     this.element = element
 
     // 不推荐使用
@@ -30,20 +27,13 @@ class CustomElement {
   }
 
   /**
-   * Apply the fill content style to an element
-   *
-   * @param {HTMLElement} ele element
-   * @param {boolean} isReplaced whether replaced or not
+   * Called when the MIPElement's append to dom.
    */
-  applyFillContent (ele, isReplaced) {
-    ele.classList.add('mip-fill-content')
-    if (isReplaced) {
-      ele.classList.add('mip-replaced-content')
-    }
-  }
-
   connectedCallback () {}
 
+  /**
+   * Called when the MIPElement's remove from dom.
+   */
   disconnectedCallback () {}
 
   /**
@@ -86,6 +76,72 @@ class CustomElement {
   build () {}
 
   /**
+   * Requests the element to unload any expensive resources when the element
+   * goes into non-visible state.
+   *
+   * @return {boolean}
+   */
+  unlayoutCallback () {
+    return false
+  }
+
+  /**
+   * Subclasses can override this method to create a dynamic placeholder
+   * element and return it to be appended to the element. This will only
+   * be called if the element doesn't already have a placeholder.
+   * @return {?Element}
+   */
+  createPlaceholderCallback () {
+    return null
+  }
+
+  /**
+   * Called when the element should perform layout. At this point the element
+   * should load/reload resources associated with it. This method is called
+   * by the runtime and cannot be called manually. Returns promise that will
+   * complete when loading is considered to be complete.
+   *
+   * @return {!Promise}
+   */
+  layoutCallback () {
+    return Promise.resolve()
+  }
+
+  /**
+   * Called to notify the element that the first layout has been successfully
+   * completed.
+   */
+  firstLayoutCompleted () {}
+
+  /**
+   * Hides or shows the placeholder, if available.
+   * @param {boolean} state
+   */
+  togglePlaceholder (state) {
+    this.element.togglePlaceholder(state)
+  }
+
+  /**
+   * Indicate a element whether has a loading.
+   */
+  isLoadingEnabled () {
+    return false
+  }
+
+  /**
+   * Apply the fill content style to an element
+   *
+   * @param {HTMLElement} ele element
+   * @param {boolean} isReplaced whether replaced or not
+   */
+  applyFillContent (ele, isReplaced) {
+    ele.classList.add('mip-fill-content')
+    if (isReplaced) {
+      ele.classList.add('mip-replaced-content')
+    }
+  }
+
+  /**
    * Expend current element's attributes which selected by attrs to an other object.
    *
    * @param {Array.<string>} attrs Attributes' name list
@@ -122,10 +178,10 @@ class CustomElement {
   }
 
   /**
-    * Trigger the handlers had been added by `addEventAction` of an action
-    *
-    * @param {string} action The action's name
-    */
+   * Trigger the handlers had been added by `addEventAction` of an action
+   *
+   * @param {Object} action The action object.
+   */
   executeEventAction (action) {
     let eventObj = this._actionEvent
     if (action && eventObj) {
@@ -135,8 +191,10 @@ class CustomElement {
 
   /**
    * Notice that resources are loaded.
+   * @deprecated
    */
   resourcesComplete () {
+    // istanbul ignore next
     this.element.resourcesComplete()
   }
 }
