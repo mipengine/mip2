@@ -88,7 +88,7 @@ Vue.use(function (Vue) {
       }
     }
 
-    registerElement(tag, VueCustomElement)
+    return registerElement(tag, VueCustomElement)
   }
 })
 
