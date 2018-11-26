@@ -382,29 +382,33 @@ let viewer = {
     // add normal scroll class to body. except ios in iframe.
     // Patch for ios+iframe is default in mip.css
     if (!platform.needSpecialScroll) {
-      document.documentElement.classList.add('mip-i-android-scroll')
-      document.body.classList.add('mip-i-android-scroll')
+      setTimeout(() => {
+        document.documentElement.classList.add('mip-i-android-scroll')
+        document.body.classList.add('mip-i-android-scroll')
+      }, 0)
     }
 
     // prevent bouncy scroll in iOS 7 & 8
     if (platform.isIos()) {
       let iosVersion = platform.getOsVersion()
       iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
-      document.documentElement.classList.add('mip-i-ios-scroll')
-      window.addEventListener('orientationchange', () => {
-        document.documentElement.classList.remove('mip-i-ios-scroll')
-        setTimeout(() => {
-          document.documentElement.classList.add('mip-i-ios-scroll')
+      setTimeout(() => {
+        document.documentElement.classList.add('mip-i-ios-scroll')
+        document.documentElement.classList.add('mip-i-ios-width')
+        window.addEventListener('orientationchange', () => {
+          document.documentElement.classList.remove('mip-i-ios-scroll')
+          setTimeout(() => {
+            document.documentElement.classList.add('mip-i-ios-scroll')
+          })
         })
-      })
-      document.documentElement.classList.add('mip-i-ios-width')
+      }, 0)
 
       if (!this.page.isRootPage) {
         this.fixIOSPageFreeze()
       }
 
       if (this.isIframed) {
-        this.lockBodyScroll()
+        setTimeout(() => this.lockBodyScroll(), 0)
 
         // While the back button is clicked,
         // the cached page has some problems.

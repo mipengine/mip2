@@ -10,7 +10,6 @@ import {
   toggleFadeHeader
 } from './util/dom'
 import {getCleanPageId, parsePath} from './util/path'
-import Debouncer from './util/debounce'
 import {supportsPassive} from './util/feature-detect'
 import {scrollTo} from './util/ease-scroll'
 import {
@@ -88,73 +87,6 @@ class Page {
   }
 
   /**
-   * listen to viewport.scroller, toggle header when scrolling up & down
-   *
-   */
-  setupBouncyHeader () {
-    if (this.bouncyHeaderSetup) {
-      return
-    }
-    const THRESHOLD = 10
-    let scrollTop
-    let lastScrollTop = 0
-    let scrollDistance
-    let scrollHeight = viewport.getScrollHeight()
-    let viewportHeight = viewport.getHeight()
-
-    // viewportHeight = 0 before frameMoveIn animation ends
-    // Wait a minute
-    /* istanbul ignore next */
-    if (viewportHeight === 0) {
-      setTimeout(this.setupBouncyHeader.bind(this), 100)
-      return
-    }
-
-    this.bouncyHeaderSetup = true
-    this.debouncer = new Debouncer(() => {
-      scrollTop = viewport.getScrollTop()
-      scrollDistance = Math.abs(scrollTop - lastScrollTop)
-
-      // ignore bouncy scrolling in iOS
-      /* istanbul ignore next */
-      if (scrollTop < 0 || scrollTop + viewportHeight > scrollHeight) {
-        return
-      }
-
-      /* istanbul ignore next */
-      if (lastScrollTop < scrollTop && scrollDistance >= THRESHOLD) {
-        let target = this.isRootPage ? window : window.parent
-        this.emitCustomEvent(target, this.isCrossOrigin, {
-          name: 'mipShellEvents',
-          data: {
-            type: 'slide',
-            data: {
-              direction: 'up'
-            }
-          }
-        })
-      }/* istanbul ignore next */ else if (lastScrollTop > scrollTop && scrollDistance >= THRESHOLD) {
-        let target = this.isRootPage ? window : window.parent
-        this.emitCustomEvent(target, this.isCrossOrigin, {
-          name: 'mipShellEvents',
-          data: {
-            type: 'slide',
-            data: {
-              direction: 'down'
-            }
-          }
-        })
-      }
-
-      lastScrollTop = scrollTop
-    })
-
-    // use passive event listener to improve scroll performance
-    viewport.scroller.addEventListener('scroll', this.debouncer, eventListenerOptions)
-    this.debouncer.handleEvent()
-  }
-
-  /**
    * notify root page with an eventdata
    *
    * @param {Object} data eventdata
@@ -173,8 +105,7 @@ class Page {
    *
    */
   destroy () {
-    /* istanbul ignore next */
-    viewport.scroller.removeEventListener('scroll', this.debouncer, false)
+    // 原本用于 bouncy 的 removeListener，现在不需要了，但方法还是保留，避免报错
   }
 
   start () {

@@ -1,3 +1,9 @@
+/**
+ * @file 控制回调次数
+ * @deprecated 这个功能本来使用在 bouncy header，不过因为使用很少，为了代码体积考虑删除了
+ * @author panyuqi@baidu.com (panyuqi)
+ */
+
 import {raf} from './feature-detect'
 
 export default class Debouncer {

@@ -72,11 +72,6 @@ export function render (shell, from, to) {
   // Hide page mask and skip transition
   shell.togglePageMask(false, {skipTransition: true})
 
-  // Show header
-  shell.toggleTransition(false)
-  shell.slideHeader('down')
-  shell.pauseBouncyHeader = true
-
   let params = {
     targetPageId,
     targetPageMeta,
@@ -198,8 +193,6 @@ export function render (shell, from, to) {
         display: 'block',
         opacity: 1
       })
-      shell.toggleTransition(true)
-      shell.pauseBouncyHeader = false
 
       // Get <mip-shell> from root page
       let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
@@ -270,8 +263,6 @@ export function render (shell, from, to) {
       } else {
         shell.refreshShell({pageMeta: targetPageMeta})
       }
-      shell.toggleTransition(true)
-      shell.pauseBouncyHeader = false
 
       // Get <mip-shell> from root page
       let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')

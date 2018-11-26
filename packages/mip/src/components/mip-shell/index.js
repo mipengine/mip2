@@ -371,9 +371,6 @@ class MipShell extends CustomElement {
         case 'updateShell':
           this.refreshShell({pageMeta: data.pageMeta})
           break
-        case 'slide':
-          this.slideHeader(data.direction)
-          break
         case 'togglePageMask':
           this.togglePageMask(data.toggle, data.options)
           break
@@ -498,13 +495,6 @@ class MipShell extends CustomElement {
     }
 
     // Refresh header
-    this.toggleTransition(false)
-    /* eslint-disable no-unused-expressions */
-    window.innerHeight
-    this.slideHeader('down')
-    window.innerHeight
-    /* eslint-enable no-unused-expressions */
-    this.toggleTransition(true)
     if (asyncRefresh) {
       // In async mode: (Invoked from `processShellConfig` by user)
       // 1. Render fade header with updated pageMeta
@@ -549,17 +539,6 @@ class MipShell extends CustomElement {
 
       // Rebind header events
       this.bindHeaderEvents()
-    }
-  }
-
-  slideHeader (direction) {
-    if (this.pauseBouncyHeader) {
-      return
-    }
-    if (direction === 'up') {
-      this.$el.classList.add('slide-up')
-    } else {
-      this.$el.classList.remove('slide-up')
     }
   }
 
@@ -623,14 +602,10 @@ class MipShell extends CustomElement {
       window.history.scrollRestoration = 'manual'
     }
 
-    let {show: showHeader, bouncy} = this.currentPageMeta.header
+    let {show: showHeader} = this.currentPageMeta.header
     // Set `padding-top` on scroller
     if (showHeader) {
       document.body.classList.add('with-header')
-    }
-
-    if (bouncy) {
-      page.setupBouncyHeader()
     }
 
     // Cross origin
