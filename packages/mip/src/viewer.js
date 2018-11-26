@@ -53,6 +53,11 @@ let viewer = {
     this.rootName = fn.getRootName(window.name)
 
     /**
+     * SF 创建的第一个页面的 window.name
+     */
+    this.rootName = fn.getRootName(window.name)
+
+    /**
      * Send Message, keep messager only one if prerender have created
      *
      * @inner

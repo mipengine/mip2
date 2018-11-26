@@ -818,6 +818,13 @@ describe('mip-carousel', function () {
   })
   describe('with no mip-img in the first child of mip-carousel', function () {
     let div
+<<<<<<< HEAD
+=======
+    // 1px x 1px
+    let img1 = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+    // 1px x 2px
+    let img2 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAAD0lEQVR42mNkYPhfzwAEAAiHAYAKx2h0AAAAAElFTkSuQmCC'
+>>>>>>> d43fda60bc943c3b2312f063f050d4237e4f0b98
     this.timeout(1500)
     before(() => {
       div = document.createElement('div')
@@ -829,10 +836,14 @@ describe('mip-carousel', function () {
         width="600"
         height="400">
         <mip-img
-          src="https://www.mipengine.org/static/img/sample_01.jpg">
+          src="${img1}">
         </mip-img>
         <mip-img
+<<<<<<< HEAD
           src="https://www.mipengine.org/static/img/sample_03.jpg">
+=======
+          src="${img2}">
+>>>>>>> d43fda60bc943c3b2312f063f050d4237e4f0b98
         </mip-img>
         <mip-img
           src="https://www.mipengine.org/static/img/sample_02.jpg">
@@ -846,7 +857,11 @@ describe('mip-carousel', function () {
       let mipCarousel = div.querySelector('mip-carousel')
       await mipCarousel._resources.updateState()
       let img = div.querySelectorAll('mip-img')[1].querySelector('img')
+<<<<<<< HEAD
       expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_01.jpg')
+=======
+      expect(img.getAttribute('src')).to.equal(img1)
+>>>>>>> d43fda60bc943c3b2312f063f050d4237e4f0b98
     })
 
     it('should change height when swipe', async () => {
