@@ -17,6 +17,7 @@ import platform from './platform'
 import naboo from './naboo'
 import EventEmitter from './event-emitter'
 import Gesture from './gesture/index'
+import {customEmit} from './custom-event'
 import customStorage from './custom-storage'
 import jsonParse from './json-parse'
 import templates from './templates'
@@ -125,6 +126,7 @@ export function isCacheUrl (pageUrl) {
 }
 
 export {
+  customEmit,
   dom,
   event,
   templates,
@@ -145,6 +147,7 @@ export default {
   isCacheUrl,
   EventEmitter,
   Gesture,
+  customEmit,
   customStorage,
   naboo,
   jsonParse,
