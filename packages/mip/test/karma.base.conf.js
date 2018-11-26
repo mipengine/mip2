@@ -17,7 +17,7 @@ const webpackConfig = {
         }
       },
       enforce: 'post',
-      exclude: /node_modules|deps|test|src\/vue\/|\.spec\.js$/
+      exclude: /node_modules|deps|test|src\/vue\/|src\/page\/|\.spec\.js$/
     }, {
       test: /\.(css|less)$/,
       use: [
