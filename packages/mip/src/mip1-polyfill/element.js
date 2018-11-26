@@ -4,11 +4,12 @@
  */
 
 import cssLoader from '../util/dom/css-loader'
-import layout from '../layout'
+import {applyLayout} from '../layout'
 import performance from '../performance'
 import resources from '../resources'
 import customElementsStore from '../custom-element-store'
 import prerender from '../client-prerender'
+import {customEmit} from '../util/custom-event'
 
 /* globals HTMLElement */
 
@@ -68,7 +69,6 @@ function createBaseElementProto () {
      * @public
      */
     let customElement = this.customElement = new CustomElement(this)
-
     customElement.createdCallback()
 
     // Add first-screen element to performance.
@@ -81,18 +81,10 @@ function createBaseElementProto () {
    * When the element is inserted into the DOM, initialize the layout and add the element to the '_resources'.
    */
   proto.attachedCallback = function () {
-    if (this.tagName === 'MIP-DATA') {
-      // console.log('attachedCallback')
-    }
-
     // Apply layout for this.
-    this._layout = layout.applyLayout(this)
+    this._layout = applyLayout(this)
     this.customElement.attachedCallback()
-
-    prerender.execute(() => {
-      // Add to resource manager.
-      this._resources.add(this)
-    }, this)
+    this._resources.add(this)
   }
 
   /**
@@ -161,11 +153,14 @@ function createBaseElementProto () {
     if (this.isBuilt()) {
       return
     }
+
     // Add `try ... catch` avoid the executing build list being interrupted by errors.
     try {
       this.customElement.build()
       this._built = true
+      customEmit(this, 'build')
     } catch (e) {
+      customEmit(this, 'build-error', e)
       console.warn('build error:', e)
     }
   }
@@ -181,6 +176,7 @@ function createBaseElementProto () {
 
   /**
    * Called by customElement. And tell the performance that element is loaded.
+   * @deprecated
    */
   proto.resourcesComplete = function () {
     performance.fsElementLoaded(this)
@@ -221,6 +217,7 @@ function loadCss (css, name) {
  * @param {string} name Name of a MIPElement.
  * @param {Class} elementClass element class
  * @param {string} css The csstext of the MIPElement.
+ * @return {Array<HTMLElement>|undefined}
  */
 function registerElement (name, elementClass, css) {
   if (customElementsStore.get(name)) {
@@ -230,10 +227,23 @@ function registerElement (name, elementClass, css) {
   // store the name-clazz pair
   customElementsStore.set(name, elementClass, 'mip1')
 
+  /** @type {Array<BaseElement>} */
+  let customElementInstances = []
+
+  // Override createdCallback to count element instances
+  let mipElementProto = createMipElementProto(name)
+  let createdCallback = mipElementProto.createdCallback
+  mipElementProto.createdCallback = function () {
+    createdCallback.call(this)
+    customElementInstances.push(this)
+  }
+
   loadCss(css, name)
   document.registerElement(name, {
-    prototype: createMipElementProto(name)
+    prototype: mipElementProto
   })
+
+  return customElementInstances
 }
 
 export default registerElement

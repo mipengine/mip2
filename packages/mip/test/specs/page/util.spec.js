@@ -39,12 +39,21 @@ describe('page.util', function () {
 
   describe('ease-scroll', function () {
     let spy
+    let oriHeight
     this.timeout(3000)
+
+    before(() => {
+      oriHeight = document.body.height
+      document.body.style.height = '10000px'
+      document.body.classList.toggle('mip-i-android-scroll')
+    })
 
     afterEach(function () {
       if (spy && spy.restore) {
         spy.restore()
       }
+      document.body.style.height = oriHeight
+      document.body.classList.toggle('mip-i-android-scroll')
     })
 
     it('scroll top', function (done) {
