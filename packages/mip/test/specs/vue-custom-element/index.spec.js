@@ -2,13 +2,28 @@
  * @file index.spec.js
  * @author huanghuiquan (huanghuiquan@baidu.com)
  */
-/*
+
+import 'src/vue-custom-element'
 import Vue from 'vue'
-import registerVueCustomElement from 'src/vue-custom-element/index'
 
 let prefix = 'vue-custom-element-index-'
 
-describe('vue custom element', function () {
+describe('vue custom element', () => {
+  /**
+   * @type {sinon.SinonSandbox}
+   */
+  let sandbox
+
+  let vue = MIP.Services.getService(window, 'mip-vue')
+
+  beforeEach(() => {
+    sandbox = sinon.createSandbox()
+  })
+
+  afterEach(() => {
+    sandbox.restore()
+  })
+
   it('install customElment to Vue', function () {
     expect(typeof Vue.customElement).to.equal('function')
   })
@@ -17,9 +32,12 @@ describe('vue custom element', function () {
     let name = prefix + 'regist'
     let created = sinon.spy()
     let connectedCallback = sinon.spy()
-    registerVueCustomElement(name, {
+    vue.registerElement(name, {
       created,
-      connectedCallback
+      connectedCallback,
+      render () {
+        return null
+      }
     })
 
     let ele = document.createElement(name)
@@ -82,7 +100,7 @@ describe('vue custom element', function () {
       return sinon.spy(comp, name)
     })
 
-    registerVueCustomElement(name, comp)
+    vue.registerElement(name, comp)
     let ele = document.createElement(name)
     document.body.appendChild(ele)
 
@@ -137,7 +155,7 @@ describe('vue custom element', function () {
       return sinon.spy(comp, name)
     })
 
-    registerVueCustomElement(name, comp)
+    vue.registerElement(name, comp)
 
     let ele = document.createElement(name)
     let viewportCallback = sinon.stub(ele, 'viewportCallback')
@@ -183,6 +201,9 @@ describe('vue custom element', function () {
     let comp = {
       prerenderAllowed () {
         return true
+      },
+      render () {
+        return null
       }
     }
     lifecycs.map(name => {
@@ -192,7 +213,7 @@ describe('vue custom element', function () {
       return sinon.spy(comp, name)
     })
 
-    registerVueCustomElement(name, comp)
+    vue.registerElement(name, comp)
 
     let ele = document.createElement(name)
     let viewportCallback = sinon.stub(ele, 'viewportCallback')
@@ -233,7 +254,7 @@ describe('vue custom element', function () {
       }
     }
 
-    registerVueCustomElement(name, comp)
+    vue.registerElement(name, comp)
 
     const ele = document.createElement(name)
     document.body.appendChild(ele)
@@ -249,4 +270,3 @@ describe('vue custom element', function () {
     })
   })
 })
-*/

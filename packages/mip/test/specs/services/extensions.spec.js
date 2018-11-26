@@ -330,6 +330,7 @@ describe('extensions', () => {
     document.body.appendChild(ele)
     extensions.registerExtension = sinon.spy(extensions.registerExtension)
 
+    delete require.cache[require.resolve('src/vue-custom-element')]
     require('src/vue-custom-element')
 
     await Services.getServicePromise(window, 'mip-vue')
