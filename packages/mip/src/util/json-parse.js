@@ -22,7 +22,10 @@ export default function (jsonStr) {
   if (rxone.test(validate)) {
     try {
       /* eslint-disable */
-      return eval('(' + jsonStr + ')')
+      // @link https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/eval
+      // 等价于在全局作用域调用，不影响uglify压缩变量名
+      let geval = eval
+      return geval('(' + jsonStr + ')')
       /* eslint-enable */
     } catch (e) { throw e }
   } else {
