@@ -331,7 +331,16 @@ class MipImg extends CustomElement {
   attributeChangedCallback (attributeName, oldValue, newValue, namespace) {
     if (attributeName === 'src' && oldValue !== newValue) {
       let img = this.element.querySelector('img')
-      img && (img.src = newValue)
+
+      if (!img) {
+        return
+      }
+
+      event.loadPromise(img).then(() => {
+        this.element.toggleFallback(false)
+      })
+
+      img.src = newValue
     }
   }
 
