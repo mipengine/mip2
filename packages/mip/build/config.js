@@ -26,14 +26,14 @@ const builds = {
   'mip-prod': {
     entry: resolve('mip'),
     dest: resolve('dist/mip.js'),
-    format: 'umd',
+    format: 'iife',
     env: 'production',
     banner: 'window._mipStartTiming=Date.now();'
   },
   'mip-vue': {
     entry: resolve('mip-vue'),
     dest: resolve('dist/mip-vue.js'),
-    format: 'umd',
+    format: 'iife',
     env: 'production'
   }
 }
