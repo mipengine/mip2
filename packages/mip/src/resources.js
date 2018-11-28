@@ -101,7 +101,7 @@ class Resources {
       prerender.execute(() => {
         element.build()
         this.updateState()
-      })
+      }, element)
     }
     COMPONENTS_NEED_NOT_DELAY.indexOf(element.tagName) === -1 ? setTimeout(fn, 0) : fn()
   }
