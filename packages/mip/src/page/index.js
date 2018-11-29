@@ -334,7 +334,9 @@ class Page {
       return
     }
 
-    let target = this.isRootPage ? this : /* istanbul ignore next */ window.parent.MIP.viewer.page
+    /* istanbul ignore next */
+    let target = this.isRootPage ? this : window.parent.MIP.viewer.page
+    /* istanbul ignore next */
     return target.prerenderPages(urls, options)
   }
 
