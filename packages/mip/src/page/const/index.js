@@ -9,8 +9,7 @@ export const DEFAULT_SHELL_CONFIG = {
     title: '',
     logo: '',
     buttonGroup: [],
-    show: false,
-    bouncy: true
+    show: false
   },
   view: {
     isIndex: false
