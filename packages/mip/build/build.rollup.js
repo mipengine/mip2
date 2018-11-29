@@ -42,13 +42,13 @@ function build (builds) {
 
 function buildEntry (config) {
   const output = config.output
-  const { file, banner } = output
+  const {file} = output
   const isProd = true
   return rollup.rollup(config)
     .then(bundle => bundle.generate(output))
     .then(({ code }) => {
       if (isProd) {
-        var minified = (banner ? banner + '\n' : '') + uglify.minify(code, {
+        var minified = uglify.minify(code, {
           output: {
             ascii_only: true
           },

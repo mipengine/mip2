@@ -44,7 +44,7 @@ function getBodyAttr (attr) {
 }
 
 class MipPix extends CustomElement {
-  firstInviewCallback () {
+  layoutCallback () {
     // 获取统计所需参数
     let ele = this.element
     let src = ele.getAttribute('src')
@@ -79,6 +79,7 @@ class MipPix extends CustomElement {
     ele.setAttribute('height', '')
     ele.appendChild(image)
     util.css(ele, {display: 'none'})
+    return Promise.resolve()
   }
 }
 

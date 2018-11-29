@@ -19,6 +19,8 @@ import EventEmitter from './event-emitter'
 import Gesture from './gesture/index'
 import customStorage from './custom-storage'
 import jsonParse from './json-parse'
+import templates from './templates'
+import Deferred from './deferred'
 
 /**
  * Exchange a url to cache url.
@@ -122,6 +124,13 @@ export function isCacheUrl (pageUrl) {
   return fn.isCacheUrl(pageUrl)
 }
 
+export {
+  dom,
+  event,
+  templates,
+  Deferred
+}
+
 export default {
   fn,
   dom,
@@ -138,5 +147,7 @@ export default {
   Gesture,
   customStorage,
   naboo,
-  jsonParse
+  jsonParse,
+  templates,
+  Deferred
 }

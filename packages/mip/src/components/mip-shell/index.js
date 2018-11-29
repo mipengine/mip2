@@ -217,10 +217,15 @@ class MipShell extends CustomElement {
       page.pageMeta = this.currentPageMeta
       this.initShell()
       this.initRouter()
-      this.bindRootEvents()
     }
 
-    this.bindAllEvents()
+    // 绑定事件改为异步，不阻塞发送 mippageload 事件，下同
+    setTimeout(() => {
+      if (page.isRootPage) {
+        this.bindRootEvents()
+      }
+      this.bindAllEvents()
+    }, 0)
   }
 
   disconnectedCallback () {
@@ -239,15 +244,45 @@ class MipShell extends CustomElement {
    * 4. Page mask (mainly used to cover header)
    */
   initShell () {
+    if (this.currentPageMeta.header && this.currentPageMeta.header.show) {
+      isHeaderShown = true
+      this.createHeader(true)
+    } else {
+      isHeaderShown = false
+    }
+
+    // Other sync parts
+    this.renderOtherParts()
+
+    setTimeout(() => {
+      if (!isHeaderShown) {
+        this.createHeader(false)
+      }
+
+      // Button wrapper & mask
+      let buttonGroup = this.currentPageMeta.header.buttonGroup
+      let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup)
+      this.$buttonMask = mask
+      this.$buttonWrapper = buttonWrapper
+
+      // Page mask
+      this.$pageMask = createPageMask()
+
+      // Loading
+      this.$loading = createLoading(this.currentPageMeta)
+
+      // Other async parts
+      this.renderOtherPartsAsync()
+    }, 0)
+  }
+
+  createHeader (showHeader) {
     // Shell wrapper
     this.$wrapper = document.createElement('mip-fixed')
     this.$wrapper.setAttribute('type', 'top')
     this.$wrapper.classList.add('mip-shell-header-wrapper')
-    if (this.currentPageMeta.header && this.currentPageMeta.header.show) {
-      isHeaderShown = true
-    } else {
+    if (!showHeader) {
       this.$wrapper.classList.add('hide')
-      isHeaderShown = false
     }
 
     // Header
@@ -257,26 +292,6 @@ class MipShell extends CustomElement {
     this.$wrapper.insertBefore(this.$el, this.$wrapper.firstChild)
 
     document.body.insertBefore(this.$wrapper, document.body.firstChild)
-
-    // Other sync parts
-    this.renderOtherParts()
-
-    // Button wrapper & mask
-    let buttonGroup = this.currentPageMeta.header.buttonGroup
-    let {mask, buttonWrapper} = createMoreButtonWrapper(buttonGroup)
-    this.$buttonMask = mask
-    this.$buttonWrapper = buttonWrapper
-
-    // Page mask
-    this.$pageMask = createPageMask()
-
-    // Loading
-    this.$loading = createLoading(this.currentPageMeta)
-
-    setTimeout(() => {
-      // Other async parts
-      this.renderOtherPartsAsync()
-    }, 0)
   }
 
   initRouter () {

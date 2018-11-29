@@ -12,15 +12,37 @@ import {
   MESSAGE_PAGE_RESIZE
 } from '../page/const'
 
+const {platform, css, event} = util
+
 let attrList = ['allowfullscreen', 'allowtransparency', 'sandbox']
 
 class MipIframe extends CustomElement {
+  constructor (...args) {
+    super(...args)
+
+    this.iframe = undefined
+  }
+  isLoadingEnabled () {
+    return true
+  }
+
   build () {
+    this.iframe = document.createElement('iframe')
+    this.iframe.frameBorder = '0'
+    this.iframe.scrolling = platform.isIos() ? /* istanbul ignore next */ 'no' : 'yes'
+
+    this.applyFillContent(this.iframe)
+    this.element.appendChild(this.iframe)
+  }
+
+  layoutCallback () {
     this.handlePageResize = this.handlePageResize.bind(this)
     this.notifyRootPage = this.notifyRootPage.bind(this)
+
     let element = this.element
     let src = element.getAttribute('src')
     let srcdoc = element.getAttribute('srcdoc')
+
     if (srcdoc) {
       src = 'data:text/html;charset=utf-8;base64,' + window.btoa(srcdoc)
     }
@@ -29,27 +51,25 @@ class MipIframe extends CustomElement {
     let width = element.getAttribute('width') || '100%'
 
     if (!src || !height) {
-      return
+      return Promise.resolve()
     }
 
     // window.addEventListener('message', )
     window.addEventListener('message', this.notifyRootPage.bind(this))
 
-    let iframe = document.createElement('iframe')
-    iframe.frameBorder = '0'
-    iframe.scrolling = util.platform.isIos() ? /* istanbul ignore next */ 'no' : 'yes'
-    util.css(iframe, {
+    css(this.iframe, {
       width,
       height
     })
 
-    this.applyFillContent(iframe)
-    iframe.src = src
+    this.iframe.src = src
 
-    this.expendAttr(attrList, iframe)
-    element.appendChild(iframe)
+    // if (srcdoc) {
+    //   this.iframe.srcdoc = srcdoc
+    // }
 
-    this.iframe = iframe
+    this.expendAttr(attrList, this.iframe)
+    element.appendChild(this.iframe)
 
     /**
      * 修复一个 iOS UC 下的 bug
@@ -68,6 +88,8 @@ class MipIframe extends CustomElement {
         clearInterval(timer)
       }, 500)
     }
+
+    return event.loadPromise(this.iframe)
   }
 
   firstInviewCallback () {
@@ -100,7 +122,7 @@ class MipIframe extends CustomElement {
     }
 
     if (height !== this.height) {
-      util.css(this.iframe, {
+      css(this.iframe, {
         height
       })
       this.height = height

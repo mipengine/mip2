@@ -9,7 +9,6 @@ import hash from '../util/hash'
 import viewer from '../viewer'
 import viewport from '../viewport'
 import templates from '../util/templates'
-import registerElement from './element'
 import customElement from './customElement'
 import performance from '../performance'
 import fixedElement from '../fixed-element'
@@ -60,9 +59,9 @@ export default function install (mip) {
      */
     registerMipElement (name, clazz, css) {
       if (templates.isTemplateClass(clazz)) {
-        templates.register(name, clazz)
+        mip.registerTemplate(name, clazz, {version: '1'})
       } else {
-        registerElement(name, clazz, css)
+        mip.registerElement(name, clazz, css, {version: '1'})
       }
     }
   })

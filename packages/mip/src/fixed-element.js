@@ -6,7 +6,7 @@
 
 import platform from './util/platform'
 import css from './util/dom/css'
-import layout from './layout'
+import {parseLength} from './layout'
 import util from './util/index'
 
 /**
@@ -98,8 +98,8 @@ class FixedElement {
       let fType = ele.getAttribute('type')
 
       // check invalid element and delete from document
-      let bottom = layout.parseLength(ele.getAttribute('bottom'))
-      let top = layout.parseLength(ele.getAttribute('top'))
+      let bottom = parseLength(ele.getAttribute('bottom'))
+      let top = parseLength(ele.getAttribute('top'))
       /* eslint-disable */
       if (fType === 'left' && !top && !bottom ||
             fType === 'gototop' && ele.firstElementChild.tagName.toLowerCase() !== 'mip-gototop' ||
@@ -314,12 +314,12 @@ class FixedElement {
    * @param {MIPElement} fixedEle fixedEle
    */
   setStyle (fixedEle) {
-    let bottom = layout.parseLength(fixedEle.getAttribute('bottom'))
+    let bottom = parseLength(fixedEle.getAttribute('bottom'))
     if (bottom) {
       fixedEle.style.bottom = bottom
       return
     }
-    let top = layout.parseLength(fixedEle.getAttribute('top'))
+    let top = parseLength(fixedEle.getAttribute('top'))
     if (top) {
       fixedEle.style.top = top
     }

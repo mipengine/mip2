@@ -27,6 +27,10 @@
   // export if necessary
   //
 
+  // in browser add to global
+  if (!nativePromiseSupported)
+    global['Promise'] = Promise;
+
   if (typeof exports !== 'undefined' && exports)
   {
     // node.js
@@ -41,12 +45,6 @@
       define(function(){
         return nativePromiseSupported ? NativePromise : Promise;
       });
-    }
-    else
-    {
-      // in browser add to global
-      if (!nativePromiseSupported)
-        global['Promise'] = Promise;
     }
   }
 
