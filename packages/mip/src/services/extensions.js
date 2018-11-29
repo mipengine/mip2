@@ -345,7 +345,7 @@ export class Extensions {
 
     holder.extension.services[name] = {implementation}
 
-    Services.registerService(this.win, name, implementation)
+    Services.registerService(this.win, name, implementation, true)
   }
 
   /**
