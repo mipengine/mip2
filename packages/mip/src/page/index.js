@@ -518,6 +518,7 @@ class Page {
             }
             targetPageInfo.targetWindow = newIframe.contentWindow
             me.addChild(targetPageInfo)
+            /* istanbul ignore next */
             !options.ignoreIframeMaxNum && me.checkIfExceedsMaxPageNum(pageId)
 
             resolve(newIframe)
