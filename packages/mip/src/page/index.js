@@ -194,6 +194,7 @@ class Page {
       customEmit(window, event.name, event.data)
 
       this.children.forEach(pageMeta => {
+        /* istanbul ignore next */
         if (pageMeta.targetWindow) {
           pageMeta.targetWindow.postMessage({
             type: MESSAGE_CROSS_ORIGIN,
@@ -246,7 +247,8 @@ class Page {
       return
     }
 
-    let target = this.isRootPage ? this : /* istanbul ignore next */ window.parent.MIP.viewer.page
+    /* istanbul ignore next */
+    let target = this.isRootPage ? this : window.parent.MIP.viewer.page
     return target.prerenderPages(urls)
   }
 
@@ -289,6 +291,7 @@ class Page {
       console.warn('该方法只能在 rootPage 调用')
       return
     }
+    /* istanbul ignore next */
     if (this.children.length >= MAX_PAGE_NUM) {
       let currentPage
       let prerenderIFrames = []
@@ -336,6 +339,7 @@ class Page {
    * @return {Page} page
    */
   getPageById (pageId) {
+    /* istanbul ignore next */
     if (!pageId) {
       return this
     }
@@ -389,14 +393,18 @@ class Page {
       console.warn('该方法只能在 rootPage 调用')
       return Promise.reject()
     }
+
+    /* istanbul ignore next */
     if (typeof urls === 'string') {
       urls = [urls]
     }
 
+    /* istanbul ignore next */
     if (!Array.isArray(urls)) {
       return Promise.reject('预渲染参数必须是一个数组')
     }
 
+    /* istanbul ignore next */
     let createPrerenderIFrame = ({fullpath, pageId}) => {
       return new Promise((resolve, reject) => {
         let me = this
@@ -434,16 +442,15 @@ class Page {
       })
     }
 
+    /* istanbul ignore next */
     let findMetaByPageId = pageId => {
       let target
-      /* istanbul ignore next */
       if (!this.isRootPage && !this.isCrossOrigin) {
         target = window.parent
       } else {
         target = window
       }
 
-      /* istanbul ignore next */
       if (target.MIP_PAGE_META_CACHE[pageId]) {
         return target.MIP_PAGE_META_CACHE[pageId]
       } else {
@@ -456,9 +463,7 @@ class Page {
         }
       }
 
-      /* istanbul ignore next */
       console.warn('Cannot find MIP Shell Config for current page. Use default instead.')
-      /* istanbul ignore next */
       return Object.assign({}, DEFAULT_SHELL_CONFIG)
     }
 
