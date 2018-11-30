@@ -336,6 +336,7 @@ export class Extensions {
    * Registers a service in extension currently being registered (by calling `MIP.push`).
    * A service in extension is still a class contains some useful functions,
    * it's no conceptual difference with other internal services.
+   * However, external services will be instantiated immediately.
    *
    * @param {string} name
    * @param {!Function} implementation
