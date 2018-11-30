@@ -13,8 +13,7 @@ function getGlobals () {
 
 function propFactory (name, origin) {
   return function () {
-    var parent = origin()
-    return parent[name]
+    return origin()[name]
   }
 }
 
@@ -22,9 +21,7 @@ function bindedPropFactory (name, origin) {
   return function () {
     var parent = origin()
     var fn = parent[name]
-    if (typeof fn === 'function') {
-      return fn.bind(parent)
-    }
+    return fn && fn.bind(parent)
   }
 }
 
