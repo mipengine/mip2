@@ -39,7 +39,8 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     // Initialize sleepWakeModule
     sleepWakeModule.init()
 
-    window.MIP.sandbox = sandbox()
+    // Init sandbox and proxy to window.MIP
+    sandbox(window.MIP)
 
     // Initialize viewer
     viewer.init()
