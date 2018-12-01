@@ -1,6 +1,15 @@
 const fs = require('fs-extra')
 const path = require('path')
-const render = require('../../../utils/render').render
+const etpl = require('etpl')
+
+const engine = new etpl.Engine({
+  commandOpen: '{%',
+  commandClose: '%}',
+  variableOpen: '{{',
+  variableClose: '}}'
+})
+let template = fs.readFileSync(path.join(__dirname, 'dir-template.etpl'), 'utf8')
+let renderer = engine.compile(template)
 
 module.exports = function (config) {
   return [
@@ -26,7 +35,6 @@ async function dir (url, reqPath) {
   if (url !== '/') {
     urlArr = url.slice(1, -1).split('/')
   }
-  let template = await fs.readFile(path.join(__dirname, 'dir-template.etpl'), 'utf8')
   let data = {
     canAccess: canAccess,
     fileList: fileList,
@@ -34,7 +42,7 @@ async function dir (url, reqPath) {
     urlArr: urlArr,
     url: url
   }
-  return render(template, data)
+  return renderer(data)
 }
 
 async function walk (reqPath) {
@@ -49,6 +57,9 @@ async function walk (reqPath) {
   let dirList = []
   let fileList = []
   for (let item of items) {
+    if (item === 'node_modules' || item[0] === '.') {
+      continue
+    }
     let stats = await fs.stat(path.join(reqPath, item))
     if (stats.isDirectory()) {
       dirList.push(item)
