@@ -11,6 +11,7 @@ import util from './util'
 import viewer from './viewer'
 import viewport from './viewport'
 import installMip1Polyfill from './mip1-polyfill'
+import sandbox from './sandbox'
 
 class Runtime {
   /**
@@ -132,7 +133,7 @@ class Runtime {
     }
 
     installMip1Polyfill(this.win.MIP)
-
+    window.MIP.sandbox = sandbox()
     preregisteredExtensions.forEach(installExtension)
   }
 }
