@@ -4,6 +4,8 @@
  *
  * @param {String} jsonStr Object string
  */
+
+/* eslint-disable no-eval */
 export default function (jsonStr) {
   jsonStr = jsonStr
     .replace(/(["'])((\\{2})*|(.*?[^\\](\\{2})*))\1/g, item => item.replace(/[/*]/g, s => '\\' + s))
@@ -18,11 +20,11 @@ export default function (jsonStr) {
     .replace(rxtwo, '@')
     .replace(rxthree, item => (']' + (/:$/.test(item) ? ':' : '')))
     .replace(rxfour, '')
-
+  let geval = eval
   if (rxone.test(validate)) {
     try {
       /* eslint-disable */
-      return eval('(' + jsonStr + ')')
+      return geval('(' + jsonStr + ')')
       /* eslint-enable */
     } catch (e) { throw e }
   } else {

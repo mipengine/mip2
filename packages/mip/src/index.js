@@ -10,7 +10,7 @@ import 'script-loader!deps/fetch-jsonp'
 import 'script-loader!document-register-element/build/document-register-element'
 import 'deps/promise'
 import 'deps/object-assign'
-import 'deps/mip-components-webpack-helpers'
+import runMipComponentsPolyfill from 'deps/mip-components-webpack-helpers'
 /* eslint-enable import/no-webpack-loader-syntax */
 
 import {registerRuntime} from './runtime'
@@ -39,8 +39,6 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     // Initialize sleepWakeModule
     sleepWakeModule.init()
 
-    window.MIP.sandbox = sandbox()
-
     // Initialize viewer
     viewer.init()
 
@@ -53,6 +51,9 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     // Apply layout for default-hidden elements.
     /* istanbul ignore next */
     hiddenElements.forEach(element => element.tagName.search(mipTagReg) > -1 && applyLayout(element))
+
+    window.MIP.sandbox = sandbox()
+    runMipComponentsPolyfill()
 
     // register buildin components
     builtinComponents.register()
