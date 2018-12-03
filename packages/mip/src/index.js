@@ -10,7 +10,7 @@ import 'script-loader!deps/fetch-jsonp'
 import 'script-loader!document-register-element/build/document-register-element'
 import 'deps/promise'
 import 'deps/object-assign'
-import runMipComponentsPolyfill from 'deps/mip-components-webpack-helpers'
+import installMipComponentsPolyfill from 'deps/mip-components-webpack-helpers'
 /* eslint-enable import/no-webpack-loader-syntax */
 
 import {registerRuntime} from './runtime'
@@ -53,7 +53,7 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     hiddenElements.forEach(element => element.tagName.search(mipTagReg) > -1 && applyLayout(element))
 
     window.MIP.sandbox = sandbox()
-    runMipComponentsPolyfill()
+    installMipComponentsPolyfill()
 
     // register buildin components
     builtinComponents.register()
