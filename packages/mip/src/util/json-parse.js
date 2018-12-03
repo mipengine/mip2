@@ -24,15 +24,14 @@ export default function (jsonStr) {
   if (!rxone.test(validate)) {
     throw new Error(jsonStr + ' Content should be a valid JSON string!')
   }
-  try {
-    /**
-     * 等价于在全局作用域调用，不影响uglify压缩变量名
-     *
-     * @see {@link https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/eval}
-     */
-    /* eslint-disable-next-line no-eval */
-    let geval = eval
-    return geval('(' + jsonStr + ')')
-    /* eslint-enable */
-  } catch (e) { throw e }
+
+  /**
+   * 等价于在全局作用域调用，不影响uglify压缩变量名
+   *
+   * @see {@link https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/eval}
+   */
+  /* eslint-disable-next-line no-eval */
+  let geval = eval
+
+  return geval('(' + jsonStr + ')')
 }
