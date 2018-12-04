@@ -36,7 +36,3 @@ export const animationEndEvent = animationEndEventName
 export const raf = window.requestAnimationFrame
   ? window.requestAnimationFrame.bind(window)
   : /* istanbul ignore next */setTimeout
-
-export function isPortrait () {
-  return window.innerHeight > window.innerWidth
-}
