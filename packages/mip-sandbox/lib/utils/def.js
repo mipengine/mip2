@@ -5,6 +5,10 @@
 
 var constant = require('./constant')
 
+var TYPE_PROPS = constant.TYPE.PROPS
+var TYPE_FUNCTION = constant.TYPE.FUNCTION
+var ACCESS_READONLY = constant.ACCESS.READONLY
+
 function noop () {}
 
 function getGlobals () {
@@ -17,7 +21,7 @@ function propFactory (name, origin) {
   }
 }
 
-function bindedPropFactory (name, origin) {
+function funcFactory (name, origin) {
   return function () {
     var parent = origin()
     var fn = parent[name]
@@ -25,54 +29,61 @@ function bindedPropFactory (name, origin) {
   }
 }
 
-function propProxy (name, type, access, origin) {
-  return {
-    get: type === constant.TYPE.FUNCTION
-      ? bindedPropFactory(name, origin)
-      : propFactory(name, origin),
-    set: access === constant.ACCESS.READONLY
-      ? noop
-      : function (val) {
-        var parent = origin()
-        parent[name] = val
-      }
-  }
+function propGetter (name, type, origin) {
+  return type === TYPE_FUNCTION
+    ? funcFactory(name, origin)
+    : propFactory(name, origin)
 }
 
-function mockProxy (access) {
+function mockGetter (name, desc, origin) {
   var mock = {}
-  return {
-    get: function () {
-      return mock
-    },
-    set: access === constant.ACCESS.READONLY
-      ? noop
-      : function (value) {
-        mock = value
-      }
-  }
-}
+  var isDefined = false
 
-function setterGetterProxy (getter, setter) {
-  return {
-    get: getter,
-    set: setter || noop
+  var properties = desc.properties
+  var childOrigin = desc.origin || propFactory(name, origin)
+
+  return function () {
+    if (isDefined) {
+      return mock
+    }
+
+    for (var i = 0; i < properties.length; i++) {
+      var group = properties[i]
+
+      var childType = group.type
+      var childAccess = group.access
+      var props = group.props
+
+      for (var j = 0; j < props.length; j++) {
+        var prop = props[j]
+        def(mock, prop.name || prop, prop, childType, childAccess, childOrigin)
+      }
+    }
+
+    isDefined = true
+    return mock
   }
 }
 
 function proxyFactory (name, desc, type, access, origin) {
-  if (typeof desc.getter === 'function') {
-    return setterGetterProxy(desc.getter, desc.setter)
+  return {
+    get: typeof desc.getter === 'function'
+      ? desc.getter
+      : desc.properties
+        ? mockGetter(name, desc, origin)
+        : propGetter(name, type, origin),
+    set: typeof desc.setter === 'function'
+      ? desc.setter
+      : access === ACCESS_READONLY
+        ? noop
+        : function (val) {
+          var parent = origin()
+          parent[name] = val
+        }
   }
-
-  if (desc.properties) {
-    return mockProxy(access)
-  }
-
-  return propProxy(name, type, access, origin)
 }
 
-function getDescriptor (name, desc, type, mode, access, origin) {
+function getDescriptor (name, desc, type, access, origin) {
   if (desc.descriptor) {
     return desc.descriptor
   }
@@ -88,63 +99,22 @@ function getDescriptor (name, desc, type, mode, access, origin) {
     return descriptor
   }
 
-  type = desc.type || type || constant.TYPE.PROPS
-  mode = desc.mode || mode || constant.MODE.NORMAL
-  access = desc.access || access || constant.ACCESS.READONLY
-  origin = origin || getGlobals
+  var proxy = proxyFactory(
+    name,
+    desc,
+    desc.type || type || TYPE_PROPS,
+    desc.access || access || ACCESS_READONLY,
+    origin || getGlobals
+  )
 
-  var proxy = proxyFactory(name, desc, type, access, origin)
-
-  var getter
-
-  if (desc.properties) {
-    var properties = desc.properties
-    var childOrigin = desc.origin || propFactory(name, origin)
-
-    getter = function () {
-      var mock = proxy.get()
-
-      for (var i = 0; i < properties.length; i++) {
-        var group = properties[i]
-
-        var childType = group.type
-        var childMode = group.mode
-        var childAccess = group.access
-        var props = group.props
-
-        for (var j = 0; j < props.length; j++) {
-          var prop = props[j]
-          def(mock, prop.name || prop, prop, childType, childMode, childAccess, childOrigin)
-        }
-      }
-
-      return mock
-    }
-  } else {
-    getter = proxy.get
-  }
-
-  // 普通的节点可以进行缓存
-  if (mode === constant.MODE.NORMAL) {
-    var cache
-    var runtimeGetter = getter
-    getter = function () {
-      if (cache) {
-        return cache
-      }
-      cache = runtimeGetter()
-      return cache
-    }
-  }
-
-  descriptor.get = getter
+  descriptor.get = proxy.get
   descriptor.set = proxy.set
 
   return descriptor
 }
 
-function def (obj, name, desc, type, mode, access, origin) {
-  var descriptor = getDescriptor(name, desc, type, mode, access, origin)
+function def (obj, name, desc, type, access, origin) {
+  var descriptor = getDescriptor(name, desc, type, access, origin)
 
   if (obj) {
     Object.defineProperty(obj, name, descriptor)

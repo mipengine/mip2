@@ -8,10 +8,10 @@ module.exports = {
     PROPS: false,
     FUNCTION: true
   },
-  MODE: {
-    NORMAL: false,
-    RUNTIME: true
-  },
+  // MODE: {
+  //   NORMAL: false,
+  //   RUNTIME: true
+  // },
   ACCESS: {
     READONLY: false,
     READWRITE: true

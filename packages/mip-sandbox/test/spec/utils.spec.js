@@ -45,8 +45,8 @@ describe('utils/def', function () {
     it('define property', function () {
       var obj = {}
 
-      def(obj, 'undefined', 'undefined', undefined, undefined, undefined)
-      def(obj, 'innerWidth', 'innerWidth', undefined, undefined, undefined)
+      def(obj, 'undefined', 'undefined', undefined, undefined)
+      def(obj, 'innerWidth', 'innerWidth', undefined, undefined)
 
       expect(obj.undefined).to.be.equal(undefined)
       expect(typeof obj.innerWidth).to.be.equal('number')
@@ -71,6 +71,11 @@ describe('utils/def', function () {
 
   describe('#def traverse', function () {
     var node = {}
+
+    window.hehe = {
+      a: 1,
+      b: 2
+    }
 
     var sandbox = {
       name: 'aroot',
@@ -133,6 +138,27 @@ describe('utils/def', function () {
           props: [
             'innerWidth'
           ]
+        },
+        {
+          type: false,
+          mode: false,
+          access: true,
+          props: [
+            {
+              name: 'hehe',
+              properties: [
+                {
+                  type: false,
+                  mode: true,
+                  access: true,
+                  props: [
+                    'a',
+                    'b'
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     }
@@ -141,7 +167,15 @@ describe('utils/def', function () {
     var obj = node.aroot
 
     it('enumerable', function () {
-      expect(Object.keys(obj)).to.be.deep.equal(['Date', 'NaN', 'location', 'window', 'setTimeout', 'innerWidth'])
+      expect(Object.keys(obj)).to.be.deep.equal([
+        'Date',
+        'NaN',
+        'location',
+        'window',
+        'setTimeout',
+        'innerWidth',
+        'hehe'
+      ])
       expect(Object.keys(obj.location)).to.be.deep.equal(['href', 'protocol', 'hash'])
     })
 
@@ -171,6 +205,23 @@ describe('utils/def', function () {
 
     it('innerWidth', function () {
       expect(typeof obj.innerWidth).to.be.equal('number')
+    })
+
+    it('readwrite', function () {
+      expect(obj.hehe.a).to.be.equal(window.hehe.a)
+      obj.hehe.a = 10086
+      expect(obj.hehe.a).to.be.equal(window.hehe.a)
+      expect(obj.hehe.a).to.be.equal(10086)
+      var newObj = {
+        c: 1,
+        d: 2
+      }
+      obj.hehe = newObj
+
+      expect(obj.hehe.a).to.be.equal(undefined)
+      expect(obj.hehe.c).to.be.equal(undefined)
+      expect(window.hehe.c).to.be.equal(1)
+      expect(obj.hehe).to.not.be.equal(newObj)
     })
   })
 })

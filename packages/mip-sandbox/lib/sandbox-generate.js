@@ -5,16 +5,17 @@
 
 // only use in browser env
 
-var keywords = require('./keywords')
+var gen = require('./keywords-generate')
 var def = require('./utils/def')
 
 module.exports = function (mip) {
-  var sandboxDescriptor = def(mip, keywords.SANDBOX.name, keywords.SANDBOX)
+  var keywords = gen()
+  var descriptor = def(mip, keywords.SANDBOX.name, keywords.SANDBOX)
 
   if (mip) {
     return
   }
 
-  var sandbox = sandboxDescriptor.get()
+  var sandbox = descriptor.get()
   return sandbox
 }
