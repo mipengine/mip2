@@ -7,18 +7,13 @@
 import css from '../../util/dom/css'
 import {
   whenTransitionEnds,
-  nextFrame
+  nextFrame,
+  setHeaderColor,
+  BACK_BUTTON_SVG
 } from '../../page/util/dom'
 import event from '../../util/dom/event'
 import {supportsPassive} from '../../page/util/feature-detect'
 
-const BACK_BUTTON_SVG = [
-  '<svg t="1530857979993" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3173"',
-    'xmlns:xlink="http://www.w3.org/1999/xlink">',
-    '<path  fill="currentColor" d="M348.949333 511.829333L774.250667 105.728C783.978667 96 789.333333 83.712 789.333333 71.104c0-12.629333-5.354667-24.917333-15.082666-34.645333-9.728-9.728-22.037333-15.082667-34.645334-15.082667-12.586667 0-24.917333 5.333333-34.624 15.082667L249.557333 471.616A62.570667 62.570667 0 0 0 234.666667 512c0 10.410667 1.130667 25.408 14.890666 40.042667l455.424 435.605333c9.706667 9.728 22.016 15.082667 34.624 15.082667s24.917333-5.354667 34.645334-15.082667c9.728-9.728 15.082667-22.037333 15.082666-34.645333 0-12.608-5.354667-24.917333-15.082666-34.645334L348.949333 511.829333z"',
-      'p-id="3174"></path>',
-  '</svg>'
-].join('')
 const MORE_BUTTON_SVG = [
   '<svg t="1530857985972" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3393"',
     'xmlns:xlink="http://www.w3.org/1999/xlink">',
@@ -34,7 +29,8 @@ const CLOSE_BUTTON_SVG = [
       'p-id="2954"></path>',
   '</svg>'
 ].join('')
-const MIP_SHELL_HEADER_BUTTON_GROUP = 'mip-shell-header-button-group'
+const MIP_SHELL_HEADER = 'mip-shell-header'
+const MIP_SHELL_HEADER_BUTTON_GROUP = MIP_SHELL_HEADER + '-button-group'
 const MIP_SHELL_HEADER_BUTTON_GROUP_STANDALONE = MIP_SHELL_HEADER_BUTTON_GROUP + '-standalone'
 const MIP_HEADER_BTN = 'mip-header-btn'
 const DATA_BUTTON_NAME = 'data-button-name'
@@ -115,7 +111,7 @@ export function createMoreButtonWrapper (buttonGroup, options = {}) {
  */
 export function createPageMask () {
   let mask = document.createElement('mip-fixed')
-  mask.classList.add('mip-shell-header-mask')
+  mask.classList.add(MIP_SHELL_HEADER + '-mask')
   document.body.appendChild(mask)
 
   return mask
@@ -192,9 +188,9 @@ export function renderHeader (shell, container) {
     ].join('')
   }
   headerHTML += [
-    '<div class="mip-shell-header-logo-title">',
-      `${logo ? `<img class="mip-shell-header-logo" src="${logo}">` : ''}`,
-      `<span class="mip-shell-header-title">${title}</span>`,
+    `<div class="${MIP_SHELL_HEADER}-logo-title">`,
+      `${logo ? `<img class="${MIP_SHELL_HEADER}-logo" src="${logo}">` : ''}`,
+      `<span class="${MIP_SHELL_HEADER}-title">${title}</span>`,
     '</div>'
   ].join('')
 
@@ -221,12 +217,7 @@ export function renderHeader (shell, container) {
   container.innerHTML = headerHTML
 
   // Set color & borderColor & backgroundColor
-  css(container, 'background-color', backgroundColor)
-  css(container.querySelectorAll('svg'), 'fill', color)
-  css(container.querySelector('.mip-shell-header-title'), 'color', color)
-  css(container.querySelector('.mip-shell-header-logo'), 'border-color', borderColor)
-  css(container.querySelector('.mip-shell-header-button-group'), 'border-color', borderColor)
-  css(container.querySelector('.mip-shell-header-button-group .split'), 'background-color', borderColor)
+  setHeaderColor(container, container, color, backgroundColor, borderColor)
 }
 
 export function bindHeaderEvents (shell) {

@@ -12,6 +12,18 @@ import {raf, transitionEndEvent, animationEndEvent} from './feature-detect'
 import {normalizeLocation} from './route'
 import viewport from '../../viewport'
 
+const MIP_SHELL_HEADER = 'mip-shell-header'
+const MIP_PAGE_LOADING_WRAPPER = 'mip-page-loading-wrapper'
+const MIP_PAGE_FADE_HEADER_WRAPPER = 'mip-page-fade-header-wrapper'
+
+export const BACK_BUTTON_SVG = [
+  '<svg t="1530857979993" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3173"',
+    'xmlns:xlink="http://www.w3.org/1999/xlink">',
+    '<path  fill="currentColor" d="M348.949333 511.829333L774.250667 105.728C783.978667 96 789.333333 83.712 789.333333 71.104c0-12.629333-5.354667-24.917333-15.082666-34.645333-9.728-9.728-22.037333-15.082667-34.645334-15.082667-12.586667 0-24.917333 5.333333-34.624 15.082667L249.557333 471.616A62.570667 62.570667 0 0 0 234.666667 512c0 10.410667 1.130667 25.408 14.890666 40.042667l455.424 435.605333c9.706667 9.728 22.016 15.082667 34.624 15.082667s24.917333-5.354667 34.645334-15.082667c9.728-9.728 15.082667-22.037333 15.082666-34.645333 0-12.608-5.354667-24.917333-15.082666-34.645334L348.949333 511.829333z"',
+      'p-id="3174"></path>',
+  '</svg>'
+].join('')
+
 export function createIFrame ({fullpath, pageId}, {onLoad, onError} = {}) {
   let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${pageId}"]`)
 
@@ -82,38 +94,48 @@ export function hideAllIFrames () {
   }
 }
 
+function getHeaderHTML (logo, isFake) {
+  return [
+    `<div class="${MIP_SHELL_HEADER}">`,
+      `<span ${isFake ? '' : 'mip-header-btn'} class="back-button">`,
+        BACK_BUTTON_SVG,
+      '</span>',
+      `<div class="${MIP_SHELL_HEADER}-logo-title">`,
+        `<img class="${MIP_SHELL_HEADER}-logo" src="${logo}">`,
+        `<span class="${MIP_SHELL_HEADER}-title"></span>`,
+      '</div>',
+    '</div>'
+  ].join('')
+}
+
 /**
  * Create loading div
  *
  * @param {Object} pageMeta Page meta info
  */
 export function createLoading (pageMeta) {
-  let loading = document.querySelector('#mip-page-loading-wrapper')
+  let loading = document.querySelector('#' + MIP_PAGE_LOADING_WRAPPER)
   if (loading) {
     return loading
   }
 
   let logo = pageMeta ? (pageMeta.header.logo || '') : ''
   loading = document.createElement('mip-fixed')
-  loading.id = 'mip-page-loading-wrapper'
-  loading.setAttribute('class', 'mip-page-loading-wrapper')
-  loading.innerHTML = `
-    <div class="mip-shell-header">
-      <span mip-header-btn class="back-button">
-        <svg t="1530857979993" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3173"
-          xmlns:xlink="http://www.w3.org/1999/xlink">
-          <path  fill="currentColor" d="M348.949333 511.829333L774.250667 105.728C783.978667 96 789.333333 83.712 789.333333 71.104c0-12.629333-5.354667-24.917333-15.082666-34.645333-9.728-9.728-22.037333-15.082667-34.645334-15.082667-12.586667 0-24.917333 5.333333-34.624 15.082667L249.557333 471.616A62.570667 62.570667 0 0 0 234.666667 512c0 10.410667 1.130667 25.408 14.890666 40.042667l455.424 435.605333c9.706667 9.728 22.016 15.082667 34.624 15.082667s24.917333-5.354667 34.645334-15.082667c9.728-9.728 15.082667-22.037333 15.082666-34.645333 0-12.608-5.354667-24.917333-15.082666-34.645334L348.949333 511.829333z"
-            p-id="3174"></path>
-        </svg>
-      </span>
-      <div class="mip-shell-header-logo-title">
-        <img class="mip-shell-header-logo" src="${logo}">
-        <span class="mip-shell-header-title"></span>
-      </div>
-    </div>
-  `
+  loading.id = MIP_PAGE_LOADING_WRAPPER
+  loading.setAttribute('class', MIP_PAGE_LOADING_WRAPPER)
+  loading.innerHTML = getHeaderHTML(logo, false)
   document.body.appendChild(loading)
   return loading
+}
+
+// 可能已经没人用，之后考虑删除吧
+export function setHeaderColor(container, dom, color, backgroundColor, borderColor) {
+  css(container, 'background-color', backgroundColor)
+  css(dom.querySelectorAll('svg'), 'fill', color)
+  css(dom.querySelector(`.${MIP_SHELL_HEADER}-title`), 'color', color)
+  css(dom.querySelector(`.${MIP_SHELL_HEADER}-logo`), 'border-color', borderColor)
+  css(dom.querySelector(`.${MIP_SHELL_HEADER}-button-group`), 'border-color', borderColor)
+  css(dom.querySelector(`.${MIP_SHELL_HEADER}-button-group .split`), 'background-color', borderColor)
 }
 
 /**
@@ -127,10 +149,11 @@ export function createLoading (pageMeta) {
  * @returns {HTMLElement}
  */
 export function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} = {}) {
-  let loading = document.querySelector('#mip-page-loading-wrapper')
+  let loadingSelector = '#' + MIP_PAGE_LOADING_WRAPPER
+  let loading = document.querySelector(loadingSelector)
   if (!loading) {
     createLoading()
-    loading = document.querySelector('#mip-page-loading-wrapper')
+    loading = document.querySelector(loadingSelector)
   }
 
   if (!targetMeta) {
@@ -149,13 +172,14 @@ export function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} =
     loading.classList.toggle('only-header', !!onlyHeader)
   }
 
+  let mipShellHeader = loading.querySelector('.' + MIP_SHELL_HEADER)
   if (!transitionContainsHeader || !targetMeta.header.show) {
-    css(loading.querySelector('.mip-shell-header'), 'display', 'none')
+    css(mipShellHeader, 'display', 'none')
   } else {
-    css(loading.querySelector('.mip-shell-header'), 'display', 'flex')
+    css(mipShellHeader, 'display', 'flex')
   }
 
-  let $logo = loading.querySelector('.mip-shell-header-logo')
+  let $logo = loading.querySelector(`.${MIP_SHELL_HEADER}-logo`)
   if (targetMeta.header.logo) {
     $logo.setAttribute('src', targetMeta.header.logo)
     css($logo, 'display', 'block')
@@ -164,7 +188,7 @@ export function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} =
   }
 
   if (targetMeta.header.title) {
-    loading.querySelector('.mip-shell-header-title').innerHTML = targetMeta.header.title
+    loading.querySelector(`.${MIP_SHELL_HEADER}-title`).innerHTML = targetMeta.header.title
   }
 
   css(loading.querySelector('.back-button'), 'display', targetMeta.view.isIndex ? 'none' : 'flex')
@@ -176,44 +200,25 @@ export function getLoading (targetMeta, {onlyHeader, transitionContainsHeader} =
       borderColor,
       backgroundColor = '#ffffff'
     } = targetMeta.header
-    let loadingContainer = loading.querySelector('.mip-shell-header')
+    let loadingContainer = loading.querySelector('.' + MIP_SHELL_HEADER)
 
-    css(loadingContainer, 'background-color', backgroundColor)
-    css(loading.querySelectorAll('svg'), 'fill', color)
-    css(loading.querySelector('.mip-shell-header-title'), 'color', color)
-    css(loading.querySelector('.mip-shell-header-logo'), 'border-color', borderColor)
-    css(loading.querySelector('.mip-shell-header-button-group'), 'border-color', borderColor)
-    css(loading.querySelector('.mip-shell-header-button-group .split'), 'background-color', borderColor)
+    setHeaderColor(loadingContainer, loading, color, backgroundColor, borderColor)
   }
 
   return loading
 }
 
 export function createFadeHeader (pageMeta) {
-  let fadeHeader = document.querySelector('#mip-page-fade-header-wrapper')
+  let fadeHeader = document.querySelector('#' + MIP_PAGE_FADE_HEADER_WRAPPER)
   if (fadeHeader) {
     return fadeHeader
   }
 
   let logo = pageMeta ? (pageMeta.header.logo || '') : ''
   fadeHeader = document.createElement('mip-fixed')
-  fadeHeader.id = 'mip-page-fade-header-wrapper'
-  fadeHeader.setAttribute('class', 'mip-page-fade-header-wrapper')
-  fadeHeader.innerHTML = `
-    <div class="mip-shell-header">
-      <span class="back-button">
-        <svg t="1530857979993" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3173"
-          xmlns:xlink="http://www.w3.org/1999/xlink">
-          <path  fill="currentColor" d="M348.949333 511.829333L774.250667 105.728C783.978667 96 789.333333 83.712 789.333333 71.104c0-12.629333-5.354667-24.917333-15.082666-34.645333-9.728-9.728-22.037333-15.082667-34.645334-15.082667-12.586667 0-24.917333 5.333333-34.624 15.082667L249.557333 471.616A62.570667 62.570667 0 0 0 234.666667 512c0 10.410667 1.130667 25.408 14.890666 40.042667l455.424 435.605333c9.706667 9.728 22.016 15.082667 34.624 15.082667s24.917333-5.354667 34.645334-15.082667c9.728-9.728 15.082667-22.037333 15.082666-34.645333 0-12.608-5.354667-24.917333-15.082666-34.645334L348.949333 511.829333z"
-            p-id="3174"></path>
-        </svg>
-      </span>
-      <div class="mip-shell-header-logo-title">
-        <img class="mip-shell-header-logo" src="${logo}">
-        <span class="mip-shell-header-title"></span>
-      </div>
-    </div>
-  `
+  fadeHeader.id = MIP_PAGE_FADE_HEADER_WRAPPER
+  fadeHeader.setAttribute('class', MIP_PAGE_FADE_HEADER_WRAPPER)
+  fadeHeader.innerHTML = getHeaderHTML(logo, true)
   document.body.appendChild(fadeHeader)
   return fadeHeader
 }
@@ -227,17 +232,18 @@ export function createFadeHeader (pageMeta) {
  * @returns {HTMLElement}
  */
 export function getFadeHeader (targetMeta, sourceMeta) {
-  let fadeHeader = document.querySelector('#mip-page-fade-header-wrapper')
+  let fadeHeaderSelector = '#' + MIP_PAGE_FADE_HEADER_WRAPPER
+  let fadeHeader = document.querySelector(fadeHeaderSelector)
   if (!fadeHeader) {
     createFadeHeader()
-    fadeHeader = document.querySelector('#mip-page-fade-header-wrapper')
+    fadeHeader = document.querySelector(fadeHeaderSelector)
   }
 
   if (!targetMeta) {
     return fadeHeader
   }
 
-  let $logo = fadeHeader.querySelector('.mip-shell-header-logo')
+  let $logo = fadeHeader.querySelector(`.${MIP_SHELL_HEADER}-logo`)
   if (targetMeta.header.logo) {
     $logo.setAttribute('src', targetMeta.header.logo)
     css($logo, 'display', 'block')
@@ -246,7 +252,7 @@ export function getFadeHeader (targetMeta, sourceMeta) {
   }
 
   if (targetMeta.header.title) {
-    fadeHeader.querySelector('.mip-shell-header-title').innerHTML = targetMeta.header.title
+    fadeHeader.querySelector(`.${MIP_SHELL_HEADER}-title`).innerHTML = targetMeta.header.title
   }
 
   css(fadeHeader.querySelector('.back-button'), 'display', targetMeta.view.isIndex ? 'none' : 'flex')
@@ -258,14 +264,9 @@ export function getFadeHeader (targetMeta, sourceMeta) {
     borderColor = '#e1e1e1',
     backgroundColor = '#ffffff'
   } = colorConfig
-  let fadeHeaderContainer = fadeHeader.querySelector('.mip-shell-header')
+  let fadeHeaderContainer = fadeHeader.querySelector('.' + MIP_SHELL_HEADER)
 
-  css(fadeHeaderContainer, 'background-color', backgroundColor)
-  css(fadeHeader.querySelectorAll('svg'), 'fill', color)
-  css(fadeHeader.querySelector('.mip-shell-header-title'), 'color', color)
-  css(fadeHeader.querySelector('.mip-shell-header-logo'), 'border-color', borderColor)
-  css(fadeHeader.querySelector('.mip-shell-header-button-group'), 'border-color', borderColor)
-  css(fadeHeader.querySelector('.mip-shell-header-button-group .split'), 'background-color', borderColor)
+  setHeaderColor(fadeHeaderContainer, fadeHeader, color, backgroundColor, borderColor)
 
   return fadeHeader
 }
