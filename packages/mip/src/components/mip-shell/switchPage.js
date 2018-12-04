@@ -4,7 +4,7 @@
  */
 /* istanbul ignore file */
 
-import {isPortrait} from '../../page/util/feature-detect'
+import viewport from '../../viewport'
 import css from '../../util/dom/css'
 import {
   getIFrame,
@@ -31,7 +31,7 @@ let activeZIndex = 10000
  * @param {Function} options.onComplete complete callback
  */
 export function switchPage (shell, options) {
-  if (isPortrait() && window.MIP_SHELL_OPTION.allowTransition) {
+  if (viewport.isPortrait() && window.MIP_SHELL_OPTION.allowTransition) {
     // enable transition
     if (options.newPage) {
       if (options.isForward) {
