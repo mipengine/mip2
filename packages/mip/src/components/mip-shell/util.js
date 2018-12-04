@@ -34,6 +34,5 @@ export /* istanbul ignore next */ function checkRouteConfig (route) {
 }
 
 function routeConfigWarning (configName, replaceName, route) {
-  console.warn(`检测到一条路由配置中没有设置 ${configName} 选项，MIP 将使用 ${replaceName} 代替。`)
-  console.warn(route)
+  console.warn(`检测到一条路由配置中没有设置 ${configName} 选项，MIP 将使用 ${replaceName} 代替。\n`, route)
 }
