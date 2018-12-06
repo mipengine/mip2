@@ -81,15 +81,13 @@ class MipShell extends CustomElement {
     if (ele) {
       try {
         tmpShellConfig = JSON.parse(ele.textContent.toString()) || {}
-        if (tmpShellConfig.alwaysReadConfigOnLoad !== undefined) {
-          this.alwaysReadConfigOnLoad = tmpShellConfig.alwaysReadConfigOnLoad
-        }
-        if (tmpShellConfig.transitionContainsHeader !== undefined) {
-          this.transitionContainsHeader = tmpShellConfig.transitionContainsHeader
-        }
-        if (tmpShellConfig.ignoreWarning !== undefined) {
-          this.ignoreWarning = tmpShellConfig.ignoreWarning
-        }
+        // 开头的分号是为了应对 rollup 的 BUG，否则会导致方括号和上一句的 || {} 连接在一起从而不执行
+        ;['alwaysReadConfigOnLoad', 'transitionContainsHeader', 'ignoreWarning'].forEach(key => {
+          if (tmpShellConfig[key] !== undefined) {
+            this[key] = tmpShellConfig[key]
+          }
+        })
+
         if (!tmpShellConfig.routes) {
           !this.ignoreWarning && console.warn('检测到 MIP Shell 配置没有包含 `routes` 数组，MIP 将自动生成一条默认的路由配置。')
           tmpShellConfig.routes = [{

@@ -11,7 +11,7 @@ import util from './util'
 import viewer from './viewer'
 import viewport from './viewport'
 import installMip1Polyfill from './mip1-polyfill'
-import sandbox from './sandbox'
+import installSandbox from './sandbox'
 
 class Runtime {
   /**
@@ -101,7 +101,7 @@ class Runtime {
 
     const {installExtension, registerElement, registerService, registerTemplate} = this.extensions
 
-    this.win.MIP = {
+    let globalMip = this.win.MIP = {
       version: '2',
       CustomElement,
       Services,
@@ -132,8 +132,8 @@ class Runtime {
       viewport
     }
 
-    installMip1Polyfill(this.win.MIP)
-    window.MIP.sandbox = sandbox()
+    installMip1Polyfill(globalMip)
+    installSandbox(globalMip)
     preregisteredExtensions.forEach(installExtension)
   }
 }
