@@ -4,6 +4,8 @@
  *
  * @param {String} jsonStr Object string
  */
+
+/* eslint-disable no-eval */
 export default function (jsonStr) {
   jsonStr = jsonStr
     .replace(/(["'])((\\{2})*|(.*?[^\\](\\{2})*))\1/g, item => item.replace(/[/*]/g, s => '\\' + s))
@@ -19,13 +21,17 @@ export default function (jsonStr) {
     .replace(rxthree, item => (']' + (/:$/.test(item) ? ':' : '')))
     .replace(rxfour, '')
 
-  if (rxone.test(validate)) {
-    try {
-      /* eslint-disable */
-      return eval('(' + jsonStr + ')')
-      /* eslint-enable */
-    } catch (e) { throw e }
-  } else {
+  if (!rxone.test(validate)) {
     throw new Error(jsonStr + ' Content should be a valid JSON string!')
   }
+
+  /**
+   * 等价于在全局作用域调用，不影响uglify压缩变量名
+   *
+   * @see {@link https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/eval}
+   */
+  /* eslint-disable-next-line no-eval */
+  let geval = eval
+
+  return geval('(' + jsonStr + ')')
 }
