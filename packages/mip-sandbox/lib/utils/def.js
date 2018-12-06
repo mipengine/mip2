@@ -3,201 +3,124 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-var globals = typeof window === 'object' ? window : {}
+var constant = require('./constant')
 
-var utils = {
-  // 方便测试用
-  getGlobals: function (val) {
-    globals = val
-  },
-  traverse: traverse,
-  def: def
-}
-
-function prop (obj, name) {
-  var keys = name.split('.')
-  for (var i = 0; i < keys.length; i++) {
-    if (!obj) {
-      return
-    }
-    obj = obj[keys[i]]
-  }
-  return obj
-}
-
-function merge (a, b, exclude) {
-  var keys = Object.keys(b)
-  for (var i = 0; i < keys.length; i++) {
-    if (!exclude || exclude.indexOf(keys[i]) === -1) {
-      a[keys[i]] = b[keys[i]]
-    }
-  }
-
-  return a
-}
-
-function getProp (name) {
-  return prop(globals, name)
-}
-
-function getRuntimeProp (name) {
-  var runtimeProp = function () {
-    return prop(globals, name)
-  }
-
-  runtimeProp._name = 'runtimeProp'
-  return runtimeProp
-}
-
-function formatOptions (options, mount) {
-  ['host', 'getter'].forEach(function (propName) {
-    var propVal = options[propName]
-    if (typeof propVal !== 'string') {
-      return
-    }
-
-    if (mount) {
-      options[propName] = mount[propVal]
-      if (options[propName] != null) {
-        return
-      }
-    }
-
-    options[propName] = getProp(propVal)
-    if (options[propName] != null) {
-      return
-    }
-
-    options[propName] = getRuntimeProp(propVal)
-  })
-
-  if (!options.host) {
-    options.host = globals
-  }
-
-  return options
-}
-
-function traverse (node, parent, mount) {
-  mount = mount || {}
-  var options = merge({}, node, ['properties'])
-  formatOptions(options, mount)
-
-  if (!node.properties) {
-    parent &&
-    def(
-      parent,
-      node.name,
-      typeof options.getter === 'function' ? options.getter : function () {
-        return options.getter
-      }
-    )
-    return
-  }
-
-  var obj = {}
-
-  if (node.mount) {
-    mount[node.mount] = obj
-  }
-
-  node.properties.forEach(function (child) {
-    if (typeof child === 'string') {
-      def(obj, child, child, options)
-    } else {
-      traverse(child, obj, mount)
-    }
-  })
-
-  if (parent) {
-    def(parent, node.name, function () {
-      return obj
-    })
-    return
-  }
-
-  return obj
-}
+var TYPE_PROPS = constant.TYPE.PROPS
+var TYPE_FUNCTION = constant.TYPE.FUNCTION
+var ACCESS_READONLY = constant.ACCESS.READONLY
 
 function noop () {}
 
-function formatDescriptor (props, options) {
+function getGlobals () {
+  return window
+}
+
+function propFactory (name, origin) {
+  return function () {
+    return origin()[name]
+  }
+}
+
+function funcFactory (name, origin) {
+  return function () {
+    var parent = origin()
+    var fn = parent[name]
+    return fn && fn.bind(parent)
+  }
+}
+
+function propGetter (name, type, origin) {
+  return type === TYPE_FUNCTION
+    ? funcFactory(name, origin)
+    : propFactory(name, origin)
+}
+
+function mockGetter (name, desc, origin) {
+  var mock = {}
+  var isDefined = false
+
+  var properties = desc.properties
+  var childOrigin = desc.origin || propFactory(name, origin)
+
+  return function () {
+    if (isDefined) {
+      return mock
+    }
+
+    for (var i = 0; i < properties.length; i++) {
+      var group = properties[i]
+
+      var childType = group.type
+      var childAccess = group.access
+      var props = group.props
+
+      for (var j = 0; j < props.length; j++) {
+        var prop = props[j]
+        def(mock, prop.name || prop, prop, childType, childAccess, childOrigin)
+      }
+    }
+
+    isDefined = true
+    return mock
+  }
+}
+
+function proxyFactory (name, desc, type, access, origin) {
+  return {
+    get: typeof desc.getter === 'function'
+      ? desc.getter
+      : desc.properties
+        ? mockGetter(name, desc, origin)
+        : propGetter(name, type, origin),
+    set: typeof desc.setter === 'function'
+      ? desc.setter
+      : access === ACCESS_READONLY
+        ? noop
+        : function (val) {
+          var parent = origin()
+          parent[name] = val
+        }
+  }
+}
+
+function getDescriptor (name, desc, type, access, origin) {
+  if (desc.descriptor) {
+    return desc.descriptor
+  }
+
   var descriptor = {
     enumerable: true,
     configurable: false
   }
 
-  if (typeof props === 'function') {
-    descriptor.get = props
+  if (typeof desc === 'function') {
+    descriptor.get = desc
     descriptor.set = noop
     return descriptor
   }
 
-  if (options.type === 'raw') {
-    return props
-  }
+  var proxy = proxyFactory(
+    name,
+    desc,
+    desc.type || type || TYPE_PROPS,
+    desc.access || access || ACCESS_READONLY,
+    origin || getGlobals
+  )
 
-  if (typeof options.host === 'function' && options.host._name === 'runtimeProp') {
-    descriptor.get = function () {
-      var runtimeHost = options.host()
-      return runtimeHost[props]
-    }
+  descriptor.get = proxy.get
+  descriptor.set = proxy.set
 
-    descriptor.set = function (val) {
-      if (options.access !== 'readonly') {
-        var runtimeHost = options.host()
-        runtimeHost[props] = val
-      }
-    }
+  return descriptor
+}
 
-    return descriptor
-  }
+function def (obj, name, desc, type, access, origin) {
+  var descriptor = getDescriptor(name, desc, type, access, origin)
 
-  if (typeof options.host[props] === 'function') {
-    if (/^[A-Z]/.test(props)) {
-      descriptor.value = options.host[props]
-      descriptor.writable = false
-    } else {
-      // 不然直接 MIP.sandbox.setTimeout(() => {}) 会报错
-      descriptor.get = function () {
-        return options.host[props].bind(options.host)
-      }
-    }
-  } else {
-    descriptor.get = function () {
-      return options.host[props]
-    }
-
-    descriptor.set = function (val) {
-      // 只是防止用户篡改而不是不让用户写
-      if (options.access !== 'readonly') {
-        options.host[props] = val
-      }
-    }
+  if (obj) {
+    Object.defineProperty(obj, name, descriptor)
   }
 
   return descriptor
 }
 
-/**
- * define property
- *
- * @param {Object} obj 待定义属性的对象
- * @param {string} name 属性名
- * @param {Function|string} props 属性
- * @param {Object} options 参数
- * @param {string=} options.type 'raw'
- * @param {Object|string=} options.host 原属性的宿主 默认为 window
- * @param {string=} options.access 属性的读写权限 默认不做限制 可传值 readonly 只读权限
- */
-function def (obj, name, props, options) {
-  options = options || {}
-
-  formatOptions(options)
-
-  var descriptor = formatDescriptor(props, options)
-
-  Object.defineProperty(obj, name, descriptor)
-}
-
-module.exports = utils
+module.exports = def
