@@ -16,7 +16,7 @@ module.exports = {
   shared: resolve('src/vue/shared'),
   web: resolve('src/vue/platforms/web'),
   sfc: resolve('src/vue/sfc'),
-  'deps': resolve('deps'),
+  deps: resolve('deps'),
   'script-loader!deps': resolve('deps'),
   'script-loader!document-register-element': resolve('node_modules/document-register-element')
 }

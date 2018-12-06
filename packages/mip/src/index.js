@@ -10,12 +10,10 @@ import 'script-loader!deps/fetch-jsonp'
 import 'script-loader!document-register-element/build/document-register-element'
 import 'deps/promise'
 import 'deps/object-assign'
-import 'deps/mip-components-webpack-helpers'
 /* eslint-enable import/no-webpack-loader-syntax */
 
 import {registerRuntime} from './runtime'
 import util from './util/index'
-import sandbox from './sandbox'
 import {applyLayout} from './layout'
 import viewer from './viewer'
 import viewport from './viewport'
@@ -29,7 +27,6 @@ import {OUTER_MESSAGE_PERFORMANCE_UPDATE} from './page/const/index'
 /* istanbul ignore next */
 if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefined') {
   monitorInstall()
-
   registerRuntime(window)
 
   // init viewport
@@ -38,8 +35,6 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
   util.dom.waitDocumentReady(() => {
     // Initialize sleepWakeModule
     sleepWakeModule.init()
-
-    window.MIP.sandbox = sandbox()
 
     // Initialize viewer
     viewer.init()
