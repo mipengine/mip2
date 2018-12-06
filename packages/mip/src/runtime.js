@@ -134,7 +134,8 @@ class Runtime {
 
     installMip1Polyfill(globalMip)
     installSandbox(globalMip)
-    preregisteredExtensions.forEach(installExtension)
+
+    Array.isArray(preregisteredExtensions) && preregisteredExtensions.forEach(installExtension)
   }
 }
 
