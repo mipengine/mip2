@@ -415,10 +415,9 @@ class Page {
             // 预加载前已经存在，直接返回即可
             resolve(iframe)
             return
-          } else {
-            // 如果在断网情况下，内部的 window.MIP 会是一个数组。这样实际上这个 iframe 也不可复用，应当删除
-            iframe.parentNode.removeChild(iframe)
           }
+          // 如果在断网情况下，内部的 window.MIP 会是一个数组。这样实际上这个 iframe 也不可复用，应当删除
+          iframe.parentNode.removeChild(iframe)
         }
 
         createIFrame({fullpath: fullpath + '#prerender=1', pageId}, {
