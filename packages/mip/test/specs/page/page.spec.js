@@ -195,11 +195,6 @@ describe('page API #UI', function () {
     }
   })
 
-  it('.setupBouncyHeader', function () {
-    page.setupBouncyHeader()
-    expect(page.bouncyHeaderSetup).to.be.true
-  })
-
   it('.destroy', function () {
     page.destroy()
   })

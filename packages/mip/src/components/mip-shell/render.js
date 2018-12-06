@@ -72,11 +72,6 @@ export function render (shell, from, to) {
   // Hide page mask and skip transition
   shell.togglePageMask(false, {skipTransition: true})
 
-  // Show header
-  shell.toggleTransition(false)
-  shell.slideHeader('down')
-  shell.pauseBouncyHeader = true
-
   let params = {
     targetPageId,
     targetPageMeta,
@@ -95,8 +90,9 @@ export function render (shell, from, to) {
   // 如果不是 rootPage，则要求 iframe 和 page 同时存在
   // 之所以要判断两个都存在，是因为预渲染情况在 iframe load 之后才添加 page，所以可能 page=null 但是 iframe 已经有了
   let targetExists = isTargetRootPage || (targetIFrame && targetPage)
+  let isCacheFirst = to.meta && to.meta.cacheFirst && !isTargetRootPage
 
-  if (!targetExists || (to.meta && to.meta.reload && !to.meta.cacheFirst)) {
+  if (!targetExists || (to.meta && to.meta.reload && !isCacheFirst)) {
     // 进入这个分支表示需要创建新的 iframe，有以下情况：
     // 1. 目标页面不存在
     // 2. 目标页面的 iframe 和 page 虽然都存在，但是因为是点击链接跳转的（to.meta.reload = true)，因此为了实时性需要重新加载。
@@ -198,8 +194,6 @@ export function render (shell, from, to) {
         display: 'block',
         opacity: 1
       })
-      shell.toggleTransition(true)
-      shell.pauseBouncyHeader = false
 
       // Get <mip-shell> from root page
       let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')
@@ -270,8 +264,6 @@ export function render (shell, from, to) {
       } else {
         shell.refreshShell({pageMeta: targetPageMeta})
       }
-      shell.toggleTransition(true)
-      shell.pauseBouncyHeader = false
 
       // Get <mip-shell> from root page
       let shellDOM = document.querySelector('mip-shell') || document.querySelector('[mip-shell]')

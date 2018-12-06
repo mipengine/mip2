@@ -81,9 +81,10 @@ class ServicesInternal {
    * @param {string} id
    * @param {!Object} context
    * @param {!Function} Constructor
+   * @param {?boolean} instantiate
    * @returns {!Object}
    */
-  static registerService (holder, id, context, Constructor) {
+  static registerService (holder, id, context, Constructor, instantiate) {
     const services = this.getServices(holder)
     let service = services[id]
 
@@ -113,7 +114,7 @@ class ServicesInternal {
     /**
      * Service may have been requested already, in which case we need to fulfill the pending promise.
      */
-    if (service.resolve) {
+    if (service.resolve || instantiate) {
       this.instantiateService(service)
     }
 
@@ -227,9 +228,10 @@ class Services extends ServicesFactory {
    * @param {!Window} holder currently represents `Window`.
    * @param {string} id of the service.
    * @param {!Function} Constructor of the service.
+   * @param {?boolean} instantiate service immediately.
    */
-  static registerService (holder, id, Constructor) {
-    ServicesInternal.registerService(holder, id, holder, Constructor)
+  static registerService (holder, id, Constructor, instantiate) {
+    ServicesInternal.registerService(holder, id, holder, Constructor, instantiate)
   }
 
   /**

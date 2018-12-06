@@ -57,6 +57,14 @@ describe('services', () => {
       expect(Constructor).to.be.calledOnce
     })
 
+    it('should instantiate service immediately', () => {
+      Services.registerService(window, 'a', Constructor, true)
+      const a = window.services.a
+      expect(a.instance).instanceOf(Constructor)
+      expect(a.context).to.be.null
+      expect(a.Constructor).to.be.null
+    })
+
     it('should return the service when it exists', () => {
       const a0 = Services.getServiceOrNull(window, 'a')
       expect(a0).to.be.null
