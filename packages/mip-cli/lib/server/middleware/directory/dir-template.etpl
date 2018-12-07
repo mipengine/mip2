@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="x5-orientation" content="portrait">
+    <style>
+      *,
+      *:before,
+      *:after {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        font-size: 120%;
+        font-family: Consolas, Tahoma;
+      }
+      a, p {
+        text-decoration: none;
+        color: #333;
+      }
+      a:hover {
+        background: #eaeaea;
+      }
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      .crumb {
+        margin-bottom: 1em;
+        padding: 1em;
+        background: #333;
+      }
+      .crumb li {
+        display: inline;
+        margin-right: 5px;
+        color: #ccc;
+      }
+      .crumb li a {
+        color: #ccc;
+      }
+      .crumb li a:hover {
+        text-decoration: underline;
+        background: inherit;
+      }
+      .list li {
+        min-height: .5em;
+        display: inline-block;
+        width: 33.33%;
+      }
+      .list li a, p {
+        display: block;
+        padding: 0 1em;
+        line-height: 2;
+      }
+      .list li p {
+        opacity: 0.5;
+        margin: 0;
+      }
+      @media only screen and (max-width : 768px) {
+      .list li {
+        display: block;
+        width: 100%;
+      }
+      .list li a, p {
+        line-height: 3;
+        border-bottom: 1px dotted #ccc;
+      }
+    }
+    </style>
+  </head>
+  <body>
+    {% var: url = {{url}} %}
+    {% var: dirUrl = '/' %}
+
+    <ul class="crumb">
+      <li><a href="/">/</a></li>
+      {% for: {{urlArr}} as {{u}} %}
+      {% var: dirUrl = {{dirUrl}} + {{u}} + '/' %}
+        <li><a href={{dirUrl}}>{{u}}/</a></li>
+      {% /for %}
+    </ul>
+    
+    <ul class="list">
+      {% for: {{dirList}} as {{item}} %}
+        <li><a href={{url}}{{item}}/>{{item}}/</a></li>
+      {% /for %}
+    </ul>
+
+    <ul class="list">
+      {% for: {{fileList}} as {{item}} %}
+        <li>
+          {% if: {{canAccess}} == true %}
+            <a href={{url}}{{item}}>{{item}}</a>
+          {% else %}
+            <p>{{item}}</p>
+          {% /if %}
+        </li>
+      {% /for %}
+    </ul>
+  </body>
+</html>

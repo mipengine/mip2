@@ -30,7 +30,7 @@ module.exports = function (options) {
 
     console.log()
     console.log()
-    cli.info(`服务启动成功，正在监听 http://127.0.0.1:${server.port}`)
+    cli.info(`服务启动成功，正在监听 http://127.0.0.1:${server.port}，直接访问可显示项目目录`)
     console.log()
     console.log(chalk.yellow('预览页面:'))
     console.log(`/example 目录下的 html 可以通过 http://127.0.0.1:${server.port}/example/{页面名}.html 进行预览。`)
