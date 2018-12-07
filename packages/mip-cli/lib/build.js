@@ -3,7 +3,7 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-const Builder = require('./builder')
+const Builder = require('./builder/webpack/build')
 const fs = require('fs-extra')
 const path = require('path')
 const cli = require('./cli')

@@ -3,7 +3,7 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-const Builder = require('../../builder')
+const Builder = require('../../builder/webpack/dev')
 
 module.exports = function (options) {
   let builder = new Builder(options)
