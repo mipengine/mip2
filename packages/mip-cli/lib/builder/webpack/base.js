@@ -2,7 +2,6 @@
  * @file webpack builder
  * @author clark-t (clarktanglei@163.com)
  */
-
 const config = require('./config')
 const {globPify} = require('../../utils/helper')
 const projectPath = require('../../utils/project-path')

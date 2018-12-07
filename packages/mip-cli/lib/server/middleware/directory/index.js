@@ -2,24 +2,22 @@ const fs = require('fs-extra')
 const path = require('path')
 const etpl = require('etpl')
 
-const engine = new etpl.Engine({
-  commandOpen: '{%',
-  commandClose: '%}',
-  variableOpen: '{{',
-  variableClose: '}}'
-})
-let template = fs.readFileSync(path.join(__dirname, 'dir-template.etpl'), 'utf8')
-let renderer = engine.compile(template)
+module.exports = async function (config) {
+  const engine = new etpl.Engine({
+    commandOpen: '{%',
+    commandClose: '%}',
+    variableOpen: '{{',
+    variableClose: '}}'
+  })
+  const template = await fs.readFile(path.join(__dirname, 'dir-template.etpl'), 'utf8')
+  const renderer = engine.compile(template)
 
-module.exports = function (config) {
   return [
     async (ctx, next) => {
       let pagePath = path.join(config.dir, ctx.url)
-
-      let content = ''
       let stat = await fs.stat(pagePath)
       if (stat.isDirectory()) {
-        content = await dir(ctx.url, pagePath)
+        let content = await dir(ctx.url, pagePath, renderer)
         ctx.body = content
       } else {
         await next()
@@ -28,7 +26,7 @@ module.exports = function (config) {
   ]
 }
 
-async function dir (url, reqPath) {
+async function dir (url, reqPath, renderer) {
   let {fileList, dirList, canAccess} = await walk(reqPath)
   url = url.endsWith('/') ? url : url + '/'
   let urlArr = []

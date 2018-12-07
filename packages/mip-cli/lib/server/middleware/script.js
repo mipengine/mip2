@@ -5,14 +5,13 @@
 
 const Builder = require('../../builder/webpack/dev')
 
-module.exports = function (options) {
+module.exports = async function (options) {
   let builder = new Builder(options)
 
   options.app.builder = builder
+  await builder.loaded
 
   return [
-    async function (ctx, next) {
-      await builder.dev(ctx, next)
-    }
+    builder.dev.bind(builder)
   ]
 }
