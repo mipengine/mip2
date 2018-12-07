@@ -6,6 +6,17 @@
     transition: opacity linear 300ms;
   }
 
+  &.mip-img-loaded {
+    background: transparent;
+    &::before {
+      content: none;
+      display: none;
+    }
+    img.mip-fill-content {
+      opacity: 1;
+    }
+  }
+
   &-container {
     margin: 16px auto;
     font-size: 0;
