@@ -25,6 +25,7 @@ module.exports = async function (options) {
     if (options.clean) {
       await fs.remove(options.output)
     }
+    cli.info('开始编译...')
     await builder.build()
 
     cli.info('编译成功！')
