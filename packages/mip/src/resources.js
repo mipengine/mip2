@@ -65,7 +65,7 @@ class Resources {
     this._viewport = viewport
 
     /** @private @type {Promise} */
-    this._updatePromise = null
+    this._rafId = null
 
     this._gesture = new Gesture(document, {
       preventX: false
@@ -103,7 +103,7 @@ class Resources {
         this.updateState()
       }, element)
     }
-    COMPONENTS_NEED_NOT_DELAY.indexOf(element.tagName) === -1 ? setTimeout(fn, 0) : fn()
+    COMPONENTS_NEED_NOT_DELAY.indexOf(element.tagName) === -1 ? setTimeout(fn, 20) : fn()
   }
 
   /**
@@ -157,10 +157,11 @@ class Resources {
    * @return {Promise<undefined>}
    */
   _update () {
-    if (!this._updatePromise) {
-      this._updatePromise = Promise.resolve().then(() => this._doRealUpdate())
+    if (!this._rafId) {
+      // 改用 raf 让页面一帧只计算一次 update
+      this._rafId = window.requestAnimationFrame(() => this._doRealUpdate())
     }
-    return this._updatePromise
+    return this._rafId
   }
 
   /**
@@ -187,7 +188,7 @@ class Resources {
       }
     }
 
-    this._updatePromise = null
+    this._rafId = null
   }
 
   /**
