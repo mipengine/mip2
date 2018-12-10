@@ -111,7 +111,7 @@ mip 组件是基于[Web Component](https://developer.mozilla.org/en-US/docs/Web/
     - element `{Element}` Element 实例
 - 详细：
 
-    当自定义元素从视口内消失或者重新进入视口时触发改回调。
+    当自定义元素从视口内消失或者重新进入视口时触发该回调。
 
 ### connectedCallback
 
