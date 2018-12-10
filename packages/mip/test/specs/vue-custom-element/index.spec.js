@@ -44,6 +44,7 @@ describe('vue custom element', function () {
       'created',
       'beforeMount',
       'mounted',
+      'viewportCallback',
       'firstInviewCallback',
       'beforeUpdate',
       'updated',
@@ -112,6 +113,7 @@ describe('vue custom element', function () {
       'created',
       'beforeMount',
       'mounted',
+      'viewportCallback',
       'firstInviewCallback',
       'disconnectedCallback'
       // 'beforeDestroy',
@@ -150,6 +152,7 @@ describe('vue custom element', function () {
         sinon.assert.calledOnce(comp.connectedCallback)
         sinon.assert.calledOnce(comp.disconnectedCallback)
         sinon.assert.notCalled(comp.created)
+        sinon.assert.notCalled(comp.viewportCallback)
         sinon.assert.notCalled(comp.firstInviewCallback)
 
         expect(ele.innerHTML).to.be.empty
@@ -157,6 +160,7 @@ describe('vue custom element', function () {
         viewportCallback.restore()
         ele.viewportCallback(true)
         sinon.assert.calledOnce(comp.created)
+        sinon.assert.calledOnce(comp.viewportCallback)
         sinon.assert.calledOnce(comp.firstInviewCallback)
 
         expect(ele.innerHTML).to.equal('<div>hah</div>')
@@ -174,6 +178,7 @@ describe('vue custom element', function () {
       'created',
       'beforeMount',
       'mounted',
+      'viewportCallback',
       'firstInviewCallback',
       'disconnectedCallback'
       // 'beforeDestroy',
@@ -203,11 +208,13 @@ describe('vue custom element', function () {
         sinon.assert.calledOnce(comp.connectedCallback)
         sinon.assert.calledOnce(comp.disconnectedCallback)
         sinon.assert.calledOnce(comp.created)
+        sinon.assert.notCalled(comp.viewportCallback)
         sinon.assert.notCalled(comp.firstInviewCallback)
 
         viewportCallback.restore()
         ele.viewportCallback(true)
 
+        sinon.assert.calledOnce(comp.viewportCallback)
         sinon.assert.calledOnce(comp.firstInviewCallback)
         resolve()
       })
