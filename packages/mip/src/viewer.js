@@ -359,16 +359,20 @@ let viewer = {
         return
       }
 
-      // TODO 判断是 MIP2 就走 open，否则就走 MIP1 的逻辑
-      // self.open(to, {isMipLink, replace, state, cacheFirst})
-
-      if (isMipLink) {
-        console.log('hi there')
-        let message = self._getMessageData.call(this);
-        self.sendMessage(message.messageKey, message.messageData);
+      // 以下情况使用 MIP 接管页面跳转
+      // 1. Standalone
+      // 2. New MIP Service
+      let useNewMIPService = window.MIP.standalone || window.location.hash.indexOf('mipservice=2') !== -1
+      if (useNewMIPService) {
+        self.open(to, {isMipLink, replace, state, cacheFirst})
       } else {
-        // other jump through '_top'
-        top.location.href = this.href;
+        if (isMipLink) {
+          let message = self._getMessageData.call(this);
+          self.sendMessage(message.messageKey, message.messageData);
+        } else {
+          // other jump through '_top'
+          top.location.href = this.href;
+        }
       }
 
       event.preventDefault()
