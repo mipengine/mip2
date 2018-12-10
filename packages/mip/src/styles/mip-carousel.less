@@ -2,6 +2,11 @@ mip-carousel a {
   -webkit-tap-highlight-color: transparent;
 }
 
+// 因为第三方站点设置了 `div clear:both` 需要重置一下
+.mip-carousel-wrapper div {
+  clear: none;
+}
+
 .mip-carousle-subtitle {
   position: absolute;
   bottom: 0;
