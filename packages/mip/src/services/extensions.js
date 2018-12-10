@@ -3,6 +3,7 @@ import {templates, Deferred, event} from '../util'
 import registerMip1Element from '../mip1-polyfill/element'
 import registerCustomElement from '../register-element'
 import registerVueCustomElement from '../vue-custom-element'
+import installMipComponentsPolyfill from 'deps/mip-components-webpack-helpers'
 
 const {listen} = event
 
@@ -20,6 +21,12 @@ export class Extensions {
     this.win = win
 
     /**
+     * @private
+     * @const
+     */
+    this.doc = win.document
+
+    /**
      * @type {!Object}
      * @private
      */
@@ -30,14 +37,6 @@ export class Extensions {
      * @private
      */
     this.currentExtensionId = null
-
-    /**
-     * An empty constructor, only used as a placeholder in `registerElement`.
-     *
-     * @private
-     * @const
-     */
-    this.emptyService = class {}
 
     /**
      * @private
@@ -91,22 +90,13 @@ export class Extensions {
   }
 
   /**
-   * Returns extensionId for extension which is currently being registered.
-   *
-   * @returns {string}
-   */
-  getCurrentExtensionId () {
-    return this.currentExtensionId || UNKNOWN_EXTENSION_ID
-  }
-
-  /**
    * Returns holder for extension which is currently being registered.
    *
    * @returns {!Object}
    * @private
    */
   getCurrentExtensionHolder () {
-    return this.getExtensionHolder(this.getCurrentExtensionId())
+    return this.getExtensionHolder(this.currentExtensionId || UNKNOWN_EXTENSION_ID)
   }
 
   /**
@@ -201,9 +191,10 @@ export class Extensions {
        * It still possible that all element instances in current extension call lifecycle `build` synchronously.
        * Executes callback in microtask to make sure all these elements are built.
        */
-      this.timer.then(() => this.tryResolveExtension(holder))
+      this.timer.then(() => this.tryToResolveExtension(holder))
     } catch (err) {
-      this.timer.then(() => this.tryRejectExtension(holder, err))
+      this.tryToRejectError(holder, err)
+
       throw err
     } finally {
       this.currentExtensionId = null
@@ -216,7 +207,7 @@ export class Extensions {
    * @param {!Object} holder of extension.
    * @private
    */
-  tryResolveExtension (holder) {
+  tryToResolveExtension (holder) {
     if (!holder.elementInstances.every(el => el.isBuilt())) {
       return
     }
@@ -237,7 +228,7 @@ export class Extensions {
    * @param {Error} error to reject.
    * @private
    */
-  tryRejectExtension (holder, error) {
+  tryToRejectError (holder, error) {
     holder.error = error
 
     if (holder.reject) {
@@ -259,7 +250,11 @@ export class Extensions {
       // this.preloadDepsOf(extension),
       this.mipdoc.whenBodyAvailable()
     ]).then(
-      () => this.registerExtension(extension.name, extension.func, this.win.MIP)
+      () => {
+        !window.__mipComponentsWebpackHelpers__ && installMipComponentsPolyfill()
+
+        return this.registerExtension(extension.name, extension.func, this.win.MIP)
+      }
     )
   }
 
@@ -313,29 +308,25 @@ export class Extensions {
          * If they are not, these event listeners would not be registered before they emit events.
          */
         let unlistenBuild = listen(el, 'build', () => {
-          this.tryResolveExtension(holder)
+          this.tryToResolveExtension(holder)
           unlistenBuild()
           unlistenBuildError()
         })
         let unlistenBuildError = listen(el, 'build-error', event => {
-          this.tryRejectExtension(holder, event.detail)
+          this.tryToRejectError(holder, event.detail[0])
           unlistenBuild()
           unlistenBuildError()
         })
       })
       holder.elementInstances = holder.elementInstances.concat(elementInstances)
     }
-
-    /**
-     * Registers an empty service to resolve the possible pending promise.
-     */
-    Services.registerService(this.win, name, this.emptyService)
   }
 
   /**
    * Registers a service in extension currently being registered (by calling `MIP.push`).
    * A service in extension is still a class contains some useful functions,
    * it's no conceptual difference with other internal services.
+   * However, external services will be instantiated immediately.
    *
    * @param {string} name
    * @param {!Function} implementation
@@ -345,7 +336,7 @@ export class Extensions {
 
     holder.extension.services[name] = {implementation}
 
-    Services.registerService(this.win, name, implementation)
+    Services.registerService(this.win, name, implementation, true)
   }
 
   /**

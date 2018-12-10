@@ -40,13 +40,12 @@ describe('timer', () => {
     }, 100)
   })
 
-  it('should exceute callback in microtask', () => {
+  it('should exceute callback in microtask', async () => {
     const callback = sinon.spy()
     timer.resolved.then = sinon.spy(timer.resolved.then)
-    return timer.then(callback).then(() => {
-      expect(callback).to.be.calledOnce
-      expect(timer.resolved.then).to.be.calledOnce
-    })
+    await timer.then(callback)
+    expect(callback).to.be.calledOnce
+    expect(timer.resolved.then).to.be.calledOnce
   })
 
   it('should be a cancellable microtask', (done) => {
@@ -87,11 +86,10 @@ describe('timer', () => {
     }, 200)
   })
 
-  it('should sleep by calling delay', () => {
+  it('should sleep by calling delay', async () => {
     timer.delay = sinon.spy(timer.delay)
-    return timer.sleep(100).then(() => {
-      expect(timer.delay.args[0][1]).to.equal(100)
-    })
+    await timer.sleep(100)
+    expect(timer.delay.args[0][1]).to.equal(100)
   })
 
   it('should reject after timeout', () => {
@@ -102,14 +100,13 @@ describe('timer', () => {
     })
   })
 
-  it('should not reject when racing promise resolved', () => {
+  it('should not reject when racing promise resolved', async () => {
     timer.cancel = sinon.spy(timer.cancel)
     const promise = timer.timeout(200, timer.sleep(100).then(() => 'race'))
     expect(timer.cancel).to.be.not.called
-    return promise.then((value) => {
-      expect(timer.cancel).to.be.calledOnce
-      expect(value).to.equal('race')
-    })
+    const value = await promise
+    expect(timer.cancel).to.be.calledOnce
+    expect(value).to.equal('race')
   })
 
   it('should reject with message', () => {
@@ -126,16 +123,11 @@ describe('timer', () => {
       count++
       return count > 1
     }
-    setTimeout(() => expect(count).to.equal(0), 100)
-    setTimeout(() => expect(count).to.equal(1), 300)
     return Promise.all([
-      new Promise(resolve => setTimeout(() => {
-        expect(count).to.equal(2)
-        resolve()
-      }, 500)),
-      timer.poll(predicate, 200).then(() => {
-        expect(count).to.equal(2)
-      })
+      timer.sleep(100).then(() => expect(count).to.equal(0)),
+      timer.sleep(300).then(() => expect(count).to.equal(1)),
+      timer.sleep(500).then(() => expect(count).to.equal(2)),
+      timer.poll(predicate, 200).then(() => expect(count).to.equal(2))
     ])
   })
 })
