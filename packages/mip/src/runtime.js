@@ -12,6 +12,7 @@ import viewer from './viewer'
 import viewport from './viewport'
 import installMip1Polyfill from './mip1-polyfill'
 import installSandbox from './sandbox'
+import installMipComponentsPolyfill from 'deps/mip-components-webpack-helpers'
 
 class Runtime {
   /**
@@ -133,6 +134,7 @@ class Runtime {
     }
 
     installMip1Polyfill(globalMip)
+    installMipComponentsPolyfill()
     installSandbox(globalMip)
     preregisteredExtensions.forEach(installExtension)
   }
