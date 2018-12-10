@@ -9,7 +9,7 @@ import viewport from './viewport'
 import rect from './util/dom/rect'
 import prerender from './client-prerender'
 
-const COMPONENTS_NEED_NOT_DELAY = ['MIP-IMG', 'MIP-CAROUSEL', 'MIP-DATA', 'MIP-VIDEO', 'MIP-LAYOUT']
+// const COMPONENTS_NEED_NOT_DELAY = ['MIP-IMG', 'MIP-CAROUSEL', 'MIP-DATA', 'MIP-VIDEO', 'MIP-LAYOUT']
 
 /**
  * Store the resources.
@@ -97,13 +97,13 @@ class Resources {
     element._eid = this._eid++
     resources[this._rid][element._eid] = element
 
-    let fn = () => {
-      prerender.execute(() => {
-        element.build()
-        this.updateState()
-      }, element)
-    }
-    COMPONENTS_NEED_NOT_DELAY.indexOf(element.tagName) === -1 ? setTimeout(fn, 20) : fn()
+    // let fn = () => {
+    prerender.execute(() => {
+      element.build()
+      this.updateState()
+    }, element)
+    // }
+    // COMPONENTS_NEED_NOT_DELAY.indexOf(element.tagName) === -1 ? setTimeout(fn, 20) : fn()
   }
 
   /**
@@ -170,7 +170,6 @@ class Resources {
   _doRealUpdate () {
     let resources = this.getResources()
     let viewportRect = this._viewport.getRect()
-
     for (let i in resources) {
       if (resources[i].isBuilt()) {
         // 兼容 mip1 的组件
