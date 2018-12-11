@@ -173,10 +173,6 @@ describe('resources', function () {
   })
 
   describe('#_update', function () {
-    it('not resources', function () {
-      expect(app._update()).instanceof(Promise)
-    })
-
     it('.prerenderAllowed', function () {
       sinon.stub(app, 'getResources').callsFake(function () {
         return {
@@ -235,10 +231,10 @@ describe('resources', function () {
         expect(flag).to.be.true
       }
 
-      return app._update().then(() => {
-        rect.overlapping.restore()
-        rect.getElementRect.restore()
-      })
+      // return app._update().then(() => {
+      rect.overlapping.restore()
+      rect.getElementRect.restore()
+      // })
     })
   })
 

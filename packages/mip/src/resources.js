@@ -64,7 +64,7 @@ class Resources {
      */
     this._viewport = viewport
 
-    /** @private @type {Promise} */
+    /** @private @type {number} */
     this._rafId = null
 
     this._gesture = new Gesture(document, {
@@ -159,7 +159,7 @@ class Resources {
   _update () {
     if (!this._rafId) {
       // 改用 raf 让页面一帧只计算一次 update
-      this._rafId = window.requestAnimationFrame(() => this._doRealUpdate())
+      this._rafId = fn.raf(() => this._doRealUpdate())
     }
     return this._rafId
   }
@@ -172,8 +172,6 @@ class Resources {
     let viewportRect = this._viewport.getRect()
     for (let i in resources) {
       if (resources[i].isBuilt()) {
-        // 兼容 mip1 的组件
-        resources[i].applySizesAndMediaQuery && resources[i].applySizesAndMediaQuery()
         // Compute the viewport state of current element.
         // If current element`s prerenderAllowed returns `true` always set the state to be `true`.
         let elementRect = rect.getElementRect(resources[i])

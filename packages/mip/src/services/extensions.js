@@ -298,6 +298,16 @@ export class Extensions {
 
     if (elementInstances && elementInstances.length) {
       elementInstances.forEach(el => {
+        if (el.isBuilt()) {
+          this.tryToResolveExtension(holder)
+          return
+        }
+
+        if (el.error) {
+          this.tryToRejectError(holder, el.error)
+          return
+        }
+
         /**
          * Lifecycle `build` of element instances is probably delayed with `setTimeout`.
          * If they are not, these event listeners would not be registered before they emit events.

@@ -72,7 +72,7 @@ describe('mip-carousel', function () {
     })
 
     it('should produce mip-carousel correctly', async function () {
-      await mipCarousel._resources.updateState()
+      mipCarousel.viewportCallback(true)
       let mipCarouselContainer = div.querySelector('div.mip-carousel-container')
       wrapBox = div.querySelector('div.mip-carousel-wrapper')
       slideBoxs = wrapBox.querySelectorAll('div.mip-carousel-slideBox')
@@ -165,7 +165,7 @@ describe('mip-carousel', function () {
     let wrapBox
     let event = document.createEvent('Events')
     let indicator
-    let carousel
+    let mipCarousel
     this.timeout(2000)
 
     before(function () {
@@ -186,12 +186,12 @@ describe('mip-carousel', function () {
           </mip-img>
         </mip-carousel>
       `
-      carousel = div.querySelector('mip-carousel')
+      mipCarousel = div.querySelector('mip-carousel')
       document.body.appendChild(div)
     })
 
     it('should show default indicator', async function () {
-      await carousel._resources.updateState()
+      mipCarousel.viewportCallback(true)
       let indicatorbox = div.querySelector('div.mip-carousel-indicatorbox')
       let indicatorBoxwrap = indicatorbox.querySelector('p.mip-carousel-indicatorBoxwrap')
       indicator = indicatorBoxwrap.querySelectorAll('span')[0]
@@ -203,7 +203,7 @@ describe('mip-carousel', function () {
     })
 
     it('should not move when vertically scrolling', async function () {
-      await carousel._resources.updateState()
+      mipCarousel.viewportCallback(true)
       wrapBox = div.querySelector('div.mip-carousel-wrapper')
 
       event.initEvent('touchstart', true, true)
@@ -229,7 +229,7 @@ describe('mip-carousel', function () {
     })
 
     it('should not move when touch diff is too small', async function () {
-      await carousel._resources.updateState()
+      mipCarousel.viewportCallback(true)
       wrapBox = div.querySelector('div.mip-carousel-wrapper')
 
       event.initEvent('touchstart', true, true)
@@ -254,7 +254,7 @@ describe('mip-carousel', function () {
     })
 
     it('should move to next img when touch', async function () {
-      await carousel._resources.updateState()
+      mipCarousel.viewportCallback(true)
       event.initEvent('touchstart', true, true)
       event.targetTouches = event.touches = [{
         pageX: 0,
@@ -282,7 +282,7 @@ describe('mip-carousel', function () {
     })
 
     it('should move to another direction', async function () {
-      await carousel._resources.updateState()
+      mipCarousel.viewportCallback(true)
 
       event.initEvent('touchstart', true, true)
       event.targetTouches = event.touches = [{
@@ -307,10 +307,10 @@ describe('mip-carousel', function () {
     })
 
     it('should go index with `go` handler', async function () {
-      await carousel._resources.updateState()
+      mipCarousel.viewportCallback(true)
       wrapBox = div.querySelector('div.mip-carousel-wrapper')
       indicator = div.querySelector('.mip-carousel-indicatornow')
-      carousel.customElement.executeEventAction({
+      mipCarousel.customElement.executeEventAction({
         handler: 'go',
         event: 'tap',
         arg: '2'
@@ -334,60 +334,7 @@ describe('mip-carousel', function () {
     let dotsDom
     this.timeout(3000)
 
-    it('should be not ok with appointed indicatorId but not indicator', async function () {
-      divNo = document.createElement('div')
-      divNo.innerHTML = `
-        <mip-carousel
-          indicatorId="mip-carousel-example1"
-          width="100"
-          height="80">
-          <mip-img
-            src="https://www.mipengine.org/static/img/sample_01.jpg">
-          </mip-img>
-          <mip-img
-            src="https://www.mipengine.org/static/img/sample_02.jpg">
-          </mip-img>
-          <mip-img
-            src="https://www.mipengine.org/static/img/sample_03.jpg">
-          </mip-img>
-        </mip-carousel>
-      `
-      document.body.appendChild(divNo)
-      await divNo.querySelector('mip-carousel')._resources.updateState()
-      expect(divNo.querySelector('#mip-carousel-example1')).to.be.null
-    })
-
-    it('should be not ok with wrong indicator', async function () {
-      divWrong = document.createElement('div')
-      divWrong.innerHTML = `
-        <mip-carousel
-          indicatorId="mip-carousel-example2"
-          width="100"
-          height="80">
-          <mip-img
-            src="https://www.mipengine.org/static/img/sample_01.jpg">
-          </mip-img>
-          <mip-img
-            src="https://www.mipengine.org/static/img/sample_02.jpg">
-          </mip-img>
-          <mip-img
-            src="https://www.mipengine.org/static/img/sample_03.jpg">
-          </mip-img>
-        </mip-carousel>
-        <div class="mip-carousel-indicator-wrapper">
-          <div id="mip-carousel-example2">
-            <div class="mip-carousel-activeitem mip-carousel-indecator-item"></div>
-          </div>
-        </div>
-      `
-      document.body.appendChild(divWrong)
-      await divNo.querySelector('mip-carousel')._resources.updateState()
-      let indicatorDom = divWrong.querySelector('#mip-carousel-example2')
-      expect(indicatorDom.classList.contains('hide')).to.be.true
-      expect(window.getComputedStyle(indicatorDom, null).display).to.include('none')
-    })
-
-    it('should be ok with correct setting', async function () {
+    before(() => {
       divOk = document.createElement('div')
       divOk.innerHTML = `
         <mip-carousel
@@ -413,8 +360,95 @@ describe('mip-carousel', function () {
         </div>
       `
       document.body.appendChild(divOk)
+      divOk.querySelector('mip-carousel').viewportCallback(true)
 
-      await divNo.querySelector('mip-carousel')._resources.updateState()
+      divOkAuto = document.createElement('div')
+      divOkAuto.innerHTML = `
+        <mip-carousel
+          autoplay
+          defer="1000"
+          indicatorId="mip-carousel-example4"
+          width="100"
+          height="80">
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_01.jpg">
+          </mip-img>
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_02.jpg">
+          </mip-img>
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_03.jpg">
+          </mip-img>
+        </mip-carousel>
+        <div class="mip-carousel-indicator-wrapper">
+          <div class="mip-carousel-indicatorDot" id="mip-carousel-example4">
+            <div class="mip-carousel-activeitem mip-carousel-indecator-item"></div>
+            <div class="mip-carousel-indecator-item"></div>
+            <div class="mip-carousel-indecator-item"></div>
+          </div>
+        </div>
+      `
+      document.body.appendChild(divOkAuto)
+      divOkAuto.querySelector('mip-carousel').viewportCallback(true)
+
+      divNo = document.createElement('div')
+      divNo.innerHTML = `
+        <mip-carousel
+          indicatorId="mip-carousel-example1"
+          width="100"
+          height="80">
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_01.jpg">
+          </mip-img>
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_02.jpg">
+          </mip-img>
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_03.jpg">
+          </mip-img>
+        </mip-carousel>
+      `
+      document.body.appendChild(divNo)
+      divNo.querySelector('mip-carousel').viewportCallback(true)
+
+      divWrong = document.createElement('div')
+      divWrong.innerHTML = `
+        <mip-carousel
+          indicatorId="mip-carousel-example2"
+          width="100"
+          height="80">
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_01.jpg">
+          </mip-img>
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_02.jpg">
+          </mip-img>
+          <mip-img
+            src="https://www.mipengine.org/static/img/sample_03.jpg">
+          </mip-img>
+        </mip-carousel>
+        <div class="mip-carousel-indicator-wrapper">
+          <div id="mip-carousel-example2">
+            <div class="mip-carousel-activeitem mip-carousel-indecator-item"></div>
+          </div>
+        </div>
+      `
+      document.body.appendChild(divWrong)
+      divWrong.querySelector('mip-carousel').viewportCallback(true)
+    })
+
+    it('should be not ok with appointed indicatorId but not indicator', async function () {
+      expect(divNo.querySelector('#mip-carousel-example1')).to.be.null
+    })
+
+    it('should be not ok with wrong indicator', async function () {
+      let indicatorDom = divWrong.querySelector('#mip-carousel-example2')
+      expect(indicatorDom.classList.contains('hide')).to.be.true
+      expect(window.getComputedStyle(indicatorDom, null).display).to.include('none')
+    })
+
+    it('should be ok with correct setting', async function () {
+      divNo.querySelector('mip-carousel').viewportCallback(true)
       // render indicator
       indicatorDom = divOk.querySelector('#mip-carousel-example3')
       dotsDom = indicatorDom.querySelectorAll('.mip-carousel-indecator-item')
@@ -425,7 +459,7 @@ describe('mip-carousel', function () {
     it('should change dot indicator by carousel moving', async function () {
       let wrapBox = divOk.querySelector('div.mip-carousel-wrapper')
       // touchmove
-      let event = document.createEvent('Events')
+      let event = document.createEvent('Event')
       event.initEvent('touchstart', true, true)
       event.targetTouches = event.touches = [{
         pageX: 0,
@@ -458,34 +492,6 @@ describe('mip-carousel', function () {
     })
 
     it('should be ok with autoplay', function () {
-      divOkAuto = document.createElement('div')
-      divOkAuto.innerHTML = `
-        <mip-carousel
-          autoplay
-          defer="1000"
-          indicatorId="mip-carousel-example4"
-          width="100"
-          height="80">
-          <mip-img
-            src="https://www.mipengine.org/static/img/sample_01.jpg">
-          </mip-img>
-          <mip-img
-            src="https://www.mipengine.org/static/img/sample_02.jpg">
-          </mip-img>
-          <mip-img
-            src="https://www.mipengine.org/static/img/sample_03.jpg">
-          </mip-img>
-        </mip-carousel>
-        <div class="mip-carousel-indicator-wrapper">
-          <div class="mip-carousel-indicatorDot" id="mip-carousel-example4">
-            <div class="mip-carousel-activeitem mip-carousel-indecator-item"></div>
-            <div class="mip-carousel-indecator-item"></div>
-            <div class="mip-carousel-indecator-item"></div>
-          </div>
-        </div>
-      `
-      document.body.appendChild(divOkAuto)
-
       // render indicator
       indicatorDom = divOkAuto.querySelector('#mip-carousel-example4')
       dotsDom = indicatorDom.querySelectorAll('.mip-carousel-indecator-item')
@@ -541,10 +547,10 @@ describe('mip-carousel', function () {
       `
       mipCarousel = div.querySelector('mip-carousel')
       document.body.appendChild(div)
+      mipCarousel.viewportCallback(true)
     })
 
     it('should go to next img when click btn', async function () {
-      await mipCarousel._resources.updateState()
       let nextBtn = div.querySelector('p.mip-carousel-nextBtn')
       eventClick.initEvent('click', true, true)
       nextBtn.dispatchEvent(eventClick)
@@ -555,7 +561,6 @@ describe('mip-carousel', function () {
     })
 
     it('should go to pre img when click btn', async function () {
-      await mipCarousel._resources.updateState()
       preBtn = div.querySelector('p.mip-carousel-preBtn')
       eventClick.initEvent('click', true, true)
       preBtn.dispatchEvent(eventClick)
@@ -565,7 +570,6 @@ describe('mip-carousel', function () {
     })
 
     it('should go to last img by clicking preBtn', async function () {
-      await mipCarousel._resources.updateState()
       eventClick.initEvent('click', true, true)
       preBtn.dispatchEvent(eventClick)
 
@@ -607,10 +611,10 @@ describe('mip-carousel', function () {
       `
       mipCarousel = div.querySelector('mip-carousel')
       document.body.appendChild(div)
+      mipCarousel.viewportCallback(true)
     })
 
     it('should go to next img when click btn', async function () {
-      await mipCarousel._resources.updateState()
       let nextBtn = div.querySelector('p.mip-carousel-nextBtn')
       eventClick.initEvent('click', true, true)
       nextBtn.dispatchEvent(eventClick)
@@ -621,7 +625,6 @@ describe('mip-carousel', function () {
     })
 
     it('should go to pre img when click btn', async function () {
-      await mipCarousel._resources.updateState()
       let preBtn = div.querySelector('p.mip-carousel-preBtn')
       eventClick.initEvent('click', true, true)
       preBtn.dispatchEvent(eventClick)
@@ -680,10 +683,10 @@ describe('mip-carousel', function () {
       `
       mipCarousel = div.querySelector('mip-carousel')
       document.body.appendChild(div)
+      mipCarousel.viewportCallback(true)
     })
 
     it('should start from index img', async function () {
-      await mipCarousel._resources.updateState()
       wrapBox = div.querySelector('div.mip-carousel-wrapper')
       expect(wrapBox.style.transform).to.equal('translate3d(-200px, 0px, 0px)')
 
@@ -694,7 +697,6 @@ describe('mip-carousel', function () {
     })
 
     it('should switch to certain img when emit tap event', async function () {
-      await mipCarousel._resources.updateState()
       let switchBtn = div.querySelector('div.mip-carousel-switchBtn')
       eventClick.initEvent('click', true, true)
       switchBtn.dispatchEvent(eventClick)
@@ -711,7 +713,6 @@ describe('mip-carousel', function () {
   // 图片又可能因为不在 viewport 所以一直没加载，所以又要放到 body 的最前面，时间不能设置太短，可能真的没加载
   describe('with lazy loading', function () {
     let div
-    this.timeout(2000)
 
     before(function () {
       div = document.createElement('div')
@@ -736,10 +737,10 @@ describe('mip-carousel', function () {
         </mip-carousel>
       `
       document.body.insertBefore(div, document.body.firstChild)
+      div.querySelector('mip-carousel').viewportCallback(true)
     })
     // 一定要挑一张图片上面的代码都没用到过，并且不能在第一张和最后一张
     it('should not load picture samplePX', async function () {
-      await sleep(500)
       let mipImg = div.querySelectorAll('mip-img')[3]
       let img = mipImg.querySelector('img')
       expect(img.getAttribute('src')).to.not.equal('https://www.mipengine.org/static/img/P2x1_457e18b.jpg')
@@ -749,7 +750,6 @@ describe('mip-carousel', function () {
       let nextBtn = div.querySelector('p.mip-carousel-nextBtn')
       eventClick.initEvent('click', true, true)
       nextBtn.dispatchEvent(eventClick)
-      await sleep(1500)
       let img = div.querySelectorAll('mip-img')[3].querySelector('img')
       expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/P2x1_457e18b.jpg')
     })
@@ -794,10 +794,10 @@ describe('mip-carousel', function () {
         </mip-carousel>
       `
       document.body.insertBefore(div, document.body.firstChild)
+      div.querySelector('mip-carousel').viewportCallback(true)
     })
     // 一定要挑一张图片上面的代码都没用到过，并且不能在第一张和最后一张
     it('should not load picture samplePX', async function () {
-      await sleep(500)
       let mipImg = div.querySelectorAll('mip-img')[3]
       let img = mipImg.querySelector('img')
       expect(img.getAttribute('src')).to.not.equal('https://www.mipengine.org/static/img/P2x1_457e18b.jpg')
@@ -807,7 +807,6 @@ describe('mip-carousel', function () {
       let nextBtn = div.querySelector('p.mip-carousel-nextBtn')
       eventClick.initEvent('click', true, true)
       nextBtn.dispatchEvent(eventClick)
-      await sleep(550)
       let img = div.querySelectorAll('mip-img')[3].querySelector('img')
       expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/P2x1_457e18b.jpg')
     })
@@ -817,12 +816,12 @@ describe('mip-carousel', function () {
     })
   })
   describe('with no mip-img in the first child of mip-carousel', function () {
+    let originHeight
     let div
     // 1px x 1px
     let img1 = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
     // 1px x 2px
     let img2 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAAD0lEQVR42mNkYPhfzwAEAAiHAYAKx2h0AAAAAElFTkSuQmCC'
-    this.timeout(1500)
     before(() => {
       div = document.createElement('div')
       div.innerHTML = `
@@ -844,26 +843,22 @@ describe('mip-carousel', function () {
       </mip-carousel>
       `
       document.body.insertBefore(div, document.body.firstChild)
+      div.querySelector('mip-carousel').viewportCallback(true)
+      originHeight = window.getComputedStyle(div, null).getPropertyValue('height')
     })
 
     it('should load picture correctly', async function () {
-      let mipCarousel = div.querySelector('mip-carousel')
-      await mipCarousel._resources.updateState()
       let img = div.querySelectorAll('mip-img')[1].querySelector('img')
       expect(img.getAttribute('src')).to.equal(img1)
     })
 
     it('should change height when swipe', async () => {
-      let mipCarousel = div.querySelector('mip-carousel')
-      await mipCarousel._resources.updateState()
-      let height = window.getComputedStyle(div, null).getPropertyValue('height')
       let eventClick = document.createEvent('MouseEvents')
       let nextBtn = div.querySelector('p.mip-carousel-nextBtn')
       eventClick.initEvent('click', true, true)
       nextBtn.dispatchEvent(eventClick)
 
-      await sleep(1200)
-      expect(window.getComputedStyle(div, null).getPropertyValue('height')).not.equal(height)
+      expect(window.getComputedStyle(div, null).getPropertyValue('height')).not.equal(originHeight)
     })
     after(function () {
       document.body.removeChild(div)
