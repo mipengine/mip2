@@ -6,4 +6,3 @@ dist
 coverage*
 reports
 .nyc_output
-**/package-lock.json
