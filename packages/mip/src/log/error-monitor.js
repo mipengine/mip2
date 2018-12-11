@@ -2,7 +2,7 @@
  * @file error-monitor.js
  * @description javascript error monitor
  * 
- * 1. 仅收集百度 CDN 地址下官方组件和 MIP 核心错误
+ * 1. 仅收集百度&神马 CDN 地址下官方组件和 MIP 核心错误
  * 2. 抽样比例 0.1
  * 
  * @author schoeu, liwenqian
@@ -27,7 +27,8 @@ export function errorHandler (e = {}, opts = {}) {
 
   // 报错文件请求路径, 跨域js文件中错误无信息暂不上报
   let filename = e.filename
-  if (!filename || !/(c\.mipcdn|mipcache\.bdstatic)\.com\/static/.test(filename)) {
+  let legalPathRegex = /(c\.mipcdn\.com|mipcache\.bdstatic\.com|\S+\.sm-tc\.cn|\S+\.transcode\.cn)\/static/
+  if (!filename || !legalPathRegex.test(filename)) {
     return
   }
 
