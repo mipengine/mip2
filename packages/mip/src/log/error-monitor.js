@@ -54,7 +54,6 @@ export function errorHandler (e = {}, opts = {}) {
       col: colno,
       href: window.location.href
     }
-    console.log(logData)
     viewer.sendMessage(OUTER_MESSAGE_STABILITY_LOG, logData)
   }
 }
