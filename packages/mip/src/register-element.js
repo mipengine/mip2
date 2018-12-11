@@ -114,6 +114,7 @@ class BaseElement extends HTMLElement {
     // Apply layout for this.
     this.classList.add('mip-element')
     this._layout = applyLayout(this)
+    this.applySizesAndMediaQuery()
     this.customElement.connectedCallback()
     this._resources.add(this)
   }
@@ -308,6 +309,7 @@ class BaseElement extends HTMLElement {
       // emit build event
       customEmit(this, 'build')
     } catch (e) {
+      this.error = e
       customEmit(this, 'build-error', e)
       console.warn('build error:', e)
     }

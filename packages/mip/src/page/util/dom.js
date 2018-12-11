@@ -6,11 +6,14 @@
 
 import css from '../../util/dom/css'
 import platform from '../../util/platform'
+import fn from '../../util/fn'
 
 import {MIP_IFRAME_CONTAINER} from '../const/index'
-import {raf, transitionEndEvent, animationEndEvent} from './feature-detect'
+import {transitionEndEvent, animationEndEvent} from './feature-detect'
 import {normalizeLocation} from './route'
 import viewport from '../../viewport'
+
+const {raf} = fn
 
 const MIP_SHELL_HEADER = 'mip-shell-header'
 const MIP_PAGE_LOADING_WRAPPER = 'mip-page-loading-wrapper'
