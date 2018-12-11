@@ -32,7 +32,3 @@ if (window.onanimationend === undefined &&
 }
 export const transitionEndEvent = transitionEndEventName
 export const animationEndEvent = animationEndEventName
-
-export const raf = window.requestAnimationFrame
-  ? window.requestAnimationFrame.bind(window)
-  : /* istanbul ignore next */setTimeout

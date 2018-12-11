@@ -100,7 +100,7 @@ function getImgsSrc () {
  */
 function getCurrentImg (carouselWrapper, mipCarousel) {
   // 例如：'translate3d(-90px,0,0)'
-  let str = carouselWrapper.style.webkitTransform
+  let str = carouselWrapper.style.webkitTransform || carouselWrapper.style.transform
   let result = /translate3d\(-?([0-9]+)/i.exec(str)
   // 原先宽度是视口宽度，现在需要的是图片本身宽度。最后还是一样的。。。
   let width = mipCarousel.getAttribute('width')
@@ -205,8 +205,13 @@ function bindPopup (element, img) {
         skipTransition: true,
         extraClass: 'black'
       })
+
+      let mipCarouselWrapper = popup.querySelector('.mip-carousel-wrapper')
+      /* istanbul ignore if */
+      if (mipCarouselWrapper == null) return
+
       // 找出当前视口下的图片
-      let currentImg = getCurrentImg(popup.querySelector('.mip-carousel-wrapper'), mipCarousel)
+      let currentImg = getCurrentImg(mipCarouselWrapper, mipCarousel)
       popupImg.setAttribute('src', currentImg.getAttribute('data-src'))
       let previousPos = getImgOffset(img)
       // 获取弹出图片滑动的距离，根据前面的设定，top大于0就不是长图，小于0才是滑动的距离。

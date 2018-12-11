@@ -50,7 +50,6 @@ let scrollHandle = function (event) {
  */
 let savedWindowWidth = null
 let savedWindowHeight = null
-
 let currentWindowWidth
 let resizeEvent = fn.throttle(function (event) {
   currentWindowWidth = getWidth()
@@ -77,10 +76,11 @@ let viewport = {
     this.scroller.addEventListener('scroll', scrollHandle.bind(this), false)
 
     // 只在 iOS 下处理兼容性问题
+    /* istanbul ignore if */
     if (platform.isIOS()) {
       savedWindowWidth = this.getWidth()
-      win.addEventListener('resize', resizeEvent.bind(this))
     }
+    win.addEventListener('resize', resizeEvent.bind(this))
   },
 
   /**
