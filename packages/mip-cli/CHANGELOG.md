@@ -1,5 +1,13 @@
 # CHANGELOG
 
+- 1.5.1
+    1. dev 模式添加目录浏览功能
+    2. 禁止 example 和 mock 文件夹外的静态资源访问
+    3. 允许组件开发者自行调用 MIP.registerElement() 和 MIP.registerService() 进行组件注册
+    4. 调整服务启动成功的提示文案及提示时间
+    5. Builder 开发模式和编译模式分离，减少编译模式下因加载开发模式的依赖而报 warning 的问题
+    6. 修复弱网情况下 validator 校验 npm 白名单过慢的问题
+
 - 1.4.3
     1. 更新 mip-sandbox 和 mip-component-validator 依赖版本，新增 `atob` `TextEncoder` `TextDecoder` 白名单
 
