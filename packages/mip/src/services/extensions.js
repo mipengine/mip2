@@ -239,18 +239,9 @@ export class Extensions {
    * Installs an extension. The same as `MIP.push`.
    *
    * @param {!Object} extension
-   * @returns {!Promise<void>}
    */
   installExtension (extension) {
-    return Promise.all([
-      /**
-       * Disables `extension.deps` temporarily.
-       */
-      // this.preloadDepsOf(extension),
-      this.mipdoc.whenBodyAvailable()
-    ]).then(
-      () => this.registerExtension(extension.name, extension.func, this.win.MIP)
-    )
+    this.registerExtension(extension.name, extension.func, this.win.MIP)
   }
 
   /**
