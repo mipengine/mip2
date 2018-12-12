@@ -1,6 +1,6 @@
 # CHANGELOG
 
-- 1.5.0
+- 1.5.1
     1. dev 模式添加目录浏览功能
     2. 禁止 example 和 mock 文件夹外的静态资源访问
     3. 允许组件开发者自行调用 MIP.registerElement() 和 MIP.registerService() 进行组件注册
