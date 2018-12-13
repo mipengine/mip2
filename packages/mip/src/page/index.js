@@ -129,6 +129,9 @@ class Page {
 
     // trigger show page custom event
     this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+
+    let mipServiceTmp = window.location.hash.match(/mipservice=(\d)/)
+    window.mipService = mipServiceTmp ? mipServiceTmp[1] : '1'
   }
 
   // ========================= Util functions for developers =========================
