@@ -288,15 +288,20 @@ export class Extensions {
     let elementInstances = this.getElementRegistrator(element)(name, implementation, css)
 
     if (elementInstances && elementInstances.length) {
-      elementInstances.forEach(el => {
+      holder.elementInstances = holder.elementInstances.concat(elementInstances)
+      for (let i = 0, len = elementInstances.length; i < len; i++) {
+        let el = elementInstances[i]
+
+        // Delay to last processing extension resolve.
         if (el.isBuilt()) {
-          this.tryToResolveExtension(holder)
-          return
+          continue
         }
 
+        // It can't catch error of customElements.define with try/catch.
+        // @see https://github.com/w3c/webcomponents/issues/547
         if (el.error) {
           this.tryToRejectError(holder, el.error)
-          return
+          break
         }
 
         /**
@@ -313,8 +318,7 @@ export class Extensions {
           unlistenBuild()
           unlistenBuildError()
         })
-      })
-      holder.elementInstances = holder.elementInstances.concat(elementInstances)
+      }
     }
   }
 
