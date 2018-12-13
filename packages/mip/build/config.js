@@ -26,7 +26,7 @@ const builds = {
   'mip-prod': {
     entry: resolve('mip'),
     dest: resolve('dist/mip.js'),
-    format: 'iife',
+    format: 'umd',
     env: 'production',
     banner: 'window._mipStartTiming=Date.now();'
   }

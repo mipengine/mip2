@@ -3,7 +3,6 @@ import {templates, Deferred, event} from '../util'
 import registerMip1Element from '../mip1-polyfill/element'
 import registerCustomElement from '../register-element'
 import registerVueCustomElement from '../vue-custom-element'
-import installMipComponentsPolyfill from 'deps/mip-components-webpack-helpers'
 
 const {listen} = event
 
@@ -250,11 +249,7 @@ export class Extensions {
       // this.preloadDepsOf(extension),
       this.mipdoc.whenBodyAvailable()
     ]).then(
-      () => {
-        !window.__mipComponentsWebpackHelpers__ && installMipComponentsPolyfill()
-
-        return this.registerExtension(extension.name, extension.func, this.win.MIP)
-      }
+      () => this.registerExtension(extension.name, extension.func, this.win.MIP)
     )
   }
 

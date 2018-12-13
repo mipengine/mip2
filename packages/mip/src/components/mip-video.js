@@ -114,7 +114,7 @@ class MipVideo extends CustomElement {
         videoEl.setAttribute(k, this.attributes[k])
       }
     }
-    let currentTime = this.attributes['currenttime'] || 0
+    let currentTime = this.attributes['currenttime']
     videoEl.setAttribute('playsinline', 'playsinline')
     // 兼容qq浏览器
     videoEl.setAttribute('x5-playsinline', 'x5-playsinline')
@@ -129,7 +129,9 @@ class MipVideo extends CustomElement {
     })
     // 如果设置了播放时间点，则直接跳转至播放时间的位置开始播放
     videoEl.addEventListener('loadedmetadata', function () {
-      this.currentTime = currentTime
+      if (currentTime) {
+        this.currentTime = +currentTime
+      }
     })
     this.element.appendChild(videoEl)
     return videoEl
