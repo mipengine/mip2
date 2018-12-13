@@ -170,21 +170,25 @@ class Resources {
   _doRealUpdate () {
     let resources = this.getResources()
     let viewportRect = this._viewport.getRect()
-    for (let i in resources) {
-      if (resources[i].isBuilt()) {
+    let i = 0
+    let ele = resources[i]
+    // 这里需要把 resources 当成一个队列来遍历，
+    // 因为组件可能在生命周期内可能产生新的组件实例
+    while (ele) {
+      if (ele.isBuilt()) {
         // Compute the viewport state of current element.
         // If current element`s prerenderAllowed returns `true` always set the state to be `true`.
-        let elementRect = rect.getElementRect(resources[i])
-        let inViewport = resources[i].prerenderAllowed(elementRect, viewportRect) ||
+        let elementRect = rect.getElementRect(ele)
+        let inViewport = ele.prerenderAllowed(elementRect, viewportRect) ||
           rect.overlapping(elementRect, viewportRect) ||
           // 在 ios 有个设置滚动${@link ./viewer.lockBodyScroll} 会设置 scrollTop=1
           // 如果部分元素在顶部而且没有设置高度，会导致 elementRect 和 viewportRect 不重叠，
           // 进而导致无法执行元素的生命周期，针对这种情况做特殊处理
           (elementRect.bottom === 0 && elementRect.top === 0 && viewportRect.top === 1)
-        this.setInViewport(resources[i], inViewport)
+        this.setInViewport(ele, inViewport)
       }
+      ele = resources[++i]
     }
-
     this._rafId = null
   }
 
