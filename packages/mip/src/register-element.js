@@ -238,6 +238,7 @@ class BaseElement extends HTMLElement {
    * Creates a loading object.
    */
   prepareLoading () {
+    /* istanbul ignore if */
     if (!this.isLoadingEnabled()) {
       return
     }
@@ -275,6 +276,7 @@ class BaseElement extends HTMLElement {
     }
 
     this.prepareLoading()
+    /* istanbul ignore if */
     if (!this._loadingContainer) {
       return
     }
@@ -320,6 +322,7 @@ class BaseElement extends HTMLElement {
   }
 
   _getSpace () {
+    /* istanbul ignore if */
     if (this.spaceElement === undefined &&
       this._layout === LAYOUT.RESPONSIVE) {
       // Expect space to exist, just not yet discovered.

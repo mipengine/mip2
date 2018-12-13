@@ -373,6 +373,7 @@ describe('Register element', function () {
       ele.setAttribute('width', '1px')
       ele.setAttribute('height', '1px')
       ele.setAttribute('heights', `(min-width: ${ww + 1}px) 50vw, 100vw`)
+      console.log('ddd')
       document.body.appendChild(ele)
 
       expect(ele.querySelector('mip-i-space').style.paddingTop).to.equal('100vw')
