@@ -362,7 +362,7 @@ let viewer = {
       // 以下情况使用 MIP 接管页面跳转
       // 1. Standalone
       // 2. New MIP Service
-      let useNewMIPService = window.MIP.standalone || window.location.hash.indexOf('mipservice=2') !== -1
+      let useNewMIPService = window.MIP.standalone || window.mipService === '2'
       if (useNewMIPService) {
         self.open(to, {isMipLink, replace, state, cacheFirst})
       } else {
