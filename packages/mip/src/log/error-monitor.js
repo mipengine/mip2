@@ -1,21 +1,19 @@
 /**
- * @file monitor.js
- * @description 监控数据监控处理
- * @author schoeu
+ * @file error-monitor.js
+ * @description javascript error monitor
+ * 
+ * 1. 仅收集百度&神马 CDN 地址下官方组件和 MIP 核心错误
+ * 2. 抽样比例 0.1
+ * 
+ * @author schoeu, liwenqian
  */
 
-import ls from './log-send'
+import viewer from '../viewer'
 import coreTags from './core-tags'
+import { OUTER_MESSAGE_STABILITY_LOG } from '../page/const/index'
 
 const RATE = 0.1
-let tags
-
-/* istanbul ignore if */
-if (!Array.isArray(coreTags)) {
-  tags = []
-}
-
-tags = coreTags.filter((it = '') => !!it.trim())
+const tags = Array.isArray(coreTags) ? coreTags.filter((it = '') => !!it.trim()) : []
 
 /**
  * MIP错误捕获处理
@@ -28,10 +26,9 @@ export function errorHandler (e = {}, opts = {}) {
   let rate = opts.rate || RATE
 
   // 报错文件请求路径, 跨域js文件中错误无信息暂不上报
-  let filename = e.filename || ''
-
-  /* istanbul ignore if */
-  if (!filename) {
+  let filename = e.filename
+  let legalPathRegex = /(c\.mipcdn\.com|mipcache\.bdstatic\.com|\S+\.sm-tc\.cn|\S+\.transcode\.cn)\/static/
+  if (!filename || !legalPathRegex.test(filename)) {
     return
   }
 
@@ -42,30 +39,23 @@ export function errorHandler (e = {}, opts = {}) {
   let lineno = e.lineno || ''
 
   // 错误列号
-  let colno = e.colno || 0
-
-  /* istanbul ignore if */
-  // 非百度 CDN 域名忽略
-  if (!/(c\.mipcdn|mipcache\.bdstatic)\.com\/static/.test(filename)) {
-    return
-  }
+  let colno = e.colno || (window.event && window.event.errorCharacter) || 0
 
   let tagInfo = /\/(mip-.+)\//g.exec(filename) || []
   let tagName = tagInfo[1] || ''
   let sampling = Math.random() <= rate
-
-  // 只记录官方组件错误
-  if (tags.indexOf(tagName) > -1 && sampling) {
+  let shouldReportError = (filename.match(/(mip\.js)/g) || tags.indexOf(tagName) > -1) && sampling
+  
+  if (shouldReportError) {
     // 数据处理
     let logData = {
       file: filename,
       msg: message,
       ln: lineno,
-      col: colno || (window.event && window.event.errorCharacter) || 0,
+      col: colno,
       href: window.location.href
     }
-
-    setTimeout(() => ls.sendLog('mip-stability', logData), 0)
+    viewer.sendMessage(OUTER_MESSAGE_STABILITY_LOG, logData)
   }
 }
 

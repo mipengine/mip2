@@ -5,18 +5,19 @@
 
 /* globals describe, it, expect, sinon */
 
-import ls from 'src/log/log-send'
-import { errorHandler } from 'src/log/monitor'
+import viewer from 'src/viewer'
+import { errorHandler } from 'src/log/error-monitor'
 
 describe('monitor', function () {
   it('catch error', function (done) {
     let filename = 'https://c.mipcdn.com/static/v2/mip-sidebar/mip-sidebar.js'
     let message = 'test monitor'
-    let spy = sinon.stub(ls, 'sendLog').callsFake(function (type, msg = {}) {
-      expect(type).to.be.equal('mip-stability')
-      expect(msg).to.be.a('object')
-      expect(msg.msg).to.be.equal(message)
-      expect(msg.file).to.be.equal(filename)
+
+    let spy = sinon.stub(viewer, 'sendMessage').callsFake(function (eventName, data = {}) {
+      expect(eventName).to.be.equal('stability-log')
+      expect(data).to.be.a('object')
+      expect(data.msg).to.be.equal(message)
+      expect(data.file).to.be.equal(filename)
       spy.restore()
       done()
     })
@@ -25,5 +26,31 @@ describe('monitor', function () {
     e.filename = filename
 
     errorHandler(e, { rate: 1 })
+  })
+
+  it('should ignore report when not mipcdn file', function () {
+    let filename = 'https://120ask.com/static/v2/mip-a/mip-a.js'
+    let message = 'test error monitor'
+    let spy = sinon.stub(viewer, 'sendMessage')
+
+    let e = new Error(message)
+    e.filename = filename
+
+    errorHandler(e, { rate: 1 })
+    expect(spy).to.not.be.called
+    spy.restore()
+  })
+
+  it('should ignore report when not core or mip-extensions', function () {
+    let filename = 'https://c.mipcdn.com/static/v2/mip-a/mip-a.js'
+    let message = 'test error monitor'
+    let spy = sinon.stub(viewer, 'sendMessage')
+
+    let e = new Error(message)
+    e.filename = filename
+
+    errorHandler(e, { rate: 1 })
+    expect(spy).to.not.be.called
+    spy.restore()
   })
 })
