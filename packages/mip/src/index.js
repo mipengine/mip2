@@ -20,13 +20,13 @@ import viewport from './viewport'
 import builtinComponents from './components/index'
 import sleepWakeModule from './sleep-wake-module'
 import performance from './performance'
-import monitorInstall from './log/monitor'
+import errorMonitorInstall from './log/error-monitor'
 import {OUTER_MESSAGE_PERFORMANCE_UPDATE} from './page/const/index'
 
 // Ensure loaded only once
 /* istanbul ignore next */
 if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefined') {
-  monitorInstall()
+  errorMonitorInstall()
   registerRuntime(window)
 
   // init viewport
