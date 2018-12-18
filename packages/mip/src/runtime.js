@@ -11,7 +11,6 @@ import util from './util'
 import viewer from './viewer'
 import viewport from './viewport'
 import installMip1Polyfill from './mip1-polyfill'
-import installSandbox from './sandbox'
 import installMipComponentsPolyfill from 'deps/mip-components-webpack-helpers'
 
 class Runtime {
@@ -92,17 +91,16 @@ class Runtime {
   }
 
   /**
-   * Registers the runtime in global scope. Constructs `window.MIP` object.
+   * Returns the runtime object.
    */
-  register () {
-    const preregisteredExtensions = this.win.MIP || []
+  get () {
     const {pageMeta, standalone} = this.getPageMetadata()
 
     viewer.pageMeta = pageMeta
 
     const {installExtension, registerElement, registerService, registerTemplate} = this.extensions
 
-    let globalMip = this.win.MIP = {
+    const MIP = {
       version: '2',
       CustomElement,
       Services,
@@ -133,10 +131,10 @@ class Runtime {
       viewport
     }
 
-    installMip1Polyfill(globalMip)
+    installMip1Polyfill(MIP)
     installMipComponentsPolyfill()
-    installSandbox(globalMip)
-    Array.isArray(preregisteredExtensions) && preregisteredExtensions.forEach(installExtension)
+
+    return MIP
   }
 }
 
@@ -144,10 +142,8 @@ class Runtime {
  * @param {!Window} win
  * @returns {!Runtime}
  */
-export function registerRuntime (win) {
+export function getRuntime (win) {
   const runtime = new Runtime(win)
 
-  runtime.register()
-
-  return runtime
+  return runtime.get()
 }

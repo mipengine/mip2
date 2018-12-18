@@ -203,6 +203,10 @@ function getRootName (name) {
   }
 }
 
+const raf = window.requestAnimationFrame
+  ? window.requestAnimationFrame.bind(window)
+  : setTimeout.bind(window)
+
 export default {
   throttle,
   values,
@@ -213,5 +217,6 @@ export default {
   del,
   hasTouch,
   isCacheUrl,
-  getRootName
+  getRootName,
+  raf
 }

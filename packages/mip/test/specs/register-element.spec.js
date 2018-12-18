@@ -52,7 +52,7 @@ describe('Register element', function () {
     expect(insertStyleElement.calledOnce).to.be.true
   })
 
-  it('should call customElement life cycle hooks in order', function (done) {
+  it('should call customElement life cycle hooks in order', function () {
     let name = prefix + 'custom-element'
     let lifecycs = [
       // 'constuctor'
@@ -72,13 +72,11 @@ describe('Register element', function () {
     ele.setAttribute('name', 'fake')
 
     document.body.appendChild(ele)
-    setTimeout(() => {
-      document.body.removeChild(ele)
+    ele.viewportCallback(true)
+    document.body.removeChild(ele)
 
-      lifecycSpies.forEach(spy => spy.restore())
-      sinon.assert.callOrder(...lifecycSpies)
-      done()
-    }, 1)
+    lifecycSpies.forEach(spy => spy.restore())
+    sinon.assert.callOrder(...lifecycSpies)
   })
 
   it('should has a mip-element class in dom', function () {
@@ -163,7 +161,7 @@ describe('Register element', function () {
 
       document.body.appendChild(ele)
 
-      await new Promise(resolve => (ele.customElement.build = resolve))
+      ele.viewportCallback(true)
 
       let placeholder = ele.querySelector('.default-placeholder')
       expect(placeholder).to.not.be.null
@@ -179,7 +177,7 @@ describe('Register element', function () {
       ele.appendChild(placeholder)
       document.body.appendChild(ele)
 
-      await new Promise(resolve => (ele.customElement.build = resolve))
+      ele.viewportCallback(true)
       let eleRect = ele.getBoundingClientRect()
       let placeholderRect = placeholder.getBoundingClientRect()
       expect(eleRect).to.deep.equal(placeholderRect)
@@ -197,7 +195,7 @@ describe('Register element', function () {
       ele.appendChild(placeholder)
       document.body.appendChild(ele)
 
-      await new Promise(resolve => (ele.customElement.build = resolve))
+      ele.viewportCallback(true)
       let eleRect = ele.getBoundingClientRect()
       let placeholderRect = placeholder.getBoundingClientRect()
       expect(eleRect).to.not.equal(placeholderRect)
@@ -214,7 +212,7 @@ describe('Register element', function () {
       ele.appendChild(placeholder)
       document.body.appendChild(ele)
 
-      await new Promise(resolve => (ele.customElement.build = resolve))
+      ele.viewportCallback(true)
       let eleRect = ele.getBoundingClientRect()
       let placeholderRect = placeholder.getBoundingClientRect()
       expect(eleRect).to.not.equal(placeholderRect)
@@ -250,12 +248,9 @@ describe('Register element', function () {
       document.body.appendChild(ele)
 
       expect(ele.querySelector('.mip-loading-container')).to.be.null
-      await new Promise(resolve => {
-        ele.customElement.layoutCallback = function () {
-          resolve()
-          return Promise.resolve()
-        }
-      })
+
+      ele.viewportCallback(true)
+
       // show loading
       let loader = ele.querySelector('.mip-loading-container')
       expect(loader).to.be.not.null
@@ -275,12 +270,9 @@ describe('Register element', function () {
       document.body.appendChild(ele)
 
       expect(ele.querySelector('.mip-loading-container')).to.be.null
-      await new Promise(resolve => {
-        ele.customElement.layoutCallback = function () {
-          resolve()
-          return Promise.resolve()
-        }
-      })
+
+      ele.viewportCallback(true)
+
       // show loading
       let loader = ele.querySelector('.mip-loading-container')
       expect(loader).to.be.null
@@ -316,6 +308,7 @@ describe('Register element', function () {
           resolve()
           return Promise.reject(err)
         }
+        ele.viewportCallback(true)
       })
 
       let eleRect = ele.getBoundingClientRect()
@@ -333,7 +326,6 @@ describe('Register element', function () {
 
     beforeEach(() => {
       ele = createElement(name)
-      document.body.appendChild(ele)
     })
 
     afterEach(() => {
@@ -342,51 +334,48 @@ describe('Register element', function () {
 
     it('normal sizes not match', async function () {
       ele.setAttribute('sizes', `(min-width: ${ww + 1}px) 50vw, 100vw`)
-      await new Promise(resolve => (ele.customElement.build = resolve))
+      document.body.appendChild(ele)
       expect(ele.style.width).to.equal('100vw')
     })
 
     it('normal sizes match', async function () {
       ele.setAttribute('sizes', `(min-width: ${ww - 1}px) 50vw, 100vw`)
-      await new Promise(resolve => (ele.customElement.build = resolve))
+      document.body.appendChild(ele)
       expect(ele.style.width).to.equal('50vw')
     })
 
     it('normal heights not match', async function () {
       ele.setAttribute('sizes', `(min-width: ${ww + 1}px) 50vw, 100vw`)
-      await new Promise(resolve => (ele.customElement.build = resolve))
+      document.body.appendChild(ele)
       expect(ele.style.width).to.equal('100vw')
     })
 
     it('normal heights match', async function () {
       ele.setAttribute('sizes', `(min-width: ${ww - 1}px) 50vw, 100vw`)
-      await new Promise(resolve => (ele.customElement.build = resolve))
+      document.body.appendChild(ele)
       expect(ele.style.width).to.equal('50vw')
     })
 
     it('normal media query match', async function () {
       ele.setAttribute('media', `(min-width: ${ww - 1}px)`)
-      await new Promise(resolve => (ele.customElement.build = resolve))
+      document.body.appendChild(ele)
       expect(ele.classList.contains('mip-hidden-by-media-query')).to.be.false
     })
 
     it('normal media query not match', async function () {
       ele.setAttribute('media', `(min-width: ${ww + 1}px)`)
-      await new Promise(resolve => (ele.customElement.build = resolve))
+      document.body.appendChild(ele)
       expect(ele.classList.contains('mip-hidden-by-media-query')).to.be.true
     })
 
     it('normal heights width layout=responsive', async function () {
-      document.body.removeChild(ele)
-
-      ele = createElement(name)
       ele.setAttribute('layout', 'responsive')
       ele.setAttribute('width', '1px')
       ele.setAttribute('height', '1px')
       ele.setAttribute('heights', `(min-width: ${ww + 1}px) 50vw, 100vw`)
+      console.log('ddd')
       document.body.appendChild(ele)
 
-      await new Promise(resolve => (ele.customElement.build = resolve))
       expect(ele.querySelector('mip-i-space').style.paddingTop).to.equal('100vw')
     })
   })

@@ -69,10 +69,7 @@ describe('viewport', function () {
     let old = window.innerWidth
 
     window.innerWidth = true
-    expect(viewport.getWidth()).to.be.true
-
-    window.innerWidth = false
-    expect(viewport.getWidth()).to.be.a('number')
+    expect(viewport.getWidth()).to.equal(old)
 
     window.innerWidth = old
   })
@@ -81,12 +78,13 @@ describe('viewport', function () {
     let old = window.innerHeight
 
     window.innerHeight = true
-    expect(viewport.getHeight()).to.be.true
-
-    window.innerHeight = false
-    expect(viewport.getHeight()).to.be.a('number')
+    expect(viewport.getHeight()).to.equal(window.innerHeight)
 
     window.innerHeight = old
+  })
+
+  it('.isPortrait', function () {
+    expect(viewport.isPortrait()).to.be.false
   })
 
   describe('event', function () {
@@ -101,10 +99,11 @@ describe('viewport', function () {
       spy.returns(10)
       window.dispatchEvent(new Event('scroll'))
       document.body.dispatchEvent(new Event('scroll'))
+      spy.restore()
     })
 
     it('resize', function (done) {
-      viewport.on('resize', function (event) {
+      viewport.once('resize', function (event) {
         expect(event).to.not.be.undefined
         // restore innerWidth
         window.innerWidth = window.innerWidth + 1
