@@ -172,12 +172,19 @@ class Resources {
     let resources = this.getResources()
     let viewportRect = viewport.getRect()
 
-    let keys = Object.keys(resources)
-    let diff = [...keys]
+    let elementIds = []
+    while (true) {
+      let updatedElementIds = Object.keys(resources)
+      // 计算是否有新增的自定义元素
+      let newElementIds = updatedElementIds.filter(k => elementIds.indexOf(k) < 0)
+      elementIds = updatedElementIds
 
-    while (diff.length) {
-      while (diff.length) {
-        let ele = resources[diff.shift()]
+      if (!newElementIds.length) {
+        break
+      }
+
+      for (let i = 0, len = newElementIds.length; i < len; i++) {
+        let ele = resources[newElementIds[i]]
         // The element may have been removed.
         if (ele && ele.isBuilt()) {
           // Compute the viewport state of current element.
@@ -193,11 +200,6 @@ class Resources {
           this.setInViewport(ele, inViewport)
         }
       }
-
-      let updatedKeys = Object.keys(resources)
-      // 计算是否有新增的自定义元素
-      diff = updatedKeys.filter(k => keys.indexOf(k) < 0)
-      keys = updatedKeys
     }
     this._rafId = null
   }
