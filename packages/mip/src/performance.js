@@ -5,6 +5,10 @@
 
 import util from './util/index'
 import viewer from './viewer'
+import firstScreenLabel from './log/firstscreen-label'
+import rect from './util/dom/rect'
+import viewport from './viewport'
+import prerender from './client-prerender'
 
 const EventEmitter = util.EventEmitter
 
@@ -91,6 +95,18 @@ function recordTiming (name, timing) {
 }
 
 /**
+ * check element if inViewport
+ *
+ * @param {HTMLElement} element html element
+ */
+function isInViewport (element) {
+  let elementRect = rect.getElementRect(element)
+  let viewportRect = viewport.getRect()
+  return element.prerenderAllowed(elementRect, viewportRect) ||
+    rect.overlapping(elementRect, viewportRect)
+}
+
+/**
  * Try recording first-screen loaded.
  */
 function tryRecordFirstScreen () {
@@ -101,15 +117,34 @@ function tryRecordFirstScreen () {
 }
 
 /**
+ * Lock the fsElements. No longer add fsElements.
+ */
+function lockFirstScreen() {
+  // when is prerendering, iframe container display none,
+  // all elements are not in viewport.
+  if (prerender.isPrerendering) {
+    return
+  }
+  fsElements = fsElements.filter((element) => {
+    if (prerender.isPrerendered) {
+      return isInViewport(element)
+    }
+    return element.inViewport()
+  }).map((element) => {
+    element.setAttribute('mip-firstscreen-element', '')
+    return element
+  })
+  fsElementsLocked = true
+  tryRecordFirstScreen()
+  !prerender.isPrerendered && firstScreenLabel.sendLog()
+}
+/**
  * Record dom loaded timing.
  */
 function domLoaded () {
   recordTiming('MIPDomContentLoaded')
   setTimeout(() => {
-    fsElements = fsElements.filter(ele => ele.inViewport())
-    // Lock the fsElements. No longer add fsElements.
-    fsElementsLocked = true
-    tryRecordFirstScreen()
+    lockFirstScreen()
   }, 10)
 }
 
@@ -151,6 +186,7 @@ export default {
   fsElementLoaded,
   getTiming,
   recordTiming,
+  lockFirstScreen,
   on () {
     performanceEvent.on.apply(performanceEvent, arguments)
   }
