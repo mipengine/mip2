@@ -381,6 +381,20 @@ Vue 自定义元素组件是在 MIP.CustomElement 的基础上进行封装的，
 
     自定义元素的生命周期钩子，在元素挂载到 DOM 上之后，首次出现在视口内上时执行。适合做懒加载之类的功能。
 
+### viewportCallback
+
+- **类型**：`Function`
+
+- **上下文**: Vue 组件实例
+
+- **参数**：
+  - inViewport `{Boolean}` 当前是否在视口内
+  - element `{Element}` Element 实例
+
+- **详细**：
+
+  当自定义元素从视口内消失或者重新进入视口时触发该回调。
+
 ### connectedCallback
 
 - **MIP 组件新增**
