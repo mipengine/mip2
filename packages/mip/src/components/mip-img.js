@@ -7,6 +7,7 @@
 /* eslint-disable no-new */
 
 import util from '../util/index'
+import {customEmit} from '../util/custom-event'
 import CustomElement from '../custom-element'
 import viewport from '../viewport'
 import viewer from '../viewer'
@@ -311,6 +312,7 @@ class MipImg extends CustomElement {
       // 标识资源已加载完成
       this.resourcesComplete()
       this.element.classList.add('mip-img-loaded')
+      customEmit(this.element, 'load')
     }).catch(reason => {
       /* istanbul ignore if */
       if (!viewer.isIframed) {
