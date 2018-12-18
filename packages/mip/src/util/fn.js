@@ -205,7 +205,7 @@ function getRootName (name) {
 
 const raf = window.requestAnimationFrame
   ? window.requestAnimationFrame.bind(window)
-  : setTimeout
+  : setTimeout.bind(window)
 
 export default {
   throttle,
