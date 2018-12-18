@@ -176,10 +176,10 @@ class Resources {
     let diff = [...keys]
 
     while (diff.length) {
-      let ele = resources[diff.shift()]
-
-      while (ele) {
-        if (ele.isBuilt()) {
+      while (diff.length) {
+        let ele = resources[diff.shift()]
+        // The element may have been removed.
+        if (ele && ele.isBuilt()) {
           // Compute the viewport state of current element.
           // If current element`s prerenderAllowed returns `true` always set the state to be `true`.
           let elementRect = rect.getElementRect(ele)
@@ -192,7 +192,6 @@ class Resources {
 
           this.setInViewport(ele, inViewport)
         }
-        ele = resources[diff.shift()]
       }
 
       let updatedKeys = Object.keys(resources)
