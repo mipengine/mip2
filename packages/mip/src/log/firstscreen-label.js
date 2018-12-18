@@ -32,8 +32,6 @@ function getPathTo(element) {
 function sendLog() {
   let allLabelImgs = [...document.querySelectorAll('mip-img[firstScreen="1"]')]
   let allFirstScreenImgs = [...document.querySelectorAll('mip-img[mip-firstscreen-element]')]
-  console.log(allLabelImgs)
-  console.log(allFirstScreenImgs)
   allLabelImgs.forEach(element => {
     if (!element.hasAttribute('mip-firstscreen-element')) {
       incorrectList.push(getPathTo(element))
