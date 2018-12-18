@@ -237,7 +237,7 @@ class Bind {
     Object.assign(win.m, data.pageData)
     // record props of pageData
     !cancel && Object.keys(data.pageData).forEach(k => {
-      win.pgStates[k] = null
+      win.pgStates[k] = true
     })
 
     let globalData = data.globalData
