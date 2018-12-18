@@ -450,10 +450,10 @@ let viewer = {
         // 这些兼容性的代码会严重触发 reflow，但又不需要在首帧执行
         // 使用 setTimeout 不阻塞 postMessage 回调执行
         setTimeout(() => {
-          this.lockBodyScroll()
-          this.viewportScroll()
           this.fixSoftKeyboard()
+          this.viewportScroll()
         }, 0)
+        this.lockBodyScroll()
 
         // While the back button is clicked,
         // the cached page has some problems.
