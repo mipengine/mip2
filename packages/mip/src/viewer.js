@@ -335,18 +335,16 @@ let viewer = {
      * otherwise let TOP jump
      */
     event.delegate(document, 'a', 'click', function (event) {
-      let $a = this
-
       /**
        * browser will resolve fullpath, including path, query & hash
        * eg. http://localhost:8080/examples/page/tree.html?a=b#hash
-       * don't use `$a.getAttribute('href')`
+       * don't use `this.getAttribute('href')`
        */
-      let to = $a.href
-      let isMipLink = $a.hasAttribute('mip-link') || $a.getAttribute('data-type') === 'mip'
-      let replace = $a.hasAttribute('replace')
-      let cacheFirst = $a.hasAttribute('cache-first')
-      let state = self._getMipLinkData.call($a)
+      let to = this.href
+      let isMipLink = this.hasAttribute('mip-link') || this.getAttribute('data-type') === 'mip'
+      let replace = this.hasAttribute('replace')
+      let cacheFirst = this.hasAttribute('cache-first')
+      let state = self._getMipLinkData.call(this)
 
       /**
        * For mail、phone、market、app ...
@@ -361,7 +359,21 @@ let viewer = {
         return
       }
 
-      self.open(to, {isMipLink, replace, state, cacheFirst})
+      // 以下情况使用 MIP 接管页面跳转
+      // 1. Standalone
+      // 2. New MIP Service
+      let useNewMIPService = window.MIP.standalone || window.mipService === '2'
+      if (useNewMIPService) {
+        self.open(to, {isMipLink, replace, state, cacheFirst})
+      } else {
+        if (isMipLink) {
+          let message = self._getMessageData.call(this);
+          self.sendMessage(message.messageKey, message.messageData);
+        } else {
+          // other jump through '_top'
+          top.location.href = this.href;
+        }
+      }
 
       event.preventDefault()
     }, false)
@@ -381,6 +393,28 @@ let viewer = {
       title: this.getAttribute('data-title') || parentNode.getAttribute('title') || undefined,
       defaultTitle: this.innerText.trim().split('\n')[0] || undefined
     }
+  },
+
+  /**
+   * get alink postMessage data
+   * @return {Object} messageData
+   */
+  _getMessageData () {
+    let messageKey = 'loadiframe';
+    let messageData = {};
+    messageData.url = this.href;
+    if (this.hasAttribute('no-head')) {
+        messageData.nohead = true;
+    }
+    if (this.hasAttribute('mip-link')) {
+        let parent = this.parentNode;
+        messageData.title = parent.getAttribute('title') || parent.innerText.trim().split('\n')[0];
+        messageData.click = parent.getAttribute('data-click');
+    } else {
+        messageData.title = this.getAttribute('data-title') || this.innerText.trim().split('\n')[0];
+        messageData.click = this.getAttribute('data-click');
+    }
+    return {messageKey, messageData}
   },
 
   handleBrowserQuirks () {
@@ -413,7 +447,13 @@ let viewer = {
       }
 
       if (this.isIframed) {
-        setTimeout(() => this.lockBodyScroll(), 0)
+        // 这些兼容性的代码会严重触发 reflow，但又不需要在首帧执行
+        // 使用 setTimeout 不阻塞 postMessage 回调执行
+        setTimeout(() => {
+          this.fixSoftKeyboard()
+          this.viewportScroll()
+        }, 0)
+        this.lockBodyScroll()
 
         // While the back button is clicked,
         // the cached page has some problems.
@@ -444,11 +484,6 @@ let viewer = {
         document.documentElement.classList.add('trigger-layout')
         document.body.classList.add('trigger-layout')
       })
-    }
-
-    if (this.isIframed) {
-      this.viewportScroll()
-      this.fixSoftKeyboard()
     }
   },
 

@@ -8,6 +8,7 @@
 export default function customEvent (eventName, detail) {
   const params = {bubbles: false, cancelable: false, detail}
   let event
+  /* istanbul ignore else */
   if (typeof window.CustomEvent === 'function') {
     event = new CustomEvent(eventName, params)
   } else {

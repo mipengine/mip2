@@ -3,7 +3,6 @@ import {templates, Deferred, event} from '../util'
 import registerMip1Element from '../mip1-polyfill/element'
 import registerCustomElement from '../register-element'
 import registerVueCustomElement from '../vue-custom-element'
-import installMipComponentsPolyfill from 'deps/mip-components-webpack-helpers'
 
 const {listen} = event
 
@@ -240,22 +239,9 @@ export class Extensions {
    * Installs an extension. The same as `MIP.push`.
    *
    * @param {!Object} extension
-   * @returns {!Promise<void>}
    */
   installExtension (extension) {
-    return Promise.all([
-      /**
-       * Disables `extension.deps` temporarily.
-       */
-      // this.preloadDepsOf(extension),
-      this.mipdoc.whenBodyAvailable()
-    ]).then(
-      () => {
-        !window.__mipComponentsWebpackHelpers__ && installMipComponentsPolyfill()
-
-        return this.registerExtension(extension.name, extension.func, this.win.MIP)
-      }
-    )
+    this.registerExtension(extension.name, extension.func, this.win.MIP)
   }
 
   /**
@@ -302,7 +288,22 @@ export class Extensions {
     let elementInstances = this.getElementRegistrator(element)(name, implementation, css)
 
     if (elementInstances && elementInstances.length) {
-      elementInstances.forEach(el => {
+      holder.elementInstances = holder.elementInstances.concat(elementInstances)
+      for (let i = 0, len = elementInstances.length; i < len; i++) {
+        let el = elementInstances[i]
+
+        // Delay to last processing extension resolve.
+        if (el.isBuilt()) {
+          continue
+        }
+
+        // It can't catch error of customElements.define with try/catch.
+        // @see https://github.com/w3c/webcomponents/issues/547
+        if (el.error) {
+          this.tryToRejectError(holder, el.error)
+          break
+        }
+
         /**
          * Lifecycle `build` of element instances is probably delayed with `setTimeout`.
          * If they are not, these event listeners would not be registered before they emit events.
@@ -317,8 +318,7 @@ export class Extensions {
           unlistenBuild()
           unlistenBuildError()
         })
-      })
-      holder.elementInstances = holder.elementInstances.concat(elementInstances)
+      }
     }
   }
 

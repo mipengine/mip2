@@ -54,6 +54,7 @@ export const MAX_PAGE_NUM = 6
 
 // 和 SF 通讯的事件名称
 export const OUTER_MESSAGE_PERFORMANCE_UPDATE = 'performance-update'
+export const OUTER_MESSAGE_STABILITY_LOG = 'stability-log'
 export const OUTER_MESSAGE_CHANGE_STATE = 'change-state'
 export const OUTER_MESSAGE_VIDEO_JUMP = 'video-jump'
 export const OUTER_MESSAGE_HISTORY_NAVIGATE = 'history-navigate'

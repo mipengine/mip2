@@ -9,7 +9,7 @@ import viewport from './viewport'
 import rect from './util/dom/rect'
 import prerender from './client-prerender'
 
-const COMPONENTS_NEED_NOT_DELAY = ['MIP-IMG', 'MIP-CAROUSEL', 'MIP-DATA', 'MIP-VIDEO', 'MIP-LAYOUT']
+// const COMPONENTS_NEED_NOT_DELAY = ['MIP-IMG', 'MIP-CAROUSEL', 'MIP-DATA', 'MIP-VIDEO', 'MIP-LAYOUT']
 
 /**
  * Store the resources.
@@ -64,8 +64,8 @@ class Resources {
      */
     this._viewport = viewport
 
-    /** @private @type {Promise} */
-    this._updatePromise = null
+    /** @private @type {number} */
+    this._rafId = null
 
     this._gesture = new Gesture(document, {
       preventX: false
@@ -97,13 +97,13 @@ class Resources {
     element._eid = this._eid++
     resources[this._rid][element._eid] = element
 
-    let fn = () => {
-      prerender.execute(() => {
-        element.build()
-        this.updateState()
-      }, element)
-    }
-    COMPONENTS_NEED_NOT_DELAY.indexOf(element.tagName) === -1 ? setTimeout(fn, 0) : fn()
+    // let fn = () => {
+    prerender.execute(() => {
+      element.build()
+      this.updateState()
+    }, element)
+    // }
+    // COMPONENTS_NEED_NOT_DELAY.indexOf(element.tagName) === -1 ? setTimeout(fn, 20) : fn()
   }
 
   /**
@@ -125,7 +125,7 @@ class Resources {
   /**
    * Return an object of resources.
    *
-   * @return {Array}
+   * @return {Object}
    */
   getResources () {
     return resources[this._rid]
@@ -157,37 +157,51 @@ class Resources {
    * @return {Promise<undefined>}
    */
   _update () {
-    if (!this._updatePromise) {
-      this._updatePromise = Promise.resolve().then(() => this._doRealUpdate())
+    if (!this._rafId) {
+      // 改用 raf 让页面一帧只计算一次 update
+      this._rafId = fn.raf(() => this._doRealUpdate())
     }
-    return this._updatePromise
+    return this._rafId
   }
 
   /**
    * Do real update elements's viewport state with performance
    */
   _doRealUpdate () {
+    /* @type {Object} */
     let resources = this.getResources()
-    let viewportRect = this._viewport.getRect()
+    let viewportRect = viewport.getRect()
 
-    for (let i in resources) {
-      if (resources[i].isBuilt()) {
-        // 兼容 mip1 的组件
-        resources[i].applySizesAndMediaQuery && resources[i].applySizesAndMediaQuery()
-        // Compute the viewport state of current element.
-        // If current element`s prerenderAllowed returns `true` always set the state to be `true`.
-        let elementRect = rect.getElementRect(resources[i])
-        let inViewport = resources[i].prerenderAllowed(elementRect, viewportRect) ||
-          rect.overlapping(elementRect, viewportRect) ||
-          // 在 ios 有个设置滚动${@link ./viewer.lockBodyScroll} 会设置 scrollTop=1
-          // 如果部分元素在顶部而且没有设置高度，会导致 elementRect 和 viewportRect 不重叠，
-          // 进而导致无法执行元素的生命周期，针对这种情况做特殊处理
-          (elementRect.bottom === 0 && elementRect.top === 0 && viewportRect.top === 1)
-        this.setInViewport(resources[i], inViewport)
+    let elementIds = []
+    while (true) {
+      let updatedElementIds = Object.keys(resources)
+      // 计算是否有新增的自定义元素
+      let newElementIds = updatedElementIds.filter(k => elementIds.indexOf(k) < 0)
+      elementIds = updatedElementIds
+
+      if (!newElementIds.length) {
+        break
+      }
+
+      for (let i = 0, len = newElementIds.length; i < len; i++) {
+        let ele = resources[newElementIds[i]]
+        // The element may have been removed.
+        if (ele && ele.isBuilt()) {
+          // Compute the viewport state of current element.
+          // If current element`s prerenderAllowed returns `true` always set the state to be `true`.
+          let elementRect = rect.getElementRect(ele)
+          let inViewport = ele.prerenderAllowed(elementRect, viewportRect) ||
+            rect.overlapping(elementRect, viewportRect) ||
+            // 在 ios 有个设置滚动${@link ./viewer.lockBodyScroll} 会设置 scrollTop=1
+            // 如果部分元素在顶部而且没有设置高度，会导致 elementRect 和 viewportRect 不重叠，
+            // 进而导致无法执行元素的生命周期，针对这种情况做特殊处理
+            (elementRect.bottom === 0 && elementRect.top === 0 && viewportRect.top === 1)
+
+          this.setInViewport(ele, inViewport)
+        }
       }
     }
-
-    this._updatePromise = null
+    this._rafId = null
   }
 
   /**
