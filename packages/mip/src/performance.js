@@ -6,8 +6,6 @@
 import util from './util/index'
 import viewer from './viewer'
 import firstScreenLabel from './log/firstscreen-label'
-import rect from './util/dom/rect'
-import viewport from './viewport'
 import prerender from './client-prerender'
 
 const EventEmitter = util.EventEmitter
@@ -95,18 +93,6 @@ function recordTiming (name, timing) {
 }
 
 /**
- * check element if inViewport
- *
- * @param {HTMLElement} element html element
- */
-function isInViewport (element) {
-  let elementRect = rect.getElementRect(element)
-  let viewportRect = viewport.getRect()
-  return element.prerenderAllowed(elementRect, viewportRect) ||
-    rect.overlapping(elementRect, viewportRect)
-}
-
-/**
  * Try recording first-screen loaded.
  */
 function tryRecordFirstScreen () {
@@ -127,7 +113,7 @@ function lockFirstScreen() {
   }
   fsElements = fsElements.filter((element) => {
     if (prerender.isPrerendered) {
-      return isInViewport(element)
+      return element._resources.isInViewport(element)
     }
     return element.inViewport()
   }).map((element) => {
