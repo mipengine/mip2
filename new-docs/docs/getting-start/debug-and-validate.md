@@ -12,7 +12,7 @@ MIP2 提供了一个命令行工具 mip2 CLI，它提供了脚手架、调试、
 
 不过 mip2 CLI 主要实现的功能是：
 - 编译并调试 components 目录下的组件
-- 在 example 中拼凑组件进行调试
+- 在 example 中拼凑组件进行调试
 
 而 mip2 site dev 的主要功能是：
 - 官方的组件开发服务器，即对应 mip2 dev，可以对 MIP 组件进行调试
