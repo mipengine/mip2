@@ -18,10 +18,7 @@ let parsePrerender = ele => {
 
   let prerender = ele.getAttribute('prerender')
   let isFirstScreenElement = ele.getAttribute('firstscreen')
-  if (isFirstScreenElement) {
-    ele.viewportCallback && ele.viewportCallback(true)
-  }
-  return isFirstScreenElement != null && prerender != null && prerender !== 'false'
+  return isFirstScreenElement != null || (prerender != null && prerender !== 'false')
 }
 
 let resetPrerenderHash = () => {
