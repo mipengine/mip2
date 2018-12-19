@@ -1,121 +1,345 @@
 [
   {
-    "name": "mip-access",
-    "chinese": "页面内容访问权限定制组件",
+    "name": "mip-bind",
+    "chinese": "绑定数据组件",
     "type": "动态内容",
-    "desc": "mip-access 能够允许发布者对页面内容进行访问权限的控制，通过内容标记和用户访问情况进行综合评价，从而决定页面要展示的内容。",
+    "desc": "<mip-bind> 是以数据驱动页面更新的功能，开发者通过配置数据信息，并绑定在相应 DOM 上，就可以轻松做到数据变动后 DOM 元素随之变动的效果",
     "preview": false
   },
   {
-    "name": "mip-ad-ecom",
-    "chinese": "百度凤巢广告",
-    "type": "广告",
-    "desc": "百度凤巢广告组件，仅在百度搜索来源的MIP页中生效。",
-    "preview": false
-  },
-  {
-    "name": "mip-ad",
-    "chinese": "MIP 广告",
-    "type": "广告",
-    "desc": "用于在 MIP 页中引入广告脚本，投放广告。",
-    "preview": false
-  },
-  {
-    "name": "mip-bridge-baidu",
-    "chinese": "百度商桥组件",
-    "type": "广告",
-    "desc": "安装百度商桥代码，引入百度商桥功能。",
-    "preview": [true, false]
-  },
-  {
-    "name": "mip-experiment",
-    "chinese": "前端抽样实验",
-    "type": "统计",
-    "desc": "该组件用于前端抽样实验。",
-    "preview": false
-  },
-  {
-    "name": "mip-group-selection",
-    "chinese": "分组选择",
-    "type": "动态内容",
-    "desc": "分组选择组件，可用于城市分组，英文名分组，颜色分组等。",
-    "preview": false
-  },
-  {
-    "name": "mip-history",
-    "chinese": "历史记录",
-    "type": "动态内容",
-    "desc": "封装了对历史记录的操作，实现页面间前进后退的功能。",
-    "preview": true
-  },
-  {
-    "name": "mip-install-serviceworker",
-    "chinese": "注册 Service Worker",
-    "type": "动态内容",
-    "desc": "注册 Service Worker，使您的 MIP 站点实现离线可用。",
-    "preview": false
-  },
-  {
-    "name": "mip-mustache",
-    "chinese": "mustache 模板引擎",
-    "type": "动态内容",
-    "desc": "允许页面写 mustache 模板。",
-    "preview": false
-  },
-  {
-    "name": "mip-scrollbox",
-    "chinese": "横向滑动组件",
+    "name": "mip-shell",
+    "chinese": "shell 组件",
     "type": "布局",
-    "desc": "支持自动适合屏幕宽度、栅格化（12列和两端 17px 边距）等特性。",
-    "preview": true
-  },
-  {
-    "name": "mip-semi-fixed",
-    "chinese": "滑动悬浮组件",
-    "type": "布局",
-    "desc": "position:sticky 的 JS 兼容版本。页面元素滑动到顶部时自动贴顶。",
-    "preview": true
-  },
-  {
-    "name": "mip-share",
-    "chinese": "分享组件",
-    "type": "社交",
-    "desc": "提供页面内分享按钮功能，默认分享当前网址。",
-    "preview": true
-  },
-  {
-    "name": "mip-stats-cnzz",
-    "chinese": "友盟统计投放",
-    "type": "统计",
-    "desc": "友盟（CNZZ）统计投放",
+    "desc": "使用 MIP Shell 最简单直接的方式是直接使用内置的组件 <mip-shell>。开发者可以在 每个页面中 使用这个标签来定义 Shell 的各项配置。内置的 <mip-shell> 仅提供头部标题栏，但通过 继承内置 Shell，开发者可以实现渲染其他部件，如底部菜单栏，侧边栏等等。(继承内置 Shell 的相关内容会在之后的部分进行讲述",
     "preview": false
   },
   {
-    "name": "mip-story",
-    "chinese": "小故事组件",
+    "name": "mip-carousel",
+    "chinese": "多图轮播",
+    "type": "布局",
+    "desc": "<mip-carousel> 用来支持 MIP 中图片的一种展示方式，支持多图轮播",
+    "preview": true
+  },
+  {
+    "name": "mip-fixed",
+    "chinese": "折叠节点",
+    "type": "布局",
+    "desc": "折叠隐藏节点，可记录用户上次行为",
+    "preview": true
+  },
+  {
+    "name": "mip-iframe",
+    "chinese": "iframe",
+    "type": "布局",
+    "desc": "<mip-iframe> 是用来支持在 MIP 中嵌入第三方内容的一种方式，需要注意的是：所嵌入的内容强制是符合 HTTPS 协议的",
+    "preview": true
+  },
+  {
+    "name": "mip-img",
+    "chinese": "图片",
+    "type": "媒体",
+    "desc": "<mip-img> 用来支持在 MIP 中增加图片内容",
+    "preview": true
+  },
+  {
+    "name": "mip-layout",
+    "chinese": "折叠节点",
+    "type": "布局",
+    "desc": "amp-layout组件可以应用于响应式的任何元素布局。",
+    "preview": false
+  },
+  {
+    "name": "mip-pix",
+    "chinese": "mip-pix 统计",
+    "type": "统计",
+    "desc": "将 <mip-pix> 组件直接引入，可发送带有自定义参数的请求，用于统计页面访问情况。这些参数主要包括页面打开时间点，页面 title 和当面页面地址",
+    "preview": false
+  },
+  {
+    "name": "mip-rem",
+    "chinese": "mip-rem 组件",
     "type": "呈现",
-    "desc": "引入更好质量和多元化的内容的功能组件。",
+    "desc": "<mip-rem> 用来设置文档根元素的 font-size，防止样式错乱问题。默认值为空，即跟随浏览器的默认设置",
+    "preview": false
+  },
+  {
+    "name": "mip-video",
+    "chinese": "视频组件",
+    "type": "媒体",
+    "desc": "<mip-video> 用来支持在 MIP 中增加视频内容，是 HTML <video>的直接包装。 功能和兼容性与 HTML5<video> 一致",
+    "preview": true
+  },
+  {
+    "name": "mip-accordion",
+    "chinese": "折叠节点",
+    "type": "布局",
+    "desc": "折叠隐藏节点，可记录用户上次行为",
+    "preview": true
+  },
+  {
+    "name": "mip-analytics",
+    "chinese": "数据分析",
+    "type": "统计",
+    "desc": "发送数据分析",
+    "preview": false
+  },
+  {
+    "name": "mip-anim",
+    "chinese": "动画",
+    "type": "媒体",
+    "desc": "用来支持在 MIP 页中 GIF 图的使用",
     "preview": [true, false, true]
   },
   {
-    "name": "mip-toggle",
-    "type": "呈现",
-    "chinese": "显示隐藏",
-    "desc": "提供显示/隐藏元素的功能。",
-    "preview": true
+    "name": "mip-app-banner",
+    "chinese": "App 调起组件",
+    "type": "布局",
+    "desc": "用于调起 App",
+    "preview": false
   },
   {
-    "name": "mip-vd-baidu",
-    "chinese": "百度视频组件",
+    "name": "mip-appdl",
+    "chinese": "App 下载",
+    "type": "布局",
+    "desc": "App 下载，可区分 Android 和 iOS",
+    "preview": false
+  },
+  {
+    "name": "mip-audio",
+    "chinese": "音频播放",
     "type": "媒体",
-    "desc": "HTTP 视频源播放的百度解决方案。",
+    "desc": "音频播放组件，支持 src 播放，source 播放，进度拖动功能",
+    "preview": false
+  },
+  {
+    "name": "mip-city-selection",
+    "chinese": "城市选择组件",
+    "type": "呈现",
+    "desc": "mip-city-selection 分组选择组件，可用于城市分组，英文名分组，颜色分组等",
+    "preview": false
+  },
+  {
+    "name": "mip-confirm",
+    "chinese": "提示框",
+    "type": "动态内容",
+    "desc": "提示框组件 自定义内容 可配置确认取消按钮（confirm确认框） 和 只有确认按钮（alert提示框）",
+    "preview": false
+  },
+  {
+    "name": "mip-date-countdown",
+    "chinese": "倒计时组件",
+    "type": "呈现",
+    "desc": "倒计时组件",
+    "preview": false
+  },
+  {
+    "name": "mip-env",
+    "chinese": "环境容器",
+    "type": "动态内容",
+    "desc": "环境容器组件，可将内容仅在指定环境下做展示,否则不展示",
+    "preview": false
+  },
+  {
+    "name": "mip-fastclick",
+    "chinese": "fastclick 组件",
+    "type": "动态内容",
+    "desc": "点击延迟问题应该由页面引入 mip-fastclick 组件解决，禁止 组件内部单独引入 fastclick",
+    "preview": false
+  },
+  {
+    "name": "mip-filter",
+    "chinese": "筛选组件",
+    "type": "动态内容",
+    "desc": "筛选功能，支持从 hash 定位筛选项",
+    "preview": false
+  },
+  {
+    "name": "mip-font",
+    "chinese": "自定义字体组件",
+    "type": "呈现",
+    "desc": "管理自定义字体的加载",
     "preview": true
   },
   {
-    "name": "mip-vd-tabs",
+    "name": "mip-form",
+    "chinese": "表单组件",
+    "type": "动态内容",
+    "desc": "form 表单",
+    "preview": true
+  },
+  {
+    "name": "mip-gototop",
+    "chinese": "回到顶部组件",
+    "type": "动态内容",
+    "desc": "点击回到页面顶部",
+    "preview": true
+  },
+  {
+    "name": "mip-html-os",
+    "chinese": "操作系统",
+    "type": "动态内容",
+    "desc": "根据操作系统来区分应该显示的内容，支持 Andriod 和 iOS。",
+    "preview": false
+  },
+  {
+    "name": "mip-image-slider",
+    "chinese": "图片对比组件",
+    "type": "布局",
+    "desc": "一种将两张 mip-img 图片对比的组件。用户可以点击或拖动移动条来比较图片",
+    "preview": true
+  },
+  {
+    "name": "mip-infinitescroll",
+    "chinese": "无限滚动",
+    "type": "动态内容",
+    "desc": "当用户滚动到页面底部时，异步加载更多数据。适用于信息推荐",
+    "preview": false
+  },
+  {
+    "name": "mip-inservice-login",
+    "chinese": "登录授权组件",
+    "type": "动态内容",
+    "desc": "登录授权组件",
+    "preview": false
+  },
+  {
+    "name": "mip-inservice-pay",
+    "chinese": "极速服务 支付组件件",
+    "type": "动态内容",
+    "desc": "极速服务 支付组件",
+    "preview": false
+  },
+  {
+    "name": "mip-lightbox",
+    "chinese": "弹出层",
+    "type": "布局",
+    "desc": "由用户控制展现或关闭的全屏浮层组件，组件全屏覆盖。",
+    "preview": false
+  },
+  {
+    "name": "mip-link",
+    "chinese": "跳转链接",
+    "type": "动态内容",
+    "desc": "实现两个 MIP 页面之间互相跳转的功能",
+    "preview": false
+  },
+  {
+    "name": "mip-list",
+    "chinese": "列表组件",
+    "type": "动态内容",
+    "desc": "可以渲染同步数据，或者异步请求数据后渲染",
+    "preview": false
+  },
+  {
+    "name": "mip-map",
+    "chinese": "地图组件",
+    "type": "动态内容",
+    "desc": "组件集成了百度地图的服务，目前支持定位、地图控件加载、定位点弹窗信息定制等功能",
+    "preview": false
+  },
+  {
+    "name": "mip-mathml",
+    "chinese": "MathML 公式",
+    "type": "呈现",
+    "desc": "这个扩展组件会创建一个 iframe 并且渲染 MathML 公式",
+    "preview": false
+  },
+  {
+    "name": "mip-nav-slidedown",
+    "chinese": "菜单",
+    "type": "布局",
+    "desc": "响应式菜单，在 MIP 官网有引用",
+    "preview": false
+  },
+  {
+    "name": "mip-novel-video",
+    "chinese": "mip-novel-video 组件",
+    "type": "媒体",
+    "desc": "用来支持在 MIP 页中广告视频的使用",
+    "preview": false
+  },
+  {
+    "name": "mip-range",
+    "chinese": "拖动选择组件",
+    "type": "动态内容",
+    "desc": "通过拖动滑块在一个固定区间内进行选择",
+    "preview": false
+  },
+  {
+    "name": "mip-script",
+    "chinese": "自定义 JS 代码",
+    "type": "动态内容",
+    "desc": "开发者可以在 mip-script 中编写自定义 JavaScript 代码来完成一些事情，使 MIP 页面交互更加灵活",
+    "preview": false
+  },
+  {
+    "name": "mip-semi-fixed",
+    "chinese": "自动贴顶",
+    "type": "布局",
+    "desc": "position:sticky 的 JS 兼容版本。页面元素滑动到顶部时自动贴顶",
+    "preview": false
+  },
+  {
+    "name": "mip-shell-inservice",
+    "chinese": "极速服务 mip-shell 定制化组件",
+    "type": "布局",
+    "desc": "极速服务 mip-shell 定制化",
+    "preview": false
+  },
+  {
+    "name": "mip-shell-xiaoshuo",
+    "chinese": "小说 mip-shell 定制化组件",
+    "type": "布局",
+    "desc": "为极速小说阅读器定制的 mip-shell",
+    "preview": false
+  },
+  {
+    "name": "mip-showmore",
+    "chinese": "显示更多",
+    "type": "动态内容",
+    "desc": "隐藏过长的文章，点击按钮显示更多内容",
+    "preview": false
+  },
+  {
+    "name": "mip-sidebar",
+    "chinese": "侧边栏组件",
+    "type": "布局",
+    "desc": "侧边栏组件，点击按钮，侧边栏滑入屏幕",
+    "preview": false
+  },
+  {
+    "name": "mip-stats-baidu",
+    "chinese": "添加百度统计组件",
+    "type": "统计",
+    "desc": "添加百度统计组件，用于统计页面数据",
+    "preview": false
+  },
+  {
+    "name": "mip-stats-tianrun",
+    "chinese": "天润统计组件",
+    "type": "统计",
+    "desc": "添加天润统计",
+    "preview": false
+  },
+  {
+    "name": "mip-tabs",
     "chinese": "tab 切换组件",
     "type": "布局",
-    "desc": "在网页中显示标签。标签页内元素较多时不建议使用，会影响页面性能。",
-    "preview": true
+    "desc": "可嵌套、自定义 tab 标签及对应内容",
+    "preview": false
+  },
+  {
+    "name": "mip-timeago",
+    "chinese": "时间转化过去事组件",
+    "type": "呈现",
+    "desc": "用于将指定时间转换为 *** time ago 的形式，例如，3天前，2月前，31年后，5 years ago",
+    "preview": false
+  },
+  {
+    "name": "mip-toast",
+    "chinese": "弹出框（只有文字 文字和图标 位置上、中、下",
+    "type": "动态内容",
+    "desc": "提示框组件 自定义内容",
+    "preview": false
   }
 ]
