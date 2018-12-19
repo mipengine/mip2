@@ -8,7 +8,7 @@
 import viewer from 'src/viewer'
 import { errorHandler } from 'src/log/error-monitor'
 
-describe('monitor', function () {
+describe('error-monitor', function () {
   it('catch error', function (done) {
     let filename = 'https://c.mipcdn.com/static/v2/mip-sidebar/mip-sidebar.js'
     let message = 'test monitor'

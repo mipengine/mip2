@@ -98,4 +98,14 @@ describe('client-prerender', function () {
     prerender.execute(fn, ele)
     sinon.assert.calledOnce(fn)
   })
+
+  it('firstscreen attribute should be not delay fn', function () {
+    let prerender = new ClientPrerender()
+    let fn = sinon.spy()
+    let ele = document.createElement('div')
+    ele.setAttribute('firstsceen', '1')
+
+    prerender.execute(fn, ele)
+    sinon.assert.calledOnce(fn)
+  })
 })
