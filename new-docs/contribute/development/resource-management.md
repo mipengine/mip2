@@ -12,7 +12,7 @@ MIP CLI 内置了以下 Loader 辅助组件开发者进行样式开发：
   1. autoprefixer
 4. css-loader
 
-因此开发者可以使用 LESS、Stylus 写样式，并且在开发时不需要在意部分浏览器私有属性的优雅降级问题，编译时会通过 autoprefixer 进行自动补全。写好的样式资源只需要在组件入口文件通过相对路径 `import` 的方式引入即可：
+因此开发者可以使用 LESS、Stylus 写样式，并且在开发时不需要在意部分浏览器私有属性的优雅降级问题，编译时会通过 autoprefixer 进行自动补全。写好的样式资源只需要在组件入口文件通过相对路径 `import` 的方式引入即可，css-loader 会自动生成 style 标签将样式注入到网页当中：
 
 ```js
 import('./mip-example.less')

@@ -16,13 +16,9 @@
       "name": "MIP 内容声明",
       "key": "announcement"
     }
-    {
-      "name": "Showcases 案例",
-      "key": "showcases"
-    },
-    {
-      "name": "小故事",
-      "key": "mip-stories"
-    }
+  ],
+  "ignore": [
+    "showcases",
+    "mip-stories"
   ]
 }
