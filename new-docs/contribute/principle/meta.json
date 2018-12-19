@@ -19,6 +19,9 @@
       "key": "slot"
     },
     {
+      "key": "service"
+    },
+    {
       "key": "sandbox"
     }
   ]

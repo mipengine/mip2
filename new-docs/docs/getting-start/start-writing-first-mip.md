@@ -99,7 +99,7 @@ MIP（Mobile Instant Pages - 移动网页加速器）主要用于移动端页面
 ```
 
 ## 5. 替换禁用 HTML 标签
-[notice]MIP 十分关注页面速度，也因此禁用了一些引起拖慢速度的 HTML 标签（[禁用列表](../mip-standard/mip-html-spec.md)）。例如，`<img>` 标签会引起浏览器的 repaint 和 reflow，为了避免这些，MIP 提供了替代标签 `<mip-img>` ，详见 [`<mip-img>`使用文档](../../extensions/builtin/mip-img.md) 。
+MIP 十分关注页面速度，也因此禁用了一些引起拖慢速度的 HTML 标签（[禁用列表](../mip-standard/mip-html-spec.md)）。例如，`<img>` 标签会引起浏览器的 repaint 和 reflow，为了避免这些，MIP 提供了替代标签 `<mip-img>` ，详见 [`<mip-img>`使用文档](../../extensions/builtin/mip-img.md) 。
 
 ```html
 <!DOCTYPE html>
@@ -126,7 +126,7 @@ MIP（Mobile Instant Pages - 移动网页加速器）主要用于移动端页面
 ```
 
 ## 6. 使用 MIP 组件
-[warning]出于对代码质量和性能的考虑，MIP 页中不允许使用 `script` 标签自定义 JavaScript 代码。如有必要，开发者可以考虑使用 [`<mip-script>` 组件](../interactive-mip/mip-script.md)来编写受 MIP 限制的 JavaScript 代码。
+出于对代码质量和性能的考虑，MIP 页中不允许使用 `script` 标签自定义 JavaScript 代码。如有必要，开发者可以考虑使用 [`<mip-script>` 组件](../interactive-mip/mip-script.md)来编写受 MIP 限制的 JavaScript 代码。
 
 在一个合法的 MIP 页面中，所有的交互通过引入 MIP 组件实现。MIP 组件可以理解为封装了 JS 的自定义 HTML 标签。上一步中的 `<mip-img>` 也是一个 MIP 组件，[点击这里](../../extensions/index.md) 查看更多组件。
 
@@ -171,13 +171,11 @@ MIP（Mobile Instant Pages - 移动网页加速器）主要用于移动端页面
 
 在使用组件时，请注意阅读组件文档，查看组件是否依赖所需脚本。如果依赖，请在 `mip.js` 之后引入脚本。
 
-[info] 另外，这个切换组件是用 Vue 语法写的组件。MIP 组件化的核心是基于 Custom Elements（自定义元素）来实现的，而 MIP 支持将 Vue 组件转换为 MIP 组件，这也是 MIP 的特点之一。
-
 ## 7. 使用 MIP 特性
 
 MIP 提供了强大的组件DOM通信，组件间通信功能，以解决在MIP组件开发中遇到的组件交互问题。可以通过 DOM 属性来触发某个 MIP 元素的自定义事件。语法使用用一种简单特定的语言来表示：`eventName:targetId[.actionName[(args)]]`。通过 mip-tabs 来进行简单说明，例子如下：
 
-```javascript
+```html
 <mip-tabs initial-tab="0" id="tabs">
   <mip-tabs-item label="MIP 2">
     <h2>什么是 MIP</h2>
@@ -205,7 +203,7 @@ MIP 提供了强大的组件DOM通信，组件间通信功能，以解决在MIP�
 
 另外，MIP 也有数据驱动的概念，即不直接操作 DOM 节点，通过事先配置数据，并将 DOM 节点与数据绑定，通过触发数据的更新来触发 DOM 节点的更新。下面将对上面的例子补充完整来进行说明。
 
-```javascript
+```html
 <!DOCTYPE html>
 <html mip>
   <head>
@@ -217,7 +215,6 @@ MIP 提供了强大的组件DOM通信，组件间通信功能，以解决在MIP�
     <title>Hello World</title>
     <style mip-custom>
       /* 自定义样式 */
-
       mip-tabs {
         transition: height .3s;
         box-sizing: border-box;
@@ -307,15 +304,17 @@ MIP 提供了强大的组件DOM通信，组件间通信功能，以解决在MIP�
 上述例子都是比较基本的用法，[这个链接](https://itoss.me/mip-test/src/mip-bind/view/ecommerce.html)展示了更复杂的应用，后面的章节将会对 MIP 的特性做更多详细的说明。
 
 ## 8. 预览
-开发完成后，可以使用 [MIP 校验工具](//www.mipengine.org/validator/validate) 保证代码规范。
+开发完成后，可以使用 [MIP 校验工具](https://www.mipengine.org/validator/validate) 保证代码规范。
 
-[info] 校验代码，使用 [MIP 校验工具](//www.mipengine.org/validator/validate)。<br> 预览线上 URL 异步打开效果，使用 [MIP 预览工具](//www.mipengine.org/validator/preview)。
+校验代码，使用 [MIP 校验工具](https://www.mipengine.org/validator/validate)。
+
+预览线上 URL 异步打开效果，使用 [MIP 预览工具](https://www.mipengine.org/validator/preview)。
 
 MIP 页文件可以直接运行，你可以选择如下方式，像预览普通 HTML 站点一样预览 MIP-HTML 页面：
 
 - 直接在浏览器中打开（由于 XML HTTP Requests 失败可能会导致某些元素预览失败）。
 - 在本地部署一个服务，如 Apache，Nginx 等。
-- 使用 MIP-CLI 辅助预览，使用方法见 MIP 博客：[开发教程一](http://www.cnblogs.com/mipengine/p/mip_cli_1_install.html)。
+- 使用 MIP-CLI 辅助预览，使用方法可以参考网站内 **工具** 一栏。
 
 ## 9. 起飞
 到目前为止，你已经创建好了一个 MIP 页面。这个页面有图、有文，可以在浏览器中运行。
@@ -329,4 +328,4 @@ MIP 页文件可以直接运行，你可以选择如下方式，像预览普通 
 - [可交互 MIP](../interactive-mip/introduction.md)
 - [全站 MIP](../all-sites-mip/introduction.md)
 
-[info] MIP 开发系列视频教程：https://bit.baidu.com/course/datalist/column/120.html
+MIP 开发系列视频教程：https://bit.baidu.com/course/datalist/column/120.html
