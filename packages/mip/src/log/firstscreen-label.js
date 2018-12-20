@@ -30,7 +30,7 @@ function getPathTo(element) {
 }
 
 function sendLog() {
-  let allLabelImgs = [...document.querySelectorAll('mip-img[firstScreen="1"]')]
+  let allLabelImgs = [...document.querySelectorAll('mip-img[firstscreen]')]
   let allFirstScreenImgs = [...document.querySelectorAll('mip-img[mip-firstscreen-element]')]
   allLabelImgs.forEach(element => {
     if (!element.hasAttribute('mip-firstscreen-element')) {
