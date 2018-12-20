@@ -102,6 +102,17 @@ mip 组件是基于[Web Component](https://developer.mozilla.org/en-US/docs/Web/
 
     自定义元素的生命周期钩子，在元素挂载到 DOM 上之后，首次出现在视口内上时执行。适合做懒加载之类的功能。
 
+### viewportCallback
+
+- 类型：Function
+- Context: Vue 组件实例
+- 参数
+    - inViewport `{Boolean}` 当前是否在视口内
+    - element `{Element}` Element 实例
+- 详细：
+
+    当自定义元素从视口内消失或者重新进入视口时触发该回调。
+
 ### connectedCallback
 
 - 类型：Function

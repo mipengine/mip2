@@ -400,19 +400,19 @@ let viewer = {
    * @return {Object} messageData
    */
   _getMessageData () {
-    let messageKey = 'loadiframe';
-    let messageData = {};
-    messageData.url = this.href;
+    let messageKey = 'loadiframe'
+    let messageData = {}
+    messageData.url = this.href
     if (this.hasAttribute('no-head')) {
-        messageData.nohead = true;
+      messageData.nohead = true
     }
     if (this.hasAttribute('mip-link')) {
-        let parent = this.parentNode;
-        messageData.title = parent.getAttribute('title') || parent.innerText.trim().split('\n')[0];
-        messageData.click = parent.getAttribute('data-click');
+      let parent = this.parentNode
+      messageData.title = parent.getAttribute('title') || parent.innerText.trim().split('\n')[0]
+      messageData.click = parent.getAttribute('data-click')
     } else {
-        messageData.title = this.getAttribute('data-title') || this.innerText.trim().split('\n')[0];
-        messageData.click = this.getAttribute('data-click');
+      messageData.title = this.getAttribute('data-title') || this.innerText.trim().split('\n')[0]
+      messageData.click = this.getAttribute('data-click')
     }
     return {messageKey, messageData}
   },
@@ -447,7 +447,13 @@ let viewer = {
       }
 
       if (this.isIframed) {
-        setTimeout(() => this.lockBodyScroll(), 0)
+        // 这些兼容性的代码会严重触发 reflow，但又不需要在首帧执行
+        // 使用 setTimeout 不阻塞 postMessage 回调执行
+        setTimeout(() => {
+          this.fixSoftKeyboard()
+          this.viewportScroll()
+        }, 0)
+        this.lockBodyScroll()
 
         // While the back button is clicked,
         // the cached page has some problems.
@@ -478,11 +484,6 @@ let viewer = {
         document.documentElement.classList.add('trigger-layout')
         document.body.classList.add('trigger-layout')
       })
-    }
-
-    if (this.isIframed) {
-      this.viewportScroll()
-      this.fixSoftKeyboard()
     }
   },
 

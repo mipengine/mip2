@@ -1,4 +1,4 @@
-import {raf} from './feature-detect'
+import fn from '../../util/fn'
 import viewport from '../../viewport'
 
 export function scrollTo (height, { duration = 500, scrollTop = 0 } = {}) {
@@ -39,13 +39,13 @@ export function scrollTo (height, { duration = 500, scrollTop = 0 } = {}) {
 function transition (duration, step, callback) {
   let start = Date.now()
 
-  raf(loop)
+  fn.raf(loop)
 
   function loop () {
     let now = Date.now() - start
 
     if (step(bezier(now, 0, 1, duration))) {
-      raf(loop)
+      fn.raf(loop)
     } else {
       callback()
     }

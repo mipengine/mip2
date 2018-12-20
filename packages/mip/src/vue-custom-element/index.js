@@ -70,6 +70,11 @@ Vue.use(function (Vue) {
       }
 
       /** @override */
+      viewportCallback (inViewport) {
+        callLifeCycle(this.vm, 'viewportCallback', inViewport, this.element)
+      }
+
+      /** @override */
       attributeChangedCallback (name, oldValue, value) {
         if (this.vueInstance) {
           const nameCamelCase = camelize(name)

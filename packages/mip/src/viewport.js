@@ -13,6 +13,11 @@ import platform from './util/platform'
 const docElem = document.documentElement
 const win = window
 
+let getWidth = () => win.innerWidth || docElem.clientWidth
+let getHeight = () => platform.isIOS()
+  ? (docElem.clientHeight || win.innerHeight)
+  : (win.innerHeight || docElem.clientHeight)
+
 /**
  * 触发 scroll 事件
  */
@@ -43,14 +48,16 @@ let scrollHandle = function (event) {
  *
  * @param {Object} event 事件对象
  */
-let savedWindowWidth = win.innerWidth || docElem.clientWidth
+let savedWindowWidth = null
+let savedWindowHeight = null
 let currentWindowWidth
 let resizeEvent = fn.throttle(function (event) {
-  currentWindowWidth = this.getWidth()
+  currentWindowWidth = getWidth()
   if (currentWindowWidth !== savedWindowWidth) {
     this.trigger('resize', event)
     savedWindowWidth = currentWindowWidth
   }
+  savedWindowHeight = getHeight()
 }, 200)
 
 /**
@@ -68,6 +75,11 @@ let viewport = {
 
     this.scroller.addEventListener('scroll', scrollHandle.bind(this), false)
 
+    // 只在 iOS 下处理兼容性问题
+    /* istanbul ignore if */
+    if (platform.isIOS()) {
+      savedWindowWidth = this.getWidth()
+    }
     win.addEventListener('resize', resizeEvent.bind(this))
   },
 
@@ -104,7 +116,10 @@ let viewport = {
    * @return {number}
    */
   getWidth () {
-    return win.innerWidth || docElem.clientWidth
+    if (savedWindowWidth == null) {
+      savedWindowWidth = getWidth()
+    }
+    return savedWindowWidth
   },
 
   /**
@@ -114,8 +129,10 @@ let viewport = {
    */
   getHeight () {
     /* istanbul ignore next */
-    return platform.isIOS() ? (docElem.clientHeight || win.innerHeight)
-      : (win.innerHeight || docElem.clientHeight)
+    if (savedWindowHeight == null) {
+      savedWindowHeight = getHeight()
+    }
+    return savedWindowHeight
   },
 
   /**
@@ -148,6 +165,10 @@ let viewport = {
       this.getWidth(),
       this.getHeight()
     )
+  },
+
+  isPortrait () {
+    return this.getHeight() > this.getWidth()
   }
 }
 
