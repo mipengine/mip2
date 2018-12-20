@@ -1,1 +1,1 @@
-mip-pix.md
+# mip-pix

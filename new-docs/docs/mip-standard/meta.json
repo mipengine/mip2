@@ -15,10 +15,6 @@
     {
       "name": "MIP 校验规则",
       "key": "mip-validate"
-    },
-    {
-      "name": "MIP 内容声明",
-      "key": "mip-announcement"
     }
   ]
 }

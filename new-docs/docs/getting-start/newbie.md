@@ -2,9 +2,10 @@
 
 新手指南提供了 MIP 的一些技术指引，主要是后文的总体预览，详细内容可点击相关链接进行查看。
 
-## 第一次使用 MIP 
+## 第一次使用 MIP
 
 本教程对初学者十分友好，点击下面的链接可以进行第一次 MIP 页面的开发与调试体验，还可以了解 MIP 在搜索中是如何生效的。
+
 1. [创建第一个 MIP 页面](./start-writing-first-mip.md)
 2. [调试与验证 MIP 页面](./debug-and-validate.md)
 3. [MIP 搜索生效](./mip-in-search/introduction.md)
@@ -12,6 +13,7 @@
 ## MIP 规范
 
 MIP 页面的高性能离不开规范的重要性。因为 MIP 主要由 MIP-HTML、MIP-JS 和 MIP-CACHE 三部分组成，所以主要的规范有：
+
 - [MIP HTML 规范](../mip-standard/mip-html-spec.md)
 - [MIP CACHE 规范](../mip-standard/mip-cache-spec.md)
 - [MIP 组件规范](../mip-standard/mip-components-spec.md)
@@ -20,6 +22,7 @@ MIP 页面的高性能离不开规范的重要性。因为 MIP 主要由 MIP-HTM
 ## 样式与布局
 
 MIP 为了性能和易用性考虑，对 CSS 的使用做了一定的限制，与此同时，针对响应式设计，MIP 做出了一些扩展来更好地展示页面元素：
+
 1. [支持的 CSS ](../style-and-layout/supported-css.md)
 2. [组件布局](../style-and-layout/layout.md)
 3. [媒体查询](../style-and-layout/meadia-query.md)
@@ -28,6 +31,7 @@ MIP 为了性能和易用性考虑，对 CSS 的使用做了一定的限制，�
 ## 交互式设计
 
 MIP 提供了为数众多的官方组件来满足开发者的需求。不过在一些复杂的可交互 MIP 页面中，只通过配置组件属性是达不到设计要求的。因此 MIP 组件通过对外暴露属性、事件和行为的方式来实现外部对组件的配置和使用。
+
 - [事件监听与行为触发](../interactive-mip/event-and-action.md)
 - [数据绑定](../interactive-mip/data-binding/introduction.md)
     - [数据定义](../interactive-mip/data-binding/data-definition.md)
@@ -50,6 +54,7 @@ MIP 提供了为数众多的官方组件来满足开发者的需求。不过在�
 ## 用户行为统计与分析
 
 对于大多数网站，用户行为的统计与分析功能是必不可少的，MIP 正是考虑到了这些情形，所以提供了相应的组件供用户选择。
+
 - [mip-pix](../analytics/mip-pix.md)
 - [mip-analytics](../analytics/mip-analytics.md)
 

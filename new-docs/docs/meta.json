@@ -32,5 +32,9 @@
       "name": "辅助开发工具",
       "key": "assistant-development-tools"
     }
+  ],
+  "ignore": [
+    "analytics",
+    "progressive-enhancement-design"
   ]
 }

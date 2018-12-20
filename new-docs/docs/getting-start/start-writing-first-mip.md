@@ -1,7 +1,5 @@
 # 开发您的第一个 MIP 页面
 
-MIP（Mobile Instant Pages - 移动网页加速器）主要用于移动端页面加速。
-
 这篇文档将带你快速创建一个 MIP 页面。
 
 ## 1. 创建 HTML 文件
@@ -99,7 +97,8 @@ MIP（Mobile Instant Pages - 移动网页加速器）主要用于移动端页面
 ```
 
 ## 5. 替换禁用 HTML 标签
-MIP 十分关注页面速度，也因此禁用了一些引起拖慢速度的 HTML 标签（[禁用列表](../mip-standard/mip-html-spec.md)）。例如，`<img>` 标签会引起浏览器的 repaint 和 reflow，为了避免这些，MIP 提供了替代标签 `<mip-img>` ，详见 [`<mip-img>`使用文档](../../extensions/builtin/mip-img.md) 。
+
+MIP 十分关注页面速度，也因此禁用了一些引起拖慢速度的 HTML 标签（[禁用列表](../mip-standard/mip-html-spec.md)）。例如，`<img>` 标签会引起浏览器的 repaint 和 reflow，为了避免这些，MIP 提供了替代标签 `<mip-img>` ，详见 [`<mip-img>`使用文档](../../components/builtin/mip-img.md)。
 
 ```html
 <!DOCTYPE html>
@@ -126,11 +125,12 @@ MIP 十分关注页面速度，也因此禁用了一些引起拖慢速度的 HTM
 ```
 
 ## 6. 使用 MIP 组件
-出于对代码质量和性能的考虑，MIP 页中不允许使用 `script` 标签自定义 JavaScript 代码。如有必要，开发者可以考虑使用 [`<mip-script>` 组件](../interactive-mip/mip-script.md)来编写受 MIP 限制的 JavaScript 代码。
 
-在一个合法的 MIP 页面中，所有的交互通过引入 MIP 组件实现。MIP 组件可以理解为封装了 JS 的自定义 HTML 标签。上一步中的 `<mip-img>` 也是一个 MIP 组件，[点击这里](../../extensions/index.md) 查看更多组件。
+出于对代码质量和性能的考虑，MIP 页中不允许使用 `script` 标签自定义 JavaScript 代码。MIP 提供了官方组件库，涵盖了一系列常用的展示、布局、动画、广告等等功能，基本上能够做到在不需要写任何自定义 JS 代码的前提下实现各种丰富的交互。[点击这里](../../components/index.md) 可以查看目前提供的 MIP 组件列表及其文档。
 
-我们以 tab 切换组件为例，根据[切换组件文档](../../extensions/extensions/mip-tabs.md)，组件对应的 HTML 标签为 `<mip-tabs>` ，需要依赖 <https://c.mipcdn.com/static/v2/mip-tabs/mip-tabs.js> 脚本，用在页面里就是这样：
+每个 MIP 组件都封装成了 Custom Element 也就是自定义 HTML 元素，开发者只需要像使用 `<img>`、`<video>` 这类标签那样使用 MIP 组件就好了。
+
+我们以 Tab 切换组件为例，根据[切换组件文档](../../components/extensions/mip-tabs.md)，组件对应的 HTML 标签为 `<mip-tabs>` ，需要依赖 `<https://c.mipcdn.com/static/v2/mip-tabs/mip-tabs.js>` 脚本，页面可以这样使用：
 
 ```html
 <!DOCTYPE html>
@@ -150,17 +150,17 @@ MIP 十分关注页面速度，也因此禁用了一些引起拖慢速度的 HTM
   </head>
   <body>
     <mip-tabs initial-tab="0">
-      <mip-tabs-item label="MIP 2">
-        <h2>MIP 2</h2>
+      <mip-tabs-item label="标签0">
+        <h2>标签0展示了一张图片</h2>
         <mip-img layout="responsive" width="350" height="263" src="https://www.mipengine.org/static/img/mip_logo_3b722d7.png" alt="MIP LOGO"></mip-img>
       </mip-tabs-item>
-      <mip-tabs-item label="mip-tabs 组件介绍">
+      <mip-tabs-item label="标签1">
+        <h2>标签1展示了一个无序列表</h2>
         <ol>
-          <li>使用方便</li>
-          <li>动画交互</li>
-          <li>任意嵌套</li>
-          <li>自定义tab内容结构</li>
-        </ol>   
+          <li>列表0</li>
+          <li>列表1</li>
+          <li>列表2</li>
+        </ol>
       </mip-tabs-item>
     </mip-tabs>
     <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
@@ -169,139 +169,39 @@ MIP 十分关注页面速度，也因此禁用了一些引起拖慢速度的 HTM
 </html>
 ```
 
-在使用组件时，请注意阅读组件文档，查看组件是否依赖所需脚本。如果依赖，请在 `mip.js` 之后引入脚本。
+在浏览器打开这个 HTML 页面便可以看到，页面上显示了切换组件的布局，点击对应的标签页的标题能够切换显示对应的标签页。在这个过程中我们根本不需要去写自定义 JS 脚本，只需要在 HTML 里使用各种官方组件标签和原生 HTML 标签进行组合，加上样式调整，基本上就能够做出功能丰富的 MIP 页面了。
 
-## 7. 使用 MIP 特性
+## 7. 使用 MIP 事件交互机制
 
-MIP 提供了强大的组件DOM通信，组件间通信功能，以解决在MIP组件开发中遇到的组件交互问题。可以通过 DOM 属性来触发某个 MIP 元素的自定义事件。语法使用用一种简单特定的语言来表示：`eventName:targetId[.actionName[(args)]]`。通过 mip-tabs 来进行简单说明，例子如下：
+MIP 提供了便捷的事件交互机制，来解决 MIP 页面开发过程中遇到的组件交互问题。
+
+首先 MIP 组件会在特定条件下触发抛出某些事件，比如按钮组件被点击时触发点击事件，比如定时组件在特定时间触发定时事件等等，具体组件会触发什么样的事件在对应的官方组件文档里都有详细的说明和示例。MIP 提供了一套机制，即直接在需要监听事件的标签上添加 `on` 属性，并按照一定的语法规则描述监听到事件后的行为，就可以实现组件之间基于事件机制的交互。
+
+首先我们通过 mip-tabs 和 button 之间的事件交互来进行简单说明，例子如下：
 
 ```html
+<button on="tap:tabs.slideTab(0)">切换至标签0</button>
+<button on="tap:tabs.slideTab(1)">切换至标签1</button>
+
 <mip-tabs initial-tab="0" id="tabs">
-  <mip-tabs-item label="MIP 2">
-    <h2>什么是 MIP</h2>
+  <mip-tabs-item label="标签0">
+    <h2>标签0展示了一张图片</h2>
     <mip-img layout="responsive" width="350" height="263" src="https://www.mipengine.org/static/img/mip_logo_3b722d7.png" alt="MIP LOGO"></mip-img>
   </mip-tabs-item>
-  <mip-tabs-item label="mip-tabs 组件介绍">
+  <mip-tabs-item label="标签1">
+    <h2>标签1展示了一个无序列表</h2>
     <ol>
-      <li>使用方便</li>
-      <li>动画交互</li>
-      <li>任意嵌套</li>
-      <li>自定义tab内容结构</li>
+      <li>列表0</li>
+      <li>列表1</li>
+      <li>列表2</li>
     </ol>
-    <button on="tap:tabs.slideTab(2)">点击查看更多</button>     
-  </mip-tabs-item>
-  <mip-tabs-item label="更多">
-    <div>MIP 教程</div>
-    <div>MIP 组件</div>
-    <div>MIP API</div>
-    <div>MIP Codelab</div>
   </mip-tabs-item>
 </mip-tabs>
 ```
 
-在这个例子中，点击按钮会跳转到第三个 tab ，其中 tap 是 MIP 为所有 HTML 元素设置的点击事件，tabs 是 mip-tabs 组件的 id ，slideTab 是其暴露的 action。
+在这个例子中我们增加了两个 `<button>` 按钮，并且用 `on` 语法监听他们的点击。点击按钮时会触发通用事件 `tap`，监听到 `tap` 事件后会去寻找 ID 为 `tabs` 的组件，也就是 mip-tabs 切换组件。mip-tabs 提供了切换标签页的方法 `slideTab()`，因此通过调用这个 `tabs.slideTab(0)` 即可触发标签页的切换。至此就完成了基于事件机制的组件交互过程。
 
-另外，MIP 也有数据驱动的概念，即不直接操作 DOM 节点，通过事先配置数据，并将 DOM 节点与数据绑定，通过触发数据的更新来触发 DOM 节点的更新。下面将对上面的例子补充完整来进行说明。
-
-```html
-<!DOCTYPE html>
-<html mip>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="https://c.mipcdn.com/static/v2/mip.css">
-    <!-- canonical 中的链接优先填写对应内容的移动端页面（H5）地址 -->
-    <link rel="canonical" href="https://www.example.com/your/path.html">
-    <title>Hello World</title>
-    <style mip-custom>
-      /* 自定义样式 */
-      mip-tabs {
-        transition: height .3s;
-        box-sizing: border-box;
-        -webkit-box-sizing: border-box;
-      }
-
-      .mip-tabs {
-        transition: height .3s;
-      }
-
-      h2 {
-        line-height: 3;
-      }
-
-      p {
-        line-height: 1.8;
-      }
-
-      ul,
-      ol {
-        padding-top: 30px;
-      }
-
-      ul li,
-      ol li {
-        list-style: disc;
-        list-style-position: inside;
-        line-height: 1.6;
-      }
-      
-      .bold {
-        font-weight: bold;
-      }
-    </style>
-  </head>
-  <body>
-    <mip-data>
-      <script type="application/json">
-        {
-          "isActive": true,
-          "alt": "MIP LOGO",
-          "styleObject": {
-            "color": "red"
-          }
-        }
-      </script>
-    </mip-data>
-
-    <mip-tabs initial-tab="0" id="tabs">
-      <mip-tabs-item label="MIP 2" m-bind:class="{ bold: isActive }">
-        <h2>什么是 MIP</h2>
-        <p>MIP（Mobile Instant Pages - 移动网页加速器），是一套应用于移动网页的开放性技术标准。通过提供 MIP-HTML 规范、MIP-JS 运行环境以及 MIP-Cache 页面缓存系统，实现移动网页加速。
-          MIP 主要由三部分组织成：
-        </p>
-        <ul>
-          <li>MIP-HTML：基于 HTML 中的基础标签制定了全新的规范，通过对一部分基础标签的使用限制或功能扩展，使 HTML 能够展现更加丰富的内容。</li>
-          <li>MIP-JS：可以保证 MIP-HTML 页面的快速渲染。</li>
-          <li m-bind:style="styleObject">MIP-Cache：用于实现 MIP 页面的高速缓存，从而进一步提高页面性能。</li>
-        </ul>
-        <button on="tap:MIP.setData({isActive:!m.isActive})">点击切换字体粗细</button>
-        <mip-img m-bind:alt="alt" layout="responsive" width="350" height="263" src="https://www.mipengine.org/static/img/mip_logo_3b722d7.png"></mip-img>
-      </mip-tabs-item>
-      <mip-tabs-item label="mip-tabs 组件介绍">
-        <ol>
-          <li>使用方便</li>
-          <li>动画交互</li>
-          <li>任意嵌套</li>
-          <li>自定义tab内容结构</li>
-        </ol>
-        <button on="tap:tabs.slideTab(2)">点击查看更多</button>     
-      </mip-tabs-item>
-      <mip-tabs-item label="更多">
-        <div>MIP 教程</div>
-        <div>MIP 组件</div>
-        <div>MIP API</div>
-        <div>MIP Codelab</div>
-      </mip-tabs-item>
-    </mip-tabs>
-    <script src="https://c.mipcdn.com/static/v2/mip.js"></script>
-    <script src="https://c.mipcdn.com/static/v2/mip-tabs/mip-tabs.js"></script>
-  </body>
-</html>
-```
-
-`<mip-data>` 组件用于设置数据源，`mip-bind` 用于在 HTML 元素上绑定和使用此前用 `<mip-data>` 设置的数据。在上述例子中，变量 alt 被绑定为 `<mip-img>` 的 alt 属性，变量 isActive 被用来决定 bold class 是否存在，并且可以结合 `on` 语法做到动态切换，变量 styleObject 被用来绑定元素的样式。
-
-上述例子都是比较基本的用法，[这个链接](https://itoss.me/mip-test/src/mip-bind/view/ecommerce.html)展示了更复杂的应用，后面的章节将会对 MIP 的特性做更多详细的说明。
+MIP 提供了多种交互机制来方便开发者在不需要写自定义 JS 的情况下完成组件交互的功能，相关文档可以阅读 [可交互式设计](../interactive-mip/introduction.md) 章节来进行深入学习。
 
 ## 8. 预览
 开发完成后，可以使用 [MIP 校验工具](https://www.mipengine.org/validator/validate) 保证代码规范。
