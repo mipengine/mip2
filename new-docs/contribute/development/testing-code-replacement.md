@@ -25,3 +25,5 @@ if ('production' === 'development') {
 ```
 
 再经过 uglify 压缩，这段代码就会被除掉了。
+
+测试代码替换可以配合 MIP CLI 在开发模式下提供的 mock 数据机制来方便开发者进行组件调试。关于 mock 机制的说明和用法请参考文档 [在调试模式下使用 mock 数据](../development/mock-data.md)

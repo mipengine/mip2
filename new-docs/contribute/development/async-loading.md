@@ -13,3 +13,28 @@ connectedCallback () {
 ```
 
 这样在 lodash 将在组件执行到生命周期 connectedCallback 时才会去异步加载。异步加载完毕后，将会在控制台输出 lodash 的版本号。假设多次调用`import('lodash')`，那么只会发送一次资源请求，其余的直接从缓存中读取。
+
+对于需要同时加载多个异步模块，并且在模块加载完成之后执行代码，那么可以利用 `Promise.all()` + `import()` 来实现：
+
+```js
+Promise.all([
+  import('./a'),
+  import('./b'),
+  import('./c')
+]).then((a, b, c) => {
+  /* do something */
+})
+```
+
+当然也可以直接使用 Webpack 默认提供的 `require.ensure()` 方法来实现：
+
+```js
+require.ensure(['./a', './b', './c'], function (require) {
+  let a = require('./a')
+  let b = require('./b')
+  let c = require('./c')
+})
+```
+
+这样，组件在编译的时候会自动从代码中提取出 `./a` `./b` `./c` 这三个模块，并且只有当代码执行到这段异步加载的逻辑时才会去加载这些模块。
+

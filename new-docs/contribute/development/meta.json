@@ -10,7 +10,7 @@
     },
     {
       "name": "父子组件机制",
-      "key": "nested-components"
+      "key": "subcomponents"
     },
     {
       "name": "模块异步加载",
