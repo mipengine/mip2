@@ -5,6 +5,7 @@
 
 import util from './util/index'
 import viewer from './viewer'
+import viewport from './viewport'
 import firstScreenLabel from './log/firstscreen-label'
 import prerender from './client-prerender'
 
@@ -111,9 +112,10 @@ function lockFirstScreen() {
   if (prerender.isPrerendering) {
     return
   }
+  let viewportRect = viewport.getRect()
   fsElements = fsElements.filter((element) => {
     if (prerender.isPrerendered) {
-      return element._resources.isInViewport(element)
+      return element._resources.isInViewport(element, viewportRect)
     }
     return element.inViewport()
   }).map((element) => {

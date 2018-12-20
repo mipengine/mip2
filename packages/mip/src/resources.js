@@ -156,11 +156,11 @@ class Resources {
    * Check element in viewport
    *
    * @param {MIPElement} element element
+   * @param {Object} viewportRect viewport Rect
    * @return {boolean} is inViewport
    */
-  isInViewport (element) {
+  isInViewport (element, viewportRect) {
     let elementRect = rect.getElementRect(element)
-    let viewportRect = this._viewport.getRect()
     // Compute the viewport state of current element.
     // If current element`s prerenderAllowed returns `true` always set the state to be `true`.
     return element.prerenderAllowed(elementRect, viewportRect) ||
@@ -189,6 +189,7 @@ class Resources {
   _doRealUpdate () {
     /* @type {Object} */
     let resources = this.getResources()
+    let viewportRect = this._viewport.getRect()
     let elementIds = []
     while (true) {
       let updatedElementIds = Object.keys(resources)
@@ -204,7 +205,7 @@ class Resources {
         let ele = resources[newElementIds[i]]
         // The element may have been removed.
         if (ele && ele.isBuilt()) {
-          let inViewport = this.isInViewport(ele)
+          let inViewport = this.isInViewport(ele, viewportRect)
           this.setInViewport(ele, inViewport)
         }
       }
