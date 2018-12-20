@@ -4,7 +4,7 @@ MIP 提供了强大的组件DOM通信，组件间通信功能，以解决在MIP�
 
 语法使用用一种简单特定的语言来表示：
 
-```
+```js
 eventName:targetId[.actionName[(args)]]
 ```
 
@@ -20,7 +20,8 @@ eventName:targetId[.actionName[(args)]]
 ## 处理多个事件
 
 你可以在一个 element 上监听多个事件，多个事件之间使用空格分开， 例如：
-```
+
+```html
 <mip-example on="sucess:item-id.close error:item-id.show"></mip-example>
 ```
 
@@ -29,6 +30,7 @@ eventName:targetId[.actionName[(args)]]
 ## 自定义组件事件 (event) 和行为 (action)
 
 ### 组件内注册监听行为（action）
+
 ```js
 /**
  * 组件内部绑定事件行为
@@ -58,6 +60,7 @@ MIP.viewer.eventAction.execute(eventName, element, event)
 ```
 
 - 简写 (推荐使用)
+
 ```js
 this.$emit(eventName, event)
 ```
@@ -67,6 +70,7 @@ this.$emit(eventName, event)
 下面通过例子实现点击(tap) `<button>` 标签触发 `mip-a` 组件内部的 counter +2，`mip-b` 内容展现 (show) 触发 `mip-a` 组件内部的 counter +1
 
 - HTML
+
 ```html
 <mip-a id="counter"></mip-a>
 <button on="tap:counter.add(2)"> 点击 +2 </button>
@@ -75,6 +79,7 @@ this.$emit(eventName, event)
 ```
 
 - Extensions `mip-a`
+
 ```html
 <template>
   <div >
@@ -109,6 +114,7 @@ export {
 ```
 
 - Extensions `mip-b`
+
 ```html
 <template>
   <div >
@@ -149,7 +155,7 @@ export {
 
 MIP 在所有 HTML 元素（包括 MIP 元素）暴露了 `tap` 事件， 所以你可以在任何一个 HTML 元素上监听 tap 事件，例如：
 
-```
+```html
 <div on="tap:id.custom_event">单击时触发</div>
 ```
 
@@ -158,7 +164,8 @@ MIP 在所有 HTML 元素（包括 MIP 元素）暴露了 `tap` 事件， 所以
 组件可被监听的事件是指 mip 组件暴露给外部的事件，可以通过 `on` 属性监听事件
 
 用法示例：
-```
+
+```html
 <mip-form on="submitSuccess:info.success">表单提交成功后触发 #info 组件的 success 行为</mip-form>
 <mip-info id="info"></mip-info>
 ```
