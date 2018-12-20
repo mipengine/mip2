@@ -4,7 +4,7 @@
 
 ## 插槽内容
 
-为了保持和 Vue 开发体验一致，MIP 组件机制实现了和 Vue 几乎一致的内容分发 API， 将 MIP 组件内模板的 <slot> 元素作为承载分发内容的出口。
+为了保持和 Vue 开发体验一致，MIP 组件机制实现了和 Vue 几乎一致的内容分发 API， 将 MIP 组件内模板的 `<slot>` 元素作为承载分发内容的出口。
 
 你可以这样组合组件
 
@@ -25,7 +25,7 @@
 </a>
 ```
 
-当组件渲染的时候，这个 <slot> 元素将会被替换为“Your Profile”。插槽内可以包含任何模板代码，包括 HTML：
+当组件渲染的时候，这个 `<slot>` 元素将会被替换为 “Your Profile”。插槽内可以包含任何模板代码，包括 HTML：
 
 ```html
 <mip-link url="/profile">
@@ -45,11 +45,11 @@
 </mip-link>
 ```
 
-如果 <mip-link> 没有包含一个 <slot> 元素，则任何传入它的内容都会被抛弃。
+如果 `<mip-link>` 没有包含一个 `<slot>` 元素，则任何传入它的内容都会被抛弃。
 
 ## 具名插槽
 
-有些时候我们需要多个插槽。例如，一个假设的 <mip-layout> 组件多模板如下：
+有些时候我们需要多个插槽。例如，一个假设的 `<mip-layout>` 组件多模板如下：
 
 ```html
 <div class="container">
@@ -65,7 +65,7 @@
 </div>
 ```
 
-对于这样的情况，<slot> 元素有一个特殊的特性：name。这个特性可以用来定义额外的插槽：
+对于这样的情况，`<slot>` 元素有一个特殊的特性：name。这个特性可以用来定义额外的插槽：
 
 ```html
 <div class="container">
@@ -130,9 +130,9 @@
 
 ## 插槽的默认内容
 
-有的时候为插槽提供默认的内容是很有用的。例如，一个 <mip-submit-button> 组件可能希望这个按钮的默认内容是“Submit”，但是同时允许用户覆写为“Save”、“Upload”或别的内容。
+有的时候为插槽提供默认的内容是很有用的。例如，一个 `<mip-submit-button>` 组件可能希望这个按钮的默认内容是“Submit”，但是同时允许用户覆写为“Save”、“Upload” 或别的内容。
 
-你可以在 <slot> 标签内部指定默认的内容来做到这一点。
+你可以在 `<slot>` 标签内部指定默认的内容来做到这一点。
 
 ```html
 <button type="submit">
@@ -145,7 +145,8 @@
 ## 和 Vue 插槽的区别
 
 1. MIP 不支持编译作用域(Compilation Scope)，不支持以下写法：
-```
+
+```html
 <mip-link url="/profile" slot-scope="{user}">
   Logged in as {{ user.name }}
 </mip-link>
