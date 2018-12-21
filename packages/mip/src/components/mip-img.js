@@ -315,7 +315,9 @@ class MipImg extends CustomElement {
     }
     return event.loadPromise(img).then(() => {
       // 标识资源已加载完成
-      this.resourcesComplete()
+      try {
+        this.resourcesComplete()
+      } catch (e) {}
       this.element.classList.add('mip-img-loaded')
       customEmit(this.element, 'load')
     }).catch(reason => {
