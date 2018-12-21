@@ -4,19 +4,7 @@
       "key": "mip-component"
     },
     {
-      "key": "relationship-between-mip-component"
-    },
-    {
       "key": "instance-life-cycle"
-    },
-    {
-      "key": "props"
-    },
-    {
-      "key": "event-and-action"
-    },
-    {
-      "key": "slot"
     },
     {
       "key": "service"
@@ -24,5 +12,12 @@
     {
       "key": "sandbox"
     }
+  ],
+  "ignore": [
+    "mip-component",
+    "props",
+    "event-and-action",
+    "slot",
+    "relationship-between-mip-component-and-vue"
   ]
 }

@@ -17,7 +17,7 @@ MIP 页面的高性能离不开规范的重要性。因为 MIP 主要由 MIP-HTM
 - [MIP HTML 规范](../mip-standard/mip-html-spec.md)
 - [MIP Canonical 使用规范](../mip-standard/mip-canonical.md)
 - [MIP CACHE 规范](../mip-standard/mip-cache-spec.md)
-- [MIP 组件规范](../mip-standard/mip-components-spec.md)
+- [MIP 校验规则](../mip-standard/mip-validate.md)
 
 ## 样式与布局
 
@@ -33,7 +33,7 @@ MIP 为了性能和易用性考虑，对 CSS 的使用做了一定的限制，�
 MIP 提供了为数众多的官方组件来满足开发者的需求。不过在一些复杂的可交互 MIP 页面中，只通过配置组件属性是达不到设计要求的。因此 MIP 组件通过对外暴露属性、事件和行为的方式来实现外部对组件的配置和使用。
 
 - [事件监听与行为触发](../interactive-mip/event-and-action.md)
-- [数据绑定](../interactive-mip/data-binding/introduction.md)
+- 数据绑定
     - [数据定义](../interactive-mip/data-binding/data-definition.md)
     - [数据获取、修改与观察](../interactive-mip/data-binding/data-operation.md)
     - [数据绑定语法说明](../interactive-mip/data-binding/mip-bind.md)
