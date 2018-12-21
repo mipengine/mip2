@@ -4,6 +4,7 @@
  */
 
 import dom from 'src/util/dom/dom'
+import {event} from 'src/util'
 
 /* eslint-disable no-unused-expressions */
 /* globals describe, before, it, expect, after, Event */
@@ -111,10 +112,12 @@ describe('mip-img', function () {
       <mip-img src="https://www.mipengine.org/static/img/sample_01.jpg"></mip-img>
     `
     let mipImg = mipImgWrapper.querySelector('mip-img')
+    let loading = new Promise(resolve => event.listen(mipImg, 'load', resolve))
     mipImg.viewportCallback(true)
     let img = mipImg.querySelector('img')
     expect(img.classList.contains('mip-replaced-content')).to.equal(true)
     expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_01.jpg')
+    return loading
   })
 
   it('should change src and reload img', function () {
