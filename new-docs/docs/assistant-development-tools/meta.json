@@ -1,10 +1,10 @@
 {
   "menu": [
     {
-      "key": "cli-user-plugin"
+      "key": "introduction"
     },
     {
-      "key": "introduction"
+      "key": "cli-user-plugin"
     },
     {
       "key": "mip-sf"

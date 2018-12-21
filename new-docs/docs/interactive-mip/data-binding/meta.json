@@ -1,9 +1,6 @@
 {
   "menu": [
     {
-      "key": "introduction"
-    },
-    {
       "key": "data-definition"
     },
     {
@@ -21,5 +18,8 @@
     {
       "key": "global-data-definition"
     }
+  ],
+  "ignore": [
+    "introduction"
   ]
 }

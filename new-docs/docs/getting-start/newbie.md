@@ -8,16 +8,16 @@
 
 1. [创建第一个 MIP 页面](./start-writing-first-mip.md)
 2. [调试与验证 MIP 页面](./debug-and-validate.md)
-3. [MIP 搜索生效](./mip-in-search/introduction.md)
+3. [MIP 搜索生效](../mip-in-search/introduction.md)
 
 ## MIP 规范
 
 MIP 页面的高性能离不开规范的重要性。因为 MIP 主要由 MIP-HTML、MIP-JS 和 MIP-CACHE 三部分组成，所以主要的规范有：
 
 - [MIP HTML 规范](../mip-standard/mip-html-spec.md)
+- [MIP Canonical 使用规范](../mip-standard/mip-canonical.md)
 - [MIP CACHE 规范](../mip-standard/mip-cache-spec.md)
 - [MIP 组件规范](../mip-standard/mip-components-spec.md)
-- ...
 
 ## 样式与布局
 

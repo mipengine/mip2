@@ -31,6 +31,10 @@
     {
       "name": "辅助开发工具",
       "key": "assistant-development-tools"
+    },
+    {
+      "name": "MIP 搜索生效流程",
+      "key": "mip-in-search"
     }
   ],
   "ignore": [
