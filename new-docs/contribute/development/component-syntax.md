@@ -47,7 +47,7 @@ class MIPGreeting extends MIP.CustomElement {
 
   attributeChangedCallback (name, oldValue, value) {
     if (name === 'name') {
-      this.element.querySelector('#greeting-name').innerText = value;
+      this.element.querySelector('#greeting-name').innerText = value
     }
   }
 }
