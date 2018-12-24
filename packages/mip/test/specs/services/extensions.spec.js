@@ -568,6 +568,43 @@ describe('extensions', () => {
     expect(Services.getService(window, 'mip-service')).instanceOf(implementation)
   })
 
+  it.only('should register element in order', async function () {
+    let order = []
+
+    await new Promise(resolve => {
+      extensions.installExtension({
+        name: 'mip-ext-a',
+        func () {
+          setTimeout(() => {
+            order.push('a')
+            extensions.registerElement('mip-a', class extends CustomElement {})
+          }, 100)
+        }
+      })
+
+      extensions.installExtension({
+        name: 'mip-ext-b',
+        func () {
+          setTimeout(() => {
+            order.push('b')
+            extensions.registerElement('mip-b', class extends CustomElement {})
+          })
+        }
+      })
+
+      extensions.installExtension({
+        name: 'mip-ext-c',
+        func () {
+          order.push('c')
+          extensions.registerElement('mip-c', class extends CustomElement {})
+          resolve()
+        }
+      })
+    })
+
+    expect(order).to.deep.equal(['a', 'b', 'c'])
+  })
+
   it('should register template in registration', () => {
     const implementation = templates.inheritTemplate()
     implementation.prototype.cache = html => html

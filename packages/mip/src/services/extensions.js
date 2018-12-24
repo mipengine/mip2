@@ -50,6 +50,14 @@ export class Extensions {
     this.timer = Services.timerFor(win)
 
     /**
+     * @tyep {?string}
+     * @private
+     */
+    this.waitingRegisterElement = false
+
+    this.extensionsQueue = []
+
+    /**
      * Binds methods exposed to `MIP`.
      */
     this.installExtension = this.installExtension.bind(this)
@@ -241,7 +249,20 @@ export class Extensions {
    * @param {!Object} extension
    */
   installExtension (extension) {
-    this.registerExtension(extension.name, extension.func, this.win.MIP)
+    this.extensionsQueue.push(extension)
+    this.tryToRegisterExtensions()
+  }
+
+  tryToRegisterExtensions () {
+    while (!this.waitingRegisterElement) {
+      this.waitingRegisterElement = true
+      const extension = this.extensionsQueue.shift()
+      if (!extension) {
+        break
+      }
+
+      this.registerExtension(extension.name, extension.func, this.win.MIP)
+    }
   }
 
   /**
@@ -319,6 +340,13 @@ export class Extensions {
           unlistenBuildError()
         })
       }
+    }
+
+    if (this.waitingRegisterElement) {
+      Promise.resolve().then(() => {
+        this.waitingRegisterElement = false
+        this.tryToRegisterExtensions()
+      })
     }
   }
 
