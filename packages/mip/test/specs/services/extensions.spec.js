@@ -568,7 +568,7 @@ describe('extensions', () => {
     expect(Services.getService(window, 'mip-service')).instanceOf(implementation)
   })
 
-  it.only('should register element in order', async function () {
+  it('should register element in order', async function () {
     let order = []
 
     await new Promise(resolve => {
