@@ -596,7 +596,7 @@ class MipShell extends CustomElement {
   // ===================== All Page Functions =====================
   bindAllEvents () {
     // Don't let browser restore scroll position.
-    if ('scrollRestoration' in window.history) {
+    if (!window.MIP.standalone && 'scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual'
     }
 
