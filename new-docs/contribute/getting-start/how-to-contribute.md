@@ -66,6 +66,13 @@ Pull request 提交后，会自动触发持续集成的任务，如代码规范�
 
 官方开发人员操作合入之后，代码最终 merge 到官方库，在此过程中可关注官方开发人员的评论，积极参与讨论，共同为 MIP 组件贡献良好的代码。
 
+5.**调用组件脚本**
+
+```
+// 页面中引用
+<script src="https://c.mipcdn.com/static/v2/mip-example/mip-example.js"></script>
+```
+
 ## 提交站长组件
 
 ### 站长组件仓库说明
@@ -150,7 +157,7 @@ $ cd cafe.com
 
 5.**调用组件脚本**
 
-```javascript
+```
 // 页面中引用
 <script src="https://c.mipcdn.com/extensions/platform/v2/{站点项目名}/{组件名}/{组件名}.js"></script>
 ```
