@@ -31,6 +31,14 @@ describe('mip-img', function () {
     }
   })
 
+  it('should be loading with default placeholder if not define a size', async () => {
+    let mipImg = dom.create('<mip-img src="https://www.mipengine.org/static/img/sample_01.jpg"></mip-img>')
+    mipImgWrapper.appendChild(mipImg)
+    document.body.appendChild(mipImgWrapper)
+    mipImg.viewportCallback(true)
+    expect(mipImg.querySelectorAll('.mip-default-placeholder').length).to.be.equal(1)
+  })
+
   it('should be loading with placeholder', function () {
     let mipImg = dom.create('<mip-img popup src="https://www.wrong.org?mip_img_ori=1"></mip-img>')
     mipImgWrapper.appendChild(mipImg)
