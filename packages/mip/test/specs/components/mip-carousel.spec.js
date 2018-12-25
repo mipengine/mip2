@@ -443,7 +443,7 @@ describe('mip-carousel', function () {
 
     it('should be not ok with wrong indicator', async function () {
       let indicatorDom = divWrong.querySelector('#mip-carousel-example2')
-      expect(indicatorDom.classList.contains('hide')).to.be.true
+      expect(indicatorDom.classList.contains('mip-hide')).to.be.true
       expect(window.getComputedStyle(indicatorDom, null).display).to.include('none')
     })
 
