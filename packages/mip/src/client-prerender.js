@@ -17,7 +17,8 @@ let parsePrerender = ele => {
   }
 
   let prerender = ele.getAttribute('prerender')
-  return prerender != null && prerender !== 'false'
+  let isFirstScreenElement = ele.getAttribute('firstscreen')
+  return isFirstScreenElement != null || (prerender != null && prerender !== 'false')
 }
 
 let resetPrerenderHash = () => {
@@ -33,7 +34,7 @@ let resetPrerenderHash = () => {
 class ClientPrerender {
   constructor () {
     // 预渲染环境标记, 是否是预渲染状态
-    this.prerender = false
+    this.isPrerendering = false
 
     // 是否执行过预渲染
     this.isPrerendered = false
@@ -46,11 +47,11 @@ class ClientPrerender {
     })
 
     if (util.hash.get('prerender') === '1') {
-      this.prerender = true
+      this.isPrerendering = true
       new Promise(resolve => {
         // set client prerender event
         this.messager.on(MESSAGE_PAGE_ACTIVE, () => {
-          this.prerender = false
+          this.isPrerendering = false
           resetPrerenderHash()
           resolve()
         })
@@ -60,6 +61,8 @@ class ClientPrerender {
         })
       }).then(() => {
         this.isPrerendered = true
+        performance.recordTiming('MIPPageShow')
+        performance.lockFirstScreen()
         performance.recordTiming('MIPElementBuildStart')
         let fn
         while ((fn = this.queue.shift())) {
@@ -72,7 +75,7 @@ class ClientPrerender {
   }
 
   execute (fn, ele) {
-    if (this.prerender && !parsePrerender(ele)) {
+    if (this.isPrerendering && !parsePrerender(ele)) {
       this.queue.push(fn)
     } else {
       fn()
