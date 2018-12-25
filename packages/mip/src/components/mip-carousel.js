@@ -603,7 +603,7 @@ class MIPCarousel extends CustomElement {
         }
       } else {
         // 若个数不匹配，则隐藏掉indicator
-        addClass(indicDom, 'hide')
+        addClass(indicDom, 'mip-hide')
         dotItems = []
       }
     }
