@@ -28,6 +28,14 @@ $ git clone https://github.com/your-username/mip2-extensions.git
 
 `git clone` 出来的项目结构与 `mip2 init` 命令初始化的项目结构类似，我们可以在根目录使用 `mip2 add` 命令新增组件。
 
+![](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy//assets/mip/docs/cli/mip2-add-3eef75e8.png)
+
+根据 `mip2 add` 的命令提示，我们可以通过以下命令来增加一个叫 `mip-example` 的组件开发目录：
+
+```shell
+mip2 add mip-example
+```
+
 - [组件开发](../development/component-syntax.md)
 - [调试](../debug/mip-dev.md)
 - [校验](./mip-cli-usage.md#组件和页面校验)
@@ -54,11 +62,11 @@ $ git push
 
 ![github-pr](./images/Picture3.png)
 
-按照提示，完成提交。最终会在官方仓库提交一个 Pull request
+按照提示，完成提交。最终会在官方仓库提交一个 Pull Request
 
 ![github-prlist](./images/Picture4.png)
 
-Pull request 提交后，会自动触发持续集成的任务，如代码规范检查、部署预览等，在 Conversation 选项卡可以看到实时状态。如果有不通过的，需要再次修改提交，确保所有检查项都成功通过，官方才能审核合入。
+Pull Request 提交后，会自动触发持续集成的任务，如代码规范检查、部署预览等，在 Conversation 选项卡可以看到实时状态。如果有不通过的，需要再次修改提交，确保所有检查项都成功通过，官方才能审核合入。
 
 ![github-status](./images/Picture5.png)
 
