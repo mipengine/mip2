@@ -4,7 +4,7 @@ MIP 允许开发者使用 Vue 单文件的形式去开发 MIP 组件，MIP CLI �
 
 ## 创建一个简单的 MIP 组件
 
-采用 Vue 单文件写法开发 MIP 组件，在写法上基本与普通的 Vue 单文件相一致，在组件文件命名上首先需要满足 MIP 的组件命名规范，要求以 `mip-` 作为组件前缀，对于第三方站长组件需要以 `mip-[第三方组件标识]-` 的格式进行命名，同时要求以 `.vue` 作为文件后缀。比如 `mip-example.vue`、`mip-baidu-example.vue` 等等，创建好文件之后，我们可以简单编写这个组建的内容，以 `mip-example.vue` 为例：
+采用 Vue 单文件写法开发 MIP 组件，在写法上基本与普通的 Vue 单文件相一致，在组件文件命名上首先需要满足 MIP 的组件命名规范，要求以 `mip-` 作为组件前缀，对于第三方站长组件需要以 `mip-[第三方组件标识]-` 的格式进行命名，同时要求以 `.vue` 作为文件后缀。比如 `mip-example.vue`、`mip-baidu-example.vue` 等等，创建好文件之后，我们可以简单编写这个组件的内容，以 `mip-example.vue` 为例：
 
 ```html
 <template>
@@ -30,9 +30,13 @@ export default {
 
 ## 生命周期
 
-使用 Vue 单文件写法开发 MIP 组件与普通的 Vue 组件存在着一定区别，区别之一就是组件的生命周期。MIP 组件扩展了 Vue 组件的生命周期钩子，生命周期示意图如下所示：
+使用 Vue 单文件写法开发 MIP 组件与普通的 Vue 组件存在着一定区别，区别之一就是组件的生命周期。MIP 组件扩展了 Vue 组件的生命周期钩子，同时限制了部分 CustomElement 生命周期钩子，生命周期示意图如下所示：
 
 ![mip2 组件生命周期](https://boscdn.baidu.com/v1/assets/mip/mip2-component-lifecycle.png)
+
+> 由于 vue 组件实例化比较消耗性能，所以 mip 对 vue 组件做了延迟实例化，只有组件执行 firstInviewCallback 后才会执行组件的实例化。如果需要强制组件在初始化时执行 vue 组件实例化，需要通过声明 prerenderAllowed() 为 true 实现。
+
+> 由于 vue 组件的生命周期属于 CustomElement 生命周期的一部分，所以在部分 CustomElement 生命周期钩子（如 connectedCallback）中 vue 实例还未实例化，无法获取 vue 实例，在 vue 组件的扩展钩子里无法通过 this 获取到 vue 实例，element 实例则通过钩子的最后一个参数传入，具体请参考下面的生命周期钩子参数说明。
 
 允许调用的生命周期钩子如下所示：
 
