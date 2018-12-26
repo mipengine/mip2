@@ -7,10 +7,9 @@ mip2 CLI 是官方提供的命令行工具，它提供了脚手架、调试、�
 mip2 CLI 使用 NPM 安装，依赖 Node 环境，推荐
 
 - [Node.js](https://nodejs.org/) (>=8.x)
-
 - [Git](https://git-scm.com/)
 
-## 安装 mip2 CLI
+## 安装 MIP CLI
 
 打开命令行工具，输入：
 
@@ -18,25 +17,31 @@ mip2 CLI 使用 NPM 安装，依赖 Node 环境，推荐
 $ npm install -g mip2
 ```
 
-输入 `mip2 -V`，若能正常显示版本号，说明已经安装成功。
+输入 `mip2 -V`，若能正常显示版本号，说明已经安装成功。在使用 mip2 CLI 工具输入命令时，比如 `mip2 dev`、`mip2 build` 等等，会首先检查当前安装的 CLI 版本，如果存在新版本，则会在命令行提示升级：
+
+![mip2 update toast](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/docs/cli/mip2-update-58f7edba.png)
+
+建议开发者保持本地安装的 CLI 为最新版本，因为线上的 MIP 组件总是会拿最新版本的 CLI 工具进行编译，因此最好能够保持开发编译环境和线上编译环境的一致性。
 
 ## mip2 CLI 使用
 
 ### `mip2 init` 创建项目脚手架
 
+在开发第三方站长组件的时候，首先需要在 mip2-extensions-platform 这个代码库下新增第三方站长组件的开发目录，通过 `mip2 init` 命令就能够快速生成符合 MIP 组件开发规范的目录结构。该命令的使用方法如下所示：
+
 ```shell
 $ mip2 init
 
-? 项目名称（mip-project）my-project
+? 项目名称（mip-project）test.a.com
 ? 项目描述 (A MIP project)
 ? 作者信息 (username (username@your-email.com))
 INFO generate MIP project successfully!
 ```
 
-根据提示输入项目名 `myproject`，生成项目结构如下
+在 mip2-extensions-platform 代码库根目录下执行 `mip2 init`，然后根据命令行的提示依次输入第三方站点信息即可。生成项目结构如下：
 
 ```bash
-myproject
+test.a.com
     ├── common                          // 组件公用代码，如 utils 等
     ├── components                      // 组件目录，编写组件代码
     │   └── mip-example
@@ -89,19 +94,19 @@ $ mip2 add mip-hello-world -f
 
 1. 组件入口文件
 
-mip-cli 默认生成了 mip-hello-world.vue 作为入口文件，开发者需要对其进行修改补充以实现具体的组件功能。
+mip-cli 默认生成了 mip-hello-world.vue 作为入口文件，开发者需要对其进行修改补充以实现具体的组件功能。如何写 MIP 组件，mip2 cli 提供了哪些功能帮助开发者更加方便快捷地开发组件，请参考 [组件开发](../development/component-syntax.md) 以及这个目录下的其他文章。
 
 2. 组件说明文档
 
 该文件内容必须是UTF-8 编码格式，用于对当前 MIP 扩展组件进行详细说明：
 
-① 组件描述、属性说明与示例对使用者有指导作用，可直接阅读；
-
-② 组件描述、属性说明将被提取，进行自文档化；
-
-③ 组件示例将被开发调试工具自动解析，生成调试页面。
+- 组件描述、属性说明与示例对使用者有指导作用，可直接阅读；
+- 组件描述、属性说明将被提取，进行自文档化；
+- 组件示例将被开发调试工具自动解析，生成调试页面。
 
 README.md 文件必须符合 MIP 扩展组件 README.md 规范。手写README.md 可能比较麻烦，默认提供的 README.md 文件给出了要求编写的段落格式，我们还可以通过模仿或复制 README.md 样例来创建 README.md。
+
+组件说明文档的开发规范链接为：[MIP README 规范](https://github.com/mipengine/mip-extensions/blob/master/docs/spec-readme-md.md)。
 
 3. 组件使用示例
 
@@ -117,19 +122,7 @@ $ mip2 dev
 
 默认会将 components 目录下的组件编译好，同时在 `8111` 端口启动服务器，并自动调起浏览器打开 `example/index.html` ，实现预览和调试。在修改组件和页面的代码时，无需手动重启和刷新，服务器内部已经帮我们实现了这一功能。
 
-可选参数：
-
-```
--p, --port <n>          启动端口号
--d, --dir <value>       项目文件夹路径
--l, --livereload        启用调试自动刷新
--a, --asset <value>     静态资源 publicPath
--o, --autoopen <value>  自动打开网页
--i, --ignore            忽略沙盒注入
--c, --config <value>    mip-cli 配置文件路径
-```
-
-了解详细用法：[组件开发](./04-component-development.md)，[调试组件](./05-component-testing.md)
+我们写了另一篇文章专门介绍 mip2 dev 的详细用法：[调试组件](../debug/mip-dev.md)。
 
 ### `mip2 validate` 组件和页面校验
 
@@ -174,7 +167,7 @@ $ mip2 build
 -i, --ignore          忽略沙盒注入
 ```
 
-了解详细用法：[组件构建](./06-component-deploy.md)
+了解详细用法：[组件构建](../deploy/mip-build.md)
 
 ### `mip2 sw` 生成 Service Worker
 

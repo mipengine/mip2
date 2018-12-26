@@ -28,13 +28,15 @@ $ git clone https://github.com/your-username/mip2-extensions.git
 
 `git clone` 出来的项目结构与 `mip2 init` 命令初始化的项目结构类似，我们可以在根目录使用 `mip2 add` 命令新增组件。
 
-![](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy//assets/mip/docs/cli/mip2-add-3eef75e8.png)
+![](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/docs/cli/mip2-add-3eef75e8.png)
 
 根据 `mip2 add` 的命令提示，我们可以通过以下命令来增加一个叫 `mip-example` 的组件开发目录：
 
 ```shell
 mip2 add mip-example
 ```
+
+然后在新增的组件开发目录里根据相关开发文档的教程进行组件开发调试与校验：
 
 - [组件开发](../development/component-syntax.md)
 - [调试](../debug/mip-dev.md)
@@ -44,7 +46,7 @@ mip2 add mip-example
 
 ```bash
 # add需要提交的文件
-$ git add XXX.js
+$ git add .
 # commit需要提交的文件
 $ git commit -m 'update_log...'
 # pull 保持和远程分支一致
@@ -141,17 +143,15 @@ https://c.mipcdn.com/extensions/platform/v2/test.a.com/mip-example/mip-example.j
 $ mip2 init
 ```
 
-按照提示输入项目名称，如 `cafe.com`，新增了一个站点项目。
+按照提示输入项目名称，如 `test.a.com`，新增了一个站点项目。
+
+![init 示例](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/docs/cli/mip2-init-a81dcd37.png)
 
 ```bash
-$ cd cafe.com
+$ cd test.a.com
 ```
 
-切换到站点项目目录即可快速进行组件开发工作了：
-
-- [新增组件](./mip-cli-usage.md)
-- [调试组件](./mip-cli-usage.md#启动调试服务器)
-- [校验组件](./mip-cli-usage.md#组件和页面校验)
+切换到站点项目目录即可快速进行组件开发工作了，这块开发的方式与官方组件开发的方式相一致。
 
 3.**发起 Pull Request**
 
