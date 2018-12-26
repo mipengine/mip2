@@ -28,8 +28,8 @@ $ git clone https://github.com/your-username/mip2-extensions.git
 
 `git clone` 出来的项目结构与 `mip2 init` 命令初始化的项目结构类似，我们可以在根目录使用 `mip2 add` 命令新增组件。
 
-- [组件开发](./mip-cli-usage.md)
-- [调试](./mip-cli-usage.md#启动调试服务器)
+- [组件开发](../development/component-syntax.md)
+- [调试](../debug/mip-dev.md)
 - [校验](./mip-cli-usage.md#组件和页面校验)
 
 开发完成后提交：
@@ -43,7 +43,7 @@ $ git commit -m 'update_log...'
 $ git remote add upstream https://github.com/mipengine/mip2-extensions.git
 $ git pull upsteam master
 # push 本次提交
-$ git push 
+$ git push
 ```
 
 3.**发起 Pull Request**
