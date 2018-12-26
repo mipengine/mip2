@@ -261,7 +261,13 @@ class FixedElement {
                */
               /* istanbul ignore next */
               if (process.env.NODE_ENV === 'production') {
-                elements[j].parentElement.removeChild(elements[j])
+                /**
+                  * hide and warn for debugging instead of removing element
+                  */
+                // elements[j].parentElement.removeChild(elements[j])
+                let ele = elements[j]
+                ele.style.cssText = 'display: none!important'
+                console.warn(`Can not use "position: fixed" in ${ele.tagName}!`)
               }
             }
           } catch (e) {
