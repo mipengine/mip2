@@ -5,6 +5,10 @@
       "key": "component-syntax"
     },
     {
+      "name": "使用 Vue 单文件语法来开发 MIP 组件",
+      "key": "writing-mip-component-in-vue-style"
+    },
+    {
       "name": "资源管理",
       "key": "resources-management"
     },
