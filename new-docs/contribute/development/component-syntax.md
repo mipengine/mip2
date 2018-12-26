@@ -33,12 +33,40 @@ export default MIPGreeting
 </mip-greeting>
 ```
 
+## 添加 css 样式
+
+添加 css 样式需要另外声明一个样式文件，如 `mip-greeting.less`, 然后在组件中 import：
+
+```less
+mip-greeting {
+  background: green;
+}
+```
+
+```js
+import './mip-greeting.less'
+
+class MIPGreeting extends MIP.CustomElement {
+  build () {
+    const name = this.element.getAttribute('name')
+
+    this.element.innerHTML = `<div>Hello <span id="greeting-name">${name}</span>!</div>`
+  }
+}
+
+export default MIPGreeting
+```
+
 ## 响应数据更新
 
-当 MIP 组件需要相应属性变更时，需要实现 `attributeChangedCallback`：
+当 MIP 组件需要相应属性变更时，需要声明 `observedAttributes`, 该静态方法需要返回需要观察变化的属性列表，否则无法监听属性的改变，然后实现 `attributeChangedCallback` 对响应的属性做处理：
 
 ```js
 class MIPGreeting extends MIP.CustomElement {
+  static get observedAttributes () {
+    return ['name']
+  }
+
   build () {
     const name = this.element.getAttribute('name')
 
