@@ -4,6 +4,19 @@
 
 你可以定义以下的生命周期回调钩子，这些回调会在自定义元素的生命周期的不同点回调。
 
+### constructor
+- 类型：Function
+- Context: CustomElement
+- 详细：
+    自定义元素构造函数
+
+### attributeChangedCallback
+
+- 类型：Function
+- Context: CustomElement
+- 详细：
+    自定义元素在初始化完成后，如果对应组件 class 定义了 observedAttributes 并且自定义元素上定义了对应的属性，那么 attributeChangedCallback 会在组件执行完 constructor 之后会立即执行。之后在监控的属性变更时会再次触发 attributeChangedCallback。
+
 ### connectedCallback
 
 - 类型：Function
