@@ -52,10 +52,12 @@ export function createIFrame ({fullpath, pageId}, {onLoad, onError} = {}) {
   })
   container.setAttribute('name', pageMeta)
 
-  if (fullpath.indexOf('#') === -1) {
-    fullpath += '#mipservice=' + window.mipService
-  } else {
-    fullpath += '&mipservice=' + window.mipService
+  if (!window.MIP.standalone) {
+    if (fullpath.indexOf('#') === -1) {
+      fullpath += '#mipservice=' + window.mipService
+    } else {
+      fullpath += '&mipservice=' + window.mipService
+    }
   }
   container.setAttribute('src', fullpath)
   container.setAttribute('class', MIP_IFRAME_CONTAINER)
