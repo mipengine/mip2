@@ -205,8 +205,12 @@ class Resources {
         let ele = resources[newElementIds[i]]
         // The element may have been removed.
         if (ele && ele.isBuilt()) {
-          let inViewport = this.isInViewport(ele, viewportRect)
-          this.setInViewport(ele, inViewport)
+          try {
+            let inViewport = this.isInViewport(ele, viewportRect)
+            this.setInViewport(ele, inViewport)
+          } catch (e) {
+            console.warn(e)
+          }
         }
       }
     }
