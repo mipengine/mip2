@@ -48,6 +48,7 @@ let isHeaderShown = false
 
 window.MIP_PAGE_META_CACHE = Object.create(null)
 window.MIP_SHELL_CONFIG = null
+window.MIP_SHELL_ROUTES_AUTO_GENERATED = false
 
 class MipShell extends CustomElement {
   // ===================== CustomElement LifeCycle =====================
@@ -94,6 +95,7 @@ class MipShell extends CustomElement {
             pattern: '*',
             meta: DEFAULT_SHELL_CONFIG
           }]
+          window.MIP_SHELL_ROUTES_AUTO_GENERATED = true
         }
       } catch (e) {
         !this.ignoreWarning && console.warn('检测到格式非法的 MIP Shell 配置，MIP 将使用默认的配置代替。')
@@ -103,6 +105,7 @@ class MipShell extends CustomElement {
             meta: DEFAULT_SHELL_CONFIG
           }]
         }
+        window.MIP_SHELL_ROUTES_AUTO_GENERATED = true
       }
     } else {
       !this.ignoreWarning && console.warn('没有检测到 MIP Shell 配置，MIP 将使用默认的配置代替。')
@@ -112,6 +115,7 @@ class MipShell extends CustomElement {
           meta: DEFAULT_SHELL_CONFIG
         }]
       }
+      window.MIP_SHELL_ROUTES_AUTO_GENERATED = true
     }
 
     if (page.isRootPage) {
@@ -190,6 +194,9 @@ class MipShell extends CustomElement {
 
       if (!pageMeta) {
         pageMeta = this.findMetaByPageId(pageId)
+      }
+      if (window.parent.MIP_SHELL_ROUTES_AUTO_GENERATED) {
+        window.parent.document.title = pageMeta.header.title = (document.querySelector('title') || {}).innerHTML || ''
       }
 
       page.emitCustomEvent(window.parent, page.isCrossOrigin, {
