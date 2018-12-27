@@ -332,7 +332,7 @@ function backwardTransition (shell, options) {
   // If source page is root page, skip transition
   if (!iframe) {
     document.documentElement.classList.add('mip-no-scroll')
-    window.MIP.viewer.page.getElementsInRootPage().forEach(e => e.classList.add('hide'))
+    window.MIP.viewer.page.getElementsInRootPage().forEach(e => e.classList.add('mip-hide'))
 
     onComplete && onComplete()
     shell.afterSwitchPage(options)
@@ -447,7 +447,6 @@ function skipTransition (shell, options) {
   skipTransitionAndCreate(shell, options)
 }
 
-
 /**
  * Disable scrolling of root page when covered by an iframe
  * NOTE: it doesn't work in iOS, see `_lockBodyScroll()` in viewer.js
@@ -456,11 +455,11 @@ function fixRootPageScroll (shell, {sourcePageId, targetPageId} = {}) {
   let page = window.MIP.viewer.page
   if (sourcePageId === page.pageId) {
     document.documentElement.classList.add('mip-no-scroll')
-    page.getElementsInRootPage().forEach(e => e.classList.add('hide'))
+    page.getElementsInRootPage().forEach(e => e.classList.add('mip-hide'))
   }
   if (targetPageId === page.pageId) {
     document.documentElement.classList.remove('mip-no-scroll')
-    page.getElementsInRootPage().forEach(e => e.classList.remove('hide'))
+    page.getElementsInRootPage().forEach(e => e.classList.remove('mip-hide'))
     shell.restoreScrollPosition()
   }
 }
