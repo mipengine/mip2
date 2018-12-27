@@ -324,12 +324,12 @@ class MipShell extends CustomElement {
         if (data.options.allowTransition) {
           window.MIP_SHELL_OPTION.allowTransition = true
         }
-        router.push(data.route)
+        router.push(data.route, data.options.skipRender)
       } else if (type === MESSAGE_ROUTER_REPLACE) {
         if (data.options.allowTransition) {
           window.MIP_SHELL_OPTION.allowTransition = true
         }
-        router.replace(data.route)
+        router.replace(data.route, data.options.skipRender)
       } else if (type === MESSAGE_ROUTER_BACK) {
         window.MIP_SHELL_OPTION.allowTransition = true
         window.MIP_SHELL_OPTION.isForward = false

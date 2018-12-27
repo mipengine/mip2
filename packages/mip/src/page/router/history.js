@@ -35,14 +35,26 @@ export default class HTML5History {
     window.history.go(n)
   }
 
-  push (location) {
+  push (location, skipRender) {
+    /* istanbul ignore next */
+    if (skipRender) {
+      pushState(route.fullPath)
+      window.MIP.viewer.updateSFState(route.fullPath)
+      return
+    }
     this.transitionTo(location, route => {
       /* istanbul ignore next */
       pushState(route.fullPath)
     })
   }
 
-  replace (location) {
+  replace (location, skipRender) {
+    /* istanbul ignore next */
+    if (skipRender) {
+      replaceState(route.fullPath)
+      window.MIP.viewer.updateSFState(route.fullPath, true)
+      return
+    }
     this.transitionTo(location, route => {
       /* istanbul ignore next */
       replaceState(route.fullPath)

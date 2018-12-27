@@ -221,6 +221,14 @@ class Page {
     this.notifyRootPage({type: MESSAGE_ROUTER_FORWARD})
   }
 
+  /**
+   * 添加路由
+   *
+   * @param {string} route 目标路由
+   * @param {Object} options
+   * @param {boolean} options.allowTransition 是否增加切换动画，默认 false
+   * @param {boolean} options.skipRender 是否跳过渲染，单纯修改URL，默认 false
+   */
   push (route, options = {}) {
     this.notifyRootPage({
       type: MESSAGE_ROUTER_PUSH,
@@ -228,6 +236,14 @@ class Page {
     })
   }
 
+  /**
+   * 替换路由
+   *
+   * @param {string} route 目标路由
+   * @param {Object} options
+   * @param {boolean} options.allowTransition 是否增加切换动画，默认 false
+   * @param {boolean} options.skipRender 是否跳过渲染，单纯修改URL，默认 false
+   */
   replace (route, options = {}) {
     this.notifyRootPage({
       type: MESSAGE_ROUTER_REPLACE,

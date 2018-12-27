@@ -126,7 +126,7 @@ Fast - Respond quickly to user interactions with silky smooth animations and no 
     <a class="link" href="../builtin/mip-iframe.html" mip-link>Login</a>
     <a class="link" href="./tree.html" mip-link data-title="Customized title">Go to Tree</a>
     <a class="link" href="./tree.html" mip-link cache-first>Go to Tree cache first</a>
-    <a class="link" id="prerender">Prerender</a>
+    <a class="link" id="replace">replace url</a>
 
     <br><br>
     <p>
@@ -213,13 +213,8 @@ Fast - Respond quickly to user interactions with silky smooth animations and no 
 
     <script src="../../dist/mip.js"></script>
     <script>
-        // document.querySelector('#prerender').addEventListener('click', () => {
-        //     window.MIP.viewer.page.prerender([
-        //         'http://localhost:8080/examples/page/tree.html',
-        //         'http://localhost:8080/examples/page/data.html'
-        //     ]).then(iframes => {
-        //         alert('prerender done')
-        //     })
-        // })
+        document.querySelector('#replace').addEventListener('click', () => {
+            window.MIP.viewer.page.replace('/examples/page/tree.html')
+        })
     </script>
 </body>

@@ -260,6 +260,17 @@ let viewer = {
     }
   },
 
+  updateSFState (url, replace) {
+    if (window.MIP.standalone) {
+      return
+    }
+    let pushMessage = {
+      url: parseCacheUrl(url),
+      state: {}
+    }
+    this.sendMessage(replace ? OUTER_MESSAGE_REPLACE_STATE : OUTER_MESSAGE_PUSH_STATE, pushMessage)
+  },
+
   /**
    * Event binding callback.
    * For overridding _bindEventCallback of EventEmitter.
