@@ -4,7 +4,7 @@
 
 ## 创建 MIP 组件目录
 
-以开发官方组件为例（mip2-extensions），首先需要在 `components` 目录下创建组件文件夹，假设开发的组件名为 `mip-example` 那么，需要在 components 目录下创建如下目录结构：
+以开发官方组件为例（mip2-extensions），首先需要在 `components` 目录下创建组件文件夹，假设开发的组件名为 `mip-example` 那么，需要在 `components` 目录下创建如下目录结构：
 
 ```
 ├── components
@@ -56,13 +56,13 @@ export default class MIPExample extends MIP.CustomElement {
 </html>
 ```
 
-其中 `<script src="/mip-example/mip-example.js"></script>` 为引入开发模式下的 mip-example 组件，`<mip-example></mip-example>` 则是 mip-example 这个组件的使用方法，其它的内容都是属于 MIP 页面所必须的运行环境。
+其中 `<script src="/mip-example/mip-example.js"></script>` 为引入开发模式下的 `mip-example` 组件，`<mip-example></mip-example>` 则是 `mip-example` 这个组件的使用方法，其它的内容都是属于 MIP 页面所必须的运行环境。
 
-接下来，在命令行通过 `mip2 dev` 启动调试服务器（启动前可能需要在组件仓库根目录执行 npm install 安装依赖），启动完成后访问 `http://127.0.0.1:8111/components/mip-example/example/index.html` 即可查看对应的网页：
+接下来，在命令行通过 `mip2 dev` 启动调试服务器（启动前可能需要在组件仓库根目录执行 `npm install` 安装依赖），启动完成后访问 `http://127.0.0.1:8111/components/mip-example/example/index.html` 即可查看对应的网页：
 
 ![hello world](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/docs/cli/mip2-hello-world-ac8ff645.png)
 
-可以看到页面显示了 "Hello World" 这样的单词，这正是 mip-example 这个组件所生成显示的。
+可以看到页面显示了 "Hello World" 这样的单词，这正是 `mip-example` 这个组件所生成显示的。
 
 ## 添加样式
 
@@ -77,11 +77,12 @@ mip-example {
 }
 ```
 
-然后在 mip-example.js 文件顶部通过 import 引入这个样式即可：
+然后在 mip-example.js 文件顶部通过 `import` 引入这个样式即可：
 
 ```js
 import './index.less'
-export default MIPExample extends MIP.CustomElement {
+
+export default class MIPExample extends MIP.CustomElement {
   // ....
 }
 ```
@@ -105,11 +106,11 @@ mip-example p {
 
 ## 组件生命周期
 
-前面 mip-example 在 `build` 这个生命周期里渲染出 `<p>Hello World</p>` 这个节点，关于组件生命周期的说明，在另一篇文章 [MIP 组件生命周期](../principle/instance-life-cycle.md) 有更详细的说明，在这里就不做赘述。组件开发者应该根据组件的功能，在最适合的生命周期钩子里完成功能初始化、资源加载、事件绑定、功能执行等等，只有充分理解了 MIP 组件的生命周期，才能够开发出性能最佳的组件。
+前面 `mip-example` 在 `build` 这个生命周期里渲染出 `<p>Hello World</p>` 这个节点，关于组件生命周期的说明，在另一篇文章 [MIP 组件生命周期](../principle/instance-life-cycle.md) 有更详细的说明，在这里就不做赘述。组件开发者应该根据组件的功能，在最适合的生命周期钩子里完成功能初始化、资源加载、事件绑定、功能执行等等，只有充分理解了 MIP 组件的生命周期，才能够开发出性能最佳的组件。
 
 ## 属性获取
 
-组件中通过 `this.element.getAttribute` 可以获取元素的属性。比如如下所示给 mip-example 传入 name 属性：
+组件中通过 `this.element.getAttribute` 可以获取元素的属性。比如如下所示给 `mip-example` 传入 `name` 属性：
 
 ```html
 <mip-example name="lilei"></mip-example>
@@ -118,7 +119,7 @@ mip-example p {
 那么可以通过以下方式拿到这个值：
 
 ```js
-export default MIPExample extends MIP.CustomElement {
+export default class MIPExample extends MIP.CustomElement {
   build () {
     let name = this.element.getAttribute('name')
     // ...
@@ -130,6 +131,7 @@ export default MIPExample extends MIP.CustomElement {
 
 ```js
 import './index.less'
+
 export default class MIPExample extends MIP.CustomElement {
   build () {
     let name = this.element.getAttribute('name')
@@ -144,27 +146,21 @@ export default class MIPExample extends MIP.CustomElement {
 
 ![Hello LiLei](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/docs/cli/mip2-hello-lilei-78527e0f.png)
 
-我们可以在 example/index.html 将属性值修改成别的内容进行调试。需要注意的是，通过 this.element.getAttribute() 方法拿到的属性类型都是 String，开发者需要根据实际要求的数据类型手动进行转换。
+我们可以在 example/index.html 将属性值修改成别的内容进行调试。需要注意的是，通过 `this.element.getAttribute()` 方法拿到的属性类型都是字符串，开发者需要根据实际要求的数据类型手动进行转换。
 
 ## 响应数据更新
 
-在上面这种获取属性的方式只有在主动调用 this.element.getAttribute() 时才能够获取最新的属性，如果需要时时监听属性变化的话，可以通过 Custom Element 提供的 observedAttributes 和 attributeChangedCallback 进行属性监听：
-
+在上面这种获取属性的方式只有在主动调用 `this.element.getAttribute()` 时才能够获取最新的属性，如果需要时时监听属性变化的话，可以通过 Custom Element 提供的 observedAttributes 和 attributeChangedCallback 进行属性监听：
 
 当 MIP 组件需要相应属性变更时，需要实现 `attributeChangedCallback`：
 
 ```js
 import './index.less'
+
 export default class MIPExample extends MIP.CustomElement {
   constructor (...args) {
     super(...args)
     this.content = document.createElement('p')
-  }
-
-  build () {
-    let name = this.element.getAttribute('name')
-    this.content.innerText = 'Hello ' + name
-    this.element.appendChild(this.content)
   }
 
   static get observedAttributes () {
@@ -176,28 +172,34 @@ export default class MIPExample extends MIP.CustomElement {
       this.content.innerText = 'Hello ' + newValue
     }
   }
+
+  build () {
+    let name = this.element.getAttribute('name')
+    this.content.innerText = 'Hello ' + name
+    this.element.appendChild(this.content)
+  }
 }
 ```
 
-通过前面组件生命周期的学习我们知道 constructor、attributeChangedCallback、build 这三个生命周期钩子的执行顺序为 constructor -> attributeChangedCallback -> build，因此我们需要将 this.content 的初始化放到 constructor 里执行，这样在首次触发 attributeChangedCallback 时，才不会报 `this.content` 尚未定义的错误。
+通过前面组件生命周期的学习我们知道 `constructor`、`attributeChangedCallback`、`build` 这三个生命周期钩子的执行顺序为 `constructor` -> `attributeChangedCallback` -> `build`，因此我们需要将 `this.content` 的初始化放到 `constructor` 里执行，这样在首次触发 `attributeChangedCallback` 时，才不会报 `this.content` 尚未定义的错误。
 
-经过上述改造之后，只要动态修改 name 属性值，页面也将会立即同步显示对应的 Hello。
+经过上述改造之后，只要动态修改 `name` 属性值，页面也将会立即同步显示对应的 Hello。
 
-在上述代码中，observedAttributes 是一个只读的静态属性，定义了需要监听的属性名称列表，目前只监听了一个 `name` 属性。attributeChangedCallback 定义了监听的属性修改时的回调，回调方法的三个参数分别为：
+在上述代码中，`observedAttributes` 是一个只读的静态属性，定义了需要监听的属性名称列表，目前只监听了一个 `name` 属性。`attributeChangedCallback` 定义了监听的属性修改时的回调，回调方法的三个参数分别为：
 
 - 属性名
 - 旧值
 - 新值
 
-attributeChangedCallback 会在 constructor 和 connectedCallback 之间首次触发，这个首次触发的条件是初始化阶段已经定义好监听的属性，以 mip-example 为例，如果页面初始化时 mip-example 没有传入 name 属性：
+`attributeChangedCallback` 会在 `constructor` 和 `connectedCallback` 之间首次触发，这个首次触发的条件是初始化阶段已经定义好监听的属性，以 mip-example 为例，如果页面初始化时 mip-example 没有传入 name 属性：
 
 ```html
 <mip-example other-props="123"></mip-example>
 ```
 
-那么 attributeChangedCallback 是不会触发的。
+那么 `attributeChangedCallback` 是不会触发的。
 
-组件初始化完成之后，只要 mip-example 的 name 属性一发生变化，都会触发一次 attributeChangedCallback。
+组件初始化完成之后，只要 mip-example 的 name 属性一发生变化，都会触发一次 `attributeChangedCallback`。
 
 ## 事件触发
 
@@ -261,6 +263,7 @@ mipCustomElement.addEventAction(actionName, function (event, str) {
 
 ```js
 import './index.less'
+
 export default class MIPExample extends MIP.CustomElement {
   build () {
     let name = this.element.getAttribute('name')
@@ -284,12 +287,13 @@ export default class MIPExample extends MIP.CustomElement {
 
 ## 组件插槽
 
-组件的实例通过 this.element 获取，因此组件标签对里面的内容可以通过 `this.element.children`、`this.element.childNodes` 或者是 `this.element.innerHTML` 等这些原生 HTML DOM Element 对象所提供的方法或属性来获取。同样的，我们也可以通过 `this.element.querySelecotor`、`this.element.querySelecotorAll` 等原生方法去查询组件内部的节点。
+组件的实例通过 this.element 获取，因此组件标签对里面的内容可以通过 `this.element.children`、`this.element.childNodes` 或者是 `this.element.innerHTML` 等这些原生 HTMLElement 对象所提供的方法或属性来获取。同样的，我们也可以通过 `this.element.querySelector`、`this.element.querySelectorAll` 等原生方法去查询组件内部的节点。
 
-以 mip-example 为例，可以通过如下方法获取特定节点：
+以 `mip-example` 为例，可以通过如下方法获取特定节点：
 
 ```js
 import './index.less'
+
 export default class MIPExample extends MIP.CustomElement {
   build () {
     let p = document.createElement('p')
@@ -305,7 +309,7 @@ export default class MIPExample extends MIP.CustomElement {
 }
 ```
 
-在上面的例子中，首先在 build 生命周期阶段创建了一个 p 标签，并且 class 为 'content'，然后通过 this.element.querySelectorAll 获取 this.element 元素内部 class 为 content 的全部节点，并且对这些节点的内容添加了序号。
+在上面的例子中，首先在 `build` 生命周期阶段创建了一个 p 标签，并且 `class` 为 'content'，然后通过 `this.element.querySelectorAll` 获取 `this.element` 元素内部 `class` 为 content 的全部节点，并且对这些节点的内容添加了序号。
 
 然后 example/index.html 改成这样：
 
@@ -315,7 +319,7 @@ export default class MIPExample extends MIP.CustomElement {
 </mip-example>
 ```
 
-在 mip-example 的标签对内部手动添加了一个 className 为 content 的 div 标签。刷新网页可以看到页面显示效果如下：
+在 `mip-example` 的标签对内部手动添加了一个 `class` 为 content 的 div 标签。刷新网页可以看到页面显示效果如下：
 
 ![](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/docs/cli/mip2-slot-22ec5732.png)
 
