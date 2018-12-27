@@ -12,7 +12,7 @@ import {
   MESSAGE_PAGE_RESIZE
 } from '../page/const'
 
-const {platform, css, event} = util
+const {css, event} = util
 
 let attrList = ['allowfullscreen', 'allowtransparency', 'sandbox']
 
@@ -47,7 +47,7 @@ class MipIframe extends CustomElement {
 
     this.iframe = document.createElement('iframe')
     this.iframe.frameBorder = '0'
-    this.iframe.scrolling = platform.isIos() ? /* istanbul ignore next */ 'no' : 'yes'
+    this.iframe.scrolling = 'no'
 
     this.applyFillContent(this.iframe)
     this.element.appendChild(this.iframe)
