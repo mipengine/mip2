@@ -38,6 +38,7 @@ export default class HTML5History {
   push (location, skipRender) {
     /* istanbul ignore next */
     if (skipRender) {
+      const route = normalizeLocation(location, this.current)
       pushState(route.fullPath)
       window.MIP.viewer.updateSFState(route.fullPath)
       return
@@ -51,6 +52,7 @@ export default class HTML5History {
   replace (location, skipRender) {
     /* istanbul ignore next */
     if (skipRender) {
+      const route = normalizeLocation(location, this.current)
       replaceState(route.fullPath)
       window.MIP.viewer.updateSFState(route.fullPath, true)
       return

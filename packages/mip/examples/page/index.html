@@ -214,7 +214,7 @@ Fast - Respond quickly to user interactions with silky smooth animations and no 
     <script src="../../dist/mip.js"></script>
     <script>
         document.querySelector('#replace').addEventListener('click', () => {
-            window.MIP.viewer.page.replace('/examples/page/tree.html')
+            window.MIP.viewer.page.replace('/examples/page/tree.html', {skipRender: true})
         })
     </script>
 </body>
