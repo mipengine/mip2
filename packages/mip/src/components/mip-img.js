@@ -278,6 +278,43 @@ class MipImg extends CustomElement {
       elementRect.top + elementRect.height + threshold >= viewportRect.top
   }
 
+  /** @overwrite */
+  build () {
+    this.createPlaceholder()
+  }
+
+  /**
+   * Create default placeholder if element has not define size
+   */
+  createPlaceholder () {
+    if (this.element.classList.contains('mip-layout-size-defined')) {
+      return
+    }
+
+    /* istanbul ignore if */
+    if (this.element.querySelector('.mip-default-placeholder')) {
+      return
+    }
+
+    let placeholder = document.createElement('mip-i-space')
+    placeholder.classList.add('mip-default-placeholder')
+
+    this.element.appendChild(css(
+      placeholder, {
+        'padding-bottom': '75%',
+        'background': 'rgba(0, 0, 0, 0.08)',
+        'opacity': '1'
+      })
+    )
+  }
+
+  removePlaceholder () {
+    let placeholder = this.element.querySelector('.mip-default-placeholder')
+    if (placeholder) {
+      this.element.removeChild(placeholder)
+    }
+  }
+
   layoutCallback () {
     let ele = this.element
     let img = new Image()
@@ -313,11 +350,15 @@ class MipImg extends CustomElement {
     if (ele.hasAttribute('popup')) {
       bindPopup(ele, img)
     }
+    this.element.classList.add('mip-img-loading')
     return event.loadPromise(img).then(() => {
       // 标识资源已加载完成
       try {
         this.resourcesComplete()
       } catch (e) {}
+
+      this.removePlaceholder()
+      this.element.classList.remove('mip-img-loading')
       this.element.classList.add('mip-img-loaded')
       customEmit(this.element, 'load')
     }).catch(reason => {
