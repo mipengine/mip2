@@ -305,8 +305,6 @@ class FixedElement {
         break
       default:
         fixedEle.style.display = 'none'
-        // hack: mip1 下游有个样式覆盖了 display: none，导致loading无法消失
-        fixedEle.style.cssText = fixedEle.style.cssText.replace(/display\s*:\s*none/, 'display:none!important')
     }
   }
 
