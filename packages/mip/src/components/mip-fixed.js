@@ -10,6 +10,12 @@ class MipFixed extends CustomElement {
     const viewer = window.MIP.viewer
     const platform = window.MIP.util.platform
 
+    // Hack: mip1 站点强制重写 mip-layout-container display，导致无法隐藏 loading
+    // 针对 mip-fixed 先把 mip-layout-container 去掉，这个不会对现有样式造成影响
+    // TODO: 1. 考虑针对 mip-fixed 统一不使用 layout 处理 2. 推动下游去掉这个 class 的重写
+    // 站点 http://mip.cntrades.com/15995352952/sell/itemid-170607633.html
+    this.element.classList.remove('mip-layout-container')
+
     if (this.element.getAttribute('mipdata-fixedidx')) {
       return
     }
