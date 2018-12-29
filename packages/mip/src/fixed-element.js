@@ -77,7 +77,7 @@ class FixedElement {
       }
     }
     /* istanbul ignore if */
-    if (isIframed) {
+    if (!window.MIP.standalone) {
       this.doCustomElements()
     }
   }
