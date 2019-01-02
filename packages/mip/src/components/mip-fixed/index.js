@@ -33,13 +33,13 @@ class MipFixed extends CustomElement {
   }
 
   build () {
+    let ele = this.element
     this.addEventAction('close', event => {
       event.preventDefault()
-      util.css(this.element, 'display', 'none')
+      util.css(ele, 'display', 'none')
     })
 
     // 如果有需要悬浮过渡动画
-    let ele = this.element
     let position = ele.getAttribute('type')
     if (ele.hasAttribute('data-slide') && (position === 'top' || position === 'bottom')) {
       if (!this.viewportScroll) {

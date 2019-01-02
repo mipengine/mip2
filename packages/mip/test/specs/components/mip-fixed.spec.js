@@ -118,15 +118,17 @@ describe('mip-fixed', function () {
       content.style.height = '2000px'
       content.style.width = '10px'
       document.body.appendChild(content)
-      window.scrollTo(0, 0)
-      window.scrollTo(0, 1000)
-      viewport.trigger('scroll')
 
       setTimeout(() => {
-        expect(element.classList.contains('mip-fixed-hide-top')).to.be.equal(true)
-        document.body.removeChild(content)
-        done()
-      }, 10)
+        window.scrollTo(0, 0)
+        window.scrollTo(0, 1000)
+        viewport.trigger('scroll')
+        setTimeout(() => {
+          expect(element.classList.contains('mip-fixed-hide-top')).to.be.equal(true)
+          document.body.removeChild(content)
+          done()
+        }, 10)
+      }, 100)
     })
 
     it('should have mip-fixed-hide-bottom class when type set to `bottom` and data-slide is set and scroll down', function (done) {
@@ -137,15 +139,17 @@ describe('mip-fixed', function () {
       content.style.height = '2000px'
       content.style.width = '10px'
       document.body.appendChild(content)
-      window.scrollTo(0, 0)
-      window.scrollTo(0, 1000)
-      viewport.trigger('scroll')
 
       setTimeout(() => {
-        expect(element.classList.contains('mip-fixed-hide-bottom')).to.be.equal(true)
-        document.body.removeChild(content)
-        done()
-      }, 10)
+        window.scrollTo(0, 0)
+        window.scrollTo(0, 1000)
+        viewport.trigger('scroll')
+        setTimeout(() => {
+          expect(element.classList.contains('mip-fixed-hide-bottom')).to.be.equal(true)
+          document.body.removeChild(content)
+          done()
+        }, 10)
+      }, 100)
     })
 
     it('should not have mip-fixed-hide-top class when type set to `top` and data-slide is set and scroll to top', function (done) {
@@ -156,15 +160,17 @@ describe('mip-fixed', function () {
       content.style.height = '2000px'
       content.style.width = '10px'
       document.body.appendChild(content)
-      window.scrollTo(0, 1000)
-      window.scrollTo(0, 0)
-      viewport.trigger('scroll')
 
       setTimeout(() => {
-        expect(element.classList.contains('mip-fixed-hide-top')).to.be.equal(false)
-        document.body.removeChild(content)
-        done()
-      }, 1)
+        window.scrollTo(0, 1000)
+        window.scrollTo(0, 0)
+        viewport.trigger('scroll')
+        setTimeout(() => {
+          expect(element.classList.contains('mip-fixed-hide-top')).to.be.equal(false)
+          document.body.removeChild(content)
+          done()
+        }, 10)
+      }, 100)
     })
 
     it('should not have mip-fixed-hide-bottom class when type set to `bottom` and data-slide is set and scroll to top', function (done) {
@@ -175,15 +181,16 @@ describe('mip-fixed', function () {
       content.style.height = '2000px'
       content.style.width = '10px'
       document.body.appendChild(content)
-      window.scrollTo(0, 1000)
-      window.scrollTo(0, 0)
-      viewport.trigger('scroll')
-
       setTimeout(() => {
-        expect(element.classList.contains('mip-fixed-hide-bottom')).to.be.equal(false)
-        document.body.removeChild(content)
-        done()
-      }, 1)
+        window.scrollTo(0, 1000)
+        window.scrollTo(0, 0)
+        viewport.trigger('scroll')
+        setTimeout(() => {
+          expect(element.classList.contains('mip-fixed-hide-bottom')).to.be.equal(false)
+          document.body.removeChild(content)
+          done()
+        }, 10)
+      }, 100)
     })
 
     it('should be closed when the the close action is triggered', function () {
