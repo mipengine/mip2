@@ -17,7 +17,7 @@ function changeUa (ua) {
   stub.restore()
 }
 
-describe.only('mip-fixed', function () {
+describe('mip-fixed', function () {
   describe('position', function () {
     let element
 
