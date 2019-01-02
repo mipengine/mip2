@@ -17,7 +17,7 @@ function changeUa (ua) {
   stub.restore()
 }
 
-describe('mip-fixed', function () {
+describe.only('mip-fixed', function () {
   describe('position', function () {
     let element
 
@@ -108,6 +108,49 @@ describe('mip-fixed', function () {
       document.body.appendChild(element)
 
       expect(element.offsetHeight + element.offsetTop).to.be.equal(viewport.getHeight() - 90)
+    })
+
+    it('should have mip-fixed-hide-top class when type set to `top` and data-slide is set and scroll down', function () {
+      element.setAttribute('data-slide', '')
+      element.setAttribute('type', 'top')
+      document.body.appendChild(element)
+      let content = document.createElement('div')
+      content.style.height = '2000px'
+      content.style.with = '10px'
+      document.body.appendChild(content)
+      window.scrollTo(0, 1000)
+
+      setTimeout(() => {
+        expect(element.classList.contains('mip-fixed-hide-top')).to.be.equal(true)
+      }, 1)
+    })
+
+    it('should not have mip-fixed-hide-top class when type set to `top` and data-slide is set and scroll to top', function () {
+      element.setAttribute('data-slide', '')
+      element.setAttribute('type', 'top')
+      document.body.appendChild(element)
+      let content = document.createElement('div')
+      content.style.height = '2000px'
+      content.style.with = '10px'
+      document.body.appendChild(content)
+      window.scrollTo(0, 1000)
+      window.scrollTo(0, 0)
+
+      setTimeout(() => {
+        expect(element.classList.contains('mip-fixed-hide-top')).to.be.equal(true)
+      }, 1)
+    })
+
+    it('should be closed when the the close action is triggered', function () {
+      element.setAttribute('type', 'top')
+      element.setAttribute('id', 'customid')
+      document.body.appendChild(element)
+      let btn = document.createElement('div')
+      btn.setAttribute('on', 'tap:customid.close')
+      element.appendChild(btn)
+      btn.click()
+
+      expect(element.style.display).to.be.equal('none')
     })
   })
 
