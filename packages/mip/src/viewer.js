@@ -46,7 +46,6 @@ let viewer = {
      * The initialise method of viewer
      */
   init () {
-
     /**
      * SF 创建的第一个页面的 window.name
      */
@@ -97,7 +96,6 @@ let viewer = {
 
     // proxy <a mip-link>
     setTimeout(() => this._proxyLink(this.page), 0)
-
   },
 
   /**
@@ -367,11 +365,11 @@ let viewer = {
         self.open(to, {isMipLink, replace, state, cacheFirst})
       } else {
         if (isMipLink) {
-          let message = self._getMessageData.call(this);
-          self.sendMessage(message.messageKey, message.messageData);
+          let message = self._getMessageData.call(this)
+          self.sendMessage(message.messageKey, message.messageData)
         } else {
           // other jump through '_top'
-          top.location.href = this.href;
+          top.location.href = this.href
         }
       }
 

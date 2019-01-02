@@ -7,7 +7,7 @@
 import util from '../util/index'
 import viewer from '../viewer'
 import CustomElement from '../custom-element'
-// import {OUTER_MESSAGE_CHANGE_STATE} from '../page/const/index'
+import {CUSTOM_EVENT_SHOW_PAGE, CUSTOM_EVENT_HIDE_PAGE} from '../page/const'
 
 let windowInIframe = viewer.isIframed
 
@@ -87,7 +87,12 @@ class MipVideo extends CustomElement {
         this.videoElement = this.renderError()
       }
     }
-
+    window.addEventListener(CUSTOM_EVENT_SHOW_PAGE, () => {
+      this.videoElement.load && this.videoElement.load()
+    })
+    window.addEventListener(CUSTOM_EVENT_HIDE_PAGE, () => {
+      this.videoElement.pause && this.videoElement.pause()
+    })
     this.addEventAction('seekTo', (e, currentTime) => {
       this.videoElement.currentTime = currentTime
     })
