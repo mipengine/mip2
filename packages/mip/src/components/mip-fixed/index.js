@@ -3,7 +3,8 @@
  * @author panyuqi(panyuqi@baidu.com)
  * @desc 解决 MIP1 <mip-fixed> 遗留的问题
  */
-import CustomElement from '../custom-element'
+import CustomElement from '../../custom-element'
+import ViewportScroll from './viewport-scroll'
 
 class MipFixed extends CustomElement {
   connectedCallback () {
@@ -27,6 +28,26 @@ class MipFixed extends CustomElement {
       // only in iOS + iframe need moving element to fixedlayer
       const shouldMoveToFixedLayer = platform.isIos() && viewer.isIframed
       viewer.fixedElement.setFixedElement([this.element], shouldMoveToFixedLayer)
+    }
+  }
+
+  build () {
+    this.addEventAction('close', event => {
+      event.preventDefault()
+      window.MIP.util.css(this.element, 'display', 'none')
+    })
+
+    // 如果有需要悬浮过渡动画
+    let position = this.element.getAttribute('type')
+    if (this.element.hasAttribute('data-slide') && (position === 'top' || position === 'bottom')) {
+      if (!this.viewportScroll) {
+        this.viewportScroll = new ViewportScroll()
+      }
+      this.viewportScroll.init({
+        element: this.element,
+        position: position,
+        slide: this.element.getAttribute('data-slide')
+      })
     }
   }
 }
