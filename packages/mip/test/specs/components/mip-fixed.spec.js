@@ -118,6 +118,7 @@ describe('mip-fixed', function () {
       content.style.height = '2000px'
       content.style.with = '10px'
       document.body.appendChild(content)
+      window.scrollTo(0, 0)
       window.scrollTo(0, 1000)
       viewport.trigger('scroll')
 
