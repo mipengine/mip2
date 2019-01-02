@@ -110,7 +110,7 @@ describe('mip-fixed', function () {
       expect(element.offsetHeight + element.offsetTop).to.be.equal(viewport.getHeight() - 90)
     })
 
-    it('should have mip-fixed-hide-top class when type set to `top` and data-slide is set and scroll down', function () {
+    it('should have mip-fixed-hide-top class when type set to `top` and data-slide is set and scroll down', function (done) {
       element.setAttribute('data-slide', '')
       element.setAttribute('type', 'top')
       document.body.appendChild(element)
@@ -119,13 +119,15 @@ describe('mip-fixed', function () {
       content.style.with = '10px'
       document.body.appendChild(content)
       window.scrollTo(0, 1000)
+      viewport.trigger('scroll')
 
       setTimeout(() => {
         expect(element.classList.contains('mip-fixed-hide-top')).to.be.equal(true)
-      }, 1)
+        done()
+      }, 10)
     })
 
-    it('should not have mip-fixed-hide-top class when type set to `top` and data-slide is set and scroll to top', function () {
+    it('should not have mip-fixed-hide-top class when type set to `top` and data-slide is set and scroll to top', function (done) {
       element.setAttribute('data-slide', '')
       element.setAttribute('type', 'top')
       document.body.appendChild(element)
@@ -135,9 +137,11 @@ describe('mip-fixed', function () {
       document.body.appendChild(content)
       window.scrollTo(0, 1000)
       window.scrollTo(0, 0)
+      viewport.trigger('scroll')
 
       setTimeout(() => {
-        expect(element.classList.contains('mip-fixed-hide-top')).to.be.equal(true)
+        expect(element.classList.contains('mip-fixed-hide-top')).to.be.equal(false)
+        done()
       }, 1)
     })
 
