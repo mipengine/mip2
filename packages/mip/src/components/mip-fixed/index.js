@@ -5,6 +5,7 @@
  */
 import CustomElement from '../../custom-element'
 import ViewportScroll from './viewport-scroll'
+import util from '../../util'
 
 class MipFixed extends CustomElement {
   connectedCallback () {
@@ -34,19 +35,20 @@ class MipFixed extends CustomElement {
   build () {
     this.addEventAction('close', event => {
       event.preventDefault()
-      window.MIP.util.css(this.element, 'display', 'none')
+      util.css(this.element, 'display', 'none')
     })
 
     // 如果有需要悬浮过渡动画
-    let position = this.element.getAttribute('type')
-    if (this.element.hasAttribute('data-slide') && (position === 'top' || position === 'bottom')) {
+    let ele = this.element
+    let position = ele.getAttribute('type')
+    if (ele.hasAttribute('data-slide') && (position === 'top' || position === 'bottom')) {
       if (!this.viewportScroll) {
         this.viewportScroll = new ViewportScroll()
       }
       this.viewportScroll.init({
-        element: this.element,
-        position: position,
-        slide: this.element.getAttribute('data-slide')
+        element: ele,
+        position,
+        slide: ele.getAttribute('data-slide')
       })
     }
   }

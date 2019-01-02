@@ -1,3 +1,17 @@
+const hideTop = 'mip-fixed-hide-top'
+const hideBottom = 'mip-fixed-hide-bottom'
+
+const up = 'up'
+const down = 'down'
+
+function addClass (el, slide, className) {
+  el.classList.add(slide || className)
+}
+
+function removeClass (el, slide, className) {
+  el.classList.remove(slide || className)
+}
+
 export default class ViewportScroll {
   constructor () {
     /**
@@ -32,18 +46,18 @@ export default class ViewportScroll {
     this.position = {
       top: {
         in (el, slide) {
-          el.classList.remove(slide || 'mip-fixed-hide-top')
+          removeClass(el, slide, hideTop)
         },
         out (el, slide) {
-          el.classList.add(slide || 'mip-fixed-hide-top')
+          addClass(el, slide, hideTop)
         }
       },
       bottom: {
         in (el, slide) {
-          el.classList.remove(slide || 'mip-fixed-hide-bottom')
+          removeClass(el, slide, hideBottom)
         },
         out (el, slide) {
-          el.classList.add(slide || 'mip-fixed-hide-bottom')
+          addClass(el, slide, hideBottom)
         }
       }
     }
@@ -57,7 +71,7 @@ export default class ViewportScroll {
       return
     }
 
-    let type = event.direction === 'down' ? 'out' : 'in'
+    let type = event.direction === down ? 'out' : 'in'
     this.animate.forEach(item => {
       let positionHandle = this.position[item.position]
       if (positionHandle && typeof positionHandle[type] === 'function') {
@@ -100,10 +114,10 @@ export default class ViewportScroll {
       scrollHeight = viewport.getScrollHeight()
 
       if (scrollTop + window.innerHeight >= scrollHeight) {
-        if (lastDirection !== 'down') {
-          lastDirection = 'down'
+        if (lastDirection !== down) {
+          lastDirection = down
           this.onscroll({
-            direction: 'down'
+            direction: down
           })
         }
       // lockbodyscroll会导致滚动到顶部时产生scrollTop变为0和1的抖动，因此采用1作为判断
@@ -115,22 +129,22 @@ export default class ViewportScroll {
         }
 
         let direction = null
-        if (lastDirection !== 'down' && direct === 1) {
-          lastDirection = 'down'
-          direction = 'down'
-        } else if (lastDirection !== 'up' && direct === -1) {
-          lastDirection = 'up'
-          direction = 'up'
+        if (lastDirection !== down && direct === 1) {
+          lastDirection = down
+          direction = down
+        } else if (lastDirection !== up && direct === -1) {
+          lastDirection = up
+          direction = up
         }
 
         this.onscroll({
           direction: direction
         })
       } else if (scrollTop === 0 || scrollTop === 1) {
-        if (lastDirection !== 'up') {
-          lastDirection = 'up'
+        if (lastDirection !== up) {
+          lastDirection = up
           this.onscroll({
-            direction: 'up'
+            direction: up
           })
         }
       }
