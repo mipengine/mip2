@@ -124,7 +124,6 @@ describe('mip-fixed', function () {
       setTimeout(() => {
         expect(element.classList.contains('mip-fixed-hide-top')).to.be.equal(true)
         document.body.removeChild(content)
-        window.scrollTo(0, 0)
         done()
       }, 10)
     })
