@@ -116,7 +116,7 @@ describe('mip-fixed', function () {
       document.body.appendChild(element)
       let content = document.createElement('div')
       content.style.height = '2000px'
-      content.style.with = '10px'
+      content.style.width = '10px'
       document.body.appendChild(content)
       window.scrollTo(0, 0)
       window.scrollTo(0, 1000)
@@ -129,13 +129,32 @@ describe('mip-fixed', function () {
       }, 10)
     })
 
+    it('should have mip-fixed-hide-bottom class when type set to `bottom` and data-slide is set and scroll down', function (done) {
+      element.setAttribute('data-slide', '')
+      element.setAttribute('type', 'bottom')
+      document.body.appendChild(element)
+      let content = document.createElement('div')
+      content.style.height = '2000px'
+      content.style.width = '10px'
+      document.body.appendChild(content)
+      window.scrollTo(0, 0)
+      window.scrollTo(0, 1000)
+      viewport.trigger('scroll')
+
+      setTimeout(() => {
+        expect(element.classList.contains('mip-fixed-hide-bottom')).to.be.equal(true)
+        document.body.removeChild(content)
+        done()
+      }, 10)
+    })
+
     it('should not have mip-fixed-hide-top class when type set to `top` and data-slide is set and scroll to top', function (done) {
       element.setAttribute('data-slide', '')
       element.setAttribute('type', 'top')
       document.body.appendChild(element)
       let content = document.createElement('div')
       content.style.height = '2000px'
-      content.style.with = '10px'
+      content.style.width = '10px'
       document.body.appendChild(content)
       window.scrollTo(0, 1000)
       window.scrollTo(0, 0)
@@ -143,6 +162,25 @@ describe('mip-fixed', function () {
 
       setTimeout(() => {
         expect(element.classList.contains('mip-fixed-hide-top')).to.be.equal(false)
+        document.body.removeChild(content)
+        done()
+      }, 1)
+    })
+
+    it('should not have mip-fixed-hide-bottom class when type set to `bottom` and data-slide is set and scroll to top', function (done) {
+      element.setAttribute('data-slide', '')
+      element.setAttribute('type', 'bottom')
+      document.body.appendChild(element)
+      let content = document.createElement('div')
+      content.style.height = '2000px'
+      content.style.width = '10px'
+      document.body.appendChild(content)
+      window.scrollTo(0, 1000)
+      window.scrollTo(0, 0)
+      viewport.trigger('scroll')
+
+      setTimeout(() => {
+        expect(element.classList.contains('mip-fixed-hide-bottom')).to.be.equal(false)
         document.body.removeChild(content)
         done()
       }, 1)
