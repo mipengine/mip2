@@ -7,7 +7,7 @@
 import util from '../util/index'
 import viewer from '../viewer'
 import CustomElement from '../custom-element'
-import {CUSTOM_EVENT_SHOW_PAGE, CUSTOM_EVENT_HIDE_PAGE} from '../page/const'
+import {CUSTOM_EVENT_SHOW_PAGE, CUSTOM_EVENT_HIDE_PAGE} from '../page/const/index'
 
 let videoAttributes = [
   'ads',
