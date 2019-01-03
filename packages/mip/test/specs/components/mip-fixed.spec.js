@@ -131,6 +131,39 @@ describe('mip-fixed', function () {
       }, 100)
     })
 
+    it('should have mip-fixed-hide-top class when type set to `top` and data-slide is set and touch move down', function (done) {
+      let wrapper = document.createElement('div')
+      element.setAttribute('data-slide', '')
+      element.setAttribute('type', 'top')
+      wrapper.appendChild(element)
+      let content = document.createElement('div')
+      content.style.height = '2000px'
+      content.style.width = '10px'
+      wrapper.appendChild(content)
+      document.body.appendChild(wrapper)
+
+      let event = document.createEvent('Events')
+      event.initEvent('touchstart', true, true)
+      event.targetTouches = event.touches = [{
+        pageX: 0,
+        pageY: 200
+      }]
+      wrapper.dispatchEvent(event)
+      event.initEvent('touchmove', true, true)
+      event.targetTouches = event.touches = [{
+        pageX: 0,
+        pageY: 500
+      }]
+      wrapper.dispatchEvent(event)
+      event.initEvent('touchend', true, true)
+      wrapper.dispatchEvent(event)
+      setTimeout(() => {
+        expect(element.classList.contains('mip-fixed-hide-top')).to.be.equal(true)
+        document.body.removeChild(wrapper)
+        done()
+      }, 10)
+    })
+
     it('should have mip-fixed-hide-bottom class when type set to `bottom` and data-slide is set and scroll down', function (done) {
       element.setAttribute('data-slide', '')
       element.setAttribute('type', 'bottom')
