@@ -1,15 +1,24 @@
 const MIP_FIXED_HIDE_TOP = 'mip-fixed-hide-top'
 const MIP_FIXED_HIDE_BUTTOM = 'mip-fixed-hide-bottom'
 
-const DIRECTION_UP = 'up'
-const DIRECTION_DOWN = 'down'
-
-function addClass (el, slide, className) {
-  el.classList.add(slide || className)
+/**
+ * Add class to the element
+ * @param {HTMLElement} el The mip-fixed element
+ * @param {String} slide element's data-slide attribute
+ * @param {String} reserveClass class name
+ */
+function addClass (el, slide, reserveClass) {
+  el.classList.add(slide || reserveClass)
 }
 
-function removeClass (el, slide, className) {
-  el.classList.remove(slide || className)
+/**
+ * Remove class from the element
+ * @param {HTMLElement} el the mip-fixed element
+ * @param {String} slide element's data-slide attribute
+ * @param {String} reserveClass class name
+ */
+function removeClass (el, slide, reserveClass) {
+  el.classList.remove(slide || reserveClass)
 }
 
 export default class ViewportScroll {
@@ -19,7 +28,7 @@ export default class ViewportScroll {
      *
      * @type {boolean}
      */
-    this.inited = false
+    this.initialized = false
 
     /**
      * 是否为首次，主要解决 viewport.onscroll 在默认时触发
@@ -64,91 +73,76 @@ export default class ViewportScroll {
   }
 
   /**
-   * 滚动回调
+   * handle the scroll
+   * @param {Number} direction scroll direction
    */
-  onscroll (event) {
-    if (!event.direction) {
+  handleScroll (direction) {
+    if (direction === 0) {
       return
     }
 
-    let type = event.direction === DIRECTION_DOWN ? 'out' : 'in'
+    let type = direction > 0 ? 'out' : 'in'
     this.animate.forEach(item => {
-      let positionHandle = this.position[item.position]
-      if (positionHandle && typeof positionHandle[type] === 'function') {
-        positionHandle[type](item.element, item.slide)
+      let positionHandler = this.position[item.position]
+      if (positionHandler && typeof positionHandler[type] === 'function') {
+        positionHandler[type](item.element, item.slide)
       }
     })
   }
 
   /**
-   * 初始化，单例
+   * get scroll direction, >0 is down, <0 is up, 0 is static
+   * @param {Number} scrollTop scrollTop
+   * @param {Number} lastScrollTop lastScrollTop
+   * @param {Number} scrollHeight scrollHeight
+   * @return {Number} scroll direction
+   */
+  getDirection (scrollTop, lastScrollTop, scrollHeight) {
+    // 在底部视作向下滚动
+    if (scrollTop + window.innerHeight >= scrollHeight) {
+      return 1
+    }
+    // lockbodyscroll会导致滚动到顶部时产生scrollTop变为0和1的抖动，因此采用1作为判断
+    if (scrollTop > 1) {
+      return scrollTop - lastScrollTop
+    }
+    // 在顶部视作向上滚动
+    return -1
+  }
+
+  /**
+   * 初始化
+   * @param {Object} item 动画处理元素
    */
   init (item) {
     // 设置元素
     this.animate.push(item)
 
     // 如果已经绑定事件
-    if (this.inited) {
+    if (this.initialized) {
       return
     }
 
     this.bindScrollEvent()
   }
 
-  /**
-   * 绑定滚动事件
-   */
   bindScrollEvent () {
     let viewport = window.MIP.viewport
-    let lastDirection = null
-    let direct = 0
+    let direction = 0
     let scrollTop = viewport.getScrollTop()
     let scrollHeight = viewport.getScrollHeight()
     let lastScrollTop = 0
 
-    // 设置状态
-    this.inited = true
+    this.initialized = true
 
-    let pagemove = () => {
+    /**
+     *  get the scroll direction and handle it
+     */
+    let pageMove = () => {
       scrollTop = viewport.getScrollTop()
       scrollHeight = viewport.getScrollHeight()
-
-      if (scrollTop + window.innerHeight >= scrollHeight) {
-        if (lastDirection !== DIRECTION_DOWN) {
-          lastDirection = DIRECTION_DOWN
-          this.onscroll({
-            direction: DIRECTION_DOWN
-          })
-        }
-      // lockbodyscroll会导致滚动到顶部时产生scrollTop变为0和1的抖动，因此采用1作为判断
-      } else if (scrollTop > 1) {
-        if (lastScrollTop < scrollTop) {
-          direct = 1
-        } else if (lastScrollTop > scrollTop) {
-          direct = -1
-        }
-
-        let direction = null
-        if (lastDirection !== DIRECTION_DOWN && direct === 1) {
-          lastDirection = DIRECTION_DOWN
-          direction = DIRECTION_DOWN
-        } else if (lastDirection !== DIRECTION_UP && direct === -1) {
-          lastDirection = DIRECTION_UP
-          direction = DIRECTION_UP
-        }
-
-        this.onscroll({
-          direction: direction
-        })
-      } else if (scrollTop === 0 || scrollTop === 1) {
-        if (lastDirection !== DIRECTION_UP) {
-          lastDirection = DIRECTION_UP
-          this.onscroll({
-            direction: DIRECTION_UP
-          })
-        }
-      }
-
+      direction = this.getDirection(scrollTop, lastScrollTop, scrollHeight)
+      this.handleScroll(direction)
       lastScrollTop = scrollTop
     }
 
@@ -157,14 +151,14 @@ export default class ViewportScroll {
       scrollTop = viewport.getScrollTop()
       scrollHeight = viewport.getScrollHeight()
     })
-    window.addEventListener('touchmove', pagemove)
-    window.addEventListener('touchend', pagemove)
+    window.addEventListener('touchmove', pageMove)
+    window.addEventListener('touchend', pageMove)
     viewport.on('scroll', event => {
       if (this.first) {
         this.first = false
         return
       }
-      pagemove()
+      pageMove()
     })
   }
 }

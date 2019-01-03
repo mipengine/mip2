@@ -110,7 +110,7 @@ describe('mip-fixed', function () {
       expect(element.offsetHeight + element.offsetTop).to.be.equal(viewport.getHeight() - 90)
     })
 
-    it('should have mip-fixed-hide-top class when type set to `top` and data-slide is set and scroll down', function (done) {
+    it('should have mip-fixed-hide-top class when type set to `top` and data-slide is set and scroll down', async function () {
       element.setAttribute('data-slide', '')
       element.setAttribute('type', 'top')
       document.body.appendChild(element)
@@ -119,19 +119,19 @@ describe('mip-fixed', function () {
       content.style.width = '10px'
       document.body.appendChild(content)
 
-      setTimeout(() => {
-        window.scrollTo(0, 0)
-        window.scrollTo(0, 1000)
-        viewport.trigger('scroll')
+      await new Promise(resolve => {
         setTimeout(() => {
-          expect(element.classList.contains('mip-fixed-hide-top')).to.be.equal(true)
-          document.body.removeChild(content)
-          done()
-        }, 10)
-      }, 100)
+          window.scrollTo(0, 0)
+          window.scrollTo(0, 1000)
+          viewport.trigger('scroll')
+          resolve()
+        }, 100)
+      }).then(() => new Promise(resolve => setTimeout(resolve, 10)))
+      expect(element.classList.contains('mip-fixed-hide-top')).to.be.equal(true)
+      document.body.removeChild(content)
     })
 
-    it('should have mip-fixed-hide-top class when type set to `top` and data-slide is set and touch move down', function (done) {
+    it('should have mip-fixed-hide-top class when type set to `top` and data-slide is set and touch move down', async function () {
       let wrapper = document.createElement('div')
       element.setAttribute('data-slide', '')
       element.setAttribute('type', 'top')
@@ -157,14 +157,13 @@ describe('mip-fixed', function () {
       wrapper.dispatchEvent(event)
       event.initEvent('touchend', true, true)
       wrapper.dispatchEvent(event)
-      setTimeout(() => {
-        expect(element.classList.contains('mip-fixed-hide-top')).to.be.equal(true)
-        document.body.removeChild(wrapper)
-        done()
-      }, 10)
+
+      await new Promise(resolve => setTimeout(resolve, 10))
+      expect(element.classList.contains('mip-fixed-hide-top')).to.be.equal(true)
+      document.body.removeChild(wrapper)
     })
 
-    it('should have mip-fixed-hide-bottom class when type set to `bottom` and data-slide is set and scroll down', function (done) {
+    it('should have mip-fixed-hide-bottom class when type set to `bottom` and data-slide is set and scroll down', async function () {
       element.setAttribute('data-slide', '')
       element.setAttribute('type', 'bottom')
       document.body.appendChild(element)
@@ -173,19 +172,19 @@ describe('mip-fixed', function () {
       content.style.width = '10px'
       document.body.appendChild(content)
 
-      setTimeout(() => {
-        window.scrollTo(0, 0)
-        window.scrollTo(0, 1000)
-        viewport.trigger('scroll')
+      await new Promise(resolve => {
         setTimeout(() => {
-          expect(element.classList.contains('mip-fixed-hide-bottom')).to.be.equal(true)
-          document.body.removeChild(content)
-          done()
-        }, 10)
-      }, 100)
+          window.scrollTo(0, 0)
+          window.scrollTo(0, 1000)
+          viewport.trigger('scroll')
+          resolve()
+        }, 100)
+      }).then(() => new Promise(resolve => setTimeout(resolve, 10)))
+      expect(element.classList.contains('mip-fixed-hide-bottom')).to.be.equal(true)
+      document.body.removeChild(content)
     })
 
-    it('should not have mip-fixed-hide-top class when type set to `top` and data-slide is set and scroll to top', function (done) {
+    it('should not have mip-fixed-hide-top class when type set to `top` and data-slide is set and scroll to top', async function () {
       element.setAttribute('data-slide', '')
       element.setAttribute('type', 'top')
       document.body.appendChild(element)
@@ -194,19 +193,19 @@ describe('mip-fixed', function () {
       content.style.width = '10px'
       document.body.appendChild(content)
 
-      setTimeout(() => {
-        window.scrollTo(0, 1000)
-        window.scrollTo(0, 0)
-        viewport.trigger('scroll')
+      await new Promise(resolve => {
         setTimeout(() => {
-          expect(element.classList.contains('mip-fixed-hide-top')).to.be.equal(false)
-          document.body.removeChild(content)
-          done()
-        }, 10)
-      }, 100)
+          window.scrollTo(0, 1000)
+          window.scrollTo(0, 0)
+          viewport.trigger('scroll')
+          resolve()
+        }, 100)
+      }).then(() => new Promise(resolve => setTimeout(resolve, 10)))
+      expect(element.classList.contains('mip-fixed-hide-top')).to.be.equal(false)
+      document.body.removeChild(content)
     })
 
-    it('should not have mip-fixed-hide-bottom class when type set to `bottom` and data-slide is set and scroll to top', function (done) {
+    it('should not have mip-fixed-hide-bottom class when type set to `bottom` and data-slide is set and scroll to top', async function () {
       element.setAttribute('data-slide', '')
       element.setAttribute('type', 'bottom')
       document.body.appendChild(element)
@@ -214,16 +213,17 @@ describe('mip-fixed', function () {
       content.style.height = '2000px'
       content.style.width = '10px'
       document.body.appendChild(content)
-      setTimeout(() => {
-        window.scrollTo(0, 1000)
-        window.scrollTo(0, 0)
-        viewport.trigger('scroll')
+
+      await new Promise(resolve => {
         setTimeout(() => {
-          expect(element.classList.contains('mip-fixed-hide-bottom')).to.be.equal(false)
-          document.body.removeChild(content)
-          done()
-        }, 10)
-      }, 100)
+          window.scrollTo(0, 1000)
+          window.scrollTo(0, 0)
+          viewport.trigger('scroll')
+          resolve()
+        }, 100)
+      }).then(() => new Promise(resolve => setTimeout(resolve, 10)))
+      expect(element.classList.contains('mip-fixed-hide-bottom')).to.be.equal(false)
+      document.body.removeChild(content)
     })
 
     it('should be closed when the the close action is triggered', function () {
