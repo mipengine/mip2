@@ -11,7 +11,7 @@ class ViewportScroll {
     this.initialized = false
 
     /**
-     * 是否为首次滚动，用于处理viewer.init默认触发的scroll
+     * 是否为首次滚动，用于处理 viewer.init 默认触发的 scroll
      *
      * @type {boolean}
      */
@@ -82,7 +82,7 @@ class ViewportScroll {
     if (scrollTop + window.innerHeight >= scrollHeight) {
       return 1
     }
-    // lockbodyscroll会导致滚动到顶部时产生scrollTop变为0和1的抖动，因此采用1作为判断
+    // lockbodyscroll 会导致滚动到顶部时产生 scrollTop 变为 0 和 1 的抖动，因此采用 1 作为判断
     if (scrollTop > 1) {
       return scrollTop - lastScrollTop
     }
@@ -132,7 +132,7 @@ class ViewportScroll {
     window.addEventListener('touchmove', pageMove)
     window.addEventListener('touchend', pageMove)
     viewport.on('scroll', event => {
-      // 忽略viewer.init默认触发的scroll
+      // 忽略 viewer.init 默认触发的 scroll
       if (this.firstScroll) {
         this.firstScroll = false
         return

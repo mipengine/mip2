@@ -19,7 +19,7 @@ function changeUa (ua) {
 
 let sleep = t => new Promise(resolve => setTimeout(resolve, t))
 
-describe.only('mip-fixed', function () {
+describe('mip-fixed', function () {
   describe('position', function () {
     let element
 
