@@ -1,27 +1,7 @@
 const MIP_FIXED_HIDE_TOP = 'mip-fixed-hide-top'
 const MIP_FIXED_HIDE_BUTTOM = 'mip-fixed-hide-bottom'
 
-/**
- * Add class to the element
- * @param {HTMLElement} el The mip-fixed element
- * @param {String} slide element's data-slide attribute
- * @param {String} reserveClass class name
- */
-function addClass (el, slide, reserveClass) {
-  el.classList.add(slide || reserveClass)
-}
-
-/**
- * Remove class from the element
- * @param {HTMLElement} el the mip-fixed element
- * @param {String} slide element's data-slide attribute
- * @param {String} reserveClass class name
- */
-function removeClass (el, slide, reserveClass) {
-  el.classList.remove(slide || reserveClass)
-}
-
-export default class ViewportScroll {
+class ViewportScroll {
   constructor () {
     /**
      * 初始化状态
@@ -31,14 +11,14 @@ export default class ViewportScroll {
     this.initialized = false
 
     /**
-     * 是否为首次，主要解决 viewport.onscroll 在默认时触发
+     * 是否为首次滚动，用于处理viewer.init默认触发的scroll
      *
      * @type {boolean}
      */
-    this.first = true
+    this.firstScroll = true
 
     /**
-     * 动画处理元素
+     * 浮动元素数组
      *
      * @type {Array}
      * @param {string} animate.position 浮动元素位置：top、bottom
@@ -55,26 +35,26 @@ export default class ViewportScroll {
     this.position = {
       top: {
         in (el, slide) {
-          removeClass(el, slide, MIP_FIXED_HIDE_TOP)
+          el.classList.remove(slide || MIP_FIXED_HIDE_TOP)
         },
         out (el, slide) {
-          addClass(el, slide, MIP_FIXED_HIDE_TOP)
+          el.classList.add(slide || MIP_FIXED_HIDE_TOP)
         }
       },
       bottom: {
         in (el, slide) {
-          removeClass(el, slide, MIP_FIXED_HIDE_BUTTOM)
+          el.classList.remove(slide || MIP_FIXED_HIDE_BUTTOM)
         },
         out (el, slide) {
-          addClass(el, slide, MIP_FIXED_HIDE_BUTTOM)
+          el.classList.add(slide || MIP_FIXED_HIDE_BUTTOM)
         }
       }
     }
   }
 
   /**
-   * handle the scroll
-   * @param {Number} direction scroll direction
+   * execute the handler based on the scroll direction
+   * @param {number} direction scroll direction
    */
   handleScroll (direction) {
     if (direction === 0) {
@@ -92,10 +72,10 @@ export default class ViewportScroll {
 
   /**
    * get scroll direction, >0 is down, <0 is up, 0 is static
-   * @param {Number} scrollTop scrollTop
-   * @param {Number} lastScrollTop lastScrollTop
-   * @param {Number} scrollHeight scrollHeight
-   * @return {Number} scroll direction
+   * @param {number} scrollTop scrollTop
+   * @param {number} lastScrollTop lastScrollTop
+   * @param {number} scrollHeight scrollHeight
+   * @return {number} scroll direction
    */
   getDirection (scrollTop, lastScrollTop, scrollHeight) {
     // 在底部视作向下滚动
@@ -111,14 +91,12 @@ export default class ViewportScroll {
   }
 
   /**
-   * 初始化
-   * @param {Object} item 动画处理元素
+   * 添加浮动元素动画处理对象，首次执行需绑定事件
+   * @param {Object} item 浮动元素动画处理对象
    */
   init (item) {
-    // 设置元素
     this.animate.push(item)
 
-    // 如果已经绑定事件
     if (this.initialized) {
       return
     }
@@ -138,7 +116,7 @@ export default class ViewportScroll {
     /**
      *  get the scroll direction and handle it
      */
-    let pageMove = () => {
+    let pageMove = (event) => {
       scrollTop = viewport.getScrollTop()
       scrollHeight = viewport.getScrollHeight()
       direction = this.getDirection(scrollTop, lastScrollTop, scrollHeight)
@@ -154,11 +132,14 @@ export default class ViewportScroll {
     window.addEventListener('touchmove', pageMove)
     window.addEventListener('touchend', pageMove)
     viewport.on('scroll', event => {
-      if (this.first) {
-        this.first = false
+      // 忽略viewer.init默认触发的scroll
+      if (this.firstScroll) {
+        this.firstScroll = false
         return
       }
       pageMove()
     })
   }
 }
+
+export default new ViewportScroll()

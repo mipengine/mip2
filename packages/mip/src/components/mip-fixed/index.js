@@ -4,7 +4,7 @@
  * @desc 解决 MIP1 <mip-fixed> 遗留的问题
  */
 import CustomElement from '../../custom-element'
-import ViewportScroll from './viewport-scroll'
+import viewportScroll from './viewport-scroll'
 import util from '../../util'
 
 class MipFixed extends CustomElement {
@@ -42,10 +42,7 @@ class MipFixed extends CustomElement {
     // 如果有需要悬浮过渡动画
     let position = ele.getAttribute('type')
     if (ele.hasAttribute('data-slide') && (position === 'top' || position === 'bottom')) {
-      if (!this.viewportScroll) {
-        this.viewportScroll = new ViewportScroll()
-      }
-      this.viewportScroll.init({
+      viewportScroll.init({
         element: ele,
         position,
         slide: ele.getAttribute('data-slide')
