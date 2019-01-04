@@ -1,6 +1,8 @@
 # 使用 Vue 单文件语法来开发 MIP 组件
 
-MIP 允许开发者使用 Vue 单文件的形式去开发 MIP 组件，MIP CLI 内置了插件将 Vue 单文件转换成 MIP 组件。需要注意的是，以 Vue 单文件的形式开发 MIP 组件仅仅降低了组件开发成本，在性能上不如 MIP 推荐的 Custom Element 的书写方式所开发出来的组件，因此对于 MIP 官方组件要求必须完全采用 Custom Element 的方式进行开发，同时希望第三方站长组件也尽可能使用 Custom Element 的方式开发。
+MIP 允许开发者使用 Vue 单文件的形式去开发 MIP 组件，MIP CLI 内置了插件将 Vue 单文件转换成 MIP 组件。
+
+[notice]以 Vue 单文件的形式开发 MIP 组件仅仅降低了组件开发成本，在**性能**上远不如 MIP 推荐的 Custom Element 的书写方式所开发出来的组件，因此对于 MIP 官方组件要求**必须**完全采用 Custom Element 的方式进行开发，同时希望第三方站长组件也**强烈建议**使用 Custom Element 的方式开发。
 
 ## 创建一个简单的 MIP 组件
 

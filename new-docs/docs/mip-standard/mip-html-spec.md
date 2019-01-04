@@ -20,7 +20,7 @@ MIP 规范是高性能 MIP 页面的保证，其中最重要的规范是：MIP H
   - 必须在`<head>` 标签中包含`<link rel="stylesheet" type="text/css" href="https:// c.mipcdn.com/static/v1/mip.css" >`。
   - 必须在 `<head>` 标签中包含 `<link rel="canonical" href="http(s)://example.com">` 。
   - 必须在 `<head>` 标签中包含 `<link rel="canonical" href="http(s)://example.com">` 。
-  - 必须在 `<body>` 标签底部包含 `<script src="<script src="https://c.mipcdn.com/static/v2/mip.js"></script>` ，如果包含在 `<head>` 标签中则须增加 `async` 属性。
+  - 必须在 `<body>` 标签底部包含 `<script src="https://c.mipcdn.com/static/v2/mip.js"></script>` ，如果包含在 `<head>` 标签中则须增加 `async` 属性。
 
 
 <a id="2"></a>
@@ -107,13 +107,13 @@ MIP-HTML 禁止使用对页面性能以及安全有较大影响的标签，同�
 |--|--|--|
 |`token`|是|非空|
 
-#### mip-form 
+#### mip-form
 |属性|必填|备注|
 |--|--|--|
 |`method`|否|值为 `get` 或 `post`|
 |`url`|是|必须是 `http(s)` 或 `//` 开头的地址|
 
-#### mip-link 
+#### mip-link
 |属性|必填|备注|
 |--|--|--|
 |`href`|是|值为非 `javascript:`|
