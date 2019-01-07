@@ -183,7 +183,7 @@ describe('mip-video', function () {
       let _mipVideo = new MipVideo()
       _mipVideo.attributes = getAttributeSet(div.attributes)
       _mipVideo.element = document.body
-      _mipVideo.sourceDoms = mipVideo.querySelectorAll('source')
+      _mipVideo.sourceDoms = [...mipVideo.querySelectorAll('source')]
       let videoEl = _mipVideo.renderPlayElsewhere()
 
       expect(videoEl.tagName).to.equal('DIV')
