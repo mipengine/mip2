@@ -14,7 +14,7 @@ import MipPix from './mip-pix'
 import MipBind from './mip-bind/bind'
 import MipData from './mip-bind/mip-data'
 import MipShell from './mip-shell/index'
-import MipFixed from './mip-fixed'
+import MipFixed from './mip-fixed/index'
 import MipLayout from './mip-layout'
 import registerElement from '../register-element'
 
