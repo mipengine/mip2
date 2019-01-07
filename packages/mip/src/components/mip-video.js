@@ -80,6 +80,7 @@ class MipVideo extends CustomElement {
 
   // Render the `<video>` element, and append to `this.element`
   renderInView () {
+    console.log('view')
     let videoEl = document.createElement('video')
     for (let k in this.attributes) {
       if (this.attributes.hasOwnProperty(k) && videoAttributes.indexOf(k) > -1) {
@@ -110,6 +111,7 @@ class MipVideo extends CustomElement {
   }
   // 混合内容警告：出于安全因素的考虑，不予播放，显示一个 X
   renderError () {
+    console.log('error')
     let videoEl = document.createElement('div')
     videoEl.setAttribute('class', 'mip-video-poster')
     if (this.attributes.poster) {
@@ -125,6 +127,7 @@ class MipVideo extends CustomElement {
   }
   // Render the `<div>` element with poster and play btn, and append to `this.element`
   renderPlayElsewhere () {
+    console.log('else')
     let videoEl = document.createElement('div')
     let urlSrc
     videoEl.setAttribute('class', 'mip-video-poster')
