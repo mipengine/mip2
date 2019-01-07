@@ -99,9 +99,9 @@ class ViewportScroll {
   bindScrollEvent () {
     let viewport = window.MIP.viewport
     let direction = 0
-    let scrollTop = viewport.getScrollTop()
-    let scrollHeight = viewport.getScrollHeight()
     let lastScrollTop = 0
+    let scrollTop
+    let scrollHeight
 
     /**
      *  get the scroll direction and handle it
