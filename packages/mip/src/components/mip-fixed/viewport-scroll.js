@@ -21,11 +21,11 @@ class ViewportScroll {
      * 浮动元素数组
      *
      * @type {Array}
-     * @param {string} animate.position 浮动元素位置：top、bottom
-     * @param {HTMLElement} animate.element 浮动元素
-     * @param {string} animate.slide 滑动隐藏的类型（样式名）
+     * @param {string} animations.position 浮动元素位置：top、bottom
+     * @param {HTMLElement} animations.element 浮动元素
+     * @param {string} animations.slide 滑动隐藏的类型（样式名）
      */
-    this.animate = []
+    this.animations = []
 
     /**
      * 根据元素位置单独处理入场、退场动画，目前只支持顶、底元素滑动隐藏
@@ -33,21 +33,13 @@ class ViewportScroll {
      * @type {Object}
      */
     this.position = {
-      top: {
-        in (el, slide) {
-          el.classList.remove(slide || MIP_FIXED_HIDE_TOP)
-        },
-        out (el, slide) {
-          el.classList.add(slide || MIP_FIXED_HIDE_TOP)
-        }
+      top: MIP_FIXED_HIDE_TOP,
+      bottom: MIP_FIXED_HIDE_BUTTOM,
+      in (el, slide, def) {
+        el.classList.remove(slide || def)
       },
-      bottom: {
-        in (el, slide) {
-          el.classList.remove(slide || MIP_FIXED_HIDE_BUTTOM)
-        },
-        out (el, slide) {
-          el.classList.add(slide || MIP_FIXED_HIDE_BUTTOM)
-        }
+      out (el, slide, def) {
+        el.classList.add(slide || def)
       }
     }
   }
@@ -57,15 +49,16 @@ class ViewportScroll {
    * @param {number} direction scroll direction
    */
   handleScroll (direction) {
-    if (direction === 0) {
+    if (!direction) {
       return
     }
 
     let type = direction > 0 ? 'out' : 'in'
-    this.animate.forEach(item => {
-      let positionHandler = this.position[item.position]
-      if (positionHandler && typeof positionHandler[type] === 'function') {
-        positionHandler[type](item.element, item.slide)
+    this.animations.forEach(item => {
+      let positionHandler = this.position[type]
+      let hideClass = this.position[item.position]
+      if (hideClass) {
+        positionHandler(item.element, item.slide, hideClass)
       }
     })
   }
@@ -95,12 +88,11 @@ class ViewportScroll {
    * @param {Object} item 浮动元素动画处理对象
    */
   init (item) {
-    this.animate.push(item)
-
+    this.animations.push(item)
     if (this.initialized) {
       return
     }
-
+    this.initialized = true
     this.bindScrollEvent()
   }
 
@@ -111,12 +103,10 @@ class ViewportScroll {
     let scrollHeight = viewport.getScrollHeight()
     let lastScrollTop = 0
 
-    this.initialized = true
-
     /**
      *  get the scroll direction and handle it
      */
-    let pageMove = (event) => {
+    let pageMove = () => {
       scrollTop = viewport.getScrollTop()
       scrollHeight = viewport.getScrollHeight()
       direction = this.getDirection(scrollTop, lastScrollTop, scrollHeight)
@@ -125,13 +115,13 @@ class ViewportScroll {
     }
 
     // 使用 touch + scroll 兼容在移动端 iframe 和非 iframe
-    window.addEventListener('touchstart', event => {
+    window.addEventListener('touchstart', () => {
       scrollTop = viewport.getScrollTop()
       scrollHeight = viewport.getScrollHeight()
     })
     window.addEventListener('touchmove', pageMove)
     window.addEventListener('touchend', pageMove)
-    viewport.on('scroll', event => {
+    viewport.on('scroll', () => {
       // 忽略 viewer.init 默认触发的 scroll
       if (this.firstScroll) {
         this.firstScroll = false
