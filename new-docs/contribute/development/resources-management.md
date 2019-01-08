@@ -7,12 +7,11 @@
 MIP CLI 内置了以下 Loader 辅助组件开发者进行样式开发：
 
 1. less-loader
-2. stylus-loader
-3. postcss-loader
+2. postcss-loader
   1. autoprefixer
-4. css-loader
+3. css-loader
 
-因此开发者可以使用 LESS、Stylus 写样式，并且在开发时不需要在意部分浏览器私有属性的优雅降级问题，编译时会通过 autoprefixer 进行自动补全。写好的样式资源只需要在组件入口文件通过相对路径 `import` 的方式引入即可，css-loader 会自动生成 style 标签将样式注入到网页当中：
+因此开发者可以使用 LESS 写样式，并且在开发时不需要在意部分浏览器私有属性的优雅降级问题，编译时会通过 autoprefixer 进行自动补全。写好的样式资源只需要在组件入口文件通过相对路径 `import` 的方式引入即可，css-loader 会自动生成 style 标签将样式注入到网页当中：
 
 ```js
 import('./mip-example.less')
@@ -25,7 +24,7 @@ MIP CLI 内置了 Webpack 的相关静态资源的 url-loader 来确保一些常
 1. `.png`、`.jpg`、`.jpeg`、`.gif` 为后缀的图片资源
 2. `.otf`、`.ttf`、`.svg`、`.woff`、`woff2` 等字体文件的字体资源
 
-这些静态资源可以在 CSS（CSS/LESS/Stylus）代码里通过 `url()` 函数引入，也可以在 JS 代码里通过 `import` 的方式引入。引入的路径要求必须为**相对路径**，相应的引入方法如下所示：
+这些静态资源可以在 CSS（CSS/LESS）代码里通过 `url()` 函数引入，也可以在 JS 代码里通过 `import` 的方式引入。引入的路径要求必须为**相对路径**，相应的引入方法如下所示：
 
 CSS 引入
 
