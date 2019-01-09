@@ -19,6 +19,14 @@ import dom from './dom/dom'
 const PARSE_REG = /^(\w+):\s*([\w-]+)\.([\w-$]+)(?:\((.+)\))?$/
 
 /**
+ * Regular for parsing event in argument.
+ * @const
+ * @inner
+ * @type {RegExp}
+ */
+const ARG_EVENT_REG = /event\.[\w.]+/g
+
+/**
  * Regular for checking elements.
  * @const
  * @inner
@@ -240,16 +248,59 @@ class EventAction {
       let action = actions[i].replace(/\n/g, '')
       let matchedResult = action.match(PARSE_REG)
       if (matchedResult && matchedResult[1] === type) {
+        let arg = this.processArg(matchedResult[4], event)
         result.push({
           type: matchedResult[1],
           id: matchedResult[2],
           handler: matchedResult[3],
-          arg: matchedResult[4],
-          event: event
+          arg,
+          event
         })
       }
     }
     return result
+  }
+
+  /**
+   * Replace the event dot references in arg with their actual values
+   *
+   * @param {string} arg arguments string
+   * @param {Event} event event
+   */
+  processArg (arg, event) {
+    if (!arg) {
+      return
+    }
+
+    const data = {}
+    data['event'] = event
+
+    let result = arg.replace(ARG_EVENT_REG, expr => {
+      let arr = expr.split('.')
+      let value = data
+      for (let part of arr) {
+        // illegal expression, do not replace
+        if (!part) {
+          return expr
+        }
+        if (value && value[part] !== undefined && value.hasOwnProperty(part)) {
+          value = value[part]
+          continue
+        }
+        value = undefined
+        break
+      }
+      return this.convertToString(value)
+    })
+
+    return result
+  }
+
+  convertToString (value) {
+    if (typeof value === 'object') {
+      return JSON.stringify(value)
+    }
+    return value + ''
   }
 }
 

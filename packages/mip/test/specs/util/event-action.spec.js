@@ -114,6 +114,34 @@ describe('event-action', function () {
       }])
   })
 
+  it('#processArg', () => {
+    let action = new EventAction()
+    let event = {
+      'one': 1,
+      'two': 2,
+      'nest': {
+        'three': 3
+      }
+    }
+    expect(action.processArg('event.one', event)).to.be.equal('1')
+    expect(action.processArg('event.one, test, 1, event.two', event)).to.be.equal('1, test, 1, 2')
+    expect(action.processArg('event.three', event)).to.be.equal('undefined')
+    expect(action.processArg('event.', event)).to.be.equal('event.')
+    expect(action.processArg('event.nest.three', event)).to.be.equal('3')
+    expect(action.processArg('event.nest.four', event)).to.be.equal('undefined')
+    expect(action.processArg('event..one', event)).to.be.equal('event..one')
+  })
+
+  it('#convertToString', () => {
+    let action = new EventAction()
+    expect(action.convertToString(1)).to.be.equal('1')
+    expect(action.convertToString(undefined)).to.be.equal('undefined')
+    expect(action.convertToString(null)).to.be.equal('null')
+    expect(action.convertToString('test')).to.be.equal('test')
+    expect(action.convertToString({'a': 1})).to.be.equal('{"a":1}')
+    expect(action.convertToString([1, 2, 3])).to.be.equal('[1,2,3]')
+  })
+
   it('error handler', function () {
     let ele = document.createElement('div')
     ele.setAttribute('on', 'click:MIP.anotherMethod({a:1}) ')
