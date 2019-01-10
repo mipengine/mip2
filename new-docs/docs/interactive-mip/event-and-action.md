@@ -37,32 +37,6 @@ MIP 提供了 `on` 属性来定义对组件的事件绑定与事件触发时的�
 MIP 定义了全局事件 `tap`，`tap` 事件可以在任何 HTML 元素（包括原生 HTML 和 MIP 组件）上进行监听，该事件通过点击行为触发。举个例子，通过点击按钮触发 mip-lightbox 组件的展现和消失，那么可以在按钮元素上绑定 `tap` 事件：
 
 ```html
-<!-- preview -->
-<!-- preset
-<style mip-custom>
-button {
-  border: 1px solid #f1f1f1;
-  border-radius: 5px;
-  padding: 10px 20px;
-  margin: 20px 0;
-  font-size: 14px;
-  background: #fff;
-  display: block;
-  box-sizing: border-box;
-}
-
-.lightbox {
-  padding: 10px;
-  background: white;
-}
-
-.lightbox p {
-  margin: 80px 0;
-  display: block;
-}
-</style>
-<script src="https://c.mipcdn.com/static/v2/mip-lightbox/mip-lightbox.js"></script>
--->
 <button on="tap:light-box.open">打开弹框</button>
 <mip-lightbox
   id="light-box"
@@ -70,7 +44,7 @@ button {
 >
   <div class="lightbox">
     <p>Hello World!</p>
-    <button on="tap:light-box:close">关闭弹框</button>
+    <button on="tap:light-box.close">关闭弹框</button>
   </div>
 </mip-lightbox>
 ```
