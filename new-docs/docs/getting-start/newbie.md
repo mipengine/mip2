@@ -25,7 +25,7 @@ MIP 为了性能和易用性考虑，对 CSS 的使用做了一定的限制，�
 
 1. [支持的 CSS ](../style-and-layout/supported-css.md)
 2. [组件布局](../style-and-layout/layout.md)
-3. [媒体查询](../style-and-layout/meadia-query.md)
+3. [媒体查询](../style-and-layout/media-query.md)
 4. [占位符和备用行为](../style-and-layout/placeholder-and-fallback.md)
 
 ## 交互式设计
@@ -38,7 +38,7 @@ MIP 提供了为数众多的官方组件来满足开发者的需求。不过在�
     - [数据获取、修改与观察](../interactive-mip/data-binding/data-operation.md)
     - [数据绑定语法说明](../interactive-mip/data-binding/mip-bind.md)
     - [class 与 style 属性绑定语法说明](../interactive-mip/data-binding/class-and-style-binding.md)
-- [自定义 JS](../interactive-mip/custom-js.md)
+- [自定义 JS](../interactive-mip/custom-js-by-using-mip-script.md)
 
 ## 全站 MIP 开发
 

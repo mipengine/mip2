@@ -45,4 +45,4 @@ MIP.watch('a.b.c', function (newValue) {
 </mip-script>
 ```
 
-例子中使用到了 `mip-script` 想了解更多有关 mip-script 的知识，请阅读 [自定义 JS](../custom-js.md)
+例子中使用到了 `mip-script` 想了解更多有关 mip-script 的知识，请阅读 [自定义 JS](../custom-js-by-using-mip-script.md)

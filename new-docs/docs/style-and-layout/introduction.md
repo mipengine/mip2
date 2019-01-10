@@ -8,5 +8,5 @@ MIP 页面上的样式和布局和普通的 HTML 页面十分类似，都是需�
 
 - [支持的 CSS ](./supported-css.md)：介绍 CSS 的使用方式
 - [组件布局](./layout.md)：介绍组件支持的布局方式
-- [媒体查询](./meadia-query.md)：介绍媒体查询和自适应图片的内容
+- [媒体查询](./media-query.md)：介绍媒体查询和自适应图片的内容
 - [占位符和备用行为](./placeholder-and-fallback.md)：介绍占位符和备用行为

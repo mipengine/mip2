@@ -87,4 +87,4 @@ button {
 <button on="tap:MIP.setData({buttonState: 'clicked'})">点击按钮</button>
 ```
 
-在点击按钮时，数据 `buttonState` 将被赋值为 'clicked'。然后通过 [m-bind](./data-binding.md) 方法将 `buttonState` 绑定到节点属性上，就能够通过数据驱动的方式实现组件间通信。这块内容将在下一节[数据绑定](./data-binding.md) 中进行更为详细的说明。
+在点击按钮时，数据 `buttonState` 将被赋值为 'clicked'。然后通过 [m-bind](./data-binding/mip-bind.md) 方法将 `buttonState` 绑定到节点属性上，就能够通过数据驱动的方式实现组件间通信。这块内容将在下一节[数据绑定](./data-binding/mip-bind.md) 中进行更为详细的说明。
