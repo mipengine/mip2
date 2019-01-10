@@ -10,12 +10,12 @@ import EventAction from 'src/util/event-action'
 
 let mockElement = {
   executeEventAction (action) {
-    this.arg = action.arg
+    this.arg = action.rawArg
   },
   tagName: 'mip-test'
 }
 
-describe('event-action', function () {
+describe.only('event-action', function () {
   it('white list', function () {
     let MIP = window.MIP = window.MIP || {}
     MIP.setData = function () {}
@@ -100,7 +100,8 @@ describe('event-action', function () {
         type: 'tap',
         id: 'MIP',
         handler: 'setData',
-        arg: '{name: "faketap"}',
+        rawArg: '{name: "faketap"}',
+        parsedArgs: ['{name: "faketap"}'],
         event: {}
       }])
 
@@ -109,27 +110,75 @@ describe('event-action', function () {
         type: 'tap',
         id: 'MIP',
         handler: 'setData',
-        arg: '{name: "faketap ()\\\'"}',
+        rawArg: '{name: "faketap ()\\\'"}',
+        parsedArgs: ['{name: "faketap ()\\\'"}'],
         event: {}
       }])
+
+    // expect(action.parse('tap: MIP.setData({name: event.one})', 'tap', {one: 1}))
+    //   .to.deep.equal([{
+    //     type: 'tap',
+    //     id: 'MIP',
+    //     handler: 'setData',
+    //     rawArg: '{name: 1}',
+    //     parsedArgs: ['{name: 1}'],
+    //     event: {}
+    //   }])
   })
 
   it('#processArg', () => {
     let action = new EventAction()
     let event = {
-      'one': 1,
-      'two': 2,
-      'nest': {
-        'three': 3
+      one: 1,
+      two: 2,
+      nest: {
+        three: 3
       }
     }
-    expect(action.processArg('event.one', event)).to.be.equal('1')
-    expect(action.processArg('event.one, test, 1, event.two', event)).to.be.equal('1, test, 1, 2')
-    expect(action.processArg('event.three', event)).to.be.equal('undefined')
-    expect(action.processArg('event.', event)).to.be.equal('event.')
-    expect(action.processArg('event.nest.three', event)).to.be.equal('3')
-    expect(action.processArg('event.nest.four', event)).to.be.equal('undefined')
-    expect(action.processArg('event..one', event)).to.be.equal('event..one')
+    expect(action.processArg('event.one', event))
+      .to.deep.equal({
+        rawArg: '1',
+        parsedArgs: [1]
+      })
+    expect(action.processArg('event.one, test, 1, event.two', event))
+      .to.deep.equal({
+        rawArg: '1,test,1,2',
+        parsedArgs: [1, 'test', '1', 2]
+      })
+    expect(action.processArg('event.three', event))
+      .to.deep.equal({
+        rawArg: 'undefined',
+        parsedArgs: [undefined]
+      })
+    expect(action.processArg('event.', event))
+      .to.deep.equal({
+        rawArg: 'undefined',
+        parsedArgs: [undefined]
+      })
+    expect(action.processArg('event.nest.three', event))
+      .to.deep.equal({
+        rawArg: '3',
+        parsedArgs: [3]
+      })
+    expect(action.processArg('event.nest.four', event))
+      .to.deep.equal({
+        rawArg: 'undefined',
+        parsedArgs: [undefined]
+      })
+    expect(action.processArg('event..one', event))
+      .to.deep.equal({
+        rawArg: 'undefined',
+        parsedArgs: [undefined]
+      })
+  })
+
+  it('#split', () => {
+    expect(this.split('tap: id.show({1, 2}, \') click:id.open([1, 2, 3])', ' ', ':'))
+      .to.equal(['tap: id.show({1, 2}, \')', 'click:id.open([1, 2, 3])'])
+    expect(this.split('tap: id.show({1, 2}, \')'), ' ')
+      .to.equal(['tap:', 'id.show({1, 2}, \')'])
+    expect(this.split('1, "123", event.data'), ',')
+      .to.equal(['1', '123', 'event.data'])
   })
 
   it('#convertToString', () => {
@@ -140,6 +189,7 @@ describe('event-action', function () {
     expect(action.convertToString('test')).to.be.equal('test')
     expect(action.convertToString({'a': 1})).to.be.equal('{"a":1}')
     expect(action.convertToString([1, 2, 3])).to.be.equal('[1,2,3]')
+    expect(action.convertToString(true)).to.be.equal('true')
   })
 
   it('error handler', function () {
