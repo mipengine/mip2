@@ -18,6 +18,12 @@ import dom from './dom/dom'
  */
 const PARSE_REG = /^(\w+):\s*([\w-]+)\.([\w-$]+)(?:\((.+)\))?$/
 
+/**
+ * Regular for parsing event argument.
+ * @const
+ * @inner
+ * @type {RegExp}
+ */
 const EVENT_ARG_REG = /event\.[\w.]*/g
 
 /**
@@ -88,7 +94,7 @@ class EventAction {
       }
     }) : {}
 
-    let fn = new Function('DOM', `with(this){return ${action.rawArg}}`) // eslint-disable-line
+    let fn = new Function('DOM', `with(this){return ${action.arg}}`) // eslint-disable-line
     let data = fn.call(proxy)
 
     if (action.handler === 'setData') {
@@ -194,20 +200,60 @@ class EventAction {
   }
 
   parse (str, type, event) {
-    let actions = this.split(str, ' ', ':')
+    if (typeof str !== 'string') {
+      return []
+    }
+
+    let isQuote = char => char === '"' || char === '\''
+    let isSpace = char => char === ' '
+    let isColon = char => char === ':'
+
+    let pos = 0
+    let actions = []
+    let pstack = []
+    for (let i = 0, slen = str.length; i < slen; i++) {
+      let peek = pstack[pstack.length - 1]
+      let char = str[i]
+
+      if (char === '(' && !isQuote(peek)) {
+        pstack.push(char)
+      } else if (char === ')' && peek === '(') {
+        pstack.pop()
+      } else if (isQuote(char) && str[i - 1] !== '\\') {
+        if (peek === char) {
+          pstack.pop()
+        } else {
+          pstack.push(char)
+        }
+      } else if (isColon(char) && !pstack.length) {
+        pstack.push(char)
+      } else if (isColon(peek) && !isSpace(str[i + 1])) {
+        pstack.pop()
+      } else if (isSpace(char) && !pstack.length) {
+        let act = str.substring(pos, i).trim(' ')
+        act && actions.push(act)
+        pos = i
+      }
+    }
+
+    if (pstack.length) {
+      throw new SyntaxError(`Can not match ${pstack[pstack.length - 1]} in statement: 'on=${str}'`)
+    }
+
+    let act = str.substring(pos, str.length).trim(' ')
+    act && actions.push(act)
 
     let result = []
     for (let i = 0, len = actions.length; i < len; i++) {
       let action = actions[i].replace(/\n/g, '')
       let matchedResult = action.match(PARSE_REG)
+      let arg = this.processArg(matchedResult[4], event)
       if (matchedResult && matchedResult[1] === type) {
-        let {rawArg, parsedArgs} = this.processArg(matchedResult[4], event)
         result.push({
           type: matchedResult[1],
           id: matchedResult[2],
           handler: matchedResult[3],
-          rawArg,
-          parsedArgs,
+          arg,
           event
         })
       }
@@ -217,110 +263,22 @@ class EventAction {
 
   /**
    * Replace the event dot references in arg string with their values
-   * and split the arg by ','
    *
    * @param {string} arg arguments string
    * @param {Event} event event
-   * @return {Object} arg object, legacy:
-   * @example original arg is: 'event.size, 10', the result is:
-   * {
-   *    "rawArg": '20, 10'
-   *    "parsedArgs": [20, '10']
-   * }
+   * @return {string} new arg
    */
   processArg (arg, event) {
-    let arr = this.split(arg, ',')
-    let parsedArgs = []
+    if (!arg) {
+      return undefined
+    }
     const data = {event}
-    let argArr = arr.map((item) => {
-      let isEventArg = false
-      item = item.replace(EVENT_ARG_REG, expr => {
-        // dereference the event dot expression, such as 'event.field1'
-        let value = expr.split('.').reduce((value, part) => part && value ? value[part] : undefined, data)
-        isEventArg = true
-        parsedArgs.push(value)
-        return this.convertToString(value)
-      })
-
-      // if (item.indexOf('event.') !== -1) {
-      //   // dereference the event dot expression, such as 'event.field1'
-      //   let value = item.split('.').reduce((value, part) => part && value ? value[part] : undefined, data)
-
-      //   parsedArgs.push(value)
-      //   return this.convertToString(value)
-      // }
-      if (!isEventArg) {
-        parsedArgs.push(item)
-      }
-      return item
+    arg = arg.replace(EVENT_ARG_REG, expr => {
+      // dereference the event dot expression, such as 'event.field1'
+      let value = expr.split('.').reduce((value, part) => part && value ? value[part] : undefined, data)
+      return this.convertToString(value)
     })
-    return {
-      rawArg: argArr.join(','),
-      parsedArgs
-    }
-  }
-
-  /**
-   * Special spliter. It will split the string just by those that are not surrounded by paired signs or not behind the option
-   *
-   * @param {string} str
-   * @param {string} seperator
-   * @param {string} option
-   */
-  split (str, seperator, option) {
-    if (typeof str !== 'string' || typeof seperator !== 'string') {
-      return []
-    }
-    let isQuote = char => char === '"' || char === '\''
-    // let open = '{[(<'
-    // let close = '}])>'
-    const open = {
-      '{': '}',
-      '(': ')',
-      '[': ']',
-      '<': '>'
-    }
-    const close = {
-      '}': '{',
-      ')': '(',
-      ']': '[',
-      '>': '<'
-    }
-
-    let pos = 0
-    let result = []
-    let pstack = []
-    for (let i = 0, slen = str.length; i < slen; i++) {
-      let peek = pstack[pstack.length - 1]
-      let char = str[i]
-
-      if (open[char] && !isQuote(peek)) {
-        pstack.push(char)
-      } else if (close[char] && peek === close[char]) {
-        pstack.pop()
-      } else if (isQuote(char) && str[i - 1] !== '\\') {
-        if (peek === char) {
-          pstack.pop()
-        } else {
-          pstack.push(char)
-        }
-      } else if (option && char === option && !pstack.length) {
-        pstack.push(char)
-      } else if (option && peek === option && str[i + 1] !== seperator) {
-        pstack.pop()
-      } else if (char === seperator && !pstack.length) {
-        let part = str.substring(pos, i).trim(' ')
-        part && result.push(part)
-        pos = i + 1
-      }
-    }
-
-    if (pstack.length) {
-      throw new SyntaxError(`Can not match ${pstack[pstack.length - 1]} in statement: '${str}'`)
-    }
-    let part = str.substring(pos, str.length).trim(' ')
-    part && result.push(part)
-    return result
+    return arg
   }
 
   convertToString (value) {

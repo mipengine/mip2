@@ -185,7 +185,7 @@ class CustomElement {
   executeEventAction (action) {
     let eventObj = this._actionEvent
     if (action && eventObj) {
-      eventObj.trigger(action.handler, action.event, action.rawArg, ...action.parsedArgs)
+      eventObj.trigger(action.handler, action.event, action.arg)
     }
   }
 
