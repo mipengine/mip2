@@ -247,7 +247,7 @@ class EventAction {
     for (let i = 0, len = actions.length; i < len; i++) {
       let action = actions[i].replace(/\n/g, '')
       let matchedResult = action.match(PARSE_REG)
-      let arg = this.processArg(matchedResult[4], event)
+      let arg = this.handleArguments(matchedResult[4], event)
       if (matchedResult && matchedResult[1] === type) {
         result.push({
           type: matchedResult[1],
@@ -268,7 +268,7 @@ class EventAction {
    * @param {Event} event event
    * @return {string} new arg
    */
-  processArg (arg, event) {
+  handleArguments (arg, event) {
     if (!arg) {
       return undefined
     }

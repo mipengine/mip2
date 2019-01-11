@@ -15,7 +15,7 @@ let mockElement = {
   tagName: 'mip-test'
 }
 
-describe.only('event-action', function () {
+describe('event-action', function () {
   it('white list', function () {
     let MIP = window.MIP = window.MIP || {}
     MIP.setData = function () {}
@@ -124,7 +124,7 @@ describe.only('event-action', function () {
       }])
   })
 
-  it('#processArg', () => {
+  it('#handleArguments', () => {
     let action = new EventAction()
     let event = {
       one: 1,
@@ -133,13 +133,13 @@ describe.only('event-action', function () {
         three: 3
       }
     }
-    expect(action.processArg('event.one', event)).to.deep.equal('1')
-    expect(action.processArg('event.one, test, 1, event.two', event)).to.deep.equal('1, test, 1, 2')
-    expect(action.processArg('event.three', event)).to.deep.equal('undefined')
-    expect(action.processArg('event.', event)).to.deep.equal('undefined')
-    expect(action.processArg('event.nest.three', event)).to.deep.equal('3')
-    expect(action.processArg('event.nest.four', event)).to.deep.equal('undefined')
-    expect(action.processArg('event..one', event)).to.deep.equal('undefined')
+    expect(action.handleArguments('event.one', event)).to.deep.equal('1')
+    expect(action.handleArguments('event.one, test, 1, event.two', event)).to.deep.equal('1, test, 1, 2')
+    expect(action.handleArguments('event.three', event)).to.deep.equal('undefined')
+    expect(action.handleArguments('event.', event)).to.deep.equal('undefined')
+    expect(action.handleArguments('event.nest.three', event)).to.deep.equal('3')
+    expect(action.handleArguments('event.nest.four', event)).to.deep.equal('undefined')
+    expect(action.handleArguments('event..one', event)).to.deep.equal('undefined')
   })
 
   it('#convertToString', () => {
