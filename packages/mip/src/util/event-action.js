@@ -24,7 +24,7 @@ const PARSE_REG = /^(\w+):\s*([\w-]+)\.([\w-$]+)(?:\((.+)\))?$/
  * @inner
  * @type {RegExp}
  */
-const EVENT_ARG_REG = /event\.[\w.]*/g
+const EVENT_ARG_REG = /event(\.\w+)+/g
 
 /**
  * Regular for checking elements.
@@ -275,7 +275,7 @@ class EventAction {
     const data = {event}
     arg = arg.replace(EVENT_ARG_REG, expr => {
       // dereference the event dot expression, such as 'event.field1'
-      let value = expr.split('.').reduce((value, part) => part && value ? value[part] : undefined, data)
+      let value = expr.split('.').reduce((value, part) => (part && value) ? value[part] : undefined, data)
       return this.convertToString(value)
     })
     return arg
