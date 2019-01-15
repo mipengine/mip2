@@ -14,6 +14,7 @@ import dom from './util/dom/dom'
 import css from './util/dom/css'
 import {parseSizeList} from './size-list'
 import {customEmit} from './util/custom-event'
+import templates from './util/templates'
 
 /** @param {!Element} element */
 function isInputPlaceholder (element) {
@@ -456,6 +457,10 @@ function loadCss (css, name) {
  * @return {Array<HTMLElement>|undefined}
  */
 function registerElement (name, elementClass, css) {
+  if (templates.isTemplateClass(elementClass)) {
+    templates.register(name, elementClass)
+    return
+  }
   if (customElementsStore.get(name)) {
     return
   }
