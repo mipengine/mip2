@@ -8,6 +8,7 @@ import CustomElement from 'src/custom-element.js'
 import store from 'src/custom-element-store.js'
 import cssLoader from 'src/util/dom/css-loader'
 import performance from 'src/performance'
+import {templates} from 'src/util';
 
 describe('Register element', function () {
   let prefix = 'mip-test-register-element'
@@ -91,6 +92,11 @@ describe('Register element', function () {
     expect(ele.classList.contains('mip-element')).to.be.true
   })
 
+  it('should register templates', function () {
+    let name = 'mip-mustache'
+    registerElement(name, templates.inheritTemplate())
+    expect(templates._templates[name]).not.to.be.undefined
+  })
   it('should warning built error if build throw an error', function (done) {
     let name = prefix + '-build-error'
     let warn = sinon.stub(console, 'warn')
