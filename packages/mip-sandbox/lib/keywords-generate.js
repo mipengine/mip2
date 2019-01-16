@@ -335,7 +335,7 @@ module.exports = function () {
                     name: 'createElement',
                     getter: function () {
                       return function (nodename) {
-                        if (typeof nodename === 'string' && nodename.toLowerCase()) {
+                        if (typeof nodename === 'string' && nodename.toLowerCase() === 'script') {
                           console.error('[MIP] 禁止创建 SCRIPT 标签引入第三方 JS 脚本')
                         }
                         return document.createElement(nodename)
