@@ -236,10 +236,9 @@ MIP.sandbox.this = function (that) {
 
 ### 原生安全的全局变量
 
-以下全局变量被认为是安全的，在沙盒注入过程中不会加上任何沙盒前缀：
+以下全局变量被认为是安全的，在沙盒注入过程中不会加上任何沙盒前缀。
 
 ```javascript
-
 var ORIGINAL = [
   'Array',
   'ArrayBuffer',
@@ -291,51 +290,51 @@ var ORIGINAL = [
   // 1.0.17 新增 WebSocket
   'WebSocket',
   'WritableStream',
-  // https://github.com/mipengine/mip2/issues/347
-  'atob',
   // issue https://github.com/mipengine/mip2/issues/62
   'crypto',
-  'clearInterval',
-  'clearTimeout',
   'console',
   'decodeURI',
   'decodeURIComponent',
+  'localStorage',
+  'navigator',
+  'sessionStorage',
+  'screen',
+  'undefined',
   'devicePixelRatio',
-  'encodeURI',
-  'encodeURIComponent',
-  'escape',
-  'fetch',
-  'getComputedStyle',
   'innerHeight',
   'innerWidth',
-  'isFinite',
-  'isNaN',
   'isSecureContext',
-  'localStorage',
   'length',
-  'matchMedia',
-  'navigator',
   'outerHeight',
   'outerWidth',
-  'parseFloat',
-  'parseInt',
-  'screen',
   'screenLeft',
   'screenTop',
   'screenX',
   'screenY',
   'scrollX',
   'scrollY',
-  'sessionStorage',
+  // mip-data ready status
+  'mipDataPromises',
+  // https://github.com/mipengine/mip2/issues/347
+  'atob',
+  'clearInterval',
+  'clearTimeout',
+  'encodeURI',
+  'encodeURIComponent',
+  'escape',
+  'fetch',
+  'getComputedStyle',
+  'isFinite',
+  'isNaN',
+  'matchMedia',
+  'parseFloat',
+  'parseInt',
   'setInterval',
   'setTimeout',
-  'undefined',
   'unescape',
   // mip1 polyfill
-  'fetchJsonp',
-  // mip-data ready status
-  'mipDataPromises'
-]
+  'fetchJsonp'
+  ]
 
 var RESERVED = [
   'arguments',
@@ -368,21 +367,21 @@ var WHITELIST_ORIGINAL = [
   'ImageBitmap',
   'MutationObserver',
   'Notification',
-  'addEventListener',
-  'cancelAnimationFrame',
-  'createImageBitmap',
   // 待定
   'history',
   // 待定
   'location',
+  'scrollbars',
+  'addEventListener',
+  'cancelAnimationFrame',
+  'createImageBitmap',
   'removeEventListener',
   'requestAnimationFrame',
   'scrollBy',
   'scrollTo',
   'scroll',
-  'scrollbars',
   'webkitCancelAnimationFrame',
-  'webkitRequestAnimationFrame'
+  'webkitRequestAnimationFrame',
 ]
 
 // 自定义安全变量
@@ -400,13 +399,26 @@ var WHITELIST_CUSTOM = [
       'referrer',
       'readyState',
       'documentElement',
-      'createElement',
-      'createDcoumentFragment',
+      'createDocumentFragment',
+      // https://github.com/mipengine/mip2/issues/470
+      'execCommand',
       'getElementById',
       'getElementsByClassName',
       'getElementsByTagName',
       'querySelector',
-      'querySelectorAll'
+      'querySelectorAll',
+      // createElement 禁止创建 SCRIPT 标签
+      {
+        name: 'createElement',
+        getter: function () {
+          return function (nodename) {
+            if (typeof nodename === 'string' && nodename.toLowerCase()) {
+              console.error('[MIP] 禁止创建 SCRIPT 标签引入第三方 JS 脚本')
+            }
+            return document.createElement(nodename)
+          }
+        }
+      }
     ]
   },
   {

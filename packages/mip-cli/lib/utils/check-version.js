@@ -5,7 +5,7 @@
 
 const request = require('request')
 const semver = require('semver')
-const localVersion = require('../package').version
+const localVersion = require('../../package').version
 const chalk = require('chalk')
 
 module.exports = function checkVersion () {
