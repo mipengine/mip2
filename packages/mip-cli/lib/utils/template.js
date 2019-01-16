@@ -17,11 +17,11 @@ const inquirer = require('inquirer')
 const render = require('./render').render
 const getMeta = require('./meta')
 
-const OFFICIAL_VUE_TEMPLATE = 'mip-project/mip-cli-template'
-const OFFICIAL_TEMPLATE = 'mip-project/mip-cli-template#custom-element'
+const OFFICIAL_VUE_TEMPLATE = 'mipengine/mip-cli-template#vue'
+const OFFICIAL_TEMPLATE = 'mipengine/mip-cli-template'
 
-const VUE_TEMPLATE_TMP = '.mip-vue-template'
-const TEMPLATE_TMP = '.mip-template'
+const VUE_TEMPLATE_TMP = path.resolve(home, '.mip-vue-template')
+const TEMPLATE_TMP = path.resolve(home, '.mip-template')
 
 function downloadRepo (isVue, done) {
   if (typeof isVue === 'function') {
