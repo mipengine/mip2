@@ -329,8 +329,22 @@ module.exports = function () {
                 type: TYPE_FUNCTION,
                 access: ACCESS_READONLY,
                 props: [
-                  'createElement',
+                  // https://github.com/mipengine/mip2/issues/464
+                  // 'createElement',
+                  {
+                    name: 'createElement',
+                    getter: function () {
+                      return function (nodename) {
+                        if (typeof nodename === 'string' && nodename.toLowerCase() === 'script') {
+                          console.error('[MIP] 禁止创建 SCRIPT 标签引入第三方 JS 脚本')
+                        }
+                        return document.createElement(nodename)
+                      }
+                    }
+                  },
                   'createDocumentFragment',
+                  // https://github.com/mipengine/mip2/issues/470
+                  'execCommand',
                   'getElementById',
                   'getElementsByClassName',
                   'getElementsByTagName',

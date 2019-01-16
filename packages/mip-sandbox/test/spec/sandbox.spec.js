@@ -62,6 +62,12 @@ describe('sandbox', function () {
     expect(sandbox.strict).to.be.equal(sandbox.strict.window)
   })
 
+  it('document.createElement', function () {
+    expect(sandbox.document.createElement('script').tagName).to.be.equal('SCRIPT')
+    expect(sandbox.document.createElement('SCRIPT').tagName).to.be.equal('SCRIPT')
+    expect(sandbox.document.createElement('DIV').tagName).to.be.equal('DIV')
+  })
+
   it('location', function () {
     expect(Object.keys(sandbox.location)).to.have.include.members(Object.keys(sandbox.strict.location))
     expect(sandbox.location).to.not.be.equal(sandbox.strict.location)
