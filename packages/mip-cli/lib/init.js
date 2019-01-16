@@ -4,12 +4,13 @@
  */
 
 const cli = require('./cli')
-const generate = require('./generate')
-const downloadRepo = require('./utils/download-repo')
+const {downloadRepo, generate} = require('./utils/template')
+
+const templateDir = 'template'
 
 module.exports = function init () {
   downloadRepo(() => {
-    generate('template', false, err => {
+    generate(templateDir, false, err => {
       if (err) {
         cli.error('Failed to generate project: ' + err.message.trim())
         return

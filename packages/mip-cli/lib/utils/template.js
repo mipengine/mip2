@@ -1,17 +1,65 @@
 /**
- * @file 渲染模板生成项目
- * @author tracy(qiushidev@gmail.com)
+ * @file template 项目模板工具
+ * @author tracy (qiushidev@gmail.com) clark-t (clarktanglei@163.com)
  */
 
-const async = require('async')
+const cli = require('../cli')
 const path = require('path')
+const exists = require('fs').existsSync
+const ora = require('ora')
+const home = require('user-home')
+const rm = require('rimraf').sync
+const download = require('download-git-repo')
+
+const async = require('async')
 const ms = require('metalsmith')
 const inquirer = require('inquirer')
-const render = require('./utils/render').render
-const getMeta = require('./utils/meta')
-const home = require('user-home')
-// 本地临时目录
-const tmp = path.join(home, '.mip-template')
+const render = require('./render').render
+const getMeta = require('./meta')
+
+const OFFICIAL_VUE_TEMPLATE = 'mip-project/mip-cli-template'
+const OFFICIAL_TEMPLATE = 'mip-project/mip-cli-template#custom-element'
+
+const VUE_TEMPLATE_TMP = '.mip-vue-template'
+const TEMPLATE_TMP = '.mip-template'
+
+function downloadRepo (isVue, done) {
+  if (typeof isVue === 'function') {
+    done = isVue
+    isVue = false
+  }
+
+  let template
+  let tmp
+
+  if (isVue) {
+    template = OFFICIAL_VUE_TEMPLATE
+    // 本地临时目录
+    tmp = VUE_TEMPLATE_TMP
+  } else {
+    template = OFFICIAL_TEMPLATE
+    tmp = TEMPLATE_TMP
+  }
+
+  const spinner = ora('正在获取最新模板')
+  spinner.start()
+
+  // 先清空临时目录
+  if (exists(tmp)) {
+    rm(tmp)
+  }
+
+  // 下载默认模板到临时目录
+  download(template, tmp, {clone: false}, err => {
+    spinner.stop()
+    if (err) {
+      cli.error('Failed to download repo: ' + err.message.trim())
+      return
+    }
+
+    done()
+  })
+}
 
 /**
  * 生成项目 or 组件结构
@@ -20,7 +68,13 @@ const tmp = path.join(home, '.mip-template')
  * @param {string} compName 组件名称，仅用于只渲染组件的情况，渲染整个项目不传即可
  * @param {Function} done 回调函数
  */
-module.exports = function generate (dir, compName, done) {
+function generate (dir, compName, isVue, done) {
+  if (typeof isVue === 'function') {
+    done = isVue
+    isVue = false
+  }
+
+  let tmp = isVue ? VUE_TEMPLATE_TMP : TEMPLATE_TMP
   const metalsmith = ms(path.join(tmp, dir))
   const templatePrompts = getMeta(tmp).prompts
 
@@ -99,4 +153,9 @@ module.exports = function generate (dir, compName, done) {
       }
     }
   }
+}
+
+module.exports = {
+  downloadRepo,
+  generate
 }
