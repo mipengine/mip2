@@ -7,7 +7,7 @@ const path = require('path')
 const fs = require('fs-extra')
 const cli = require('./cli')
 const {downloadRepo, generate} = require('./utils/template')
-const {globPify} = require('./utils/helper');
+const {globPify} = require('./utils/helper')
 
 const templateDir = 'template/components/mip-example'
 
