@@ -11,3 +11,5 @@ nib
 fe-siteopen-sdk
 @baidu/fe-siteopen-sdk
 @baidu/guid
+vue-lottery
+mustache
