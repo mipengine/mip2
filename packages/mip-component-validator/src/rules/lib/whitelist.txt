@@ -11,5 +11,6 @@ nib
 fe-siteopen-sdk
 @baidu/fe-siteopen-sdk
 @baidu/guid
+web-animations-js
 vue-lottery
 mustache
