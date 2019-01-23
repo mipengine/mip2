@@ -46,11 +46,11 @@ describe('extensions', () => {
   beforeEach(() => {
     sandbox = sinon.createSandbox()
     window.services = {}
-    installMipdocService(window)
-    installTimerService(window)
-    installExtensionsService(window)
-    timer = Services.timerFor(window)
-    extensions = Services.extensionsFor(window)
+    installMipdocService()
+    installTimerService()
+    installExtensionsService()
+    timer = Services.timer()
+    extensions = Services.extensions()
   })
 
   afterEach(() => {
@@ -565,7 +565,7 @@ describe('extensions', () => {
 
     expect(service).to.exist
     expect(service.implementation).to.equal(implementation)
-    expect(Services.getService(window, 'mip-service')).instanceOf(implementation)
+    expect(Services.getService('mip-service')).instanceOf(implementation)
   })
 
   it('should register template in registration', () => {

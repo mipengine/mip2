@@ -3,30 +3,15 @@ import Services from './services'
 import {dom} from '../util'
 
 export class Mipdoc {
-  /**
-   * @param {!Window} win
-   */
-  constructor (win) {
-    /**
-     * @private
-     * @const
-     */
-    this.win = win
-
-    /**
-     * @private
-     * @const
-     */
-    this.doc = win.document
-
+  constructor () {
     /**
      * @type {!Promise<!HTMLBodyElement>}
      * @private
      * @const
      */
-    this.bodyAvailable = this.doc.body
-      ? Promise.resolve(this.doc.body)
-      : dom.waitForBody(this.doc).then(() => this.getBody())
+    this.bodyAvailable = document.body
+      ? Promise.resolve(document.body)
+      : dom.waitForBody(document).then(() => this.getBody())
   }
 
   /**
@@ -35,7 +20,7 @@ export class Mipdoc {
    * @returns {string}
    */
   getUrl () {
-    return this.win.location.href
+    return window.location.href
   }
 
   /**
@@ -44,7 +29,7 @@ export class Mipdoc {
    * @returns {!Document}
    */
   getRootNode () {
-    return this.doc
+    return document
   }
 
   /**
@@ -53,7 +38,7 @@ export class Mipdoc {
    * @returns {!HTMLHeadElement}
    */
   getHead () {
-    return this.doc.head
+    return document.head
   }
 
   /**
@@ -62,7 +47,7 @@ export class Mipdoc {
    * @returns {!HTMLBodyElement}
    */
   getBody () {
-    return this.doc.body
+    return document.body
   }
 
   /**
@@ -71,7 +56,7 @@ export class Mipdoc {
    * @returns {boolean}
    */
   isBodyAvailable () {
-    return !!this.doc.body
+    return !!document.body
   }
 
   /**
@@ -84,9 +69,6 @@ export class Mipdoc {
   }
 }
 
-/**
- * @param {!Window} win
- */
-export function installMipdocService (win) {
-  Services.registerService(win, 'mipdoc', Mipdoc)
+export function installMipdocService () {
+  Services.registerService('mipdoc', Mipdoc)
 }
