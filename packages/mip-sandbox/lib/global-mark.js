@@ -178,7 +178,8 @@ function mark (ast) {
         node.exported.isIgnore = true
         node.local.isIgnore = true
       }
-    }
+    },
+    fallback: 'iteration'
   })
 }
 
@@ -227,7 +228,8 @@ function scope (ast, parentAst) {
         ast.vars = ast.vars || []
         ast.vars.push(node.name)
       }
-    }
+    },
+    fallback: 'iteration'
   })
 }
 

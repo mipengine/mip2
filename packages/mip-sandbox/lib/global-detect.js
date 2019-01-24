@@ -29,7 +29,8 @@ module.exports = function (code, fn, type) {
       }
 
       return fn.call(this, node, parent, ast)
-    }
+    },
+    fallback: 'iteration'
   })
 
   return ast
