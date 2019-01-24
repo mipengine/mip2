@@ -13,15 +13,6 @@ class ServicesFactory {
   /**
    * @deprecated
    * @param {!Window} win
-   * @returns {import('./mipdoc').Mipdoc}
-   */
-  static mipdocFor (win) {
-    return this.mipdoc()
-  }
-
-  /**
-   * @deprecated
-   * @param {!Window} win
    * @returns {import('./timer').Timer}
    */
   static timerFor (win) {
@@ -33,13 +24,6 @@ class ServicesFactory {
    */
   static extensions () {
     return Services.getService('extensions')
-  }
-
-  /**
-   * @returns {import('./mipdoc').Mipdoc}
-   */
-  static mipdoc () {
-    return Services.getService('mipdoc')
   }
 
   /**

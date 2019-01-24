@@ -1,5 +1,4 @@
 import Services, {
-  installMipdocService,
   installTimerService,
   installExtensionsService,
   Extensions
@@ -46,11 +45,10 @@ describe('extensions', () => {
   beforeEach(() => {
     sandbox = sinon.createSandbox()
     window.services = {}
-    installMipdocService()
     installTimerService()
     installExtensionsService()
     timer = Services.timer()
-    extensions = Services.extensions()
+    extensions = Services.extensionsFor(window)
   })
 
   afterEach(() => {

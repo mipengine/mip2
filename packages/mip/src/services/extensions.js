@@ -26,12 +26,6 @@ export class Extensions {
      * @private
      * @const
      */
-    this.mipdoc = Services.mipdoc()
-
-    /**
-     * @private
-     * @const
-     */
     this.timer = Services.timer()
 
     /**

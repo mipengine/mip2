@@ -1,7 +1,6 @@
 import CustomElement from './custom-element'
 import Services, {
   installExtensionsService,
-  installMipdocService,
   installTimerService
 } from './services'
 import MipShell from './components/mip-shell'
@@ -30,7 +29,6 @@ class Runtime {
    * @private
    */
   installServices () {
-    installMipdocService()
     installExtensionsService()
     installTimerService()
   }

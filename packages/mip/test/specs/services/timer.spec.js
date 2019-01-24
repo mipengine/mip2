@@ -15,7 +15,7 @@ describe('timer', () => {
     sandbox = sinon.createSandbox()
     window.services = null
     installTimerService()
-    timer = Services.timer()
+    timer = Services.timerFor(window)
   })
 
   afterEach(() => {
