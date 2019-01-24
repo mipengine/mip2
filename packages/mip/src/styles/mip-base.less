@@ -169,7 +169,8 @@ mip-i-space {
   margin: auto;
 }
 
-.mip-layout-size-defined .mip-fill-content {
+// 必须为直接子节点，否则可能会影响嵌套组件的样式
+.mip-layout-size-defined>.mip-fill-content {
   position: absolute;
   top: 0;
   left: 0;
