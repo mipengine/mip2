@@ -4079,11 +4079,25 @@ function addStylesToDom (styles /* Array<StyleObject> */) {
   }
 }
 
+var styleLinks = head.querySelectorAll('link[rel=styleSheet]');
+var mipCssNext;
+
+for (var i$1 = 0; i$1 < styleLinks.length; i$1++) {
+  var href = styleLinks[i$1].getAttribute('href');
+  if (href && href.slice(-8) === '/mip.css') {
+    mipCssNext = styleLinks[i$1].nextSibling;
+    break
+  }
+}
+
 function createStyleElement () {
   var styleElement = document.createElement('style');
   styleElement.type = 'text/css';
   // head.appendChild(styleElement)
-  head.insertBefore(styleElement, head.firstChild);
+  head.insertBefore(
+    styleElement,
+    mipCssNext || head.firstChild
+  );
   return styleElement
 }
 
