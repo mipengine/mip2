@@ -91,7 +91,7 @@ function mark (ast) {
         }
       } else if (is(node, 'VariableDeclaration')) {
         if (node.kind === 'var') {
-          node.declarations.forEach(elem => {
+          node.declarations.forEach(function (elem) {
             elem.isLift = true
           })
         }
