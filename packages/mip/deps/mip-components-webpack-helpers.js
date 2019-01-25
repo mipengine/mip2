@@ -4079,11 +4079,14 @@ function addStylesToDom (styles /* Array<StyleObject> */) {
   }
 }
 
+var mipCssLink = head.querySelector('link[rel=stylesheet][href*="/mip.css"]');
+var mipCssLinkNext = mipCssLink && mipCssLink.nextSibling;
+
 function createStyleElement () {
   var styleElement = document.createElement('style');
   styleElement.type = 'text/css';
   // head.appendChild(styleElement)
-  head.insertBefore(styleElement, head.firstChild);
+  head.insertBefore(styleElement, mipCssLinkNext || head.firstChild);
   return styleElement
 }
 
