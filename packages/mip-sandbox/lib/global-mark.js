@@ -9,19 +9,28 @@ var estraverse = require('estraverse')
 var is = require('./utils/is')
 
 module.exports = function (code) {
-  var ast = acorn.parse(code, {
-    ecmaVersion: 8,
-    sourceType: 'module',
-    locations: true,
-    plugins: {dynamicImport: true}
-  })
+  var ast
+  if (typeof code === 'string') {
+    ast = acorn.parse(code, {
+      ecmaVersion: 8,
+      sourceType: 'module',
+      locations: true,
+      plugins: {dynamicImport: true}
+    })
+  } else {
+    ast = code
+  }
+
   // var ast = esprima.parseModule(code, {
   //   range: true,
   //   loc: true
   // })
 
-  mark(ast)
-  scope(ast)
+  if (!ast.sandboxFlag) {
+    mark(ast)
+    scope(ast)
+    ast.sandboxFlag = true
+  }
 
   return ast
 }

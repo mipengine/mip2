@@ -77,7 +77,7 @@ class FixedElement {
       }
     }
     /* istanbul ignore if */
-    if (isIframed) {
+    if (!window.MIP.standalone) {
       this.doCustomElements()
     }
   }
@@ -267,7 +267,7 @@ class FixedElement {
                 // elements[j].parentElement.removeChild(elements[j])
                 let ele = elements[j]
                 ele.style.cssText = 'display: none!important'
-                console.warn(`Can not use "position: fixed" in ${ele.tagName}!`)
+                console.warn(ele, '发现 position: fixed 样式, 请使用 mip-fixed 组件代替')
               }
             }
           } catch (e) {
@@ -311,8 +311,6 @@ class FixedElement {
         break
       default:
         fixedEle.style.display = 'none'
-        // hack: mip1 下游有个样式覆盖了 display: none，导致loading无法消失
-        fixedEle.style.cssText = fixedEle.style.cssText.replace(/display\s*:\s*none/, 'display:none!important')
     }
   }
 

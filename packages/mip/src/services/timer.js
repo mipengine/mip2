@@ -1,23 +1,13 @@
 import Services from './services'
 
 export class Timer {
-  /**
-   * @param {!Window} win
-   */
-  constructor (win) {
-    /**
-     * @type {!Window}
-     * @private
-     * @const
-     */
-    this.win = win
-
+  constructor () {
     /**
      * @type {!Promise<void>}
      * @private
      * @const
      */
-    this.resolved = win.Promise.resolve()
+    this.resolved = Promise.resolve()
 
     /**
      * @type {number}
@@ -91,7 +81,7 @@ export class Timer {
    * @returns {number}
    */
   delay (callback, ms) {
-    return this.win.setTimeout(callback, ms)
+    return setTimeout(callback, ms)
   }
 
   /**
@@ -105,7 +95,7 @@ export class Timer {
 
       return
     }
-    this.win.clearTimeout(timeoutId)
+    clearTimeout(timeoutId)
   }
 
   /**
@@ -115,7 +105,7 @@ export class Timer {
    * @returns {Promise<void>}
    */
   sleep (ms) {
-    return new this.win.Promise(resolve => this.delay(resolve, ms))
+    return new Promise(resolve => this.delay(resolve, ms))
   }
 
   /**
@@ -130,7 +120,7 @@ export class Timer {
    */
   timeout (ms, racing, message = 'timeout') {
     let timeoutId
-    const delaying = new this.win.Promise((resolve, reject) => {
+    const delaying = new Promise((resolve, reject) => {
       timeoutId = this.delay(() => reject(new Error(message)), ms)
     })
 
@@ -142,7 +132,7 @@ export class Timer {
 
     racing.then(cancel, cancel)
 
-    return this.win.Promise.race([delaying, racing])
+    return Promise.race([delaying, racing])
   }
 
   /**
@@ -154,22 +144,19 @@ export class Timer {
    * @returns {Promise<void>}
    */
   poll (predicate, ms) {
-    return new this.win.Promise(resolve => {
-      const intervalId = this.win.setInterval(() => {
+    return new Promise(resolve => {
+      const intervalId = setInterval(() => {
         if (!predicate()) {
           return
         }
 
-        this.win.clearInterval(intervalId)
+        clearInterval(intervalId)
         resolve()
       }, ms)
     })
   }
 }
 
-/**
- * @param {!Window} win
- */
-export function installTimerService (win) {
-  Services.registerService(win, 'timer', Timer)
+export function installTimerService () {
+  Services.registerService('timer', Timer)
 }

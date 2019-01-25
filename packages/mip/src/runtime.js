@@ -1,7 +1,6 @@
 import CustomElement from './custom-element'
 import Services, {
   installExtensionsService,
-  installMipdocService,
   installTimerService
 } from './services'
 import MipShell from './components/mip-shell'
@@ -14,35 +13,24 @@ import installMip1Polyfill from './mip1-polyfill'
 import installMipComponentsPolyfill from 'deps/mip-components-webpack-helpers'
 
 class Runtime {
-  /**
-   * @param {!Window} win
-   */
-  constructor (win) {
-    this.installServices(win)
+  constructor () {
+    this.installServices()
 
     /**
      * @private
      * @const
      */
-    this.win = win
-
-    /**
-     * @private
-     * @const
-     */
-    this.extensions = Services.extensionsFor(win)
+    this.extensions = Services.extensions()
   }
 
   /**
    * Install services.
    *
-   * @param {!Window} win
    * @private
    */
-  installServices (win) {
-    installMipdocService(win)
-    installExtensionsService(win)
-    installTimerService(win)
+  installServices () {
+    installExtensionsService()
+    installTimerService()
   }
 
   /**
@@ -56,7 +44,7 @@ class Runtime {
     let pageMeta
     let pageMetaConfirmed = false
     try {
-      pageMeta = JSON.parse(this.win.name)
+      pageMeta = JSON.parse(window.name)
       /* istanbul ignore next */
       pageMetaConfirmed = true
     } catch (e) {
@@ -76,7 +64,7 @@ class Runtime {
       try {
         standalone = pageMeta.standalone ||
           !viewer.isIframed ||
-          typeof this.win.top.MIP !== 'undefined'
+          typeof window.top.MIP !== 'undefined'
       } catch (e) {
         /* istanbul ignore next */
         standalone = false
@@ -139,11 +127,10 @@ class Runtime {
 }
 
 /**
- * @param {!Window} win
- * @returns {!Runtime}
+ * @returns {!Object}
  */
-export function getRuntime (win) {
-  const runtime = new Runtime(win)
+export function getRuntime () {
+  const runtime = new Runtime()
 
   return runtime.get()
 }
