@@ -32,6 +32,13 @@ class ServicesFactory {
   static timer () {
     return Services.getService('timer')
   }
+
+  /**
+   * @returns {import('./vue-compat').VueCompat}
+   */
+  static vueCompat () {
+    return Services.getService('vue-compat')
+  }
 }
 
 class ServicesInternal {

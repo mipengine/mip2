@@ -5,7 +5,7 @@
 
 /* global MIP */
 
-import fn from './fn'
+import * as fn from './fn'
 import dom from './dom/dom'
 
 /* global MIP */

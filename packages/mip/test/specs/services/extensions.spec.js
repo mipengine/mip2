@@ -1,5 +1,4 @@
 import Services, {
-  installTimerService,
   installExtensionsService,
   Extensions
 } from 'src/services'
@@ -44,11 +43,10 @@ describe('extensions', () => {
 
   beforeEach(() => {
     sandbox = sinon.createSandbox()
-    window.services = {}
-    installTimerService()
+    window.services.extensions = null
     installExtensionsService()
-    timer = Services.timer()
     extensions = Services.extensionsFor(window)
+    timer = Services.timer()
   })
 
   afterEach(() => {

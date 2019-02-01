@@ -6,9 +6,7 @@
 /* eslint-disable no-unused-expressions */
 /* global describe, it, expect */
 
-import util from 'src/util'
-
-const fn = util.fn
+import {fn} from 'src/util'
 
 describe('fn', function () {
   it('extend', function () {

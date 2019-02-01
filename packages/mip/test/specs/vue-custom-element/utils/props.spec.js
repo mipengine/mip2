@@ -413,7 +413,7 @@ describe('vue-custom-element/utils/props', function () {
           arr: Array,
           unset: Object
         }
-      }))
+      }).camelCase)
 
       element.name = 'fakehuang'
       element.age = 1
@@ -467,12 +467,12 @@ describe('vue-custom-element/utils/props', function () {
         }
       })
 
-      reactiveProps(element, props)
+      reactiveProps(element, props.camelCase)
       expect(element.name).to.be.undefined
 
       let element2 = document.createElement('div')
       element2.customElement = {}
-      reactiveProps(element2, props)
+      reactiveProps(element2, props.camelCase)
       expect(element.name).to.be.undefined
 
       element2.name = 'unready'

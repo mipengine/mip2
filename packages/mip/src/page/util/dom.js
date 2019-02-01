@@ -4,9 +4,9 @@
  * @author wangyisheng@baidu.com (wangyisheng)
  */
 
+import {fn} from '../../util'
 import css from '../../util/dom/css'
 import platform from '../../util/platform'
-import fn from '../../util/fn'
 
 import {MIP_IFRAME_CONTAINER} from '../const/index'
 import {transitionEndEvent, animationEndEvent} from './feature-detect'

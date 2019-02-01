@@ -4,11 +4,13 @@
  */
 
 import Vue from 'vue'
-import registerVueCustomElement from 'src/vue-custom-element/index'
+import 'src/vue-custom-element'
 
 let prefix = 'vue-custom-element-index-'
 
 describe('vue custom element', function () {
+  const vue = MIP.Services.getService('mip-vue')
+
   it('install customElment to Vue', function () {
     expect(typeof Vue.customElement).to.equal('function')
   })
@@ -17,7 +19,7 @@ describe('vue custom element', function () {
     let name = prefix + 'regist'
     let created = sinon.spy()
     let connectedCallback = sinon.spy()
-    registerVueCustomElement(name, {
+    vue.registerElement(name, {
       created,
       connectedCallback
     })
@@ -81,7 +83,7 @@ describe('vue custom element', function () {
       return sinon.spy(comp, name)
     })
 
-    registerVueCustomElement(name, comp)
+    vue.registerElement(name, comp)
     let ele = document.createElement(name)
     document.body.appendChild(ele)
 
@@ -129,7 +131,7 @@ describe('vue custom element', function () {
       return sinon.spy(comp, name)
     })
 
-    registerVueCustomElement(name, comp)
+    vue.registerElement(name, comp)
 
     let ele = document.createElement(name)
     let viewportCallback = sinon.stub(ele, 'viewportCallback')
@@ -183,7 +185,7 @@ describe('vue custom element', function () {
       return sinon.spy(comp, name)
     })
 
-    registerVueCustomElement(name, comp)
+    vue.registerElement(name, comp)
 
     let ele = document.createElement(name)
     let viewportCallback = sinon.stub(ele, 'viewportCallback')
@@ -222,7 +224,7 @@ describe('vue custom element', function () {
       }
     }
 
-    registerVueCustomElement(name, comp)
+    vue.registerElement(name, comp)
 
     const ele = document.createElement(name)
     document.body.appendChild(ele)

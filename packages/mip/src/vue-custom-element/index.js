@@ -4,28 +4,48 @@
  */
 
 import createVueInstance from './utils/create-vue-instance'
-import {getProps, convertAttributeValue} from './utils/props'
-import {camelize} from './utils/helpers'
+import {camelize, hyphenate} from '../util/string'
 import CustomElement from '../custom-element'
 import registerElement from '../register-element'
+import Services from '../services/services'
 import Vue from 'vue'
 
-Vue.use(function (Vue) {
-  Vue.config.ignoredElements = [/^mip-/i]
-  Vue.customElement = (tag, componentDefinition) => {
-    const props = getProps(componentDefinition)
+class MIPVue {
+  constructor () {
+    this.vueCompat = Services.vueCompat()
 
-    function callLifeCycle (ctx, name) {
-      if (typeof componentDefinition[name] === 'function') {
-        return componentDefinition[name].apply(ctx, [].slice.call(arguments, 2))
+    this.registerElement = this.registerElement.bind(this)
+
+    Vue.use((Vue) => {
+      Vue.config.ignoredElements = [/^mip-/i]
+
+      Vue.customElement = this.registerElement
+    })
+  }
+
+  /**
+   * Registers Vue custom element.
+   *
+   * @param {string} name of custom element.
+   * @param {!Object} definition of component.
+   */
+  registerElement (name, definition) {
+    const vueCompat = this.vueCompat
+    const propTypes = vueCompat.getPropTypes(name, definition)
+    const camelizedProps = Object.keys(propTypes)
+    const hyphenatedProps = camelizedProps.map(hyphenate)
+
+    function callLifeCycle (ctx, name, ...args) {
+      if (typeof definition[name] === 'function') {
+        return definition[name].apply(ctx, args)
       }
     }
 
     class VueCustomElement extends CustomElement {
       /** @override */
       prerenderAllowed (elementRect, viewportRect) {
-        if (typeof componentDefinition.prerenderAllowed === 'function') {
-          return componentDefinition.prerenderAllowed(elementRect, viewportRect)
+        if (typeof definition.prerenderAllowed === 'function') {
+          return definition.prerenderAllowed(elementRect, viewportRect)
         }
 
         return false
@@ -33,14 +53,19 @@ Vue.use(function (Vue) {
 
       /** @private */
       _build () {
-        let vueInstance = this.vueInstance = createVueInstance(
+        const propsData = {
+          ...definition.propsData,
+          ...vueCompat.getProps(this.element, propTypes)
+        }
+
+        this.vueInstance = createVueInstance(
           this.element,
           Vue,
-          componentDefinition,
-          props
+          definition,
+          camelizedProps,
+          propsData
         )
-        this.props = props
-        this.vm = vueInstance.$children[0]
+        this.vm = this.vueInstance.$children[0]
       }
 
       /** @override */
@@ -76,30 +101,24 @@ Vue.use(function (Vue) {
 
       /** @override */
       attributeChangedCallback (name, oldValue, value) {
-        if (this.vueInstance) {
-          const nameCamelCase = camelize(name)
-          const type = this.props.types[nameCamelCase]
-          this.vueInstance[nameCamelCase] = convertAttributeValue(value, type)
+        if (!this.vueInstance) {
+          return
         }
+
+        const prop = camelize(name)
+        const propType = propTypes[prop]
+
+        this.vueInstance[prop] = vueCompat.parseAttribute(value, propType)
       }
 
       /** @override */
       static get observedAttributes () {
-        return props.hyphenate
+        return hyphenatedProps
       }
     }
 
-    return registerElement(tag, VueCustomElement)
+    return registerElement(name, VueCustomElement)
   }
-})
-
-/**
- * register vue as custom element v1
- *
- * @param {string} tag custom elment name, mip-*
- * @param {*} component vue component
- * @return {Array<HTMLElement>|undefined}
- */
-export default function registerVueCustomElement (tag, component) {
-  return Vue.customElement(tag, component)
 }
+
+Services.registerService('mip-vue', MIPVue)
