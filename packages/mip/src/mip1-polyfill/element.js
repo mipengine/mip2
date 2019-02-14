@@ -194,7 +194,7 @@ function createBaseElementProto () {
  * @return {Object}
  */
 function createMipElementProto (name) {
-  let proto = Object.create(createBaseElementProto())
+  let proto = createBaseElementProto()
   proto.name = name
   return proto
 }
@@ -231,19 +231,35 @@ function registerElement (name, elementClass, css) {
   let customElementInstances = []
 
   // Override createdCallback to count element instances
-  let mipElementProto = createMipElementProto(name)
-  let createdCallback = mipElementProto.createdCallback
-  mipElementProto.createdCallback = function () {
+  let proto = createMipElementProto(name)
+  let createdCallback = proto.createdCallback
+  proto.createdCallback = function () {
     createdCallback.call(this)
     customElementInstances.push(this)
   }
 
   loadCss(css, name)
   if (window.customElements) {
-    window.customElements.define(name, mipElementProto)
+    window.customElements.define(name, class extends HTMLElement {
+      constructor () {
+        super()
+        Object.keys(proto).forEach(key => {
+          this[key] = proto[key]
+        })
+        this.createdCallback()
+      }
+
+      connectedCallback () {
+        this.attachedCallback()
+      }
+
+      disconnectedCallback () {
+        this.detachedCallback()
+      }
+    })
   } else {
     document.registerElement(name, {
-      prototype: mipElementProto
+      prototype: proto
     })
   }
 
