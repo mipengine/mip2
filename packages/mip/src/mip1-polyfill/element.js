@@ -239,9 +239,13 @@ function registerElement (name, elementClass, css) {
   }
 
   loadCss(css, name)
-  document.registerElement(name, {
-    prototype: mipElementProto
-  })
+  if (window.customElements) {
+    window.customElements.define(name, mipElementProto)
+  } else {
+    document.registerElement(name, {
+      prototype: mipElementProto
+    })
+  }
 
   return customElementInstances
 }
