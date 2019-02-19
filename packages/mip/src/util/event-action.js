@@ -271,22 +271,23 @@ class EventAction {
    */
   handleArguments (arg, event) {
     if (!arg) {
-      return undefined
+      return
     }
     const data = {event}
 
-    let dereferenceEvent = (expr) => {
+    let getEventValue = (expr) => {
       let value = expr.split('.').reduce((value, part) => (part && value) ? value[part] : undefined, data)
       return this.convertToString(value)
     }
 
+    // arg is object-like string, match and replace the value part
     if (/^\s*{.*}\s*$/.test(arg)) {
-      return arg.replace(EVENT_ARG_REG_FOR_OBJECT, ($0, $1, $2, $3, $4) => $1 + dereferenceEvent($2) + $4)
+      return arg.replace(EVENT_ARG_REG_FOR_OBJECT, (matched, colon, value, attr, tail) => colon + getEventValue(value) + tail)
     }
 
     let args = arg.split(',')
     return args.map(item => {
-      return item.trim().replace(EVENT_ARG_REG, $0 => dereferenceEvent($0))
+      return item.trim().replace(EVENT_ARG_REG, matched => getEventValue(matched))
     }).join(',')
   }
 
