@@ -113,13 +113,13 @@ describe('event-action', function () {
         event: {}
       }])
 
-    let event = {one: 1}
-    expect(action.parse('tap: MIP.setData({name: event.one})', 'tap', event))
+    let event = {one: 1, two: 2}
+    expect(action.parse('tap: MIP.setData({num1: event.one, num2: \'event.two\'})', 'tap', event))
       .to.deep.equal([{
         type: 'tap',
         id: 'MIP',
         handler: 'setData',
-        arg: '{name: 1}',
+        arg: '{num1: 1, num2: \'event.two\'}',
         event: event
       }])
   })
@@ -132,22 +132,30 @@ describe('event-action', function () {
       nest: {
         three: 3
       },
+      str: 'string',
       list: [1, 2, 3],
       bool: true
     }
+    expect(action.handleArguments('event', event)).to.deep.equal('event')
+    expect(action.handleArguments('event.', event)).to.deep.equal('event.')
     expect(action.handleArguments('event.one', event)).to.deep.equal('1')
-    expect(action.handleArguments('event.one, test, 1, event.two', event)).to.deep.equal('1, test, 1, 2')
+    expect(action.handleArguments('event.one, test, 1, event.two', event)).to.deep.equal('1,test,1,2')
     expect(action.handleArguments('event.three', event)).to.deep.equal('undefined')
     expect(action.handleArguments('event.nest.three', event)).to.deep.equal('3')
     expect(action.handleArguments('event.nest.four', event)).to.deep.equal('undefined')
     expect(action.handleArguments('event.list', event)).to.deep.equal('[1,2,3]')
     expect(action.handleArguments('event.nest', event)).to.deep.equal('{"three":3}')
     expect(action.handleArguments('event.bool', event)).to.deep.equal('true')
-    expect(action.handleArguments('event', event)).to.deep.equal('event')
-    expect(action.handleArguments('event.', event)).to.deep.equal('event.')
     expect(action.handleArguments('event..one', event)).to.deep.equal('event..one')
-    expect(action.handleArguments('event.one*', event)).to.deep.equal('1*')
-    expect(action.handleArguments('event.two-3', event)).to.deep.equal('2-3')
+    expect(action.handleArguments('event.1a', event)).to.deep.equal('event.1a')
+    expect(action.handleArguments('event.one*', event)).to.deep.equal('event.one*')
+    expect(action.handleArguments('event.two-3', event)).to.deep.equal('event.two-3')
+    expect(action.handleArguments('1 event.two', event)).to.deep.equal('1 event.two')
+    expect(action.handleArguments('{num: event.one}', event)).to.deep.equal('{num: 1}')
+    expect(action.handleArguments('{str: event.str}', event)).to.deep.equal('{str: "string"}')
+    expect(action.handleArguments('{event.one: event.one}', event)).to.deep.equal('{event.one: 1}')
+    expect(action.handleArguments('{ event.one : event.one }', event)).to.deep.equal('{ event.one : 1 }')
+    expect(action.handleArguments('event.one, {num: event.one}, event.one+1', event)).to.deep.equal('1,{num: event.one},event.one+1')
   })
 
   it('#convertToString', () => {
@@ -155,7 +163,7 @@ describe('event-action', function () {
     expect(action.convertToString(1)).to.be.equal('1')
     expect(action.convertToString(undefined)).to.be.equal('undefined')
     expect(action.convertToString(null)).to.be.equal('null')
-    expect(action.convertToString('test')).to.be.equal('test')
+    expect(action.convertToString('test')).to.be.equal('"test"')
     expect(action.convertToString({'a': 1})).to.be.equal('{"a":1}')
     expect(action.convertToString([1, 2, 3])).to.be.equal('[1,2,3]')
     expect(action.convertToString(true)).to.be.equal('true')

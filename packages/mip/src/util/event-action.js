@@ -19,12 +19,13 @@ import dom from './dom/dom'
 const PARSE_REG = /^(\w+):\s*([\w-]+)\.([\w-$]+)(?:\((.+)\))?$/
 
 /**
- * Regular for parsing event argument.
+ * Regular for parsing event arguments.
  * @const
  * @inner
  * @type {RegExp}
  */
-const EVENT_ARG_REG = /event(\.\w+)+/g
+const EVENT_ARG_REG = /^event(\.[a-zA-Z]\w+)+$/g
+const EVENT_ARG_REG_FOR_OBJECT = /(:\s*)(event(\.[a-zA-Z]\w+)+)(\s*[,}])/g
 
 /**
  * Regular for checking elements.
@@ -273,17 +274,28 @@ class EventAction {
       return undefined
     }
     const data = {event}
-    arg = arg.replace(EVENT_ARG_REG, expr => {
-      // dereference the event dot expression, such as 'event.field1'
+
+    let dereferenceEvent = (expr) => {
       let value = expr.split('.').reduce((value, part) => (part && value) ? value[part] : undefined, data)
       return this.convertToString(value)
-    })
-    return arg
+    }
+
+    if (/^\s*{.*}\s*$/.test(arg)) {
+      return arg.replace(EVENT_ARG_REG_FOR_OBJECT, ($0, $1, $2, $3, $4) => $1 + dereferenceEvent($2) + $4)
+    }
+
+    let args = arg.split(',')
+    return args.map(item => {
+      return item.trim().replace(EVENT_ARG_REG, $0 => dereferenceEvent($0))
+    }).join(',')
   }
 
   convertToString (value) {
     if (typeof value === 'object') {
       return JSON.stringify(value)
+    }
+    if (typeof value === 'string') {
+      return `"${value}"`
     }
     return value + ''
   }
