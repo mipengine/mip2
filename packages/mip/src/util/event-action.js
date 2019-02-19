@@ -286,9 +286,7 @@ class EventAction {
     }
 
     let args = arg.split(',')
-    return args.map(item => {
-      return item.trim().replace(EVENT_ARG_REG, matched => getEventValue(matched))
-    }).join(',')
+    return args.map(item => item.trim().replace(EVENT_ARG_REG, getEventValue)).join(',')
   }
 
   convertToString (value) {
