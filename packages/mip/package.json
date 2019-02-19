@@ -60,8 +60,6 @@
     "webpack-merge": "^4.1.2"
   },
   "dependencies": {
-    "document-register-element": "1.13.1",
-    "mip-sandbox": "^1.1.0-alpha-1",
     "autoprefixer": "^8.6.4",
     "babel-core": "^6.26.3",
     "babel-plugin-external-helpers": "^6.22.0",
@@ -74,8 +72,10 @@
     "babel-preset-vue": "^2.0.2",
     "babel-runtime": "^6.26.0",
     "chalk": "^2.4.1",
+    "document-register-element": "1.13.1",
     "he": "^1.1.1",
     "less": "^3.0.4",
+    "mip-sandbox": "^1.1.5",
     "ora": "^2.1.0",
     "postcss-csso": "^3.0.0",
     "rimraf": "^2.6.2",
