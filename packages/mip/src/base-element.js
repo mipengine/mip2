@@ -421,9 +421,15 @@ class BaseElement extends HTMLElement {
     }
     if (inViewport && !this._firstInViewport) {
       this.layoutCallback().then(
-        () => this.customElement.firstLayoutCompleted(),
-        () => this.toggleFallback(true)
-      ).then(onFinally, onFinally)
+        () => {
+          this.customElement.firstLayoutCompleted()
+          onFinally()
+        },
+        () => {
+          this.toggleFallback(true)
+          onFinally()
+        }
+      )
 
       this._firstInViewport = true
       this.customElement.firstInviewCallback()
