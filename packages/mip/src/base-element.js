@@ -88,6 +88,9 @@ class BaseElement extends HTMLElement {
     /** @private {string} */
     this._layout = LAYOUT.NODISPLAY
 
+    /** @private {boolean} */
+    this.everAttached = false
+
     /** @private {?Element|undefined} */
     this.spaceElement = undefined
 
@@ -96,32 +99,10 @@ class BaseElement extends HTMLElement {
 
     this.vueCompat = Services.vueCompat()
 
-    /**
-     * Instantiated the custom element.
-     */
     this.customElement = new CustomElementImpl(this)
 
-    const propTypes = this.vueCompat.getPropTypes(this.name, CustomElementImpl)
-    const props = this.vueCompat.getProps(this, propTypes)
-
-    for (const propName in propTypes) {
-      if (!hasOwnProperty.call(propTypes, propName)) {
-        continue
-      }
-
-      const propType = propTypes[propName]
-
-      if (typeof props[propName] !== 'undefined' || !hasOwnProperty.call(propType, 'default')) {
-        continue
-      }
-
-      const def = propType.default
-
-      props[propName] = typeof def === 'function' ? def() : def
-    }
-
-    this.customElement.propTypes = propTypes
-    this.customElement.props = props
+    this.customElement.propTypes = this.vueCompat.getPropTypes(this.name, CustomElementImpl)
+    this.customElement.props = {}
 
     // Add first-screen element to performance.
     if (this.customElement.hasResources()) {
@@ -130,7 +111,10 @@ class BaseElement extends HTMLElement {
   }
 
   connectedCallback () {
-    // Apply layout for this.
+    if (!this.everAttached) {
+      this.everAttached = true
+      this.customElement.props = this.getProps()
+    }
     this.classList.add('mip-element')
     this._layout = applyLayout(this)
     this.applySizesAndMediaQuery()
@@ -340,6 +324,33 @@ class BaseElement extends HTMLElement {
 
   isBuilt () {
     return this._built
+  }
+
+  /**
+   * @returns {!Object}
+   * @private
+   */
+  getProps () {
+    const propTypes = this.propTypes
+    const props = this.vueCompat.getProps(this, propTypes)
+
+    for (const propName in propTypes) {
+      if (!hasOwnProperty.call(propTypes, propName)) {
+        continue
+      }
+
+      const propType = propTypes[propName]
+
+      if (typeof props[propName] !== 'undefined' || !hasOwnProperty.call(propType, 'default')) {
+        continue
+      }
+
+      const def = propType.default
+
+      props[propName] = typeof def === 'function' ? def() : def
+    }
+
+    return props
   }
 
   _getSpace () {

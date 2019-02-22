@@ -1,7 +1,7 @@
 import Services from './services'
 
 import {hasOwnProperty, jsonParse} from '../util'
-import {camelize, hyphenate} from '../util/string'
+import {hyphenate} from '../util/string'
 import {memoize} from '../util/fn'
 
 export class VueCompat {
@@ -33,6 +33,7 @@ export class VueCompat {
   /**
    * @param {!Object} definition
    * @returns {?Object}
+   * @private
    */
   getVueExtraPropTypes (definition) {
     if (!definition) {
@@ -62,8 +63,10 @@ export class VueCompat {
 
     if (Array.isArray(props)) {
       for (let i = 0; i < props.length; i++) {
-        propTypes[camelize(props[i])] = String
+        propTypes[props[i]] = String
       }
+
+      return propTypes
     }
 
     if (typeof props === 'object') {
@@ -72,7 +75,7 @@ export class VueCompat {
           continue
         }
 
-        propTypes[camelize(name)] = this.getPropType(props[name])
+        propTypes[name] = this.getPropType(props[name])
       }
     }
 
@@ -84,27 +87,27 @@ export class VueCompat {
    * @param {!Object} propType
    */
   parseAttribute (attribute, propType) {
-    if (propType === Boolean) {
-      return attribute !== 'false'
+    if (attribute === null || typeof attribute === 'undefined') {
+      return
     }
 
     if (propType === Number) {
       return parseFloat(attribute, 10)
     }
 
+    if (propType === Boolean) {
+      return attribute !== 'false'
+    }
+
     if (propType === Array || propType === Object) {
       try {
         return jsonParse(attribute)
       } catch (err) {
-        return null
+        return
       }
     }
 
-    if (propType === Date) {
-      return new Date(attribute)
-    }
-
-    if (propType !== Function && typeof propType === 'function') {
+    if (propType !== Date && propType !== Function && typeof propType === 'function') {
       return this.parseAttribute(attribute, propType(attribute))
     }
 
@@ -119,20 +122,14 @@ export class VueCompat {
   getPropsFromAttributes (element, propTypes) {
     const props = {}
 
-    for (const propName in propTypes) {
-      if (!hasOwnProperty.call(propTypes, propName)) {
+    for (const name in propTypes) {
+      if (!hasOwnProperty.call(propTypes, name)) {
         continue
       }
 
-      const attrName = hyphenate(propName)
+      const attribute = element.getAttribute(hyphenate(name))
 
-      if (!element.hasAttribute(attrName)) {
-        continue
-      }
-
-      const attribute = element.getAttribute(attrName)
-
-      props[propName] = this.parseAttribute(attribute, propTypes[propName])
+      props[name] = this.parseAttribute(attribute, propTypes[name])
     }
 
     return props
