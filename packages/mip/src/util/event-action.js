@@ -241,7 +241,7 @@ class EventAction {
       throw new SyntaxError(`Can not match ${pstack[pstack.length - 1]} in statement: 'on=${str}'`)
     }
 
-    let act = str.substring(pos, str.length).trim(' ')
+    let act = str.slice(pos).trim(' ')
     act && actions.push(act)
 
     let result = []
@@ -286,32 +286,32 @@ class EventAction {
 
     let pos = 0
     let result = []
-    let pstack = []
+    let plist = []
     for (let i = 0, slen = str.length; i < slen; i++) {
-      let peek = pstack[pstack.length - 1]
+      let peek = plist[plist.length - 1]
       let char = str[i]
 
       if (open[char] && !isQuote(peek)) {
-        pstack.push(char)
+        plist.push(char)
       } else if (close[char]) {
-        let index = pstack.lastIndexOf(close[char])
+        let index = plist.lastIndexOf(close[char])
         if (index !== -1) {
-          pstack.splice(index, pstack.length - index)
+          plist.splice(index, plist.length - index)
         }
       } else if (isQuote(char) && str[i - 1] !== '\\') {
         if (peek === char) {
-          pstack.pop()
+          plist.pop()
         } else {
-          pstack.push(char)
+          plist.push(char)
         }
-      } else if (char === seperator && !pstack.length) {
-        let part = str.substring(pos, i).trim(' ')
+      } else if (char === seperator && !plist.length) {
+        let part = str.substring(pos, i).trim()
         result.push(part)
         pos = i + 1
       }
     }
 
-    let part = str.substring(pos, str.length).trim(' ')
+    let part = str.slice(pos).trim()
     result.push(part)
     return result
   }
