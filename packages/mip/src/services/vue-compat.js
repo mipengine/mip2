@@ -1,6 +1,6 @@
 import Services from './services'
 
-import {hasOwnProperty, jsonParse} from '../util'
+import {jsonParse} from '../util'
 import {hyphenate} from '../util/string'
 import {memoize} from '../util/fn'
 
@@ -23,7 +23,7 @@ export class VueCompat {
       return prop[0]
     }
 
-    if (prop && typeof prop === 'object' && prop.type) {
+    if (prop && typeof prop === 'object') {
       return this.getPropType(prop.type)
     }
 
@@ -36,10 +36,6 @@ export class VueCompat {
    * @private
    */
   getVueExtraPropTypes (definition) {
-    if (!definition) {
-      return null
-    }
-
     const {extends: extended = {}, mixins = []} = definition
 
     return {
@@ -69,11 +65,11 @@ export class VueCompat {
       return propTypes
     }
 
-    if (typeof props === 'object') {
-      for (const name in props) {
-        if (!hasOwnProperty.call(props, name)) {
-          continue
-        }
+    if (props && typeof props === 'object') {
+      const names = Object.keys(props)
+
+      for (let i = 0; i < names.length; i++) {
+        const name = names[i]
 
         propTypes[name] = this.getPropType(props[name])
       }
@@ -85,6 +81,7 @@ export class VueCompat {
   /**
    * @param {string} attribute
    * @param {!Object} propType
+   * @returns {?Object}
    */
   parseAttribute (attribute, propType) {
     if (attribute === null || typeof attribute === 'undefined') {
@@ -117,16 +114,15 @@ export class VueCompat {
   /**
    * @param {!HTMLElement} element
    * @param {!Object} propTypes
+   * @returns {!Object}
    * @private
    */
   getPropsFromAttributes (element, propTypes) {
     const props = {}
+    const names = Object.keys(propTypes)
 
-    for (const name in propTypes) {
-      if (!hasOwnProperty.call(propTypes, name)) {
-        continue
-      }
-
+    for (let i = 0; i < names.length; i++) {
+      const name = names[i]
       const attribute = element.getAttribute(hyphenate(name))
 
       props[name] = this.parseAttribute(attribute, propTypes[name])

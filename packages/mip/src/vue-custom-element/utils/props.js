@@ -8,7 +8,7 @@
 // document.querySelector('widget-vue1').prop1 = 'new Value' < --set prop
 export function reactiveProps (element, props) {
   // Handle param attributes
-  props.forEach((name, index) => {
+  props.forEach((name) => {
     Object.defineProperty(element, name, {
       get () {
         if (element.customElement && element.customElement.vm) {

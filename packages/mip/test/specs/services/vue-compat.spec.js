@@ -69,6 +69,12 @@ describe('vue-compat', () => {
     }
   }
 
+  class MIPInvalidCustom extends CustomElement {}
+  MIPInvalidCustom.props = {
+    nil: null,
+    invalid: 'foo'
+  }
+
   beforeEach(() => {
     sandbox = sinon.createSandbox()
     window.services['vue-compat'] = null
@@ -119,6 +125,13 @@ describe('vue-compat', () => {
         obj: Object,
         func: Function,
         mixed: Object
+      })
+    })
+
+    it('should resolve invalid prop types as string', () => {
+      expect(vueCompat.getPropTypes('mip-invalid-custom', MIPInvalidCustom)).to.deep.equal({
+        nil: String,
+        invalid: String
       })
     })
 

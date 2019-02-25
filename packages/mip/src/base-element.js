@@ -331,23 +331,21 @@ class BaseElement extends HTMLElement {
    * @private
    */
   getProps () {
-    const propTypes = this.propTypes
+    const propTypes = this.customElement.propTypes
     const props = this.vueCompat.getProps(this, propTypes)
+    const names = Object.keys(propTypes)
 
-    for (const propName in propTypes) {
-      if (!hasOwnProperty.call(propTypes, propName)) {
-        continue
-      }
+    for (let i = 0; i < names.length; i++) {
+      const name = names[i]
+      const propType = propTypes[name]
 
-      const propType = propTypes[propName]
-
-      if (typeof props[propName] !== 'undefined' || !hasOwnProperty.call(propType, 'default')) {
+      if (typeof props[name] !== 'undefined' || !hasOwnProperty.call(propType, 'default')) {
         continue
       }
 
       const def = propType.default
 
-      props[propName] = typeof def === 'function' ? def() : def
+      props[name] = typeof def === 'function' ? def() : def
     }
 
     return props

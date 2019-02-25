@@ -35,7 +35,7 @@ describe('vue custom element', function () {
     sinon.assert.calledTwice(connectedCallback)
   })
 
-  it('lifecycle', function () {
+  it('lifecycle', async () => {
     let name = prefix + 'lifecycle'
 
     let lifecycs = [
@@ -89,11 +89,11 @@ describe('vue custom element', function () {
 
     ele.setAttribute('str', 'fake')
 
-    Vue.nextTick().then(() => {
-      document.body.removeChild(ele)
-      expect(ele.innerHTML).to.be.equal('<div>fakehaha</div>')
-      sinon.assert.callOrder(...lifecycSpies)
-    })
+    await Vue.nextTick()
+
+    document.body.removeChild(ele)
+    expect(ele.innerHTML).to.be.equal('<div>fakehaha</div>')
+    sinon.assert.callOrder(...lifecycSpies)
   })
 
   it('lazy render', function () {
