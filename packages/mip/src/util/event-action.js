@@ -24,8 +24,8 @@ const PARSE_REG = /^(\w+):\s*([\w-]+)\.([\w-$]+)(?:\((.+)\))?$/
  * @inner
  * @type {RegExp}
  */
-const EVENT_ARG_REG = /^event(\.[a-zA-Z]\w+)+$/g
-const EVENT_ARG_REG_FOR_OBJECT = /(:\s*)(event(\.[a-zA-Z]\w+)+)(\s*[,}])/g
+const EVENT_ARG_REG = /^event(\.[a-zA-Z_][\w_]+)+$/g
+// const EVENT_ARG_REG_FOR_OBJECT = /(:\s*)(event(\.[a-zA-Z]\w+)+)(\s*[,}])/g
 
 /**
  * Regular for checking elements.
@@ -248,17 +248,71 @@ class EventAction {
     for (let i = 0, len = actions.length; i < len; i++) {
       let action = actions[i].replace(/\n/g, '')
       let matchedResult = action.match(PARSE_REG)
-      let arg = this.handleArguments(matchedResult[4], event)
       if (matchedResult && matchedResult[1] === type) {
+        let id = matchedResult[2]
+        let handler = matchedResult[3]
+        let arg = matchedResult[4]
+        // 暂不对 MIP.setData 的参数作处理
+        if (id !== 'MIP' && arg && arg.indexOf('event.') !== -1) {
+          arg = this.handleArguments(arg, event)
+        }
         result.push({
-          type: matchedResult[1],
-          id: matchedResult[2],
-          handler: matchedResult[3],
+          type,
+          id,
+          handler,
           arg,
           event
         })
       }
     }
+    return result
+  }
+
+  split (str, seperator) {
+    if (typeof str !== 'string' || typeof seperator !== 'string') {
+      return []
+    }
+    let isQuote = char => char === '"' || char === '\'' || char === '`'
+    const open = {
+      '{': '}',
+      '(': ')',
+      '[': ']'
+    }
+    const close = {
+      '}': '{',
+      ')': '(',
+      ']': '['
+    }
+
+    let pos = 0
+    let result = []
+    let pstack = []
+    for (let i = 0, slen = str.length; i < slen; i++) {
+      let peek = pstack[pstack.length - 1]
+      let char = str[i]
+
+      if (open[char] && !isQuote(peek)) {
+        pstack.push(char)
+      } else if (close[char]) {
+        let index = pstack.lastIndexOf(close[char])
+        if (index !== -1) {
+          pstack.splice(index, pstack.length - index)
+        }
+      } else if (isQuote(char) && str[i - 1] !== '\\') {
+        if (peek === char) {
+          pstack.pop()
+        } else {
+          pstack.push(char)
+        }
+      } else if (char === seperator && !pstack.length) {
+        let part = str.substring(pos, i).trim(' ')
+        result.push(part)
+        pos = i + 1
+      }
+    }
+
+    let part = str.substring(pos, str.length).trim(' ')
+    result.push(part)
     return result
   }
 
@@ -281,11 +335,11 @@ class EventAction {
     }
 
     // arg is object-like string, match and replace the value part
-    if (/^\s*{.*}\s*$/.test(arg)) {
-      return arg.replace(EVENT_ARG_REG_FOR_OBJECT, (matched, colon, value, attr, tail) => colon + getEventValue(value) + tail)
-    }
+    // if (/^\s*{.*}\s*$/.test(arg)) {
+    //   return arg.replace(EVENT_ARG_REG_FOR_OBJECT, (matched, colon, value, attr, tail) => colon + getEventValue(value) + tail)
+    // }
 
-    let args = arg.split(',')
+    let args = this.split(arg, ',')
     return args.map(item => item.trim().replace(EVENT_ARG_REG, getEventValue)).join(',')
   }
 
