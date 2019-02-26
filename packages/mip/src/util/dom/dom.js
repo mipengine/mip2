@@ -164,7 +164,7 @@ function waitForChildCallback (parent, predicate, callback) {
  * @param {function(!HTMLElement):boolean} predicate function.
  * @returns {!Promise<void>}
  */
-function waitForChild (parent, predicate) {
+export function waitForChild (parent, predicate) {
   return new Promise(resolve => waitForChildCallback(parent, predicate, resolve))
 }
 
@@ -174,7 +174,7 @@ function waitForChild (parent, predicate) {
  * @param {!Document} doc document.
  * @returns {!Promise<!HTMLBodyElement>}
  */
-function waitForBody (doc) {
+export function waitForBody (doc) {
   return waitForChild(
     doc.documentElement,
     documentElement => !!documentElement.ownerDocument.body
@@ -187,7 +187,7 @@ function waitForBody (doc) {
  *
  * @param {Function} callback callback
  */
-function waitDocumentReady (callback) {
+export function whenBodyAvailable (callback) {
   return waitForChildCallback(
     document.documentElement,
     documentElement => !!documentElement.ownerDocument.body,
@@ -226,7 +226,6 @@ export default {
   contains,
   create,
   insert,
-  waitForChild,
-  waitForBody,
-  waitDocumentReady
+  whenBodyAvailable,
+  waitDocumentReady: whenBodyAvailable
 }

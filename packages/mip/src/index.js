@@ -30,10 +30,10 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
   errorMonitorInstall()
   const MIP = getRuntime()
 
-  util.dom.waitDocumentReady(() => {
-    // init viewport
-    viewport.init()
+  // init viewport
+  viewport.init()
 
+  util.dom.waitDocumentReady(() => {
     // Initialize sleepWakeModule
     sleepWakeModule.init()
 
