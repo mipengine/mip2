@@ -231,7 +231,7 @@ class EventAction {
       } else if (isColon(peek) && !isSpace(str[i + 1])) {
         pstack.pop()
       } else if (isSpace(char) && !pstack.length) {
-        let act = str.substring(pos, i).trim(' ')
+        let act = str.substring(pos, i).trim()
         act && actions.push(act)
         pos = i
       }
@@ -241,7 +241,7 @@ class EventAction {
       throw new SyntaxError(`Can not match ${pstack[pstack.length - 1]} in statement: 'on=${str}'`)
     }
 
-    let act = str.slice(pos).trim(' ')
+    let act = str.slice(pos).trim()
     act && actions.push(act)
 
     let result = []
