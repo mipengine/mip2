@@ -42,6 +42,12 @@ let recorder = {}
 let performanceEvent = new EventEmitter()
 
 /**
+ * DOMContentLoaded flag
+ * @inner
+ */
+let domLoadedStatus = false
+
+/**
  * Add first-screen element.
  *
  * @param {HTMLElement} element html element
@@ -106,7 +112,7 @@ function tryRecordFirstScreen () {
 /**
  * Lock the fsElements. No longer add fsElements.
  */
-function lockFirstScreen() {
+function lockFirstScreen () {
   // when is prerendering, iframe container display none,
   // all elements are not in viewport.
   if (prerender.isPrerendering) {
@@ -130,10 +136,13 @@ function lockFirstScreen() {
  * Record dom loaded timing.
  */
 function domLoaded () {
-  recordTiming('MIPDomContentLoaded')
-  setTimeout(() => {
-    lockFirstScreen()
-  }, 10)
+  if (!domLoadedStatus) {
+    recordTiming('MIPDomContentLoaded')
+    setTimeout(() => {
+      lockFirstScreen()
+    }, 10)
+    domLoadedStatus = true
+  }
 }
 
 /**
@@ -161,10 +170,11 @@ function start (startTiming) {
     recordTiming('MIPPageShow', showTiming)
   })
 
-  if (document.readyState === 'complete') {
-    domLoaded()
-  } else {
-    document.addEventListener('DOMContentLoaded', domLoaded, false)
+  document.addEventListener('DOMContentLoaded', domLoaded, false)
+  document.onreadystatechange = () => {
+    if (document.readyState === 'complete') {
+      domLoaded()
+    }
   }
 }
 
