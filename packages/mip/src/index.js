@@ -28,7 +28,7 @@ import {OUTER_MESSAGE_PERFORMANCE_UPDATE} from './page/const/index'
 /* istanbul ignore next */
 if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefined') {
   errorMonitorInstall()
-  const MIP = getRuntime(window)
+  const MIP = getRuntime()
 
   // init viewport
   viewport.init()

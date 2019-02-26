@@ -1,7 +1,18 @@
 mip-fixed {
   position: fixed !important;
-  -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
+
+  &[data-slide] {
+    transition: transform .5s;
+    
+    &.mip-fixed-hide-top {
+      transform: translate3d(0, -200%, 0);
+    }
+    
+    &.mip-fixed-hide-bottom {
+      transform: translate3d(0, 200%, 0);
+    }
+  }
 }
 
 mip-fixed[type="top"] {

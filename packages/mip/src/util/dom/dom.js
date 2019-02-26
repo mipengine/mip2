@@ -186,7 +186,6 @@ function waitForBody (doc) {
  * callback is executed.
  *
  * @param {Function} callback callback
- * @deprecated Use {@link Mipdoc#whenBodyAvailable} instead.
  */
 function waitDocumentReady (callback) {
   return waitForChildCallback(

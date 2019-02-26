@@ -2,27 +2,35 @@ import {Deferred} from '../util'
 
 class ServicesFactory {
   /**
+   * @deprecated
    * @param {!Window} win
    * @returns {import('./extensions').Extensions}
    */
   static extensionsFor (win) {
-    return Services.getService(win, 'extensions')
+    return this.extensions()
   }
 
   /**
-   * @param {!Window} win
-   * @returns {import('./mipdoc').Mipdoc}
-   */
-  static mipdocFor (win) {
-    return Services.getService(win, 'mipdoc')
-  }
-
-  /**
+   * @deprecated
    * @param {!Window} win
    * @returns {import('./timer').Timer}
    */
   static timerFor (win) {
-    return Services.getService(win, 'timer')
+    return this.timer()
+  }
+
+  /**
+   * @returns {import('./extensions').Extensions}
+   */
+  static extensions () {
+    return Services.getService('extensions')
+  }
+
+  /**
+   * @returns {import('./timer').Timer}
+   */
+  static timer () {
+    return Services.getService('timer')
   }
 }
 
@@ -125,8 +133,8 @@ class ServicesInternal {
    * It means the service has not been registered on `holder`.
    * Registers a service on `holder` with a pending promise and returns it.
    *
-   * @param {!Window} holder
-   * @param {string} id
+   * @param {!Window} holder currently represents `Window`.
+   * @param {string} id of the service.
    * @returns {!Object}
    */
   static registerPendingService (holder, id) {
@@ -148,9 +156,9 @@ class ServicesInternal {
   /**
    * Returns instance of registered service from `holder` by `id`.
    *
-   * @template T
-   * @param {!Window} holder
-   * @param {string} id
+   * @template T typeof service instance.
+   * @param {!Window} holder currently represents `Window`.
+   * @param {string} id of the service.
    * @returns {T}
    */
   static getService (holder, id) {
@@ -162,9 +170,9 @@ class ServicesInternal {
   /**
    * Similar to `getService`, but returns `null` if the service has not been registered.
    *
-   * @template T
-   * @param {!Window} holder
-   * @param {string} id
+   * @template T typeof service instance.
+   * @param {!Window} holder currently represents `Window`.
+   * @param {string} id of the service.
    * @returns {?T}
    */
   static getServiceOrNull (holder, id) {
@@ -180,9 +188,9 @@ class ServicesInternal {
   /**
    * Similar to `getServicePromiseInternal`, but returns `null` if the service has not been registered.
    *
-   * @template T
-   * @param {!Window} holder
-   * @param {string} id
+   * @template T typeof service instance.
+   * @param {!Window} holder currently represents `Window`.
+   * @param {string} id of the service.
    * @returns {?Promise<T>}
    */
   static getServicePromiseOrNull (holder, id) {
@@ -203,9 +211,9 @@ class ServicesInternal {
    * Returns a promise for a service for the given `id` and `holder`.
    * The promise resolves when the implementation loaded.
    *
-   * @template T
-   * @param {!Window} holder
-   * @param {string} id
+   * @template T typeof service instance.
+   * @param {!Window} holder currently represents `Window`.
+   * @param {string} id of the service.
    * @returns {Promise<T>}
    */
   static getServicePromise (holder, id) {
@@ -223,64 +231,59 @@ class ServicesInternal {
 
 class Services extends ServicesFactory {
   /**
-   * Registers a service on `holder` with given `id` and implementation.
+   * Registers a service with given `id` and implementation.
    *
-   * @param {!Window} holder currently represents `Window`.
    * @param {string} id of the service.
    * @param {!Function} Constructor of the service.
    * @param {?boolean} instantiate service immediately.
    */
-  static registerService (holder, id, Constructor, instantiate) {
-    ServicesInternal.registerService(holder, id, holder, Constructor, instantiate)
+  static registerService (id, Constructor, instantiate) {
+    ServicesInternal.registerService(window, id, window, Constructor, instantiate)
   }
 
   /**
-   * Returns a service for the given `id` and `holder`.
+   * Returns a service for the given `id`.
    *
    * @template T typeof service instance.
-   * @param {!Window} holder currently represents `Window`.
    * @param {string} id of the service.
    * @returns {T}
    */
-  static getService (holder, id) {
-    return ServicesInternal.getService(holder, id)
+  static getService (id) {
+    return ServicesInternal.getService(window, id)
   }
 
   /**
    * Similar to `getService`, but returns `null` if the service has not been registered.
    *
    * @template T typeof service instance.
-   * @param {!Window} holder currently represents `Window`.
    * @param {string} id of the service.
    * @returns {?T}
    */
-  static getServiceOrNull (holder, id) {
-    return ServicesInternal.getServiceOrNull(holder, id)
+  static getServiceOrNull (id) {
+    return ServicesInternal.getServiceOrNull(window, id)
   }
 
   /**
    * Similar to `getServicePromise`, but returns `null` if the service has not been registered.
    *
    * @template T typeof service instance.
-   * @param {!Window} holder currently represents `Window`.
    * @param {string} id of the service.
    * @returns {?Promise<T>}
    */
-  static getServicePromiseOrNull (holder, id) {
-    return ServicesInternal.getServicePromiseOrNull(holder, id)
+  static getServicePromiseOrNull (id) {
+    return ServicesInternal.getServicePromiseOrNull(window, id)
   }
 
   /**
-   * Returns a promise for a service for the given `id` and `holder`.
+   * Returns a promise for a service for the given `id`.
    * The promise resolves when the implementation loaded.
    *
    * @template T typeof service instance.
-   * @param {!Window} holder currently represents `Window`.
    * @param {string} id of the service.
    * @returns {Promise<T>}
    */
-  static getServicePromise (holder, id) {
-    return ServicesInternal.getServicePromise(holder, id)
+  static getServicePromise (id) {
+    return ServicesInternal.getServicePromise(window, id)
   }
 }
 

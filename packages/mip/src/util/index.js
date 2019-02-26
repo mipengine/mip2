@@ -21,6 +21,7 @@ import customStorage from './custom-storage'
 import jsonParse from './json-parse'
 import templates from './templates'
 import Deferred from './deferred'
+import log from './log'
 
 /**
  * Exchange a url to cache url.
@@ -128,7 +129,8 @@ export {
   dom,
   event,
   templates,
-  Deferred
+  Deferred,
+  log
 }
 
 export default {
@@ -149,5 +151,6 @@ export default {
   naboo,
   jsonParse,
   templates,
-  Deferred
+  Deferred,
+  log
 }

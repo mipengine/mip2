@@ -7,9 +7,7 @@
 import util from '../util/index'
 import viewer from '../viewer'
 import CustomElement from '../custom-element'
-// import {OUTER_MESSAGE_CHANGE_STATE} from '../page/const/index'
-
-let windowInIframe = viewer.isIframed
+import {CUSTOM_EVENT_SHOW_PAGE, CUSTOM_EVENT_HIDE_PAGE} from '../page/const/index'
 
 let videoAttributes = [
   'ads',
@@ -50,59 +48,33 @@ function getAttributeSet (attributes) {
 class MipVideo extends CustomElement {
   layoutCallback () {
     this.attributes = getAttributeSet(this.element.attributes)
-    this.sourceDoms = this.element.querySelectorAll('source')
-    this.src = this.attributes.src
+    this.sourceDoms = [...this.element.querySelectorAll('source')]
 
-    // if window is https
-    let windowProHttps = !!window.location.protocol.match(/^https:/)
-    // if video source is https
-    let sourceIsHttps = true
-    if (!this.sourceDoms.length) {
-      sourceIsHttps = false
-    }
-    Array.prototype.slice.apply(this.sourceDoms).forEach(function (node) {
-      if (!node.src.match(/^https:|^\/\//)) {
-        sourceIsHttps = false
-      }
+    let videoElement = this.renderVideo()
+
+    window.addEventListener(CUSTOM_EVENT_SHOW_PAGE, () => {
+      videoElement.parentElement.removeChild(videoElement)
+      videoElement = this.renderVideo()
+      this.applyFillContent(videoElement, true)
     })
-    let videoProHttps = (this.src && this.src.match(/^https:|^\/\//)) ||
-                            (this.sourceDoms && sourceIsHttps)
-
-    // page ishttps         + video is https    = renderInView
-    // page ishttps(in iframe) + video is http    = renderPlayElsewhere
-    // page ishttps(else)   + video is http     = renderInView（not mip）
-    // page ishttp          + random video      = renderInView
-    // page not iframe || video src is https ||  video http + page http
-    /* istanbul ignore else */
-    if (!windowInIframe || videoProHttps ||
-    /* istanbul ignore next */ (windowInIframe && !videoProHttps && !windowProHttps)
-    ) {
-      this.videoElement = this.renderInView()
-    } else {
-      // 再细分为 iframe 外层页面是否为百度搜索结果页，如果是就 renderPlayElsewhere，否则就 renderError
-      // 考虑安全性，renderPlayElsewhere 可以在其他地方来打开视频，而renderError 则是直接显示X，不建议播放
-      if (!window.MIP.standalone) {
-        this.videoElement = this.renderPlayElsewhere()
-      } else {
-        this.videoElement = this.renderError()
-      }
-    }
-
+    window.addEventListener(CUSTOM_EVENT_HIDE_PAGE, () => {
+      videoElement.pause && videoElement.pause()
+    })
     this.addEventAction('seekTo', (e, currentTime) => {
-      this.videoElement.currentTime = currentTime
+      videoElement.currentTime = currentTime
     })
     this.addEventAction('play', () => {
       // renderPlayElsewhere 的 videoElement 是 div，没有 play
       /* istanbul ignore next */
-      this.videoElement.play && this.videoElement.play()
+      videoElement.play && videoElement.play()
     })
     this.addEventAction('pause', () => {
       // renderPlayElsewhere 的 videoElement 是 div，没有 pause
       /* istanbul ignore next */
-      this.videoElement.pause && this.videoElement.pause()
+      videoElement.pause && videoElement.pause()
     })
 
-    this.applyFillContent(this.videoElement, true)
+    this.applyFillContent(videoElement, true)
     return Promise.resolve()
   }
 
@@ -114,7 +86,7 @@ class MipVideo extends CustomElement {
         videoEl.setAttribute(k, this.attributes[k])
       }
     }
-    let currentTime = this.attributes['currenttime']
+    let currentTime = this.attributes.currenttime
     videoEl.setAttribute('playsinline', 'playsinline')
     // 兼容qq浏览器
     videoEl.setAttribute('x5-playsinline', 'x5-playsinline')
@@ -169,12 +141,7 @@ class MipVideo extends CustomElement {
     videoEl.addEventListener('click', sendVideoMessage, false)
 
     // make sourceList, send to outer iframe
-    let sourceList = []
-    Array.prototype.slice.apply(this.sourceDoms).forEach(function (node) {
-      let obj = {}
-      obj[node.type] = node.src
-      sourceList.push(obj)
-    })
+    let sourceList = this.sourceDoms.map(({type, src}) => ({[type]: src}))
 
     if (!sourceList.length) {
       urlSrc = videoEl.dataset.videoSrc
@@ -184,7 +151,7 @@ class MipVideo extends CustomElement {
 
     function sendVideoMessage () {
       /* istanbul ignore if */
-      if (windowInIframe) {
+      if (viewer.isIframed) {
         // mip_video_jump is written outside iframe
         // TODO 改成 OUTER_MESSAGE_VIDEO_JUMP
         viewer.sendMessage('mip-video-jump', {
@@ -195,6 +162,30 @@ class MipVideo extends CustomElement {
     }
     this.element.appendChild(videoEl)
     return videoEl
+  }
+
+  renderVideo () {
+    const src = this.attributes.src
+    const sources = this.sourceDoms
+    const isHttps = src => /^https:|^\/\//.test(src)
+
+    const isPageHttps = isHttps(window.location.protocol)
+    const isSourcesHttps = sources.length && sources.every(node => isHttps(node.src))
+    const isVideoHttps = isHttps(src) || isSourcesHttps
+    // page ishttps         + video is https    = renderInView
+    // page ishttps(in iframe) + video is http    = renderPlayElsewhere
+    // page ishttps(else)   + video is http     = renderInView（not mip）
+    // page ishttp          + random video      = renderInView
+    /* istanbul ignore else */
+    if (!(viewer.isIframed && !isVideoHttps && isPageHttps)) {
+      return this.renderInView()
+    }
+    // 再细分为 iframe 外层页面是否为百度搜索结果页，如果是就 renderPlayElsewhere，否则就 renderError
+    // 考虑安全性，renderPlayElsewhere 可以在其他地方来打开视频，而renderError 则是直接显示X，不建议播放
+    if (window.MIP.standalone) {
+      return this.renderError()
+    }
+    return this.renderPlayElsewhere()
   }
 }
 

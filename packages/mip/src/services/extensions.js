@@ -9,22 +9,7 @@ const {listen} = event
 const UNKNOWN_EXTENSION_ID = 'unknown'
 
 export class Extensions {
-  /**
-   * @param {!Window} win
-   */
-  constructor (win) {
-    /**
-     * @private
-     * @const
-     */
-    this.win = win
-
-    /**
-     * @private
-     * @const
-     */
-    this.doc = win.document
-
+  constructor () {
     /**
      * @type {!Object}
      * @private
@@ -41,13 +26,7 @@ export class Extensions {
      * @private
      * @const
      */
-    this.mipdoc = Services.mipdocFor(win)
-
-    /**
-     * @private
-     * @const
-     */
-    this.timer = Services.timerFor(win)
+    this.timer = Services.timer()
 
     /**
      * Binds methods exposed to `MIP`.
@@ -241,7 +220,7 @@ export class Extensions {
    * @param {!Object} extension
    */
   installExtension (extension) {
-    this.registerExtension(extension.name, extension.func, this.win.MIP)
+    this.registerExtension(extension.name, extension.func, window.MIP)
   }
 
   /**
@@ -336,7 +315,7 @@ export class Extensions {
 
     holder.extension.services[name] = {implementation}
 
-    Services.registerService(this.win, name, implementation, true)
+    Services.registerService(name, implementation, true)
   }
 
   /**
@@ -351,9 +330,6 @@ export class Extensions {
   }
 }
 
-/**
- * @param {!Window} win
- */
-export function installExtensionsService (win) {
-  Services.registerService(win, 'extensions', Extensions)
+export function installExtensionsService () {
+  Services.registerService('extensions', Extensions)
 }

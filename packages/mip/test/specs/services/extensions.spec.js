@@ -1,5 +1,4 @@
 import Services, {
-  installMipdocService,
   installTimerService,
   installExtensionsService,
   Extensions
@@ -46,10 +45,9 @@ describe('extensions', () => {
   beforeEach(() => {
     sandbox = sinon.createSandbox()
     window.services = {}
-    installMipdocService(window)
-    installTimerService(window)
-    installExtensionsService(window)
-    timer = Services.timerFor(window)
+    installTimerService()
+    installExtensionsService()
+    timer = Services.timer()
     extensions = Services.extensionsFor(window)
   })
 
@@ -565,7 +563,7 @@ describe('extensions', () => {
 
     expect(service).to.exist
     expect(service.implementation).to.equal(implementation)
-    expect(Services.getService(window, 'mip-service')).instanceOf(implementation)
+    expect(Services.getService('mip-service')).instanceOf(implementation)
   })
 
   it('should register template in registration', () => {
