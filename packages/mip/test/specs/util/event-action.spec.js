@@ -15,11 +15,11 @@ let mockElement = {
   tagName: 'mip-test'
 }
 
-describe('event-action', function () {
-  it('white list', function () {
+describe('event-action', () => {
+  it('white list', () => {
     let MIP = window.MIP = window.MIP || {}
-    MIP.setData = function () {}
-    MIP.$set = function () {}
+    MIP.setData = () => {}
+    MIP.$set = () => {}
     let action = new EventAction({
       getTarget () {
         return mockElement
@@ -39,7 +39,7 @@ describe('event-action', function () {
     expect(mockElement.arg).to.undefined
   })
 
-  it('special target and handler', function () {
+  it('special target and handler', () => {
     let setData = sinon.spy(MIP, 'setData')
     let $set = sinon.spy(MIP, '$set')
     let ele = document.createElement('div')
@@ -59,7 +59,7 @@ describe('event-action', function () {
     sinon.assert.calledWith($set, expectedData)
   })
 
-  it('should be work without Proxy', function () {
+  it('should be work without Proxy', () => {
     let OriginalProxy = window.Proxy
     window.Proxy = undefined
     let setData = sinon.spy(MIP, 'setData')
@@ -82,7 +82,7 @@ describe('event-action', function () {
     window.Proxy = OriginalProxy
   })
 
-  it('#getTarget', function () {
+  it('#getTarget', () => {
     let ele = document.createElement('div')
     ele.setAttribute('on', 'tap:testid.open')
     let action = new EventAction()
@@ -93,7 +93,7 @@ describe('event-action', function () {
     sinon.assert.calledOnce(checkTarget)
   })
 
-  it('#parse', function () {
+  it('#parse', () => {
     let action = new EventAction()
     expect(action.parse('click:MIP.setData({name: "fakeclick"}) tap: MIP.setData({name: "faketap"})', 'tap', {}))
       .to.deep.equal([{
@@ -112,9 +112,35 @@ describe('event-action', function () {
         arg: '{name: "faketap ()\\\'"}',
         event: {}
       }])
+
+    let event = {one: 1, two: 2}
+    expect(action.parse('tap: MIP.setData({num1: event.one, num2: \'event.two\'})', 'tap', event))
+      .to.deep.equal([{
+        type: 'tap',
+        id: 'MIP',
+        handler: 'setData',
+        arg: '{num1: event.one, num2: \'event.two\'}',
+        event: event
+      }])
+    expect(action.parse('tap: test.show(event.one, "event.two")', 'tap', event))
+      .to.deep.equal([{
+        type: 'tap',
+        id: 'test',
+        handler: 'show',
+        arg: '1,"event.two"',
+        event: event
+      }])
+    expect(action.parse('tap: test.show(20, some text)', 'tap', event))
+      .to.deep.equal([{
+        type: 'tap',
+        id: 'test',
+        handler: 'show',
+        arg: '20, some text',
+        event: event
+      }])
   })
 
-  it('error handler', function () {
+  it('error handler', () => {
     let ele = document.createElement('div')
     ele.setAttribute('on', 'click:MIP.anotherMethod({a:1}) ')
     let action = new EventAction({
@@ -126,7 +152,7 @@ describe('event-action', function () {
       .to.throw(`Can not find handler "anotherMethod" from MIP.`)
   })
 
-  it('normal', function (done) {
+  it('normal', done => {
     let action = new EventAction({
       getTarget () {
         return mockElement
@@ -144,15 +170,87 @@ describe('event-action', function () {
     })
   })
 
-  it('error check', function () {
+  it('error check', () => {
     let action = new EventAction()
     expect(() => action.parse('scroll:id.abc(123', 'tab')).to.throw(SyntaxError)
     expect(action.parse(123)).to.eql([])
   })
 
-  it('emtpy target', function () {
+  it('emtpy target', () => {
     let action = new EventAction()
     expect(action.execute('tap', null, {})).to.be.undefined
+  })
+})
+
+describe('split', () => {
+  let action = new EventAction()
+  it('should split the string by the seperator outside the paired mark', () => {
+    expect(action.split('a, "b, c", \'d, e\', `f, g`, (h, i), [j, k], {l, m}', ',')).to.deep.equal(['a', '"b, c"', '\'d, e\'', '`f, g`', '(h, i)', '[j, k]', '{l, m}'])
+    expect(action.split('a, "b, c, {e, f}"', ',')).to.deep.equal(['a', '"b, c, {e, f}"'])
+    expect(action.split('a, {b, [c, e)},', ',')).to.deep.equal(['a', '{b, [c, e)}', ''])
+  })
+})
+
+describe('handleArguments', () => {
+  let action = new EventAction()
+  let event = {
+    one: 1,
+    two: 2,
+    nest: {
+      three: 3
+    },
+    str: 'string',
+    list: [1, 2, 3],
+    bool: true
+  }
+  it('should get event value', () => {
+    expect(action.handleArguments('event.one', event)).to.equal('1')
+    expect(action.handleArguments(' event.one ', event)).to.equal('1')
+    expect(action.handleArguments('event.three', event)).to.equal('undefined')
+    expect(action.handleArguments('event.nest.three', event)).to.equal('3')
+    expect(action.handleArguments('event.nest.four', event)).to.equal('undefined')
+    expect(action.handleArguments('event.nest', event)).to.equal('{"three":3}')
+    expect(action.handleArguments('event.str', event)).to.equal('"string"')
+    expect(action.handleArguments('event.list', event)).to.equal('[1,2,3]')
+    expect(action.handleArguments('event.bool', event)).to.equal('true')
+  })
+
+  it('should not change if the arg is not exactly matched', () => {
+    expect(action.handleArguments('event', event)).to.equal('event')
+    expect(action.handleArguments('event.', event)).to.equal('event.')
+    expect(action.handleArguments('event..one', event)).to.equal('event..one')
+    expect(action.handleArguments('event.one*', event)).to.equal('event.one*')
+    expect(action.handleArguments('event.two-3', event)).to.equal('event.two-3')
+    expect(action.handleArguments('event.1a', event)).to.equal('event.1a')
+    expect(action.handleArguments('"event.one"', event)).to.equal('"event.one"')
+    expect(action.handleArguments('\'event.one\'', event)).to.equal('\'event.one\'')
+    expect(action.handleArguments('`event.one`', event)).to.equal('`event.one`')
+    expect(action.handleArguments('[event.one]', event)).to.equal('[event.one]')
+    expect(action.handleArguments('(event.one)', event)).to.equal('(event.one)')
+    expect(action.handleArguments('1 event.two', event)).to.equal('1 event.two')
+    expect(action.handleArguments('{num: event.one}', event)).to.equal('{num: event.one}')
+    expect(action.handleArguments('{ event.one : event.one }', event)).to.equal('{ event.one : event.one }')
+  })
+
+  it('should replace the right part of args if having comma', () => {
+    expect(action.handleArguments('event.one, test, 1, event.two', event)).to.equal('1,test,1,2')
+    expect(action.handleArguments('"hello, event.one"', event)).to.equal('"hello, event.one"')
+    expect(action.handleArguments('[1, event.two, event.bool], event.one', event)).to.equal('[1, event.two, event.bool],1')
+    expect(action.handleArguments('{num: event.one, str: event.str}', event)).to.equal('{num: event.one, str: event.str}')
+    expect(action.handleArguments('event.one, {num1: event.one}, event.one+1', event)).to.equal('1,{num1: event.one},event.one+1')
+  })
+})
+
+describe('convertToString', () => {
+  let action = new EventAction()
+  it('should convert to string', () => {
+    expect(action.convertToString(1)).to.be.equal('1')
+    expect(action.convertToString(undefined)).to.be.equal('undefined')
+    expect(action.convertToString(null)).to.be.equal('null')
+    expect(action.convertToString('test')).to.be.equal('"test"')
+    expect(action.convertToString({'a': 1})).to.be.equal('{"a":1}')
+    expect(action.convertToString([1, 2, 3])).to.be.equal('[1,2,3]')
+    expect(action.convertToString(true)).to.be.equal('true')
   })
 })
 
