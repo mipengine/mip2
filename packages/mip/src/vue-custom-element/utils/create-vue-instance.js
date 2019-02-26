@@ -10,7 +10,7 @@ import viewer from '../../viewer'
 /**
  * 获取 element 的 slot content，并将 slot content element 从父元素中移除
  * @param {HTMLElement} element slot content 的父元素
- * @param {[Node]>}  Node 数组
+ * @param {Node[]}  Node 数组
  */
 function getNodeSlots (element) {
   let nodeSlots = [...element.childNodes]

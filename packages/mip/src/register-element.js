@@ -25,7 +25,7 @@ function loadCss (css, name) {
  * @param {string} name Name of a MIPElement.
  * @param {Class} elementClass element class
  * @param {string} css The csstext of the MIPElement.
- * @return {Array<HTMLElement>|undefined}
+ * @return {HTMLElement[]}
  */
 function registerElement (name, elementClass, css) {
   if (customElementsStore.get(name)) {

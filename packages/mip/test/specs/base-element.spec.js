@@ -25,8 +25,7 @@ describe('base-element', () => {
 
   it('should call customElement lifecycles in a specific order', function () {
     let name = prefix + 'custom-element'
-    let lifecycs = [
-      // 'constuctor'
+    let lifecycles = [
       'attributeChangedCallback',
       'connectedCallback',
       'build',
@@ -38,7 +37,7 @@ describe('base-element', () => {
     registerElement(name, MIPExample)
 
     let ele = document.createElement(name)
-    let lifecycSpies = lifecycs.map(cbName => sinon.spy(ele.customElement, cbName))
+    let lifecycleSpies = lifecycles.map(cbName => sinon.spy(ele.customElement, cbName))
 
     ele.setAttribute('name', 'fake')
 
@@ -46,8 +45,8 @@ describe('base-element', () => {
     ele.viewportCallback(true)
     document.body.removeChild(ele)
 
-    lifecycSpies.forEach(spy => spy.restore())
-    sinon.assert.callOrder(...lifecycSpies)
+    lifecycleSpies.forEach(spy => spy.restore())
+    sinon.assert.callOrder(...lifecycleSpies)
   })
 
   it('should contain mip-element class name', function () {

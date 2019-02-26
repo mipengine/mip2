@@ -28,6 +28,7 @@ class MIPVue {
    *
    * @param {string} name of custom element.
    * @param {!Object} definition of component.
+   * @returns {HTMLElement[]}
    */
   registerElement (name, definition) {
     const vueCompat = this.vueCompat
