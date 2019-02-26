@@ -1,13 +1,110 @@
 import CustomElement from 'src/custom-element'
+import performance from 'src/performance'
 import registerElement from 'src/register-element'
 
 describe('base-element', () => {
+  /**
+   * @type {sinon.SinonSandbox}
+   */
+  let sandbox
+
   const prefix = 'mip-test-base-element'
   class MIPExample extends CustomElement {
     static get observedAttributes () {
       return ['name']
     }
   }
+
+  beforeEach(() => {
+    sandbox = sinon.createSandbox()
+  })
+
+  afterEach(() => {
+    sandbox.restore()
+  })
+
+  it('should call customElement lifecycles in a specific order', function () {
+    let name = prefix + 'custom-element'
+    let lifecycs = [
+      // 'constuctor'
+      'attributeChangedCallback',
+      'connectedCallback',
+      'build',
+      'viewportCallback',
+      'firstInviewCallback',
+      'disconnectedCallback'
+    ]
+
+    registerElement(name, MIPExample)
+
+    let ele = document.createElement(name)
+    let lifecycSpies = lifecycs.map(cbName => sinon.spy(ele.customElement, cbName))
+
+    ele.setAttribute('name', 'fake')
+
+    document.body.appendChild(ele)
+    ele.viewportCallback(true)
+    document.body.removeChild(ele)
+
+    lifecycSpies.forEach(spy => spy.restore())
+    sinon.assert.callOrder(...lifecycSpies)
+  })
+
+  it('should contain mip-element class name', function () {
+    let name = prefix + 'add-class'
+    registerElement(name, MIPExample)
+
+    let ele = document.createElement(name)
+
+    document.body.appendChild(ele)
+    document.body.removeChild(ele)
+
+    expect(ele.classList.contains('mip-element')).to.be.true
+  })
+
+  it('should warn if lifecycle build throws an error', function (done) {
+    let name = prefix + '-build-error'
+    let warn = sinon.stub(console, 'warn')
+
+    registerElement(name, class extends CustomElement {
+      build () {
+        throw new Error('make a build error')
+      }
+    })
+
+    let ele = document.createElement(name)
+    expect(ele.customElement.build).to.throw('build error')
+
+    document.body.appendChild(ele)
+    document.body.removeChild(ele)
+
+    setTimeout(() => {
+      warn.restore()
+      sinon.assert.calledOnce(warn)
+      delete MIPExample.prototype.build
+      done()
+    }, 1)
+  })
+
+  it('should add element to performance if it has resource', function () {
+    let name = prefix + '-performance'
+
+    let addFsElement = sinon.spy(performance, 'addFsElement')
+
+    registerElement(name, class extends CustomElement {
+      hasResources () {
+        return true
+      }
+    })
+
+    let ele = document.createElement(name)
+    document.body.appendChild(ele)
+    document.body.removeChild(ele)
+
+    addFsElement.restore()
+
+    sinon.assert.calledOnce(addFsElement)
+  })
 
   describe('placeholder', () => {
     const name = prefix + 'placeholder'
@@ -247,10 +344,122 @@ describe('base-element', () => {
       ele.setAttribute('width', '1px')
       ele.setAttribute('height', '1px')
       ele.setAttribute('heights', `(min-width: ${ww + 1}px) 50vw, 100vw`)
-      console.log('ddd')
       document.body.appendChild(ele)
 
       expect(ele.querySelector('mip-i-space').style.paddingTop).to.equal('100vw')
+    })
+  })
+
+  describe('props', () => {
+    const name = 'mip-responsive-example'
+
+    class MIPResponsiveExample extends CustomElement {
+      static get observedAttributes () {
+        return ['num', 'obj']
+      }
+    }
+
+    const defaultObj = () => ({foo: 'bar'})
+    const defaultFooItems = () => ['foo', 'bar']
+
+    MIPResponsiveExample.props = {
+      num: {
+        type: Number,
+        default: 1024
+      },
+      bool: Boolean,
+      obj: {
+        type: Object,
+        default: defaultObj
+      },
+      fooItems: {
+        type: Array,
+        default: defaultFooItems
+      }
+    }
+
+    registerElement(name, MIPResponsiveExample)
+
+    /** @type {import('src/base-element').default} */
+    let element
+
+    /** @type {?HTMLScriptElement} */
+    let script
+
+    beforeEach(() => {
+      element = document.createElement(name)
+      element.customElement.attributeChangedCallback = sinon.spy()
+      script = document.createElement('script')
+      script.type = 'application/json'
+    })
+
+    afterEach(() => {
+      if (element.parentElement) {
+        element.parentElement.removeChild(element)
+      }
+    })
+
+    it('should have props metadata and props', () => {
+      expect(element.propTypes).to.deep.equal({
+        num: Number,
+        bool: Boolean,
+        obj: Object,
+        fooItems: Array
+      })
+      expect(element.defaultValues).to.deep.equal({
+        num: 1024,
+        obj: defaultObj,
+        fooItems: defaultFooItems
+      })
+      expect(element.customElement.props).to.deep.equal({})
+    })
+
+    it('should resolve default values of props', () => {
+      document.body.appendChild(element)
+      expect(element.customElement.props).to.deep.equal({
+        num: 1024,
+        bool: undefined,
+        obj: {foo: 'bar'},
+        fooItems: ['foo', 'bar']
+      })
+    })
+
+    it('should parse all attributes when the element is attached', () => {
+      element.getProps = sinon.spy(element.getProps)
+      script.innerHTML = '{"bool": true}'
+      element.appendChild(script)
+      document.body.appendChild(element)
+      expect(element.getProps).to.be.calledOnce
+      expect(element.customElement.props).to.deep.equal({
+        num: 1024,
+        bool: true,
+        obj: {foo: 'bar'},
+        fooItems: ['foo', 'bar']
+      })
+      document.body.removeChild(element)
+      document.body.appendChild(element)
+      expect(element.getProps).to.be.calledTwice
+      expect(element.customElement.attributeChangedCallback).to.not.be.called
+    })
+
+    it('should synchronize changed attributes to props', () => {
+      element.setAttribute('foo-items', '["foo", "baz"]')
+      document.body.appendChild(element)
+      expect(element.customElement.props.fooItems).to.deep.equal(['foo', 'baz'])
+      element.setAttribute('num', '2048')
+      expect(element.customElement.props.num).to.equal(2048)
+      element.setAttribute('obj', '{"foo": "baz"}')
+      expect(element.customElement.props.obj).to.deep.equal({foo: 'baz'})
+      expect(element.customElement.attributeChangedCallback).to.be.calledTwice
+    })
+
+    it('should not synchronize attributes which are not observed', () => {
+      element.setAttribute('bool', 'true')
+      document.body.appendChild(element)
+      expect(element.customElement.props.bool).to.be.true
+      element.setAttribute('bool', 'false')
+      expect(element.customElement.props.bool).to.be.true
+      expect(element.customElement.attributeChangedCallback).to.not.be.called
     })
   })
 })

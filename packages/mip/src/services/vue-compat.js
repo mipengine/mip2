@@ -1,12 +1,12 @@
 import Services from './services'
 
-import {jsonParse} from '../util'
+import {hasOwnProperty, jsonParse} from '../util'
 import {hyphenate} from '../util/string'
 import {memoize} from '../util/fn'
 
 export class VueCompat {
   constructor () {
-    this.getPropTypes = memoize(this.getPropTypes).bind(this)
+    this.getPropsMetadata = memoize(this.getPropsMetadata).bind(this)
   }
 
   /**
@@ -46,36 +46,69 @@ export class VueCompat {
 
   /**
    * @param {string} name
-   * @param {!Object} definition
+   * @param {?Object} definition
    * @returns {!Object}
    */
-  getPropTypes (name, definition) {
-    if (!name || !definition) {
-      return {}
+  getPropsMetadata (name, definition) {
+    const metadata = {
+      propTypes: {},
+      defaultValues: {}
     }
 
-    const propTypes = typeof definition === 'object' ? this.getVueExtraPropTypes(definition) : {}
+    if (!name || !definition) {
+      return metadata
+    }
+
+    if (typeof definition === 'object') {
+      metadata.propTypes = this.getVueExtraPropTypes(definition)
+    }
+
     const {props} = definition
 
     if (Array.isArray(props)) {
       for (let i = 0; i < props.length; i++) {
-        propTypes[props[i]] = String
+        metadata.propTypes[props[i]] = String
       }
 
-      return propTypes
+      return metadata
     }
 
-    if (props && typeof props === 'object') {
-      const names = Object.keys(props)
+    if (!props || typeof props !== 'object') {
+      return metadata
+    }
 
-      for (let i = 0; i < names.length; i++) {
-        const name = names[i]
+    const names = Object.keys(props)
 
-        propTypes[name] = this.getPropType(props[name])
+    for (let i = 0; i < names.length; i++) {
+      const name = names[i]
+      const prop = props[name]
+
+      metadata.propTypes[name] = this.getPropType(prop)
+
+      if (prop && typeof prop === 'object' && hasOwnProperty.call(prop, 'default')) {
+        metadata.defaultValues[name] = prop.default
       }
     }
 
-    return propTypes
+    return metadata
+  }
+
+  /**
+   * @param {string} name
+   * @param {?Object} definition
+   * @returns {!Object}
+   */
+  getPropTypes (name, definition) {
+    return this.getPropsMetadata(name, definition).propTypes
+  }
+
+  /**
+   * @param {string} name
+   * @param {?Object} definition
+   * @returns {!Object}
+   */
+  getDefaultValues (name, definition) {
+    return this.getPropsMetadata(name, definition).defaultValues
   }
 
   /**

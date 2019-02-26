@@ -13,6 +13,7 @@ describe('vue-compat', () => {
    */
   let vueCompat
 
+  const defaultObj = () => ({foo: 'bar'})
   const mixedPropType = val => val && Number.isInteger(+val) ? Number : String
   const propTypes = {
     str: {
@@ -20,16 +21,19 @@ describe('vue-compat', () => {
     },
     num: Number,
     bool: {
-      type: Boolean
+      type: Boolean,
+      default: true
     },
     date: Date,
     arr: Array,
     obj: {
-      type: Object
+      type: Object,
+      default: defaultObj
     },
     func: Function,
     mixed: {
-      type: mixedPropType
+      type: mixedPropType,
+      default: 0
     }
   }
 
@@ -140,6 +144,27 @@ describe('vue-compat', () => {
         .to.equal(vueCompat.getPropTypes('mip-custom', MIPCustom))
       expect(vueCompat.getPropTypes('mip-vue-custom', MIPVueCustom))
         .to.equal(vueCompat.getPropTypes('mip-vue-custom', MIPVueCustom))
+    })
+  })
+
+  describe('getDefaultValues', () => {
+    it('should return an empty object if name or definition is not present', () => {
+      expect(vueCompat.getDefaultValues()).to.deep.equal({})
+      expect(vueCompat.getDefaultValues('', MIPCustom)).to.deep.equal({})
+      expect(vueCompat.getDefaultValues('mip-empty')).to.deep.equal({})
+    })
+
+    it('should return custom element default values', () => {
+      expect(vueCompat.getDefaultValues('mip-custom', MIPCustom)).to.deep.equal({
+        bool: true,
+        obj: defaultObj,
+        mixed: 0
+      })
+    })
+
+    it('should cache default values for the same elements', () => {
+      expect(vueCompat.getDefaultValues('mip-custom', MIPCustom))
+        .to.equal(vueCompat.getDefaultValues('mip-custom', MIPCustom))
     })
   })
 

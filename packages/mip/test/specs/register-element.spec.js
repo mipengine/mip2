@@ -7,7 +7,6 @@ import registerElement from 'src/register-element'
 import CustomElement from 'src/custom-element'
 import store from 'src/custom-element-store'
 import cssLoader from 'src/util/dom/css-loader'
-import performance from 'src/performance'
 
 describe('register-element', () => {
   let prefix = 'mip-test-register-element'
@@ -48,88 +47,5 @@ describe('register-element', () => {
     let style = document.head.querySelector(`[mip-extension=${name}]`)
     expect(style.textContent).to.be.equal(css)
     expect(insertStyleElement.calledOnce).to.be.true
-  })
-
-  it('should call customElement life cycle hooks in order', function () {
-    let name = prefix + 'custom-element'
-    let lifecycs = [
-      // 'constuctor'
-      'attributeChangedCallback',
-      'connectedCallback',
-      'build',
-      'viewportCallback',
-      'firstInviewCallback',
-      'disconnectedCallback'
-    ]
-
-    registerElement(name, MIPExample)
-
-    let ele = document.createElement(name)
-    let lifecycSpies = lifecycs.map(cbName => sinon.spy(ele.customElement, cbName))
-
-    ele.setAttribute('name', 'fake')
-
-    document.body.appendChild(ele)
-    ele.viewportCallback(true)
-    document.body.removeChild(ele)
-
-    lifecycSpies.forEach(spy => spy.restore())
-    sinon.assert.callOrder(...lifecycSpies)
-  })
-
-  it('should has a mip-element class in dom', function () {
-    let name = prefix + 'add-class'
-    registerElement(name, MIPExample)
-
-    let ele = document.createElement(name)
-
-    document.body.appendChild(ele)
-    document.body.removeChild(ele)
-
-    expect(ele.classList.contains('mip-element')).to.be.true
-  })
-
-  it('should warning built error if build throw an error', function (done) {
-    let name = prefix + '-build-error'
-    let warn = sinon.stub(console, 'warn')
-
-    registerElement(name, class extends CustomElement {
-      build () {
-        throw new Error('make a build error')
-      }
-    })
-
-    let ele = document.createElement(name)
-    expect(ele.customElement.build).to.throw('build error')
-
-    document.body.appendChild(ele)
-    document.body.removeChild(ele)
-
-    setTimeout(() => {
-      warn.restore()
-      sinon.assert.calledOnce(warn)
-      delete MIPExample.prototype.build
-      done()
-    }, 1)
-  })
-
-  it('should add element to performance if has resource', function () {
-    let name = prefix + '-performance'
-
-    let addFsElement = sinon.spy(performance, 'addFsElement')
-
-    registerElement(name, class extends CustomElement {
-      hasResources () {
-        return true
-      }
-    })
-
-    let ele = document.createElement(name)
-    document.body.appendChild(ele)
-    document.body.removeChild(ele)
-
-    addFsElement.restore()
-
-    sinon.assert.calledOnce(addFsElement)
   })
 })

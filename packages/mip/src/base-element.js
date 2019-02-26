@@ -88,9 +88,6 @@ class BaseElement extends HTMLElement {
     /** @private {string} */
     this._layout = LAYOUT.NODISPLAY
 
-    /** @private {boolean} */
-    this.everAttached = false
-
     /** @private {?Element|undefined} */
     this.spaceElement = undefined
 
@@ -101,7 +98,10 @@ class BaseElement extends HTMLElement {
 
     this.customElement = new CustomElementImpl(this)
 
-    this.customElement.propTypes = this.vueCompat.getPropTypes(this.name, CustomElementImpl)
+    this.propTypes = this.vueCompat.getPropTypes(this.name, CustomElementImpl)
+
+    this.defaultValues = this.vueCompat.getDefaultValues(this.name, CustomElementImpl)
+
     this.customElement.props = {}
 
     // Add first-screen element to performance.
@@ -111,10 +111,7 @@ class BaseElement extends HTMLElement {
   }
 
   connectedCallback () {
-    if (!this.everAttached) {
-      this.everAttached = true
-      this.customElement.props = this.getProps()
-    }
+    this.customElement.props = this.getProps()
     this.classList.add('mip-element')
     this._layout = applyLayout(this)
     this.applySizesAndMediaQuery()
@@ -129,9 +126,8 @@ class BaseElement extends HTMLElement {
   }
 
   attributeChangedCallback (name, oldValue, newValue) {
-    const prop = camelize(name)
-    const {propTypes} = this.customElement
-    this.customElement.props[prop] = this.vueCompat.parseAttribute(newValue, propTypes)
+    const propName = camelize(name)
+    this.customElement.props[propName] = this.vueCompat.parseAttribute(newValue, this.propTypes[propName])
     this.customElement.attributeChangedCallback(name, oldValue, newValue)
   }
 
@@ -331,19 +327,19 @@ class BaseElement extends HTMLElement {
    * @private
    */
   getProps () {
-    const propTypes = this.customElement.propTypes
+    const propTypes = this.propTypes
+    const defaultValues = this.defaultValues
     const props = this.vueCompat.getProps(this, propTypes)
     const names = Object.keys(propTypes)
 
     for (let i = 0; i < names.length; i++) {
       const name = names[i]
-      const propType = propTypes[name]
 
-      if (typeof props[name] !== 'undefined' || !hasOwnProperty.call(propType, 'default')) {
+      if (typeof props[name] !== 'undefined' || !hasOwnProperty.call(defaultValues, name)) {
         continue
       }
 
-      const def = propType.default
+      const def = defaultValues[name]
 
       props[name] = typeof def === 'function' ? def() : def
     }
