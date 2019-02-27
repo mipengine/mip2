@@ -196,6 +196,47 @@ export function whenBodyAvailable (callback) {
 }
 
 /**
+ * Calls the callback when document's state satisfies the stateFn.
+ *
+ * @param {!Document} doc
+ * @param {(doc: Document) => boolean} stateFn
+ * @param {(doc: Document) => void} callback
+ */
+function onDocumentState (doc, stateFn, callback) {
+  let ready = stateFn(doc)
+
+  if (ready) {
+    callback(doc)
+
+    return
+  }
+
+  const readyListener = () => {
+    if (!stateFn(doc)) {
+      return
+    }
+
+    if (!ready) {
+      ready = true
+      callback(doc)
+    }
+
+    doc.removeEventListener('readystatechange', readyListener)
+  }
+
+  doc.addEventListener('readystatechange', readyListener)
+}
+
+/**
+ * Returns a promise that resolve when `document` is `interactive`
+ *
+ * @param {!Document} doc document.
+ */
+export function whenDocumentInteractive (doc) {
+  return new Promise(resolve => onDocumentState(doc, doc => doc.readyState !== 'loading', resolve))
+}
+
+/**
  * Insert dom list to a node
  *
  * @param  {HTMLElement} parent the node will be inserted
@@ -227,5 +268,6 @@ export default {
   create,
   insert,
   whenBodyAvailable,
+  /** @deprecated */
   waitDocumentReady: whenBodyAvailable
 }
