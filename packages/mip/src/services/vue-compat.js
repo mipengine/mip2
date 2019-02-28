@@ -6,11 +6,19 @@ import {memoize} from '../util/fn'
 
 export class VueCompat {
   constructor () {
+    /**
+     * Metadata should be cached by name of the custom element.
+     *
+     * @type {(name: string, definition: ?Object) => !Object}
+     * @private
+     */
     this.getPropsMetadata = memoize(this.getPropsMetadata).bind(this)
   }
 
   /**
-   * @param {!Object} prop
+   * Returns formatted prop type.
+   *
+   * @param {!Object} prop type.
    * @returns {!Object}
    * @private
    */
@@ -31,7 +39,9 @@ export class VueCompat {
   }
 
   /**
-   * @param {!Object} definition
+   * Returns prop types derived from `extends` and `mixins` of Vue component.
+   *
+   * @param {!Object} definition of Vue component.
    * @returns {?Object}
    * @private
    */
@@ -45,9 +55,13 @@ export class VueCompat {
   }
 
   /**
-   * @param {string} name
-   * @param {?Object} definition
+   * Returns metadata computed from a definition of custom element or Vue component,
+   * which contains `propTypes` and `defaultValues`.
+   *
+   * @param {string} name of custom element.
+   * @param {?Object} definition of custom element or Vue component.
    * @returns {!Object}
+   * @private
    */
   getPropsMetadata (name, definition) {
     const metadata = {
@@ -94,8 +108,10 @@ export class VueCompat {
   }
 
   /**
-   * @param {string} name
-   * @param {?Object} definition
+   * Returns prop types of custom element or Vue component.
+   *
+   * @param {string} name of custom element.
+   * @param {?Object} definition of custom element or Vue component.
    * @returns {!Object}
    */
   getPropTypes (name, definition) {
@@ -103,8 +119,10 @@ export class VueCompat {
   }
 
   /**
-   * @param {string} name
-   * @param {?Object} definition
+   * Returns default values of custom element or Vue component.
+   *
+   * @param {string} name of custom element.
+   * @param {?Object} definition of custom element.
    * @returns {!Object}
    */
   getDefaultValues (name, definition) {
@@ -112,8 +130,10 @@ export class VueCompat {
   }
 
   /**
-   * @param {string} attribute
-   * @param {!Object} propType
+   * Returns prop that is parsed based on prop type.
+   *
+   * @param {string} attribute name.
+   * @param {!Object} propType of attribute.
    * @returns {?Object}
    */
   parseAttribute (attribute, propType) {
@@ -145,8 +165,10 @@ export class VueCompat {
   }
 
   /**
-   * @param {!HTMLElement} element
-   * @param {!Object} propTypes
+   * Returns props of element parsed from attributes.
+   *
+   * @param {!HTMLElement} element instance.
+   * @param {!Object} propTypes of custom element.
    * @returns {!Object}
    * @private
    */
@@ -165,7 +187,9 @@ export class VueCompat {
   }
 
   /**
-   * @param {!HTMLElement} element
+   * Returns props of element parsed from JSON.
+   *
+   * @param {!HTMLElement} element instance.
    * @returns {?Object}
    * @private
    */
@@ -184,8 +208,10 @@ export class VueCompat {
   }
 
   /**
-   * @param {!HTMLElement} element
-   * @param {!Object} propTypes
+   * Returns props of element merged from attributes and JSON.
+   *
+   * @param {!HTMLElement} element instance.
+   * @param {!Object} propTypes of custom element.
    * @returns {!Object}
    */
   getProps (element, propTypes) {
