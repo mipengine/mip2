@@ -315,7 +315,7 @@ class MipImg extends CustomElement {
     }
   }
 
-  layoutCallback () {
+  async layoutCallback () {
     let ele = this.element
     let img = new Image()
     if (ele.hasAttribute('popup')) {
@@ -351,20 +351,18 @@ class MipImg extends CustomElement {
       bindPopup(ele, img)
     }
     this.element.classList.add('mip-img-loading')
-    return event.loadPromise(img).then(() => {
-      // 标识资源已加载完成
-      try {
-        this.resourcesComplete()
-      } catch (e) {}
 
+    try {
+      await event.loadPromise(img)
+      this.resourcesComplete()
       this.removePlaceholder()
       this.element.classList.remove('mip-img-loading')
       this.element.classList.add('mip-img-loaded')
       customEmit(this.element, 'load')
-    }).catch(reason => {
+    } catch (reason) {
       /* istanbul ignore if */
       if (!viewer.isIframed) {
-        return Promise.reject(reason)
+        return
       }
       let ele = document.createElement('a')
       ele.href = img.src
@@ -373,9 +371,7 @@ class MipImg extends CustomElement {
         ele.search += (/[?&]$/.test(search) ? '' : '&') + 'mip_img_ori=1'
         img.src = ele.href
       }
-
-      return Promise.reject(reason)
-    })
+    }
   }
 
   attributeChangedCallback (attributeName, oldValue, newValue, namespace) {

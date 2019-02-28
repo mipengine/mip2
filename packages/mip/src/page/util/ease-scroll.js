@@ -1,4 +1,4 @@
-import fn from '../../util/fn'
+import {fn} from '../../util'
 import viewport from '../../viewport'
 
 export function scrollTo (height, { duration = 500, scrollTop = 0 } = {}) {

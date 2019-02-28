@@ -7,7 +7,7 @@
 
 /* globals location */
 
-import fn from './fn'
+import * as fn from './fn'
 import hash from './hash'
 import dom from './dom/dom'
 import event from './dom/event'
@@ -22,6 +22,7 @@ import jsonParse from './json-parse'
 import templates from './templates'
 import Deferred from './deferred'
 import log from './log'
+import * as string from './string'
 
 /**
  * Exchange a url to cache url.
@@ -125,12 +126,17 @@ export function isCacheUrl (pageUrl) {
   return fn.isCacheUrl(pageUrl)
 }
 
+export const hasOwnProperty = Object.prototype.hasOwnProperty
+
 export {
   dom,
   event,
+  fn,
+  jsonParse,
   templates,
   Deferred,
-  log
+  log,
+  string
 }
 
 export default {
@@ -152,5 +158,6 @@ export default {
   jsonParse,
   templates,
   Deferred,
-  log
+  log,
+  string
 }

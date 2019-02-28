@@ -7,7 +7,7 @@
 
 /* globals localStorage, fetch, top */
 
-import fn from './fn'
+import * as fn from './fn'
 
 /**
  * Type of storage

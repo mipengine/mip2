@@ -2,7 +2,7 @@ import Services from './services'
 import {templates, Deferred, event} from '../util'
 import registerMip1Element from '../mip1-polyfill/element'
 import registerCustomElement from '../register-element'
-import registerVueCustomElement from '../vue-custom-element'
+import '../vue-custom-element'
 
 const {listen} = event
 
@@ -238,7 +238,7 @@ export class Extensions {
     }
 
     if (typeof element.implementation === 'object') {
-      return registerVueCustomElement
+      return Services.getService('mip-vue').registerElement
     }
 
     return registerCustomElement

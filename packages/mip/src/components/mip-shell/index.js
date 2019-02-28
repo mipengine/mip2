@@ -17,9 +17,8 @@ import {
   unbindHeaderEvents
 } from './dom'
 import {render} from './render'
-import {makeCacheUrl} from '../../util'
+import {fn, makeCacheUrl} from '../../util'
 import css from '../../util/dom/css'
-import fn from '../../util/fn'
 import CustomElement from '../../custom-element'
 import {
   createLoading,
