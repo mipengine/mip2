@@ -83,13 +83,15 @@ function mark (ast) {
     enter: function (node, parent) {
       // 标记变量声明
       if (is(node, /^Import\w*Specifier$/)) {
-        node.local.isVar = true
+        if (node.local) {
+          node.local.isVar = true
+        }
         if (node.imported && is(node.imported, 'Identifier')) {
           node.imported.isIgnore = true
         }
       } else if (is(node, 'VariableDeclaration')) {
         if (node.kind === 'var') {
-          node.declarations.forEach(elem => {
+          node.declarations.forEach(function (elem) {
             elem.isLift = true
           })
         }
@@ -143,7 +145,10 @@ function mark (ast) {
           }
         })
       } else if (is(node, 'ClassDeclaration')) {
-        node.id.isVar = true
+        // 可能会存在匿名类的情况 export default class {} 此时 id 为 null
+        if (node.id) {
+          node.id.isVar = true
+        }
       } else if (is(node, 'CatchClause')) {
         if (is(node.param, 'Identifier')) {
           node.param.isVar = true
@@ -173,7 +178,8 @@ function mark (ast) {
         node.exported.isIgnore = true
         node.local.isIgnore = true
       }
-    }
+    },
+    fallback: 'iteration'
   })
 }
 
@@ -222,7 +228,8 @@ function scope (ast, parentAst) {
         ast.vars = ast.vars || []
         ast.vars.push(node.name)
       }
-    }
+    },
+    fallback: 'iteration'
   })
 }
 
