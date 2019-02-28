@@ -24,7 +24,7 @@ import {
   MESSAGE_BROADCAST_EVENT,
   DEFAULT_SHELL_CONFIG
 } from './const/index'
-import fn from '../util/fn'
+import {fn} from '../util'
 import {customEmit} from '../util/custom-event'
 import viewport from '../viewport'
 import performance from '../performance'

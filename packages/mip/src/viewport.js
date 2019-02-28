@@ -5,7 +5,7 @@
 
 import EventEmitter from './util/event-emitter'
 import rect from './util/dom/rect'
-import fn from './util/fn'
+import {fn} from './util'
 import platform from './util/platform'
 // import fixedElement from './fixed-element'
 

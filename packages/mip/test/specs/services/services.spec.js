@@ -20,7 +20,8 @@ describe('services', () => {
 
   describe('window singletons', () => {
     beforeEach(() => {
-      window.services = null
+      window.services.a = null
+      window.services.b = null
     })
 
     it('should make per window singletons', () => {

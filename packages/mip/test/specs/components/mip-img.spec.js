@@ -72,7 +72,7 @@ describe('mip-img', function () {
     img.dispatchEvent(errEvent)
   })
 
-  it('should replace src if load img error', async function () {
+  it('should replace src if load img error', async () => {
     mipImgWrapper.innerHTML = `<mip-img popup src="https://www.wrong.org?test=1"></mip-img>`
     let mipImg = mipImgWrapper.querySelector('mip-img')
     mipImg.viewportCallback(true)
