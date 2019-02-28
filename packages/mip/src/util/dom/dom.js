@@ -231,6 +231,7 @@ function onDocumentState (doc, stateFn, callback) {
  * Returns a promise that resolve when `document` is `interactive`
  *
  * @param {!Document} doc document.
+ * @returns {!Promise<void>}
  */
 export function whenDocumentInteractive (doc) {
   return new Promise(resolve => onDocumentState(doc, doc => doc.readyState !== 'loading', resolve))
