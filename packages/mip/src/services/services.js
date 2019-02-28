@@ -27,7 +27,7 @@ class ServicesInternal {
   /**
    * Returns the object that holds the services registered in a holder.
    *
-   * @param {!Window} holder
+   * @param {!Window} holder currently represents `Window`.
    * @returns {Object}
    * @private
    */
@@ -45,7 +45,7 @@ class ServicesInternal {
    * Instantiates the given service. Fulfills the pending promise if the service has been requested.
    * Returns instance of the service.
    *
-   * @param {Object} service
+   * @param {Object} service to be instantiated.
    * @returns {Object}
    * @private
    */
@@ -74,11 +74,11 @@ class ServicesInternal {
   /**
    * Registers a service on `holder`. Returns the registered service.
    *
-   * @param {!Window} holder
-   * @param {string} id
-   * @param {!Object} context
-   * @param {!Function} Constructor
-   * @param {?boolean} instantiate
+   * @param {!Window} holder currently represents `Window`.
+   * @param {string} id of the service.
+   * @param {!Object} context of the service.
+   * @param {!Function} Constructor of the service.
+   * @param {?boolean} instantiate service immediately.
    * @returns {!Object}
    */
   static registerService (holder, id, context, Constructor, instantiate) {
@@ -117,6 +117,7 @@ class ServicesInternal {
 
     return service
   }
+
   /**
    * Service doesn't have an implementation or a pending promise.
    * It means the service has not been registered on `holder`.
