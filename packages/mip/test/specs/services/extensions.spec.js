@@ -45,7 +45,7 @@ describe('extensions', () => {
     sandbox = sinon.createSandbox()
     window.services.extensions = null
     installExtensionsService()
-    extensions = Services.extensionsFor(window)
+    extensions = Services.extensions()
     timer = Services.timer()
   })
 

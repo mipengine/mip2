@@ -2,24 +2,6 @@ import {Deferred} from '../util'
 
 class ServicesFactory {
   /**
-   * @deprecated
-   * @param {!Window} win
-   * @returns {import('./extensions').Extensions}
-   */
-  static extensionsFor (win) {
-    return this.extensions()
-  }
-
-  /**
-   * @deprecated
-   * @param {!Window} win
-   * @returns {import('./timer').Timer}
-   */
-  static timerFor (win) {
-    return this.timer()
-  }
-
-  /**
    * @returns {import('./extensions').Extensions}
    */
   static extensions () {
