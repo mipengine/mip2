@@ -6,7 +6,7 @@
 /* eslint-disable no-unused-expressions */
 /* global describe, it, expect, before, after, location */
 
-import dom from 'src/util/dom/dom'
+import dom, {waitForChild, waitForBody} from 'src/util/dom/dom'
 
 let docElem = document.documentElement
 docElem.closest = docElem.contains = null
@@ -163,11 +163,11 @@ describe('dom', () => {
 
     it('should immediately return if child is available', () => {
       parent.appendChild(child)
-      return dom.waitForChild(parent, contains)
+      return waitForChild(parent, contains)
     })
 
     it('should wait until child is available', () => {
-      const waiting = dom.waitForChild(parent, contains)
+      const waiting = waitForChild(parent, contains)
       parent.appendChild(child)
       return waiting
     })
@@ -193,7 +193,7 @@ describe('dom', () => {
       let checkFuncValue = false
       const checkFunc = () => checkFuncValue
 
-      const waiting = dom.waitForChild(parent, checkFunc)
+      const waiting = waitForChild(parent, checkFunc)
       expect(mutationObserver.observe).to.be.calledOnce
       expect(mutationObserver.observe.firstCall.args[0]).to.equal(parent)
       expect(mutationObserver.observe.firstCall.args[1])
@@ -229,7 +229,7 @@ describe('dom', () => {
       let checkFuncValue = false
       const checkFunc = () => checkFuncValue
 
-      const waiting = dom.waitForChild(parent, checkFunc)
+      const waiting = waitForChild(parent, checkFunc)
       expect(intervalCallback).to.exist
 
       // False callback.
@@ -246,7 +246,7 @@ describe('dom', () => {
     })
 
     it('should wait for body', () => {
-      return dom.waitForBody(document).then(() => {
+      return waitForBody(document).then(() => {
         expect(document.body).to.exist
       })
     })
