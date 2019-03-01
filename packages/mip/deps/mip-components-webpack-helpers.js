@@ -4079,14 +4079,15 @@ function addStylesToDom (styles /* Array<StyleObject> */) {
   }
 }
 
-var mipCssLink = head.querySelector('link[rel=stylesheet][href*="/mip.css"]');
-var mipCssLinkNext = mipCssLink && mipCssLink.nextSibling;
+var mipCssLink
 
 function createStyleElement () {
   var styleElement = document.createElement('style');
   styleElement.type = 'text/css';
-  // head.appendChild(styleElement)
-  head.insertBefore(styleElement, mipCssLinkNext || head.firstChild);
+  if (!mipCssLink) {
+    mipCssLink = head.querySelector('link[rel=stylesheet][href*="/mip.css"]')
+  }
+  head.insertBefore(styleElement, mipCssLink && mipCssLink.nextSibling || head.firstChild);
   return styleElement
 }
 
