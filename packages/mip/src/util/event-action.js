@@ -24,7 +24,7 @@ const PARSE_REG = /^(\w+):\s*([\w-]+)\.([\w-$]+)(?:\((.+)\))?$/
  * @inner
  * @type {RegExp}
  */
-const EVENT_ARG_REG = /^event(\.[a-zA-Z_][\w_]+)+$/g
+const EVENT_ARG_REG = /^event(\.[a-zA-Z_][\w_]*)+$/g
 // const EVENT_ARG_REG_FOR_OBJECT = /(:\s*)(event(\.[a-zA-Z]\w+)+)(\s*[,}])/g
 
 /**
