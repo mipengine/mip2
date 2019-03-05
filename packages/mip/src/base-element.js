@@ -52,8 +52,12 @@ function isInternalNode (node) {
 }
 
 class BaseElement extends HTMLElement {
-  constructor () {
-    super()
+  /**
+   * @param {?HTMLElement} element
+   * @see {@link https://github.com/WebReflection/document-register-element#v1-caveat}
+   */
+  constructor (element) {
+    super(element)
 
     /** @private {string} */
     this.name = this.tagName.toLowerCase()
