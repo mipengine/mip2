@@ -51,7 +51,7 @@ $ git add .
 $ git commit -m 'update_log...'
 # pull 保持和远程分支一致
 $ git remote add upstream https://github.com/mipengine/mip2-extensions.git
-$ git pull upsteam master
+$ git pull upstream master
 # push 本次提交
 $ git push
 ```
