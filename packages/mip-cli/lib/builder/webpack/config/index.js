@@ -6,10 +6,11 @@
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const styleLoaders = require('./style-loaders')
 const CustomElementPlugin = require('./custom-element-plugin')
-const {babelLoader, babelExternals} = require('./babel')
+const babelLoader = require('./babel')
 const path = require('path')
 const componentExternals = require('./component-externals')
 const webpack = require('webpack')
+const mipExternal = require('mip-components-webpack-helpers/lib/external')
 
 module.exports = function (options) {
   let config = {
@@ -20,7 +21,8 @@ module.exports = function (options) {
       chunkFilename: '[name].[hash].js',
       publicPath: options.asset.replace(/\/$/, '') + '/'
     },
-    mode: options.env === 'development' ? 'development' : 'production',
+    // mode: options.env === 'development' ? 'development' : 'production',
+    mode: 'development',
     context: options.context,
     devtool: options.env === 'development' ? 'inline-source-map' : false,
     module: {
@@ -74,8 +76,7 @@ module.exports = function (options) {
       ]
     },
     externals: [
-      babelExternals,
-      componentExternals
+      mipExternal(__dirname)
     ],
     resolve: {
       extensions: ['.js', '.json', '.vue'],

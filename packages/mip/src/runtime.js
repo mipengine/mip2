@@ -10,7 +10,7 @@ import util from './util'
 import viewer from './viewer'
 import viewport from './viewport'
 import installMip1Polyfill from './mip1-polyfill'
-import installMipComponentsPolyfill from 'deps/mip-components-webpack-helpers'
+// import installMipComponentsPolyfill from 'deps/mip-components-webpack-helpers'
 
 class Runtime {
   constructor () {
@@ -120,7 +120,7 @@ class Runtime {
     }
 
     installMip1Polyfill(MIP)
-    installMipComponentsPolyfill()
+    // installMipComponentsPolyfill()
 
     return MIP
   }

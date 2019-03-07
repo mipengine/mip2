@@ -16,7 +16,9 @@ const commonStyleLoaders = [
           browsers: [
             '> 1%',
             'last 2 versions',
-            'ie 9-10'
+            'ie 9-10',
+            'iOS > 7',
+            'android >= 4.4'
           ]
         }),
         require('cssnano')({
