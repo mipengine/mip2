@@ -4,8 +4,8 @@
  */
 /* istanbul ignore file */
 
+import {fn} from '../../util'
 import platform from '../../util/platform'
-import fn from '../../util/fn'
 import css from '../../util/dom/css'
 import {switchPage} from './switchPage'
 import {isSameRoute, getFullPath} from '../../page/util/route'

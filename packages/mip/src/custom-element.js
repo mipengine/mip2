@@ -6,8 +6,14 @@
 import EventEmitter from './util/event-emitter'
 
 class CustomElement {
+  /**
+   * @param {HTMLElement} element
+   */
   constructor (element) {
-    /** @public @type {MIPElement} */
+    /**
+     * @public
+     * @type {HTMLElement}
+     */
     this.element = element
 
     // 不推荐使用

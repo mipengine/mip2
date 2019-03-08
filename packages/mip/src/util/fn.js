@@ -10,7 +10,7 @@
  * @param {number} delay The run time interval
  * @return {Function}
  */
-function throttle (fn, delay) {
+export function throttle (fn, delay) {
   let context
   let args
   let timerId
@@ -43,7 +43,7 @@ function throttle (fn, delay) {
  * @param {Object} obj obj
  * @return {Array}
  */
-function values (obj) {
+export function values (obj) {
   let keys = Object.keys(obj)
   let length = keys.length
   let ret = []
@@ -61,7 +61,7 @@ function values (obj) {
  * @param {Object} obj obj
  * @return {boolean}
  */
-function isPlainObject (obj) {
+export function isPlainObject (obj) {
   return !!obj && typeof obj === 'object' && Object.getPrototypeOf(obj) === Object.prototype
 }
 
@@ -98,7 +98,7 @@ function _extend (target, source, deep) {
  * @param {Object} target target
  * @return {Object}
  */
-function extend (target) {
+export function extend (target) {
   let hasDeep = typeof target === 'boolean'
   let deep = false
   if (hasDeep) {
@@ -117,7 +117,7 @@ function extend (target) {
  * @param {Object} obj obj
  * @return {Object}
  */
-function pick (obj) {
+export function pick (obj) {
   let keys = arguments[1]
   let result = {}
   if (!Array.isArray(keys)) {
@@ -138,7 +138,7 @@ function pick (obj) {
  * @param {string} string params string
  * @return {boolean} whehter varible is string
  */
-function isString (string) {
+export function isString (string) {
   return Object.prototype.toString.call(string) === '[object String]'
 }
 
@@ -148,7 +148,7 @@ function isString (string) {
  * @param {Object} obj object
  * @param {string} key key of object
  */
-function del (obj, key) {
+export function del (obj, key) {
   if (!obj || !obj[key]) {
     return
   }
@@ -164,7 +164,7 @@ function del (obj, key) {
  *
  * @return {boolean} if window has Touch event(is mobile) or not (is PC)
  */
-function hasTouch () {
+export function hasTouch () {
   return ('ontouchstart' in window ||
     (window.navigator.maxTouchPoints !== undefined && window.navigator.maxTouchPoints > 0) ||
     window.DocumentTouch !== undefined)
@@ -176,7 +176,7 @@ function hasTouch () {
  * @param {string} pageUrl - current page url.
  * @return {boolean} isCacheUrl.
  */
-function isCacheUrl (pageUrl) {
+export function isCacheUrl (pageUrl) {
   return /mipcache.bdstatic.com/.test(pageUrl) ||
     /^(\/\/|http:\/\/|https:\/\/)[^.]+.mipcdn.com\/(stati)?c\//.test(pageUrl)
 }
@@ -186,7 +186,7 @@ function isCacheUrl (pageUrl) {
  * 如果是 MIP2 的子页面，通过 window.name 由父页面传递下来。
  * 格式如 iframe-shell-xxxxxx
  */
-function getRootName (name) {
+export function getRootName (name) {
   if (!name) {
     return ''
   }
@@ -203,20 +203,14 @@ function getRootName (name) {
   }
 }
 
-const raf = window.requestAnimationFrame
+export const raf = window.requestAnimationFrame
   ? window.requestAnimationFrame.bind(window)
   : setTimeout.bind(window)
 
-export default {
-  throttle,
-  values,
-  extend,
-  pick,
-  isPlainObject,
-  isString,
-  del,
-  hasTouch,
-  isCacheUrl,
-  getRootName,
-  raf
+export const memoize = (fn) => {
+  const cache = Object.create(null)
+
+  return function (...args) {
+    return cache[args[0]] || (cache[args[0]] = fn.apply(this, args))
+  }
 }

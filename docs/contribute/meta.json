@@ -1,0 +1,28 @@
+{
+  "menu": [
+    {
+      "name": "起步",
+      "key": "getting-start"
+    },
+    {
+      "name": "组件开发",
+      "key": "development"
+    },
+    {
+      "name": "组件调试",
+      "key": "debug"
+    },
+    {
+      "name": "组件部署",
+      "key": "deploy"
+    },
+    {
+      "name": "组件机制",
+      "key": "principle"
+    },
+    {
+      "name": "工具库",
+      "key": "utils"
+    }
+  ]
+}

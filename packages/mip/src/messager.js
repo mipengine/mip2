@@ -6,9 +6,8 @@
 
 /* global top HTMLIFrameElement */
 
-// import Emitter from 'micro-event';
+import {fn} from './util'
 import Emitter from './util/event-emitter'
-import fn from './util/fn'
 
 const messageTypes = {
   twoWay: 'two-way'

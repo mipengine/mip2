@@ -3,18 +3,17 @@
  * @author sfe
  */
 
-import {getPropsData, reactiveProps} from './props'
-import {toArray} from './helpers'
+import {reactiveProps} from './props'
 import {customEmit} from '../../util/custom-event'
 import viewer from '../../viewer'
 
 /**
  * 获取 element 的 slot content，并将 slot content element 从父元素中移除
  * @param {HTMLElement} element slot content 的父元素
- * @param {[Node]>}  Node 数组
+ * @param {Node[]}  Node 数组
  */
 function getNodeSlots (element) {
-  let nodeSlots = toArray(element.childNodes)
+  let nodeSlots = [...element.childNodes]
     .map(node => {
       element.removeChild(node)
       return node
@@ -26,19 +25,20 @@ function getNodeSlots (element) {
 /**
  * Create new Vue instance
  *
- * @param {HTMLElement} element
+ * @param {!HTMLElement} element
  * @param {Vue} Vue
- * @param {Object} componentDefinition
- * @param {Object} props
+ * @param {!Object} componentDefinition
+ * @param {string[]} camelizedProps
+ * @param {!Object} propsData
  */
 export default function createVueInstance (
   element,
   Vue,
   componentDefinition,
-  props
+  camelizedProps,
+  propsData
 ) {
-  let ComponentDefinition = Vue.util.extend({}, componentDefinition)
-  let propsData = getPropsData(element, ComponentDefinition, props)
+  const definition = Vue.util.extend({}, componentDefinition)
 
   // Auto event handling based on $emit
   function beforeCreate () { // eslint-disable-line no-inner-declarations
@@ -56,7 +56,7 @@ export default function createVueInstance (
       element.customElement.addEventAction(eventName, callback)
     }
   }
-  ComponentDefinition.beforeCreate = [].concat(ComponentDefinition.beforeCreate || [], beforeCreate)
+  definition.beforeCreate = [].concat(definition.beforeCreate || [], beforeCreate)
 
   let nodeSlots = getNodeSlots(element)
 
@@ -64,21 +64,20 @@ export default function createVueInstance (
 
   let rootElement = {
     propsData,
-    props: props.camelCase,
+    props: camelizedProps,
     computed: {
       reactiveProps () {
         let reactivePropsList = {}
-        props.camelCase.forEach(prop => {
+        camelizedProps.forEach(prop => {
           reactivePropsList[prop] = this[prop]
         })
-
         return reactivePropsList
       }
     },
     el: element.children[0],
     render (createElement) {
       return createElement(
-        ComponentDefinition,
+        definition,
         {
           props: this.reactiveProps
         },
@@ -87,7 +86,7 @@ export default function createVueInstance (
     }
   }
 
-  reactiveProps(element, props)
+  reactiveProps(element, camelizedProps)
 
   return new Vue(rootElement)
 }

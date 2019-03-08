@@ -1,0 +1,16 @@
+{
+  "menu": [
+    {
+      "key": "introduction"
+    },
+    {
+      "key": "cli-user-plugin"
+    },
+    {
+      "key": "mip-sf"
+    },
+    {
+      "key": "mip-site"
+    }
+  ]
+}

@@ -1,7 +1,8 @@
 import CustomElement from './custom-element'
 import Services, {
   installExtensionsService,
-  installTimerService
+  installTimerService,
+  installVueCompatService
 } from './services'
 import MipShell from './components/mip-shell'
 import performance from './performance'
@@ -31,6 +32,7 @@ class Runtime {
   installServices () {
     installExtensionsService()
     installTimerService()
+    installVueCompatService()
   }
 
   /**

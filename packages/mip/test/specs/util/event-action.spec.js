@@ -194,6 +194,7 @@ describe('split', () => {
 describe('handleArguments', () => {
   let action = new EventAction()
   let event = {
+    _: 0,
     one: 1,
     two: 2,
     nest: {
@@ -204,6 +205,7 @@ describe('handleArguments', () => {
     bool: true
   }
   it('should get event value', () => {
+    expect(action.handleArguments('event._', event)).to.equal('0')
     expect(action.handleArguments('event.one', event)).to.equal('1')
     expect(action.handleArguments(' event.one ', event)).to.equal('1')
     expect(action.handleArguments('event.three', event)).to.equal('undefined')

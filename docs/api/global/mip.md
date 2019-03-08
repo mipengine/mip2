@@ -89,31 +89,20 @@ window.MIP
 
 ## 方法
 
-### registerVueCustomElement
-- 参数：
-  - {string} tag 自定义标签名
-  - {*} component vue component
-- 用法：
-
-  注册用 Vue 编写的自定义组件，组件编写方式参考[使用 mip-cli 快速开始](../../guide/mip-cli/start-writing-first-mip.md)
-
-  ```javascript
-  MIP.registerVueCustomElement('mip-test', {
-    render () { console.log('mip-test') }
-  })
-  ```
-
-### registerCustomElement
+### registerElement
 - 参数：
   - {string} tag 自定义标签名
   - {CustomElement} clazz customElement v1 标准的自定义 Class
   - {string} css 自定义组件的 css
 - 用法：
 
-  注册原生 customElement v2 编写的组件，不推荐使用
-
   ```javascript
-  MIP.registerCustomElement('mip-test', class MipTest extends MIP.CustomElement {})
+  MIP.registerElement('mip-test', class MipTest extends MIP.CustomElement {})
+  MIP.registerElement('mip-test-2', {
+    render () {
+      console.log('mip-test')
+    }
+  })
   ```
 
 ### prerenderElement

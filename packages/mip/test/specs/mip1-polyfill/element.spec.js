@@ -10,10 +10,7 @@ import cssLoader from 'src/util/dom/css-loader'
 import registerElement from 'src/mip1-polyfill/element'
 import customElement from 'src/mip1-polyfill/customElement'
 import performance from 'src/performance'
-import Services, {
-  installExtensionsService,
-  installTimerService
-} from 'src/services'
+import Services from 'src/services'
 
 let $
 
@@ -65,9 +62,6 @@ describe('mip1 element', function () {
   beforeEach(() => {
     sandbox = sinon.createSandbox()
     MipTestElement = customElement.create()
-    window.services = {}
-    installExtensionsService()
-    installTimerService()
     extensions = Services.extensions()
   })
 

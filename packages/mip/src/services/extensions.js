@@ -1,8 +1,9 @@
 import Services from './services'
 import {templates, Deferred, event} from '../util'
+import {whenDocumentInteractive} from '../util/dom/dom'
 import registerMip1Element from '../mip1-polyfill/element'
 import registerCustomElement from '../register-element'
-import registerVueCustomElement from '../vue-custom-element'
+import '../vue-custom-element'
 
 const {listen} = event
 
@@ -220,7 +221,7 @@ export class Extensions {
    * @param {!Object} extension
    */
   installExtension (extension) {
-    this.registerExtension(extension.name, extension.func, window.MIP)
+    whenDocumentInteractive(document).then(() => this.registerExtension(extension.name, extension.func, window.MIP))
   }
 
   /**
@@ -238,7 +239,7 @@ export class Extensions {
     }
 
     if (typeof element.implementation === 'object') {
-      return registerVueCustomElement
+      return Services.getService('mip-vue').registerElement
     }
 
     return registerCustomElement
