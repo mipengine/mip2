@@ -32,21 +32,16 @@ module.exports = babelLoader (options = {}) {
               .filter(str => !!buitinFeatures[str])
           }
         ]
-        // ,
-        // require.resolve('babel-preset-stage-2')
       ],
       plugins: [
         [
           require('@babel/plugin-transform-runtime'),
           {
-            // corejs: 2,
             corejs: false,
             helpers: true,
-            // polyfill: true,
             regenerator: true,
             absoluteRuntime: resolveModule('@babel/runtime'),
             useESModules: true
-            // moduleName: resolveModule('@babel/runtime')
           }
         ]
       ]
