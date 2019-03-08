@@ -38,13 +38,12 @@
 
 ## open
 
-在 MIP 页面中点击 `<a mip-link>` 链接会在当前页面进行具有切换效果的页面跳转，类似 SPA 中的效果。
-除了这种方式，开发者也可以通过编程方式实现这一效果。
+在 MIP 页面中点击 `<a mip-link>` 链接会在当前页面进行具有切换效果的页面跳转，类似 SPA 中的效果。在 MIP 环境下 location.href 的行为可能会发生变化，因此需要通过该 open 方法来实现跳转行为。
 
 - 参数：
   - {string} to 目标页面的 URL
   - {Object} options 配置对象
-    - {boolean} options.isMipLink 默认 `true`。目标页面是否是 MIP 页。如果不是，直接使用 `top.location.href` 进行跳转。
+    - {boolean} options.isMipLink 默认 `true`。目标页面是否是 MIP 页。如果不是，则设置为 `false`。
     - {boolean} options.replace 默认 `false`。目标页面是否采用 replace 方式打开。如果是，则不会新增一条历史记录。
 - 返回值：无
 - 用法：

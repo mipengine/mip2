@@ -1,0 +1,17 @@
+{
+  "menu": [
+    {
+      "key": "introduction"
+    },
+    {
+      "key": "event-and-action"
+    },
+    {
+      "name": "数据绑定",
+      "key": "data-binding"
+    },
+    {
+      "key": "custom-js"
+    }
+  ]
+}

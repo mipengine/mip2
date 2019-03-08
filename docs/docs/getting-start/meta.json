@@ -1,0 +1,17 @@
+{
+  "menu": [
+    {
+      "key": "newbie"
+    },
+    {
+      "key": "start-writing-first-mip"
+    },
+    {
+      "key": "debug-and-validate"
+    },
+    {
+      "name": "MIP 搜索生效",
+      "key": "mip-in-search"
+    }
+  ]
+}

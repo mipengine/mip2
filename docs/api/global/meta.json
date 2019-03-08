@@ -7,9 +7,6 @@
       "key": "base-custom-element"
     },
     {
-      "key": "vue-custom-element"
-    },
-    {
       "key": "viewer"
     },
     {
@@ -18,5 +15,8 @@
     {
       "key": "mip-shell"
     }
+  ],
+  "ignore": [
+    "vue-custom-element"
   ]
 }

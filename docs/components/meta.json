@@ -1,0 +1,36 @@
+{
+  "menu": [
+    {
+      "name": "组件列表",
+      "key": "index"
+    },
+    {
+      "name": "布局",
+      "key": "layout"
+    },
+    {
+      "name": "呈现",
+      "key": "presentation"
+    },
+    {
+      "name": "多媒体",
+      "key": "media"
+    },
+    {
+      "name": "动态内容",
+      "key": "dynamic-content"
+    },
+    {
+      "name": "广告",
+      "key": "ads"
+    },
+    {
+      "name": "社交与分享",
+      "key": "social"
+    },
+    {
+      "name": "统计与分析",
+      "key": "analytics"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "menu": [
+    {
+      "name": "起步",
+      "key": "getting-start"
+    },
+    {
+      "name": "开发规范",
+      "key": "mip-standard"
+    },
+    {
+      "name": "样式与布局",
+      "key": "style-and-layout"
+    },
+    {
+      "name": "交互式设计",
+      "key": "interactive-mip"
+    },
+    {
+      "name": "全站 MIP 开发",
+      "key": "all-sites-mip"
+    },
+    {
+      "name": "用户行为统计与分析",
+      "key": "analytics"
+    },
+    {
+      "name": "渐进增强式设计",
+      "key": "progressive-enhancement-design"
+    },
+    {
+      "name": "辅助开发工具",
+      "key": "assistant-development-tools"
+    },
+    {
+      "name": "MIP 搜索生效流程",
+      "key": "mip-in-search"
+    }
+  ],
+  "ignore": [
+    "analytics",
+    "progressive-enhancement-design"
+  ]
+}
