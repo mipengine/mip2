@@ -26,42 +26,43 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules|fetch.js/,
-        loader: 'babel-loader',
-        options: {
-          babelrc: false,
-          presets: [
-            [
-              require.resolve('@babel/preset-env'),
-              {
-                modules: false,
-                targets: {
-                  browsers: [
-                    '> 1%',
-                    'last 2 versions',
-                    'not ie <= 8',
-                    'iOS > 7',
-                    'android >= 4.4'
-                  ]
-                }
-              }
-            ]
-          ],
-          plugins: [
-            [
-              require.resolve('@babel/plugin-transform-runtime'),
-              {
-                // corejs: false,
-                // corejs: 2,
-                // corejs: 1,
-                helpers: true,
-                regenerator: true,
-                absoluteRuntime: '@babel/runtime',
-                // absoluteRuntime: require.resolve('@babel/runtime'),
-                useESModules: true
-              }
-            ]
-          ]
-        }
+        loader: 'babel-loader'
+        // ,
+        // options: {
+        //   babelrc: false,
+        //   presets: [
+        //     [
+        //       require.resolve('@babel/preset-env'),
+        //       {
+        //         modules: false,
+        //         targets: {
+        //           browsers: [
+        //             '> 1%',
+        //             'last 2 versions',
+        //             'not ie <= 8',
+        //             'iOS > 7',
+        //             'android >= 4.4'
+        //           ]
+        //         }
+        //       }
+        //     ]
+        //   ],
+        //   plugins: [
+        //     [
+        //       require.resolve('@babel/plugin-transform-runtime'),
+        //       {
+        //         // corejs: false,
+        //         // corejs: 2,
+        //         // corejs: 1,
+        //         helpers: true,
+        //         regenerator: true,
+        //         absoluteRuntime: '@babel/runtime',
+        //         // absoluteRuntime: require.resolve('@babel/runtime'),
+        //         useESModules: true
+        //       }
+        //     ]
+        //   ]
+        // }
       },
       {
         test: /\.(css|less)$/,
