@@ -1,20 +1,29 @@
 {
   "presets": [
     [
-      "env",
+      "@babel/preset-env",
       {
-        "modules": false
+        "modules": false,
+        "targets": {
+          "browsers": [
+            "> 1%",
+            "last 2 versions",
+            "not ie <= 8",
+            "iOS > 7",
+            "android > 4.4"
+          ]
+        }
       }
-    ],
-    "vue"
+    ]
   ],
   "plugins": [
-    "syntax-dynamic-import",
-    "transform-object-rest-spread",
     [
-      "transform-builtin-classes",
+      "@babel/plugin-transform-runtime",
       {
-        "globals": ["HTMLElement"]
+        "corejs": false,
+        "helpers": true,
+        "regenerator": true,
+        "absoluteRuntime": "@babel/runtime"
       }
     ]
   ],

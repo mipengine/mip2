@@ -58,8 +58,45 @@ function genConfig (name) {
         }
       ),
       babel({
-        plugins: ['external-helpers']
+        runtimeHelpers: true,
+        exclude: 'node_modules/**',
+        babelrc: false,
+        presets: [
+          [
+            require.resolve('@babel/preset-env'),
+            {
+              modules: false,
+              targets: {
+                browsers: [
+                  '> 1%',
+                  'last 2 versions',
+                  'not ie <= 8',
+                  'iOS > 7',
+                  'android > 4.4'
+                ]
+              }
+            }
+          ]
+        ],
+        plugins: [
+          [
+            require.resolve('@babel/plugin-transform-runtime'),
+            {
+              // corejs: 2,
+              corejs: false,
+              helpers: true,
+              regenerator: true,
+              absoluteRuntime: '@babel/runtime',
+              // absoluteRuntime: require.resolve('@babel/runtime'),
+              // useESModules: true
+            }
+          ]
+        ]
+        // plugins: ['external-helpers']
       })
+      // babel({
+      //   plugins: ['external-helpers']
+      // })
     ].concat(opts.plugins || []),
     output: {
       file: opts.dest,
