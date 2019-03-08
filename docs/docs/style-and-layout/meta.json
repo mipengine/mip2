@@ -1,0 +1,20 @@
+{
+  "menu": [
+    {
+      "name": "介绍",
+      "key": "introduction"
+    },
+    {
+      "name": "支持的 css",
+      "key": "supported-css"
+    },
+    {
+      "name": "组件布局",
+      "key": "layout"
+    }
+  ],
+  "ignore": [
+    "placeholder-and-fallback",
+    "media-query"
+  ]
+}

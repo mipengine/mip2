@@ -1,0 +1,20 @@
+{
+  "menu": [
+    {
+      "name": "MIP-HTML 规范",
+      "key": "mip-html-spec"
+    },
+    {
+      "name": "MIP-Cache 规范",
+      "key": "mip-cache-spec"
+    },
+    {
+      "name": "Canonical 使用规范",
+      "key": "mip-canonical"
+    },
+    {
+      "name": "MIP 校验规则",
+      "key": "mip-validate"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "menu": [
+    {
+      "name": "什么是 MIP",
+      "key": "what-is-mip"
+    },
+    {
+      "name": "MIP 是如何运作的",
+      "key": "how-mip-works"
+    },
+    {
+      "name": "MIP 使用场景",
+      "key": "who-uses-mip"
+    },
+    {
+      "name": "MIP 内容声明",
+      "key": "announcement"
+    }
+  ],
+  "ignore": [
+    "showcases",
+    "mip-stories"
+  ]
+}
