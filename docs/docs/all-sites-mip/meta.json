@@ -1,0 +1,25 @@
+{
+  "menu": [
+    {
+      "key": "introduction"
+    },
+    {
+      "key": "structure"
+    },
+    {
+      "key": "switch-page"
+    },
+    {
+      "key": "page-api"
+    },
+    {
+      "key": "mip-shell"
+    },
+    {
+      "key": "viewer"
+    },
+    {
+      "key": "style"
+    }
+  ]
+}
