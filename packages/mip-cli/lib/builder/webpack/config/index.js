@@ -21,8 +21,7 @@ module.exports = function (options) {
       chunkFilename: '[name].[hash].js',
       publicPath: options.asset.replace(/\/$/, '') + '/'
     },
-    // mode: options.env === 'development' ? 'development' : 'production',
-    mode: 'development',
+    mode: options.env === 'development' ? 'development' : 'production',
     context: options.context,
     devtool: options.env === 'development' ? 'inline-source-map' : false,
     module: {
