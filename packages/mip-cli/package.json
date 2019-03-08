@@ -35,7 +35,6 @@
     "@babel/preset-env": "^7.3.4",
     "@babel/register": "^7.0.0",
     "@babel/runtime": "^7.3.4",
-    "@babel/runtime-corejs2": "^7.3.4",
     "async": "^2.6.0",
     "autoprefixer": "^8.5.0",
     "babel-loader": "^8.0.5",
