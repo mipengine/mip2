@@ -126,7 +126,9 @@ export function isCacheUrl (pageUrl) {
   return fn.isCacheUrl(pageUrl)
 }
 
-export const hasOwnProperty = Object.prototype.hasOwnProperty
+const hasOwnProperty = Object.prototype.hasOwnProperty
+
+export const hasOwn = (obj, key) => hasOwnProperty.call(obj, key)
 
 export {
   dom,
