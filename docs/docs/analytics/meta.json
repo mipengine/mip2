@@ -1,0 +1,13 @@
+{
+  "menu": [
+    {
+      "key": "introduction"
+    },
+    {
+      "key": "mip-pix"
+    },
+    {
+      "key": "mip-analytics"
+    }
+  ]
+}

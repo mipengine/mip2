@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- 1.5.3
+    1. 锁死 webpack-dev-middleware 版本至 3.6.0
+
 - 1.5.2
     1. 升级 mip-sandbox，添加 `document.execCommand` 白名单，`document.createElement('script') 打 warning`
     2. 升级 `init`、`add` 命令，默认初始化组件改为 Custom Element 组件

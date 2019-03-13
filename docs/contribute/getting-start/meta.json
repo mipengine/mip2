@@ -1,0 +1,16 @@
+{
+  "menu": [
+    {
+      "name": "如何贡献组件代码",
+      "key": "how-to-contribute"
+    },
+    {
+      "name": "组件开发规范",
+      "key": "component-spec"
+    },
+    {
+      "name": "使用 MIP-CLI 开发组件",
+      "key": "mip-cli-usage"
+    }
+  ]
+}

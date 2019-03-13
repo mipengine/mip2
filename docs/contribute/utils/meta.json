@@ -1,0 +1,22 @@
+{
+  "menu": [
+    {
+      "key": "viewer-and-viewport"
+    },
+    {
+      "key": "fetch"
+    },
+    {
+      "key": "naboo"
+    },
+    {
+      "key": "gesture"
+    },
+    {
+      "key": "platform"
+    },
+    {
+      "key": "hash"
+    }
+  ]
+}

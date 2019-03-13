@@ -312,7 +312,7 @@ describe('vue-compat', () => {
     })
 
     it('should return props merged from attributes and JSON', () => {
-      script.innerHTML = JSON.stringify({num: 0, bool: true, obj: {foo: 'baz'}, mixed: 1})
+      script.innerHTML = JSON.stringify({num: 'Infinity', bool: true, obj: {foo: 'baz'}, mixed: 1})
       element.appendChild(script)
 
       element.setAttribute('str', 'foo')
@@ -326,7 +326,7 @@ describe('vue-compat', () => {
 
       expect(vueCompat.getProps(element, propTypes)).to.deep.equal({
         str: 'foo',
-        num: 0,
+        num: Infinity,
         bool: true,
         date: '2019-01-01',
         arr: ['foo', 'bar'],

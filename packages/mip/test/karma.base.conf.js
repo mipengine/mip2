@@ -18,7 +18,9 @@ class WebpackRequirePlugin {
           '  return exported.a = exported',
           '}',
           '__webpack_require__.r = function () {}',
-          '__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };'
+          '__webpack_require__.o = function (object, property) {',
+          '  return Object.prototype.hasOwnProperty.call(object, property)',
+          '};'
         ].join('\n')
       )
     })

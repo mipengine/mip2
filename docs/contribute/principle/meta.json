@@ -1,0 +1,23 @@
+{
+  "menu": [
+    {
+      "key": "mip-component"
+    },
+    {
+      "key": "instance-life-cycle"
+    },
+    {
+      "key": "service"
+    },
+    {
+      "key": "sandbox"
+    }
+  ],
+  "ignore": [
+    "mip-component",
+    "props",
+    "event-and-action",
+    "slot",
+    "relationship-between-mip-component-and-vue"
+  ]
+}
