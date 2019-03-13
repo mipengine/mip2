@@ -32,7 +32,8 @@ module.exports = function (options) {
             {
               loader: require.resolve('vue-loader'),
               options: {
-                productionMode: options.env !== 'development'
+                productionMode: options.env !== 'development',
+                compiler: require('vue-template-compiler/build')
               }
             }
           ]
