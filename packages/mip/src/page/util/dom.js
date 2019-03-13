@@ -328,6 +328,15 @@ export function ensureMIPShell () {
   }
 }
 
+/**
+ * Returns whether mip-shell needs to be disabled.
+ *
+ * @returns {boolean}
+ */
+export function isMIPShellDisabled () {
+  return !!(window.MIP.standalone && document.querySelector('mip-shell[disabled]'))
+}
+
 export function nextFrame (fn) {
   raf(() => {
     raf(fn)

@@ -17,6 +17,7 @@ import MipShell from './mip-shell/index'
 import MipFixed from './mip-fixed/index'
 import MipLayout from './mip-layout'
 import registerElement from '../register-element'
+import {isMIPShellDisabled} from '../page/util/dom'
 
 export default {
 
@@ -34,6 +35,6 @@ export default {
     registerElement('mip-fixed', MipFixed)
     new MipBind()
     registerElement('mip-data', MipData)
-    registerElement('mip-shell', MipShell)
+    isMIPShellDisabled() || registerElement('mip-shell', MipShell)
   }
 }
