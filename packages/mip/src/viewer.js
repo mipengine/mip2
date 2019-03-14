@@ -94,8 +94,7 @@ let viewer = {
     this.fixedElement = fixedElement
     fixedElement.init()
 
-    // proxy <a mip-link>
-    setTimeout(() => this._proxyLink(this.page), 0)
+    isMIPShellDisabled() || setTimeout(() => this._proxyLink(this.page))
   },
 
   /**
