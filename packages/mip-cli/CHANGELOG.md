@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- 1.5.4
+    1. build 异常时，中断程序，便于外部脚本捕获错误
+
 - 1.5.3
     1. 锁死 webpack-dev-middleware 版本至 3.6.0
 
