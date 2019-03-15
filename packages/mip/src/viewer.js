@@ -332,13 +332,18 @@ let viewer = {
      * otherwise let TOP jump
      */
     event.delegate(document, 'a', 'click', function (event) {
+      let isMipLink = this.hasAttribute('mip-link') || this.getAttribute('data-type') === 'mip'
+
+      if (!isMipLink && this.getAttribute('target') === '_blank') {
+        return
+      }
+
       /**
        * browser will resolve fullpath, including path, query & hash
        * eg. http://localhost:8080/examples/page/tree.html?a=b#hash
        * don't use `this.getAttribute('href')`
        */
       let to = this.href
-      let isMipLink = this.hasAttribute('mip-link') || this.getAttribute('data-type') === 'mip'
       let replace = this.hasAttribute('replace')
       let cacheFirst = this.hasAttribute('cache-first')
       let state = self._getMipLinkData.call(this)
@@ -362,14 +367,11 @@ let viewer = {
       let useNewMIPService = window.MIP.standalone || window.mipService === '2'
       if (useNewMIPService) {
         self.open(to, {isMipLink, replace, state, cacheFirst})
+      } else if (isMipLink) {
+        let message = self._getMessageData.call(this)
+        self.sendMessage(message.messageKey, message.messageData)
       } else {
-        if (isMipLink) {
-          let message = self._getMessageData.call(this)
-          self.sendMessage(message.messageKey, message.messageData)
-        } else {
-          // other jump through '_top'
-          top.location.href = this.href
-        }
+        top.location.href = this.href
       }
 
       event.preventDefault()
