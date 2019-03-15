@@ -10,7 +10,7 @@
             "last 2 versions",
             "not ie <= 8",
             "iOS > 7",
-            "android > 4.4"
+            "android >= 4.4"
           ]
         }
       }
