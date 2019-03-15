@@ -48,6 +48,9 @@ class Runtime {
     let pageMetaConfirmed = false
     try {
       pageMeta = JSON.parse(window.name)
+      if (typeof pageMeta !== 'object' || pageMeta === null) {
+        throw new Error()
+      }
       /* istanbul ignore next */
       pageMetaConfirmed = true
     } catch (e) {
