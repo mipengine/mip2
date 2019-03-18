@@ -14,7 +14,7 @@ describe('vue custom element', () => {
    */
   let sandbox
 
-  let vue = MIP.Services.getService(window, 'mip-vue')
+  let vue = MIP.Services.getService('mip-vue')
 
   beforeEach(() => {
     sandbox = sinon.createSandbox()

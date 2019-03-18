@@ -88,12 +88,12 @@ export class Extensions {
    * @private
    */
   insertScript (url) {
-    const script = this.doc.createElement('script')
+    const script = document.createElement('script')
 
     script.async = true
     script.src = url
 
-    this.doc.head.appendChild(script)
+    document.head.appendChild(script)
 
     return script
   }
@@ -130,7 +130,7 @@ export class Extensions {
 
     const url = this.getExtensionScriptUrl(extensionId, version)
 
-    holder.script = this.doc.querySelector(`script[src="${url}"]`)
+    holder.script = document.querySelector(`script[src="${url}"]`)
 
     return holder.script
   }
@@ -249,14 +249,14 @@ export class Extensions {
        * This extension needs `mip-vue` service.
        */
       if (
-        this.doc.documentElement.hasAttribute('mip-vue') &&
-        !Services.getServiceOrNull(this.win, 'mip-vue')
+        document.documentElement.hasAttribute('mip-vue') &&
+        !Services.getServiceOrNull('mip-vue')
       ) {
         /**
          * Inserts script of `mip-vue` service if needed.
          */
-        if (!this.doc.querySelector('script[src*="mip-vue.js"]')) {
-          const baseUrl = this.doc.querySelector('script[src*="mip.js"]').src.replace(/\/[^/]+$/, '')
+        if (!document.querySelector('script[src*="mip-vue.js"]')) {
+          const baseUrl = document.querySelector('script[src*="mip.js"]').src.replace(/\/[^/]+$/, '')
 
           this.insertScript(`${baseUrl}/mip-vue.js`)
         }
@@ -265,7 +265,7 @@ export class Extensions {
          * Interrupts current registration.
          * Reregisters this extension while `mip-vue` service is loaded.
          */
-        Services.getServicePromise(this.win, 'mip-vue')
+        Services.getServicePromise('mip-vue')
           .then(() => this.registerExtension(extensionId, factory, ...args))
 
         return
@@ -340,9 +340,9 @@ export class Extensions {
    */
   getElementRegistrator (element) {
     if (typeof element.implementation === 'object') {
-      const vue = Services.getServiceOrNull(this.win, 'mip-vue')
+      const vue = Services.getServiceOrNull('mip-vue')
 
-      this.doc.documentElement.setAttribute('mip-vue', '')
+      document.documentElement.setAttribute('mip-vue', '')
 
       return vue && vue.registerElement
     }

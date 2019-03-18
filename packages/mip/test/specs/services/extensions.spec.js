@@ -522,19 +522,15 @@ describe('extensions', () => {
     const ele = document.createElement('mip-vue-custom')
 
     document.body.appendChild(ele)
-    extensions.registerExtension = sinon.spy(extensions.registerExtension)
 
-    delete require.cache[require.resolve('src/vue-custom-element')]
     require('src/vue-custom-element')
 
-    await Services.getServicePromise(window, 'mip-vue')
+    await Services.getServicePromise('mip-vue')
+
     ele.viewportCallback(true)
 
     expect(mountedCallback).to.be.calledOnce
 
-    expect(extensions.registerExtension).to.be.calledTwice
-
-    await new Promise(resolve => ele.addEventListener('build', resolve))
     await timer.sleep()
 
     expect(mountedCallback).to.be.calledOnce
