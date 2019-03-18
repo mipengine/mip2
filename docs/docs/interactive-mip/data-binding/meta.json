@@ -1,0 +1,25 @@
+{
+  "menu": [
+    {
+      "key": "data-definition"
+    },
+    {
+      "key": "data-operation"
+    },
+    {
+      "key": "mip-bind"
+    },
+    {
+      "key": "class-and-style-binding"
+    },
+    {
+      "key": "data-watch"
+    },
+    {
+      "key": "global-data-definition"
+    }
+  ],
+  "ignore": [
+    "introduction"
+  ]
+}

@@ -4,7 +4,7 @@
  */
 
 import viewport from 'src/viewport'
-import {isPortrait, transitionEndEvent, animationEndEvent} from 'src/page/util/feature-detect'
+import {transitionEndEvent, animationEndEvent} from 'src/page/util/feature-detect'
 import {scrollTo} from 'src/page/util/ease-scroll'
 /* eslint-disable no-unused-expressions */
 /* globals describe, it, expect, afterEach, sinon */
@@ -30,10 +30,6 @@ describe('page.util', function () {
 
     it('.animationEndEvent', function () {
       expect(animationEndEvent).to.be.equal('animationend')
-    })
-
-    it('.isPortrait', function () {
-      expect(isPortrait()).to.be.false
     })
   })
 

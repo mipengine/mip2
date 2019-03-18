@@ -11,29 +11,10 @@ const {getFilenameFromUrl} = require('webpack-dev-middleware/lib/util')
 /* eslint-enable */
 const crypto = require('crypto')
 
-module.exports = function (config) {
+module.exports = async function (config) {
   return [
     async (ctx, next) => {
-      let id = ctx.params.id
-
-      if (!id) {
-        let ext = path.extname(ctx.params.id)
-        if (!ext) {
-          id += '.html'
-        }
-      }
-
-      let pagePath
-
-      let ext = path.extname(ctx.params.id)
-      if (ext) {
-        pagePath = path.resolve(config.dir, id)
-      } else {
-        pagePath = await resolvePath([
-          path.resolve(config.dir, id + '.html'),
-          path.resolve(config.dir, id, 'index.html')
-        ])
-      }
+      let pagePath = path.resolve(config.dir, ctx.params.id)
 
       try {
         let html = await fs.readFile(pagePath, 'utf-8')

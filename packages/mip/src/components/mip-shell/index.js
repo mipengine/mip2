@@ -17,9 +17,8 @@ import {
   unbindHeaderEvents
 } from './dom'
 import {render} from './render'
-import {makeCacheUrl} from '../../util'
+import {fn, makeCacheUrl} from '../../util'
 import css from '../../util/dom/css'
-import fn from '../../util/fn'
 import CustomElement from '../../custom-element'
 import {
   createLoading,
@@ -48,6 +47,7 @@ let isHeaderShown = false
 
 window.MIP_PAGE_META_CACHE = Object.create(null)
 window.MIP_SHELL_CONFIG = null
+window.MIP_SHELL_ROUTES_AUTO_GENERATED = false
 
 class MipShell extends CustomElement {
   // ===================== CustomElement LifeCycle =====================
@@ -81,21 +81,20 @@ class MipShell extends CustomElement {
     if (ele) {
       try {
         tmpShellConfig = JSON.parse(ele.textContent.toString()) || {}
-        if (tmpShellConfig.alwaysReadConfigOnLoad !== undefined) {
-          this.alwaysReadConfigOnLoad = tmpShellConfig.alwaysReadConfigOnLoad
-        }
-        if (tmpShellConfig.transitionContainsHeader !== undefined) {
-          this.transitionContainsHeader = tmpShellConfig.transitionContainsHeader
-        }
-        if (tmpShellConfig.ignoreWarning !== undefined) {
-          this.ignoreWarning = tmpShellConfig.ignoreWarning
-        }
+        // 开头的分号是为了应对 rollup 的 BUG，否则会导致方括号和上一句的 || {} 连接在一起从而不执行
+        ;['alwaysReadConfigOnLoad', 'transitionContainsHeader', 'ignoreWarning'].forEach(key => {
+          if (tmpShellConfig[key] !== undefined) {
+            this[key] = tmpShellConfig[key]
+          }
+        })
+
         if (!tmpShellConfig.routes) {
           !this.ignoreWarning && console.warn('检测到 MIP Shell 配置没有包含 `routes` 数组，MIP 将自动生成一条默认的路由配置。')
           tmpShellConfig.routes = [{
             pattern: '*',
             meta: DEFAULT_SHELL_CONFIG
           }]
+          window.MIP_SHELL_ROUTES_AUTO_GENERATED = true
         }
       } catch (e) {
         !this.ignoreWarning && console.warn('检测到格式非法的 MIP Shell 配置，MIP 将使用默认的配置代替。')
@@ -105,6 +104,7 @@ class MipShell extends CustomElement {
             meta: DEFAULT_SHELL_CONFIG
           }]
         }
+        window.MIP_SHELL_ROUTES_AUTO_GENERATED = true
       }
     } else {
       !this.ignoreWarning && console.warn('没有检测到 MIP Shell 配置，MIP 将使用默认的配置代替。')
@@ -114,6 +114,7 @@ class MipShell extends CustomElement {
           meta: DEFAULT_SHELL_CONFIG
         }]
       }
+      window.MIP_SHELL_ROUTES_AUTO_GENERATED = true
     }
 
     if (page.isRootPage) {
@@ -192,6 +193,9 @@ class MipShell extends CustomElement {
 
       if (!pageMeta) {
         pageMeta = this.findMetaByPageId(pageId)
+      }
+      if (window.parent.MIP_SHELL_ROUTES_AUTO_GENERATED) {
+        window.parent.document.title = pageMeta.header.title = (document.querySelector('title') || {}).innerHTML || ''
       }
 
       page.emitCustomEvent(window.parent, page.isCrossOrigin, {
@@ -371,9 +375,6 @@ class MipShell extends CustomElement {
         case 'updateShell':
           this.refreshShell({pageMeta: data.pageMeta})
           break
-        case 'slide':
-          this.slideHeader(data.direction)
-          break
         case 'togglePageMask':
           this.togglePageMask(data.toggle, data.options)
           break
@@ -498,13 +499,6 @@ class MipShell extends CustomElement {
     }
 
     // Refresh header
-    this.toggleTransition(false)
-    /* eslint-disable no-unused-expressions */
-    window.innerHeight
-    this.slideHeader('down')
-    window.innerHeight
-    /* eslint-enable no-unused-expressions */
-    this.toggleTransition(true)
     if (asyncRefresh) {
       // In async mode: (Invoked from `processShellConfig` by user)
       // 1. Render fade header with updated pageMeta
@@ -549,17 +543,6 @@ class MipShell extends CustomElement {
 
       // Rebind header events
       this.bindHeaderEvents()
-    }
-  }
-
-  slideHeader (direction) {
-    if (this.pauseBouncyHeader) {
-      return
-    }
-    if (direction === 'up') {
-      this.$el.classList.add('slide-up')
-    } else {
-      this.$el.classList.remove('slide-up')
     }
   }
 
@@ -619,18 +602,14 @@ class MipShell extends CustomElement {
   // ===================== All Page Functions =====================
   bindAllEvents () {
     // Don't let browser restore scroll position.
-    if ('scrollRestoration' in window.history) {
+    if (!window.MIP.standalone && 'scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual'
     }
 
-    let {show: showHeader, bouncy} = this.currentPageMeta.header
+    let {show: showHeader} = this.currentPageMeta.header
     // Set `padding-top` on scroller
     if (showHeader) {
       document.body.classList.add('with-header')
-    }
-
-    if (bouncy) {
-      page.setupBouncyHeader()
     }
 
     // Cross origin

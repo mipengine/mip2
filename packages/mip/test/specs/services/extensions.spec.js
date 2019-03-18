@@ -1,12 +1,29 @@
 import Services, {
-  installMipdocService,
-  installTimerService,
   installExtensionsService,
   Extensions
 } from 'src/services'
 import CustomElement from 'src/custom-element'
 import customElement from 'src/mip1-polyfill/customElement'
 import templates from 'src/util/templates'
+import resources from 'src/resources'
+
+function mockAsyncBuildFactory (el) {
+  let add = resources.add
+  return {
+    stub () {
+      resources.add = targetEl => targetEl !== el && add.call(resources, targetEl)
+    },
+    delayToRunBuild () {
+      setTimeout(() => {
+        el.build()
+        el.viewportCallback(true)
+      })
+    },
+    restore () {
+      resources.add = add
+    }
+  }
+}
 
 describe('extensions', () => {
   /**
@@ -26,12 +43,10 @@ describe('extensions', () => {
 
   beforeEach(() => {
     sandbox = sinon.createSandbox()
-    window.services = {}
-    installMipdocService(window)
-    installTimerService(window)
-    installExtensionsService(window)
-    timer = Services.timerFor(window)
-    extensions = Services.extensionsFor(window)
+    window.services.extensions = null
+    installExtensionsService()
+    extensions = Services.extensions()
+    timer = Services.timer()
     document.documentElement.removeAttribute('mip-vue')
   })
 
@@ -253,8 +268,6 @@ describe('extensions', () => {
       extensions.registerElement('mip-custom', implementation, css)
     }, MIP)
 
-    await new Promise(resolve => ele.addEventListener('build', resolve))
-
     expect(buildCallback).to.be.calledOnce
     document.body.removeChild(ele)
 
@@ -268,29 +281,206 @@ describe('extensions', () => {
     expect(element.version).to.not.exist
   })
 
-  it('should fail registration in build', async () => {
+  it('should register multipe custom element in one extension', async () => {
+    let name = 'multi-custom-element'
+    const buildCallback1 = sinon.spy()
+    const implementation1 = class MIPCustom extends CustomElement {
+      build () {
+        buildCallback1()
+      }
+    }
+
+    const buildCallback2 = sinon.spy()
+    const implementation2 = class MIPCustom extends CustomElement {
+      build () {
+        buildCallback2()
+      }
+    }
+
+    const ele1 = document.createElement(name + '1')
+    const ele2 = document.createElement(name + '2')
+
+    document.body.appendChild(ele1)
+    document.body.appendChild(ele2)
+
+    extensions.registerExtension('mip-ext', () => {
+      extensions.registerElement(name + '1', implementation1)
+      extensions.registerElement(name + '2', implementation2)
+    }, MIP)
+
+    expect(buildCallback1).to.be.calledOnce
+    expect(buildCallback2).to.be.calledOnce
+    document.body.removeChild(ele1)
+    document.body.removeChild(ele2)
+
+    const extension = await extensions.waitForExtension('mip-ext')
+
+    const element1 = extension.elements[name + '1']
+    const element2 = extension.elements[name + '2']
+
+    expect(element1).to.exist
+    expect(element2).to.exist
+    expect(element1.implementation).to.equal(implementation1)
+    expect(element2.implementation).to.equal(implementation2)
+    expect(element1.version).to.not.exist
+  })
+
+  it('should register multipe asynchronous custom element in one extension', async () => {
+    let name = 'multi-custom-element-asynchronous'
+    const buildCallback1 = sinon.spy()
+    const implementation1 = class MIPCustom extends CustomElement {
+      build () {
+        buildCallback1()
+      }
+    }
+
+    const buildCallback2 = sinon.spy()
+    const implementation2 = class MIPCustom extends CustomElement {
+      build () {
+        buildCallback2()
+      }
+    }
+
+    const ele1 = document.createElement(name + '1')
+    const ele2 = document.createElement(name + '2')
+
+    const mockAsyncBuild1 = mockAsyncBuildFactory(ele1)
+    const mockAsyncBuild2 = mockAsyncBuildFactory(ele1)
+    mockAsyncBuild1.stub()
+    mockAsyncBuild2.stub()
+
+    document.body.appendChild(ele1)
+    document.body.appendChild(ele2)
+
+    mockAsyncBuild1.delayToRunBuild()
+    mockAsyncBuild2.delayToRunBuild()
+
+    extensions.registerExtension('mip-ext', () => {
+      extensions.registerElement(name + '1', implementation1)
+      extensions.registerElement(name + '2', implementation2)
+    }, MIP)
+
+    document.body.removeChild(ele1)
+    document.body.removeChild(ele2)
+
+    const extension = await extensions.waitForExtension('mip-ext')
+
+    expect(buildCallback1).to.be.calledOnce
+    expect(buildCallback2).to.be.calledOnce
+
+    const element1 = extension.elements[name + '1']
+    const element2 = extension.elements[name + '2']
+
+    expect(element1).to.exist
+    expect(element2).to.exist
+    expect(element1.implementation).to.equal(implementation1)
+    expect(element2.implementation).to.equal(implementation2)
+    expect(element1.version).to.not.exist
+    mockAsyncBuild1.restore()
+    mockAsyncBuild2.restore()
+  })
+
+  it('should register custom element with build asynchronous in registration', async () => {
+    const name = 'mip-ext-asynchronous-build'
+    const buildCallback = sinon.spy()
+    const implementation = class MIPCustom extends CustomElement {
+      build () {
+        buildCallback()
+      }
+    }
+    const css = name + '{display: block}'
+    const ele = document.createElement(name)
+
+    const mockAsyncBuild = mockAsyncBuildFactory(ele)
+    mockAsyncBuild.stub()
+
+    document.body.appendChild(ele)
+
+    mockAsyncBuild.delayToRunBuild()
+
+    extensions.registerExtension(name, () => {
+      extensions.registerElement(name, implementation, css)
+    }, MIP)
+
+    // mock build asynchronous
+    setTimeout(() => {
+      ele.build()
+      ele.viewportCallback(true)
+    }, 100)
+    await new Promise(resolve => ele.addEventListener('build', resolve))
+
+    expect(buildCallback).to.be.calledOnce
+    document.body.removeChild(ele)
+
+    const extension = await extensions.waitForExtension(name)
+
+    const element = extension.elements[name]
+
+    expect(element).to.exist
+    expect(element.implementation).to.equal(implementation)
+    expect(element.css).to.equal(css)
+    expect(element.version).to.not.exist
+
+    // restore add func
+    mockAsyncBuild.restore()
+  })
+
+  it('should fail registration in build asynchronous', async () => {
+    const name = 'mip-custom-error-asynchronous'
     const implementation = class MIPCustomError extends CustomElement {
       build () {
         throw new Error('intentional')
       }
     }
-    const ele = document.createElement('mip-custom-error')
+    const ele = document.createElement(name)
+
+    const mockAsyncBuild = mockAsyncBuildFactory(ele)
+    mockAsyncBuild.stub()
 
     document.body.appendChild(ele)
 
-    extensions.registerExtension('mip-ext', () => {
-      extensions.registerElement('mip-custom-error', implementation)
+    mockAsyncBuild.delayToRunBuild()
+
+    extensions.registerExtension(name, () => {
+      extensions.registerElement(name, implementation)
     })
 
     await new Promise(resolve => ele.addEventListener('build-error', resolve))
 
     document.body.removeChild(ele)
 
-    return extensions.waitForExtension('mip-ext').then(() => {
+    await extensions.waitForExtension(name).then(() => {
       throw new Error('It must have been rejected')
     }).catch((err) => {
       expect(err.message).to.equal('intentional')
     })
+
+    mockAsyncBuild.restore()
+  })
+
+  it('should fail registration in build', async () => {
+    let name = 'mip-ext-synchronous-error'
+    const implementation = class MIPCustomError extends CustomElement {
+      build () {
+        throw new Error('intentional')
+      }
+    }
+    const ele = document.createElement(name)
+
+    document.body.appendChild(ele)
+
+    extensions.registerExtension(name, () => {
+      extensions.registerElement(name, implementation)
+    })
+
+    document.body.removeChild(ele)
+
+    try {
+      await extensions.waitForExtension(name)
+      throw new Error('It must have been rejected')
+    } catch (err) {
+      expect(err.message).to.equal('intentional')
+    }
   })
 
   it('should register vue custom element in registration', async () => {
@@ -338,6 +528,9 @@ describe('extensions', () => {
     require('src/vue-custom-element')
 
     await Services.getServicePromise(window, 'mip-vue')
+    ele.viewportCallback(true)
+
+    expect(mountedCallback).to.be.calledOnce
 
     expect(extensions.registerExtension).to.be.calledTwice
 
@@ -348,6 +541,7 @@ describe('extensions', () => {
     document.body.removeChild(ele)
 
     const extension = await extensions.waitForExtension('mip-ext')
+
     const element = extension.elements['mip-vue-custom']
 
     expect(element).to.exist
@@ -368,8 +562,6 @@ describe('extensions', () => {
     extensions.registerExtension('mip-ext', () => {
       extensions.registerElement('mip-legacy', implementation, css, {version: '1'})
     })
-
-    await new Promise(resolve => ele.addEventListener('build', resolve))
 
     expect(attachedCallback).to.be.calledOnce
     document.body.removeChild(ele)
@@ -395,7 +587,7 @@ describe('extensions', () => {
 
     expect(service).to.exist
     expect(service.implementation).to.equal(implementation)
-    expect(Services.getService(window, 'mip-service')).instanceOf(implementation)
+    expect(Services.getService('mip-service')).instanceOf(implementation)
   })
 
   it('should register template in registration', () => {

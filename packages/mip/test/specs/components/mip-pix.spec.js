@@ -52,76 +52,72 @@ describe('mip-pix', function () {
 
   it('should send by default', function () {
     pixDefault = createPix('https://www.mipengine.org/a.gif')
-    return pixDefault._resources.updateState(() => {
-      let src = pixDefault.querySelector('img').getAttribute('src')
-      let params = parseUrl(src)
-      let keys = Object.keys(params)
-      let title = encodeURIComponent((document.querySelector('title') || {}).innerHTML || '')
-      expect(keys).to.include('t')
-      expect(keys).to.include('title')
-      expect(keys).to.include('host')
-      expect(keys.length).to.equal(3)
-      expect(isValidDate(params.t)).to.be.true
-      expect(params.title).to.equal(title)
-      expect(params.host).to.equal(encodeURIComponent(window.location.href))
-    })
+    pixDefault.viewportCallback(true)
+    let src = pixDefault.querySelector('img').getAttribute('src')
+    let params = parseUrl(src)
+    let keys = Object.keys(params)
+    let title = encodeURIComponent((document.querySelector('title') || {}).innerHTML || '')
+    expect(keys).to.include('t')
+    expect(keys).to.include('title')
+    expect(keys).to.include('host')
+    expect(keys.length).to.equal(3)
+    expect(isValidDate(params.t)).to.be.true
+    expect(params.title).to.equal(title)
+    expect(params.host).to.equal(encodeURIComponent(window.location.href))
   })
 
   it('should send by arguments', function () {
     pixSetParam = createPix('https://www.mipengine.org/a.gif?t=${TIME}&title=${TITLE}&host=${HOST}') // eslint-disable-line
-    return pixDefault._resources.updateState(() => {
-      let src = pixSetParam.querySelector('img').getAttribute('src')
-      let params = parseUrl(src)
-      let keys = Object.keys(params)
-      let title = encodeURIComponent((document.querySelector('title') || {}).innerHTML || '')
-      expect(keys).to.include('t')
-      expect(keys).to.include('title')
-      expect(keys).to.include('host')
-      expect(keys.length).to.equal(3)
-      expect(isValidDate(params.t)).to.be.true
-      expect(params.title).to.equal(title)
-      expect(params.host).to.equal(encodeURIComponent(window.location.href))
-    })
+    pixSetParam.viewportCallback(true)
+    let src = pixSetParam.querySelector('img').getAttribute('src')
+    let params = parseUrl(src)
+    let keys = Object.keys(params)
+    let title = encodeURIComponent((document.querySelector('title') || {}).innerHTML || '')
+    expect(keys).to.include('t')
+    expect(keys).to.include('title')
+    expect(keys).to.include('host')
+    expect(keys.length).to.equal(3)
+    expect(isValidDate(params.t)).to.be.true
+    expect(params.title).to.equal(title)
+    expect(params.host).to.equal(encodeURIComponent(window.location.href))
   })
 
   it('should send with extra args', function () {
     pixExtraParam = createPix('https://www.mipengine.org/a.gif?t=${TIME}&title=${TITLE}&host=${HOST}&area=A') // eslint-disable-line
-    return pixDefault._resources.updateState(() => {
-      let src = pixExtraParam.querySelector('img').getAttribute('src')
-      let params = parseUrl(src)
-      let keys = Object.keys(params)
-      let title = encodeURIComponent((document.querySelector('title') || {}).innerHTML || '')
-      expect(keys).to.include('t')
-      expect(keys).to.include('title')
-      expect(keys).to.include('host')
-      expect(keys).to.include('area')
-      expect(keys.length).to.equal(4)
-      expect(isValidDate(params.t)).to.be.true
-      expect(params.title).to.equal(title)
-      expect(params.host).to.equal(encodeURIComponent(window.location.href))
-      expect(params.area).to.equal('A')
-    })
+    pixExtraParam.viewportCallback(true)
+    let src = pixExtraParam.querySelector('img').getAttribute('src')
+    let params = parseUrl(src)
+    let keys = Object.keys(params)
+    let title = encodeURIComponent((document.querySelector('title') || {}).innerHTML || '')
+    expect(keys).to.include('t')
+    expect(keys).to.include('title')
+    expect(keys).to.include('host')
+    expect(keys).to.include('area')
+    expect(keys.length).to.equal(4)
+    expect(isValidDate(params.t)).to.be.true
+    expect(params.title).to.equal(title)
+    expect(params.host).to.equal(encodeURIComponent(window.location.href))
+    expect(params.area).to.equal('A')
   })
 
   it('should send by experiment', function () {
     pixExperiment = createPix('https://www.mipengine.org/a.gif?mip-x-button-color=${MIP-X-BUTTON-COLOR}&mip-x-font-color=${MIP-X-FONT-COLOR}') // eslint-disable-line
-    return pixDefault._resources.updateState(() => {
-      let src = pixExperiment.querySelector('img').getAttribute('src')
-      let params = parseUrl(src)
-      let keys = Object.keys(params)
-      let title = encodeURIComponent((document.querySelector('title') || {}).innerHTML || '')
-      expect(keys).to.include('t')
-      expect(keys).to.include('title')
-      expect(keys).to.include('host')
-      expect(keys).to.include('mip-x-button-color')
-      expect(keys).to.include('mip-x-font-color')
-      expect(keys.length).to.equal(5)
-      expect(isValidDate(params.t)).to.be.true
-      expect(params.title).to.equal(title)
-      expect(params.host).to.equal(encodeURIComponent(window.location.href))
-      // expect(params['mip-x-button-color']).to.be.oneOf(['yellow', 'grey'])
-      // expect(params['mip-x-font-color']).to.be.oneOf(['black', 'white'])
-    })
+    pixExperiment.viewportCallback(true)
+    let src = pixExperiment.querySelector('img').getAttribute('src')
+    let params = parseUrl(src)
+    let keys = Object.keys(params)
+    let title = encodeURIComponent((document.querySelector('title') || {}).innerHTML || '')
+    expect(keys).to.include('t')
+    expect(keys).to.include('title')
+    expect(keys).to.include('host')
+    expect(keys).to.include('mip-x-button-color')
+    expect(keys).to.include('mip-x-font-color')
+    expect(keys.length).to.equal(5)
+    expect(isValidDate(params.t)).to.be.true
+    expect(params.title).to.equal(title)
+    expect(params.host).to.equal(encodeURIComponent(window.location.href))
+    // expect(params['mip-x-button-color']).to.be.oneOf(['yellow', 'grey'])
+    // expect(params['mip-x-font-color']).to.be.oneOf(['black', 'white'])
   })
 
   after(function () {

@@ -7,6 +7,7 @@
 /* eslint-disable no-new */
 
 import util from '../util/index'
+import {customEmit} from '../util/custom-event'
 import CustomElement from '../custom-element'
 import viewport from '../viewport'
 import viewer from '../viewer'
@@ -100,7 +101,7 @@ function getImgsSrc () {
  */
 function getCurrentImg (carouselWrapper, mipCarousel) {
   // 例如：'translate3d(-90px,0,0)'
-  let str = carouselWrapper.style.webkitTransform
+  let str = carouselWrapper.style.webkitTransform || carouselWrapper.style.transform
   let result = /translate3d\(-?([0-9]+)/i.exec(str)
   // 原先宽度是视口宽度，现在需要的是图片本身宽度。最后还是一样的。。。
   let width = mipCarousel.getAttribute('width')
@@ -205,8 +206,13 @@ function bindPopup (element, img) {
         skipTransition: true,
         extraClass: 'black'
       })
+
+      let mipCarouselWrapper = popup.querySelector('.mip-carousel-wrapper')
+      /* istanbul ignore if */
+      if (mipCarouselWrapper == null) return
+
       // 找出当前视口下的图片
-      let currentImg = getCurrentImg(popup.querySelector('.mip-carousel-wrapper'), mipCarousel)
+      let currentImg = getCurrentImg(mipCarouselWrapper, mipCarousel)
       popupImg.setAttribute('src', currentImg.getAttribute('data-src'))
       let previousPos = getImgOffset(img)
       // 获取弹出图片滑动的距离，根据前面的设定，top大于0就不是长图，小于0才是滑动的距离。
@@ -272,7 +278,44 @@ class MipImg extends CustomElement {
       elementRect.top + elementRect.height + threshold >= viewportRect.top
   }
 
-  layoutCallback () {
+  /** @overwrite */
+  build () {
+    this.createPlaceholder()
+  }
+
+  /**
+   * Create default placeholder if element has not define size
+   */
+  createPlaceholder () {
+    if (this.element.classList.contains('mip-layout-size-defined')) {
+      return
+    }
+
+    /* istanbul ignore if */
+    if (this.element.querySelector('.mip-default-placeholder')) {
+      return
+    }
+
+    let placeholder = document.createElement('mip-i-space')
+    placeholder.classList.add('mip-default-placeholder')
+
+    this.element.appendChild(css(
+      placeholder, {
+        'padding-bottom': '75%',
+        'background': 'rgba(0, 0, 0, 0.08)',
+        'opacity': '1'
+      })
+    )
+  }
+
+  removePlaceholder () {
+    let placeholder = this.element.querySelector('.mip-default-placeholder')
+    if (placeholder) {
+      this.element.removeChild(placeholder)
+    }
+  }
+
+  async layoutCallback () {
     let ele = this.element
     let img = new Image()
     if (ele.hasAttribute('popup')) {
@@ -307,14 +350,19 @@ class MipImg extends CustomElement {
     if (ele.hasAttribute('popup')) {
       bindPopup(ele, img)
     }
-    return event.loadPromise(img).then(() => {
-      // 标识资源已加载完成
+    this.element.classList.add('mip-img-loading')
+
+    try {
+      await event.loadPromise(img)
       this.resourcesComplete()
+      this.removePlaceholder()
+      this.element.classList.remove('mip-img-loading')
       this.element.classList.add('mip-img-loaded')
-    }).catch(reason => {
+      customEmit(this.element, 'load')
+    } catch (reason) {
       /* istanbul ignore if */
       if (!viewer.isIframed) {
-        return Promise.reject(reason)
+        return
       }
       let ele = document.createElement('a')
       ele.href = img.src
@@ -323,15 +371,22 @@ class MipImg extends CustomElement {
         ele.search += (/[?&]$/.test(search) ? '' : '&') + 'mip_img_ori=1'
         img.src = ele.href
       }
-
-      return Promise.reject(reason)
-    })
+    }
   }
 
   attributeChangedCallback (attributeName, oldValue, newValue, namespace) {
     if (attributeName === 'src' && oldValue !== newValue) {
       let img = this.element.querySelector('img')
-      img && (img.src = newValue)
+
+      if (!img) {
+        return
+      }
+
+      event.loadPromise(img).then(() => {
+        this.element.toggleFallback(false)
+      })
+
+      img.src = newValue
     }
   }
 

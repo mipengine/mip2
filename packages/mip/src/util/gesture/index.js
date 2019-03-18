@@ -6,7 +6,7 @@
 import EventEmitter from '../event-emitter'
 import Recognizer from './gesture-recognizer'
 import dataProcessor from './data-processor'
-import fn from '../fn'
+import * as fn from '../fn'
 
 /* eslint-disable no-cond-assign */
 

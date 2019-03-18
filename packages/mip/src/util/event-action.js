@@ -5,7 +5,7 @@
 
 /* global MIP */
 
-import fn from './fn'
+import * as fn from './fn'
 import dom from './dom/dom'
 
 /* global MIP */
@@ -17,6 +17,15 @@ import dom from './dom/dom'
  * @type {RegExp}
  */
 const PARSE_REG = /^(\w+):\s*([\w-]+)\.([\w-$]+)(?:\((.+)\))?$/
+
+/**
+ * Regular for parsing event arguments.
+ * @const
+ * @inner
+ * @type {RegExp}
+ */
+const EVENT_ARG_REG = /^event(\.[a-zA-Z_][\w_]*)+$/g
+// const EVENT_ARG_REG_FOR_OBJECT = /(:\s*)(event(\.[a-zA-Z]\w+)+)(\s*[,}])/g
 
 /**
  * Regular for checking elements.
@@ -222,7 +231,7 @@ class EventAction {
       } else if (isColon(peek) && !isSpace(str[i + 1])) {
         pstack.pop()
       } else if (isSpace(char) && !pstack.length) {
-        let act = str.substring(pos, i).trim(' ')
+        let act = str.substring(pos, i).trim()
         act && actions.push(act)
         pos = i
       }
@@ -232,7 +241,7 @@ class EventAction {
       throw new SyntaxError(`Can not match ${pstack[pstack.length - 1]} in statement: 'on=${str}'`)
     }
 
-    let act = str.substring(pos, str.length).trim(' ')
+    let act = str.slice(pos).trim()
     act && actions.push(act)
 
     let result = []
@@ -240,16 +249,108 @@ class EventAction {
       let action = actions[i].replace(/\n/g, '')
       let matchedResult = action.match(PARSE_REG)
       if (matchedResult && matchedResult[1] === type) {
+        let id = matchedResult[2]
+        let handler = matchedResult[3]
+        let arg = matchedResult[4]
+        // 暂不对 MIP.setData 的参数作处理
+        if (id !== 'MIP' && arg && arg.indexOf('event.') !== -1) {
+          arg = this.handleArguments(arg, event)
+        }
         result.push({
-          type: matchedResult[1],
-          id: matchedResult[2],
-          handler: matchedResult[3],
-          arg: matchedResult[4],
-          event: event
+          type,
+          id,
+          handler,
+          arg,
+          event
         })
       }
     }
     return result
+  }
+
+  split (str, seperator) {
+    if (typeof str !== 'string' || typeof seperator !== 'string') {
+      return []
+    }
+    let isQuote = char => char === '"' || char === '\'' || char === '`'
+    const open = {
+      '{': '}',
+      '(': ')',
+      '[': ']'
+    }
+    const close = {
+      '}': '{',
+      ')': '(',
+      ']': '['
+    }
+
+    let pos = 0
+    let result = []
+    let plist = []
+    for (let i = 0, slen = str.length; i < slen; i++) {
+      let peek = plist[plist.length - 1]
+      let char = str[i]
+
+      if (open[char] && !isQuote(peek)) {
+        plist.push(char)
+      } else if (close[char]) {
+        let index = plist.lastIndexOf(close[char])
+        if (index !== -1) {
+          plist.splice(index, plist.length - index)
+        }
+      } else if (isQuote(char) && str[i - 1] !== '\\') {
+        if (peek === char) {
+          plist.pop()
+        } else {
+          plist.push(char)
+        }
+      } else if (char === seperator && !plist.length) {
+        let part = str.substring(pos, i).trim()
+        result.push(part)
+        pos = i + 1
+      }
+    }
+
+    let part = str.slice(pos).trim()
+    result.push(part)
+    return result
+  }
+
+  /**
+   * Replace the event dot references in arg string with their values
+   *
+   * @param {string} arg arguments string
+   * @param {Event} event event
+   * @return {string} new arg
+   */
+  handleArguments (arg, event) {
+    if (!arg) {
+      return
+    }
+    const data = {event}
+
+    let getEventValue = (expr) => {
+      let value = expr.split('.').reduce((value, part) => (part && value) ? value[part] : undefined, data)
+      return this.convertToString(value)
+    }
+
+    // arg is object-like string, match and replace the value part
+    // if (/^\s*{.*}\s*$/.test(arg)) {
+    //   return arg.replace(EVENT_ARG_REG_FOR_OBJECT, (matched, colon, value, attr, tail) => colon + getEventValue(value) + tail)
+    // }
+
+    let args = this.split(arg, ',')
+    return args.map(item => item.trim().replace(EVENT_ARG_REG, getEventValue)).join(',')
+  }
+
+  convertToString (value) {
+    if (typeof value === 'object') {
+      return JSON.stringify(value)
+    }
+    if (typeof value === 'string') {
+      return `"${value}"`
+    }
+    return value + ''
   }
 }
 

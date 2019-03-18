@@ -59,7 +59,7 @@ function getWhitelist () {
   const url = 'http://bos.nj.bpc.baidu.com/assets/mip-cli/whitelist.txt'
   const local = path.resolve(__dirname, 'lib/whitelist.txt')
 
-  return fetch(url)
+  return fetch(url, {timeout: 1000})
     .then(response => response.text())
     .then(async txt => {
       await fs.writeFile(local, txt, {encodeing: 'utf8'})

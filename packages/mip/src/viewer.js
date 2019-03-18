@@ -11,10 +11,8 @@ import Gesture from './util/gesture/index'
 import platform from './util/platform'
 import EventAction from './util/event-action'
 import EventEmitter from './util/event-emitter'
-import fn from './util/fn'
-import {makeCacheUrl, parseCacheUrl} from './util'
+import {fn, makeCacheUrl, parseCacheUrl} from './util'
 import {supportsPassive} from './page/util/feature-detect'
-import {resolvePath} from './page/util/path'
 import viewport from './viewport'
 import Page from './page/index'
 import {
@@ -23,6 +21,8 @@ import {
   OUTER_MESSAGE_PUSH_STATE,
   OUTER_MESSAGE_REPLACE_STATE
 } from './page/const'
+import {isMIPShellDisabled} from './page/util/dom'
+import {resolvePath} from './page/util/path'
 import Messager from './messager'
 import fixedElement from './fixed-element'
 import clientPrerender from './client-prerender'
@@ -46,7 +46,6 @@ let viewer = {
      * The initialise method of viewer
      */
   init () {
-
     /**
      * SF 创建的第一个页面的 window.name
      */
@@ -95,9 +94,7 @@ let viewer = {
     this.fixedElement = fixedElement
     fixedElement.init()
 
-    // proxy <a mip-link>
-    setTimeout(() => this._proxyLink(this.page), 0)
-
+    isMIPShellDisabled() || setTimeout(() => this._proxyLink(this.page))
   },
 
   /**
@@ -208,9 +205,9 @@ let viewer = {
     }
 
     // Jump in top window directly
-    // 1. Cross origin and NOT in SF
+    // 1. ( Cross origin or MIP Shell is disabled ) and NOT in SF
     // 2. Not MIP page and not only hash change
-    if ((this._isCrossOrigin(to) && window.MIP.standalone) ||
+    if (((this._isCrossOrigin(to) || isMIPShellDisabled()) && window.MIP.standalone) ||
       (!isMipLink && !isHashInCurrentPage)) {
       if (replace) {
         window.top.location.replace(to)
@@ -335,18 +332,21 @@ let viewer = {
      * otherwise let TOP jump
      */
     event.delegate(document, 'a', 'click', function (event) {
-      let $a = this
+      let isMipLink = this.hasAttribute('mip-link') || this.getAttribute('data-type') === 'mip'
+
+      if (!isMipLink && this.getAttribute('target') === '_blank') {
+        return
+      }
 
       /**
        * browser will resolve fullpath, including path, query & hash
        * eg. http://localhost:8080/examples/page/tree.html?a=b#hash
-       * don't use `$a.getAttribute('href')`
+       * don't use `this.getAttribute('href')`
        */
-      let to = $a.href
-      let isMipLink = $a.hasAttribute('mip-link') || $a.getAttribute('data-type') === 'mip'
-      let replace = $a.hasAttribute('replace')
-      let cacheFirst = $a.hasAttribute('cache-first')
-      let state = self._getMipLinkData.call($a)
+      let to = this.href
+      let replace = this.hasAttribute('replace')
+      let cacheFirst = this.hasAttribute('cache-first')
+      let state = self._getMipLinkData.call(this)
 
       /**
        * For mail、phone、market、app ...
@@ -361,7 +361,18 @@ let viewer = {
         return
       }
 
-      self.open(to, {isMipLink, replace, state, cacheFirst})
+      // 以下情况使用 MIP 接管页面跳转
+      // 1. Standalone
+      // 2. New MIP Service
+      let useNewMIPService = window.MIP.standalone || window.mipService === '2'
+      if (useNewMIPService) {
+        self.open(to, {isMipLink, replace, state, cacheFirst})
+      } else if (isMipLink) {
+        let message = self._getMessageData.call(this)
+        self.sendMessage(message.messageKey, message.messageData)
+      } else {
+        top.location.href = this.href
+      }
 
       event.preventDefault()
     }, false)
@@ -383,32 +394,64 @@ let viewer = {
     }
   },
 
+  /**
+   * get alink postMessage data
+   * @return {Object} messageData
+   */
+  _getMessageData () {
+    let messageKey = 'loadiframe'
+    let messageData = {}
+    messageData.url = this.href
+    if (this.hasAttribute('no-head')) {
+      messageData.nohead = true
+    }
+    if (this.hasAttribute('mip-link')) {
+      let parent = this.parentNode
+      messageData.title = parent.getAttribute('title') || parent.innerText.trim().split('\n')[0]
+      messageData.click = parent.getAttribute('data-click')
+    } else {
+      messageData.title = this.getAttribute('data-title') || this.innerText.trim().split('\n')[0]
+      messageData.click = this.getAttribute('data-click')
+    }
+    return {messageKey, messageData}
+  },
+
   handleBrowserQuirks () {
     // add normal scroll class to body. except ios in iframe.
     // Patch for ios+iframe is default in mip.css
     if (!platform.needSpecialScroll) {
-      document.documentElement.classList.add('mip-i-android-scroll')
-      document.body.classList.add('mip-i-android-scroll')
+      setTimeout(() => {
+        document.documentElement.classList.add('mip-i-android-scroll')
+        document.body.classList.add('mip-i-android-scroll')
+      }, 0)
     }
 
     // prevent bouncy scroll in iOS 7 & 8
     if (platform.isIos()) {
       let iosVersion = platform.getOsVersion()
       iosVersion = iosVersion ? iosVersion.split('.')[0] : ''
-      document.documentElement.classList.add('mip-i-ios-scroll')
-      window.addEventListener('orientationchange', () => {
-        document.documentElement.classList.remove('mip-i-ios-scroll')
-        setTimeout(() => {
-          document.documentElement.classList.add('mip-i-ios-scroll')
+      setTimeout(() => {
+        document.documentElement.classList.add('mip-i-ios-scroll')
+        document.documentElement.classList.add('mip-i-ios-width')
+        window.addEventListener('orientationchange', () => {
+          document.documentElement.classList.remove('mip-i-ios-scroll')
+          setTimeout(() => {
+            document.documentElement.classList.add('mip-i-ios-scroll')
+          })
         })
-      })
-      document.documentElement.classList.add('mip-i-ios-width')
+      }, 0)
 
       if (!this.page.isRootPage) {
         this.fixIOSPageFreeze()
       }
 
       if (this.isIframed) {
+        // 这些兼容性的代码会严重触发 reflow，但又不需要在首帧执行
+        // 使用 setTimeout 不阻塞 postMessage 回调执行
+        setTimeout(() => {
+          this.fixSoftKeyboard()
+          this.viewportScroll()
+        }, 0)
         this.lockBodyScroll()
 
         // While the back button is clicked,
@@ -440,11 +483,6 @@ let viewer = {
         document.documentElement.classList.add('trigger-layout')
         document.body.classList.add('trigger-layout')
       })
-    }
-
-    if (this.isIframed) {
-      this.viewportScroll()
-      this.fixSoftKeyboard()
     }
   },
 

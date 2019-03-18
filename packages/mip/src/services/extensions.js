@@ -1,5 +1,6 @@
 import Services from './services'
 import {templates, Deferred, event} from '../util'
+import {whenDocumentInteractive} from '../util/dom/dom'
 import registerMip1Element from '../mip1-polyfill/element'
 import registerCustomElement from '../register-element'
 
@@ -10,22 +11,7 @@ const UNKNOWN_EXTENSION_ID = 'unknown'
 // const LATEST_MIP_VERSION = '2'
 
 export class Extensions {
-  /**
-   * @param {!Window} win
-   */
-  constructor (win) {
-    /**
-     * @private
-     * @const
-     */
-    this.win = win
-
-    /**
-     * @private
-     * @const
-     */
-    this.doc = win.document
-
+  constructor () {
     /**
      * @type {!Object}
      * @private
@@ -42,13 +28,7 @@ export class Extensions {
      * @private
      * @const
      */
-    this.mipdoc = Services.mipdocFor(win)
-
-    /**
-     * @private
-     * @const
-     */
-    this.timer = Services.timerFor(win)
+    this.timer = Services.timer()
 
     /**
      * Binds methods exposed to `MIP`.
@@ -344,18 +324,9 @@ export class Extensions {
    * Installs an extension. The same as `MIP.push`.
    *
    * @param {!Object} extension
-   * @returns {!Promise<void>}
    */
   installExtension (extension) {
-    return Promise.all([
-      /**
-       * Disables `extension.deps` temporarily.
-       */
-      // this.preloadDepsOf(extension),
-      this.mipdoc.whenBodyAvailable()
-    ]).then(
-      () => this.registerExtension(extension.name, extension.func, this.win.MIP)
-    )
+    whenDocumentInteractive(document).then(() => this.registerExtension(extension.name, extension.func, window.MIP))
   }
 
   /**
@@ -414,7 +385,22 @@ export class Extensions {
     let elementInstances = registrator(name, implementation, css)
 
     if (elementInstances && elementInstances.length) {
-      elementInstances.forEach(el => {
+      holder.elementInstances = holder.elementInstances.concat(elementInstances)
+      for (let i = 0, len = elementInstances.length; i < len; i++) {
+        let el = elementInstances[i]
+
+        // Delay to last processing extension resolve.
+        if (el.isBuilt()) {
+          continue
+        }
+
+        // It can't catch error of customElements.define with try/catch.
+        // @see https://github.com/w3c/webcomponents/issues/547
+        if (el.error) {
+          this.tryToRejectError(holder, el.error)
+          break
+        }
+
         /**
          * Lifecycle `build` of element instances is probably delayed with `setTimeout`.
          * If they are not, these event listeners would not be registered before they emit events.
@@ -429,8 +415,7 @@ export class Extensions {
           unlistenBuild()
           unlistenBuildError()
         })
-      })
-      holder.elementInstances = holder.elementInstances.concat(elementInstances)
+      }
     }
   }
 
@@ -438,6 +423,7 @@ export class Extensions {
    * Registers a service in extension currently being registered (by calling `MIP.push`).
    * A service in extension is still a class contains some useful functions,
    * it's no conceptual difference with other internal services.
+   * However, external services will be instantiated immediately.
    *
    * @param {string} name
    * @param {!Function} implementation
@@ -447,7 +433,7 @@ export class Extensions {
 
     holder.extension.services[name] = {implementation}
 
-    Services.registerService(this.win, name, implementation)
+    Services.registerService(name, implementation, true)
   }
 
   /**
@@ -462,9 +448,6 @@ export class Extensions {
   }
 }
 
-/**
- * @param {!Window} win
- */
-export function installExtensionsService (win) {
-  Services.registerService(win, 'extensions', Extensions)
+export function installExtensionsService () {
+  Services.registerService('extensions', Extensions)
 }

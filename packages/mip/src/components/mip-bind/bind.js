@@ -17,7 +17,7 @@ class Bind {
     // save and check watcher defined by MIP.watch
     this.watcherIds = []
     // save local states of page
-    this.win.pgStates = new Set()
+    this.win.pgStates = {}
     // require mip data extension runtime
     this.compile = new Compile()
     this.observer = new Observer()
@@ -132,7 +132,7 @@ class Bind {
         }
         data = classified.pageData
         Object.keys(data).forEach(field => {
-          if (win.pgStates.has(field)) {
+          if (win.pgStates.hasOwnProperty(field)) {
             assign(win.m, {
               [field]: data[field]
             })
@@ -236,12 +236,14 @@ class Bind {
     let win = this.win
     Object.assign(win.m, data.pageData)
     // record props of pageData
-    !cancel && Object.keys(data.pageData).forEach(k => win.pgStates.add(k))
+    !cancel && Object.keys(data.pageData).forEach(k => {
+      win.pgStates[k] = true
+    })
 
     let globalData = data.globalData
     // update props from globalData
     Object.keys(globalData).forEach(key => {
-      if (!win.pgStates.has(key) && win.m.hasOwnProperty(key)) {
+      if (!win.pgStates.hasOwnProperty(key) && win.m.hasOwnProperty(key)) {
         if (isObject(globalData[key]) && win.m[key] && isObject(win.m[key])) {
           assign(win.m[key], globalData[key])
           win.m[key] = JSON.parse(JSON.stringify(win.m[key]))

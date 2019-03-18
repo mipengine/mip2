@@ -4,7 +4,7 @@ require('../lib/utils/compat')
 
 const cli = require('../lib/cli')
 const version = require('../package').version
-const checkVersion = require('../lib/check-version')
+const checkVersion = require('../lib/utils/check-version')
 
 checkVersion().then(() => {
   cli.program

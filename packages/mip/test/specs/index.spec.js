@@ -43,22 +43,22 @@ describe('MIP', () => {
 
   it('should expose MIP.push', () => {
     expect(MIP.push).to.be.a('function')
-    expect(MIP.push).to.equal(MIP.Services.extensionsFor(window).installExtension)
+    expect(MIP.push).to.equal(MIP.Services.extensions().installExtension)
   })
 
   it('should expose MIP.registerElement', () => {
     expect(MIP.registerElement).to.be.a('function')
-    expect(MIP.registerElement).to.equal(MIP.Services.extensionsFor(window).registerElement)
+    expect(MIP.registerElement).to.equal(MIP.Services.extensions().registerElement)
   })
 
   it('should expose MIP.registerService', () => {
     expect(MIP.registerService).to.be.a('function')
-    expect(MIP.registerService).to.equal(MIP.Services.extensionsFor(window).registerService)
+    expect(MIP.registerService).to.equal(MIP.Services.extensions().registerService)
   })
 
   it('should expose MIP.registerTemplate', () => {
     expect(MIP.registerTemplate).to.be.a('function')
-    expect(MIP.registerTemplate).to.equal(MIP.Services.extensionsFor(window).registerTemplate)
+    expect(MIP.registerTemplate).to.equal(MIP.Services.extensions().registerTemplate)
   })
 
   it('should expose MIP.registerCustomElement', () => {

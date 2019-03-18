@@ -3,7 +3,7 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-const Builder = require('./builder')
+const Builder = require('./builder/webpack/build')
 const fs = require('fs-extra')
 const path = require('path')
 const cli = require('./cli')
@@ -25,6 +25,7 @@ module.exports = async function (options) {
     if (options.clean) {
       await fs.remove(options.output)
     }
+    cli.info('开始编译...')
     await builder.build()
 
     cli.info('编译成功！')

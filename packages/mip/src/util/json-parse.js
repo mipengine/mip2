@@ -4,6 +4,8 @@
  *
  * @param {String} jsonStr Object string
  */
+
+/* eslint-disable no-eval */
 export default function (jsonStr) {
   jsonStr = jsonStr
     .replace(/(["'])((\\{2})*|(.*?[^\\](\\{2})*))\1/g, item => item.replace(/[/*]/g, s => '\\' + s))
@@ -28,7 +30,6 @@ export default function (jsonStr) {
       return geval('(' + jsonStr + ')')
       /* eslint-enable */
     } catch (e) { throw e }
-  } else {
-    throw new Error(jsonStr + ' Content should be a valid JSON string!')
   }
+  throw new Error(jsonStr + ' Content should be a valid JSON string!')
 }

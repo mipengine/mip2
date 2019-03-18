@@ -164,7 +164,7 @@ function waitForChildCallback (parent, predicate, callback) {
  * @param {function(!HTMLElement):boolean} predicate function.
  * @returns {!Promise<void>}
  */
-function waitForChild (parent, predicate) {
+export function waitForChild (parent, predicate) {
   return new Promise(resolve => waitForChildCallback(parent, predicate, resolve))
 }
 
@@ -174,7 +174,7 @@ function waitForChild (parent, predicate) {
  * @param {!Document} doc document.
  * @returns {!Promise<!HTMLBodyElement>}
  */
-function waitForBody (doc) {
+export function waitForBody (doc) {
   return waitForChild(
     doc.documentElement,
     documentElement => !!documentElement.ownerDocument.body
@@ -186,14 +186,55 @@ function waitForBody (doc) {
  * callback is executed.
  *
  * @param {Function} callback callback
- * @deprecated Use {@link Mipdoc#whenBodyAvailable} instead.
  */
-function waitDocumentReady (callback) {
+export function whenBodyAvailable (callback) {
   return waitForChildCallback(
     document.documentElement,
     documentElement => !!documentElement.ownerDocument.body,
     callback
   )
+}
+
+/**
+ * Calls the callback when document's state satisfies the stateFn.
+ *
+ * @param {!Document} doc
+ * @param {(doc: Document) => boolean} stateFn
+ * @param {(doc: Document) => void} callback
+ */
+function onDocumentState (doc, stateFn, callback) {
+  let ready = stateFn(doc)
+
+  if (ready) {
+    callback(doc)
+
+    return
+  }
+
+  const readyListener = () => {
+    if (!stateFn(doc)) {
+      return
+    }
+
+    if (!ready) {
+      ready = true
+      callback(doc)
+    }
+
+    doc.removeEventListener('readystatechange', readyListener)
+  }
+
+  doc.addEventListener('readystatechange', readyListener)
+}
+
+/**
+ * Returns a promise that resolve when `document` is `interactive`
+ *
+ * @param {!Document} doc document.
+ * @returns {!Promise<void>}
+ */
+export function whenDocumentInteractive (doc) {
+  return new Promise(resolve => onDocumentState(doc, doc => doc.readyState !== 'loading', resolve))
 }
 
 /**
@@ -227,7 +268,7 @@ export default {
   contains,
   create,
   insert,
-  waitForChild,
-  waitForBody,
-  waitDocumentReady
+  whenBodyAvailable,
+  /** @deprecated */
+  waitDocumentReady: whenBodyAvailable
 }

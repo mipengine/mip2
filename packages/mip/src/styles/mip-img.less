@@ -1,9 +1,22 @@
+//  .mip-img  这个 class 不能删除，mip1有个神奇的存在
+// 加了这个class就有渐变动画效果
 .mip-img {
   background: #fff;
 
   img.mip-fill-content {
     opacity: 0;
     transition: opacity linear 300ms;
+  }
+
+  &.mip-img-loaded {
+    background: transparent;
+    &::before {
+      content: none;
+      display: none;
+    }
+    img.mip-fill-content {
+      opacity: 1;
+    }
   }
 
   &-container {
@@ -94,4 +107,12 @@ mip-img {
   width: 100%;
   /* XXX: remove small space between bottom of img and mip-img */
   font-size: 0;
+
+  &.mip-img-loading {
+    img {
+      position: absolute;
+      top: 0;
+      height: auto;
+    }
+  }
 }

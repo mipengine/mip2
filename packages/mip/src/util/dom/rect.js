@@ -4,9 +4,10 @@
  */
 
 import platform from '../platform'
+import {whenBodyAvailable} from './dom'
 
 // Save the native object or method.
-let docBody = document.body
+let docBody
 let docElem = document.documentElement
 let round = Math.round
 
@@ -37,7 +38,7 @@ function patchForIOS (isEnd) {
  * @inner
  * @type {HTMLElement}
  */
-let getterElement = patchForIOS()
+let getterElement
 
 /**
  * Element for setting scroll values.
@@ -45,7 +46,7 @@ let getterElement = patchForIOS()
  * @inner
  * @type {HTMLElement}
  */
-let setterElement = patchForIOS()
+let setterElement
 
 /**
  * Element for get page height.
@@ -53,7 +54,14 @@ let setterElement = patchForIOS()
  * @inner
  * @type {HTMLElement}
  */
-let endElement = patchForIOS(true)
+let endElement
+
+whenBodyAvailable(() => {
+  docBody = document.body
+  getterElement = patchForIOS()
+  setterElement = patchForIOS()
+  endElement = patchForIOS(true)
+})
 
 /**
  * Browsers have some bugs in frame of IOS, the native getBoundingClientRect() also needs to recalculate,

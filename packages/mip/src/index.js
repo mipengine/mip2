@@ -10,36 +10,38 @@ import 'script-loader!deps/fetch-jsonp'
 import 'script-loader!document-register-element/build/document-register-element'
 import 'deps/promise'
 import 'deps/object-assign'
-import 'deps/mip-components-webpack-helpers'
 /* eslint-enable import/no-webpack-loader-syntax */
 
-import {registerRuntime} from './runtime'
+import {getRuntime} from './runtime'
 import util from './util/index'
-import sandbox from './sandbox'
 import {applyLayout} from './layout'
 import viewer from './viewer'
 import viewport from './viewport'
 import builtinComponents from './components/index'
+import installSandbox from './sandbox'
 import sleepWakeModule from './sleep-wake-module'
 import performance from './performance'
-import monitorInstall from './log/monitor'
+import errorMonitorInstall from './log/error-monitor'
 import {OUTER_MESSAGE_PERFORMANCE_UPDATE} from './page/const/index'
 
 // Ensure loaded only once
 /* istanbul ignore next */
 if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefined') {
-  monitorInstall()
-
-  registerRuntime(window)
-
-  // init viewport
-  viewport.init()
+  errorMonitorInstall()
+  const MIP = getRuntime()
 
   util.dom.waitDocumentReady(() => {
+    // init viewport
+    viewport.init()
+
     // Initialize sleepWakeModule
     sleepWakeModule.init()
 
-    window.MIP.sandbox = sandbox()
+    const preregisteredExtensions = window.MIP || []
+
+    window.MIP = MIP
+
+    installSandbox(window.MIP)
 
     // Initialize viewer
     viewer.init()
@@ -56,6 +58,7 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
 
     // register buildin components
     builtinComponents.register()
+    Array.isArray(preregisteredExtensions) && preregisteredExtensions.forEach(window.MIP.push)
 
     performance.start(window._mipStartTiming)
     // send performance data

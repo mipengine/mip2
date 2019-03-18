@@ -8,12 +8,7 @@ var estraverse = require('estraverse')
 var is = require('./utils/is')
 
 module.exports = function (code, fn, type) {
-  var ast
-  if (typeof code === 'string') {
-    ast = mark(code)
-  } else {
-    ast = code
-  }
+  var ast = mark(code)
 
   estraverse[type || 'traverse'](ast, {
     enter: function (node, parent) {
@@ -34,7 +29,8 @@ module.exports = function (code, fn, type) {
       }
 
       return fn.call(this, node, parent, ast)
-    }
+    },
+    fallback: 'iteration'
   })
 
   return ast

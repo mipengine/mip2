@@ -7,7 +7,7 @@
 
 /* globals location */
 
-import fn from './fn'
+import * as fn from './fn'
 import hash from './hash'
 import dom from './dom/dom'
 import event from './dom/event'
@@ -22,6 +22,8 @@ import customStorage from './custom-storage'
 import jsonParse from './json-parse'
 import templates from './templates'
 import Deferred from './deferred'
+import log from './log'
+import * as string from './string'
 
 /**
  * Exchange a url to cache url.
@@ -125,12 +127,20 @@ export function isCacheUrl (pageUrl) {
   return fn.isCacheUrl(pageUrl)
 }
 
+const hasOwnProperty = Object.prototype.hasOwnProperty
+
+export const hasOwn = (obj, key) => hasOwnProperty.call(obj, key)
+
 export {
   customEmit,
   dom,
   event,
+  fn,
+  jsonParse,
   templates,
-  Deferred
+  Deferred,
+  log,
+  string
 }
 
 export default {
@@ -152,5 +162,7 @@ export default {
   naboo,
   jsonParse,
   templates,
-  Deferred
+  Deferred,
+  log,
+  string
 }

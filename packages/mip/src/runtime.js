@@ -1,8 +1,8 @@
 import CustomElement from './custom-element'
 import Services, {
   installExtensionsService,
-  installMipdocService,
-  installTimerService
+  installTimerService,
+  installVueCompatService
 } from './services'
 import MipShell from './components/mip-shell'
 import performance from './performance'
@@ -11,37 +11,28 @@ import util from './util'
 import viewer from './viewer'
 import viewport from './viewport'
 import installMip1Polyfill from './mip1-polyfill'
+import installMipComponentsPolyfill from 'deps/mip-components-webpack-helpers'
 
 class Runtime {
-  /**
-   * @param {!Window} win
-   */
-  constructor (win) {
-    this.installServices(win)
+  constructor () {
+    this.installServices()
 
     /**
      * @private
      * @const
      */
-    this.win = win
-
-    /**
-     * @private
-     * @const
-     */
-    this.extensions = Services.extensionsFor(win)
+    this.extensions = Services.extensions()
   }
 
   /**
    * Install services.
    *
-   * @param {!Window} win
    * @private
    */
-  installServices (win) {
-    installMipdocService(win)
-    installExtensionsService(win)
-    installTimerService(win)
+  installServices () {
+    installExtensionsService()
+    installTimerService()
+    installVueCompatService()
   }
 
   /**
@@ -55,7 +46,10 @@ class Runtime {
     let pageMeta
     let pageMetaConfirmed = false
     try {
-      pageMeta = JSON.parse(this.win.name)
+      pageMeta = JSON.parse(window.name)
+      if (typeof pageMeta !== 'object' || pageMeta === null) {
+        throw new Error()
+      }
       /* istanbul ignore next */
       pageMetaConfirmed = true
     } catch (e) {
@@ -75,7 +69,7 @@ class Runtime {
       try {
         standalone = pageMeta.standalone ||
           !viewer.isIframed ||
-          typeof this.win.top.MIP !== 'undefined'
+          typeof window.top.MIP !== 'undefined'
       } catch (e) {
         /* istanbul ignore next */
         standalone = false
@@ -90,17 +84,16 @@ class Runtime {
   }
 
   /**
-   * Registers the runtime in global scope. Constructs `window.MIP` object.
+   * Returns the runtime object.
    */
-  register () {
-    const preregisteredExtensions = this.win.MIP || []
+  get () {
     const {pageMeta, standalone} = this.getPageMetadata()
 
     viewer.pageMeta = pageMeta
 
     const {installExtension, registerElement, registerService, registerTemplate} = this.extensions
 
-    this.win.MIP = {
+    const MIP = {
       version: '2',
       CustomElement,
       Services,
@@ -131,20 +124,18 @@ class Runtime {
       viewport
     }
 
-    installMip1Polyfill(this.win.MIP)
+    installMip1Polyfill(MIP)
+    installMipComponentsPolyfill()
 
-    preregisteredExtensions.forEach(installExtension)
+    return MIP
   }
 }
 
 /**
- * @param {!Window} win
- * @returns {!Runtime}
+ * @returns {!Object}
  */
-export function registerRuntime (win) {
-  const runtime = new Runtime(win)
+export function getRuntime () {
+  const runtime = new Runtime()
 
-  runtime.register()
-
-  return runtime
+  return runtime.get()
 }

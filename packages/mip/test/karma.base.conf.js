@@ -2,6 +2,31 @@ const webpack = require('webpack')
 const alias = require('../build/alias')
 const version = process.env.VERSION || require('../package.json').version
 
+class WebpackRequirePlugin {
+  apply (compiler) {
+    compiler.hooks.compilation.tap('MainTemplate', (compilation) => {
+      compilation.mainTemplate.hooks.requireExtensions.tap('MainTemplate', () =>
+        [
+          '__webpack_require__.d = function (exported, name, get) {',
+          '  Reflect.defineProperty(exported, name, {',
+          '    configurable: true,',
+          '    enumerable: true,',
+          '    get',
+          '  })',
+          '}',
+          '__webpack_require__.n = function (exported) {',
+          '  return exported.a = exported',
+          '}',
+          '__webpack_require__.r = function () {}',
+          '__webpack_require__.o = function (object, property) {',
+          '  return Object.prototype.hasOwnProperty.call(object, property)',
+          '};'
+        ].join('\n')
+      )
+    })
+  }
+}
+
 const webpackConfig = {
   mode: 'development',
   resolve: {
@@ -48,7 +73,8 @@ const webpackConfig = {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
       '__VERSION__': JSON.stringify(version.toString())
-    })
+    }),
+    new WebpackRequirePlugin()
   ],
   devtool: '#inline-source-map'
 }

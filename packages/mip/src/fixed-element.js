@@ -77,7 +77,7 @@ class FixedElement {
       }
     }
     /* istanbul ignore if */
-    if (isIframed) {
+    if (!window.MIP.standalone) {
       this.doCustomElements()
     }
   }
@@ -261,7 +261,13 @@ class FixedElement {
                */
               /* istanbul ignore next */
               if (process.env.NODE_ENV === 'production') {
-                elements[j].parentElement.removeChild(elements[j])
+                /**
+                  * hide and warn for debugging instead of removing element
+                  */
+                // elements[j].parentElement.removeChild(elements[j])
+                let ele = elements[j]
+                ele.style.cssText = 'display: none!important'
+                console.warn(ele, '发现 position: fixed 样式, 请使用 mip-fixed 组件代替')
               }
             }
           } catch (e) {

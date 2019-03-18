@@ -8,6 +8,7 @@ const path = require('path')
 const args = cli.setup({
   usage: '<component-name>',
   options: [
+    ['-v, --vue', '添加组件类型为 Vue 组件'],
     ['-f, --force', '是否覆盖']
   ],
   help: [

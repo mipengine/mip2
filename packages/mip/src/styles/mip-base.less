@@ -4,16 +4,6 @@
   padding: 0
 }
 
-html {
-  font-size: 100px;
-}
-
-@media screen and (max-width: 360px) {
-  html {
-    font-size: 90px !important;
-  }
-}
-
 body {
   font-size-adjust: none;
   text-size-adjust: none;
@@ -197,7 +187,7 @@ mip-i-space {
   overflow: hidden;
 }
 
-.hide {
+.mip-hide {
   display: none !important;
 }
 
@@ -210,17 +200,17 @@ mip-script {
   display: block;
 }
 
-.mip-element.mip-notsupported>.mip-replaced-content {
-  visibility: hidden !important;
-}
+// .mip-element.mip-notsupported>.mip-replaced-content {
+//   visibility: hidden !important;
+// }
 
 .mip-element>[placeholder].mip-hidden,.mip-element>[placeholder].hidden {
   visibility: hidden;
 }
 
-.mip-element:not(.mip-notsupported)>[fallback] {
-  display: none;
-}
+// .mip-element:not(.mip-notsupported)>[fallback] {
+//   display: none;
+// }
 
 .mip-layout-size-defined>[fallback],.mip-layout-size-defined>[placeholder] {
   position: absolute !important;

@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 require('../lib/utils/compat')
 const cli = require('../lib/cli')
+
+cli.info('正在初始化...')
+
 const dev = require('../lib/dev')
-const validator = require('mip-component-validator')
 const path = require('path')
 const fs = require('fs')
 const {objectSubset} = require('../lib/utils/helper')
@@ -48,9 +50,11 @@ if (conf.ignore === true) {
   conf.ignore = 'sandbox,whitelist'
 }
 
-if (conf.ignore && /(^|,)whitelist(,|$)/.test(conf.ignore)) {
-  dev(conf)
-} else {
+dev(conf)
+
+// 白名单校验没必要阻塞 dev 启动
+if (!conf.ignore || !/(^|,)whitelist(,|$)/.test(conf.ignore)) {
+  const validator = require('mip-component-validator')
   validator.whitelist(conf.dir).then(reporter => {
     if (reporter.errors.length) {
       cli.error(reporter.errors[0].message)
@@ -58,5 +62,4 @@ if (conf.ignore && /(^|,)whitelist(,|$)/.test(conf.ignore)) {
       // process.exit(1)
     }
   })
-  .then(() => dev(conf))
 }

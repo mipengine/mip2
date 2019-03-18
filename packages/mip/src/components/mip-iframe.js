@@ -12,7 +12,7 @@ import {
   MESSAGE_PAGE_RESIZE
 } from '../page/const'
 
-const {platform, css, event} = util
+const {css, event} = util
 
 let attrList = ['allowfullscreen', 'allowtransparency', 'sandbox']
 
@@ -24,15 +24,6 @@ class MipIframe extends CustomElement {
   }
   isLoadingEnabled () {
     return true
-  }
-
-  build () {
-    this.iframe = document.createElement('iframe')
-    this.iframe.frameBorder = '0'
-    this.iframe.scrolling = platform.isIos() ? /* istanbul ignore next */ 'no' : 'yes'
-
-    this.applyFillContent(this.iframe)
-    this.element.appendChild(this.iframe)
   }
 
   layoutCallback () {
@@ -54,6 +45,13 @@ class MipIframe extends CustomElement {
       return Promise.resolve()
     }
 
+    this.iframe = document.createElement('iframe')
+    this.iframe.frameBorder = '0'
+    this.iframe.scrolling = 'no'
+
+    this.applyFillContent(this.iframe)
+    this.element.appendChild(this.iframe)
+
     // window.addEventListener('message', )
     window.addEventListener('message', this.notifyRootPage.bind(this))
 
@@ -63,10 +61,6 @@ class MipIframe extends CustomElement {
     })
 
     this.iframe.src = src
-
-    // if (srcdoc) {
-    //   this.iframe.srcdoc = srcdoc
-    // }
 
     this.expendAttr(attrList, this.iframe)
     element.appendChild(this.iframe)

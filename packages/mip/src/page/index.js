@@ -10,7 +10,6 @@ import {
   toggleFadeHeader
 } from './util/dom'
 import {getCleanPageId, parsePath} from './util/path'
-import Debouncer from './util/debounce'
 import {supportsPassive} from './util/feature-detect'
 import {scrollTo} from './util/ease-scroll'
 import {
@@ -25,7 +24,7 @@ import {
   MESSAGE_BROADCAST_EVENT,
   DEFAULT_SHELL_CONFIG
 } from './const/index'
-import fn from '../util/fn'
+import {fn} from '../util'
 import {customEmit} from '../util/custom-event'
 import viewport from '../viewport'
 import performance from '../performance'
@@ -88,73 +87,6 @@ class Page {
   }
 
   /**
-   * listen to viewport.scroller, toggle header when scrolling up & down
-   *
-   */
-  setupBouncyHeader () {
-    if (this.bouncyHeaderSetup) {
-      return
-    }
-    const THRESHOLD = 10
-    let scrollTop
-    let lastScrollTop = 0
-    let scrollDistance
-    let scrollHeight = viewport.getScrollHeight()
-    let viewportHeight = viewport.getHeight()
-
-    // viewportHeight = 0 before frameMoveIn animation ends
-    // Wait a minute
-    /* istanbul ignore next */
-    if (viewportHeight === 0) {
-      setTimeout(this.setupBouncyHeader.bind(this), 100)
-      return
-    }
-
-    this.bouncyHeaderSetup = true
-    this.debouncer = new Debouncer(() => {
-      scrollTop = viewport.getScrollTop()
-      scrollDistance = Math.abs(scrollTop - lastScrollTop)
-
-      // ignore bouncy scrolling in iOS
-      /* istanbul ignore next */
-      if (scrollTop < 0 || scrollTop + viewportHeight > scrollHeight) {
-        return
-      }
-
-      /* istanbul ignore next */
-      if (lastScrollTop < scrollTop && scrollDistance >= THRESHOLD) {
-        let target = this.isRootPage ? window : window.parent
-        this.emitCustomEvent(target, this.isCrossOrigin, {
-          name: 'mipShellEvents',
-          data: {
-            type: 'slide',
-            data: {
-              direction: 'up'
-            }
-          }
-        })
-      }/* istanbul ignore next */ else if (lastScrollTop > scrollTop && scrollDistance >= THRESHOLD) {
-        let target = this.isRootPage ? window : window.parent
-        this.emitCustomEvent(target, this.isCrossOrigin, {
-          name: 'mipShellEvents',
-          data: {
-            type: 'slide',
-            data: {
-              direction: 'down'
-            }
-          }
-        })
-      }
-
-      lastScrollTop = scrollTop
-    })
-
-    // use passive event listener to improve scroll performance
-    viewport.scroller.addEventListener('scroll', this.debouncer, eventListenerOptions)
-    this.debouncer.handleEvent()
-  }
-
-  /**
    * notify root page with an eventdata
    *
    * @param {Object} data eventdata
@@ -173,8 +105,7 @@ class Page {
    *
    */
   destroy () {
-    /* istanbul ignore next */
-    viewport.scroller.removeEventListener('scroll', this.debouncer, false)
+    // 原本用于 bouncy 的 removeListener，现在不需要了，但方法还是保留，避免报错
   }
 
   start () {
@@ -198,6 +129,9 @@ class Page {
 
     // trigger show page custom event
     this.emitEventInCurrentPage({name: CUSTOM_EVENT_SHOW_PAGE})
+
+    let mipServiceTmp = window.location.hash.match(/mipservice=(\d)/)
+    window.mipService = mipServiceTmp ? mipServiceTmp[1] : '1'
   }
 
   // ========================= Util functions for developers =========================
@@ -263,6 +197,7 @@ class Page {
       customEmit(window, event.name, event.data)
 
       this.children.forEach(pageMeta => {
+        /* istanbul ignore next */
         if (pageMeta.targetWindow) {
           pageMeta.targetWindow.postMessage({
             type: MESSAGE_CROSS_ORIGIN,
@@ -315,7 +250,8 @@ class Page {
       return
     }
 
-    let target = this.isRootPage ? this : /* istanbul ignore next */ window.parent.MIP.viewer.page
+    /* istanbul ignore next */
+    let target = this.isRootPage ? this : window.parent.MIP.viewer.page
     return target.prerenderPages(urls)
   }
 
@@ -358,6 +294,7 @@ class Page {
       console.warn('该方法只能在 rootPage 调用')
       return
     }
+    /* istanbul ignore next */
     if (this.children.length >= MAX_PAGE_NUM) {
       let currentPage
       let prerenderIFrames = []
@@ -405,6 +342,7 @@ class Page {
    * @return {Page} page
    */
   getPageById (pageId) {
+    /* istanbul ignore next */
     if (!pageId) {
       return this
     }
@@ -458,23 +396,31 @@ class Page {
       console.warn('该方法只能在 rootPage 调用')
       return Promise.reject()
     }
+
+    /* istanbul ignore next */
     if (typeof urls === 'string') {
       urls = [urls]
     }
 
+    /* istanbul ignore next */
     if (!Array.isArray(urls)) {
       return Promise.reject('预渲染参数必须是一个数组')
     }
 
+    /* istanbul ignore next */
     let createPrerenderIFrame = ({fullpath, pageId}) => {
       return new Promise((resolve, reject) => {
         let me = this
         let iframe = getIFrame(pageId)
         /* istanbul ignore next */
         if (iframe) {
-          // 预加载前已经存在，直接返回即可
-          resolve(iframe)
-          return
+          if (iframe.contentWindow.MIP.version === '2') {
+            // 预加载前已经存在，直接返回即可
+            resolve(iframe)
+            return
+          }
+          // 如果在断网情况下，内部的 window.MIP 会是一个数组。这样实际上这个 iframe 也不可复用，应当删除
+          iframe.parentNode.removeChild(iframe)
         }
 
         createIFrame({fullpath: fullpath + '#prerender=1', pageId}, {
@@ -503,16 +449,15 @@ class Page {
       })
     }
 
+    /* istanbul ignore next */
     let findMetaByPageId = pageId => {
       let target
-      /* istanbul ignore next */
       if (!this.isRootPage && !this.isCrossOrigin) {
         target = window.parent
       } else {
         target = window
       }
 
-      /* istanbul ignore next */
       if (target.MIP_PAGE_META_CACHE[pageId]) {
         return target.MIP_PAGE_META_CACHE[pageId]
       } else {
@@ -525,9 +470,7 @@ class Page {
         }
       }
 
-      /* istanbul ignore next */
       console.warn('Cannot find MIP Shell Config for current page. Use default instead.')
-      /* istanbul ignore next */
       return Object.assign({}, DEFAULT_SHELL_CONFIG)
     }
 
