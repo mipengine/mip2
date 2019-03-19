@@ -17,6 +17,7 @@ import platform from './platform'
 import naboo from './naboo'
 import EventEmitter from './event-emitter'
 import Gesture from './gesture/index'
+import {customEmit} from './custom-event'
 import customStorage from './custom-storage'
 import jsonParse from './json-parse'
 import templates from './templates'
@@ -131,6 +132,7 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
 export const hasOwn = (obj, key) => hasOwnProperty.call(obj, key)
 
 export {
+  customEmit,
   dom,
   event,
   fn,
@@ -155,6 +157,7 @@ export default {
   isCacheUrl,
   EventEmitter,
   Gesture,
+  customEmit,
   customStorage,
   naboo,
   jsonParse,
