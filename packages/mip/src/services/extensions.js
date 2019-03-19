@@ -389,20 +389,21 @@ export class Extensions {
       for (let i = 0, len = elementInstances.length; i < len; i++) {
         let el = elementInstances[i]
 
-        // Delay to last processing extension resolve.
         if (el.isBuilt()) {
           continue
         }
 
-        // It can't catch error of customElements.define with try/catch.
-        // @see https://github.com/w3c/webcomponents/issues/547
+        /**
+         * Errors occurred in `customElements.define` cannot be caught.
+         * @see {@link https://github.com/w3c/webcomponents/issues/547}
+         */
         if (el.error) {
           this.tryToRejectError(holder, el.error)
           break
         }
 
         /**
-         * Lifecycle `build` of element instances is probably delayed with `setTimeout`.
+         * Lifecycle `build` of element instances are probably delayed with `setTimeout`.
          * If they are not, these event listeners would not be registered before they emit events.
          */
         let unlistenBuild = listen(el, 'build', () => {
