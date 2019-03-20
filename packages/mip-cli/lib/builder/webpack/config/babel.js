@@ -8,7 +8,7 @@ const {babelExternalList} = require('mip-components-webpack-helpers/lib/data')
 const buitinFeatures = require('@babel/preset-env/data/built-in-features')
 const path = require('path')
 
-module.exports = babelLoader (options = {}) {
+module.exports = function babelLoader (options = {}) {
   let config = {
     loader: require.resolve('babel-loader'),
     options: {
