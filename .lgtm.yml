@@ -10,4 +10,4 @@ path_classifiers:
 extraction:
   javascript:
     index:
-      include: packages/mip/src/**/*.js
+      include: packages/mip/src
