@@ -11,5 +11,3 @@ extraction:
   javascript:
     index:
       include: packages/mip/src/**/*.js
-# queries:
-#   exclude: js/unused-local-variable
