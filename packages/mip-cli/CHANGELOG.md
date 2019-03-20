@@ -1,5 +1,9 @@
 # CHANGELOG
 
+- 1.5.6
+    1. 升级 Babel 至 v7
+    2. 优化 external 管理策略
+
 - 1.5.4
     1. build 异常时，中断程序，便于外部脚本捕获错误
 
