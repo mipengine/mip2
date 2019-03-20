@@ -5,7 +5,7 @@ import {LAYOUT, applyLayout} from './layout'
 import performance from './performance'
 import customElementsStore from './custom-element-store'
 import Services from './services'
-import {hasOwnProperty} from './util'
+import {hasOwn} from './util'
 import {customEmit} from './util/custom-event'
 import dom from './util/dom/dom'
 import css from './util/dom/css'
@@ -339,7 +339,7 @@ class BaseElement extends HTMLElement {
     for (let i = 0; i < names.length; i++) {
       const name = names[i]
 
-      if (typeof props[name] !== 'undefined' || !hasOwnProperty.call(defaultValues, name)) {
+      if (typeof props[name] !== 'undefined' || !hasOwn(defaultValues, name)) {
         continue
       }
 

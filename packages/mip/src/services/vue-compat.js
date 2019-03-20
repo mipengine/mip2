@@ -1,6 +1,6 @@
 import Services from './services'
 
-import {hasOwnProperty, jsonParse} from '../util'
+import {hasOwn, jsonParse} from '../util'
 import {hyphenate} from '../util/string'
 import {memoize} from '../util/fn'
 
@@ -99,7 +99,7 @@ export class VueCompat {
 
       metadata.propTypes[name] = this.getPropType(prop)
 
-      if (prop && typeof prop === 'object' && hasOwnProperty.call(prop, 'default')) {
+      if (prop && typeof prop === 'object' && hasOwn(prop, 'default')) {
         metadata.defaultValues[name] = prop.default
       }
     }
@@ -190,10 +190,11 @@ export class VueCompat {
    * Returns props of element parsed from JSON.
    *
    * @param {!HTMLElement} element instance.
+   * @param {!Object} propTypes of custom element.
    * @returns {?Object}
    * @private
    */
-  getPropsFromJSON (element) {
+  getPropsFromJSON (element, propTypes) {
     const script = element.querySelector('script[type*=json]')
 
     if (!script) {
@@ -201,7 +202,20 @@ export class VueCompat {
     }
 
     try {
-      return jsonParse(script.innerHTML)
+      const props = jsonParse(script.innerHTML)
+      const names = Object.keys(props)
+
+      for (let i = 0; i < names.length; i++) {
+        const name = names[i]
+
+        if (typeof props[name] !== 'string') {
+          continue
+        }
+
+        props[name] = this.parseAttribute(props[name], propTypes[name])
+      }
+
+      return props
     } catch (err) {
       return null
     }
@@ -217,7 +231,7 @@ export class VueCompat {
   getProps (element, propTypes) {
     return {
       ...this.getPropsFromAttributes(element, propTypes),
-      ...this.getPropsFromJSON(element)
+      ...this.getPropsFromJSON(element, propTypes)
     }
   }
 }

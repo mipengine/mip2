@@ -13,7 +13,6 @@ import EventAction from './util/event-action'
 import EventEmitter from './util/event-emitter'
 import {fn, makeCacheUrl, parseCacheUrl} from './util'
 import {supportsPassive} from './page/util/feature-detect'
-import {resolvePath} from './page/util/path'
 import viewport from './viewport'
 import Page from './page/index'
 import {
@@ -22,6 +21,8 @@ import {
   OUTER_MESSAGE_PUSH_STATE,
   OUTER_MESSAGE_REPLACE_STATE
 } from './page/const'
+import {isMIPShellDisabled} from './page/util/dom'
+import {resolvePath} from './page/util/path'
 import Messager from './messager'
 import fixedElement from './fixed-element'
 import clientPrerender from './client-prerender'
@@ -93,8 +94,7 @@ let viewer = {
     this.fixedElement = fixedElement
     fixedElement.init()
 
-    // proxy <a mip-link>
-    setTimeout(() => this._proxyLink(this.page), 0)
+    isMIPShellDisabled() || setTimeout(() => this._proxyLink(this.page))
   },
 
   /**
@@ -205,9 +205,9 @@ let viewer = {
     }
 
     // Jump in top window directly
-    // 1. Cross origin and NOT in SF
+    // 1. ( Cross origin or MIP Shell is disabled ) and NOT in SF
     // 2. Not MIP page and not only hash change
-    if ((this._isCrossOrigin(to) && window.MIP.standalone) ||
+    if (((this._isCrossOrigin(to) || isMIPShellDisabled()) && window.MIP.standalone) ||
       (!isMipLink && !isHashInCurrentPage)) {
       if (replace) {
         window.top.location.replace(to)
@@ -332,13 +332,18 @@ let viewer = {
      * otherwise let TOP jump
      */
     event.delegate(document, 'a', 'click', function (event) {
+      let isMipLink = this.hasAttribute('mip-link') || this.getAttribute('data-type') === 'mip'
+
+      if (!isMipLink && this.getAttribute('target') === '_blank') {
+        return
+      }
+
       /**
        * browser will resolve fullpath, including path, query & hash
        * eg. http://localhost:8080/examples/page/tree.html?a=b#hash
        * don't use `this.getAttribute('href')`
        */
       let to = this.href
-      let isMipLink = this.hasAttribute('mip-link') || this.getAttribute('data-type') === 'mip'
       let replace = this.hasAttribute('replace')
       let cacheFirst = this.hasAttribute('cache-first')
       let state = self._getMipLinkData.call(this)
@@ -362,14 +367,11 @@ let viewer = {
       let useNewMIPService = window.MIP.standalone || window.mipService === '2'
       if (useNewMIPService) {
         self.open(to, {isMipLink, replace, state, cacheFirst})
+      } else if (isMipLink) {
+        let message = self._getMessageData.call(this)
+        self.sendMessage(message.messageKey, message.messageData)
       } else {
-        if (isMipLink) {
-          let message = self._getMessageData.call(this)
-          self.sendMessage(message.messageKey, message.messageData)
-        } else {
-          // other jump through '_top'
-          top.location.href = this.href
-        }
+        top.location.href = this.href
       }
 
       event.preventDefault()
