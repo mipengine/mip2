@@ -1,0 +1,15 @@
+path_classifiers:
+  docs:
+    - "**/*.md"
+  cli:
+    - "packages/mip-cli/**/*.*"
+  validator:
+    - "packages/mip-component-validator/**/*.*"
+  sandbox:
+    - "packages/mip-sandbox/**/*.*"
+extraction:
+  javascript:
+    index:
+      include: packages/mip/src/**/*.js
+# queries:
+#   exclude: js/unused-local-variable
