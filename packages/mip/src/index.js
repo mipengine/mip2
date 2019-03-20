@@ -69,6 +69,8 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     // Show page
     viewer.show()
 
+    console.log()
+
     // clear cookie
     let storage = util.customStorage(2)
     storage.delExceedCookie()
