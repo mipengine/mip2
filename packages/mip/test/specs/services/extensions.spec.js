@@ -415,7 +415,6 @@ describe('extensions', () => {
     extensions.registerExtension('mip-ext', () => {
       extensions.registerElement('mip-vue-custom', implementation, css)
     }, MIP)
-
     extensions.registerExtension('mip-ext', () => {}, MIP)
 
     expect(document.documentElement.hasAttribute('mip-vue')).to.be.true
@@ -435,13 +434,12 @@ describe('extensions', () => {
 
     document.body.appendChild(ele)
 
+    delete require.cache[require.resolve('src/vue-custom-element')]
     require('src/vue-custom-element')
 
     await Services.getServicePromise('mip-vue')
 
     ele.viewportCallback(true)
-
-    expect(mountedCallback).to.be.calledOnce
 
     await timer.sleep()
 
