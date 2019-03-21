@@ -1,6 +1,6 @@
 {
   "name": "mip2",
-  "version": "1.5.5-alpha-2",
+  "version": "1.5.6-alpha-2",
   "description": "CLI for mip 2.0",
   "preferGlobal": true,
   "bin": {
