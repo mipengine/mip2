@@ -14,6 +14,7 @@ import 'deps/object-assign'
 
 import {getRuntime} from './runtime'
 import util from './util/index'
+import {whenDocumentInteractive} from './util/dom/dom'
 import {applyLayout} from './layout'
 import viewer from './viewer'
 import viewport from './viewport'
@@ -57,7 +58,7 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     hiddenElements.forEach(element => element.tagName.search(mipTagReg) > -1 && applyLayout(element))
 
     // register buildin components
-    builtinComponents.register()
+    whenDocumentInteractive(document).then(builtinComponents.register)
     Array.isArray(preregisteredExtensions) && preregisteredExtensions.forEach(window.MIP.push)
 
     performance.start(window._mipStartTiming)
