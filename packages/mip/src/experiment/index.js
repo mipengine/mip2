@@ -44,21 +44,23 @@ function setCookie (key, value, expires) {
 /**
  * 获取 cookie 的内容
  *
- * @param {*} key
+ * @param {string} key cookie 的名称
+ * @returns {string} 获取的 cookie 的内容
  */
 function getCookie (key) {
   let reg = new RegExp('(^| )' + key + '=([^;]*)(;|$)')
   let arr = document.cookie.match(reg)
+
   if (arr && arr[2]) {
     return unescape(arr[2])
   }
-  return null
+  return ''
 }
 
 /**
- * 全局设置实验配置
+ * 全局设置实验配置（提供一种 API 设置全局实验配置的机制）
  *
- * @param {Object} conf
+ * @param {Object} conf 待设置的配置信息
  */
 export function setConfig (conf) {
   experimentConfig = conf
