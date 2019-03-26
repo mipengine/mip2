@@ -5,6 +5,14 @@
 
 import defaultExperimentConfig from './config'
 
+/**
+ * 默认的 cookie 失效时间
+ *
+ * @type {number}
+ * @const
+ */
+const COOKIE_DEFAULT_EXPIRES = 24 * 60 * 60 * 1000
+
 let experimentConfig = defaultExperimentConfig
 
 /**
@@ -117,7 +125,7 @@ export function assertAbTest (expName) {
  * @returns {boolean} 当前实验是否命中
  */
 function isShootAbTest (expName, abExpConf = {}) {
-  let abArr = []
+  let probabilityControlArr = []
   let {
     startTime,
     endTime,
@@ -132,15 +140,19 @@ function isShootAbTest (expName, abExpConf = {}) {
   }
 
   for (let i = 0; i < 100; i++) {
-    abArr[i] = (i < ratio) ? 1 : 0
+    probabilityControlArr[i] = i < ratio
   }
 
   let expIndex = parseInt(Math.random() * 100, 10)
 
   // 如果实验在设定的生效时间中，就可以判断是否命中
-  if (abArr[expIndex]) {
-    // 命中实验了，将命中结果存如 cookie，保证当前用户每次都能命中，cookie 生效时间 10 分钟
-    setCookie(expName, JSON.stringify(abExpConf), 10 * 60 * 1000)
+  if (probabilityControlArr[expIndex]) {
+    let expEndTime = (new Date(endTime)).getTime()
+    let nowTime = Date.now()
+    let defaultExpires = expEndTime ? expEndTime - nowTime : COOKIE_DEFAULT_EXPIRES
+
+    // 命中实验了，将命中结果存如 cookie，保证当前用户每次都能命中，cookie 默认生效时间 24 小时
+    setCookie(expName, JSON.stringify(abExpConf), defaultExpires > 0 ? defaultExpires : COOKIE_DEFAULT_EXPIRES)
     return true
   }
 
@@ -165,12 +177,12 @@ export function tryAssertAllAbTests () {
       setCookie(expName, '', -1)
     }
 
-    let abCookieResult = getCookie(expName)
+    let cookieResult = getCookie(expName)
 
     // 如果 cookie 已经记录了命中情况，就不需要重新再走命中判断逻辑
-    if (abCookieResult) {
+    if (cookieResult) {
       // 如果实验配置的信息没有发生变更，直接返回命中情况
-      abCookieResult === JSON.stringify(expConf)
+      cookieResult === JSON.stringify(expConf)
         ? abTestNames.push(expName)
         : isShootAbTest(expName, expConf) && abTestNames.push(expName)
     } else {
