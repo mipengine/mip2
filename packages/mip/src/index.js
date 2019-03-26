@@ -23,7 +23,7 @@ import sleepWakeModule from './sleep-wake-module'
 import performance from './performance'
 import errorMonitorInstall from './log/error-monitor'
 import {OUTER_MESSAGE_PERFORMANCE_UPDATE} from './page/const/index'
-import {tryAssertAllAbTests} from './experiment/index'
+import {tryAssertAllAbTests, assertAbTest, assertSite} from './experiment/index'
 
 // Ensure loaded only once
 /* istanbul ignore next */
@@ -71,6 +71,18 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
 
     // Show page
     viewer.show()
+
+    if (assertAbTest('test1')) {
+      alert('命中 abTest test1')
+    }
+
+    if (assertAbTest('test2')) {
+      alert('命中 abTest test2')
+    }
+
+    if (assertSite('test1')) {
+      alert('命中站点实验 test1')
+    }
 
     // clear cookie
     let storage = util.customStorage(2)
