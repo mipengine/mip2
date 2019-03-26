@@ -18,9 +18,9 @@ import eventAction from '../util/event-action'
 // 将 jquery 配置为远程的，需要时才引入
 window.require.config({
   paths: {
-    'searchbox/openjs/aio': '//m.baidu.com/static/searchbox/openjs/aio.js?v=201606',
-    jquery: '//c.mipcdn.com/static/deps/jquery',
-    zepto: '//c.mipcdn.com/static/deps/zepto'
+    'searchbox/openjs/aio': 'https://m.baidu.com/static/searchbox/openjs/aio.js?v=201606',
+    jquery: 'https://c.mipcdn.com/static/deps/jquery',
+    zepto: 'https://c.mipcdn.com/static/deps/zepto'
   }
 })
 

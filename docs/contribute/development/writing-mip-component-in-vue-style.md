@@ -178,7 +178,7 @@ export default {
 <mip-example on="mounted:btn.click()"></mip-example>
 ```
 
-关于 on 语法监听事件属于 MIP 组件的使用，可以参考文档 [可交互 MIP](../../docs/interactive/event-and-action.md) 进行学习，这里就不做赘述。
+关于 on 语法监听事件属于 MIP 组件的使用，可以参考文档 [可交互 MIP](../../docs/interactive-mip/event-and-action.md) 进行学习，这里就不做赘述。
 
 this.$emit() 方法可以传入第二个参数，该参数要求类型为一个对象，这样就能够在触发事件的同时向外传递数据：
 
