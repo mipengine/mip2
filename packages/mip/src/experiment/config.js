@@ -14,6 +14,7 @@ export default {
       endTime: '2019-04-10 23:59:59',
       sites: [
         'nj03-wise-ronghe28.nj03.baidu.com',
+        'cp01-sys-rpm14.cp01.baidu.com',
         'localhost'
       ]
     }
