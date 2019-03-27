@@ -13,9 +13,11 @@ export default {
       startTime: '2019-02-13 00:00:00',
       endTime: '2019-04-10 23:59:59',
       sites: [
-        'nj03-wise-ronghe28.nj03.baidu.com',
         'cp01-sys-rpm14.cp01.baidu.com',
-        'localhost'
+        'baobao.baidu.com',
+        'muzhi.baidu.com',
+        'm.120ask.com',
+        'wenxue.m.iqiyi.com'
       ]
     }
   },
@@ -23,17 +25,17 @@ export default {
   abTest: {
     test1: {
       description: 'abTest1 实验描述',
-      startTime: '2019-02-14 00:00:00',
-      endTime: '2019-04-20 17:08:00',
+      startTime: '2019-03-27 15:30:00',
+      endTime: '2019-03-28 12:08:00',
       // 所开的流量的百分比
-      ratio: 20
+      ratio: 100
     },
     test2: {
       description: 'abTest2 实验描述',
-      startTime: '2019-03-21 00:00:00',
-      endTime: '2019-04-21 23:59:59',
+      //startTime: '2019-03-21 00:00:00',
+      //endTime: '2019-04-21 23:59:59',
       // 所开的流量的百分比
-      ratio: 40
+      ratio: 10
     }
   }
 }
