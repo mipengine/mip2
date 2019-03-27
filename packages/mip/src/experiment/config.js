@@ -123,7 +123,7 @@ export default {
       // 所开的流量的百分比
       ratio: 50
     },
-    test8: {
+    test9: {
       description: '1-8 测试开始时间在起始时间和结束时间范围内',
       startTime: '2019-02-13 00:00:00',
       endTime: '2019-04-10 23:59:59',
