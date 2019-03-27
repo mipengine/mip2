@@ -79,11 +79,67 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     if (assertAbTest('test2')) {
       alert('命中 abTest test2')
     }
+    
+    if (assertAbTest('test3')) {
+      alert('命中 abTest test3')
+    }
+    
+    if (assertAbTest('test4')) {
+      alert('命中 abTest test4')
+    }
 
+    if (assertAbTest('test5')) {
+      alert('命中 abTest test5')
+    }
+    
+    if (assertAbTest('test6')) {
+      alert('命中 abTest test6')
+    }
+    
+    if (assertAbTest('test7')) {
+      alert('命中 abTest test7')
+    }
+    
+    if (assertAbTest('test8')) {
+      alert('命中 abTest test8')
+    }
+    
+    if (assertAbTest('test9')) {
+      alert('命中 abTest test9')
+    }
+    
     if (assertSite('test1')) {
       alert('命中站点实验 test1')
     }
+    
+    if (assertSite('test2')) {
+      alert('命中站点实验 test2')
+    }
 
+    if (assertSite('test3')) {
+      alert('命中站点实验 test3')
+    }
+    
+    if (assertSite('test4')) {
+      alert('命中站点实验 test4')
+    }
+    
+    if (assertSite('test5')) {
+      alert('命中站点实验 test5')
+    }
+    
+    if (assertSite('test6')) {
+      alert('命中站点实验 test6')
+    }
+    
+    if (assertSite('test7')) {
+      alert('命中站点实验 test7')
+    }
+    
+    if (assertSite('test8')) {
+      alert('命中站点实验 test8')
+    }
+    
     // clear cookie
     let storage = util.customStorage(2)
     storage.delExceedCookie()
