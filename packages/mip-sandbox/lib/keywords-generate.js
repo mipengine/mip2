@@ -304,6 +304,8 @@ module.exports = function () {
           // 待定
           'location',
           'scrollbars',
+          // https://github.com/mipengine/mip2/issues/563
+          'swan',
           {
             name: 'document',
             origin: function () {

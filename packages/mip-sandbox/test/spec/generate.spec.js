@@ -105,6 +105,7 @@ describe('generate', function () {
           import {b as bb} from 'xxx'
           import * as c from 'xxx'
           const d = require('xxx')
+          swan.webView.navigateTo({url: 'abc'})
 
           function e({f, g: h = i}) {
             console.log(a)
@@ -145,6 +146,7 @@ describe('generate', function () {
           import {b as bb} from 'xxx'
           import * as c from 'xxx'
           const d = require('xxx')
+          swan.webView.navigateTo({url: 'abc'})
 
           function e({f, g: h = MIP.sandbox.i}) {
             console.log(a)
