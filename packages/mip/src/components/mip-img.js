@@ -315,7 +315,7 @@ class MipImg extends CustomElement {
     }
   }
 
-  async layoutCallback () {
+  layoutCallback () {
     let ele = this.element
     let img = new Image()
     if (ele.hasAttribute('popup')) {
@@ -351,31 +351,33 @@ class MipImg extends CustomElement {
       bindPopup(ele, img)
     }
     this.element.classList.add('mip-img-loading')
-
-    try {
-console.log('mip-img start promise')
-      await event.loadPromise(img)
-console.log('mip-img end promise')
-      this.resourcesComplete()
-      this.removePlaceholder()
-      this.element.classList.remove('mip-img-loading')
-      this.element.classList.add('mip-img-loaded')
-      customEmit(this.element, 'load')
-    } catch (reason) {
-console.log('mip-img end promise')
-console.error('mip-img error：' + img.src)
-      /* istanbul ignore if */
-      if (!viewer.isIframed) {
-        return
-      }
-      let ele = document.createElement('a')
-      ele.href = img.src
-      if (!/(\?|&)mip_img_ori=1(&|$)/.test(ele.search)) {
-        let search = ele.search || '?'
-        ele.search += (/[?&]$/.test(search) ? '' : '&') + 'mip_img_ori=1'
-        img.src = ele.href
-      }
-    }
+    console.log('mip-img start promise')
+    return event.loadPromise(img)
+      .then(
+        () => {
+          console.log('mip-img end promise')
+          this.resourcesComplete()
+          this.removePlaceholder()
+          this.element.classList.remove('mip-img-loading')
+          this.element.classList.add('mip-img-loaded')
+          customEmit(this.element, 'load')
+        },
+        () => {
+          console.log('mip-img end promise')
+          console.error('mip-img error：' + img.src)
+          /* istanbul ignore if */
+          if (!viewer.isIframed) {
+            return
+          }
+          let ele = document.createElement('a')
+          ele.href = img.src
+          if (!/(\?|&)mip_img_ori=1(&|$)/.test(ele.search)) {
+            let search = ele.search || '?'
+            ele.search += (/[?&]$/.test(search) ? '' : '&') + 'mip_img_ori=1'
+            img.src = ele.href
+          }
+        }
+      )
   }
 
   attributeChangedCallback (attributeName, oldValue, newValue, namespace) {
