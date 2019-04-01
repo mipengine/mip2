@@ -87,6 +87,7 @@ describe('mip-img', function () {
 
     await new Promise(resolve => {
       let errEvent = new Event('error')
+      window.__TEST_ERR_EVENT__ = errEvent
       img.addEventListener('error', function (e) {
         console.error('spec error callback')
         console.log(e === errEvent)
@@ -94,6 +95,7 @@ describe('mip-img', function () {
       })
       img.dispatchEvent(errEvent)
     })
+    console.log('spec src')
     expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1')
   })
 
