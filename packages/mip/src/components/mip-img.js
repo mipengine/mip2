@@ -360,6 +360,7 @@ class MipImg extends CustomElement {
       this.element.classList.add('mip-img-loaded')
       customEmit(this.element, 'load')
     } catch (reason) {
+console.error('mip-img error：' + img.src)
       /* istanbul ignore if */
       if (!viewer.isIframed) {
         return
@@ -370,7 +371,6 @@ class MipImg extends CustomElement {
         let search = ele.search || '?'
         ele.search += (/[?&]$/.test(search) ? '' : '&') + 'mip_img_ori=1'
         img.src = ele.href
-console.error('mip-img error')
       }
     }
   }
