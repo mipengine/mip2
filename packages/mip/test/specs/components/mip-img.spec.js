@@ -110,33 +110,29 @@ describe('mip-img', function () {
       expect(count).to.be.equal(1)
       resolve1 = resolve
     })
-    let resolve2
-    let promise2 = new Promise(resolve => {
+
+    promise1.then(() => {
       count++
-      expect(count).to.be.equal(2)
-      resolve2 = resolve
+      expect(count).to.be.equal(3)
     })
 
     arr.push(function () {
       resolve1()
     })
-    arr.push(function () {
-      resolve2()
-    })
 
-    let promises = Promise.all([
-      promise1.then(() => {
+    return new Promise(resolve => {
+      arr.push(function () {
         count++
-        expect(count).to.be.equal(3)
-      }),
-      promise2.then(() => {
-        count++
-        expect(count).to.be.equal(4)
+        expect(count).to.be.equal(2)
+        resolve()
       })
-    ])
 
-    arr.forEach(item => item())
-    return promises
+      arr.forEach(item => item())
+    })
+    .then(function () {
+      count++
+      expect(count).to.be.equal(4)
+    })
   })
 
   it('should work with srcset', function () {
