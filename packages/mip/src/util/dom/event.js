@@ -103,7 +103,13 @@ function loadPromise (eleOrWindow) {
     }
     // For elements, unlisten on error (don't for Windows).
     if (tagName) {
-      listenOnce(eleOrWindow, 'error', reject)
+      listenOnce(eleOrWindow, 'error', function (e) {
+        if (eleOrWindow.getAttribute && eleOrWindow.getAttribute('src') === 'https://www.wrong.org?test=1') {
+          console.log('mip-img error event')
+          console.log(window.__TEST__FOR__ === e)
+        }
+        reject(e)
+      })
     }
   })
 

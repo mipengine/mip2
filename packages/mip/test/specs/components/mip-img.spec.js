@@ -73,6 +73,7 @@ describe('mip-img', function () {
   })
 
   it('should replace src if load img error', async () => {
+    console.log('start load img error')
     mipImgWrapper.innerHTML = `<mip-img popup src="https://www.wrong.org?test=1"></mip-img>`
     let mipImg = mipImgWrapper.querySelector('mip-img')
     mipImg.viewportCallback(true)
@@ -83,10 +84,16 @@ describe('mip-img', function () {
     expect(img.getAttribute('src')).to.equal('https://www.wrong.org?test=1')
 
     await new Promise(resolve => {
-      img.addEventListener('error', resolve)
       let errEvent = new Event('error')
+      window.__TEST__FOR__ = errEvent
+      img.addEventListener('error', function (e) {
+        console.log('spec error event')
+        console.log(errEvent === e)
+        resolve(e)
+      })
       img.dispatchEvent(errEvent)
     })
+    console.log('spec error resolve')
     expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1')
   })
 
