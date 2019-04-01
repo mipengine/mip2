@@ -97,6 +97,42 @@ describe('mip-img', function () {
     expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1')
   })
 
+  it('should has not error', async function () {
+    let arr = []
+    let count = 0
+
+    async function fn() {
+      try {
+        await new Promise((resolve, reject) => {
+          arr.push(function () {
+            count++
+            expect(count).to.be.equal(1)
+            reject()
+          })
+        })
+      }
+      catch (e) {
+        count++
+        expect(count).to.be.equal(3)
+      }
+    }
+
+    fn()
+
+    await new Promise(resolve => {
+      arr.push(function () {
+        count++
+        expect(count).to.be.equal(2)
+        resolve()
+      })
+
+      arr.forEach(item => item())
+    })
+
+    count++
+    expect(count).to.be.equal(4)
+  })
+
   it('should work with srcset', function () {
     mipImgWrapper.innerHTML = `
       <mip-img srcset="https://www.mipengine.org/static/img/wrong_address1.jpg 1x,
