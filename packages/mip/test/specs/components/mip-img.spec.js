@@ -100,27 +100,29 @@ describe('mip-img', function () {
     expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1')
   })
 
-  it('should has not error', function () {
+  it('should has not error', async function () {
     let arr = []
     let count = 0
 
-    let resolve1
-    let promise1 = new Promise(resolve => {
-      count++
-      expect(count).to.be.equal(1)
-      resolve1 = resolve
-    })
+    async function fn() {
+      try {
+        await new Promise((resolve, reject) => {
+          arr.push(function () {
+            count++
+            expect(count).to.be.equal(1)
+            reject()
+          })
+        })
+      }
+      catch (e) {
+        count++
+        expect(count).to.be.equal(3)
+      }
+    }
 
-    promise1.then(() => {
-      count++
-      expect(count).to.be.equal(3)
-    })
+    fn()
 
-    arr.push(function () {
-      resolve1()
-    })
-
-    return new Promise(resolve => {
+    await new Promise(resolve => {
       arr.push(function () {
         count++
         expect(count).to.be.equal(2)
@@ -129,10 +131,9 @@ describe('mip-img', function () {
 
       arr.forEach(item => item())
     })
-    .then(function () {
-      count++
-      expect(count).to.be.equal(4)
-    })
+
+    count++
+    expect(count).to.be.equal(4)
   })
 
   it('should work with srcset', function () {
