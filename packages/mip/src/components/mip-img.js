@@ -362,6 +362,7 @@ console.log('mip-img end promise')
       this.element.classList.add('mip-img-loaded')
       customEmit(this.element, 'load')
     } catch (reason) {
+console.log('mip-img end promise')
 console.error('mip-img error：' + img.src)
       /* istanbul ignore if */
       if (!viewer.isIframed) {

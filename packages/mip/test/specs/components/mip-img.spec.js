@@ -92,10 +92,11 @@ describe('mip-img', function () {
         console.error('spec error callback')
         console.log(e === errEvent)
         resolve(e)
+        console.log('spec error resolve is called')
       })
       img.dispatchEvent(errEvent)
     })
-    console.log('spec src')
+    console.log('spec end promise')
     expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1')
   })
 

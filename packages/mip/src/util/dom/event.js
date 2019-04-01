@@ -105,13 +105,14 @@ function loadPromise (eleOrWindow) {
     if (tagName) {
       listenOnce(eleOrWindow, 'error', function (e) {
         if (eleOrWindow.getAttribute('src') === 'https://www.wrong.org?test=1') {
-console.log('mip-img error reject')
+console.log('mip-img error callback')
 console.log(window.__TEST_ERR_EVENT__ === e)
         }
         else if (tagName === 'IMG') {
 console.log('img url is: ' + eleOrWindow.src)
         }
         reject(e)
+console.log('mip-img error reject is called')
       })
     }
   })
