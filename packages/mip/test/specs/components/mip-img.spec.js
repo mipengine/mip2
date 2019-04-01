@@ -84,7 +84,7 @@ describe('mip-img', function () {
 
     expect(img.classList.contains('mip-replaced-content')).to.equal(true)
     expect(img.getAttribute('src')).to.equal('https://www.wrong.org?test=1')
-
+    console.log('spec start promise')
     await new Promise(resolve => {
       let errEvent = new Event('error')
       window.__TEST_ERR_EVENT__ = errEvent
