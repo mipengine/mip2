@@ -82,7 +82,10 @@ describe('mip-img', function () {
     let promise = new Promise(res => {
       resolve = res
     })
-    let callback = () => resolve()
+    let callback = e => {
+console.error('spec error')
+      resolve()
+    }
 
     mipImg.viewportCallback(true)
 
@@ -95,24 +98,12 @@ describe('mip-img', function () {
     let errEvent = new Event('error')
     img.dispatchEvent(errEvent)
 
-    return promise.then(() => sleep(10))
-      .then(() => expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1'))
-
-    // return new Promise(resolve => {
-    //   let step = 0
-    //   img.addEventListener('error', function (e) {
-    //     step++
-    //     expect(step).to.equal(2)
-    //     resolve()
-    //   })
-    //   let errEvent = new Event('error')
-    //   img.dispatchEvent(errEvent)
-    //   step++
-    //   expect(step).to.equal(1)
-    // })
-    // .then(() => {
-    //   expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1')
-    // })
+    return promise
+      // .then(() => sleep(10))
+      .then(() => {
+console.log('spec error then')
+        expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1')
+      })
   })
 
   it('should work with srcset', function () {

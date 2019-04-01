@@ -370,6 +370,7 @@ class MipImg extends CustomElement {
         let search = ele.search || '?'
         ele.search += (/[?&]$/.test(search) ? '' : '&') + 'mip_img_ori=1'
         img.src = ele.href
+console.error('mip-img error')
       }
     }
   }
