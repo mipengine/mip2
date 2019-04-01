@@ -72,7 +72,7 @@ describe('mip-img', function () {
     img.dispatchEvent(errEvent)
   })
 
-  it('should replace src if load img error', async () => {
+  it('should replace src if load img error', () => {
     mipImgWrapper.innerHTML = `<mip-img popup src="https://www.wrong.org?test=1"></mip-img>`
     let mipImg = mipImgWrapper.querySelector('mip-img')
     mipImg.viewportCallback(true)
@@ -82,12 +82,14 @@ describe('mip-img', function () {
     expect(img.classList.contains('mip-replaced-content')).to.equal(true)
     expect(img.getAttribute('src')).to.equal('https://www.wrong.org?test=1')
 
-    await new Promise(resolve => {
+    return new Promise(resolve => {
       img.addEventListener('error', resolve)
       let errEvent = new Event('error')
       img.dispatchEvent(errEvent)
     })
-    expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1')
+    .then(() => {
+      expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1')
+    })
   })
 
   it('should work with srcset', function () {
