@@ -9,6 +9,8 @@ import {event} from 'src/util'
 /* eslint-disable no-unused-expressions */
 /* globals describe, before, it, expect, after, Event */
 
+const sleep = time => new Promise(resolve => setTimeout(resolve, time))
+
 describe('mip-img', function () {
   let mipImgWrapper
 
@@ -93,9 +95,8 @@ describe('mip-img', function () {
     let errEvent = new Event('error')
     img.dispatchEvent(errEvent)
 
-    return promise.then(() => {
-      expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1')
-    })
+    return promise.then(() => sleep(10))
+      .then(() => expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1'))
 
     // return new Promise(resolve => {
     //   let step = 0
