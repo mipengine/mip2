@@ -99,6 +99,45 @@ describe('mip-img', function () {
     expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1')
   })
 
+  it('should has not error', function () {
+    let arr = []
+    let count = 0
+
+    let resolve1
+    let promise1 = new Promise(resolve => {
+      count++
+      expect(count).to.be.equal(1)
+      resolve1 = resolve
+    })
+    let resolve2
+    let promise2 = new Promise(resolve => {
+      count++
+      expect(count).to.be.equal(2)
+      resolve2 = resolve
+    })
+
+    arr.push(function () {
+      resolve1()
+    })
+    arr.push(function () {
+      resolve2()
+    })
+
+    let promises = Promise.all([
+      promise1.then(() => {
+        count++
+        expect(count).to.be.equal(3)
+      }),
+      promise2.then(() => {
+        count++
+        expect(count).to.be.equal(4)
+      })
+    ])
+
+    arr.forEach(item => item())
+    return promises
+  })
+
   it('should work with srcset', function () {
     mipImgWrapper.innerHTML = `
       <mip-img srcset="https://www.mipengine.org/static/img/wrong_address1.jpg 1x,
