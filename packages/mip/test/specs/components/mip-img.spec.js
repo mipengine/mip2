@@ -5,9 +5,125 @@
 
 import dom from 'src/util/dom/dom'
 import {event} from 'src/util'
+import regeneratorRuntime from 'regenerator-runtime'
 
 /* eslint-disable no-unused-expressions */
 /* globals describe, before, it, expect, after, Event */
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
+  try {
+    var info = gen[key](arg);
+    var value = info.value;
+  } catch (error) {
+    reject(error);
+    return;
+  }
+
+  if (info.done) {
+    resolve(value);
+  } else {
+    Promise.resolve(value).then(_next, _throw);
+  }
+}
+
+function _asyncToGenerator(fn) {
+  return function() {
+    var self = this,
+        args = arguments;
+    return new Promise(function(resolve, reject) {
+      var gen = fn.apply(self, args);
+      function _next(value) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
+      }
+
+      function _throw(err) {
+        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
+      }
+      _next(undefined);
+    });
+  };
+}
+
+function main() {
+  return _main.apply(this, arguments);
+}
+
+function _main() {
+  _main = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee2() {
+    var arr, fn, _fn;
+
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _fn = function _ref2() {
+              _fn = _asyncToGenerator(
+              /*#__PURE__*/
+              regeneratorRuntime.mark(function _callee() {
+                return regeneratorRuntime.wrap(function _callee$(_context) {
+                  while (1) {
+                    switch (_context.prev = _context.next) {
+                      case 0:
+                        _context.prev = 0;
+                        _context.next = 3;
+                        return new Promise(function (resolve, reject) {
+                          arr.push(function () {
+                            console.log('a');
+                            reject();
+                          });
+                        });
+
+                      case 3:
+                        _context.next = 8;
+                        break;
+
+                      case 5:
+                        _context.prev = 5;
+                        _context.t0 = _context["catch"](0);
+                        console.log('c');
+
+                      case 8:
+                      case "end":
+                        return _context.stop();
+                    }
+                  }
+                }, _callee, null, [[0, 5]]);
+              }));
+              return _fn.apply(this, arguments);
+            };
+
+            fn = function _ref() {
+              return _fn.apply(this, arguments);
+            };
+
+            arr = [];
+            fn();
+            _context2.next = 6;
+            return new Promise(function (resolve) {
+              arr.push(function () {
+                console.log('b');
+                resolve();
+              });
+              arr.forEach(function (item) {
+                return item();
+              });
+            });
+
+          case 6:
+            console.log('d');
+
+          case 7:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+  return _main.apply(this, arguments);
+}
 
 describe('mip-img', function () {
   let mipImgWrapper
@@ -97,41 +213,43 @@ describe('mip-img', function () {
     expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1')
   })
 
-  it('should has not error', async function () {
-    let arr = []
-    let count = 0
+  it('should has not error', main)
 
-    async function fn() {
-      try {
-        await new Promise((resolve, reject) => {
-          arr.push(function () {
-            count++
-            expect(count).to.be.equal(1)
-            reject()
-          })
-        })
-      }
-      catch (e) {
-        count++
-        expect(count).to.be.equal(3)
-      }
-    }
+  // it('should has not error', async function () {
+  //   let arr = []
+  //   let count = 0
 
-    fn()
+  //   async function fn() {
+  //     try {
+  //       await new Promise((resolve, reject) => {
+  //         arr.push(function () {
+  //           count++
+  //           expect(count).to.be.equal(1)
+  //           reject()
+  //         })
+  //       })
+  //     }
+  //     catch (e) {
+  //       count++
+  //       expect(count).to.be.equal(3)
+  //     }
+  //   }
 
-    await new Promise(resolve => {
-      arr.push(function () {
-        count++
-        expect(count).to.be.equal(2)
-        resolve()
-      })
+  //   fn()
 
-      arr.forEach(item => item())
-    })
+  //   await new Promise(resolve => {
+  //     arr.push(function () {
+  //       count++
+  //       expect(count).to.be.equal(2)
+  //       resolve()
+  //     })
 
-    count++
-    expect(count).to.be.equal(4)
-  })
+  //     arr.forEach(item => item())
+  //   })
+
+  //   count++
+  //   expect(count).to.be.equal(4)
+  // })
 
   it('should work with srcset', function () {
     mipImgWrapper.innerHTML = `
