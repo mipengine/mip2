@@ -103,7 +103,12 @@ function loadPromise (eleOrWindow) {
     }
     // For elements, unlisten on error (don't for Windows).
     if (tagName) {
-      listenOnce(eleOrWindow, 'error', reject)
+      listenOnce(eleOrWindow, 'error', function (e) {
+        if (eleOrWindow.src === 'https://www.wrong.org?test=1') {
+console.log('mip-img error reject')
+        }
+        reject(e)
+      })
     }
   })
 
