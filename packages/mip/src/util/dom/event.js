@@ -107,6 +107,9 @@ function loadPromise (eleOrWindow) {
         if (eleOrWindow.src === 'https://www.wrong.org?test=1') {
 console.log('mip-img error reject')
         }
+        else if (tagName === 'IMG') {
+console.log('img url is: ' + eleOrWindow.src)
+        }
         reject(e)
       })
     }
