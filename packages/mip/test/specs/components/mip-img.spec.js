@@ -304,41 +304,37 @@ describe('mip-img', function () {
 
   it('should has not error', main)
 
-  // it('should has not error', async function () {
-  //   let arr = []
-  //   let count = 0
+  it('should has not error2', async function () {
+    let arr = []
+    let count = 0
 
-  //   async function fn() {
-  //     try {
-  //       await new Promise((resolve, reject) => {
-  //         arr.push(function () {
-  //           count++
-  //           expect(count).to.be.equal(1)
-  //           reject()
-  //         })
-  //       })
-  //     }
-  //     catch (e) {
-  //       count++
-  //       expect(count).to.be.equal(3)
-  //     }
-  //   }
+    async function fn() {
+      try {
+        await new Promise((resolve, reject) => {
+          arr.push(function () {
+            console.log('a')
+            reject()
+          })
+        })
+      }
+      catch (e) {
+        console.log('c')
+      }
+    }
 
-  //   fn()
+    fn()
 
-  //   await new Promise(resolve => {
-  //     arr.push(function () {
-  //       count++
-  //       expect(count).to.be.equal(2)
-  //       resolve()
-  //     })
+    await new Promise(resolve => {
+      arr.push(function () {
+        console.log('b')
+        resolve()
+      })
 
-  //     arr.forEach(item => item())
-  //   })
+      arr.forEach(item => item())
+    })
 
-  //   count++
-  //   expect(count).to.be.equal(4)
-  // })
+    console.log('d')
+  })
 
   it('should work with srcset', function () {
     mipImgWrapper.innerHTML = `
