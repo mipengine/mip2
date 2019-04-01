@@ -95,8 +95,8 @@ console.error('spec error')
     expect(img.getAttribute('src')).to.equal('https://www.wrong.org?test=1')
 
     img.addEventListener('error', callback)
-    let errEvent = new Event('error')
-    img.dispatchEvent(errEvent)
+    // let errEvent = new Event('error')
+    // img.dispatchEvent(errEvent)
 
     return promise
       // .then(() => sleep(10))
