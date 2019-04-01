@@ -306,7 +306,6 @@ describe('mip-img', function () {
 
   it('should has not error2', async function () {
     let arr = []
-    let count = 0
 
     async function fn() {
       try {
