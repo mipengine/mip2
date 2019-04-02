@@ -23,6 +23,18 @@ window.MIP = {
   },
   watch: function () {
     return 'watch'
+  },
+  util: {
+    platform: {
+      isIOS: function () {
+        return true
+      }
+    },
+    dom: {
+      create: function () {
+        return 'create'
+      }
+    }
   }
 }
 
@@ -47,9 +59,6 @@ describe('sandbox', function () {
     expect(sandbox.this(window)).to.be.equal(sandbox)
     expect(sandbox.this(document)).to.be.equal(sandbox.document)
     expect(sandbox.document.cookie).to.be.equal(document.cookie)
-    expect(Object.keys(sandbox.strict.document)).to.be.deep.equal(['cookie', 'domain'])
-    expect(sandbox.strict.document.cookie).to.be.equal(document.cookie)
-    expect(sandbox.strict.MIP.viewer.isIframed).to.be.equal(MIP.viewer.isIframed)
     expect(sandbox.strict.this(window)).to.be.equal(sandbox.strict)
     expect(sandbox.strict.this(document)).to.be.equal(sandbox.strict.document)
   })
@@ -60,6 +69,16 @@ describe('sandbox', function () {
 
   it('strict', function () {
     expect(sandbox.strict).to.be.equal(sandbox.strict.window)
+    expect(sandbox.strict.MIP.sandbox).to.be.equal(sandbox.strict)
+    expect(sandbox.strict.MIP.sandbox.strict).to.be.equal(sandbox.strict)
+    expect(sandbox.strict.MIP.sandbox.strict.window).to.be.equal(sandbox.strict)
+    expect(sandbox.strict.MIP.sandbox.window).to.be.equal(sandbox.strict)
+    expect(Object.keys(sandbox.strict.MIP.sandbox.document)).to.be.deep.equal(['cookie', 'domain'])
+    expect(Object.keys(sandbox.strict.MIP.util)).to.be.deep.equal(['platform', 'customStorage', 'jsonParse', 'string'])
+    expect(sandbox.strict.MIP.util.platform.isIOS()).to.be.equal(true)
+    expect(Object.keys(sandbox.strict.document)).to.be.deep.equal(['cookie', 'domain'])
+    expect(sandbox.strict.document.cookie).to.be.equal(document.cookie)
+    expect(sandbox.strict.MIP.viewer.isIframed).to.be.equal(MIP.viewer.isIframed)
   })
 
   it('document.createElement', function () {
