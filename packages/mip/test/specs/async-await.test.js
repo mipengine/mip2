@@ -1,4 +1,4 @@
-describe.only('Async Await', function () {
+describe('Async Await', function () {
   it('should has not error', async function main() {
     let arr = []
 
@@ -26,7 +26,6 @@ describe.only('Async Await', function () {
 
       arr.forEach(item => item())
     })
-
     console.log('d')
   })
 })
