@@ -12,7 +12,7 @@ import CustomElement from '../custom-element'
 import viewport from '../viewport'
 import viewer from '../viewer'
 
-const {css, rect, event, naboo, makeCacheUrl} = util
+const {css, rect, event, naboo} = util
 
 // 取值根据 https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement
 let imgAttributes = [
@@ -329,20 +329,7 @@ class MipImg extends CustomElement {
     this.attributes = getAttributeSet(this.element.attributes)
     for (let k in this.attributes) {
       if (this.attributes.hasOwnProperty(k) && imgAttributes.indexOf(k) > -1) {
-        if (k === 'src') {
-          // src attribute needs to be mip-cached
-          let imgsrc = makeCacheUrl(this.attributes.src, 'img')
-          img.setAttribute(k, imgsrc)
-        } else if (k === 'srcset') {
-          let imgSrcset = this.attributes.srcset
-          let reg = /[\w-/]+\.(jpg|jpeg|png|gif|webp|bmp|tiff) /g
-          let srcArr = imgSrcset.replace(reg, function (url) {
-            return makeCacheUrl(url, 'img')
-          })
-          img.setAttribute('srcset', srcArr)
-        } else {
-          img.setAttribute(k, this.attributes[k])
-        }
+        img.setAttribute(k, this.attributes[k])
       }
     }
 
