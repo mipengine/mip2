@@ -290,6 +290,9 @@ module.exports = function () {
         type: TYPE_PROPS,
         access: ACCESS_READONLY,
         props: [
+          // https://github.com/mipengine/mip2/issues/576
+          'BMap',
+          'BMapLib',
           // https://github.com/mipengine/mip2/issues/143
           'CustomEvent',
           'File',
