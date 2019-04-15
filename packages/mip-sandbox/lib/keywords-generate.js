@@ -288,11 +288,17 @@ module.exports = function () {
     properties: ORIGINAL.concat([
       {
         type: TYPE_PROPS,
-        access: ACCESS_READONLY,
+        access: ACCESS_READWRITE,
         props: [
           // https://github.com/mipengine/mip2/issues/576
           'BMap',
-          'BMapLib',
+          'BMapLib'
+        ]
+      },
+      {
+        type: TYPE_PROPS,
+        access: ACCESS_READONLY,
+        props: [
           // https://github.com/mipengine/mip2/issues/143
           'CustomEvent',
           'File',
