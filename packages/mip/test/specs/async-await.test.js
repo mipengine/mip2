@@ -1,3 +1,5 @@
+import 'src/index'
+
 describe('Async Await', function () {
   it('should has not error', async function main() {
     let arr = []
