@@ -196,7 +196,7 @@ describe('mip-img', function () {
     console.log('d')
   })
 
-  it('should has not error3', async function () {
+  it('should has not error3', function () {
     let arr = []
 
     function fn() {
