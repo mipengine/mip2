@@ -28,4 +28,34 @@ describe('Async Await', function () {
     })
     console.log('d')
   })
+
+  it('should also has not error', function main() {
+    let arr = []
+
+    function fn() {
+      return new Promise((resolve, reject) => {
+        arr.push(function () {
+          console.log('a')
+          reject()
+        })
+      })
+      .catch(error => {
+        console.log('c')
+      })
+    }
+
+    fn()
+
+    return new Promise(resolve => {
+      arr.push(function () {
+        console.log('b')
+        resolve()
+      })
+
+      arr.forEach(item => item())
+    })
+    .then(() => {
+      console.log('d')
+    })
+  })
 })
