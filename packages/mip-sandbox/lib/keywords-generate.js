@@ -288,6 +288,15 @@ module.exports = function () {
     properties: ORIGINAL.concat([
       {
         type: TYPE_PROPS,
+        access: ACCESS_READWRITE,
+        props: [
+          // https://github.com/mipengine/mip2/issues/576
+          'BMap',
+          'BMapLib'
+        ]
+      },
+      {
+        type: TYPE_PROPS,
         access: ACCESS_READONLY,
         props: [
           // https://github.com/mipengine/mip2/issues/143
@@ -304,6 +313,8 @@ module.exports = function () {
           // 待定
           'location',
           'scrollbars',
+          // https://github.com/mipengine/mip2/issues/563
+          'swan',
           {
             name: 'document',
             origin: function () {
