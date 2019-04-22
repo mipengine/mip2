@@ -1,5 +1,11 @@
 # CHANGELOG
 
+- 1.5.9
+    1. 升级 mip-sandbox，添加 `BMap`、`BMapLib` 白名单
+
+- 1.5.7
+    1. 升级 mip-sandbox，添加 `swan` 白名单
+
 - 1.5.4
     1. build 异常时，中断程序，便于外部脚本捕获错误
 
