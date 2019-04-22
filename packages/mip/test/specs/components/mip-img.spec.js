@@ -196,6 +196,36 @@ describe('mip-img', function () {
     console.log('d')
   })
 
+  it('should has not error3', async function () {
+    let arr = []
+
+    function fn() {
+      return new Promise((resolve, reject) => {
+        arr.push(function () {
+          console.log('a')
+          reject()
+        })
+      })
+      .catch(e => {
+        console.log('c')
+      })
+    }
+
+    fn()
+
+    return new Promise(resolve => {
+      arr.push(function () {
+        console.log('b')
+        resolve()
+      })
+
+      arr.forEach(item => item())
+    })
+    .then(e => {
+      console.log('d')
+    })
+  })
+
   it('should work with srcset', function () {
     mipImgWrapper.innerHTML = `
       <mip-img srcset="https://www.mipengine.org/static/img/wrong_address1.jpg 1x,
