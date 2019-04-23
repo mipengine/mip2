@@ -3,6 +3,7 @@
  * @author sfe
  */
 
+import 'deps/promise'
 
 export default async function main() {
   let arr = []
