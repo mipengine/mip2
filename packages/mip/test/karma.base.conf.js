@@ -35,6 +35,7 @@ class WebpackRequirePlugin {
         let file = compiler.outputFileSystem.readFileSync(path.resolve(outputPath, filename), 'utf-8')
         console.log('--------- ' + filename + ' ----------')
         console.log(file)
+
       })
     })
   }
