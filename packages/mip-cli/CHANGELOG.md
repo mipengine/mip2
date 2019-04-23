@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- 1.5.9
+    1. 升级 mip-sandbox，添加 `BMap`、`BMapLib` 白名单
+
 - 1.5.7
     1. 升级 mip-sandbox，添加 `swan` 白名单
 

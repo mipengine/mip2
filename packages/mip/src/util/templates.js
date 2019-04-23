@@ -88,6 +88,9 @@ class Templates {
     if (!element || element.nodeType !== 1) {
       return console.error('Template parent element must be a node element')
     }
+    if (element.tagName === 'TEMPLATE') {
+      return element
+    }
     let templateId = element.getAttribute('template')
     let template
 

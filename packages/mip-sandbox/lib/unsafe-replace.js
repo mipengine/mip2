@@ -25,7 +25,7 @@ function safeThisExpression (prefix) {
 
 module.exports = function (code, keywords, prefix) {
   keywords = keywords || []
-  prefix = prefix || 'MIP.sandbox'
+  prefix = prefix || 'window.MIP.sandbox'
 
   return detect(
     code,
