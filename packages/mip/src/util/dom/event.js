@@ -103,7 +103,10 @@ function loadPromise (eleOrWindow) {
     }
     // For elements, unlisten on error (don't for Windows).
     if (tagName) {
-      listenOnce(eleOrWindow, 'error', reject)
+      listenOnce(eleOrWindow, 'error', (e) => {
+        console.log('a')
+        reject(e)
+      })
     }
   })
 

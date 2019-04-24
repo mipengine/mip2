@@ -347,6 +347,7 @@ class MipImg extends CustomElement {
       this.element.classList.add('mip-img-loaded')
       customEmit(this.element, 'load')
     } catch (reason) {
+      console.log('c')
       /* istanbul ignore if */
       if (!viewer.isIframed) {
         return

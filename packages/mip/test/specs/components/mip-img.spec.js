@@ -83,10 +83,14 @@ describe.only('mip-img', function () {
     expect(img.getAttribute('src')).to.equal('https://www.wrong.org?test=1')
 
     await new Promise(resolve => {
-      img.addEventListener('error', resolve)
+      img.addEventListener('error', function () {
+        console.log('b')
+        resolve()
+      })
       let errEvent = new Event('error')
       img.dispatchEvent(errEvent)
     })
+    console.log('d')
     expect(img.src).to.equal('https://www.wrong.org/?test=1&mip_img_ori=1')
   })
 
