@@ -1355,6 +1355,8 @@ var USE_NATIVE$1 = !!function () {
   } catch (e) { /* empty */ }
 }();
 
+console.log('----------- USE NATIVE$1:------ ' + USE_NATIVE$1)
+
 // helpers
 var isThenable = function (it) {
   var then;
