@@ -78,8 +78,10 @@ import 'deps/promise'
 //     storage.delExceedCookie()
 //   })
 // }
+//
 
-export default async function main () {
+
+export default function create () {
   let arr = []
 
   async function fn () {
@@ -96,16 +98,20 @@ export default async function main () {
     }
   }
 
+  let obj = {
+    on: function (cb) {
+      arr.push(function () {
+        console.log('b')
+        cb()
+      })
+    },
+    dispatch: function () {
+      arr.forEach(item => item())
+    }
+  }
+
   fn()
 
-  await new Promise(resolve => {
-    arr.push(function () {
-      console.log('b')
-      resolve()
-    })
-
-    arr.forEach(item => item())
-  })
-  console.log('d')
+  return obj
 }
 
