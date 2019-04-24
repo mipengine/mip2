@@ -5,7 +5,7 @@
 
 /* eslint-disable import/no-webpack-loader-syntax */
 
-// import 'deps/promise'
+import 'deps/promise'
 
 function listen (element, eventType, listener, options) {
   element.addEventListener(eventType, listener, options)
