@@ -5,26 +5,26 @@ const path = require('path')
 
 class WebpackRequirePlugin {
   apply (compiler) {
-    compiler.hooks.compilation.tap('MainTemplate', (compilation) => {
-      compilation.mainTemplate.hooks.requireExtensions.tap('MainTemplate', () =>
-        [
-          '__webpack_require__.d = function (exported, name, get) {',
-          '  Reflect.defineProperty(exported, name, {',
-          '    configurable: true,',
-          '    enumerable: true,',
-          '    get',
-          '  })',
-          '}',
-          '__webpack_require__.n = function (exported) {',
-          '  return exported.a = exported',
-          '}',
-          '__webpack_require__.r = function () {}',
-          '__webpack_require__.o = function (object, property) {',
-          '  return Object.prototype.hasOwnProperty.call(object, property)',
-          '};'
-        ].join('\n')
-      )
-    })
+    // compiler.hooks.compilation.tap('MainTemplate', (compilation) => {
+    //   compilation.mainTemplate.hooks.requireExtensions.tap('MainTemplate', () =>
+    //     [
+    //       '__webpack_require__.d = function (exported, name, get) {',
+    //       '  Reflect.defineProperty(exported, name, {',
+    //       '    configurable: true,',
+    //       '    enumerable: true,',
+    //       '    get',
+    //       '  })',
+    //       '}',
+    //       '__webpack_require__.n = function (exported) {',
+    //       '  return exported.a = exported',
+    //       '}',
+    //       '__webpack_require__.r = function () {}',
+    //       '__webpack_require__.o = function (object, property) {',
+    //       '  return Object.prototype.hasOwnProperty.call(object, property)',
+    //       '};'
+    //     ].join('\n')
+    //   )
+    // })
 
     compiler.hooks.afterEmit.tap('ConsoleOutput', (compilation) => {
       let outputPath = compilation.getPath(compiler.outputPath)
@@ -35,6 +35,11 @@ class WebpackRequirePlugin {
         let file = compiler.outputFileSystem.readFileSync(path.resolve(outputPath, filename), 'utf-8')
         console.log('----------' + filename + '-----------')
         console.log(file)
+        // require('fs').writeFileSync(
+        //   path.resolve(__dirname, '../dist/output.js'),
+        //   file,
+        //   'utf-8'
+        // )
       })
     })
   }
@@ -46,14 +51,18 @@ const webpackConfig = {
     alias
   },
   module: {
-    rules: [{
+    rules: [
+    {
       test: /\.js$/,
-      use: {
-        loader: 'istanbul-instrumenter-loader',
-        options: {
-          esModules: true
+      use: [
+        {
+          loader: 'babel-loader'
+        },
+        {
+          loader: 'istanbul-instrumenter-loader',
+          options: { esModules: true }
         }
-      },
+      ],
       enforce: 'post',
       exclude: /node_modules|deps|test|src\/vue\/|\.spec\.js$/
     }, {
