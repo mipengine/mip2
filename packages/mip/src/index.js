@@ -7,6 +7,7 @@
 
 import 'deps/promise'
 
+
 function listen (element, eventType, listener, options) {
   element.addEventListener(eventType, listener, options)
   return () => element.removeEventListener(eventType, listener)
