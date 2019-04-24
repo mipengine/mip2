@@ -1542,21 +1542,21 @@ _setSpecies(PROMISE);
 Wrapper = _core[PROMISE];
 
 // statics
-// _export(_export.S + _export.F * !USE_NATIVE$1, PROMISE, {
-//   // 25.4.4.5 Promise.reject(r)
-//   reject: function reject(r) {
-//     var capability = newPromiseCapability(this);
-//     var $$reject = capability.reject;
-//     $$reject(r);
-//     return capability.promise;
-//   }
-// });
-// _export(_export.S + _export.F * (_library || !USE_NATIVE$1), PROMISE, {
-//   // 25.4.4.6 Promise.resolve(x)
-//   resolve: function resolve(x) {
-//     return _promiseResolve(_library && this === Wrapper ? $Promise : this, x);
-//   }
-// });
+_export(_export.S + _export.F * !USE_NATIVE$1, PROMISE, {
+  // 25.4.4.5 Promise.reject(r)
+  reject: function reject(r) {
+    var capability = newPromiseCapability(this);
+    var $$reject = capability.reject;
+    $$reject(r);
+    return capability.promise;
+  }
+});
+_export(_export.S + _export.F * (_library || !USE_NATIVE$1), PROMISE, {
+  // 25.4.4.6 Promise.resolve(x)
+  resolve: function resolve(x) {
+    return _promiseResolve(_library && this === Wrapper ? $Promise : this, x);
+  }
+});
 // _export(_export.S + _export.F * !(USE_NATIVE$1 && _iterDetect(function (iter) {
 //   $Promise.all(iter)['catch'](empty);
 // })), PROMISE, {
