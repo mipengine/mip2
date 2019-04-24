@@ -1605,18 +1605,18 @@ _setSpecies(PROMISE);
 //   }
 // });
 
-_export(_export.P + _export.R, 'Promise', { 'finally': function (onFinally) {
-  var C = _speciesConstructor(this, _core.Promise || _global.Promise);
-  var isFunction = typeof onFinally == 'function';
-  return this.then(
-    isFunction ? function (x) {
-      return _promiseResolve(C, onFinally()).then(function () { return x; });
-    } : onFinally,
-    isFunction ? function (e) {
-      return _promiseResolve(C, onFinally()).then(function () { throw e; });
-    } : onFinally
-  );
-} });
+// _export(_export.P + _export.R, 'Promise', { 'finally': function (onFinally) {
+//   var C = _speciesConstructor(this, _core.Promise || _global.Promise);
+//   var isFunction = typeof onFinally == 'function';
+//   return this.then(
+//     isFunction ? function (x) {
+//       return _promiseResolve(C, onFinally()).then(function () { return x; });
+//     } : onFinally,
+//     isFunction ? function (e) {
+//       return _promiseResolve(C, onFinally()).then(function () { throw e; });
+//     } : onFinally
+//   );
+// } });
 
 // https://github.com/tc39/proposal-promise-try
 
