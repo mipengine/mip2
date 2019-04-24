@@ -8,7 +8,7 @@
 import 'script-loader!deps/fetch'
 import 'script-loader!deps/fetch-jsonp'
 import 'script-loader!document-register-element/build/document-register-element'
-import 'deps/promise'
+// import 'deps/promise'
 import 'deps/object-assign'
 /* eslint-enable import/no-webpack-loader-syntax */
 
