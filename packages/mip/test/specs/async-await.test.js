@@ -1,11 +1,21 @@
-import create from 'src/index'
+import load from 'src/index'
 
 describe.only('Async Await', function () {
   it('should has not error', async function () {
-    let obj = create()
+    let div = document.createElement('div')
+    document.body.appendChild(div)
+    div.innerHTML = '<img src="https://www.wrong.org?test=1">'
+    let img = div.querySelector('img')
+
+    load(img)
+
     await new Promise(resolve => {
-      obj.on(resolve)
-      obj.dispatch()
+      img.addEventListener('error', function () {
+        console.log('c')
+        resolve()
+      })
+      let err = new Event('error')
+      img.dispatchEvent(err)
     })
     console.log('d')
   })
