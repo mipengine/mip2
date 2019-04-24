@@ -22,16 +22,32 @@ function listenOnce (element, eventType, listener, optEvtListenerOpts) {
 
 function loadPromise (dom) {
   let promise = new Promise((resolve, reject) => {
-    listenOnce(dom, 'load', resolve)
+    listenOnce(dom, 'load', function () {
+      console.log('resolve')
+      resolve()
+    })
     listenOnce(dom, 'error', function (e) {
-      console.log('b')
+      console.log('a')
       reject(e)
     })
   })
   return promise
 }
 
-export default function load (img) {
-  loadPromise(img)
+async function layoutCallback (dom) {
+  let img = new Image()
+  img.setAttribute('src', dom.getAttribute('src'))
+  dom.appendChild(img)
+
+  try {
+    await loadPromise(img)
+  }
+  catch (e) {
+    console.log('c')
+  }
+}
+
+export default function viewportCallback (img) {
+  layoutCallback(img)
 }
 

@@ -1,17 +1,17 @@
-import load from 'src/index'
+import viewportCallback from 'src/index'
 
 describe.only('Async Await', function () {
   it('should has not error', async function () {
     let div = document.createElement('div')
     document.body.appendChild(div)
-    div.innerHTML = '<img src="https://www.wrong.org?test=1">'
-    let img = div.querySelector('img')
+    div.setAttribute('src', 'https://www.wrong.org?test=1')
+    viewportCallback(div)
 
-    load(img)
+    let img = div.querySelector('img')
 
     await new Promise(resolve => {
       img.addEventListener('error', function () {
-        console.log('c')
+        console.log('b')
         resolve()
       })
       let err = new Event('error')
