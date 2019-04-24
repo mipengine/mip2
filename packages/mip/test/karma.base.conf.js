@@ -26,18 +26,18 @@ class WebpackRequirePlugin {
       )
     })
 
-    compiler.hooks.afterEmit.tap('ConsoleOutput', (compilation) => {
-      let outputPath = compilation.getPath(compiler.outputPath)
-      console.log('--- the output path is ---')
-      console.log(outputPath)
-      let filenames = compiler.outputFileSystem.readdirSync(outputPath)
-      filenames.forEach(filename => {
-        let file = compiler.outputFileSystem.readFileSync(path.resolve(outputPath, filename), 'utf-8')
-        console.log('--------- ' + filename + ' ----------')
-        console.log(file)
+    // compiler.hooks.afterEmit.tap('ConsoleOutput', (compilation) => {
+    //   let outputPath = compilation.getPath(compiler.outputPath)
+    //   console.log('--- the output path is ---')
+    //   console.log(outputPath)
+    //   let filenames = compiler.outputFileSystem.readdirSync(outputPath)
+    //   filenames.forEach(filename => {
+    //     let file = compiler.outputFileSystem.readFileSync(path.resolve(outputPath, filename), 'utf-8')
+    //     console.log('--------- ' + filename + ' ----------')
+    //     console.log(file)
 
-      })
-    })
+    //   })
+    // })
   }
 }
 
