@@ -1482,63 +1482,64 @@ var $resolve = function (value) {
 };
 
 // constructor polyfill
-// if (!USE_NATIVE$1) {
-//   // 25.4.3.1 Promise(executor)
-//   $Promise = function Promise(executor) {
-//     _anInstance(this, $Promise, PROMISE, '_h');
-//     _aFunction(executor);
-//     Internal.call(this);
-//     try {
-//       executor(_ctx($resolve, this, 1), _ctx($reject, this, 1));
-//     } catch (err) {
-//       $reject.call(this, err);
-//     }
-//   };
-//   // eslint-disable-next-line no-unused-vars
-//   Internal = function Promise(executor) {
-//     this._c = [];             // <- awaiting reactions
-//     this._a = undefined;      // <- checked in isUnhandled reactions
-//     this._s = 0;              // <- state
-//     this._d = false;          // <- done
-//     this._v = undefined;      // <- value
-//     this._h = 0;              // <- rejection state, 0 - default, 1 - handled, 2 - unhandled
-//     this._n = false;          // <- notify
-//   };
-//   Internal.prototype = _redefineAll($Promise.prototype, {
-//     // 25.4.5.3 Promise.prototype.then(onFulfilled, onRejected)
-//     then: function then(onFulfilled, onRejected) {
-//       var reaction = newPromiseCapability(_speciesConstructor(this, $Promise));
-//       reaction.ok = typeof onFulfilled == 'function' ? onFulfilled : true;
-//       reaction.fail = typeof onRejected == 'function' && onRejected;
-//       reaction.domain = isNode$1 ? process$2.domain : undefined;
-//       this._c.push(reaction);
-//       if (this._a) this._a.push(reaction);
-//       if (this._s) notify(this, false);
-//       return reaction.promise;
-//     },
-//     // 25.4.5.1 Promise.prototype.catch(onRejected)
-//     'catch': function (onRejected) {
-//       return this.then(undefined, onRejected);
-//     }
-//   });
-//   OwnPromiseCapability = function () {
-//     var promise = new Internal();
-//     this.promise = promise;
-//     this.resolve = _ctx($resolve, promise, 1);
-//     this.reject = _ctx($reject, promise, 1);
-//   };
-//   _newPromiseCapability.f = newPromiseCapability = function (C) {
-//     return C === $Promise || C === Wrapper
-//       ? new OwnPromiseCapability(C)
-//       : newGenericPromiseCapability(C);
-//   };
-// }
+if (!USE_NATIVE$1) {
+  console.log('-------- wozai zheli ya ---- jiuzai zheliya ---------')
+  // 25.4.3.1 Promise(executor)
+  $Promise = function Promise(executor) {
+    _anInstance(this, $Promise, PROMISE, '_h');
+    _aFunction(executor);
+    Internal.call(this);
+    try {
+      executor(_ctx($resolve, this, 1), _ctx($reject, this, 1));
+    } catch (err) {
+      $reject.call(this, err);
+    }
+  };
+  // eslint-disable-next-line no-unused-vars
+  Internal = function Promise(executor) {
+    this._c = [];             // <- awaiting reactions
+    this._a = undefined;      // <- checked in isUnhandled reactions
+    this._s = 0;              // <- state
+    this._d = false;          // <- done
+    this._v = undefined;      // <- value
+    this._h = 0;              // <- rejection state, 0 - default, 1 - handled, 2 - unhandled
+    this._n = false;          // <- notify
+  };
+  Internal.prototype = _redefineAll($Promise.prototype, {
+    // 25.4.5.3 Promise.prototype.then(onFulfilled, onRejected)
+    then: function then(onFulfilled, onRejected) {
+      var reaction = newPromiseCapability(_speciesConstructor(this, $Promise));
+      reaction.ok = typeof onFulfilled == 'function' ? onFulfilled : true;
+      reaction.fail = typeof onRejected == 'function' && onRejected;
+      reaction.domain = isNode$1 ? process$2.domain : undefined;
+      this._c.push(reaction);
+      if (this._a) this._a.push(reaction);
+      if (this._s) notify(this, false);
+      return reaction.promise;
+    },
+    // 25.4.5.1 Promise.prototype.catch(onRejected)
+    'catch': function (onRejected) {
+      return this.then(undefined, onRejected);
+    }
+  });
+  OwnPromiseCapability = function () {
+    var promise = new Internal();
+    this.promise = promise;
+    this.resolve = _ctx($resolve, promise, 1);
+    this.reject = _ctx($reject, promise, 1);
+  };
+  _newPromiseCapability.f = newPromiseCapability = function (C) {
+    return C === $Promise || C === Wrapper
+      ? new OwnPromiseCapability(C)
+      : newGenericPromiseCapability(C);
+  };
+}
 
 _export(_export.G + _export.W + _export.F * !USE_NATIVE$1, { Promise: $Promise });
 _setToStringTag($Promise, PROMISE);
 _setSpecies(PROMISE);
-Wrapper = window.Promise;
-// Wrapper = _core[PROMISE];
+
+Wrapper = _core[PROMISE];
 
 // statics
 // _export(_export.S + _export.F * !USE_NATIVE$1, PROMISE, {
@@ -1626,8 +1627,7 @@ Wrapper = window.Promise;
 //   return promiseCapability.promise;
 // } });
 
-// var promise = _core.Promise;
-var promise = window.Promise;
+var promise = _core.Promise;
 
 var promise$1 = createCommonjsModule(function (module) {
 module.exports = { "default": promise, __esModule: true };
