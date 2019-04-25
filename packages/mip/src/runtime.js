@@ -12,7 +12,7 @@ import viewer from './viewer'
 import viewport from './viewport'
 import installMip1Polyfill from './mip1-polyfill'
 import installMipComponentsPolyfill from 'deps/mip-components-webpack-helpers'
-import 'core-js/modules/es7.promise.finally'
+// import 'core-js/modules/es7.promise.finally'
 
 class Runtime {
   constructor () {
