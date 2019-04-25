@@ -9,7 +9,7 @@ import {event} from 'src/util'
 /* eslint-disable no-unused-expressions */
 /* globals describe, before, it, expect, after, Event */
 
-describe('mip-img', function () {
+describe.only('mip-img', function () {
   let mipImgWrapper
 
   beforeEach(() => {
@@ -72,7 +72,7 @@ describe('mip-img', function () {
     img.dispatchEvent(errEvent)
   })
 
-  it('should replace src if load img error', () => {
+  it.only('should replace src if load img error', () => {
     let resolve
     let promise = new Promise(res => {
       resolve = res
