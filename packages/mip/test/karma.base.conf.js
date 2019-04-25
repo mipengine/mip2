@@ -1,6 +1,7 @@
 const webpack = require('webpack')
 const alias = require('../build/alias')
 const version = process.env.VERSION || require('../package.json').version
+const path = require('path')
 
 class WebpackRequirePlugin {
   apply (compiler) {
@@ -24,6 +25,28 @@ class WebpackRequirePlugin {
         ].join('\n')
       )
     })
+
+    // compiler.hooks.afterEmit.tap('ConsoleOutput', (compilation) => {
+    //   let outputPath = compilation.getPath(compiler.outputPath)
+    //   console.log('--- the output path is ---')
+    //   console.log(outputPath)
+    //   let filenames = compiler.outputFileSystem.readdirSync(outputPath)
+    //   filenames.forEach(filename => {
+    //     try {
+    //       let file = compiler.outputFileSystem.readFileSync(path.resolve(outputPath, filename), 'utf-8')
+    //       console.log('----------' + filename + '-----------')
+    //       console.log(file)
+    //       require('fs').writeFileSync(
+    //         path.resolve(__dirname, '../dist/output.js'),
+    //         file,
+    //         'utf-8'
+    //       )
+    //     }
+    //     catch (e) {
+    //       console.error(e)
+    //     }
+    //   })
+    // })
   }
 }
 

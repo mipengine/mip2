@@ -1606,6 +1606,7 @@ _setSpecies(PROMISE);
 // });
 
 _export(_export.P + _export.R, 'Promise', { 'finally': function (onFinally) {
+  console.log('-- what happen --')
   var C = _speciesConstructor(this, _core.Promise || _global.Promise);
   var isFunction = typeof onFinally == 'function';
   return this.then(
