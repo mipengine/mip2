@@ -6,6 +6,7 @@ import CustomElement from 'src/custom-element'
 import customElement from 'src/mip1-polyfill/customElement'
 import templates from 'src/util/templates'
 import resources from 'src/resources'
+import {installMIPVueService} from 'src/vue-custom-element'
 
 describe('extensions', () => {
   /** @type {sinon.SinonSandbox} */
@@ -35,6 +36,7 @@ describe('extensions', () => {
     extensions = Services.extensions()
     timer = Services.timer()
     document.documentElement.removeAttribute('mip-vue')
+    window.services['mip-vue'] = null
   })
 
   afterEach(() => {
@@ -434,8 +436,7 @@ describe('extensions', () => {
 
     document.body.appendChild(ele)
 
-    delete require.cache[require.resolve('src/vue-custom-element')]
-    require('src/vue-custom-element')
+    installMIPVueService()
 
     await Services.getServicePromise('mip-vue')
 

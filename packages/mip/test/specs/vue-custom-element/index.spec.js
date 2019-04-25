@@ -3,7 +3,8 @@
  * @author huanghuiquan (huanghuiquan@baidu.com)
  */
 
-import 'src/vue-custom-element'
+import Services from 'src/services'
+import {installMIPVueService} from 'src/vue-custom-element'
 import Vue from 'vue'
 
 let prefix = 'vue-custom-element-index-'
@@ -14,10 +15,16 @@ describe('vue custom element', () => {
    */
   let sandbox
 
-  let vue = MIP.Services.getService('mip-vue')
+  /**
+   * @type {import('src/vue-custom-element').MIPVue}
+   */
+  let vue
 
   beforeEach(() => {
     sandbox = sinon.createSandbox()
+    window.services['mip-vue'] = null
+    installMIPVueService()
+    vue = Services.getService('mip-vue')
   })
 
   afterEach(() => {
