@@ -349,19 +349,33 @@ describe('base-element', () => {
     })
   })
 
-  describe('props', () => {
-    const name = 'mip-responsive-example'
+  describe('props and handlers', () => {
+    const name = 'mip-reactive-example'
 
-    class MIPResponsiveExample extends CustomElement {
+    class MIPReactiveExample extends CustomElement {
       static get observedAttributes () {
-        return ['num', 'obj']
+        return ['num', 'foo-items']
       }
+
+      constructor (element) {
+        super(element)
+
+        this.handleNumChange = sinon.spy(this.handleNumChange)
+        this.handleObjChange = sinon.spy(this.handleObjChange)
+        this.handleFooItemsChange = sinon.spy(this.handleFooItemsChange)
+      }
+
+      handleNumChange () {}
+
+      handleObjChange () {}
+
+      handleFooItemsChange () {}
     }
 
     const defaultObj = () => ({foo: 'bar'})
     const defaultFooItems = () => ['foo', 'bar']
 
-    MIPResponsiveExample.props = {
+    MIPReactiveExample.props = {
       num: {
         type: Number,
         default: 1024
@@ -377,7 +391,7 @@ describe('base-element', () => {
       }
     }
 
-    registerElement(name, MIPResponsiveExample)
+    registerElement(name, MIPReactiveExample)
 
     /** @type {import('src/base-element').default} */
     let element
@@ -405,7 +419,7 @@ describe('base-element', () => {
         obj: Object,
         fooItems: Array
       })
-      expect(element.defaultValues).to.deep.equal({
+      expect(element.defaultProps).to.deep.equal({
         num: 1024,
         obj: defaultObj,
         fooItems: defaultFooItems
@@ -438,17 +452,17 @@ describe('base-element', () => {
       document.body.removeChild(element)
       document.body.appendChild(element)
       expect(element.getProps).to.be.calledTwice
-      expect(element.customElement.attributeChangedCallback).to.not.be.called
+      expect(element.customElement.attributeChangedCallback).to.not.have.been.called
     })
 
     it('should synchronize changed attributes to props', () => {
-      element.setAttribute('foo-items', '["foo", "baz"]')
+      element.setAttribute('obj', '{"foo": "baz"}')
       document.body.appendChild(element)
-      expect(element.customElement.props.fooItems).to.deep.equal(['foo', 'baz'])
+      expect(element.customElement.props.obj).to.deep.equal({foo: 'baz'})
       element.setAttribute('num', '2048')
       expect(element.customElement.props.num).to.equal(2048)
-      element.setAttribute('obj', '{"foo": "baz"}')
-      expect(element.customElement.props.obj).to.deep.equal({foo: 'baz'})
+      element.setAttribute('foo-items', '["foo", "baz"]')
+      expect(element.customElement.props.fooItems).to.deep.equal(['foo', 'baz'])
       expect(element.customElement.attributeChangedCallback).to.be.calledTwice
     })
 
@@ -458,7 +472,21 @@ describe('base-element', () => {
       expect(element.customElement.props.bool).to.be.true
       element.setAttribute('bool', 'false')
       expect(element.customElement.props.bool).to.be.true
-      expect(element.customElement.attributeChangedCallback).to.not.be.called
+      expect(element.customElement.attributeChangedCallback).to.not.have.been.called
+    })
+
+    it('should call the corresponding handler only when observed attribute changed', () => {
+      document.body.appendChild(element)
+      element.setAttribute('num', '1024')
+      expect(element.customElement.handleNumChange).to.not.have.been.called
+      element.setAttribute('num', '2048')
+      expect(element.customElement.handleNumChange).calledOnceWithExactly(1024, 2048)
+      element.setAttribute('foo-items', '["foo", "bar"]')
+      expect(element.customElement.handleFooItemsChange).calledWithExactly(['foo', 'bar'], ['foo', 'bar'])
+      element.setAttribute('foo-items', '["foo", "baz"]')
+      expect(element.customElement.handleFooItemsChange).calledWithExactly(['foo', 'bar'], ['foo', 'baz'])
+      element.setAttribute('obj', '{"foo": "baz"}')
+      expect(element.customElement.handleObjChange).to.not.have.been.called
     })
   })
 })

@@ -149,13 +149,13 @@ describe('vue-compat', () => {
 
   describe('getDefaultValues', () => {
     it('should return an empty object if name or definition is not present', () => {
-      expect(vueCompat.getDefaultValues()).to.deep.equal({})
-      expect(vueCompat.getDefaultValues('', MIPCustom)).to.deep.equal({})
-      expect(vueCompat.getDefaultValues('mip-empty')).to.deep.equal({})
+      expect(vueCompat.getDefaultProps()).to.deep.equal({})
+      expect(vueCompat.getDefaultProps('', MIPCustom)).to.deep.equal({})
+      expect(vueCompat.getDefaultProps('mip-empty')).to.deep.equal({})
     })
 
     it('should return custom element default values', () => {
-      expect(vueCompat.getDefaultValues('mip-custom', MIPCustom)).to.deep.equal({
+      expect(vueCompat.getDefaultProps('mip-custom', MIPCustom)).to.deep.equal({
         bool: true,
         obj: defaultObj,
         mixed: 0
@@ -163,8 +163,8 @@ describe('vue-compat', () => {
     })
 
     it('should cache default values for the same elements', () => {
-      expect(vueCompat.getDefaultValues('mip-custom', MIPCustom))
-        .to.equal(vueCompat.getDefaultValues('mip-custom', MIPCustom))
+      expect(vueCompat.getDefaultProps('mip-custom', MIPCustom))
+        .to.equal(vueCompat.getDefaultProps('mip-custom', MIPCustom))
     })
   })
 
