@@ -17,8 +17,7 @@ MIP 规范是高性能 MIP 页面的保证，其中最重要的规范是：MIP H
   - `<body>` 标签必写且唯一，其父元素必须是 `<html>` 标签。标签：HTML5的标准约定，通过这两个标签进行功能区块划分。
   - 必须在`<head>` 标签中包含字符集声明: meta charset="utf-8"，字符集统一为utf-8。
   - 必须在`<head>` 标签中包含 viewport 设置标签: `<meta name="viewport" content="width=device-width,initial-scale=1">`，推荐包含`minimum-scale=1`。
-  - 必须在`<head>` 标签中包含`<link rel="stylesheet" type="text/css" href="https:// c.mipcdn.com/static/v1/mip.css" >`。
-  - 必须在 `<head>` 标签中包含 `<link rel="canonical" href="http(s)://example.com">` 。
+  - 必须在`<head>` 标签中包含`<link rel="stylesheet" type="text/css" href="https:// c.mipcdn.com/static/v2/mip.css" >`。
   - 必须在 `<head>` 标签中包含 `<link rel="canonical" href="http(s)://example.com">` 。
   - 必须在 `<body>` 标签底部包含 `<script src="https://c.mipcdn.com/static/v2/mip.js"></script>` ，如果包含在 `<head>` 标签中则须增加 `async` 属性。
 

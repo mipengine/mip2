@@ -62,13 +62,13 @@ describe('generate', function () {
           }
         `
         var expected = `
-          var a = MIP.sandbox.this(this)
-          MIP.sandbox.this(this)()
-          MIP.sandbox.this(this).setTimeout()
-          var b = {this: MIP.sandbox.this(this)}
-          MIP.sandbox.this(this)['setTimeout']()
+          var a = window.MIP.sandbox.this(this)
+          window.MIP.sandbox.this(this)()
+          window.MIP.sandbox.this(this).setTimeout()
+          var b = {this: window.MIP.sandbox.this(this)}
+          window.MIP.sandbox.this(this)['setTimeout']()
           var c = {
-            [MIP.sandbox.this(this)]: MIP.sandbox.this(this)[MIP.sandbox.this(this)][MIP.sandbox.this(this).setTimeout()]
+            [window.MIP.sandbox.this(this)]: window.MIP.sandbox.this(this)[window.MIP.sandbox.this(this)][window.MIP.sandbox.this(this).setTimeout()]
           }
         `
 
@@ -78,7 +78,7 @@ describe('generate', function () {
       it('#string', function () {
         /* eslint-disable */
         var code = '`abcd${this[this].this}efg${b[c].d}`'
-        var expected = '`abcd${MIP.sandbox.this(this)[MIP.sandbox.this(this)].this}efg${MIP.sandbox.b[MIP.sandbox.c].d}`'
+        var expected = '`abcd${window.MIP.sandbox.this(this)[window.MIP.sandbox.this(this)].this}efg${window.MIP.sandbox.b[window.MIP.sandbox.c].d}`'
         /* eslint-enable */
         expect(generate(code, keywords.WHITELIST_RESERVED)).to.be.equal(format(expected))
       })
@@ -91,7 +91,7 @@ describe('generate', function () {
         `
 
         var expected = `
-          var a = {b: MIP.sandbox.b}
+          var a = {b: window.MIP.sandbox.b}
           var c = {c}
           var d = {setTimeout}
         `
@@ -105,6 +105,7 @@ describe('generate', function () {
           import {b as bb} from 'xxx'
           import * as c from 'xxx'
           const d = require('xxx')
+          swan.webView.navigateTo({url: 'abc'})
 
           function e({f, g: h = i}) {
             console.log(a)
@@ -145,28 +146,29 @@ describe('generate', function () {
           import {b as bb} from 'xxx'
           import * as c from 'xxx'
           const d = require('xxx')
+          swan.webView.navigateTo({url: 'abc'})
 
-          function e({f, g: h = MIP.sandbox.i}) {
+          function e({f, g: h = window.MIP.sandbox.i}) {
             console.log(a)
-            console.log(MIP.sandbox.b)
+            console.log(window.MIP.sandbox.b)
             console.log(bb)
             console.log(c)
             console.log(d)
             console.log(e)
             console.log(f)
-            console.log(MIP.sandbox.g)
+            console.log(window.MIP.sandbox.g)
             console.log(h)
-            console.log(MIP.sandbox.i)
+            console.log(window.MIP.sandbox.i)
             console.log(l)
             console.log(m)
 
-            MIP.sandbox.j = new Promise(resolve => resolve())
+            window.MIP.sandbox.j = new Promise(resolve => resolve())
             var [k, ...l] = []
-            MIP.sandbox.eval(k)
+            window.MIP.sandbox.eval(k)
           }
 
           const l = '123'
-          class m extends MIP.sandbox.n {
+          class m extends window.MIP.sandbox.n {
             o() {}
           }
 
@@ -174,9 +176,9 @@ describe('generate', function () {
           ;(r => r()).call(undefined)
           ;(function s() {})()
 
-          console.log(MIP.sandbox.q)
-          console.log(MIP.sandbox.s)
-          var t = {u: MIP.sandbox.u}
+          console.log(window.MIP.sandbox.q)
+          console.log(window.MIP.sandbox.s)
+          var t = {u: window.MIP.sandbox.u}
           var v = {v}
         `
 
@@ -208,7 +210,7 @@ describe('generate', function () {
             console.log(e)
           }
 
-          console.log(MIP.sandbox.e)
+          console.log(window.MIP.sandbox.e)
 
           try {}
           catch ({message, code}) {
@@ -216,8 +218,8 @@ describe('generate', function () {
             console.log(message)
           }
 
-          console.log(MIP.sandbox.message)
-          console.log(MIP.sandbox.code)
+          console.log(window.MIP.sandbox.message)
+          console.log(window.MIP.sandbox.code)
         `
 
         expect(generate(code, keywords.WHITELIST_RESERVED)).to.be.equal(format(expected))
@@ -231,19 +233,19 @@ describe('generate', function () {
 
         var expected = `
           var a = location.href
-          var b = MIP.sandbox.document.createElement('div')
+          var b = window.MIP.sandbox.document.createElement('div')
         `
 
         var expectedInStrict = `
-          var a = MIP.sandbox.strict.location.href
-          var b = MIP.sandbox.strict.document.createElement('div')
+          var a = window.MIP.sandbox.strict.location.href
+          var b = window.MIP.sandbox.strict.document.createElement('div')
         `
 
         expect(generate(code, keywords.WHITELIST_RESERVED)).to.be.equal(format(expected))
         expect(generate(
           code,
           keywords.WHITELIST_STRICT_RESERVED,
-          {prefix: 'MIP.sandbox.strict'}
+          {prefix: 'window.MIP.sandbox.strict'}
         )).to.be.equal(format(expectedInStrict))
       })
 
@@ -267,7 +269,7 @@ describe('generate', function () {
               var a = await dynamicA
               var b = await import('path/to/b')
               console.log(a)
-              console.log(MIP.sandbox.c)
+              console.log(window.MIP.sandbox.c)
             }
           }
         `
@@ -292,6 +294,24 @@ describe('generate', function () {
           var b = 123
           export {b, a as c}
           export default b
+        `
+
+        expect(generate(code, keywords.WHITELIST_RESERVED)).to.be.equal(format(expected))
+      })
+
+      it('BMap', function () {
+        var code = `
+          window.BMap.console()
+          window.BMap = {}
+          BMap = 'hehe'
+          BMap = function () {}
+        `
+
+        var expected = `
+          window.MIP.sandbox.window.BMap.console()
+          window.MIP.sandbox.window.BMap = {}
+          BMap = 'hehe'
+          BMap = function () {}
         `
 
         expect(generate(code, keywords.WHITELIST_RESERVED)).to.be.equal(format(expected))
