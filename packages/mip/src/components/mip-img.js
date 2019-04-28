@@ -12,7 +12,7 @@ import CustomElement from '../custom-element'
 import viewport from '../viewport'
 import viewer from '../viewer'
 
-const {css, rect, event, naboo} = util
+const {css, rect, event, naboo, platform, dom} = util
 
 // 取值根据 https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement
 let imgAttributes = [
@@ -255,6 +255,29 @@ function bindPopup (element, img) {
   }, false)
 }
 
+/**
+ * 点击图片调起手百图片浏览器
+ * 协议link：http://wiki.baidu.com/pages/viewpage.action?pageId=686806027
+ *
+ * @param  {HTMLElement} img     mip-img下的img
+ * @return {void}         无
+ */
+function bindInvoke (img) {
+  img.addEventListener('click', () => {
+    let url = 'baiduboxapp://v19/utils/previewImage?params=' + encodeURIComponent(JSON.stringify({urls: [img.src]}))
+    let iframe = document.createElement('iframe')
+    iframe.style.display = 'none'
+    iframe.src = url
+    let body = document.body
+    body.appendChild(iframe)
+    // 销毁 iframe
+    setTimeout(() => {
+      body.removeChild(iframe)
+      iframe = null
+    }, 0)
+  })
+}
+
 class MipImg extends CustomElement {
   static get observedAttributes () {
     return imgAttributes
@@ -334,7 +357,11 @@ class MipImg extends CustomElement {
     }
 
     ele.appendChild(img)
-    if (ele.hasAttribute('popup')) {
+    // 在手百中，点击非跳转图片应调起图片查看器
+    if (platform.isBaiduApp() && !dom.closest(img, 'a')) {
+      bindInvoke(img)
+    }
+    else if (ele.hasAttribute('popup')) {
       bindPopup(ele, img)
     }
     this.element.classList.add('mip-img-loading')
