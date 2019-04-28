@@ -4,7 +4,6 @@
  */
 
 import Services from 'src/services'
-import {installMIPVueService} from 'src/vue-custom-element'
 import Vue from 'vue'
 
 let prefix = 'vue-custom-element-index-'
@@ -23,7 +22,8 @@ describe('vue custom element', () => {
   beforeEach(() => {
     sandbox = sinon.createSandbox()
     window.services['mip-vue'] = null
-    installMIPVueService()
+    delete require.cache[require.resolve('src/vue-custom-element')]
+    require('src/vue-custom-element')
     vue = Services.getService('mip-vue')
   })
 

@@ -6,7 +6,6 @@ import CustomElement from 'src/custom-element'
 import customElement from 'src/mip1-polyfill/customElement'
 import templates from 'src/util/templates'
 import resources from 'src/resources'
-import {installMIPVueService} from 'src/vue-custom-element'
 
 describe('extensions', () => {
   /** @type {sinon.SinonSandbox} */
@@ -410,9 +409,11 @@ describe('extensions', () => {
     const css = 'mip-vue-custom{display:block}'
     const baseUrl = 'https://c.mipcdn.com/static/v2'
 
-    extensions.insertScript(`${baseUrl}/mip.js`)
+    const script = document.createElement('script')
 
-    extensions.insertScript = sandbox.spy()
+    script.src = `${baseUrl}/mip.js`
+    script.async = true
+    document.head.appendChild(script)
 
     extensions.registerExtension('mip-ext', () => {
       extensions.registerElement('mip-vue-custom', implementation, css)
@@ -436,7 +437,8 @@ describe('extensions', () => {
 
     document.body.appendChild(ele)
 
-    installMIPVueService()
+    delete require.cache[require.resolve('src/vue-custom-element')]
+    require('src/vue-custom-element')
 
     await Services.getServicePromise('mip-vue')
 

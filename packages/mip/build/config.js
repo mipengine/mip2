@@ -23,7 +23,7 @@ const resolve = p => {
 }
 
 const builds = {
-  'mip-prod': {
+  'mip': {
     entry: resolve('mip'),
     dest: resolve('dist/mip.js'),
     format: 'umd',
