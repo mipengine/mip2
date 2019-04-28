@@ -63,7 +63,7 @@ describe('base-element', () => {
 
   it('should warn if lifecycle build throws an error', function (done) {
     let name = prefix + '-build-error'
-    let warn = sinon.stub(console, 'warn')
+    let warn = sinon.stub(console, 'error')
 
     registerElement(name, class extends CustomElement {
       build () {

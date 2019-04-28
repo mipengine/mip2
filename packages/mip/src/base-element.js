@@ -329,7 +329,7 @@ class BaseElement extends HTMLElement {
     } catch (e) {
       this.error = e
       customEmit(this, 'build-error', e)
-      console.warn('build error:', e)
+      console.error(e)
     }
   }
 

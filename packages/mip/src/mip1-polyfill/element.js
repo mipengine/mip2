@@ -161,7 +161,7 @@ function createBaseElementProto () {
       customEmit(this, 'build')
     } catch (e) {
       customEmit(this, 'build-error', e)
-      console.warn('build error:', e)
+      console.error(e)
     }
   }
 
