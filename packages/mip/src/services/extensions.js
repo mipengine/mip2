@@ -10,6 +10,24 @@ const UNKNOWN_EXTENSION_ID = 'unknown'
 
 // const LATEST_MIP_VERSION = '2'
 
+/**
+ * Inserts a script element in `<head>` with specified url. Returns that script element.
+ *
+ * @param {string} url of script.
+ * @returns {!HTMLScriptElement}
+ * @private
+ */
+function insertScript (url) {
+  const script = document.createElement('script')
+
+  script.async = true
+  script.src = url
+
+  document.head.appendChild(script)
+
+  return script
+}
+
 export class Extensions {
   constructor () {
     /**
@@ -81,24 +99,6 @@ export class Extensions {
   }
 
   /**
-   * Inserts a script element in `<head>` with specified url. Returns that script element.
-   *
-   * @param {string} url of script.
-   * @returns {!HTMLScriptElement}
-   * @private
-   */
-  insertScript (url) {
-    const script = document.createElement('script')
-
-    script.async = true
-    script.src = url
-
-    document.head.appendChild(script)
-
-    return script
-  }
-
-  /**
    * Returns the script url of extension.
    *
    * @param {string} extensionId of extension.
@@ -151,7 +151,7 @@ export class Extensions {
       return
     }
 
-    holder.script = this.insertScript(this.getExtensionScriptUrl(extensionId, version))
+    holder.script = insertScript(this.getExtensionScriptUrl(extensionId, version))
   }
   */
 
@@ -258,7 +258,7 @@ export class Extensions {
         if (!document.querySelector('script[src*="mip-vue.js"]')) {
           const baseUrl = document.querySelector('script[src*="mip.js"]').src.replace(/\/[^/]+$/, '')
 
-          this.insertScript(`${baseUrl}/mip-vue.js`)
+          insertScript(`${baseUrl}/mip-vue.js`)
         }
 
         /**

@@ -13,7 +13,7 @@ const {
   util: {string: {camelize, hyphenate}}
 } = window.MIP
 
-export class MIPVue {
+class MIPVue {
   constructor () {
     this.vueCompat = Services.vueCompat()
 
@@ -125,8 +125,4 @@ export class MIPVue {
   }
 }
 
-export function installMIPVueService () {
-  Services.registerService('mip-vue', MIPVue)
-}
-
-installMIPVueService()
+Services.registerService('mip-vue', MIPVue)
