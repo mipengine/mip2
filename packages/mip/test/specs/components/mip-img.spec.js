@@ -3,11 +3,13 @@
  * @author qiusiqi(qiusiqi@baidu.com)
  */
 
-import dom from 'src/util/dom/dom'
-import {event} from 'src/util'
+import dom, {waitForChild} from 'src/util/dom/dom'
+import util from 'src/util'
 
 /* eslint-disable no-unused-expressions */
 /* globals describe, before, it, expect, after, Event */
+
+const {event, platform} = util
 
 describe('mip-img', function () {
   let mipImgWrapper
@@ -247,5 +249,24 @@ describe('mip-img', function () {
     expect(mipPopWrap.querySelector('.mip-img-popUp-bg')).to.be.exist
     expect(mipPopWrap.querySelector('mip-carousel')).to.be.exist
     expect(mipPopWrap.querySelector('mip-carousel').getAttribute('index')).to.equal('1')
+  })
+  it('should invoke image browser in BaiduApp when the image is clicked', () => {
+    let stub = sinon.stub(platform, 'isBaiduApp').callsFake(() => true)
+
+    let mipImg = document.createElement('mip-img')
+    mipImg.setAttribute('width', '100px')
+    mipImg.setAttribute('height', '100px')
+    mipImg.setAttribute('src', 'https://www.mipengine.org/static/img/sample_02.jpg')
+    mipImg.setAttribute('popup', 'true')
+    mipImgWrapper.appendChild(mipImg)
+
+    mipImg.viewportCallback(true)
+
+    let img = mipImg.querySelector('img')
+    let event = document.createEvent('MouseEvents')
+    event.initEvent('click', true, true)
+    img.dispatchEvent(event)
+    
+    return waitForChild(document.body, body => body.querySelector('iframe'))
   })
 })
