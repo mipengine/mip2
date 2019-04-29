@@ -251,7 +251,8 @@ describe('mip-img', function () {
     expect(mipPopWrap.querySelector('mip-carousel').getAttribute('index')).to.equal('1')
   })
   it('should invoke image browser in BaiduApp when the image is clicked', () => {
-    let stub = sinon.stub(platform, 'isBaiduApp').callsFake(() => true)
+    let stub = sinon.stub(platform, 'isBaiduApp')
+    stub.callsFake(() => true)
 
     let mipImg = document.createElement('mip-img')
     mipImg.setAttribute('width', '100px')
@@ -261,12 +262,12 @@ describe('mip-img', function () {
     mipImgWrapper.appendChild(mipImg)
 
     mipImg.viewportCallback(true)
-
     let img = mipImg.querySelector('img')
     let event = document.createEvent('MouseEvents')
     event.initEvent('click', true, true)
     img.dispatchEvent(event)
-    
+
+    stub.restore()
     return waitForChild(document.body, body => body.querySelector('iframe'))
   })
 })
