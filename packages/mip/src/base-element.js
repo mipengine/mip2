@@ -132,7 +132,7 @@ class BaseElement extends HTMLElement {
   attributeChangedCallback (name, oldValue, newValue) {
     const propName = camelize(name)
 
-    if (hasOwn(this.propTypes, propName) && oldValue !== newValue) {
+    if (this.isBuilt() && hasOwn(this.propTypes, propName) && oldValue !== newValue) {
       const prevProps = this.customElement.props[propName]
       const nextProps = this.vueCompat.parseAttribute(newValue, this.propTypes[propName])
       const handler = `handle${capitalize(propName)}Change`

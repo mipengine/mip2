@@ -78,8 +78,17 @@ class CustomElement {
 
   /**
    * Called when the MIPElement is first inserted into the document.
+   *
+   * @deprecated
    */
-  build () {}
+  build () {
+    this.buildCallback()
+  }
+
+  /**
+   * Executes after the element attached to DOM.
+   */
+  buildCallback () {}
 
   /**
    * Requests the element to unload any expensive resources when the element
