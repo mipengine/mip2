@@ -263,10 +263,10 @@ function bindPopup (element, img) {
  */
 function bindInvocation (img) {
   img.addEventListener('click', () => {
-    let url = 'baiduboxapp://v19/utils/previewImage?params=' + encodeURIComponent(JSON.stringify({urls: [img.src]}))
+    let scheme = 'baiduboxapp://v19/utils/previewImage?params=' + encodeURIComponent(JSON.stringify({urls: [img.src]}))
     let iframe = document.createElement('iframe')
     iframe.style.display = 'none'
-    iframe.src = url
+    iframe.src = scheme
     let body = document.body
     body.appendChild(iframe)
     // 销毁 iframe
