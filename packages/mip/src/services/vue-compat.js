@@ -56,7 +56,7 @@ export class VueCompat {
 
   /**
    * Returns metadata computed from a definition of custom element or Vue component,
-   * which contains `propTypes` and `defaultValues`.
+   * which contains `propTypes` and `defaultProps`.
    *
    * @param {string} name of custom element.
    * @param {?Object} definition of custom element or Vue component.
@@ -66,7 +66,7 @@ export class VueCompat {
   getPropsMetadata (name, definition) {
     const metadata = {
       propTypes: {},
-      defaultValues: {}
+      defaultProps: {}
     }
 
     if (!name || !definition) {
@@ -100,7 +100,7 @@ export class VueCompat {
       metadata.propTypes[name] = this.getPropType(prop)
 
       if (prop && typeof prop === 'object' && hasOwn(prop, 'default')) {
-        metadata.defaultValues[name] = prop.default
+        metadata.defaultProps[name] = prop.default
       }
     }
 
@@ -119,14 +119,14 @@ export class VueCompat {
   }
 
   /**
-   * Returns default values of custom element or Vue component.
+   * Returns default props of custom element or Vue component.
    *
    * @param {string} name of custom element.
    * @param {?Object} definition of custom element.
    * @returns {!Object}
    */
-  getDefaultValues (name, definition) {
-    return this.getPropsMetadata(name, definition).defaultValues
+  getDefaultProps (name, definition) {
+    return this.getPropsMetadata(name, definition).defaultProps
   }
 
   /**
