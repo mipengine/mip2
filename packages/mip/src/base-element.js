@@ -9,7 +9,7 @@ import {hasOwn} from './util'
 import {customEmit} from './util/custom-event'
 import dom from './util/dom/dom'
 import css from './util/dom/css'
-import {camelize} from './util/string'
+import {camelize, capitalize} from './util/string'
 import {parseSizeList} from './size-list'
 
 /** @param {!Element} element */
@@ -104,7 +104,7 @@ class BaseElement extends HTMLElement {
 
     this.propTypes = this.vueCompat.getPropTypes(this.name, CustomElementImpl)
 
-    this.defaultValues = this.vueCompat.getDefaultValues(this.name, CustomElementImpl)
+    this.defaultProps = this.vueCompat.getDefaultProps(this.name, CustomElementImpl)
 
     this.customElement.props = {}
 
@@ -131,7 +131,18 @@ class BaseElement extends HTMLElement {
 
   attributeChangedCallback (name, oldValue, newValue) {
     const propName = camelize(name)
-    this.customElement.props[propName] = this.vueCompat.parseAttribute(newValue, this.propTypes[propName])
+
+    if (this.isBuilt() && hasOwn(this.propTypes, propName) && oldValue !== newValue) {
+      const prevProps = this.customElement.props[propName]
+      const nextProps = this.vueCompat.parseAttribute(newValue, this.propTypes[propName])
+      const handler = `handle${capitalize(propName)}Change`
+
+      this.customElement.props[propName] = nextProps
+      if (typeof this.customElement[handler] === 'function' &&
+        !(oldValue === null && nextProps === this.defaultProps[propName])) {
+        this.customElement[handler](prevProps, nextProps)
+      }
+    }
     this.customElement.attributeChangedCallback(name, oldValue, newValue)
   }
 
@@ -318,7 +329,7 @@ class BaseElement extends HTMLElement {
     } catch (e) {
       this.error = e
       customEmit(this, 'build-error', e)
-      console.warn('build error:', e)
+      console.error(e)
     }
   }
 
@@ -332,18 +343,18 @@ class BaseElement extends HTMLElement {
    */
   getProps () {
     const propTypes = this.propTypes
-    const defaultValues = this.defaultValues
+    const defaultProps = this.defaultProps
     const props = this.vueCompat.getProps(this, propTypes)
     const names = Object.keys(propTypes)
 
     for (let i = 0; i < names.length; i++) {
       const name = names[i]
 
-      if (typeof props[name] !== 'undefined' || !hasOwn(defaultValues, name)) {
+      if (typeof props[name] !== 'undefined' || !hasOwn(defaultProps, name)) {
         continue
       }
 
-      const def = defaultValues[name]
+      const def = defaultProps[name]
 
       props[name] = typeof def === 'function' ? def() : def
     }

@@ -6,7 +6,7 @@
 import Deps from './deps'
 import * as util from './util'
 
-import {MAX_UPDATE_COUNT} from '../../vue/core/observer/scheduler'
+const MAX_UPDATE_COUNT = 100
 
 const queue = []
 let has = {}

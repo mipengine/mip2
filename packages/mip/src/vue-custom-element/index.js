@@ -4,11 +4,14 @@
  */
 
 import createVueInstance from './utils/create-vue-instance'
-import {camelize, hyphenate} from '../util/string'
-import CustomElement from '../custom-element'
-import registerElement from '../register-element'
-import Services from '../services/services'
 import Vue from 'vue'
+
+const {
+  CustomElement,
+  Services,
+  registerElement,
+  util: {string: {camelize, hyphenate}}
+} = window.MIP
 
 class MIPVue {
   constructor () {

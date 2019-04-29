@@ -13,7 +13,8 @@ module.exports = merge.smart(baseConfig, {
   mode: 'development',
   devtool: 'inline-source-map',
   entry: {
-    mip: resolve('src/index.js')
+    mip: resolve('src/index.js'),
+    'mip-vue': resolve('src/vue-custom-element/index.js')
   },
   resolve: {
     alias: {
