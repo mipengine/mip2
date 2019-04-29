@@ -257,12 +257,11 @@ function bindPopup (element, img) {
 
 /**
  * 点击图片调起手百图片浏览器
- * 协议link：http://wiki.baidu.com/pages/viewpage.action?pageId=686806027
  *
  * @param  {HTMLElement} img     mip-img下的img
  * @return {void}         无
  */
-function bindInvoke (img) {
+function bindInvocation (img) {
   img.addEventListener('click', () => {
     let url = 'baiduboxapp://v19/utils/previewImage?params=' + encodeURIComponent(JSON.stringify({urls: [img.src]}))
     let iframe = document.createElement('iframe')
@@ -359,7 +358,7 @@ class MipImg extends CustomElement {
     ele.appendChild(img)
     // 在手百中，点击非跳转图片应调起图片查看器
     if (platform.isBaiduApp() && !dom.closest(img, 'a')) {
-      bindInvoke(img)
+      bindInvocation(img)
     }
     else if (ele.hasAttribute('popup')) {
       bindPopup(ele, img)
