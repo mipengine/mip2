@@ -256,7 +256,7 @@ describe('mip-img', function () {
     let mipImg = document.createElement('mip-img')
     mipImg.setAttribute('width', '100px')
     mipImg.setAttribute('height', '100px')
-    mipImg.setAttribute('src', 'https://www.mipengine.org/static/img/sample_02.jpg')
+    mipImg.setAttribute('src', 'https://boscdn.baidu.com/v1/assets/mip/mip2-component-lifecycle.png')
     mipImg.setAttribute('popup', 'true')
     mipImgWrapper.appendChild(mipImg)
 

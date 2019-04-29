@@ -262,7 +262,13 @@ function bindPopup (element, img) {
  * @return {void}         无
  */
 function bindInvocation (img) {
-  img.addEventListener('click', () => {
+  img.addEventListener('click', e => {
+    e.stopPropagation()
+    // 图片未加载则不调起
+    /* istanbul ignore if */
+    if (img.width + img.naturalWidth === 0) {
+      return
+    }
     let scheme = 'baiduboxapp://v19/utils/previewImage?params=' + encodeURIComponent(JSON.stringify({urls: [img.src]}))
     let iframe = document.createElement('iframe')
     iframe.style.display = 'none'
