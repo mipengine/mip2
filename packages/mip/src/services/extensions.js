@@ -256,9 +256,14 @@ export class Extensions {
          * Inserts script of `mip-vue` service if needed.
          */
         if (!document.querySelector('script[src*="mip-vue.js"]')) {
-          const baseUrl = document.querySelector('script[src*="mip.js"]').src.replace(/\/[^/]+$/, '')
+          /* istanbul ignore if */
+          if (process.env.NODE_ENV === 'production') {
+            insertScript(`https://c.mipcdn.com/static/v2/mip-vue.js`)
+          } else {
+            const baseUrl = document.querySelector('script[src*="mip.js"]').src.replace(/\/[^/]+$/, '')
 
-          insertScript(`${baseUrl}/mip-vue.js`)
+            insertScript(`${baseUrl}/mip-vue.js`)
+          }
         }
 
         /**
