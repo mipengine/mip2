@@ -258,7 +258,7 @@ function bindPopup (element, img) {
 /**
  * 调起手百图片浏览器
  *
- * @param  {HTMLElement} ele mip-img
+ * @param  {HTMLElement} ele     mip-img
  * @param  {HTMLElement} img     mip-img下的img
  * @return {void}         无
  */
