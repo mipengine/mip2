@@ -3,11 +3,30 @@ import {templates, Deferred, event} from '../util'
 import {whenDocumentInteractive} from '../util/dom/dom'
 import registerMip1Element from '../mip1-polyfill/element'
 import registerCustomElement from '../register-element'
-import '../vue-custom-element'
 
 const {listen} = event
 
 const UNKNOWN_EXTENSION_ID = 'unknown'
+
+// const LATEST_MIP_VERSION = '2'
+
+/**
+ * Inserts a script element in `<head>` with specified url. Returns that script element.
+ *
+ * @param {string} url of script.
+ * @returns {!HTMLScriptElement}
+ * @private
+ */
+function insertScript (url) {
+  const script = document.createElement('script')
+
+  script.async = true
+  script.src = url
+
+  document.head.appendChild(script)
+
+  return script
+}
 
 export class Extensions {
   constructor () {
@@ -61,7 +80,8 @@ export class Extensions {
         resolve: null,
         reject: null,
         loaded: null,
-        error: null
+        error: null,
+        script: null
       }
     }
 
@@ -77,6 +97,63 @@ export class Extensions {
   getCurrentExtensionHolder () {
     return this.getExtensionHolder(this.currentExtensionId || UNKNOWN_EXTENSION_ID)
   }
+
+  /**
+   * Returns the script url of extension.
+   *
+   * @param {string} extensionId of extension.
+   * @param {string=} version of extension.
+   * @returns {string}
+   * @private
+   */
+  /*
+  getExtensionScriptUrl (extensionId, version = LATEST_MIP_VERSION) {
+    return `https://c.mipcdn.com/static/v${version}/${extensionId}/${extensionId}.js`
+  }
+  */
+
+  /**
+   * Returns the script element of extension or null.
+   *
+   * @param {string} extensionId of extension.
+   * @param {string=} version of extension.
+   * @returns {?HTMLScriptElement}
+   * @private
+   */
+  /*
+  findExtensionScript (extensionId, version = LATEST_MIP_VERSION) {
+    const holder = this.getExtensionHolder(extensionId)
+
+    if (holder.script) {
+      return holder.script
+    }
+
+    const url = this.getExtensionScriptUrl(extensionId, version)
+
+    holder.script = document.querySelector(`script[src="${url}"]`)
+
+    return holder.script
+  }
+  */
+
+  /**
+   * Appends the extension script in `<head>` if there's no existing script element of extension.
+   *
+   * @param {string} extensionId of extension.
+   * @param {string=} version of extension.
+   * @private
+   */
+  /*
+  insertExtensionScriptIfNeeded (extensionId, version = LATEST_MIP_VERSION) {
+    const holder = this.getExtensionHolder(extensionId)
+
+    if (holder.loaded || holder.error || this.findExtensionScript(extensionId, version)) {
+      return
+    }
+
+    holder.script = insertScript(this.getExtensionScriptUrl(extensionId, version))
+  }
+  */
 
   /**
    * Returns or creates a promise waiting for extension loaded.
@@ -124,6 +201,8 @@ export class Extensions {
    */
   /*
   preloadExtension (extensionId) {
+    this.insertExtensionScriptIfNeeded(extensionId)
+
     return this.waitForExtension(extensionId)
   }
   /*
@@ -165,6 +244,37 @@ export class Extensions {
     try {
       this.currentExtensionId = extensionId
       factory(...args)
+
+      /**
+       * This extension needs `mip-vue` service.
+       */
+      if (
+        document.documentElement.hasAttribute('mip-vue') &&
+        !Services.getServiceOrNull('mip-vue')
+      ) {
+        /**
+         * Inserts script of `mip-vue` service if needed.
+         */
+        if (!document.querySelector('script[src*="mip-vue.js"]')) {
+          /* istanbul ignore if */
+          if (process.env.NODE_ENV === 'production') {
+            insertScript(`https://c.mipcdn.com/static/v2/mip-vue.js`)
+          } else {
+            const baseUrl = document.querySelector('script[src*="mip.js"]').src.replace(/\/[^/]+$/, '')
+
+            insertScript(`${baseUrl}/mip-vue.js`)
+          }
+        }
+
+        /**
+         * Interrupts current registration.
+         * Reregisters this extension while `mip-vue` service is loaded.
+         */
+        Services.getServicePromise('mip-vue')
+          .then(() => this.registerExtension(extensionId, factory, ...args))
+
+        return
+      }
 
       /**
        * It still possible that all element instances in current extension call lifecycle `build` synchronously.
@@ -230,16 +340,20 @@ export class Extensions {
    * If `element.version === '1'`, then it will fallback to the registration of MIP1 elements.
    *
    * @param {!Object} element contains implementation, css and version.
-   * @returns {!function(string, !Function | !Object, string)}
+   * @returns {?function(string, !Function | !Object, string):?HTMLElement[]}
    * @private
    */
   getElementRegistrator (element) {
-    if (element.version && element.version.split('.')[0] === '1') {
-      return registerMip1Element
+    if (typeof element.implementation === 'object') {
+      const vue = Services.getServiceOrNull('mip-vue')
+
+      document.documentElement.setAttribute('mip-vue', '')
+
+      return vue && vue.registerElement
     }
 
-    if (typeof element.implementation === 'object') {
-      return Services.getService('mip-vue').registerElement
+    if (element.version && element.version.split('.')[0] === '1') {
+      return registerMip1Element
     }
 
     return registerCustomElement
@@ -262,30 +376,39 @@ export class Extensions {
       element.version = version
     }
 
-    holder.extension.elements[name] = element
+    if (!holder.extension.elements[name]) {
+      holder.extension.elements[name] = element
+    }
 
-    /** @type {HTMLElement[]} */
-    let elementInstances = this.getElementRegistrator(element)(name, implementation, css)
+    const registrator = this.getElementRegistrator(element)
+
+    if (!registrator) {
+      return
+    }
+
+    /** @type {?HTMLElement[]} */
+    let elementInstances = registrator(name, implementation, css)
 
     if (elementInstances && elementInstances.length) {
       holder.elementInstances = holder.elementInstances.concat(elementInstances)
       for (let i = 0, len = elementInstances.length; i < len; i++) {
         let el = elementInstances[i]
 
-        // Delay to last processing extension resolve.
         if (el.isBuilt()) {
           continue
         }
 
-        // It can't catch error of customElements.define with try/catch.
-        // @see https://github.com/w3c/webcomponents/issues/547
+        /**
+         * Errors occurred in `customElements.define` cannot be caught.
+         * @see {@link https://github.com/w3c/webcomponents/issues/547}
+         */
         if (el.error) {
           this.tryToRejectError(holder, el.error)
           break
         }
 
         /**
-         * Lifecycle `build` of element instances is probably delayed with `setTimeout`.
+         * Lifecycle `build` of element instances are probably delayed with `setTimeout`.
          * If they are not, these event listeners would not be registered before they emit events.
          */
         let unlistenBuild = listen(el, 'build', () => {

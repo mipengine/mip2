@@ -3,13 +3,33 @@
  * @author huanghuiquan (huanghuiquan@baidu.com)
  */
 
+import Services from 'src/services'
 import Vue from 'vue'
-import 'src/vue-custom-element'
 
 let prefix = 'vue-custom-element-index-'
 
-describe('vue custom element', function () {
-  const vue = MIP.Services.getService('mip-vue')
+describe('vue custom element', () => {
+  /**
+   * @type {sinon.SinonSandbox}
+   */
+  let sandbox
+
+  /**
+   * @type {import('src/vue-custom-element').MIPVue}
+   */
+  let vue
+
+  beforeEach(() => {
+    sandbox = sinon.createSandbox()
+    window.services['mip-vue'] = null
+    delete require.cache[require.resolve('src/vue-custom-element')]
+    require('src/vue-custom-element')
+    vue = Services.getService('mip-vue')
+  })
+
+  afterEach(() => {
+    sandbox.restore()
+  })
 
   it('install customElment to Vue', function () {
     expect(typeof Vue.customElement).to.equal('function')
@@ -21,7 +41,10 @@ describe('vue custom element', function () {
     let connectedCallback = sinon.spy()
     vue.registerElement(name, {
       created,
-      connectedCallback
+      connectedCallback,
+      render () {
+        return null
+      }
     })
 
     let ele = document.createElement(name)
@@ -176,6 +199,9 @@ describe('vue custom element', function () {
     let comp = {
       prerenderAllowed () {
         return true
+      },
+      render () {
+        return null
       }
     }
     lifecycs.map(name => {
