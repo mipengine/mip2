@@ -290,6 +290,9 @@ describe('mip-img', function () {
 
     appStub.restore()
     iframeStub.restore()
-    return waitForChild(document.body, body => body.querySelector('iframe'))
+    await waitForChild(document.body, body => body.querySelector('iframe')).then(() => {
+      let event = new Event('touchend')
+      img.dispatchEvent(event)
+    })
   })
 })
