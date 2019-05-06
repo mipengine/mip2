@@ -64,8 +64,12 @@ function genConfig (name) {
         }
       ),
       babel({
-        plugins: ['external-helpers']
+        runtimeHelpers: true,
+        exclude: 'node_modules/**'
       })
+      // babel({
+      //   plugins: ['external-helpers']
+      // })
     ].concat(opts.plugins || []),
     output: {
       file: opts.dest,
