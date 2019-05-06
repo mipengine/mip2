@@ -5,6 +5,7 @@
 
 import dom, {waitForChild} from 'src/util/dom/dom'
 import util from 'src/util'
+import viewer from 'src/viewer';
 
 /* eslint-disable no-unused-expressions */
 /* globals describe, before, it, expect, after, Event */
@@ -250,9 +251,9 @@ describe('mip-img', function () {
     expect(mipPopWrap.querySelector('mip-carousel')).to.be.exist
     expect(mipPopWrap.querySelector('mip-carousel').getAttribute('index')).to.equal('1')
   })
-  it('should invoke image browser in BaiduApp when the image is clicked', () => {
-    let stub = sinon.stub(platform, 'isBaiduApp')
-    stub.callsFake(() => true)
+  it('should invoke image browser in BaiduApp when the popup image is clicked', () => {
+    let appStub = sinon.stub(platform, 'isBaiduApp')
+    appStub.callsFake(() => true)
 
     let mipImg = document.createElement('mip-img')
     mipImg.setAttribute('width', '100px')
@@ -267,7 +268,28 @@ describe('mip-img', function () {
     event.initEvent('click', true, true)
     img.dispatchEvent(event)
 
-    stub.restore()
+    appStub.restore()
+    return waitForChild(document.body, body => body.querySelector('iframe'))
+  })
+  it('should invoke image browser in BaiduApp when the image is long pressed', async () => {
+    let appStub = sinon.stub(platform, 'isBaiduApp')
+    let iframeStub = sinon.stub(viewer, 'isIframed')
+    appStub.callsFake(() => true)
+    iframeStub.callsFake(() => true)
+
+    let mipImg = document.createElement('mip-img')
+    mipImg.setAttribute('width', '100px')
+    mipImg.setAttribute('height', '100px')
+    mipImg.setAttribute('src', 'https://boscdn.baidu.com/v1/assets/mip/mip2-component-lifecycle.png')
+    mipImgWrapper.appendChild(mipImg)
+
+    mipImg.viewportCallback(true)
+    let img = mipImg.querySelector('img')
+    let event = new Event('touchstart')
+    img.dispatchEvent(event)
+
+    appStub.restore()
+    iframeStub.restore()
     return waitForChild(document.body, body => body.querySelector('iframe'))
   })
 })
