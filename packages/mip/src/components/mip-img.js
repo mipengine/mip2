@@ -256,14 +256,32 @@ function bindPopup (element, img) {
 }
 
 /**
- * 点击图片调起手百图片浏览器
+ * 调起手百图片浏览器
  *
+ * @param  {HTMLElement} element mip-img
  * @param  {HTMLElement} img     mip-img下的img
  * @return {void}         无
  */
-function bindInvocation (img) {
-  img.addEventListener('click', e => {
-    e.stopPropagation()
+function bindInvocation (ele, img) {
+  //有 popup 属性的图片点击调起
+  if (ele.hasAttribute('popup')) {
+    img.addEventListener('click', e => {
+      e.stopPropagation()
+      invoke()
+    })
+  }
+  //iframe 中长按调起
+  if (viewer.isIframed) {
+    let timeout
+    img.addEventListener('touchstart', () => {
+      timeout = setTimeout(invoke, 300)
+    })
+    img.addEventListener('touchend', () => {
+      clearTimeout(timeout)
+    })
+  }
+
+  function invoke () {
     // 图片未加载则不调起
     /* istanbul ignore if */
     if (img.width + img.naturalWidth === 0) {
@@ -280,7 +298,7 @@ function bindInvocation (img) {
       body.removeChild(iframe)
       iframe = null
     }, 0)
-  })
+  }
 }
 
 class MipImg extends CustomElement {
@@ -364,9 +382,8 @@ class MipImg extends CustomElement {
     ele.appendChild(img)
     // 在手百中，点击非跳转图片应调起图片查看器
     if (platform.isBaiduApp() && !dom.closest(img, 'a')) {
-      bindInvocation(img)
-    }
-    else if (ele.hasAttribute('popup')) {
+      bindInvocation(ele, img)
+    } else if (ele.hasAttribute('popup')) {
       bindPopup(ele, img)
     }
     this.element.classList.add('mip-img-loading')
