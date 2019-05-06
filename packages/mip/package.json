@@ -70,7 +70,7 @@
     "document-register-element": "1.13.1",
     "he": "^1.1.1",
     "less": "^3.0.4",
-    "mip-components-webpack-helpers": "^1.0.14",
+    "mip-components-webpack-helpers": "^1.0.15",
     "mip-sandbox": "^1.1.9",
     "ora": "^2.1.0",
     "postcss-csso": "^3.0.0",
