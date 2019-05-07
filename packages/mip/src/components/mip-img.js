@@ -257,17 +257,21 @@ function bindPopup (element, img) {
 
 /**
  * 调起手百图片浏览器
+ * 应对 popup 不支持缩放，手百 ios iframe 长按无法保存图片的情况
  *
  * @param  {HTMLElement} ele     mip-img
  * @param  {HTMLElement} img     mip-img下的img
  * @return {void}         无
  */
 function bindInvocation (ele, img) {
-  // iframe 中长按调起
-  if (viewer.isIframed) {
+  // ios iframe 中长按调起
+  if (viewer.isIframed && platform.isIOS()) {
     let timeout
     img.addEventListener('touchstart', () => {
-      timeout = setTimeout(invoke, 300)
+      timeout = setTimeout(invoke, 400)
+    })
+    img.addEventListener('touchmove', () => {
+      clearTimeout(timeout)
     })
     img.addEventListener('touchend', () => {
       clearTimeout(timeout)
