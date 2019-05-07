@@ -268,7 +268,7 @@ function bindInvocation (ele, img) {
   if (viewer.isIframed && platform.isIOS()) {
     let timeout
     img.addEventListener('touchstart', () => {
-      timeout = setTimeout(invoke, 400)
+      timeout = setTimeout(invoke, 300)
     })
     img.addEventListener('touchmove', () => {
       clearTimeout(timeout)
