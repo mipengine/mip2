@@ -271,11 +271,13 @@ describe('mip-img', function () {
     appStub.restore()
     return waitForChild(document.body, body => body.querySelector('iframe'))
   })
-  it('should invoke image browser in BaiduApp when the image is long pressed', async () => {
+  it('should invoke image browser in ios BaiduApp when the image is long pressed', async () => {
     let appStub = sinon.stub(platform, 'isBaiduApp')
     let iframeStub = sinon.stub(viewer, 'isIframed')
+    let iosStub = sinon.stub(platform, 'isIOS')
     appStub.callsFake(() => true)
     iframeStub.callsFake(() => true)
+    iosStub.callsFake(() => true)
 
     let mipImg = document.createElement('mip-img')
     mipImg.setAttribute('width', '100px')
@@ -290,8 +292,11 @@ describe('mip-img', function () {
 
     appStub.restore()
     iframeStub.restore()
+    iosStub.restore()
     await waitForChild(document.body, body => body.querySelector('iframe')).then(() => {
       let event = new Event('touchend')
+      img.dispatchEvent(event)
+      event = new Event('touchmove')
       img.dispatchEvent(event)
     })
   })
