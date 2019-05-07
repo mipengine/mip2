@@ -284,7 +284,7 @@ function bindInvocation (ele, img) {
       invoke()
     })
   }
-  
+
   function invoke () {
     // 图片未加载则不调起
     /* istanbul ignore if */

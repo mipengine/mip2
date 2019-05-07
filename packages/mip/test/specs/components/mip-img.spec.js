@@ -278,18 +278,18 @@ describe('mip-img', function () {
     appStub.callsFake(() => true)
     iframeStub.callsFake(() => true)
     iosStub.callsFake(() => true)
-    
+
     let mipImg = document.createElement('mip-img')
     mipImg.setAttribute('width', '100px')
     mipImg.setAttribute('height', '100px')
     mipImg.setAttribute('src', 'https://boscdn.baidu.com/v1/assets/mip/mip2-component-lifecycle.png')
     mipImgWrapper.appendChild(mipImg)
-    
+
     mipImg.viewportCallback(true)
     let img = mipImg.querySelector('img')
     let event = new Event('touchstart')
     img.dispatchEvent(event)
-    
+
     appStub.restore()
     iframeStub.restore()
     iosStub.restore()
