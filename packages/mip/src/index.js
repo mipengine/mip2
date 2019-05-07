@@ -3,14 +3,8 @@
  * @author sfe
  */
 
-/* eslint-disable import/no-webpack-loader-syntax */
 // add polyfills
-import 'script-loader!deps/fetch'
-import 'script-loader!deps/fetch-jsonp'
-import 'script-loader!document-register-element/build/document-register-element'
-import 'deps/promise'
-import 'deps/object-assign'
-/* eslint-enable import/no-webpack-loader-syntax */
+import './polyfill'
 
 import {getRuntime} from './runtime'
 import util from './util/index'
