@@ -43,6 +43,13 @@ module.exports = function babelLoader (options = {}) {
             absoluteRuntime: resolveModule('@babel/runtime'),
             useESModules: true
           }
+        ],
+        require('@babel/plugin-syntax-dynamic-import'),
+        [
+          require('@babel/plugin-proposal-class-properties'),
+          {
+            loose: true
+          }
         ]
       ]
     }

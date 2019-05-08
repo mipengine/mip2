@@ -1,6 +1,6 @@
 {
   "name": "mip2",
-  "version": "1.5.10",
+  "version": "1.5.11",
   "description": "CLI for mip 2.0",
   "preferGlobal": true,
   "bin": {
@@ -31,6 +31,8 @@
   "homepage": "https://github.com/mipengine/mip2/blob/master/packages/mip-cli/README.md",
   "dependencies": {
     "@babel/core": "~7.3.4",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/plugin-transform-runtime": "~7.3.4",
     "@babel/preset-env": "~7.3.4",
     "@babel/register": "~7.0.0",
@@ -63,7 +65,7 @@
     "metalsmith": "^2.3.0",
     "minimatch": "^3.0.4",
     "mip-component-validator": "^1.1.7",
-    "mip-components-webpack-helpers": "^1.0.15",
+    "mip-components-webpack-helpers": "^1.0.17",
     "mip-sandbox": "^1.1.9",
     "mip-validator": "^1.5.15",
     "opn": "^5.3.0",
@@ -79,7 +81,7 @@
     "vue-loader": "^15.0.10",
     "vue-style-loader": "^4.1.0",
     "vue-template-compiler": "2.5.16",
-    "webpack": "^4.8.3",
+    "webpack": "~4.12.1",
     "webpack-dev-middleware": "3.6.0",
     "webpack-sources": "^1.1.0",
     "workbox-build": "3.2.0",

@@ -12,7 +12,7 @@ import CustomElement from '../custom-element'
 import viewport from '../viewport'
 import viewer from '../viewer'
 
-const {css, rect, event, naboo} = util
+const {css, rect, event, naboo, platform, dom} = util
 
 // 取值根据 https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement
 let imgAttributes = [
@@ -255,6 +255,56 @@ function bindPopup (element, img) {
   }, false)
 }
 
+/**
+ * 调起手百图片浏览器
+ * 应对 popup 不支持缩放，手百 ios iframe 长按无法保存图片的情况
+ *
+ * @param  {HTMLElement} ele     mip-img
+ * @param  {HTMLElement} img     mip-img下的img
+ * @return {void}         无
+ */
+function bindInvocation (ele, img) {
+  // ios iframe 中长按调起
+  if (viewer.isIframed && platform.isIOS()) {
+    let timeout
+    img.addEventListener('touchstart', () => {
+      timeout = setTimeout(invoke, 300)
+    })
+    img.addEventListener('touchmove', () => {
+      clearTimeout(timeout)
+    })
+    img.addEventListener('touchend', () => {
+      clearTimeout(timeout)
+    })
+  }
+  // 有 popup 属性的图片点击调起
+  if (ele.hasAttribute('popup')) {
+    img.addEventListener('click', e => {
+      e.stopPropagation()
+      invoke()
+    })
+  }
+
+  function invoke () {
+    // 图片未加载则不调起
+    /* istanbul ignore if */
+    if (img.width + img.naturalWidth === 0) {
+      return
+    }
+    let scheme = 'baiduboxapp://v19/utils/previewImage?params=' + encodeURIComponent(JSON.stringify({urls: [img.src]}))
+    let iframe = document.createElement('iframe')
+    iframe.style.display = 'none'
+    iframe.src = scheme
+    let body = document.body
+    body.appendChild(iframe)
+    // 销毁 iframe
+    setTimeout(() => {
+      body.removeChild(iframe)
+      iframe = null
+    }, 0)
+  }
+}
+
 class MipImg extends CustomElement {
   static get observedAttributes () {
     return imgAttributes
@@ -334,7 +384,10 @@ class MipImg extends CustomElement {
     }
 
     ele.appendChild(img)
-    if (ele.hasAttribute('popup')) {
+    // 在手百中，点击非跳转图片可调起图片查看器
+    if (platform.isBaiduApp() && !dom.closest(img, 'a')) {
+      bindInvocation(ele, img)
+    } else if (ele.hasAttribute('popup')) {
       bindPopup(ele, img)
     }
     this.element.classList.add('mip-img-loading')
