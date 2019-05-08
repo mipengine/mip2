@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- 1.5.10
+    1. 锁死 webpack 版本至 4.12.1，修复 minimize 文件报错的 bug
+
 - 1.5.9
     1. 升级 mip-sandbox，添加 `BMap`、`BMapLib` 白名单
 
