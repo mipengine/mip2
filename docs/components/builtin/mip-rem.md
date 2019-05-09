@@ -7,7 +7,7 @@
 ### 基本使用
 
 ```html
-<mip-rem font-size='[{"maxWidth": 359, "size": 90}, {"maxWidth": 413, "size": 100}, {"maxWidth": 767, "size": 110}, {"maxWidth": 1023, "size": 200}, {"minWidth": 1024, "size": 270},]'></mip-rem>
+<mip-rem font-size='[{"minWidth": 1024, "size": 270}, {"maxWidth": 1023, "size": 200}, {"maxWidth": 767, "size": 110}, {"maxWidth": 413, "size": 100}, {"maxWidth": 359, "size": 90}]'></mip-rem>
 <div style="font-size: 14px;">这是14px</div>
 <div style="font-size: 0.5rem;">这是0.5rem</div>
 ```
