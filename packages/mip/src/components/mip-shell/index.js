@@ -284,7 +284,7 @@ class MipShell extends CustomElement {
     this.$wrapper.setAttribute('type', 'top')
     this.$wrapper.classList.add('mip-shell-header-wrapper')
     if (!showHeader) {
-      this.$wrapper.classList.add('hide')
+      css(this.$wrapper, 'display', 'none')
     }
 
     // Header
@@ -488,7 +488,7 @@ class MipShell extends CustomElement {
     this.currentPageMeta = pageMeta
 
     if (!(pageMeta.header && pageMeta.header.show)) {
-      this.$wrapper.classList.add('hide')
+      css(this.$wrapper, 'display', 'none')
       css(this.$loading, 'display', 'none')
       if (!this.transitionContainsHeader) {
         let headerLogoTitle = this.$el.querySelector('.mip-shell-header-logo-title')
@@ -532,7 +532,7 @@ class MipShell extends CustomElement {
     this.$buttonMask = mask
     this.$buttonWrapper = buttonWrapper
 
-    this.$wrapper.classList.remove('hide')
+    css(this.$wrapper, 'display', null)
 
     if (!asyncRefresh) {
       if (!this.transitionContainsHeader) {
