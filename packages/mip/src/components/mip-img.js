@@ -393,7 +393,12 @@ class MipImg extends CustomElement {
     this.element.classList.add('mip-img-loading')
 
     try {
-      await event.loadPromise(img)
+      await event.loadPromise(img).catch(() => {
+        if (img.srcset && img.src) {
+          img.srcset = ''
+          event.loadPromise(img)
+        }
+      })
       this.resourcesComplete()
       this.removePlaceholder()
       this.element.classList.remove('mip-img-loading')
