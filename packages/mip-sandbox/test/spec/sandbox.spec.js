@@ -107,6 +107,14 @@ describe('sandbox', function () {
     expect(sandbox.strict.location.hash).to.be.equal('#hash2')
   })
 
+  it('BMap', function () {
+    expect(sandbox.BMap).to.be.equal(undefined)
+    window.BMap = {a: 1}
+    expect(sandbox.BMap).to.be.equal(window.BMap)
+    sandbox.BMap = {a: 2}
+    expect(window.BMap.a).to.be.equal(2)
+  })
+
   it('WHITELIST', function () {
     expect(sandbox.WHITELIST).to.not.be.equal(sandbox.strict.WHITELIST)
     expect(sandbox.WHITELIST_STRICT).to.not.be.equal(sandbox.strict.WHITELIST_STRICT)

@@ -229,14 +229,12 @@ module.exports = function () {
                       }
                     ]
                   },
-                  // 'util',
                   {
                     name: 'sandbox',
                     getter: function () {
                       return MIP.sandbox.strict
                     }
                   },
-                  // 'sandbox',
                   {
                     name: 'viewer',
                     origin: function () {
@@ -316,6 +314,15 @@ module.exports = function () {
       return window
     },
     properties: ORIGINAL.concat([
+      {
+        type: TYPE_PROPS,
+        access: ACCESS_READWRITE,
+        props: [
+          // https://github.com/mipengine/mip2/issues/576
+          'BMap',
+          'BMapLib'
+        ]
+      },
       {
         type: TYPE_PROPS,
         access: ACCESS_READONLY,

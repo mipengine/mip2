@@ -35,7 +35,7 @@ MIP 扩展组件开发采用 [Forking工作流](https://github.com/oldratlee/tra
 
 - [MUST] 所有组件必须在 `components` 目录下编写
 - [MUST] `components` 目录下的组件目录必须以 `mip-xxx` 的形式命名，所有组件目录必须是组件名称
-- [MUST] `components/mip-xxx` 组件目录下，必须包含 ① `example` 示例，② vue 组件 `mip-xxx.vue`，③ 组件说明文件 `README.md`
+- [MUST] `components/mip-xxx` 组件目录下，必须包含 ① 组件入口文件 `mip-xxx.js` 或 `mip-xxx.vue` ② `example` 示例，③ 组件说明文件 `README.md`
 - [MUST] `components/mip-xxx/example` 目录至少包含一个使用了该组件的示例 html
 - [SHOULD] `common` 目录用于放置公用的工具类方法如 utils.js 等 ，组件中 import 使用即可
 - [SHOULD] `static` 目录用于放置图片、字体文件

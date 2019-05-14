@@ -3,14 +3,8 @@
  * @author sfe
  */
 
-/* eslint-disable import/no-webpack-loader-syntax */
 // add polyfills
-import 'script-loader!deps/fetch'
-import 'script-loader!deps/fetch-jsonp'
-import 'script-loader!document-register-element/build/document-register-element'
-import 'deps/promise'
-import 'deps/object-assign'
-/* eslint-enable import/no-webpack-loader-syntax */
+import './polyfill'
 
 import {getRuntime} from './runtime'
 import util from './util/index'
@@ -24,12 +18,14 @@ import sleepWakeModule from './sleep-wake-module'
 import performance from './performance'
 import errorMonitorInstall from './log/error-monitor'
 import {OUTER_MESSAGE_PERFORMANCE_UPDATE} from './page/const/index'
+import {tryAssertAllAbTests} from './experiment/index'
 
 // Ensure loaded only once
 /* istanbul ignore next */
 if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefined') {
   errorMonitorInstall()
   const MIP = getRuntime()
+  const abTestResult = tryAssertAllAbTests()
 
   util.dom.waitDocumentReady(() => {
     // init viewport
@@ -64,6 +60,7 @@ if (typeof window.MIP === 'undefined' || typeof window.MIP.version === 'undefine
     performance.start(window._mipStartTiming)
     // send performance data
     performance.on('update', timing => {
+      timing.msids = abTestResult.join(',')
       viewer.sendMessage(OUTER_MESSAGE_PERFORMANCE_UPDATE, timing)
     })
 

@@ -3,11 +3,14 @@
  * @author qiusiqi(qiusiqi@baidu.com)
  */
 
-import dom from 'src/util/dom/dom'
-import {event} from 'src/util'
+import dom, {waitForChild} from 'src/util/dom/dom'
+import util from 'src/util'
+import viewer from 'src/viewer';
 
 /* eslint-disable no-unused-expressions */
 /* globals describe, before, it, expect, after, Event */
+
+const {event, platform} = util
 
 describe('mip-img', function () {
   let mipImgWrapper
@@ -247,5 +250,49 @@ describe('mip-img', function () {
     expect(mipPopWrap.querySelector('.mip-img-popUp-bg')).to.be.exist
     expect(mipPopWrap.querySelector('mip-carousel')).to.be.exist
     expect(mipPopWrap.querySelector('mip-carousel').getAttribute('index')).to.equal('1')
+  })
+  it('should invoke image browser in BaiduApp when the popup image is clicked', () => {
+    let appStub = sinon.stub(platform, 'isBaiduApp')
+    appStub.callsFake(() => true)
+
+    let mipImg = document.createElement('mip-img')
+    mipImg.setAttribute('width', '100px')
+    mipImg.setAttribute('height', '100px')
+    mipImg.setAttribute('src', 'https://boscdn.baidu.com/v1/assets/mip/mip2-component-lifecycle.png')
+    mipImg.setAttribute('popup', 'true')
+    mipImgWrapper.appendChild(mipImg)
+
+    mipImg.viewportCallback(true)
+    let img = mipImg.querySelector('img')
+    let event = document.createEvent('MouseEvents')
+    event.initEvent('click', true, true)
+    img.dispatchEvent(event)
+
+    appStub.restore()
+    return waitForChild(document.body, body => body.querySelector('iframe'))
+  })
+  it('should invoke image browser in BaiduApp when the image is long pressed', async () => {
+    let appStub = sinon.stub(platform, 'isBaiduApp')
+    let iframeStub = sinon.stub(viewer, 'isIframed')
+    appStub.callsFake(() => true)
+    iframeStub.callsFake(() => true)
+
+    let mipImg = document.createElement('mip-img')
+    mipImg.setAttribute('width', '100px')
+    mipImg.setAttribute('height', '100px')
+    mipImg.setAttribute('src', 'https://boscdn.baidu.com/v1/assets/mip/mip2-component-lifecycle.png')
+    mipImgWrapper.appendChild(mipImg)
+
+    mipImg.viewportCallback(true)
+    let img = mipImg.querySelector('img')
+    let event = new Event('touchstart')
+    img.dispatchEvent(event)
+
+    appStub.restore()
+    iframeStub.restore()
+    await waitForChild(document.body, body => body.querySelector('iframe')).then(() => {
+      let event = new Event('touchend')
+      img.dispatchEvent(event)
+    })
   })
 })
