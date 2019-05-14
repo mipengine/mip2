@@ -1,5 +1,13 @@
 # CHANGELOG
 
+- 1.5.11
+    1. 升级 Babel 至 v7
+    2. 优化 external 管理策略
+    3. 支持 proposal class properties
+
+- 1.5.10
+    1. 锁死 webpack 版本至 4.12.1，修复 minimize 文件报错的 bug
+
 - 1.5.9
     1. 升级 mip-sandbox，添加 `BMap`、`BMapLib` 白名单
 
