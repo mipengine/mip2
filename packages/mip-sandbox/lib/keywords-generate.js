@@ -211,8 +211,30 @@ module.exports = function () {
                 access: ACCESS_READONLY,
                 props: [
                   'viewport',
-                  'util',
-                  'sandbox',
+                  {
+                    name: 'util',
+                    origin: function () {
+                      return MIP.util
+                    },
+                    properties: [
+                      {
+                        type: TYPE_PROPS,
+                        access: ACCESS_READONLY,
+                        props: [
+                          'platform',
+                          'customStorage',
+                          'jsonParse',
+                          'string'
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    name: 'sandbox',
+                    getter: function () {
+                      return MIP.sandbox.strict
+                    }
+                  },
                   {
                     name: 'viewer',
                     origin: function () {
@@ -258,6 +280,12 @@ module.exports = function () {
           },
           {
             name: 'window',
+            getter: function () {
+              return MIP.sandbox.strict
+            }
+          },
+          {
+            name: 'strict',
             getter: function () {
               return MIP.sandbox.strict
             }
