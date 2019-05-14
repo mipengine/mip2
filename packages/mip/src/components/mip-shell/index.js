@@ -532,7 +532,7 @@ class MipShell extends CustomElement {
     this.$buttonMask = mask
     this.$buttonWrapper = buttonWrapper
 
-    css(this.$wrapper, 'display', null)
+    css(this.$wrapper, 'display', '')
 
     if (!asyncRefresh) {
       if (!this.transitionContainsHeader) {
