@@ -290,11 +290,27 @@ describe('mip-img', function () {
     appStub.restore()
     iframeStub.restore()
     iosStub.restore()
-    await waitForChild(document.body, body => body.querySelector('iframe')).then(() => {
+    return waitForChild(document.body, body => body.querySelector('iframe')).then(() => {
       let event = new Event('touchend')
       img.dispatchEvent(event)
       event = new Event('touchmove')
       img.dispatchEvent(event)
     })
+  })
+  it('should work with source tag', () => {
+    let mipImg = document.createElement('mip-img')
+    let source = document.createElement('source')
+    source.setAttribute('srcset', 'https://www.mipengine.org/static/img/sample_01.jpg')
+    mipImg.setAttribute('width', '100px')
+    mipImg.setAttribute('height', '100px')
+    mipImg.setAttribute('src', 'https://boscdn.baidu.com/v1/assets/mip/mip2-component-lifecycle.png')
+    mipImg.setAttribute('popup', 'true')
+    mipImg.appendChild(source)
+    mipImgWrapper.appendChild(mipImg)
+    mipImg.viewportCallback(true)
+
+    let img = mipImg.querySelector('img')
+    expect(mipImg.querySelector('picture')).to.be.exist
+    expect(img.currentSrc).to.equal('https://www.mipengine.org/static/img/sample_01.jpg')
   })
 })

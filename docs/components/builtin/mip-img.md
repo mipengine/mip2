@@ -8,9 +8,13 @@
 支持布局|responsive, fixed-height, fill, container, fixed
 所需脚本|无
 
+`<mip-img>` 用法和 `<img>` 的用法基本相同，由 MIP Runtime 控制渲染，在浏览器视窗一定范围内才会加载资源、进行渲染，同时具有加载动画、popup 等特性。
+
+`<mip-img>` 接受 `<source>` 标签作为子元素，能够选择合适的资源进行加载渲染。
+
 ## 示例
 
-[notice] `<mip-img>`需要对应闭合标签`</mip-img>`，不支持自闭合写法。自闭合规范请见[w3.org](https://www.w3.org/TR/html/syntax.html#void-elements)。
+[notice] `<mip-img>` 需要对应闭合标签 `</mip-img>`，不支持自闭合写法。自闭合规范请见[w3.org](https://www.w3.org/TR/html/syntax.html#void-elements)。
 
 ### 最基本使用
 
@@ -62,11 +66,28 @@
 <p class="mip-img-subtitle">带图片标题的类型</p>
 ```
 
+### 使用 source 标签
+
+使用 `<source>` 标签，通过浏览器选择合适的图片进行加载和渲染。如果浏览器不兼容 `<source>` 标签，自动回退使用 `<mip-img>` 的 `src` 属性。
+
+例子中 `<source>` 使用了 `type` 属性和 `media` 属性，当浏览器支持 webp 格式并且视窗宽度小于 600px 时会选择加载第一个 `<source>` 地址中的资源。
+
+```html
+<mip-img
+  width="350"
+  height="263"
+  popup
+  src="https://www.mipengine.org/static/img/sample_01.jpg">
+  <source srcset="http://boscdn.bpc.baidu.com/v1/assets/mipengine/1.webp" type="image/webp" media="(max-width: 600px)">
+  <source srcset="http://boscdn.bpc.baidu.com/v1/assets/mipengine/2.webp" type="image/webp">
+</mip-img>
+```
+
 ## 属性
 
 ### width
 
-说明：宽度，不是实际宽度，与高度属性配合来设置图片比例，详见[组件布局](../../guide/component/layout.md)  
+说明：宽度，不是实际宽度，与高度属性配合来设置图片比例，详见[组件布局](../../docs/style-and-layout/layout.md)  
 必选项：否  
 类型：数字  
 单位：无  
@@ -74,7 +95,7 @@
 
 ### height
 
-说明：高度，不是实际高度，与宽度属性配合来设置图片比例，详见[组件布局](../../guide/component/layout.md)  
+说明：高度，不是实际高度，与宽度属性配合来设置图片比例，详见[组件布局](../../docs/style-and-layout/layout.html)  
 必选项：否  
 类型：数字  
 单位：无  

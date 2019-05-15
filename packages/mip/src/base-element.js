@@ -75,7 +75,7 @@ class BaseElement extends HTMLElement {
     this._loadingContainer = null
 
     /** @private {?Element} */
-    this._laodingElement = null
+    this._loadingElement = null
 
     /** @private {boolean|undefined} */
     this._loadingDisabled = undefined
@@ -275,7 +275,7 @@ class BaseElement extends HTMLElement {
       container.appendChild(element)
       this.appendChild(container)
       this._loadingContainer = container
-      this._laodingElement = element
+      this._loadingElement = element
     }
   }
 
@@ -298,7 +298,7 @@ class BaseElement extends HTMLElement {
     }
 
     this._loadingContainer.classList.toggle('mip-hidden', !state)
-    this._laodingElement.classList.toggle('mip-active', state)
+    this._loadingElement.classList.toggle('mip-active', state)
 
     if (!state && cleanup) {
       let loadingContainer = this._loadingContainer

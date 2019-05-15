@@ -91,7 +91,7 @@ function getImgOffset (img) {
  * @return {Array.<HTMLElement>} 返回修改的元素集
  */
 function getImgsSrc () {
-  return [...document.querySelectorAll('mip-img[popup] img')].map(img => img.currentSrc)
+  return [...document.querySelectorAll('mip-img[popup] img')].map(img => img.currentSrc ? img.currentSrc : img.src)
 }
 /**
  * 找出当前视口下的图片
@@ -382,13 +382,18 @@ class MipImg extends CustomElement {
       }
     }
 
-    // 移动 <source> 和 <img> 到 <picture> 下
-    let pic = document.createElement('picture')
-    ;[...ele.querySelectorAll('source')].forEach(source => {
-      pic.append(source)
-    })
-    pic.appendChild(img)
-    ele.appendChild(pic)
+    // 如果有 <source>, 移动 <source> 和 <img> 到 <picture> 下
+    let sources = ele.querySelectorAll('source')
+    if (sources.length) {
+      let pic = document.createElement('picture')
+      ;[...sources].forEach(source => {
+        pic.appendChild(source)
+      })
+      pic.appendChild(img)
+      ele.appendChild(pic)
+    } else {
+      ele.appendChild(img)
+    }
 
     // 在手百中，点击非跳转图片可调起图片查看器
     if (platform.isBaiduApp() && !dom.closest(img, 'a')) {
