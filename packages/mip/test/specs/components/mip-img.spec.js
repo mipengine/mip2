@@ -11,6 +11,7 @@ import viewer from 'src/viewer'
 /* globals describe, before, it, expect, after, Event */
 
 const {event, platform} = util
+let sleep = time => new Promise(resolve => setTimeout(resolve, time))
 
 describe('mip-img', function () {
   let mipImgWrapper
@@ -178,7 +179,7 @@ describe('mip-img', function () {
     expect(mipImg.querySelector('div.mip-placeholder')).to.be.null
   })
 
-  it('should popup', function () {
+  it('should popup and close the popup', async () => {
     let mipImg = document.createElement('mip-img')
     mipImg.setAttribute('width', '100px')
     mipImg.setAttribute('height', '100px')
@@ -194,16 +195,24 @@ describe('mip-img', function () {
     let event = document.createEvent('MouseEvents')
     event.initEvent('click', true, true)
     img.dispatchEvent(event)
+    // 等待 popup 生成
+    await waitForChild(document.body, body => body.querySelector('mip-carousel'))
 
     let mipPopWrap = document.querySelector('.mip-img-popUp-wrapper')
-    mipPopWrap.dispatchEvent(event)
-
+    let carousel = mipPopWrap.querySelector('mip-carousel')
     expect(mipPopWrap.getAttribute('data-name')).to.equal('mip-img-popUp-name')
     expect(mipPopWrap.parentNode.tagName).to.equal('BODY')
     expect(mipPopWrap.tagName).to.equal('DIV')
     expect(mipPopWrap.querySelector('.mip-img-popUp-bg')).to.be.exist
-    expect(mipPopWrap.querySelector('mip-carousel')).to.be.exist
-    expect(mipPopWrap.querySelector('mip-carousel').getAttribute('index')).to.equal('1')
+    expect(carousel).to.be.exist
+    expect(carousel.getAttribute('index')).to.equal('1')
+
+    // 等待 carousel 渲染完成
+    await waitForChild(carousel, carousel => carousel.querySelector('.mip-carousel-wrapper'))
+    mipPopWrap.dispatchEvent(event)
+    // 等待 popup 完全关闭
+    await sleep(500)
+    expect(mipPopWrap.style.display).to.equal('none')
   })
   it('should resize popup according to window resizing', function () {
     let mipImg = document.createElement('mip-img')
@@ -221,7 +230,7 @@ describe('mip-img', function () {
     event.initEvent('resize', true, true)
     window.dispatchEvent(event)
   })
-  it('with special image popuping should popup', function () {
+  it('with special image popuping should popup', async () => {
     // 针对长图的大图浏览代码测试，其实只需要设置一张特殊的图即可。
     let mipImg = document.createElement('mip-img')
     mipImg.setAttribute('width', '100px')
@@ -238,9 +247,9 @@ describe('mip-img', function () {
     event.initEvent('click', true, true)
     img.dispatchEvent(event)
 
+    // 等待 popup 生成
+    await waitForChild(document.body, body => body.querySelector('mip-carousel'))
     let mipPopWrap = document.querySelector('.mip-img-popUp-wrapper')
-    mipPopWrap.dispatchEvent(event)
-
     expect(mipPopWrap.getAttribute('data-name')).to.equal('mip-img-popUp-name')
     expect(mipPopWrap.parentNode.tagName).to.equal('BODY')
     expect(mipPopWrap.tagName).to.equal('DIV')
