@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- 1.5.12
+    1. 紧急修复 1.5.11 版本编译过程找不到 core-js 的 BUG
+
 - 1.5.11
     1. 升级 Babel 至 v7
     2. 优化 external 管理策略
