@@ -11,6 +11,7 @@ const path = require('path')
 const componentExternals = require('./component-externals')
 const webpack = require('webpack')
 const mipExternal = require('mip-components-webpack-helpers/lib/external')
+const {resolveModule} = require('../../../utils/helper')
 
 module.exports = function (options) {
   let config = {
@@ -81,7 +82,8 @@ module.exports = function (options) {
     resolve: {
       extensions: ['.js', '.json', '.vue'],
       alias: {
-        '@': path.resolve(options.context)
+        '@': path.resolve(options.context),
+        'core-js': resolveModule('core-js')
       }
     },
     plugins: [
