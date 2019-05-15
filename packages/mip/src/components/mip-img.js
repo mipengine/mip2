@@ -185,7 +185,7 @@ function bindPopup (element, img) {
     event.stopPropagation()
     // 图片未加载则不弹层
     /* istanbul ignore if */
-    if (img.naturalWidth === 0) {
+    if (img.width + img.naturalWidth === 0) {
       return
     }
 
@@ -293,7 +293,7 @@ function bindInvocation (ele, img) {
   function invoke () {
     // 图片未加载则不调起
     /* istanbul ignore if */
-    if (img.naturalWidth === 0) {
+    if (img.width + img.naturalWidth === 0) {
       return
     }
     let urls = getImgsSrc('mip-img img')
