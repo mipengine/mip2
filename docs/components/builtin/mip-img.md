@@ -95,7 +95,7 @@
 
 ### height
 
-说明：高度，不是实际高度，与宽度属性配合来设置图片比例，详见[组件布局](../../docs/style-and-layout/layout.html)  
+说明：高度，不是实际高度，与宽度属性配合来设置图片比例，详见[组件布局](../../docs/style-and-layout/layout.md)  
 必选项：否  
 类型：数字  
 单位：无  

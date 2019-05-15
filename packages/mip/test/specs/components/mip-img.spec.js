@@ -6,12 +6,14 @@
 import dom, {waitForChild} from 'src/util/dom/dom'
 import util from 'src/util'
 import viewer from 'src/viewer'
+import Services, {installTimerService} from 'src/services'
 
 /* eslint-disable no-unused-expressions */
 /* globals describe, before, it, expect, after, Event */
 
 const {event, platform} = util
-let sleep = time => new Promise(resolve => setTimeout(resolve, time))
+installTimerService()
+const timer = Services.timer()
 
 describe('mip-img', function () {
   let mipImgWrapper
@@ -211,7 +213,7 @@ describe('mip-img', function () {
     await waitForChild(carousel, carousel => carousel.querySelector('.mip-carousel-wrapper'))
     mipPopWrap.dispatchEvent(event)
     // 等待 popup 完全关闭
-    await sleep(500)
+    await timer.sleep(500)
     expect(mipPopWrap.style.display).to.equal('none')
   })
   it('should resize popup according to window resizing', function () {
