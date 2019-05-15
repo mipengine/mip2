@@ -91,7 +91,7 @@ function getImgOffset (img) {
  * @return {Array.<HTMLElement>} 返回修改的元素集
  */
 function getImgsSrc () {
-  return [...document.querySelectorAll('mip-img')].filter(value => value.hasAttribute('popup')).map(value => value.getAttribute('src'))
+  return [...document.querySelectorAll('mip-img[popup] img')].map(img => img.currentSrc)
 }
 /**
  * 找出当前视口下的图片
@@ -111,11 +111,10 @@ function getCurrentImg (carouselWrapper, mipCarousel) {
 /**
  * 创建图片弹层
  *
- * @param  {HTMLElement} element mip-img组件元素
- * @param  {HTMLElment} img     mip-img元素包裹的img
- * @return {HTMLElment}         图片弹层的div
+ * @param  {HTMLElement} element mip-img 组件元素
+ * @return {HTMLElment}         图片弹层的 div
  */
-function createPopup (element, img) {
+function createPopup (element) {
   // 获取图片数组
   let imgsSrcArray = getImgsSrc()
   let index = parseInt(element.getAttribute('index'), 10) || 0
@@ -189,11 +188,11 @@ function bindPopup (element, img) {
       skipTransition: true,
       extraClass: 'black'
     })
-    let popup = createPopup(element, img)
+    let popup = createPopup(element)
     let popupBg = popup.querySelector('.mip-img-popUp-bg')
     let mipCarousel = popup.querySelector('mip-carousel')
     let popupImg = new Image()
-    popupImg.setAttribute('src', img.src)
+    popupImg.setAttribute('src', img.currentSrc)
     popup.appendChild(popupImg)
 
     let imgOffset = getImgOffset(img)
@@ -291,7 +290,7 @@ function bindInvocation (ele, img) {
     if (img.width + img.naturalWidth === 0) {
       return
     }
-    let scheme = 'baiduboxapp://v19/utils/previewImage?params=' + encodeURIComponent(JSON.stringify({urls: [img.src]}))
+    let scheme = 'baiduboxapp://v19/utils/previewImage?params=' + encodeURIComponent(JSON.stringify({urls: [img.currentSrc]}))
     let iframe = document.createElement('iframe')
     iframe.style.display = 'none'
     iframe.src = scheme
@@ -376,34 +375,36 @@ class MipImg extends CustomElement {
     this.applyFillContent(img, true)
 
     // transfer attributes from mip-img to img tag
-    this.attributes = getAttributeSet(this.element.attributes)
+    this.attributes = getAttributeSet(ele.attributes)
     for (let k in this.attributes) {
       if (this.attributes.hasOwnProperty(k) && imgAttributes.indexOf(k) > -1) {
         img.setAttribute(k, this.attributes[k])
       }
     }
 
-    ele.appendChild(img)
+    // 移动 <source> 和 <img> 到 <picture> 下
+    let pic = document.createElement('picture')
+    ;[...ele.querySelectorAll('source')].forEach(source => {
+      pic.append(source)
+    })
+    pic.appendChild(img)
+    ele.appendChild(pic)
+
     // 在手百中，点击非跳转图片可调起图片查看器
     if (platform.isBaiduApp() && !dom.closest(img, 'a')) {
       bindInvocation(ele, img)
     } else if (ele.hasAttribute('popup')) {
       bindPopup(ele, img)
     }
-    this.element.classList.add('mip-img-loading')
+    ele.classList.add('mip-img-loading')
 
     try {
-      await event.loadPromise(img).catch(() => {
-        if (img.srcset && img.src) {
-          img.srcset = ''
-          event.loadPromise(img)
-        }
-      })
+      await event.loadPromise(img)
       this.resourcesComplete()
       this.removePlaceholder()
-      this.element.classList.remove('mip-img-loading')
-      this.element.classList.add('mip-img-loaded')
-      customEmit(this.element, 'load')
+      ele.classList.remove('mip-img-loading')
+      ele.classList.add('mip-img-loaded')
+      customEmit(ele, 'load')
     } catch (reason) {
       /* istanbul ignore if */
       if (!viewer.isIframed) {

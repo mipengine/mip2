@@ -5,7 +5,7 @@
 
 import dom, {waitForChild} from 'src/util/dom/dom'
 import util from 'src/util'
-import viewer from 'src/viewer';
+import viewer from 'src/viewer'
 
 /* eslint-disable no-unused-expressions */
 /* globals describe, before, it, expect, after, Event */
@@ -24,9 +24,6 @@ describe('mip-img', function () {
 
   afterEach(function () {
     document.body.removeChild(mipImgWrapper)
-  })
-
-  after(() => {
     // Clear popup wrap
     let popup = document.querySelector('.mip-img-popUp-wrapper')
     if (popup) {
