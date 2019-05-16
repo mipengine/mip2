@@ -246,7 +246,7 @@ describe('mip-img', function () {
     await waitForChild(carousel, carousel => carousel.querySelector('.mip-carousel-wrapper'))
     mipPopWrap.dispatchEvent(evt)
     // 等待 popup 完全关闭
-    await timer.sleep(1000)
+    await timer.sleep(500)
     expect(mipPopWrap.style.display).to.equal('none')
   })
   it('should invoke image browser in BaiduApp when the popup image is clicked', async () => {
