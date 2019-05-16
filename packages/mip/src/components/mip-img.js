@@ -12,7 +12,7 @@ import CustomElement from '../custom-element'
 import viewport from '../viewport'
 import viewer from '../viewer'
 
-const {css, rect, event, naboo, platform, dom} = util
+const {css, rect, event, naboo, platform} = util
 
 // 取值根据 https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement
 let imgAttributes = [
@@ -92,12 +92,7 @@ function getImgOffset (img) {
  * @return {Array.<HTMLElement>} 返回修改的元素集
  */
 function getImgsSrc (selector) {
-  let urls = []
-  ;[...document.querySelectorAll(selector)].forEach(img => {
-    let url = img.currentSrc ? img.currentSrc : img.src
-    url && urls.push(url)
-  })
-  return urls
+  return [...document.querySelectorAll(selector)].map(img => img.currentSrc ? img.currentSrc : img.src)
 }
 /**
  * 找出当前视口下的图片
@@ -265,7 +260,7 @@ function bindPopup (element, img) {
  * 应对 popup 不支持缩放，手百 ios iframe 长按无法保存图片的情况
  *
  * @param  {HTMLElement} ele     mip-img
- * @param  {HTMLElement} img     mip-img下的img
+ * @param  {HTMLElement} img     mip-img 下的 img
  * @return {void}         无
  */
 function bindInvocation (ele, img) {
@@ -403,8 +398,8 @@ class MipImg extends CustomElement {
       ele.appendChild(img)
     }
 
-    // 在手百中，点击非跳转图片可调起图片查看器
-    if (platform.isBaiduApp() && !dom.closest(img, 'a')) {
+    // 在手百中，可调起图片查看器
+    if (platform.isBaiduApp()) {
       bindInvocation(ele, img)
     } else if (ele.hasAttribute('popup')) {
       bindPopup(ele, img)
