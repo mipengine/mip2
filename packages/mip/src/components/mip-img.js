@@ -116,7 +116,7 @@ function getCurrentImg (carouselWrapper, mipCarousel) {
  * @return {HTMLElment} 图片弹层的 div
  */
 function createPopup (element) {
-  // 获取图片数组
+  // 获取图片地址数组
   let imgsSrcArray = getImgsSrc('mip-img[popup] img')
   let index = parseInt(element.getAttribute('index'), 10) || 0
 
@@ -178,9 +178,10 @@ function bindPopup (element, img) {
   // 图片点击时展现图片
   img.addEventListener('click', function (event) {
     event.stopPropagation()
+    let current = img.currentSrc ? img.currentSrc : img.src
     // 图片未加载则不弹层
     /* istanbul ignore if */
-    if (img.width + img.naturalWidth === 0) {
+    if (!current || img.naturalWidth === 0) {
       return
     }
 
@@ -286,13 +287,13 @@ function bindInvocation (ele, img) {
   }
 
   function invoke () {
+    let current = img.currentSrc ? img.currentSrc : img.src
     // 图片未加载则不调起
     /* istanbul ignore if */
-    if (img.width + img.naturalWidth === 0) {
+    if (!current || img.naturalWidth === 0) {
       return
     }
-    let urls = getImgsSrc('mip-img img')
-    let current = img.currentSrc ? img.currentSrc : img.src
+    let urls = getImgsSrc('mip-img[popup] img')
     let scheme = 'baiduboxapp://v19/utils/previewImage?params=' + encodeURIComponent(JSON.stringify({urls, current}))
     let iframe = document.createElement('iframe')
     iframe.style.display = 'none'
