@@ -123,9 +123,9 @@ describe('mip-img', function () {
       <mip-img src="https://www.mipengine.org/static/img/sample_01.jpg"></mip-img>
     `
     let mipImg = mipImgWrapper.querySelector('mip-img')
-    let loading = new Promise(resolve => event.listen(mipImg, 'load', resolve))
     mipImg.viewportCallback(true)
     let img = mipImg.querySelector('img')
+    let loading = new Promise(resolve => event.listen(img, 'load', resolve))
     expect(img.classList.contains('mip-replaced-content')).to.equal(true)
     expect(img.getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_01.jpg')
     return loading
@@ -308,7 +308,7 @@ describe('mip-img', function () {
       img.dispatchEvent(event)
     })
   })
-  it('should work with source tag', () => {
+  it('should work with source tag', async () => {
     let mipImg = document.createElement('mip-img')
     let source = document.createElement('source')
     source.setAttribute('srcset', 'https://www.mipengine.org/static/img/sample_01.jpg')
@@ -321,7 +321,9 @@ describe('mip-img', function () {
     mipImg.viewportCallback(true)
 
     let img = mipImg.querySelector('img')
+    let loading = new Promise(resolve => event.listen(img, 'load', resolve))
     expect(mipImg.querySelector('picture')).to.be.exist
+    await loading
     expect(img.currentSrc).to.equal('https://www.mipengine.org/static/img/sample_01.jpg')
   })
 })
