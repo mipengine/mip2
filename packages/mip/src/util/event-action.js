@@ -96,7 +96,7 @@ class EventAction {
     }) : {}
 
     let fn = new Function('DOM', `with(this){return ${action.arg}}`) // eslint-disable-line
-    let data = fn.call(proxy)
+    let data = fn.call(Object.assign(proxy, action))
 
     if (action.handler === 'setData') {
       MIP.setData(data)
