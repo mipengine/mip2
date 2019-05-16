@@ -59,7 +59,7 @@ function getPopupImgPos (imgWidth, imgHeight) {
   }
 }
 /**
- * 从mip-img属性列表里获取属性
+ * 从 mip-img 属性列表里获取属性
  *
  * @param {Object} attributes 参考: https://dom.spec.whatwg.org/#interface-namednodemap
  * @return {Object} 属性列表JSON
@@ -77,10 +77,10 @@ function getAttributeSet (attributes) {
   return attrs
 }
 /**
- * 获取图片的offset
+ * 获取图片的 offset
  *
  * @param  {HTNMLElement} img img
- * @return {Object}     一个包含offset信息的对象
+ * @return {Object}     一个包含 offset 信息的对象
  */
 function getImgOffset (img) {
   let imgOffset = rect.getElementOffset(img)
@@ -171,7 +171,7 @@ function createPopup (element) {
  * 将图片与弹层绑定
  *
  * @param  {HTMLElement} element mip-img
- * @param  {HTMLElement} img     mip-img下的img
+ * @param  {HTMLElement} img     mip-img 下的 img
  * @return {void}         无
  */
 function bindPopup (element, img) {
@@ -216,7 +216,7 @@ function bindPopup (element, img) {
       let currentImg = getCurrentImg(mipCarouselWrapper, mipCarousel)
       popupImg.setAttribute('src', currentImg.getAttribute('data-src'))
       let previousPos = getImgOffset(img)
-      // 获取弹出图片滑动的距离，根据前面的设定，top大于0就不是长图，小于0才是滑动的距离。
+      // 获取弹出图片滑动的距离，根据前面的设定，top 大于0就不是长图，小于0才是滑动的距离。
       let currentImgPos = getImgOffset(currentImg)
       currentImgPos.top < 0 && (previousPos.top -= currentImgPos.top)
       currentImgPos.left < 0 && (previousPos.left -= currentImgPos.left)

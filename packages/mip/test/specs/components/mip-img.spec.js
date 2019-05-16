@@ -164,7 +164,7 @@ describe('mip-img', function () {
     let mipImg = document.createElement('mip-img')
     mipImg.setAttribute('width', '100px')
     mipImg.setAttribute('height', '100px')
-    mipImg.setAttribute('src', 'http://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg')
+    mipImg.setAttribute('src', 'https://www.mipengine.org/static/img/sample_01.jpg')
     mipImg.setAttribute('popup', 'true')
     mipImgWrapper.appendChild(mipImg)
 
@@ -187,7 +187,7 @@ describe('mip-img', function () {
     expect(carousel).to.be.exist
     expect(carousel.getAttribute('index')).to.equal('1')
 
-    // 等待 carousel 渲染完成
+    // 等待 carousel 生成
     await waitForChild(carousel, carousel => carousel.querySelector('.mip-carousel-wrapper'))
     mipPopWrap.dispatchEvent(evt)
     // 等待 popup 完全关闭
@@ -240,6 +240,14 @@ describe('mip-img', function () {
     expect(mipPopWrap.querySelector('.mip-img-popUp-bg')).to.be.exist
     expect(mipPopWrap.querySelector('mip-carousel')).to.be.exist
     expect(mipPopWrap.querySelector('mip-carousel').getAttribute('index')).to.equal('1')
+
+    // 等待 carousel 生成
+    let carousel = mipPopWrap.querySelector('mip-carousel')
+    await waitForChild(carousel, carousel => carousel.querySelector('.mip-carousel-wrapper'))
+    mipPopWrap.dispatchEvent(evt)
+    // 等待 popup 完全关闭
+    await timer.sleep(1000)
+    expect(mipPopWrap.style.display).to.equal('none')
   })
   it('should invoke image browser in BaiduApp when the popup image is clicked', async () => {
     let appStub = sinon.stub(platform, 'isBaiduApp')
