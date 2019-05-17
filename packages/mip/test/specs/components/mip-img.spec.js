@@ -164,7 +164,7 @@ describe('mip-img', function () {
     let mipImg = document.createElement('mip-img')
     mipImg.setAttribute('width', '100px')
     mipImg.setAttribute('height', '100px')
-    mipImg.setAttribute('src', 'https://www.mipengine.org/static/img/sample_01.jpg')
+    mipImg.setAttribute('src', 'http://boscdn.bpc.baidu.com/assets/mipengine/wide.jpg')
     mipImg.setAttribute('popup', 'true')
     mipImgWrapper.appendChild(mipImg)
 
