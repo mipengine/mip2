@@ -193,7 +193,7 @@ describe('mip-img', function () {
     // 等待 popup 完全关闭
     await timer.sleep(500)
     expect(mipPopWrap.style.display).to.equal('none')
-  })
+  }).timeout(4000)
   it('should resize popup according to window resizing', function () {
     let mipImg = document.createElement('mip-img')
     mipImg.setAttribute('width', '100px')
@@ -248,7 +248,7 @@ describe('mip-img', function () {
     // 等待 popup 完全关闭
     await timer.sleep(500)
     expect(mipPopWrap.style.display).to.equal('none')
-  })
+  }).timeout(4000)
   it('should invoke image browser in BaiduApp when the popup image is clicked', async () => {
     let appStub = sinon.stub(platform, 'isBaiduApp')
     appStub.callsFake(() => true)
