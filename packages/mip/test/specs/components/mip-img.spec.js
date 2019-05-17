@@ -194,6 +194,17 @@ describe('mip-img', function () {
     await timer.sleep(500)
     expect(mipPopWrap.style.display).to.equal('none')
   }).timeout(4000)
+  it('should not popup if the image is not loaded', async () => {
+    mipImgWrapper.innerHTML = `<mip-img popup src="https://www.wrong.org?test=1"></mip-img>`
+    let mipImg = mipImgWrapper.querySelector('mip-img')
+    mipImg.viewportCallback(true)
+    let img = mipImg.querySelector('img')
+    let evt = document.createEvent('MouseEvents')
+    evt.initEvent('click', true, true)
+    img.dispatchEvent(evt)
+    await timer.sleep(500)
+    expect(document.querySelector('.mip-img-popUp-wrapper')).to.not.exist
+  })
   it('should resize popup according to window resizing', function () {
     let mipImg = document.createElement('mip-img')
     mipImg.setAttribute('width', '100px')
