@@ -10,6 +10,8 @@
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
   <!-- <link rel="stylesheet" href="../../dist/mip.css"></link> -->
   <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" type="text/css" href="https://c.mipcdn.com/static/v2/mip.css">
+
   <script>
     window.onerror = function (message, source, lineno, colno, error) {
       window.alert('Ops, js 报错了，请联系 FE 修复')
@@ -41,9 +43,6 @@
   src="https://www.mipengine.org/static/img/sample_01.jpg">
   <div fallback>fallback</div>
 </mip-img>
-
-
-
 
 <h2>加全屏查看</h2>
 
@@ -162,6 +161,27 @@
   src="http://bos.nj.bpc.baidu.com/v1/assets/mip/mip2-component-lifecycle.png">
 </mip-img>
 
+<h2>使用 source 标签</h2>
+
+<pre class="code">&lt;mip-img
+  width="350"
+  height="263"
+  popup
+  src="https://www.mipengine.org/static/img/sample_01.jpg"&gt;
+  &lt;source srcset="http://boscdn.bpc.baidu.com/v1/assets/mipengine/2.webp" type="image/webp" media="(max-width: 600px)"&gt;
+  &lt;source srcset="http://boscdn.bpc.baidu.com/v1/assets/mipengine/1.webp" type="image/webp"&gt;
+&lt;/mip-img&gt;</pre>
+
+<mip-img
+  width="350"
+  height="263"
+  popup
+  src="https://www.mipengine.org/static/img/sample_01.jpg">
+  <source srcset="http://boscdn.bpc.baidu.com/v1/assets/mipengine/2.webp" type="image/webp" media="(max-width: 600px)">
+  <source srcset="http://boscdn.bpc.baidu.com/v1/assets/mipengine/1.webp" type="image/webp">
+</mip-img>
+
 </body>
 <script src="../../dist/mip.js"></script>
+<!-- <script src="https://c.mipcdn.com/static/v2/mip.js"></script> -->
 </html>

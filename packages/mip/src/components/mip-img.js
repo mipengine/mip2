@@ -79,20 +79,36 @@ function getAttributeSet (attributes) {
 /**
  * 获取图片的 offset
  *
- * @param  {HTNMLElement} img img
- * @return {Object}     一个包含 offset 信息的对象
+ * @param  {HTMLElement} img img
+ * @return {Object} 一个包含 offset 信息的对象
  */
 function getImgOffset (img) {
   let imgOffset = rect.getElementOffset(img)
   return imgOffset
 }
 /**
- * 获取图片的 src
- * @param {string} selector 选择器
- * @return {Array.<HTMLElement>} 返回修改的元素集
+ * 获取已渲染 popup 图片的 src 和本元素在数组中对应的 index
+ *
+ * @param {HTMLElement} ele mip-img 组件元素
+ * @return {Object} 保存 src 数组和 index
  */
-function getImgsSrc (selector) {
-  return [...document.querySelectorAll(selector)].map(img => img.currentSrc ? img.currentSrc : img.src)
+function getImgsSrcIndex (ele) {
+  // 取已渲染的 popup 图片
+  const mipImgs = [...document.querySelectorAll('mip-img[popup].mip-img-loaded')]
+  let index = mipImgs.indexOf(ele)
+  // just check
+  if (index === -1) {
+    index = 0
+  }
+  const imgsSrcArray = mipImgs.map(mipImg => {
+    let img = mipImg.querySelector('img')
+    // just check
+    if (img) {
+      return img.currentSrc ? img.currentSrc : img.src
+    }
+    return mipImgs.getAttribute('src')
+  })
+  return {imgsSrcArray, index}
 }
 /**
  * 找出当前视口下的图片
@@ -116,9 +132,7 @@ function getCurrentImg (carouselWrapper, mipCarousel) {
  * @return {HTMLElment} 图片弹层的 div
  */
 function createPopup (element) {
-  // 获取图片地址数组
-  let imgsSrcArray = getImgsSrc('mip-img[popup] img')
-  let index = parseInt(element.getAttribute('index'), 10) || 0
+  const {imgsSrcArray, index} = getImgsSrcIndex(element)
 
   let popup = document.createElement('div')
   css(popup, 'display', 'block')
@@ -293,8 +307,8 @@ function bindInvocation (ele, img) {
     if (!current || img.naturalWidth === 0) {
       return
     }
-    let urls = getImgsSrc('mip-img[popup] img')
-    let scheme = 'baiduboxapp://v19/utils/previewImage?params=' + encodeURIComponent(JSON.stringify({urls, current}))
+    const {imgsSrcArray, index} = getImgsSrcIndex(ele)
+    let scheme = 'baiduboxapp://v19/utils/previewImage?params=' + encodeURIComponent(JSON.stringify({urls: imgsSrcArray, current: index}))
     let iframe = document.createElement('iframe')
     iframe.style.display = 'none'
     iframe.src = scheme
@@ -371,10 +385,6 @@ class MipImg extends CustomElement {
   async layoutCallback () {
     let ele = this.element
     let img = new Image()
-    if (ele.hasAttribute('popup')) {
-      let allMipImg = [...document.querySelectorAll('mip-img')].filter(value => value.hasAttribute('popup'))
-      ele.setAttribute('index', allMipImg.indexOf(ele))
-    }
 
     this.applyFillContent(img, true)
 
