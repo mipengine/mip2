@@ -87,7 +87,7 @@ function getImgOffset (img) {
   return imgOffset
 }
 /**
- * 获取已渲染 popup 图片的 src 和本元素在数组中对应的 index
+ * 获取所有已渲染的 popup 属性的 mip-img src 和本元素在数组中对应的 index
  *
  * @param {HTMLElement} ele mip-img 组件元素
  * @return {Object} 保存 src 数组和 index
@@ -108,7 +108,7 @@ function getImgsSrcIndex (ele) {
     if (!img) {
       return mipImg.getAttribute('src')
     }
-    return img.currentSrc ? img.currentSrc : img.src
+    return img.currentSrc || img.src
   })
   return {imgsSrcArray, index}
 }
@@ -197,7 +197,7 @@ function bindPopup (element, img) {
   // 图片点击时展现图片
   img.addEventListener('click', function (event) {
     event.stopPropagation()
-    let current = img.currentSrc ? img.currentSrc : img.src
+    let current = img.currentSrc || img.src
     // 图片未加载则不弹层
     /* istanbul ignore if */
     if (!current || img.naturalWidth === 0) {
@@ -217,7 +217,7 @@ function bindPopup (element, img) {
     let popupBg = popup.querySelector('.mip-img-popUp-bg')
     let mipCarousel = popup.querySelector('mip-carousel')
     let popupImg = new Image()
-    popupImg.setAttribute('src', img.currentSrc ? img.currentSrc : img.src)
+    popupImg.setAttribute('src', current)
     popup.appendChild(popupImg)
 
     let imgOffset = getImgOffset(img)
@@ -305,23 +305,24 @@ function bindInvocation (ele, img) {
   if (ele.hasAttribute('popup')) {
     img.addEventListener('click', e => {
       e.stopPropagation()
-      invoke()
+      invoke(true)
     })
   }
 
-  function invoke () {
-    let currentSrc = img.currentSrc ? img.currentSrc : img.src
+  function invoke (isPopup) {
+    let current = img.currentSrc || img.src
     // 图片未加载则不调起
     /* istanbul ignore if */
-    if (!currentSrc || img.naturalWidth === 0) {
+    if (!current || img.naturalWidth === 0) {
       return
     }
-    let {imgsSrcArray, index} = getImgsSrcIndex(ele)
-    // 可能是长按调起
-    if (imgsSrcArray.length === 0) {
-      imgsSrcArray = [currentSrc]
+    // 长按只显示当前图片
+    let imgsSrcArray = [current]
+    // 对于 popup 可滑动
+    if (isPopup) {
+      imgsSrcArray = getImgsSrcIndex(ele).imgsSrcArray || [current]
     }
-    let scheme = 'baiduboxapp://v19/utils/previewImage?params=' + encodeURIComponent(JSON.stringify({urls: imgsSrcArray, current: index}))
+    let scheme = 'baiduboxapp://v19/utils/previewImage?params=' + encodeURIComponent(JSON.stringify({urls: imgsSrcArray, current}))
     let iframe = document.createElement('iframe')
     iframe.style.display = 'none'
     iframe.src = scheme
