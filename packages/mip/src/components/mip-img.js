@@ -97,16 +97,18 @@ function getImgsSrcIndex (ele) {
   const mipImgs = [...document.querySelectorAll('mip-img[popup].mip-img-loaded')]
   let index = mipImgs.indexOf(ele)
   // just check
+  /* istanbul ignore if */
   if (index === -1) {
     index = 0
   }
   const imgsSrcArray = mipImgs.map(mipImg => {
     let img = mipImg.querySelector('img')
     // just check
-    if (img) {
-      return img.currentSrc ? img.currentSrc : img.src
+    /* istanbul ignore if */
+    if (!img) {
+      return mipImg.getAttribute('src')
     }
-    return mipImgs.getAttribute('src')
+    return img.currentSrc ? img.currentSrc : img.src
   })
   return {imgsSrcArray, index}
 }
