@@ -135,7 +135,10 @@ function getCurrentImg (carouselWrapper, mipCarousel) {
  */
 function createPopup (element) {
   const {imgsSrcArray, index} = getImgsSrcIndex(element)
-
+  /* istanbul ignore if */
+  if (imgsSrcArray.length === 0) {
+    return
+  }
   let popup = document.createElement('div')
   css(popup, 'display', 'block')
 
@@ -207,6 +210,10 @@ function bindPopup (element, img) {
       extraClass: 'black'
     })
     let popup = createPopup(element)
+    /* istanbul ignore if */
+    if (!popup) {
+      return
+    }
     let popupBg = popup.querySelector('.mip-img-popUp-bg')
     let mipCarousel = popup.querySelector('mip-carousel')
     let popupImg = new Image()
@@ -232,7 +239,7 @@ function bindPopup (element, img) {
       let currentImg = getCurrentImg(mipCarouselWrapper, mipCarousel)
       popupImg.setAttribute('src', currentImg.getAttribute('data-src'))
       let previousPos = getImgOffset(img)
-      // 获取弹出图片滑动的距离，根据前面的设定，top 大于0就不是长图，小于0才是滑动的距离。
+      // 获取弹出图片滑动的距离，根据前面的设定，top 大于 0 就不是长图，小于 0 才是滑动的距离。
       let currentImgPos = getImgOffset(currentImg)
       currentImgPos.top < 0 && (previousPos.top -= currentImgPos.top)
       currentImgPos.left < 0 && (previousPos.left -= currentImgPos.left)
@@ -303,13 +310,17 @@ function bindInvocation (ele, img) {
   }
 
   function invoke () {
-    let current = img.currentSrc ? img.currentSrc : img.src
+    let currentSrc = img.currentSrc ? img.currentSrc : img.src
     // 图片未加载则不调起
     /* istanbul ignore if */
-    if (!current || img.naturalWidth === 0) {
+    if (!currentSrc || img.naturalWidth === 0) {
       return
     }
-    const {imgsSrcArray, index} = getImgsSrcIndex(ele)
+    let {imgsSrcArray, index} = getImgsSrcIndex(ele)
+    // 可能是长按调起
+    if (imgsSrcArray.length === 0) {
+      imgsSrcArray = [currentSrc]
+    }
     let scheme = 'baiduboxapp://v19/utils/previewImage?params=' + encodeURIComponent(JSON.stringify({urls: imgsSrcArray, current: index}))
     let iframe = document.createElement('iframe')
     iframe.style.display = 'none'

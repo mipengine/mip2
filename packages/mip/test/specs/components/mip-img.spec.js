@@ -298,6 +298,8 @@ describe('mip-img', function () {
 
     mipImg.viewportCallback(true)
     let img = mipImg.querySelector('img')
+    // 等图片加载完成
+    await new Promise(resolve => event.listen(img, 'load', resolve))
     let evt = new Event('touchstart')
     img.dispatchEvent(evt)
 
@@ -310,7 +312,7 @@ describe('mip-img', function () {
       evt = new Event('touchmove')
       img.dispatchEvent(evt)
     })
-  })
+  }).timeout(4000)
   it('should work with source tag', async () => {
     let mipImg = document.createElement('mip-img')
     let source = document.createElement('source')
