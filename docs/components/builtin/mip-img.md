@@ -80,8 +80,8 @@
   height="263"
   popup
   src="https://www.mipengine.org/static/img/sample_01.jpg">
-  <source srcset="http://boscdn.bpc.baidu.com/v1/assets/mipengine/1.webp" type="image/webp" media="(max-width: 600px)">
-  <source srcset="http://boscdn.bpc.baidu.com/v1/assets/mipengine/2.webp" type="image/webp">
+  <source srcset="https://boscdn.baidu.com/v1/assets/mipengine/1.webp" type="image/webp" media="(max-width: 600px)">
+  <source srcset="https://boscdn.baidu.com/v1/assets/mipengine/2.webp" type="image/webp">
 </mip-img>
 ```
 
