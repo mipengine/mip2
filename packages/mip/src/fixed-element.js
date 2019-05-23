@@ -266,8 +266,10 @@ class FixedElement {
                   */
                 // elements[j].parentElement.removeChild(elements[j])
                 let ele = elements[j]
-                ele.style.cssText = 'display: none!important'
-                console.warn(ele, '发现 position: fixed 样式, 请使用 mip-fixed 组件代替')
+                if (ele.tagName !== 'MIP-FIXED') {
+                  ele.style.cssText = 'display: none!important'
+                  console.warn(ele, '发现 position: fixed 样式, 请使用 mip-fixed 组件代替')
+                }
               }
             }
           } catch (e) {
