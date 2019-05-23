@@ -68,9 +68,11 @@
 
 ### 使用 source 标签
 
-使用 `<source>` 标签，通过浏览器选择合适的图片进行加载和渲染。如果浏览器不兼容 `<source>` 标签，自动回退使用 `<mip-img>` 的 `src` 属性。
+通过使用 `<source>` 标签，可以让浏览器选择合适的图片进行加载和渲染。如果浏览器不兼容 `<source>` 标签，自动回退使用 `<mip-img>` 的 `src` 属性。
 
-例子中 `<source>` 使用了 `type` 属性和 `media` 属性，当浏览器支持 webp 格式并且视窗宽度小于 600px 时会选择加载第一个 `<source>` 地址中的资源。如果不符合条件，浏览器继续向下检查 `<source>`，直到命中其中一条。如果都不符合，则使用 `<mip-img>` 的 `src` 地址加载资源。
+`<source>` 标签的用法与 `<picture>` 中的 `<source>` 用法相同，但是并不需要 `<picture>` 标签。下面例子中 `<source>` 使用了 `type` 属性和 `media` 属性，当浏览器支持 webp 格式并且视窗宽度小于 600px 时会选择加载第一个 `<source>` 地址中的资源。如果不符合条件，浏览器继续向下检查 `<source>`，直到命中其中一条。如果都不符合，则使用 `<mip-img>` 的 `src` 地址加载资源。
+
+相关规范见：[`<picture>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture)和 [`<source>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source)。
 
 ```html
 <mip-img
