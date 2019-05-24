@@ -121,21 +121,25 @@ describe('mip-carousel', function () {
       let mipImg = slideBoxs[2].querySelector('mip-img')
       expect(mipImg.hasAttribute('popup')).to.be.true
       let img = mipImg.querySelector('img')
-      let evt = new Event('click')
+      let evt = document.createEvent('MouseEvents')
+      evt.initEvent('click', true, true)
       img.dispatchEvent(evt)
-      await waitForChild(document.body, body => body.querySelector('.mip-img-popUp-wrapper'))
+      // await waitForChild(document.body, body => body.querySelector('.mip-img-popUp-wrapper'))
+      await sleep(500)
       let mipPopWrap = document.querySelector('.mip-img-popUp-wrapper')
       expect(mipPopWrap.getAttribute('data-name')).to.equal('mip-img-popUp-name')
-      await waitForChild(mipPopWrap, mipPopWrap => mipPopWrap.querySelector('mip-carousel'))
+      // await waitForChild(mipPopWrap, mipPopWrap => mipPopWrap.querySelector('mip-carousel'))
+      await sleep(500)
       let carousel = mipPopWrap.querySelector('mip-carousel')
       expect(carousel).to.be.exist
       carousel.viewportCallback(true)
-      await waitForChild(carousel, carousel => carousel.querySelector('.mip-carousel-wrapper'))
+      // await waitForChild(carousel, carousel => carousel.querySelector('.mip-carousel-wrapper'))
+      await sleep(500)
       mipPopWrap.dispatchEvent(evt)
       // 等待 popup 完全关闭
       await sleep(500)
       expect(carousel.style.display).to.equal('none')
-    }).timeout(6000)
+    }).timeout(4000)
 
     after(function () {
       document.body.removeChild(div)
