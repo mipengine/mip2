@@ -135,7 +135,7 @@ describe('mip-carousel', function () {
       // 等待 popup 完全关闭
       await sleep(500)
       expect(carousel.style.display).to.equal('none')
-    }).timeout(4000)
+    }).timeout(6000)
 
     after(function () {
       document.body.removeChild(div)
