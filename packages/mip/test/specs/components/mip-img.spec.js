@@ -43,7 +43,7 @@ describe('mip-img', function () {
   })
 
   it('should be loading with placeholder', async () => {
-    let mipImg = dom.create('<mip-img popup src="http://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg"></mip-img>')
+    let mipImg = dom.create('<mip-img popup src="https://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg"></mip-img>')
     mipImgWrapper.appendChild(mipImg)
     document.body.appendChild(mipImgWrapper)
     mipImg.viewportCallback(true)
@@ -99,14 +99,14 @@ describe('mip-img', function () {
 
   it('should load img with normal src', function () {
     mipImgWrapper.innerHTML = `
-      <mip-img src="http://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg"></mip-img>
+      <mip-img src="https://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg"></mip-img>
     `
     let mipImg = mipImgWrapper.querySelector('mip-img')
     mipImg.viewportCallback(true)
     let img = mipImg.querySelector('img')
     let loading = new Promise(resolve => event.listen(img, 'load', resolve))
     expect(img.classList.contains('mip-replaced-content')).to.equal(true)
-    expect(img.getAttribute('src')).to.equal('http://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg')
+    expect(img.getAttribute('src')).to.equal('https://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg')
     return loading
   })
 
@@ -164,7 +164,7 @@ describe('mip-img', function () {
     let mipImg = document.createElement('mip-img')
     mipImg.setAttribute('width', '100px')
     mipImg.setAttribute('height', '100px')
-    mipImg.setAttribute('src', 'http://boscdn.bpc.baidu.com/assets/mipengine/wide.jpg')
+    mipImg.setAttribute('src', 'https://boscdn.baidu.com/assets/mipengine/wide.jpg')
     mipImg.setAttribute('popup', 'true')
     mipImgWrapper.appendChild(mipImg)
 
@@ -316,7 +316,7 @@ describe('mip-img', function () {
   it('should work with source tag', async () => {
     let mipImg = document.createElement('mip-img')
     let source = document.createElement('source')
-    source.setAttribute('srcset', 'http://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg')
+    source.setAttribute('srcset', 'https://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg')
     mipImg.setAttribute('width', '100px')
     mipImg.setAttribute('height', '100px')
     mipImg.setAttribute('src', 'https://boscdn.baidu.com/v1/assets/mip/mip2-component-lifecycle.png')
@@ -329,6 +329,6 @@ describe('mip-img', function () {
     let loading = new Promise(resolve => event.listen(img, 'load', resolve))
     expect(mipImg.querySelector('picture')).to.be.exist
     await loading
-    expect(img.currentSrc).to.equal('http://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg')
+    expect(img.currentSrc).to.equal('https://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg')
   })
 })

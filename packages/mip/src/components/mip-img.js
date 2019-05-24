@@ -96,10 +96,9 @@ function getImgsSrcIndex (ele) {
   // 取已渲染的 popup 图片
   const mipImgs = [...document.querySelectorAll('mip-img[popup].mip-img-loaded')]
   let index = mipImgs.indexOf(ele)
-  // just check
   /* istanbul ignore if */
   if (index === -1) {
-    index = 0
+    return {imgsSrcArray: [], index}
   }
   const imgsSrcArray = mipImgs.map(mipImg => {
     let img = mipImg.querySelector('img')
@@ -136,7 +135,7 @@ function getCurrentImg (carouselWrapper, mipCarousel) {
 function createPopup (element) {
   const {imgsSrcArray, index} = getImgsSrcIndex(element)
   /* istanbul ignore if */
-  if (imgsSrcArray.length === 0) {
+  if (imgsSrcArray.length === 0 || index === -1) {
     return
   }
   let popup = document.createElement('div')
@@ -214,6 +213,10 @@ function bindPopup (element, img) {
     if (!popup) {
       return
     }
+
+    let openEvent = new Event('openPopup', {bubbles: true})
+    element.dispatchEvent(openEvent)
+
     let popupBg = popup.querySelector('.mip-img-popUp-bg')
     let mipCarousel = popup.querySelector('mip-carousel')
     let popupImg = new Image()
@@ -257,6 +260,9 @@ function bindPopup (element, img) {
         popup.removeEventListener('click', imagePop, false)
         popup.remove()
       })
+
+      let closeEvent = new Event('closePopup', {bubbles: true})
+      element.dispatchEvent(closeEvent)
     }
 
     let onResize = function () {

@@ -159,12 +159,6 @@ function getChildNodes (element) {
 
   arrNode.map(function (ele, i) {
     if (ele.tagName.toLowerCase() !== 'mip-i-space') {
-      // 如果是 autoplay，则不允许有 popup 功能
-      if (element.hasAttribute('autoplay')) {
-        if (ele.hasAttribute('popup')) {
-          ele.removeAttribute('popup')
-        }
-      }
       childList.push(ele)
       element.removeChild(ele)
     }
@@ -419,6 +413,20 @@ class MIPCarousel extends CustomElement {
         autoPlay()
       }
     }, false)
+
+    // 打开 popup 时暂停轮播
+    wrapBox.addEventListener('openPopup', e => {
+      e.stopPropagation()
+      clearInterval(moveInterval)
+    })
+
+    // 关闭 popup 时继续轮播
+    wrapBox.addEventListener('closePopup', e => {
+      e.stopPropagation()
+      if (isAutoPlay) {
+        autoPlay()
+      }
+    })
 
     // 自动轮播
     if (isAutoPlay) {
