@@ -122,6 +122,7 @@ describe('mip-carousel', function () {
       expect(mipImg.hasAttribute('popup')).to.be.true
       let img = mipImg.querySelector('img')
       let evt = document.createEvent('MouseEvents')
+      await sleep(500)
       evt.initEvent('click', true, true)
       img.dispatchEvent(evt)
       // await waitForChild(document.body, body => body.querySelector('.mip-img-popUp-wrapper'))
