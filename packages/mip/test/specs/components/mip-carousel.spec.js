@@ -122,20 +122,18 @@ describe('mip-carousel', function () {
       expect(mipImg.hasAttribute('popup')).to.be.true
       let img = mipImg.querySelector('img')
       let evt = document.createEvent('MouseEvents')
+      // 图片可能未加载
       await sleep(500)
       evt.initEvent('click', true, true)
       img.dispatchEvent(evt)
-      // await waitForChild(document.body, body => body.querySelector('.mip-img-popUp-wrapper'))
-      await sleep(500)
+      await waitForChild(document.body, body => body.querySelector('.mip-img-popUp-wrapper'))
       let mipPopWrap = document.querySelector('.mip-img-popUp-wrapper')
       expect(mipPopWrap.getAttribute('data-name')).to.equal('mip-img-popUp-name')
-      // await waitForChild(mipPopWrap, mipPopWrap => mipPopWrap.querySelector('mip-carousel'))
-      await sleep(500)
+      await waitForChild(mipPopWrap, mipPopWrap => mipPopWrap.querySelector('mip-carousel'))
       let carousel = mipPopWrap.querySelector('mip-carousel')
       expect(carousel).to.be.exist
       carousel.viewportCallback(true)
-      // await waitForChild(carousel, carousel => carousel.querySelector('.mip-carousel-wrapper'))
-      await sleep(500)
+      await waitForChild(carousel, carousel => carousel.querySelector('.mip-carousel-wrapper'))
       mipPopWrap.dispatchEvent(evt)
       // 等待 popup 完全关闭
       await sleep(500)
