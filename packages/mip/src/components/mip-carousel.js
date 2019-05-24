@@ -415,13 +415,13 @@ class MIPCarousel extends CustomElement {
     }, false)
 
     // 打开 popup 时暂停轮播
-    wrapBox.addEventListener('openPopup', e => {
+    ele.addEventListener('open-popup', e => {
       e.stopPropagation()
       clearInterval(moveInterval)
     })
 
     // 关闭 popup 时继续轮播
-    wrapBox.addEventListener('closePopup', e => {
+    ele.addEventListener('close-popup', e => {
       e.stopPropagation()
       if (isAutoPlay) {
         autoPlay()

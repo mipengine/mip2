@@ -12,7 +12,7 @@ import CustomElement from '../custom-element'
 import viewport from '../viewport'
 import viewer from '../viewer'
 
-const {css, rect, event, naboo, platform} = util
+const {css, rect, event, naboo, platform, dom} = util
 
 // 取值根据 https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement
 let imgAttributes = [
@@ -193,6 +193,8 @@ function createPopup (element) {
  * @return {void}         无
  */
 function bindPopup (element, img) {
+  // 是否在 mip-carousel 中
+  let carousel = dom.closest(element, 'mip-carousel')
   // 图片点击时展现图片
   img.addEventListener('click', function (event) {
     event.stopPropagation()
@@ -214,8 +216,9 @@ function bindPopup (element, img) {
       return
     }
 
-    let openEvent = new Event('openPopup', {bubbles: true})
-    element.dispatchEvent(openEvent)
+    if (carousel) {
+      customEmit(carousel, 'open-popup')
+    }
 
     let popupBg = popup.querySelector('.mip-img-popUp-bg')
     let mipCarousel = popup.querySelector('mip-carousel')
@@ -261,8 +264,11 @@ function bindPopup (element, img) {
         popup.remove()
       })
 
-      let closeEvent = new Event('closePopup', {bubbles: true})
-      element.dispatchEvent(closeEvent)
+      // let closeEvent = new Event('close-popup', {bubbles: true})
+      // element.dispatchEvent(closeEvent)
+      if (carousel) {
+        customEmit(carousel, 'close-popup')
+      }
     }
 
     let onResize = function () {
