@@ -193,11 +193,14 @@ function createPopup (element) {
  * @return {void}         无
  */
 function bindPopup (element, img) {
-  // 是否在 mip-carousel 中
-  let carousel = dom.closest(element, 'mip-carousel')
+  let carousel
   // 图片点击时展现图片
   img.addEventListener('click', function (event) {
     event.stopPropagation()
+    // 是否在 mip-carousel 中
+    if (!carousel) {
+      carousel = dom.closest(element, 'mip-carousel')
+    }
     let current = img.currentSrc || img.src
     // 图片未加载则不弹层
     /* istanbul ignore if */
@@ -264,8 +267,6 @@ function bindPopup (element, img) {
         popup.remove()
       })
 
-      // let closeEvent = new Event('close-popup', {bubbles: true})
-      // element.dispatchEvent(closeEvent)
       if (carousel) {
         customEmit(carousel, 'close-popup')
       }

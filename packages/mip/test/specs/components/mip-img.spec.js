@@ -162,11 +162,14 @@ describe('mip-img', function () {
 
   it('should popup and close the popup', async () => {
     let mipImg = document.createElement('mip-img')
+    let carou = document.createElement('mip-carousel')
     mipImg.setAttribute('width', '100px')
     mipImg.setAttribute('height', '100px')
     mipImg.setAttribute('src', 'https://boscdn.baidu.com/assets/mipengine/wide.jpg')
     mipImg.setAttribute('popup', 'true')
-    mipImgWrapper.appendChild(mipImg)
+    // carousel for triggering open-popup and close-popup event
+    carou.appendChild(mipImg)
+    mipImgWrapper.appendChild(carou)
 
     mipImg.viewportCallback(true)
 
@@ -185,7 +188,6 @@ describe('mip-img', function () {
     expect(mipPopWrap.querySelector('.mip-img-popUp-bg')).to.be.exist
     let carousel = mipPopWrap.querySelector('mip-carousel')
     expect(carousel).to.be.exist
-    expect(carousel.getAttribute('index')).to.equal('1')
 
     // 等待 carousel 生成
     await waitForChild(carousel, carousel => carousel.querySelector('.mip-carousel-wrapper'))
@@ -193,6 +195,7 @@ describe('mip-img', function () {
     // 等待 popup 完全关闭
     await timer.sleep(500)
     expect(mipPopWrap.style.display).to.equal('none')
+    mipImgWrapper.removeChild(carou)
   }).timeout(4000)
   it('should not popup if the image is not loaded', async () => {
     mipImgWrapper.innerHTML = `<mip-img popup src="https://www.wrong.org?test=1"></mip-img>`
