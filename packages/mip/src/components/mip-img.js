@@ -194,7 +194,7 @@ function createPopup (element) {
  */
 function bindPopup (element, img) {
   // 是否在 mip-carousel 中
-  let carousel = dom.closest(element, 'mip-carousel')
+  let carouselOutside = element.customElement.carouselOutside
   // 图片点击时展现图片
   img.addEventListener('click', function (event) {
     event.stopPropagation()
@@ -216,8 +216,8 @@ function bindPopup (element, img) {
       return
     }
 
-    if (carousel) {
-      customEmit(carousel, 'open-popup')
+    if (carouselOutside) {
+      customEmit(carouselOutside, 'open-popup')
     }
 
     let popupBg = popup.querySelector('.mip-img-popUp-bg')
@@ -269,8 +269,8 @@ function bindPopup (element, img) {
         popup.remove()
       })
 
-      if (carousel) {
-        customEmit(carousel, 'close-popup')
+      if (carouselOutside) {
+        customEmit(carouselOutside, 'close-popup')
       }
     }
 
@@ -376,6 +376,8 @@ class MipImg extends CustomElement {
 
   /** @overwrite */
   build () {
+    // 在 build 中判断，在 layoutCallback 可能不对（与执行顺序有关）
+    this.carouselOutside = dom.closest(this.element, 'mip-carousel')
     this.createPlaceholder()
   }
 
