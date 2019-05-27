@@ -167,6 +167,8 @@ function getChildNodes (element) {
     // 拷贝第一个和最后一个节点拼接dom
     let firstCard = childList[0].cloneNode(true)
     let endCard = childList[childList.length - 1].cloneNode(true)
+    firstCard.classList.add('mip-carousel-extra-img')
+    endCard.classList.add('mip-carousel-extra-img')
     childList.unshift(endCard)
     childList.push(firstCard)
   }
@@ -423,6 +425,7 @@ class MIPCarousel extends CustomElement {
     // 关闭 popup 时继续轮播
     ele.addEventListener('close-popup', e => {
       e.stopPropagation()
+      /* istanbul ignore if */
       if (isAutoPlay) {
         autoPlay()
       }
