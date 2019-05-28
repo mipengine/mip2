@@ -159,12 +159,6 @@ function getChildNodes (element) {
 
   arrNode.map(function (ele, i) {
     if (ele.tagName.toLowerCase() !== 'mip-i-space') {
-      // 如果是 autoplay，则不允许有 popup 功能
-      if (element.hasAttribute('autoplay')) {
-        if (ele.hasAttribute('popup')) {
-          ele.removeAttribute('popup')
-        }
-      }
       childList.push(ele)
       element.removeChild(ele)
     }
@@ -173,6 +167,8 @@ function getChildNodes (element) {
     // 拷贝第一个和最后一个节点拼接dom
     let firstCard = childList[0].cloneNode(true)
     let endCard = childList[childList.length - 1].cloneNode(true)
+    firstCard.classList.add('mip-carousel-extra-img')
+    endCard.classList.add('mip-carousel-extra-img')
     childList.unshift(endCard)
     childList.push(firstCard)
   }
@@ -419,6 +415,21 @@ class MIPCarousel extends CustomElement {
         autoPlay()
       }
     }, false)
+
+    // 打开 popup 时暂停轮播
+    ele.addEventListener('open-popup', e => {
+      e.stopPropagation()
+      clearInterval(moveInterval)
+    })
+
+    // 关闭 popup 时继续轮播
+    ele.addEventListener('close-popup', e => {
+      e.stopPropagation()
+      /* istanbul ignore if */
+      if (isAutoPlay) {
+        autoPlay()
+      }
+    })
 
     // 自动轮播
     if (isAutoPlay) {
