@@ -6,6 +6,8 @@
 /* eslint-disable no-unused-expressions */
 /* globals describe, before, it, expect, after */
 
+import {waitForChild} from 'src/util/dom/dom'
+
 let sleep = t => new Promise(resolve => setTimeout(resolve, t))
 
 describe('mip-carousel', function () {
@@ -60,10 +62,10 @@ describe('mip-carousel', function () {
               <div class="mip-carousle-subtitle">这里是title2</div>
           </a>
           <mip-img popup
-              src="https://www.mipengine.org/static/img/sample_02.jpg">
+              src="https://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg">
           </mip-img>
-          <mip-img
-              src="https://www.mipengine.org/static/img/sample_03.jpg">
+          <mip-img popup
+              src="https://boscdn.baidu.com/assets/mipengine/wide.jpg">
           </mip-img>
         </mip-carousel>
       `
@@ -80,7 +82,7 @@ describe('mip-carousel', function () {
       expect(wrapBox).to.be.exist
       expect(wrapBox.parentNode.classList.contains('mip-carousel-container')).to.be.true
       expect(slideBoxs.length).to.equal(5)
-      expect(slideBoxs[0].querySelector('img').getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_03.jpg')
+      expect(slideBoxs[0].querySelector('img').getAttribute('src')).to.equal('https://boscdn.baidu.com/assets/mipengine/wide.jpg')
       expect(slideBoxs[4].querySelector('img').getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_01.jpg')
     })
 
@@ -88,10 +90,6 @@ describe('mip-carousel', function () {
       // 定时播放，所以使用 setTimeout 定时检查 400 + 100
       await sleep(500)
       expect(wrapBox.style.transform).to.equal('translate3d(-200px, 0px, 0px)')
-    })
-
-    it('should not popup when autoplay', function () {
-      expect(slideBoxs[2].getAttribute('popup')).to.be.null
     })
 
     it('should move to next img when touch', async function () {
@@ -118,6 +116,29 @@ describe('mip-carousel', function () {
       await sleep(100)
       expect(wrapBox.style.transform).to.be.oneOf(['translate3d(-100px, 0px, 0px)', 'translate3d(-400px, 0px, 0px)'])
     })
+
+    it('should popup and close popup', async () => {
+      let mipImg = slideBoxs[2].querySelector('mip-img')
+      expect(mipImg.hasAttribute('popup')).to.be.true
+      let img = mipImg.querySelector('img')
+      let evt = document.createEvent('MouseEvents')
+      // 图片可能未加载
+      await sleep(500)
+      evt.initEvent('click', true, true)
+      img.dispatchEvent(evt)
+      await waitForChild(document.body, body => body.querySelector('.mip-img-popUp-wrapper'))
+      let mipPopWrap = document.querySelector('.mip-img-popUp-wrapper')
+      expect(mipPopWrap.getAttribute('data-name')).to.equal('mip-img-popUp-name')
+      await waitForChild(mipPopWrap, mipPopWrap => mipPopWrap.querySelector('mip-carousel'))
+      let carousel = mipPopWrap.querySelector('mip-carousel')
+      expect(carousel).to.be.exist
+      carousel.viewportCallback(true)
+      await waitForChild(carousel, carousel => carousel.querySelector('.mip-carousel-wrapper'))
+      mipPopWrap.dispatchEvent(evt)
+      // 等待 popup 完全关闭
+      await sleep(500)
+      expect(carousel.style.display).to.equal('none')
+    }).timeout(4000)
 
     after(function () {
       document.body.removeChild(div)

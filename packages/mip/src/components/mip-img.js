@@ -12,7 +12,7 @@ import CustomElement from '../custom-element'
 import viewport from '../viewport'
 import viewer from '../viewer'
 
-const {css, rect, event, naboo, platform} = util
+const {css, rect, event, naboo, platform, dom} = util
 
 // 取值根据 https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement
 let imgAttributes = [
@@ -93,13 +93,13 @@ function getImgOffset (img) {
  * @return {Object} 保存 src 数组和 index
  */
 function getImgsSrcIndex (ele) {
-  // 取已渲染的 popup 图片
+  // 取已渲染的 popup 图片，不包括 carousel 中头尾的两个图片
   const mipImgs = [...document.querySelectorAll('mip-img[popup].mip-img-loaded')]
+                    .filter(mipImg => !mipImg.classList.contains('mip-carousel-extra-img'))
   let index = mipImgs.indexOf(ele)
-  // just check
   /* istanbul ignore if */
   if (index === -1) {
-    index = 0
+    return {imgsSrcArray: [], index}
   }
   const imgsSrcArray = mipImgs.map(mipImg => {
     let img = mipImg.querySelector('img')
@@ -136,7 +136,7 @@ function getCurrentImg (carouselWrapper, mipCarousel) {
 function createPopup (element) {
   const {imgsSrcArray, index} = getImgsSrcIndex(element)
   /* istanbul ignore if */
-  if (imgsSrcArray.length === 0) {
+  if (imgsSrcArray.length === 0 || index === -1) {
     return
   }
   let popup = document.createElement('div')
@@ -183,7 +183,6 @@ function createPopup (element) {
   popup.appendChild(popUpBg)
   popup.appendChild(carouselWrapper)
   document.body.appendChild(popup)
-
   return popup
 }
 /**
@@ -194,6 +193,8 @@ function createPopup (element) {
  * @return {void}         无
  */
 function bindPopup (element, img) {
+  // 是否在 mip-carousel 中
+  let carouselOutside = element.customElement.carouselOutside
   // 图片点击时展现图片
   img.addEventListener('click', function (event) {
     event.stopPropagation()
@@ -214,11 +215,21 @@ function bindPopup (element, img) {
     if (!popup) {
       return
     }
+
+    if (carouselOutside) {
+      customEmit(carouselOutside, 'open-popup')
+    }
+
     let popupBg = popup.querySelector('.mip-img-popUp-bg')
     let mipCarousel = popup.querySelector('mip-carousel')
     let popupImg = new Image()
     popupImg.setAttribute('src', current)
     popup.appendChild(popupImg)
+    
+    // 背景 fade in
+    naboo.animate(popupBg, {
+      opacity: 1
+    }).start()
 
     let imgOffset = getImgOffset(img)
 
@@ -257,6 +268,10 @@ function bindPopup (element, img) {
         popup.removeEventListener('click', imagePop, false)
         popup.remove()
       })
+
+      if (carouselOutside) {
+        customEmit(carouselOutside, 'close-popup')
+      }
     }
 
     let onResize = function () {
@@ -361,6 +376,8 @@ class MipImg extends CustomElement {
 
   /** @overwrite */
   build () {
+    // 在 build 中判断，在 layoutCallback 可能不对（与执行顺序有关）
+    this.carouselOutside = dom.closest(this.element, 'mip-carousel')
     this.createPlaceholder()
   }
 
