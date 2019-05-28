@@ -65,20 +65,9 @@ export function renderMixin (Vue) {
     const vm = this
     const {render, _parentVnode} = vm.$options
 
-    if (vm._isMounted) {
-      // if the parent didn't update, the slot nodes will be the ones from
-      // last render. They need to be cloned to ensure "freshness" for this render.
-      for (const key in vm.$slots) {
-        const slot = vm.$slots[key]
-        if (slot._rendered) {
-          vm.$slots[key] = cloneVNodes(slot, true
-            // deep
-          )
-        }
-      }
+    if (_parentVnode) {
+      vm.$scopedSlots = _parentVnode.data.scopedSlots || emptyObject
     }
-
-    vm.$scopedSlots = (_parentVnode && _parentVnode.data.scopedSlots) || emptyObject
 
     // set parent vnode. this allows render functions to have access
     // to the data on the placeholder node.
