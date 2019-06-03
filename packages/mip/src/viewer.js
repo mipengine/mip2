@@ -160,16 +160,22 @@ let viewer = {
   sendMessageToBaiduApp (eventName, data = {}) {
     // 和端通信, 可以上报性能数据，也可以通知隐藏 loading
     if (platform.isBaiduApp() && platform.isAndroid()) {
-      window._flyflowNative && window._flyflowNative.exec('bd_mip', 'onMessage', JSON.stringify({
-        type: 5, // 必选，和端的约定
-        act: {
-          [OUTER_MESSAGE_MIP_PAGE_LOAD]: 'hideloading',
-          [OUTER_MESSAGE_PERFORMANCE_UPDATE]: 'perf',
-          [OUTER_MESSAGE_PUSH_STATE]: 'click',
-          [OUTER_MESSAGE_REPLACE_STATE]: 'click'
-        }[eventName] || 'none',
-        data
-      }), '')
+      let act = {
+        [OUTER_MESSAGE_MIP_PAGE_LOAD]: 'hideloading',
+        [OUTER_MESSAGE_PERFORMANCE_UPDATE]: 'perf',
+        [OUTER_MESSAGE_PUSH_STATE]: 'click',
+        [OUTER_MESSAGE_REPLACE_STATE]: 'click'
+      }[eventName]
+
+      act && window._flyflowNative && window._flyflowNative.exec(
+        'bd_mip',
+        'onMessage',
+        JSON.stringify({
+          type: 5, // 必选，和端的约定
+          act,
+          data
+        }), ''
+      )
     }
   },
 
