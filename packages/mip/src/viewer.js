@@ -19,7 +19,9 @@ import {
   CUSTOM_EVENT_SHOW_PAGE,
   CUSTOM_EVENT_HIDE_PAGE,
   OUTER_MESSAGE_PUSH_STATE,
-  OUTER_MESSAGE_REPLACE_STATE
+  OUTER_MESSAGE_REPLACE_STATE,
+  OUTER_MESSAGE_MIP_PAGE_LOAD,
+  OUTER_MESSAGE_PERFORMANCE_UPDATE
 } from './page/const'
 import {isMIPShellDisabled} from './page/util/dom'
 import {resolvePath} from './page/util/path'
@@ -115,7 +117,7 @@ let viewer = {
 
     // notify SF hide its loading
     if (win.MIP.viewer.page.isRootPage) {
-      this.sendMessage('mippageload', {
+      this.sendMessage(OUTER_MESSAGE_MIP_PAGE_LOAD, {
         time: Date.now(),
         title: encodeURIComponent(document.title)
       })
@@ -141,8 +143,39 @@ let viewer = {
         if (clientPrerender.isPrerendered && data.time) {
           data.time = Date.now()
         }
+
+        if (eventName === OUTER_MESSAGE_PERFORMANCE_UPDATE ||
+          eventName === OUTER_MESSAGE_MIP_PAGE_LOAD
+        ) {
+          this.sendMessageToBaiduApp(eventName, data)
+        }
+
         this.messager.sendMessage(eventName, data)
       })
+    }
+  },
+
+  /**
+   * Send message to BaiduApp
+   * including following types:
+   *
+   * 1. `mippageload` when current page loaded
+   * 2. `performance-update`
+   *
+   * @param {string} eventName
+   * @param {Object} data Message body
+   */
+  sendMessageToBaiduApp (eventName, data = {}) {
+    // 和端通信, 可以上报性能数据，也可以通知隐藏 loading
+    if (platform.isBaiduApp && platform.isAndroid) {
+      window._flyflowNative && window._flyflowNative.exec('bd_mip', 'onMessage', JSON.stringify({
+        type: 5, // 必选，和端的约定
+        act: {
+          [OUTER_MESSAGE_MIP_PAGE_LOAD]: 'hideloading',
+          [OUTER_MESSAGE_PERFORMANCE_UPDATE]: 'perf'
+        }[eventName] || 'perf',
+        data
+      }), '')
     }
   },
 
