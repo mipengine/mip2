@@ -143,15 +143,14 @@ let viewer = {
         if (clientPrerender.isPrerendered && data.time) {
           data.time = Date.now()
         }
-
-        if (eventName === OUTER_MESSAGE_PERFORMANCE_UPDATE ||
-          eventName === OUTER_MESSAGE_MIP_PAGE_LOAD
-        ) {
-          this.sendMessageToBaiduApp(eventName, data)
-        }
-
         this.messager.sendMessage(eventName, data)
       })
+    }
+
+    if (eventName === OUTER_MESSAGE_PERFORMANCE_UPDATE ||
+      eventName === OUTER_MESSAGE_MIP_PAGE_LOAD
+    ) {
+      this.sendMessageToBaiduApp(eventName, data)
     }
   },
 
