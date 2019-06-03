@@ -147,19 +147,12 @@ let viewer = {
       })
     }
 
-    if (eventName === OUTER_MESSAGE_PERFORMANCE_UPDATE ||
-      eventName === OUTER_MESSAGE_MIP_PAGE_LOAD
-    ) {
-      this.sendMessageToBaiduApp(eventName, data)
-    }
+    this.sendMessageToBaiduApp(eventName, data)
   },
 
   /**
    * Send message to BaiduApp
    * including following types:
-   *
-   * 1. `mippageload` when current page loaded
-   * 2. `performance-update`
    *
    * @param {string} eventName
    * @param {Object} data Message body
@@ -171,8 +164,10 @@ let viewer = {
         type: 5, // 必选，和端的约定
         act: {
           [OUTER_MESSAGE_MIP_PAGE_LOAD]: 'hideloading',
-          [OUTER_MESSAGE_PERFORMANCE_UPDATE]: 'perf'
-        }[eventName] || 'perf',
+          [OUTER_MESSAGE_PERFORMANCE_UPDATE]: 'perf',
+          [OUTER_MESSAGE_PUSH_STATE]: 'click',
+          [OUTER_MESSAGE_REPLACE_STATE]: 'click'
+        }[eventName] || 'none',
         data
       }), '')
     }
@@ -260,7 +255,8 @@ let viewer = {
     // Send statics message to BaiduResult page
     let pushMessage = {
       url: parseCacheUrl(completeUrl),
-      state
+      state,
+      click: Date.now()
     }
     this.sendMessage(replace ? OUTER_MESSAGE_REPLACE_STATE : OUTER_MESSAGE_PUSH_STATE, pushMessage)
 
