@@ -166,7 +166,7 @@ let viewer = {
    */
   sendMessageToBaiduApp (eventName, data = {}) {
     // 和端通信, 可以上报性能数据，也可以通知隐藏 loading
-    if (platform.isBaiduApp && platform.isAndroid) {
+    if (platform.isBaiduApp() && platform.isAndroid()) {
       window._flyflowNative && window._flyflowNative.exec('bd_mip', 'onMessage', JSON.stringify({
         type: 5, // 必选，和端的约定
         act: {
