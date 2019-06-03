@@ -1,99 +1,35 @@
 {
-  "name": "mip2",
-  "version": "1.5.12",
-  "description": "CLI for mip 2.0",
-  "preferGlobal": true,
-  "bin": {
-    "mip2": "bin/mip2"
-  },
+  "name": "mip-cli",
+  "version": "2.0.0",
+  "description": "CLI for MIP 2.0",
+  "main": "index.js",
   "scripts": {
-    "test": "mocha test/**/*.spec.js",
-    "lint": "eslint lib"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mipengine/mip2.git"
+    "tsc": "tsc --project .",
+    "eslint": "eslint src --ext .ts",
+    "tslint": "tslint --project . src/**/*.ts"
   },
   "keywords": [
-    "mip",
-    "2.0"
+    "MIP"
   ],
-  "contributors": [
-    {
-      "name": "tracy",
-      "email": "qiushidev@gmail.com"
-    }
-  ],
+  "author": "",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/mipengine/mip2/issues"
-  },
-  "homepage": "https://github.com/mipengine/mip2/blob/master/packages/mip-cli/README.md",
-  "dependencies": {
-    "@babel/core": "~7.3.4",
-    "@babel/plugin-proposal-class-properties": "^7.4.4",
-    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
-    "@babel/plugin-transform-runtime": "~7.3.4",
-    "@babel/preset-env": "~7.3.4",
-    "@babel/register": "~7.0.0",
-    "@babel/runtime": "~7.3.4",
-    "async": "^2.6.0",
-    "autoprefixer": "^8.5.0",
-    "babel-loader": "^8.0.5",
-    "chalk": "^2.4.1",
-    "chokidar": "^2.0.3",
-    "commander": "^2.15.1",
-    "core-js": "~2.6.5",
-    "css-loader": "^0.28.11",
-    "cssnano": "^4.1.7",
-    "deepmerge": "^2.1.1",
-    "download-git-repo": "^1.0.2",
-    "etpl": "^3.2.0",
-    "execa": "^0.10.0",
-    "file-loader": "^1.1.11",
-    "fs-extra": "^6.0.0",
-    "glob": "^7.1.2",
-    "imports-loader": "^0.8.0",
-    "inquirer": "^5.2.0",
-    "koa": "^2.5.1",
-    "koa-router": "^7.4.0",
-    "koa-static": "^4.0.3",
-    "koa-webpack": "^4.0.0",
-    "less": "^3.0.4",
-    "less-loader": "^4.1.0",
-    "livereload": "^0.7.0",
-    "metalsmith": "^2.3.0",
-    "minimatch": "^3.0.4",
-    "mip-component-validator": "^1.1.7",
-    "mip-components-webpack-helpers": "^1.0.17",
-    "mip-sandbox": "^1.1.9",
-    "mip-validator": "^1.5.15",
-    "opn": "^5.3.0",
-    "ora": "^2.1.0",
-    "postcss-loader": "^2.1.5",
-    "request": "^2.85.0",
-    "rimraf": "^2.6.2",
-    "semver": "^5.5.0",
-    "stylus": "^0.54.5",
-    "stylus-loader": "^3.0.2",
-    "url-loader": "^1.0.1",
-    "user-home": "^2.0.0",
-    "vue-loader": "^15.0.10",
-    "vue-style-loader": "^4.1.0",
-    "vue-template-compiler": "2.5.16",
-    "webpack": "~4.12.1",
-    "webpack-dev-middleware": "3.6.0",
-    "webpack-sources": "^1.1.0",
-    "workbox-build": "3.2.0",
-    "wrapper-webpack-plugin": "^2.0.0"
-  },
   "engines": {
     "node": ">=7.6"
   },
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "request": "^2.88.0",
+    "semver": "^6.1.1"
+  },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "mocha": "^5.2.0",
-    "nyc": "^11.7.3",
-    "supertest": "^3.1.0"
+    "@types/node": "^12.0.4",
+    "@types/request": "^2.48.1",
+    "@types/semver": "^6.0.0",
+    "eslint": "^5.16.0",
+    "eslint-plugin-typescript": "^0.14.0",
+    "tslint": "^5.17.0",
+    "tslint-config-airbnb": "^5.11.1",
+    "typescript": "^3.5.1",
+    "typescript-eslint-parser": "^22.0.0"
   }
 }

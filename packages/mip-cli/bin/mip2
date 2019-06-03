@@ -1,31 +1,6 @@
 #!/usr/bin/env node
 
-require('../lib/utils/compat')
+const {checkVersion} = require('../dist/index')
 
-const cli = require('../lib/cli')
-const version = require('../package').version
-const checkVersion = require('../lib/utils/check-version')
+checkVersion()
 
-checkVersion().then(() => {
-  cli.program
-    .usage('<command> [options]')
-    .version(version)
-    .command('init', cli.chalk.green('初始化 MIP 2.0 项目'))
-    .command('add', cli.chalk.green('新增一个组件'))
-    .command('validate', cli.chalk.green('验证 MIP 2.0 网页或组件'))
-    .command('dev', cli.chalk.green('启动调试服务器'))
-    .command('build', cli.chalk.green('组件打包'))
-    .command('sw', cli.chalk.green('生成 Service Worker'))
-    .command('addPlugin', 'default for add Plugin', {isDefault: true, noHelp: true})
-    .on('--help', () => {
-      const {showPluginCmdHelpInfo} = require('../lib/utils/plugin')
-      // only for user plugin command's help info
-      showPluginCmdHelpInfo()
-    })
-    .parse(process.argv)
-
-  // if input only `mip2`, show help info
-  if (cli.program.args[0] === 'addPlugin' && cli.program.args.length === 1) {
-    cli.program.help()
-  }
-})
