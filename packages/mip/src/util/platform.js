@@ -119,12 +119,12 @@ class Platform {
   getOsVersion () {
     let osVersion
     let result
-    if (this.isAndroid()) {
+    if (this.isAndroid) {
       result = /Android ([._\d]+)/.exec(this._ua()) || /Android\/([\d.]+)/.exec(this._ua())
       if (result && result.length > 1) {
         osVersion = result[1]
       }
-    } else if (this.isIOS()) {
+    } else if (this.isIOS) {
       result = /OS (\d+)_(\d+)_?(\d+)?/.exec(this._appVersion())
       if (result && result.length > 3) {
         osVersion = result[1] + '.' + result[2] + '.' + (result[3] | 0)

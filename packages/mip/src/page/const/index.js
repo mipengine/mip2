@@ -53,6 +53,7 @@ export const BUILT_IN_COMPONENTS = [
 export const MAX_PAGE_NUM = 6
 
 // 和 SF 通讯的事件名称
+export const OUTER_MESSAGE_MIP_PAGE_LOAD = 'mippageload'
 export const OUTER_MESSAGE_PERFORMANCE_UPDATE = 'performance-update'
 export const OUTER_MESSAGE_STABILITY_LOG = 'stability-log'
 export const OUTER_MESSAGE_PERFORMANCE_ANALYSIS_LOG = 'performance-analysis-log'
