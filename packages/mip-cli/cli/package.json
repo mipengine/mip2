@@ -2,9 +2,12 @@
   "name": "mip-cli",
   "version": "2.0.0",
   "description": "CLI for MIP 2.0",
-  "main": "index.js",
+  "preferGlobal": true,
+  "bin": {
+    "mip2": "bin/mip2"
+  },
   "scripts": {
-    "tsc": "tsc --project .",
+    "tsc": "tsc --project . --watch",
     "eslint": "eslint src --ext .ts",
     "tslint": "tslint --project . src/**/*.ts"
   },
@@ -18,6 +21,7 @@
   },
   "dependencies": {
     "chalk": "^2.4.2",
+    "commander": "^2.20.0",
     "request": "^2.88.0",
     "semver": "^6.1.1"
   },

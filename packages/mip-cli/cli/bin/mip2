@@ -1,6 +1,29 @@
 #!/usr/bin/env node
 
-const {checkVersion} = require('../dist/index')
+const program = require('commander')
+const requiredNodeVersion = require('../package.json').engines.node
+const {checkNodeVersion, cleanArgs} = require('../dist/utils/cli')
 
-checkVersion()
+checkNodeVersion(requiredNodeVersion)
+
+program
+  .usage('<command> [options]')
+  .version(require('../package.json').version)
+
+program
+  .command('init')
+  .option('-g, --get <path>', 'get value from option')
+  .option('-s, --set', 'set option value')
+  .description('初始化 MIP 项目')
+  .action((cmd) => {
+    require('../dist/init').init(cleanArgs(cmd))
+  })
+
+program.parse(process.argv)
+
+if (!process.argv.slice(2).length) {
+  program.outputHelp()
+}
+
+
 
