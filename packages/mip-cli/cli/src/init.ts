@@ -3,9 +3,9 @@
  * @author tracy(qiushidev@gmail.com)
  */
 
-import {Arguments} from './types/interface'
+import { Arguments } from './interface'
 
-export function init(args: Arguments) {
+export function init (args: Arguments) {
   console.log('---- invoke init ----')
   console.log('args:')
   console.log(args)

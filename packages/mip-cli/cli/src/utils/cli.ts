@@ -6,7 +6,7 @@
 import semver from 'semver'
 import chalk from 'chalk'
 import {Command, Option} from 'commander'
-import {Arguments} from '../types/interface'
+import {Arguments} from '../interface'
 
 export function checkNodeVersion(expectVersion: string): void {
   if (!semver.satisfies(process.version, expectVersion)) {

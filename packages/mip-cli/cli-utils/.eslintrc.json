@@ -5,10 +5,14 @@
     "project": "./tsconfig.json"
   },
   "extends": [
-    "standard",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "standard"
   ],
   "plugins": [
     "@typescript-eslint"
-  ]
+  ],
+  "rules": {
+    "@typescript-eslint/indent": 0,
+    "@typescript-eslint/explicit-function-return-type": 0
+  }
 }
