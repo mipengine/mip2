@@ -6,8 +6,6 @@
 import program from 'commander'
 
 export function load (command: string, subcommand?: string) {
-
-
   // 1 检查plugin 是否安装
   // 2 npm install 安装plugin
   // 3 根据命令 子命令 加载模块
@@ -20,7 +18,6 @@ export function load (command: string, subcommand?: string) {
 }
 
 function setupCommand () {
-
   program
     .command('dev <name>')
     .option('-p, --port <port>', '端口号')

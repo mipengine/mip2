@@ -11,11 +11,11 @@ program
   .usage('<command> [options]')
 
 program
-  .command('add <pluginName>')
+  .command('install <pluginName>')
   .option('-r, --registry <url>', '指定安装使用的 registry')
   .description('安装插件')
   .action((pluginName, cmd) => {
-    require('../dist/add').add(pluginName, cleanArgs(cmd))
+    require('../dist/install').add(pluginName, cleanArgs(cmd))
   })
 
 // for unknown command, install the plugin

@@ -1,14 +1,11 @@
 import chalk from 'chalk'
-import {format} from 'util'
 
 export function info (...args: any[]) {
-  const msg = format(args)
-  console.log(chalk.green('INFO'), msg)
+  console.log(chalk.green('INFO'), ...args)
 }
 
 export function warn (...args: any[]) {
-  const msg = format(args)
-  console.log(chalk.yellow('WARN'), msg)
+  console.log(chalk.yellow('WARN'), ...args)
 }
 
 export function error (...args: any[]) {

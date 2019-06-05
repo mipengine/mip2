@@ -9,7 +9,7 @@ import { Command, Option } from 'commander'
 import { Value, CliConfiguration } from '../interface'
 
 export function setup (config: CliConfiguration) {
-
+  console.log(config)
 }
 
 export function checkNodeVersion (expectVersion: string) {
