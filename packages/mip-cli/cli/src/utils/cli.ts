@@ -5,24 +5,28 @@
 
 import semver from 'semver'
 import chalk from 'chalk'
-import {Command, Option} from 'commander'
-import {Arguments} from '../interface'
+import program, { Command, Option } from 'commander'
+import { Value, CliConfiguration } from '../interface'
 
-export function checkNodeVersion(expectVersion: string): void {
+export function setup (config: CliConfiguration) {
+
+}
+
+export function checkNodeVersion (expectVersion: string) {
   if (!semver.satisfies(process.version, expectVersion)) {
     console.log(
-      chalk.red(`您的 Node 版本是 ${process.version}，MIP CLI 需要 ${expectVersion} 及以上版本，请升级您的 Node 版本。` )
+      chalk.red(`您的 Node 版本是 ${process.version}，MIP CLI 需要 ${expectVersion} 及以上版本，请升级您的 Node 版本。`)
     )
     process.exit(1)
   }
 }
 
-export function camelize (str: string): string {
+export function camelize (str: string) {
   return str.replace(/-(\w)/g, (_, c) => c ? c.toUpperCase() : '')
 }
 
 export function cleanArgs (cmd: Command) {
-  const args: Arguments = {}
+  const args: Record<string, Value | undefined> = {}
 
   cmd.options.forEach((o: Option) => {
     const key: string = camelize(o.long.replace(/^--/, ''))

@@ -9,3 +9,9 @@ export type Value = number | string | boolean | (number | string | boolean)[];
 export interface Arguments {
   [argName: string]: Value | undefined;
 }
+
+export interface CliConfiguration {
+  description: string,
+  command: string,
+  options: string[]
+}
