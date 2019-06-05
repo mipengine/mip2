@@ -5,7 +5,7 @@
 
 import semver from 'semver'
 import chalk from 'chalk'
-import program, { Command, Option } from 'commander'
+import { Command, Option } from 'commander'
 import { Value, CliConfiguration } from '../interface'
 
 export function setup (config: CliConfiguration) {

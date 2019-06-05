@@ -2,11 +2,13 @@
   "name": "mip-cli-utils",
   "version": "0.0.1",
   "description": "CLI utils for MIP 2.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
+    "build": "rm -rf dist && tsc -d",
     "tsc": "tsc --project .",
     "eslint": "eslint src --ext .ts"
   },
+  "types": "dist/index.d.ts",
   "keywords": [
     "MIP",
     "CLI",
@@ -17,8 +19,11 @@
   "engines": {
     "node": ">=7.6"
   },
-  "dependencies": {},
+  "dependencies": {
+    "chalk": "^2.4.2"
+  },
   "devDependencies": {
+    "@types/chalk": "^2.2.0",
     "@types/node": "^12.0.4",
     "@typescript-eslint/eslint-plugin": "^1.9.0",
     "@typescript-eslint/parser": "^1.9.0",

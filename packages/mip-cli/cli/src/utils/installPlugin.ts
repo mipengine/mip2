@@ -4,6 +4,7 @@
  */
 
 import { Arguments } from '../interface'
+import utils from '../../../cli-utils'
 
 export function addPlugin (pluginName: string, options: Arguments) {
 

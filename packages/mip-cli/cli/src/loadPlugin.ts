@@ -20,6 +20,7 @@ export function load (command: string, subcommand?: string) {
 }
 
 function setupCommand () {
+
   program
     .command('dev <name>')
     .option('-p, --port <port>', '端口号')

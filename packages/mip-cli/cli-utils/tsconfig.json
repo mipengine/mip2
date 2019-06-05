@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "src",
     "module": "commonjs",
     "target": "es6",
     "moduleResolution": "node",
@@ -11,7 +10,7 @@
     "noUnusedParameters": true,
     "removeComments": true,
     "esModuleInterop": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "lib": [
       "dom",
       "esnext"
