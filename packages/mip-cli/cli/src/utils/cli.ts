@@ -5,13 +5,14 @@
 
 import semver from 'semver'
 import chalk from 'chalk'
-import {Command, Option} from 'commander'
-import {Arguments} from '../interface'
+import { Command, Option } from 'commander'
+import { Arguments } from '../interface'
+import { format } from 'util'
 
-export function checkNodeVersion(expectVersion: string): void {
+export function checkNodeVersion (expectVersion: string): void {
   if (!semver.satisfies(process.version, expectVersion)) {
     console.log(
-      chalk.red(`您的 Node 版本是 ${process.version}，MIP CLI 需要 ${expectVersion} 及以上版本，请升级您的 Node 版本。` )
+      chalk.red(`您的 Node 版本是 ${process.version}，MIP CLI 需要 ${expectVersion} 及以上版本，请升级您的 Node 版本。`)
     )
     process.exit(1)
   }
@@ -33,4 +34,18 @@ export function cleanArgs (cmd: Command) {
     }
   })
   return args
+}
+
+export function info (...args: string[]) {
+  const msg = format.apply(format, args)
+  console.log(chalk.green('INFO'), msg)
+}
+
+export function warn (...args: string[]) {
+  const msg = format.apply(format, args)
+  console.log(chalk.yellow('WARN'), msg)
+}
+
+export function error (...args: string[]) {
+  console.error(chalk.red('ERROR'), ...args)
 }

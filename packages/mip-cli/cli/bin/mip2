@@ -2,7 +2,7 @@
 
 const program = require('commander')
 const requiredNodeVersion = require('../package.json').engines.node
-const {checkNodeVersion, cleanArgs} = require('../dist/utils/cli')
+const { checkNodeVersion, cleanArgs } = require('../dist/utils/cli')
 
 checkNodeVersion(requiredNodeVersion)
 
@@ -19,11 +19,17 @@ program
     require('../dist/init').init(cleanArgs(cmd))
   })
 
+program
+  .command('add <component-name>')
+  .option('-v, --vue', '添加组件类型为 Vue 组件')
+  .option('-f, --force', '是否覆盖')
+  .description('新增一个组件')
+  .action((cname, args) => {
+    require('../dist/add').add({ compName: cname, options: cleanArgs(args) })
+  })
+
 program.parse(process.argv)
 
 if (!process.argv.slice(2).length) {
   program.outputHelp()
 }
-
-
-

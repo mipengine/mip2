@@ -21,15 +21,32 @@
     "node": ">=7.6"
   },
   "dependencies": {
+    "async": "^3.0.1",
     "chalk": "^2.4.2",
+    "child_process": "^1.0.2",
     "commander": "^2.20.0",
+    "download-git-repo": "^2.0.0",
+    "etpl": "^3.2.0",
+    "glob": "7.1.4",
+    "inquirer": "^6.3.1",
+    "metalsmith": "^2.3.0",
+    "ora": "^3.4.0",
     "request": "^2.88.0",
-    "semver": "^6.1.1"
+    "rimraf": "^2.6.3",
+    "semver": "^6.1.1",
+    "user-home": "^2.0.0"
   },
   "devDependencies": {
+    "@types/fs-extra": "^7.0.0",
+    "@types/async": "^3.0.0",
+    "@types/glob": "^7.1.1",
+    "@types/inquirer": "^6.0.3",
+    "@types/metalsmith": "^2.3.0",
     "@types/node": "^12.0.4",
     "@types/request": "^2.48.1",
+    "@types/rimraf": "^2.0.2",
     "@types/semver": "^6.0.0",
+    "@types/user-home": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "^1.9.0",
     "@typescript-eslint/parser": "^1.9.0",
     "eslint": "^5.16.0",
