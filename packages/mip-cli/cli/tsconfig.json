@@ -3,7 +3,6 @@
         "baseUrl": ".",
         "paths": { "*": ["types/*"] },
         "outDir": "./dist",
-        "rootDir": "src",
         "module": "commonjs",
         "target": "es6",
         "moduleResolution": "node",

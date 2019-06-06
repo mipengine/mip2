@@ -7,16 +7,15 @@ const { checkNodeVersion, cleanArgs } = require('../dist/utils/cli')
 checkNodeVersion(requiredNodeVersion)
 
 program
+  .version(require('../package').version, '-v, --version')
   .usage('<command> [options]')
-  .version(require('../package.json').version)
 
 program
-  .command('init')
-  .option('-g, --get <path>', 'get value from option')
-  .option('-s, --set', 'set option value')
-  .description('初始化 MIP 项目')
-  .action((cmd) => {
-    require('../dist/init').init(cleanArgs(cmd))
+  .command('add <pluginName>')
+  .option('-r, --registry <url>', '指定安装使用的 registry')
+  .description('安装插件')
+  .action((pluginName, cmd) => {
+    require('../dist/add').add(pluginName, cleanArgs(cmd))
   })
 
 program
@@ -27,6 +26,20 @@ program
   .action((cname, args) => {
     require('../dist/add').add({ compName: cname, options: cleanArgs(args) })
   })
+
+// for unknown command, install the plugin
+program
+  .arguments('<command> [subcommand]')
+  .action((command, subcommand) => {
+    require('../dist/loadPlugin').load(command, subcommand)
+  })
+
+// add some useful info on help
+program.on('--help', () => {
+  console.log()
+  console.log(`使用 mip2 <command> --help 查看命令帮助详情`)
+  console.log()
+})
 
 program.parse(process.argv)
 

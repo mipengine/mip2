@@ -6,10 +6,10 @@
 // import { Arguments } from './interface'
 import path from 'path'
 import fs from 'fs-extra'
-import { downloadRepo, generate } from './utils/template'
-import { globPify } from './utils/helper'
+import { downloadRepo, generate } from '../../cli-utils/src/template'
+import globPify from '../../cli-utils/src/helper'
 import { promisify } from 'util'
-import * as cli from './utils/cli'
+import * as cli from '../../cli-utils/src/logger'
 
 const templateDir = 'template/components/mip-example'
 

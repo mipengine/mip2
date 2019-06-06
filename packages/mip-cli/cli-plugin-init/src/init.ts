@@ -3,9 +3,9 @@
  * @author tracy(qiushidev@gmail.com)
  */
 
-import { Arguments } from './interface'
-import * as cli from './utils/cli'
-import { downloadRepo, generate } from './utils/template'
+import { Arguments } from '../../cli/src/interface'
+import * as cli from '../../cli-utils/src/logger'
+import { downloadRepo, generate } from '../../cli-utils/src/template'
 
 const templateDir = 'template'
 

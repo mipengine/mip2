@@ -19,6 +19,6 @@ function pify (fn: Function) {
   })
 }
 
-export function globPify (...args: (string| object)[]): Promise<string[]> {
+export default function globPify (...args: (string| object)[]): Promise<string[]> {
   return pify(glob)(...args)
 }

@@ -1,35 +1,25 @@
 {
-  "name": "mip-cli",
-  "version": "2.0.0",
-  "description": "CLI for MIP 2.0",
-  "preferGlobal": true,
-  "bin": {
-    "mip2": "bin/mip2"
-  },
+  "name": "mip-cli-plugins-init",
+  "version": "0.0.1",
+  "description": "CLI init plugin for MIP 2.0",
+  "main": "index.js",
   "scripts": {
-    "dev": "tsc -w",
-    "build": "rm -rf dist && tsc",
+    "tsc": "tsc --project .",
     "eslint": "eslint src --ext .ts"
   },
-  "types": "./index.d.ts",
   "keywords": [
-    "MIP"
+    "MIP",
+    "CLI",
+    "utils"
   ],
   "author": "",
   "license": "MIT",
   "engines": {
     "node": ">=7.6"
   },
-  "dependencies": {
-    "chalk": "^2.4.2",
-    "commander": "^2.20.0",
-    "request": "^2.88.0",
-    "semver": "^6.1.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^12.0.4",
-    "@types/request": "^2.48.1",
-    "@types/semver": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^1.9.0",
     "@typescript-eslint/parser": "^1.9.0",
     "eslint": "^5.16.0",
