@@ -3,13 +3,13 @@
  * @author tracy(qiushidev@gmail.com)
  */
 
-import { installPlugin } from './utils/installPlugin'
+import { installOrUpdatePlugin } from './utils/plugin'
 
 interface Option {
   registry: string;
 }
 
-export function add (name: string, options: Option) {
+export function install (names: string[], options: Option) {
   const { registry } = options
-  installPlugin('npm', name, registry)
+  installOrUpdatePlugin('install', names, registry)
 }

@@ -11,11 +11,26 @@ program
   .usage('<command> [options]')
 
 program
-  .command('install <pluginName>')
+  .command('install <pluginName...>')
   .option('-r, --registry <url>', '指定安装使用的 registry')
   .description('安装插件')
   .action((pluginName, cmd) => {
-    require('../dist/install').add(pluginName, cleanArgs(cmd))
+    require('../dist/install').install(pluginName, cleanArgs(cmd))
+  })
+
+program
+  .command('list')
+  .description('显示插件列表')
+  .action(() => {
+    require('../dist/list').list()
+  })
+
+program
+  .command('update [pluginName...]')
+  .option('-r, --registry <url>', '指定更新使用的 registry')
+  .description('更新插件')
+  .action((pluginName, cmd) => {
+    require('../dist/update').update(pluginName, cleanArgs(cmd))
   })
 
 // for unknown command, install the plugin
@@ -37,6 +52,3 @@ program.parse(process.argv)
 if (!process.argv.slice(2).length) {
   program.outputHelp()
 }
-
-
-
