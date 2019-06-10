@@ -59,3 +59,16 @@ export function getPluginPackages () {
 export function isPluginFullName (name: string) {
   return pluginREG.test(name)
 }
+
+export function isInstalled (pkg: string) {
+  const packageDir = path.join(installedPath, pkg)
+  return fs.existsSync(packageDir)
+}
+
+export function resolvePluginName (name: string) {
+  if (pluginREG.test(name)) {
+    return name
+  }
+  return `mip-cli-plugin-${name}`
+}
+

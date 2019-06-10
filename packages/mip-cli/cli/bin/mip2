@@ -33,20 +33,11 @@ program
     require('../dist/update').update(pluginName, cleanArgs(cmd))
   })
 
-program
-  .command('add <component-name>')
-  .option('-v, --vue', '添加组件类型为 Vue 组件')
-  .option('-f, --force', '是否覆盖')
-  .description('新增一个组件')
-  .action((cname, args) => {
-    require('../dist/add').add({ compName: cname, options: cleanArgs(args) })
-  })
-
 // for unknown command, install the plugin
 program
-  .arguments('<command> [subcommand]')
-  .action((command, subcommand) => {
-    require('../dist/loadPlugin').load(command, subcommand)
+  .arguments('<command> [args...]')
+  .action((command, args) => {
+    require('../dist/loadPlugin').load(command, args)
   })
 
 // add some useful info on help
