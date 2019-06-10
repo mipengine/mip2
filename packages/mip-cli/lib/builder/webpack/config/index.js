@@ -8,10 +8,11 @@ const styleLoaders = require('./style-loaders')
 const CustomElementPlugin = require('./custom-element-plugin')
 const babelLoader = require('./babel')
 const path = require('path')
-const componentExternals = require('./component-externals')
+// const componentExternals = require('./component-externals')
 const webpack = require('webpack')
 const mipExternal = require('mip-components-webpack-helpers/lib/external')
 const {resolveModule} = require('../../../utils/helper')
+const getTSLoaderOptions = require('./ts-loader')
 
 module.exports = function (options) {
   let config = {
@@ -54,6 +55,26 @@ module.exports = function (options) {
             ]
         },
         {
+          test: /\.tsx?$/,
+          exclude: /node_modules/,
+          use: options.ignore && /(^|,)sandbox(,|$)/.test(options.ignore)
+            ? [
+              {
+                loader: require.resolve('awesome-typescript-loader'),
+                options: getTSLoaderOptions(options)
+              },
+              require.resolve('./child-component-loader')
+            ]
+            : [
+              {
+                loader: require.resolve('awesome-typescript-loader'),
+                options: getTSLoaderOptions(options)
+              },
+              require.resolve('./sandbox-loader'),
+              require.resolve('./child-component-loader')
+            ]
+        },
+        {
           test: /\.(png|jpe?g|gif)$/,
           use: [{
             loader: require.resolve('url-loader'),
@@ -80,7 +101,7 @@ module.exports = function (options) {
       mipExternal(__dirname)
     ],
     resolve: {
-      extensions: ['.js', '.json', '.vue'],
+      extensions: ['.js', '.json', '.vue', '.ts', '.tsx'],
       alias: {
         '@': path.resolve(options.context),
         'core-js': resolveModule('core-js')

@@ -1,7 +1,7 @@
 /**
  * @file TS-loaders.js
  */
-module.exports = function getLoaderUse (options) {
+module.exports = function getTSLoaderOptions (options) {
   return {
     errorsAsWarning: options.env === 'development',
     forceIsolateModules: options.env === 'development',
