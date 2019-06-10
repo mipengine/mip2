@@ -12,9 +12,9 @@ import download from 'download-git-repo'
 
 import async, { ErrorCallback } from 'async'
 import ms, { Callback, Plugin, Files } from 'metalsmith'
-import inquirer from 'inquirer'
+import inquirer, { Questions } from 'inquirer'
 import render from './render'
-import getMeta from './meta'
+import getMeta, { Prompts } from './meta'
 
 const OFFICIAL_VUE_TEMPLATE = 'mipengine/mip-cli-template#vue'
 const OFFICIAL_TEMPLATE = 'mipengine/mip-cli-template'
@@ -22,7 +22,7 @@ const OFFICIAL_TEMPLATE = 'mipengine/mip-cli-template'
 const VUE_TEMPLATE_TMP = path.resolve(home, '.mip-vue-template')
 const TEMPLATE_TMP = path.resolve(home, '.mip-template')
 
-export function downloadRepo (isVue: boolean | Function, done: Function) {
+export function downloadRepo (isVue: boolean | (() => void), done: () => void) {
   if (typeof isVue === 'function') {
     done = isVue
     isVue = false
@@ -67,7 +67,7 @@ export function downloadRepo (isVue: boolean | Function, done: Function) {
  * @param {string} compName 组件名称，仅用于只渲染组件的情况，渲染整个项目不传即可
  * @param {Function} done 回调函数
  */
-export async function generate (dir: string, compName: string, isVue: boolean | Function, done: Function) {
+export function generate (dir: string, compName: string, isVue: boolean | (() => void), done: (error: Error | null) => void) {
   if (typeof isVue === 'function') {
     done = isVue
     isVue = false
@@ -77,22 +77,26 @@ export async function generate (dir: string, compName: string, isVue: boolean | 
   const metalsmith = ms(path.join(tmp, dir))
   const templatePrompts = getMeta(tmp).prompts
 
-  function ask (templatePrompts: any): Plugin {
-    return (files: Files, metalsmith: ms, done: Function) => {
+  function ask (templatePrompts: Prompts): Plugin {
+    return (files: Files, metalsmith: ms, done: Callback) => {
       // 替换 components 目录组件名称
-      (metalsmith.metadata() as any).compName = compName || 'mip-example'
+      metalsmith.metadata({
+        compName: compName || 'mip-example'
+      })
 
       // 只渲染组件部分时(mip2 add)，不需要走 ask 流程，且使用 component name 作为 dest 路径
       if (compName) {
         metalsmith.destination(path.resolve('./components', compName))
         // 读取项目名称，用于渲染 README.md 的脚本地址
-        let siteName = process.cwd().split(path.sep).pop();
-        (metalsmith.metadata() as any).name = siteName
-        done()
+        let siteName = process.cwd().split(path.sep).pop()
+        metalsmith.metadata({
+          name: siteName
+        })
+        done(null, files, metalsmith)
         return
       }
 
-      function run (key: string, done: (reason?: any) => void) {
+      function run (key: string, done: (err?: Error) => void) {
         let prompt = templatePrompts[key]
 
         inquirer.prompt([{
@@ -101,20 +105,26 @@ export async function generate (dir: string, compName: string, isVue: boolean | 
           'message': prompt.message || prompt.label || key,
           'default': prompt.default,
           'validate': prompt.validate || (() => true)
-        }]).then((answers: any) => {
-          if (typeof answers[key] === 'string') {
-            (metalsmith.metadata() as any)[key] = answers[key].replace(/"/g, '\\"')
-          } else {
-            (metalsmith.metadata() as any)[key] = answers[key]
-          }
-          done()
-        }).catch(done)
+        }] as Questions)
+          .then(answers => {
+            if (typeof answers[key] === 'string') {
+              metalsmith.metadata({
+                [key]: answers[key].replace(/"/g, '\\"')
+              })
+            } else {
+              metalsmith.metadata({
+                [key]: answers[key]
+              })
+            }
+            done()
+          })
+          .catch(done)
       }
 
       async.eachSeries(Object.keys(templatePrompts), run, () => {
         // After all inquirer finished, set destination directory with input project name
         metalsmith.destination(path.resolve('./', (metalsmith.metadata() as any).name))
-        done()
+        done(null, files, metalsmith)
       })
     }
   }
@@ -122,7 +132,8 @@ export async function generate (dir: string, compName: string, isVue: boolean | 
   function renderTemplateFiles (): Plugin {
     return (files: Files, metalsmith: ms, done: Callback) => {
       let keys = Object.keys(files)
-      function run (file: string, done: (err?: Error | null | undefined) => void) {
+
+      function run (file: string, done: (err?: Error) => void) {
         let str = files[file].contents.toString()
 
         // do not attempt to render files that do not have mustaches
@@ -140,6 +151,7 @@ export async function generate (dir: string, compName: string, isVue: boolean | 
         files[file].contents = Buffer.from(res)
         done()
       }
+
       async.each(keys, run, done as ErrorCallback<Error>)
     }
   }

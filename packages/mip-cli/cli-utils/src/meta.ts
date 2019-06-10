@@ -7,13 +7,18 @@ import path from 'path'
 import { existsSync as exists } from 'fs'
 import getGitUser from './git'
 
-interface Meta {
-  prompts?: {
-    [key: string]: {
-      default: string;
-      type?: string;
-    };
+export interface Prompts {
+  [key: string]: {
+    default: string;
+    type: string;
+    message?: string;
+    label?: string;
+    validate?: (() => boolean | string);
   };
+}
+
+interface Meta {
+  prompts: Prompts;
 }
 
 /**
@@ -24,11 +29,11 @@ interface Meta {
  * @param {string} val 键值
  */
 function setDefault (opts: Meta, key: string, val: string) {
-  const prompts = opts.prompts || (opts.prompts = {})
+  const prompts = opts.prompts
   if (!prompts[key] || typeof prompts[key] !== 'object') {
     prompts[key] = {
-      'type': 'string',
-      'default': val
+      default: val,
+      type: 'string'
     }
   } else {
     prompts[key].default = val
@@ -37,7 +42,7 @@ function setDefault (opts: Meta, key: string, val: string) {
 
 export default function getMeta (dir: string) {
   const metajs = path.join(dir, 'meta.js')
-  let opts: Meta = {}
+  let opts: Meta = { prompts: {} }
 
   if (exists(metajs)) {
     const req = require(path.resolve(metajs))

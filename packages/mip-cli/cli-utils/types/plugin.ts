@@ -38,10 +38,8 @@ export type Hook = SyncHook |
   AsyncSeriesBailHook |
   AsyncSeriesWaterfallHook
 
-
 export interface Plugin {
   command: Command;
   run<T extends {}>(args: T): void;
   hooks?: Record<string, Hook>;
 }
-

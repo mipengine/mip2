@@ -15,7 +15,7 @@ export function init (args: Arguments) {
   console.log(args)
 
   downloadRepo(false, () => {
-    generate(templateDir, '', false, (err: Error) => {
+    generate(templateDir, '', false, (err: Error | null) => {
       if (err) {
         cli.error('Failed to generate project: ' + err.message.trim())
         return

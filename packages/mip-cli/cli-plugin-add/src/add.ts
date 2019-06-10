@@ -13,7 +13,7 @@ import * as cli from '../../cli-utils/src/logger'
 
 const templateDir = 'template/components/mip-example'
 
-interface AddArg {
+interface Arguments {
   compName: string;
   options: {
     vue: boolean;
@@ -21,7 +21,7 @@ interface AddArg {
   };
 }
 
-export function add (config: AddArg) {
+export function add (config: Arguments) {
   if (!config.compName) {
     cli.error('缺少组件名称参数，请按 `mip2 add [组件名]` 的格式重新输入')
     return
@@ -56,7 +56,7 @@ export function add (config: AddArg) {
   }
 
   downloadRepo(isVue, () => {
-    generate(templateDir, config.compName, isVue, async (err: Error) => {
+    generate(templateDir, config.compName, isVue, async (err: Error | null) => {
       if (err) {
         cli.error('Failed to add component: ' + err.message.trim())
         return
