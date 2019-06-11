@@ -27,9 +27,16 @@ async function checkAndInstall (command: string) {
 
 function setupCommand (mainCommand: string, cmd: any) {
   let command: string
+
   let commandPrefix: string = cmd.isSubcommand ? `${mainCommand} <${cmd.name}>` : `${mainCommand}`
+
   let commandArgs = cmd.args
-    .map(arg => arg.optional ? `[${arg.name}]` : `<${arg.name}>`)
+    .map(arg => {
+      if (arg.optional) {
+        return arg.rest ? `[${arg.name}...]` : `[${arg.name}]`
+      }
+      return arg.rest ? `<${arg.name}...>` : `<${arg.name}>`
+    })
     .join(' ')
 
   command = `${commandPrefix} ${commandArgs}`
@@ -93,13 +100,13 @@ export async function load (mainCommand: string, args?: string[]) {
   // 3 根据子命令/命令 加载模块
   // 4 运行命令
 
-  await checkAndInstall(mainCommand)
+  // await checkAndInstall(mainCommand)
 
   let pluginPackage: any
   try {
     // // for dev
-    // pluginPackage = require('../../dev-plugin.js')
-    pluginPackage = require(resolvePluginName(mainCommand))
+    pluginPackage = require('../../dev-plugin.js')
+    // pluginPackage = require(resolvePluginName(mainCommand))
   } catch (e) {
     utils.logger.info('加载命令插件失败', e)
     return

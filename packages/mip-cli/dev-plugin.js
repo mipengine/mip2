@@ -4,16 +4,17 @@ module.exports = {
     description: '启动开发模式',
     args: [
       {
-        name: 'siteName',
+        name: 'first',
         optional: true
       },
       {
-        name: 'path',
+        name: 'second',
         optional: true
       },
       {
-        name: 'size',
-        optional: true
+        name: 'third',
+        optional: true,
+        rest: true
       }
     ],
     options: [
