@@ -1,11 +1,11 @@
 import { getPluginPackages } from './utils/plugin'
-import utils from 'mip-cli-utils'
+import {logger} from 'mip-cli-utils'
 
 export function list () {
   const plugins = getPluginPackages()
 
   if (!plugins.length) {
-    utils.logger.info('没有找到插件，您可以使用 mip2 install <packageName> 进行安装')
+    logger.info('没有找到插件，您可以使用 mip2 install <packageName> 进行安装')
   }
 
   console.log()

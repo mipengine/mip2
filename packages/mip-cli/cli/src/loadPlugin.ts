@@ -5,7 +5,7 @@
 
 import program from 'commander'
 import { installOrUpdatePlugin, resolvePluginName, isInstalled } from './utils/plugin'
-import utils from 'mip-cli-utils'
+import { logger } from 'mip-cli-utils'
 import chalk from 'chalk'
 import { cleanArgs } from './utils/cli'
 
@@ -13,15 +13,15 @@ async function checkAndInstall (command: string) {
   const packageName = resolvePluginName(command)
 
   if (!isInstalled(packageName)) {
-    utils.logger.info(`正准备安装 ${chalk.cyan(packageName)}`)
+    logger.info(`正准备安装 ${chalk.cyan(packageName)}`)
 
     try {
       await installOrUpdatePlugin('install', packageName)
     } catch (e) {
-      return utils.logger.error(`插件 ${chalk.cyan(packageName)} 不存在，请重新输入`)
+      return logger.error(`插件 ${chalk.cyan(packageName)} 不存在，请重新输入`)
     }
 
-    utils.logger.info(`${chalk.cyan(packageName)} 安装成功`)
+    logger.info(`${chalk.cyan(packageName)} 安装成功`)
   }
 }
 
@@ -108,7 +108,7 @@ export async function load (mainCommand: string, args?: string[]) {
     pluginPackage = require('../../dev-plugin.js')
     // pluginPackage = require(resolvePluginName(mainCommand))
   } catch (e) {
-    utils.logger.info('加载命令插件失败', e)
+    logger.info('加载命令插件失败', e)
     return
   }
 

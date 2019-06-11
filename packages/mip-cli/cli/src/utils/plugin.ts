@@ -6,7 +6,7 @@
 import path from 'path'
 import fs from 'fs'
 import execa from 'execa'
-import utils from 'mip-cli-utils'
+import { logger } from 'mip-cli-utils'
 
 /**
  * 插件命名规则：mip-cli-plugin-xxx
@@ -48,7 +48,7 @@ export async function installOrUpdatePlugin (command: string, packageName: strin
   registry && args.push('--registry', registry)
 
   await executeCommand('npm', args, installedPath)
-  utils.logger.info(`${command} completed!`)
+  logger.info(`${command} completed!`)
 }
 
 export function getPluginPackages () {
