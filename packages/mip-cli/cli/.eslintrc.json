@@ -1,9 +1,7 @@
 {
     "root": true,
     "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-      "project": "./tsconfig.json"
-    },
+    "parserOptions": {},
     "extends": [
       "plugin:@typescript-eslint/recommended",
       "standard"
@@ -13,6 +11,7 @@
     ],
     "rules": {
       "@typescript-eslint/indent": 0,
-      "@typescript-eslint/explicit-function-return-type": 0
+      "@typescript-eslint/explicit-function-return-type": 0,
+      "@typescript-eslint/no-var-requires": 0
     }
 }

@@ -2,7 +2,8 @@
 
 const program = require('commander')
 const requiredNodeVersion = require('../package.json').engines.node
-const {checkNodeVersion, cleanArgs} = require('../dist/utils/cli')
+const { checkNodeVersion, cleanArgs } = require('../dist/utils/cli')
+const { showPluginCmdHelpInfo } = require('../dist/utils/plugin')
 
 checkNodeVersion(requiredNodeVersion)
 
@@ -11,22 +12,38 @@ program
   .usage('<command> [options]')
 
 program
-  .command('add <pluginName>')
+  .command('install <pluginName...>')
   .option('-r, --registry <url>', '指定安装使用的 registry')
   .description('安装插件')
   .action((pluginName, cmd) => {
-    require('../dist/add').add(pluginName, cleanArgs(cmd))
+    require('../dist/install').install(pluginName, cleanArgs(cmd))
+  })
+
+program
+  .command('list')
+  .description('显示插件列表')
+  .action(() => {
+    require('../dist/list').list()
+  })
+
+program
+  .command('update [pluginName...]')
+  .option('-r, --registry <url>', '指定更新使用的 registry')
+  .description('更新插件')
+  .action((pluginName, cmd) => {
+    require('../dist/update').update(pluginName, cleanArgs(cmd))
   })
 
 // for unknown command, install the plugin
 program
-  .arguments('<command> [subcommand]')
-  .action((command, subcommand) => {
-    require('../dist/loadPlugin').load(command, subcommand)
+  .arguments('<command> [args...]')
+  .action((command, args) => {
+    require('../dist/loadPlugin').load(command, args)
   })
 
 // add some useful info on help
 program.on('--help', () => {
+  showPluginCmdHelpInfo()
   console.log()
   console.log(`使用 mip2 <command> --help 查看命令帮助详情`)
   console.log()
@@ -37,6 +54,3 @@ program.parse(process.argv)
 if (!process.argv.slice(2).length) {
   program.outputHelp()
 }
-
-
-
