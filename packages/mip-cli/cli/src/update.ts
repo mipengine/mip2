@@ -1,4 +1,4 @@
-import { getPluginPackages, installOrUpdatePlugin, isPluginFullName } from './utils/plugin'
+import { getPluginPackages, installOrUpdatePlugin, resolvePluginName } from './utils/plugin'
 import utils from 'mip-cli-utils'
 
 interface Option {
@@ -19,7 +19,7 @@ export function update (pluginNames: string[], options: Option) {
   } else {
     // 只安装具体指定的 plugins
     // 如果不是输入 plugin 全名，拼成全名
-    pluginTask = pluginNames.map(name => !isPluginFullName(name) ? `mip-cli-plugin-${name}` : name)
+    pluginTask = pluginNames.map(resolvePluginName)
   }
 
   installOrUpdatePlugin('update', pluginTask, registry)

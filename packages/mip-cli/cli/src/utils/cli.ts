@@ -6,11 +6,7 @@
 import semver from 'semver'
 import chalk from 'chalk'
 import { Command, Option } from 'commander'
-import { Value, CliConfiguration } from '../interface'
-
-export function setup (config: CliConfiguration) {
-  console.log(config)
-}
+import { Value } from '../interface'
 
 export function checkNodeVersion (expectVersion: string) {
   if (!semver.satisfies(process.version, expectVersion)) {

@@ -3,7 +3,7 @@
  * @author tracy(qiushidev@gmail.com)
  */
 
-import { installOrUpdatePlugin } from './utils/plugin'
+import { installOrUpdatePlugin, resolvePluginName } from './utils/plugin'
 
 interface Option {
   registry: string;
@@ -11,5 +11,8 @@ interface Option {
 
 export function install (names: string[], options: Option) {
   const { registry } = options
+
+  names = names.map(resolvePluginName)
+
   installOrUpdatePlugin('install', names, registry)
 }
