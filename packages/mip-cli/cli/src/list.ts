@@ -1,5 +1,5 @@
 import { getPluginPackages } from './utils/plugin'
-import {logger} from 'mip-cli-utils'
+import { logger } from 'mip-cli-utils'
 
 export function list () {
   const plugins = getPluginPackages()

@@ -6,7 +6,7 @@
 import path from 'path'
 import fs from 'fs'
 import execa from 'execa'
-import { logger } from 'mip-cli-utils'
+import { logger, Command } from 'mip-cli-utils'
 
 /**
  * 插件命名规则：mip-cli-plugin-xxx
@@ -124,7 +124,7 @@ export function showPluginCmdHelpInfo () {
       printDescription(cmdName, cmdModule.command.description)
       // sub command
       if (cmdModule.command.subcommands) {
-        cmdModule.command.subcommands.forEach(subcmd => {
+        cmdModule.command.subcommands.forEach((subcmd: Command) => {
           printDescription(`${cmdName} ${subcmd.name}`, subcmd.description)
         })
       }
