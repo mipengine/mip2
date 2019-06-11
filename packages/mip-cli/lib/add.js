@@ -48,9 +48,9 @@ module.exports = function add (config) {
       await fs.writeFile(filename, content, 'utf-8')
     }))
     await Promise.all(
-      files.filter(filename => /mip-example\.(js|vue)$/)
+      files.filter(filename => /mip-example\.(vue|js|ts)$/)
         .map(async filename => {
-          await fs.rename(filename, filename.replace(/mip-example\.(vue|js)/, config.compName + '.$1'))
+          await fs.rename(filename, filename.replace(/mip-example\.(vue|js|ts)/, config.compName + '.$1'))
         })
     )
   }
