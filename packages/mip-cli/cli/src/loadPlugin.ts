@@ -7,8 +7,9 @@ import program from 'commander'
 import { installOrUpdatePlugin, resolvePluginName, isInstalled } from './utils/plugin'
 import utils from 'mip-cli-utils'
 import chalk from 'chalk'
+import { cleanArgs } from './utils/cli'
 
-async function checkAndinstall (command: string) {
+async function checkAndInstall (command: string) {
   const packageName = resolvePluginName(command)
 
   if (!isInstalled(packageName)) {
@@ -24,12 +25,11 @@ async function checkAndinstall (command: string) {
   }
 }
 
-function setupCommand (commandDef: any) {
+function setupCommand (mainCommand: string, cmd: any) {
   let command: string
-  let commandPrefix = commandDef.isSubcommand ? `dev <${commandDef.name}>` : 'dev'
-  let commandArgs = commandDef.args
-    .map(arg => arg.optional ? `[${arg.name}]` : `<${arg.name}>`
-    )
+  let commandPrefix: string = cmd.isSubcommand ? `${mainCommand} <${cmd.name}>` : `${mainCommand}`
+  let commandArgs = cmd.args
+    .map(arg => arg.optional ? `[${arg.name}]` : `<${arg.name}>`)
     .join(' ')
 
   command = `${commandPrefix} ${commandArgs}`
@@ -37,34 +37,40 @@ function setupCommand (commandDef: any) {
   // set command
   let programResult = program.command(command)
 
+  if (cmd.isSubcommand) {
+    // hack subcommand: display the usage correctly
+    programResult = programResult.usage(`${cmd.name} ${commandArgs}`)
+  }
+
   // set options
-  commandDef.options.forEach(opt => {
+  cmd.options.forEach(opt => {
     programResult.option(`-${opt.shortName}, --${opt.name} ${opt.optional ? '[value]' : '<value>'}`, `${opt.description}`)
   })
 
   // set description
   // set action
   programResult
-    .description(commandDef.description)
+    .description(cmd.description)
     .action((...args) => {
-      // console.log('action', args, args.length)
       let params = {}
-      commandDef.args.forEach((a, index) => {
-        params[a.name] = args[commandDef.isSubcommand ? index + 1 : index]
+
+      // 从参数数组解析出参数对象 {<argsName>: <argsValue>}
+      cmd.args.forEach((a, index) => {
+        params[a.name] = args[cmd.isSubcommand ? index + 1 : index]
       })
 
-      commandDef.options.forEach((o) => {
-        params[o.name] = args[args.length - 1][o.name]
-      })
+      // commander action 回调最后一个参数始终是 cmd 对象，从中获取简单 options 对象 {<optionName>: <optionValue>}
+      let options = cleanArgs(args[args.length - 1])
+      params.options = options
 
       // invoke with params
-      console.log(params)
+      cmd.run(params)
     })
 
   program.parse(process.argv)
 
   // program
-  //   .command('dev <name> [dir]')
+  //   .command('dev <component> [dir]')
   //   .option('-p, --port <value>', '端口号')
   //   .description('描述这个命令的功能')
   //   // .on('--help', () => {
@@ -73,46 +79,47 @@ function setupCommand (commandDef: any) {
   //   //   console.log('  $ custom-help --help');
   //   //   console.log('  $ custom-help -h');
   //   // })
-  //   .action((...args) => {
+  //   // .action((...args) => {
+  //   .action((name, dir) => {
   //     console.log('========= plugin run ==========')
-  //     console.log(Array.isArray(args))
+  //     console.log(name, dir)
   //   })
   // program.parse(process.argv)
 }
 
-export async function load (command: string, args?: string[]) {
-  // 1 检查plugin 是否安装
+export async function load (mainCommand: string, args?: string[]) {
+  // 1 检查 plugin 是否安装
   // 2 npm install 安装plugin
   // 3 根据子命令/命令 加载模块
   // 4 运行命令
 
-  // await checkAndinstall(command)
+  await checkAndInstall(mainCommand)
 
   let pluginPackage: any
   try {
-    // for dev
-    pluginPackage = require('../../dev-plugin.js')
-    // pluginPackage = require(resolvePluginName(command))
+    // // for dev
+    // pluginPackage = require('../../dev-plugin.js')
+    pluginPackage = require(resolvePluginName(mainCommand))
   } catch (e) {
     utils.logger.info('加载命令插件失败', e)
     return
   }
 
   // plugin 定义
-  const pluginDefination = pluginPackage.command
+  const commandDefination = pluginPackage.command
 
   // 查询是否有子命令，如果有直接加载子命令模块，否则加载主命令模块
   const subcommand = args && args[0]
-  const subcommandDefination = pluginDefination.subcommands && pluginDefination.subcommands.find(s => s.name === subcommand)
+  const subcommandDefination = commandDefination.subcommands && commandDefination.subcommands.find(s => s.name === subcommand)
 
   // 最终加载的插件定义
-  let defination: any
+  let cmd: any
   if (subcommandDefination) {
     subcommandDefination['isSubcommand'] = true
-    defination = subcommandDefination
+    cmd = subcommandDefination
   } else {
-    defination = pluginDefination
+    cmd = commandDefination
   }
 
-  setupCommand(defination)
+  setupCommand(mainCommand, cmd)
 }

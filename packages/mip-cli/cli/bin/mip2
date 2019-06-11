@@ -3,6 +3,7 @@
 const program = require('commander')
 const requiredNodeVersion = require('../package.json').engines.node
 const { checkNodeVersion, cleanArgs } = require('../dist/utils/cli')
+const { showPluginCmdHelpInfo } = require('../dist/utils/plugin')
 
 checkNodeVersion(requiredNodeVersion)
 
@@ -42,6 +43,7 @@ program
 
 // add some useful info on help
 program.on('--help', () => {
+  showPluginCmdHelpInfo()
   console.log()
   console.log(`使用 mip2 <command> --help 查看命令帮助详情`)
   console.log()

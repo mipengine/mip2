@@ -17,7 +17,7 @@ import utils from 'mip-cli-utils'
 
 // for dev mode
 const pluginREG = /^cli-plugin-*/
-const installedPath = path.join(__dirname, '../../../../..')
+const installedPath = path.join(__dirname, '../../..')
 
 function executeCommand (command: string, args: string[], targetDir: string) {
   return new Promise((resolve, reject) => {
@@ -72,3 +72,64 @@ export function resolvePluginName (name: string) {
   return `mip-cli-plugin-${name}`
 }
 
+export function resolveCommandFromPackageName (pkg: string) {
+  // mip-cli-pulgin-test => test
+  return pkg.replace(pluginREG, '')
+}
+
+function pad (str: string, width: number) {
+  let len = Math.max(0, width - str.length)
+  return str + Array(len + 1).join(' ')
+}
+
+function printDescription (name: string, description: string) {
+  if (description) {
+    // used for left-align commands list
+    const MAGIC = 35
+    console.log(`  ${pad(name, MAGIC)}${description || ''}`)
+  }
+}
+
+export function showPluginCmdHelpInfo () {
+  let pluginsPkgs = getPluginPackages()
+
+  if (!pluginsPkgs.length) {
+    return
+  }
+
+  console.log()
+  console.log('User Plugin Commands:')
+
+  // /** for dev ***********************/
+  // let cmdName = 'dev'
+  // try {
+  //   const cmdModule = require('../../../dev-plugin')
+  //   // main command
+  //   printDescription(cmdName, cmdModule.command.description)
+  //   // sub command
+  //   if (cmdModule.command.subcommands) {
+  //     cmdModule.command.subcommands.forEach(subcmd => {
+  //       printDescription(`${cmdName} ${subcmd.name}`, subcmd.description)
+  //     })
+  //   }
+  // } catch (e) {}
+  // /** for dev ***********************/
+
+  pluginsPkgs.forEach(pkg => {
+    let cmdName = resolveCommandFromPackageName(pkg)
+
+    try {
+      const cmdModule = require(pkg)
+      // main command
+      printDescription(cmdName, cmdModule.command.description)
+      // sub command
+      if (cmdModule.command.subcommands) {
+        cmdModule.command.subcommands.forEach(subcmd => {
+          printDescription(`${cmdName} ${subcmd.name}`, subcmd.description)
+        })
+      }
+    } catch (e) {}
+  })
+
+  console.log()
+}
