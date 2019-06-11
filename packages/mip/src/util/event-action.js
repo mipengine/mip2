@@ -7,8 +7,10 @@
 
 import * as fn from './fn'
 import dom from './dom/dom'
+import {LAYOUT, getLayoutClass} from '../layout'
+import log from './log'
 
-/* global MIP */
+const logger = log('Event-Action')
 
 /**
  * Regular for parsing params.
@@ -43,6 +45,24 @@ const CHECK_REG = /^mip-/
  */
 const OPTION_KEYS = ['executeEventAction', 'parse', 'checkTarget', 'getTarget', 'attr']
 
+function getAutofocusElement (el) {
+  if (el.hasAttribute('autofocus')) {
+    return el
+  }
+  return el.querySelector('[autofocus]')
+}
+
+function toggle (el, opt) {
+  if (opt === undefined) {
+    opt = el.hasAttribute('mip-hidden')
+  }
+  if (opt) {
+    el.removeAttribute('mip-hidden')
+  } else {
+    el.setAttribute('mip-hidden', '')
+  }
+}
+
 /**
  * MIP does not support external JavaScript, so we provide EventAction to trigger events between elements.
  * TODO: refactor
@@ -54,6 +74,7 @@ class EventAction {
     opt && fn.extend(this, fn.pick(opt, OPTION_KEYS))
     this.attr = 'on'
     this.globalTargets = {}
+    this.globalMethodHandlers = {}
 
     this.installAction()
   }
@@ -63,6 +84,12 @@ class EventAction {
    */
   installAction () {
     this.addGlobalTarget('MIP', this.handleMIPTarget)
+    this.addGlobalMethodHandler('show', this.handleShow.bind(this))
+    this.addGlobalMethodHandler('hide', this.handleHide.bind(this))
+    this.addGlobalMethodHandler('toggle', this.handleToggle.bind(this))
+    this.addGlobalMethodHandler('scrollTo', this.handleScrollTo.bind(this))
+    this.addGlobalMethodHandler('focus', this.handleFocus.bind(this))
+    this.addGlobalMethodHandler('toggleClass', this.handleToggleClass.bind(this))
   }
 
   /**
@@ -102,8 +129,54 @@ class EventAction {
       MIP.setData(data)
     } else if (action.handler === '$set') {
       MIP.$set(data)
+    } else if (action.handler === 'scrollTo') {
+      MIP.scrollTo(data)
+    } else if (action.handler === 'goBack') {
+      MIP.goBack()
+    } else if (action.handler === 'print') {
+      window.print()
     } else {
       throw new Error(`Can not find handler "${action.handler}" from MIP.`)
+    }
+  }
+
+  handleShow (action) {
+    const target = document.getElementById(action.id)
+    if (!target) {
+      return
+    }
+    if (target.classList.contains(getLayoutClass(LAYOUT.NODISPLAY))) {
+      logger.warn('layout=nodisplay 的元素不能被动态显示')
+    }
+    const autofocusEl = getAutofocusElement(target)
+    toggle(autofocusEl, true)
+    this.handleFocus(autofocusEl)
+  }
+
+  handleHide (action) {
+    const target = document.getElementById(action.id)
+    if (!target) {
+      return
+    }
+    toggle(target, false)
+  }
+
+  handleToggle (action) {
+    const target = document.getElementById(action.id)
+    toggle(target)
+  }
+
+  handleScrollTo (action) {
+    const target = document.getElementById(action.id)
+  }
+
+  handleToggleClass (action) {
+    const target = document.getElementById(action.id)
+  }
+
+  handleFocus (el) {
+    if (el) {
+      el.focus()
     }
   }
 
@@ -119,6 +192,10 @@ class EventAction {
       return
     }
     this.globalTargets[name] = handler
+  }
+
+  addGlobalMethodHandler (name, handler) {
+    this.globalMethodHandlers[name] = handler
   }
 
   /**
@@ -192,6 +269,13 @@ class EventAction {
         globalTarget(action)
         continue
       }
+
+      let globalMethod = this.globalMethodHandlers[action.handler]
+      if (globalMethod) {
+        globalMethod(action)
+        continue
+      }
+
       let target = this.getTarget(action.id)
       if (this.checkTarget(target)) {
         this.executeEventAction(action, target)

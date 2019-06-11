@@ -7,6 +7,7 @@ import Compile from './compile'
 import Observer from './observer'
 import Watcher, {locker} from './watcher'
 import {isObject, objNotEmpty} from './util'
+import { scrollTo } from '../../page/util/ease-scroll'
 
 /* global MIP */
 /* eslint-disable no-new-func */
@@ -38,6 +39,22 @@ class Bind {
     MIP.watch = (target, cb) => {
       this.bindWatch(target, cb)
     }
+    
+    MIP.scrollTo = ({id = '', duration = 0, offset = 0} = {}) => {
+      if (!id) {
+        return
+      }
+      const target = document.getElementById(id)
+      if (!target) {
+        return
+      }
+      scrollTo(target.offsetTop, {duration, scrollTop: offset})
+    }
+
+    MIP.goBack = () => {
+      window.history.back()
+    }
+
     // inner APIs - isolated by sandbox, not available to developers
     MIP.$set = (data, cancel) => this.bindTarget(true, data, cancel)
     MIP.$recompile = () => {
