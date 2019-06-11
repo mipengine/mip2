@@ -1,5 +1,7 @@
 import * as logger from './logger'
 
-export default {
+export * from './types/plugin'
+export {
   logger
 }
+
