@@ -16,16 +16,28 @@ import {
 } from 'tapable'
 
 export interface Option {
-  flags: string;
+  name: string;
+  shortName: string;
+  optional?: boolean;
   description: string;
   fn?: ((...args: any[]) => any) | RegExp;
   defaultValue?: any;
 }
 
+export interface Argument {
+  name: string;
+  optional?: boolean;
+  rest?: boolean;
+}
+
 export interface Command {
+  name?: string;
   description: string;
+  args?: Argument[];
   options: Option[];
+  run<T extends {}>(arg: T): void;
   help?: string;
+  hooks?: Record<string, Hook>;
 }
 
 export type Hook = SyncHook |
@@ -38,8 +50,12 @@ export type Hook = SyncHook |
   AsyncSeriesBailHook |
   AsyncSeriesWaterfallHook
 
-export interface Plugin {
-  command: Command;
-  run<T extends {}>(args: T): void;
-  hooks?: Record<string, Hook>;
+export interface Plugin extends Command {
+  subCommands?: Command[];
 }
+
+// export interface Plugin {
+//   command: Command;
+//   run<T extends {}>(args: T): void;
+//   hooks?: Record<string, Hook>;
+// }
