@@ -40,13 +40,13 @@ export function add (config: Arguments) {
       realpath: true
     })
 
-    let readFile: (file: string, encoding: string) => Promise<string> = promisify(fs.readFile)
+    let readFile = promisify<string, string, string>(fs.readFile)
     await Promise.all(files.map(async filename => {
       let content = await readFile(filename, 'utf-8')
       content = content.replace(/mip-example/g, config.compName).replace(/MIPExample/g, compClassName)
       await fs.writeFile(filename, content, 'utf-8')
     }))
-    let rename: (oldPath: string, newPath: string) => Promise<void> = promisify(fs.rename)
+    let rename = promisify<string, string>(fs.rename)
     await Promise.all(
       files.filter(filename => /mip-example\.(js|vue)$/.test(filename))
         .map(async filename => {

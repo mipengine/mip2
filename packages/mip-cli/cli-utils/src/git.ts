@@ -6,8 +6,8 @@
 import { execSync as exec } from 'child_process'
 
 export default function getGitUser () {
-  let name
-  let email
+  let name: string | Buffer = ''
+  let email: string | Buffer = ''
 
   try {
     name = exec('git config --get user.name')

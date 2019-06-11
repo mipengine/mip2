@@ -28,8 +28,8 @@ export function downloadRepo (isVue: boolean | (() => void), done: () => void) {
     isVue = false
   }
 
-  let template
-  let tmp
+  let template: string
+  let tmp: string
 
   if (isVue) {
     template = OFFICIAL_VUE_TEMPLATE

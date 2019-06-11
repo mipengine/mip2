@@ -4,21 +4,8 @@
  */
 
 import glob from 'glob'
+import { promisify } from 'util'
 
-function pify (fn: Function) {
-  return (...args: (string| object)[]): Promise<string[]> => new Promise((resolve, reject) => {
-    let callback = (err: Error | null, result: string[]) => {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(result)
-      }
-    }
-
-    fn(...args, callback)
-  })
-}
-
-export default function globPify (...args: (string| object)[]): Promise<string[]> {
-  return pify(glob)(...args)
+export default function globPify (pattern: string, options?: glob.IOptions) {
+  return promisify(glob)(pattern, options)
 }
