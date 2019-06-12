@@ -1,23 +1,15 @@
 declare module 'etpl' {
-  interface Options {
+  export interface Options {
     commandOpen?: string;
     commandClose?: string;
     variableOpen?: string;
     variableClose?: string;
   }
 
-  function render (name: string, data: object): string
+  type renderFunc = (data: object) => string
 
-  // interface EngineImpl {
-  //   compile: (source: string) => typeof render;
-  // }
-
-  class Engine {
-    constructor (options: Options);
-    private options: Options;
-    compile (source: string): (data: object) => string;
+  export class Engine {
+    public constructor (options: Options);
+    public compile (source: string): renderFunc;
   }
-  // interface Engine {
-  //   new (options: Options): EngineImpl;
-  // }
 }

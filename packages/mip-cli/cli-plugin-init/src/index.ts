@@ -3,7 +3,7 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-import { add } from './add'
+import { init } from './init'
 import { Plugin } from 'mip-cli-utils'
 
 const plugin: Plugin = {
@@ -21,8 +21,8 @@ const plugin: Plugin = {
       description: '是否覆盖'
     }
   ],
-  run (params) {
-    add(params)
+  run (_arg) {
+    init()
   }
 }
 

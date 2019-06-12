@@ -13,6 +13,8 @@
   ],
   "rules": {
     "@typescript-eslint/indent": 0,
-    "@typescript-eslint/explicit-function-return-type": 0
+    "@typescript-eslint/explicit-function-return-type": 0,
+    "no-useless-constructor": "off",
+    "@typescript-eslint/no-useless-constructor": "error"
   }
 }

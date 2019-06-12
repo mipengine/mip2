@@ -40,12 +40,12 @@ function setDefault (opts: Meta, key: string, val: string) {
   }
 }
 
-export default function getMeta (dir: string) {
+export default async function getMeta (dir: string) {
   const metajs = path.join(dir, 'meta.js')
   let opts: Meta = { prompts: {} }
 
   if (exists(metajs)) {
-    const req = require(path.resolve(metajs))
+    const req = await import(path.resolve(metajs))
     if (req !== Object(req)) {
       throw new Error('meta.js needs to expose an object')
     }

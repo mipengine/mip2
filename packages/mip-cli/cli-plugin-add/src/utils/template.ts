@@ -8,7 +8,8 @@ import { existsSync as exists } from 'fs'
 import ora from 'ora'
 import home from 'user-home'
 import { sync as rm } from 'rimraf'
-import { download } from 'download-git-repo'
+import download from 'download-git-repo'
+import { logger } from 'mip-cli-utils'
 
 import async, { ErrorCallback } from 'async'
 import ms, { Callback, Plugin, Files } from 'metalsmith'
@@ -22,7 +23,7 @@ const OFFICIAL_TEMPLATE = 'mipengine/mip-cli-template'
 const VUE_TEMPLATE_TMP = path.resolve(home, '.mip-vue-template')
 const TEMPLATE_TMP = path.resolve(home, '.mip-template')
 
-export function downloadRepo (isVue: boolean | (() => void), done: () => void) {
+export function downloadRepo (isVue: boolean | undefined | (() => void), done: () => void) {
   if (typeof isVue === 'function') {
     done = isVue
     isVue = false
@@ -52,7 +53,7 @@ export function downloadRepo (isVue: boolean | (() => void), done: () => void) {
   download(template, tmp, { clone: false }, (err: Error) => {
     spinner.stop()
     if (err) {
-      console.error('Failed to download repo: ' + err.message.trim())
+      logger.error('Failed to download repo: ' + err.message.trim())
       return
     }
 
@@ -67,7 +68,7 @@ export function downloadRepo (isVue: boolean | (() => void), done: () => void) {
  * @param {string} compName 组件名称，仅用于只渲染组件的情况，渲染整个项目不传即可
  * @param {Function} done 回调函数
  */
-export function generate (dir: string, compName: string, isVue: boolean | (() => void), done: (error: Error | null) => void) {
+export async function generate (dir: string, compName: string, isVue: boolean | undefined | (() => void), done: (error: Error | null) => void) {
   if (typeof isVue === 'function') {
     done = isVue
     isVue = false
@@ -75,23 +76,20 @@ export function generate (dir: string, compName: string, isVue: boolean | (() =>
 
   let tmp = isVue ? VUE_TEMPLATE_TMP : TEMPLATE_TMP
   const metalsmith = ms(path.join(tmp, dir))
-  const templatePrompts = getMeta(tmp).prompts
+  const templatePrompts = (await getMeta(tmp)).prompts
+  let metadata: {[key: string]: any} = metalsmith.metadata()
 
   function ask (templatePrompts: Prompts): Plugin {
     return (files: Files, metalsmith: ms, done: Callback) => {
       // 替换 components 目录组件名称
-      metalsmith.metadata({
-        compName: compName || 'mip-example'
-      })
+      metadata.compName = compName || 'mip-example'
 
       // 只渲染组件部分时(mip2 add)，不需要走 ask 流程，且使用 component name 作为 dest 路径
       if (compName) {
         metalsmith.destination(path.resolve('./components', compName))
         // 读取项目名称，用于渲染 README.md 的脚本地址
         let siteName = process.cwd().split(path.sep).pop()
-        metalsmith.metadata({
-          name: siteName
-        })
+        metadata.name = siteName
         done(null, files, metalsmith)
         return
       }
@@ -108,13 +106,9 @@ export function generate (dir: string, compName: string, isVue: boolean | (() =>
         }] as Questions)
           .then(answers => {
             if (typeof answers[key] === 'string') {
-              metalsmith.metadata({
-                [key]: answers[key].replace(/"/g, '\\"')
-              })
+              metadata[key] = answers[key].replace(/"/g, '\\"')
             } else {
-              metalsmith.metadata({
-                [key]: answers[key]
-              })
+              metadata[key] = answers[key]
             }
             done()
           })
@@ -123,16 +117,15 @@ export function generate (dir: string, compName: string, isVue: boolean | (() =>
 
       async.eachSeries(Object.keys(templatePrompts), run, () => {
         // After all inquirer finished, set destination directory with input project name
-        metalsmith.destination(path.resolve('./', (metalsmith.metadata() as any).name))
+        metalsmith.destination(path.resolve('./', metadata.name))
         done(null, files, metalsmith)
       })
     }
   }
 
   function renderTemplateFiles (): Plugin {
-    return (files: Files, metalsmith: ms, done: Callback) => {
+    return (files: Files, _metalsmith: ms, done: Callback) => {
       let keys = Object.keys(files)
-
       function run (file: string, done: (err?: Error) => void) {
         let str = files[file].contents.toString()
 
@@ -143,7 +136,7 @@ export function generate (dir: string, compName: string, isVue: boolean | (() =>
 
         let res
         try {
-          res = render(str, metalsmith.metadata())
+          res = render(str, metadata)
         } catch (err) {
           return done(err)
         }

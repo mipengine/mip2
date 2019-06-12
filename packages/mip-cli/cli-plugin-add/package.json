@@ -4,6 +4,7 @@
   "description": "CLI utils for MIP 2.0",
   "main": "dist/index.js",
   "scripts": {
+    "build": "rm -rf dist && tsc",
     "dev": "tsc --project .",
     "lint": "eslint src --ext .ts",
     "test": "jest"
