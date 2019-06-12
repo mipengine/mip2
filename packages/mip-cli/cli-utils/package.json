@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@types/async": "^3.0.0",
+    "@types/chalk": "^2.2.0",
     "@types/fs-extra": "^7.0.0",
     "@types/glob": "^7.1.1",
     "@types/inquirer": "^6.0.3",

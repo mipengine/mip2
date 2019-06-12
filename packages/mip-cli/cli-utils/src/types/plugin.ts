@@ -30,12 +30,17 @@ export interface Argument {
   rest?: boolean;
 }
 
+export interface Params {
+  args: Record<string, string>;
+  options: Record<string, string>;
+}
+
 export interface Command {
   name?: string;
   description: string;
   args?: Argument[];
   options: Option[];
-  run<T extends {}>(arg: T): void;
+  run(params: Params): void;
   help?: string;
   hooks?: Record<string, Hook>;
 }
