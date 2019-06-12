@@ -30,17 +30,9 @@
 
 MIP 2.0 将使用频繁的组件由官方组件升级为内置组件。目前升级的主要有：
 
-* `mip-fixed` 组件。在 1.0 版本中使用了该组件的表现：引入 JS 文件 `<script src="https://c.mipcdn.com/static/v1/mip-fixed/mip-fixed.js"></script>`
+* `mip-fixed` 组件。`mip-fixed` 组件在 MIP 1.0 中需要额外引入 JS 文件 `<script src="https://c.mipcdn.com/static/v1/mip-fixed/mip-fixed.js"></script>` 后才能在页面中使用 `<mip-fixed>` 标签，由于在 2.0 中该组件已经内置，无需额外引入 JS 文件，因此在迁移时将对应的 `<script>` 标签删掉即可。
 
-* `mip-data` 组件。该组件为新增的内置组件，[详见组件使用方法](../interactive-mip/data-binding/data-definition.md)。
-
-如开发者所知，使用官方组件需要引入特定的 JS 文件，而内置组件不需要。因此，对于使用了 `mip-fixed` 组件的页面，开发者可以放心删除其 JS 文件的引用。具体做法如下：
-
-找到组件的 JS 文件引用：
-
-`<script src="https://c.mipcdn.com/static/v1/mip-fixed/mip-fixed.js"></script>`
-
-直接将其删除即可。
+* `mip-bind` 组件。`mip-bind` 组件为新增的内置组件，能够让 MIP 页面获得数据驱动的能力，站长在进行迁移时可以考虑使用 `mip-bind` 丰富页面的交互性。mip-bind 的使用方法请参考文档：[《数据绑定》](../interactive-mip/data-binding/data-definition.md)。
 
 ## 官方组件迁移
 
