@@ -32,7 +32,7 @@ export interface Argument {
 
 export interface Params {
   args: Record<string, string>;
-  options: Record<string, string>;
+  options: Record<string, string | boolean>;
 }
 
 export interface Command {
@@ -55,15 +55,12 @@ export type Hook = SyncHook |
   AsyncSeriesBailHook |
   AsyncSeriesWaterfallHook
 
-
 export interface Plugin extends Command {
   subCommands?: Command[];
 }
-
 
 // export interface Plugin {
 //   command: Command;
 //   run<T extends {}>(args: T): void;
 //   hooks?: Record<string, Hook>;
 // }
-

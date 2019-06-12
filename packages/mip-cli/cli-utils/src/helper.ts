@@ -82,5 +82,3 @@ export function removeExt (pathname: string) {
   }
   return pathname.slice(0, -ext.length)
 }
-
-
