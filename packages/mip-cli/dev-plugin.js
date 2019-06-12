@@ -12,7 +12,8 @@ module.exports = {
       name: 'port',
       shortName: 'p',
       optional: true,
-      description: '端口号'
+      description: '端口号',
+      type: 'required'
     },
     {
       name: 'length',

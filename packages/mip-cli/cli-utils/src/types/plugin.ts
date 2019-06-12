@@ -18,7 +18,7 @@ import {
 export interface Option {
   name: string;
   shortName: string;
-  optional?: boolean;
+  type?: 'optional' | 'required' | 'flag';
   description: string;
   fn?: ((...args: any[]) => any) | RegExp;
   defaultValue?: any;

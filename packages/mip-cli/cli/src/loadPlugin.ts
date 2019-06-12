@@ -55,7 +55,19 @@ function setupCommand (mainCommand: string, cmd: CommandInstance) {
 
   // set options
   cmd.options.forEach(opt => {
-    programResult.option(`-${opt.shortName}, --${opt.name} ${opt.optional ? '[value]' : '<value>'}`, `${opt.description}`)
+    // option 后面的值有三种类型： 1.flag，值为 true false 2.可选添值，不填时为 undefined 3.必填值
+    let optionValue: string
+    switch (opt.type) {
+      case 'optional':
+        optionValue = '[value]'
+        break;
+      case 'required':
+        optionValue = '<value>'
+        break;
+      default:
+        optionValue = ''
+    }
+    programResult.option(`-${opt.shortName}, --${opt.name} ${optionValue}`, `${opt.description}`)
   })
 
   // set description

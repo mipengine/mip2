@@ -14,19 +14,19 @@ const plugin: Plugin = {
     {
       name: 'component',
       shortName: 'c',
-      optional: true,
+      type: 'flag',
       description: '校验 mip 组件'
     },
     {
       name: 'page',
       shortName: 'p',
-      optional: true,
+      type: 'flag',
       description: '校验 mip 页面'
     },
     {
       name: 'whitelist',
       shortName: 'w',
-      optional: true,
+      type: 'flag',
       description: '校验 npm 白名单'
     }
   ],
