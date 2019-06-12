@@ -4,17 +4,13 @@
  */
 
 import program from 'commander'
-import { installOrUpdatePlugin, resolvePluginName, isInstalled } from './utils/plugin'
-import { logger, Plugin } from 'mip-cli-utils'
+import { installOrUpdatePlugin, resolvePluginName, isInstalled, loadModule } from './utils/plugin'
+import { logger, Plugin, Params } from 'mip-cli-utils'
 import chalk from 'chalk'
 import { cleanArgs } from './utils/cli'
 
 interface CommandInstance extends Plugin {
   isSubcommand?: boolean;
-}
-
-interface Params {
-  [key: string]: Record<string, string | undefined>;
 }
 
 async function checkAndInstall (command: string) {
@@ -67,7 +63,10 @@ function setupCommand (mainCommand: string, cmd: CommandInstance) {
   programResult
     .description(cmd.description)
     .action((...args) => {
-      let params: Params = {}
+      let params: Params = {
+        args: {},
+        options: {}
+      }
 
       if (!cmd.args) {
         return
@@ -75,7 +74,7 @@ function setupCommand (mainCommand: string, cmd: CommandInstance) {
 
       // 从参数数组解析出参数对象 {<argsName>: <argsValue>}
       cmd.args.forEach((a, index) => {
-        params[a.name] = args[cmd.isSubcommand ? index + 1 : index]
+        params.args[a.name] = args[cmd.isSubcommand ? index + 1 : index]
       })
 
       // commander action 回调最后一个参数始终是 cmd 对象，从中获取简单 options 对象 {<optionName>: <optionValue>}
@@ -87,23 +86,6 @@ function setupCommand (mainCommand: string, cmd: CommandInstance) {
     })
 
   program.parse(process.argv)
-
-  // program
-  //   .command('dev <component> [dir]')
-  //   .option('-p, --port <value>', '端口号')
-  //   .description('描述这个命令的功能')
-  //   // .on('--help', () => {
-  //   //   console.log('')
-  //   //   console.log('Examples:');
-  //   //   console.log('  $ custom-help --help');
-  //   //   console.log('  $ custom-help -h');
-  //   // })
-  //   // .action((...args) => {
-  //   .action((name, dir) => {
-  //     console.log('========= plugin run ==========')
-  //     console.log(name, dir)
-  //   })
-  // program.parse(process.argv)
 }
 
 export async function load (mainCommand: string, args?: string[]) {
@@ -112,18 +94,18 @@ export async function load (mainCommand: string, args?: string[]) {
   // 3 根据子命令/命令 加载模块
   // 4 运行命令
 
-  await checkAndInstall(mainCommand)
+  // for dev, 注释掉下一行，不用安装
+  // await checkAndInstall(mainCommand)
 
   let commandDefination: CommandInstance
   try {
     // // for dev
-    commandDefination = require('../../dev-plugin.js')
-    // commandDefination = require(resolvePluginName(mainCommand))
+    // commandDefination = loadModule('../../dev-plugin.js')
+    commandDefination = loadModule(resolvePluginName(mainCommand))
   } catch (e) {
     logger.info('加载命令插件失败', e)
     return
   }
-
   // 查询是否有子命令，如果有直接加载子命令模块，否则加载主命令模块
   const subcommandName = args && args[0]
   const subcommandDefination = commandDefination.subCommands && commandDefination.subCommands.find(s => s.name === subcommandName)
