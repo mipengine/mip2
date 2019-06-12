@@ -6,28 +6,28 @@
 // import { Arguments } from './interface'
 import path from 'path'
 import fs from 'fs-extra'
-import { downloadRepo, generate } from '../../cli-utils/src/template'
-import globPify from '../../cli-utils/src/helper'
+import { downloadRepo, generate } from './utils/template'
+import globPify from './utils/helper'
 import { promisify } from 'util'
-import * as cli from '../../cli-utils/src/logger'
+import { logger } from 'mip-cli-utils'
 
 const templateDir = 'template/components/mip-example'
 
-interface Arguments {
+export interface Arguments {
   compName: string;
   options: {
-    vue: boolean;
-    force: boolean;
+    vue?: boolean;
+    force?: boolean;
   };
 }
 
 export function add (config: Arguments) {
   if (!config.compName) {
-    cli.error('缺少组件名称参数，请按 `mip2 add [组件名]` 的格式重新输入')
+    logger.error('缺少组件名称参数，请按 `mip2 add [组件名]` 的格式重新输入')
     return
   }
   if (fs.existsSync(path.resolve('components', config.compName)) && !config.options.force) {
-    cli.warn('组件:' + config.compName + ' 已存在，您可以使用 --force 参数强制覆盖')
+    logger.warn('组件:' + config.compName + ' 已存在，您可以使用 --force 参数强制覆盖')
     return
   }
 
@@ -58,12 +58,12 @@ export function add (config: Arguments) {
   downloadRepo(isVue, () => {
     generate(templateDir, config.compName, isVue, async (err: Error | null) => {
       if (err) {
-        cli.error('Failed to add component: ' + err.message.trim())
+        logger.error('Failed to add component: ' + err.message.trim())
         return
       }
 
       await replaceComponentName()
-      cli.info('Add component: ' + config.compName + ' successfully!')
+      logger.info('Add component: ' + config.compName + ' successfully!')
     })
   })
 }
