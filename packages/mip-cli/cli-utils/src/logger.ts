@@ -1,6 +1,6 @@
 import chalk from 'chalk'
-
-export default {
+export {default as chalk} from 'chalk'
+export const logger = {
   info (...args: any[]) {
     console.log(chalk.green('INFO'), ...args)
   },
