@@ -1,11 +1,9 @@
-import * as logger from './logger'
-import globPify from './helper'
-import { downloadRepo, generate } from './template'
+/**
+ * @file mip-cli-utils index
+ * @author clark-t (clarktanglei@163.com)
+ */
+
+export {default as logger} from './logger'
+export * from './helper'
 export * from './types/plugin'
 
-export {
-  logger,
-  globPify,
-  downloadRepo,
-  generate
-}
