@@ -1,5 +1,5 @@
 import { getPluginPackages, installOrUpdatePlugin, resolvePluginName } from './utils/plugin'
-import utils from 'mip-cli-utils'
+import { logger } from 'mip-cli-utils'
 
 interface Option {
   registry: string;
@@ -13,7 +13,7 @@ export function update (pluginNames: string[], options: Option) {
     // 没有具体指定，默认全部更新已安装插件
     pluginTask = getPluginPackages()
     if (!pluginTask.length) {
-      utils.logger.info('没有找到插件，您可以使用 mip2 install <packageName> 进行安装')
+      logger.info('没有找到插件，您可以使用 mip2 install <packageName> 进行安装')
       return
     }
   } else {

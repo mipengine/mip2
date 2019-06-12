@@ -6,7 +6,6 @@
 import semver from 'semver'
 import chalk from 'chalk'
 import { Command, Option } from 'commander'
-import { Value } from '../interface'
 
 export function checkNodeVersion (expectVersion: string) {
   if (!semver.satisfies(process.version, expectVersion)) {
@@ -22,7 +21,7 @@ export function camelize (str: string) {
 }
 
 export function cleanArgs (cmd: Command) {
-  const args: Record<string, Value | undefined> = {}
+  const args: Record<string, string | undefined> = {}
 
   cmd.options.forEach((o: Option) => {
     const key: string = camelize(o.long.replace(/^--/, ''))

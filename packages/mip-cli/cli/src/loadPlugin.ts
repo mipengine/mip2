@@ -5,31 +5,46 @@
 
 import program from 'commander'
 import { installOrUpdatePlugin, resolvePluginName, isInstalled } from './utils/plugin'
-import utils from 'mip-cli-utils'
+import { logger, Plugin } from 'mip-cli-utils'
 import chalk from 'chalk'
 import { cleanArgs } from './utils/cli'
+
+interface CommandInstance extends Plugin {
+  isSubcommand?: boolean;
+}
+
+interface Params {
+  [key: string]: Record<string, string | undefined>;
+}
 
 async function checkAndInstall (command: string) {
   const packageName = resolvePluginName(command)
 
   if (!isInstalled(packageName)) {
-    utils.logger.info(`正准备安装 ${chalk.cyan(packageName)}`)
+    logger.info(`正准备安装 ${chalk.cyan(packageName)}`)
 
     try {
       await installOrUpdatePlugin('install', packageName)
     } catch (e) {
-      return utils.logger.error(`插件 ${chalk.cyan(packageName)} 不存在，请重新输入`)
+      return logger.error(`插件 ${chalk.cyan(packageName)} 不存在，请重新输入`)
     }
 
-    utils.logger.info(`${chalk.cyan(packageName)} 安装成功`)
+    logger.info(`${chalk.cyan(packageName)} 安装成功`)
   }
 }
 
-function setupCommand (mainCommand: string, cmd: any) {
+function setupCommand (mainCommand: string, cmd: CommandInstance) {
   let command: string
+
   let commandPrefix: string = cmd.isSubcommand ? `${mainCommand} <${cmd.name}>` : `${mainCommand}`
-  let commandArgs = cmd.args
-    .map(arg => arg.optional ? `[${arg.name}]` : `<${arg.name}>`)
+
+  let commandArgs = (cmd.args || [])
+    .map(arg => {
+      if (arg.optional) {
+        return arg.rest ? `[${arg.name}...]` : `[${arg.name}]`
+      }
+      return arg.rest ? `<${arg.name}...>` : `<${arg.name}>`
+    })
     .join(' ')
 
   command = `${commandPrefix} ${commandArgs}`
@@ -52,7 +67,11 @@ function setupCommand (mainCommand: string, cmd: any) {
   programResult
     .description(cmd.description)
     .action((...args) => {
-      let params = {}
+      let params: Params = {}
+
+      if (!cmd.args) {
+        return
+      }
 
       // 从参数数组解析出参数对象 {<argsName>: <argsValue>}
       cmd.args.forEach((a, index) => {
@@ -95,31 +114,32 @@ export async function load (mainCommand: string, args?: string[]) {
 
   await checkAndInstall(mainCommand)
 
-  let pluginPackage: any
+  let commandDefination: CommandInstance
   try {
     // // for dev
-    // pluginPackage = require('../../dev-plugin.js')
-    pluginPackage = require(resolvePluginName(mainCommand))
+    commandDefination = require('../../dev-plugin.js')
+    // commandDefination = require(resolvePluginName(mainCommand))
   } catch (e) {
-    utils.logger.info('加载命令插件失败', e)
+    logger.info('加载命令插件失败', e)
     return
   }
 
-  // plugin 定义
-  const commandDefination = pluginPackage.command
-
   // 查询是否有子命令，如果有直接加载子命令模块，否则加载主命令模块
-  const subcommand = args && args[0]
-  const subcommandDefination = commandDefination.subcommands && commandDefination.subcommands.find(s => s.name === subcommand)
+  const subcommandName = args && args[0]
+  const subcommandDefination = commandDefination.subCommands && commandDefination.subCommands.find(s => s.name === subcommandName)
 
   // 最终加载的插件定义
-  let cmd: any
+  let cmd: CommandInstance
   if (subcommandDefination) {
-    subcommandDefination['isSubcommand'] = true
     cmd = subcommandDefination
+    cmd['isSubcommand'] = true
   } else {
     cmd = commandDefination
   }
 
-  setupCommand(mainCommand, cmd)
+  try {
+    setupCommand(mainCommand, cmd)
+  } catch (e) {
+    logger.error('启动命令插件失败', e)
+  }
 }
