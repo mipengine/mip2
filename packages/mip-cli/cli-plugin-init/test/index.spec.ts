@@ -8,7 +8,7 @@ import plugin from '../src/index'
 test('Hello World', async () => {
   jest.setTimeout(20000)
   plugin.run({
-    compName: '',
+    args: {},
     options: {}
   })
   await new Promise(resolve => {

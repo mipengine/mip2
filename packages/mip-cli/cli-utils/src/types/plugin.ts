@@ -32,7 +32,7 @@ export interface Argument {
 
 export interface Params {
   args: Record<string, string>;
-  options: Record<string, string>;
+  options: Record<string, string | boolean>;
 }
 
 export interface Command {

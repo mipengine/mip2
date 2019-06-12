@@ -1,26 +1,17 @@
 module.exports = {
-  name: 'dev',
+  name: 'validate',
   description: '启动开发模式',
   args: [
     {
-      name: 'first',
+      name: 'componentName',
       optional: true
-    },
-    {
-      name: 'second',
-      optional: true
-    },
-    {
-      name: 'third',
-      optional: true,
-      rest: true
     }
   ],
   options: [
     {
       name: 'port',
       shortName: 'p',
-      optional: false,
+      optional: true,
       description: '端口号'
     },
     {

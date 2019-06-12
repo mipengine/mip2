@@ -21,7 +21,7 @@ export function camelize (str: string) {
 }
 
 export function cleanArgs (cmd: Command) {
-  const args: Record<string, string | undefined> = {}
+  const args: Record<string, string> = {}
 
   cmd.options.forEach((o: Option) => {
     const key: string = camelize(o.long.replace(/^--/, ''))

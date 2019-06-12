@@ -16,7 +16,7 @@ import { logger, Command } from 'mip-cli-utils'
 // const installedPath = path.join(__dirname, '../../..')
 
 // for dev mode
-const pluginREG = /^cli-plugin-*/
+const pluginREG = /^(mip-)*cli-plugin-/
 const installedPath = path.join(__dirname, '../../..')
 
 function executeCommand (command: string, args: string[], targetDir: string) {
@@ -90,6 +90,16 @@ function printDescription (name: string, description: string) {
   }
 }
 
+export function loadModule (name: string) {
+  let loadResult = require(name)
+
+  if (loadResult.__esModule) {
+    return loadResult.default
+  }
+
+  return loadResult
+}
+
 export function showPluginCmdHelpInfo () {
   let pluginsPkgs = getPluginPackages()
 
@@ -100,31 +110,18 @@ export function showPluginCmdHelpInfo () {
   console.log()
   console.log('User Plugin Commands:')
 
-  // /** for dev ***********************/
-  // let cmdName = 'dev'
-  // try {
-  //   const cmdModule = require('../../../dev-plugin')
-  //   // main command
-  //   printDescription(cmdName, cmdModule.command.description)
-  //   // sub command
-  //   if (cmdModule.command.subcommands) {
-  //     cmdModule.command.subcommands.forEach(subcmd => {
-  //       printDescription(`${cmdName} ${subcmd.name}`, subcmd.description)
-  //     })
-  //   }
-  // } catch (e) {}
-  // /** for dev ***********************/
-
   pluginsPkgs.forEach(pkg => {
     let cmdName = resolveCommandFromPackageName(pkg)
-
     try {
-      const cmdModule = require(pkg)
+      // const cmdModule = loadModule(pkg)
+      // for dev
+      const cmdModule = loadModule(`mip-${pkg}`)
+
       // main command
-      printDescription(cmdName, cmdModule.command.description)
+      printDescription(cmdName, cmdModule.description)
       // sub command
-      if (cmdModule.command.subcommands) {
-        cmdModule.command.subcommands.forEach((subcmd: Command) => {
+      if (cmdModule.subcommands) {
+        cmdModule.subcommands.forEach((subcmd: Command) => {
           printDescription(`${cmdName} ${subcmd.name}`, subcmd.description)
         })
       }

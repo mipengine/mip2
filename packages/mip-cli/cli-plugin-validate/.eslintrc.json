@@ -1,0 +1,17 @@
+{
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {},
+    "extends": [
+      "plugin:@typescript-eslint/recommended",
+      "standard"
+    ],
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "rules": {
+      "@typescript-eslint/indent": 0,
+      "@typescript-eslint/explicit-function-return-type": 0,
+      "@typescript-eslint/no-var-requires": 0
+    }
+}
