@@ -21,9 +21,9 @@ const MIP_PAGE_FADE_HEADER_WRAPPER = 'mip-page-fade-header-wrapper'
 
 export const BACK_BUTTON_SVG = [
   '<svg t="1530857979993" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3173"',
-    'xmlns:xlink="http://www.w3.org/1999/xlink">',
-    '<path  fill="currentColor" d="M348.949333 511.829333L774.250667 105.728C783.978667 96 789.333333 83.712 789.333333 71.104c0-12.629333-5.354667-24.917333-15.082666-34.645333-9.728-9.728-22.037333-15.082667-34.645334-15.082667-12.586667 0-24.917333 5.333333-34.624 15.082667L249.557333 471.616A62.570667 62.570667 0 0 0 234.666667 512c0 10.410667 1.130667 25.408 14.890666 40.042667l455.424 435.605333c9.706667 9.728 22.016 15.082667 34.624 15.082667s24.917333-5.354667 34.645334-15.082667c9.728-9.728 15.082667-22.037333 15.082666-34.645333 0-12.608-5.354667-24.917333-15.082666-34.645334L348.949333 511.829333z"',
-      'p-id="3174"></path>',
+  'xmlns:xlink="http://www.w3.org/1999/xlink">',
+  '<path  fill="currentColor" d="M348.949333 511.829333L774.250667 105.728C783.978667 96 789.333333 83.712 789.333333 71.104c0-12.629333-5.354667-24.917333-15.082666-34.645333-9.728-9.728-22.037333-15.082667-34.645334-15.082667-12.586667 0-24.917333 5.333333-34.624 15.082667L249.557333 471.616A62.570667 62.570667 0 0 0 234.666667 512c0 10.410667 1.130667 25.408 14.890666 40.042667l455.424 435.605333c9.706667 9.728 22.016 15.082667 34.624 15.082667s24.917333-5.354667 34.645334-15.082667c9.728-9.728 15.082667-22.037333 15.082666-34.645333 0-12.608-5.354667-24.917333-15.082666-34.645334L348.949333 511.829333z"',
+  'p-id="3174"></path>',
   '</svg>'
 ].join('')
 
@@ -107,13 +107,13 @@ export function hideAllIFrames () {
 function getHeaderHTML (logo, isFake) {
   return [
     `<div class="${MIP_SHELL_HEADER}">`,
-      `<span ${isFake ? '' : 'mip-header-btn'} class="back-button">`,
-        BACK_BUTTON_SVG,
-      '</span>',
-      `<div class="${MIP_SHELL_HEADER}-logo-title">`,
-        `<img class="${MIP_SHELL_HEADER}-logo" src="${logo}">`,
-        `<span class="${MIP_SHELL_HEADER}-title"></span>`,
-      '</div>',
+    `<span ${isFake ? '' : 'mip-header-btn'} class="back-button">`,
+    BACK_BUTTON_SVG,
+    '</span>',
+    `<div class="${MIP_SHELL_HEADER}-logo-title">`,
+    `<img class="${MIP_SHELL_HEADER}-logo" src="${logo}">`,
+    `<span class="${MIP_SHELL_HEADER}-title"></span>`,
+    '</div>',
     '</div>'
   ].join('')
 }
@@ -139,7 +139,7 @@ export function createLoading (pageMeta) {
 }
 
 // 可能已经没人用，之后考虑删除吧
-export function setHeaderColor(container, dom, color, backgroundColor, borderColor) {
+export function setHeaderColor (container, dom, color, backgroundColor, borderColor) {
   css(container, 'background-color', backgroundColor)
   css(dom.querySelectorAll('svg'), 'fill', color)
   css(dom.querySelector(`.${MIP_SHELL_HEADER}-title`), 'color', color)

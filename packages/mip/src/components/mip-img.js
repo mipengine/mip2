@@ -95,7 +95,7 @@ function getImgOffset (img) {
 function getImgsSrcIndex (ele) {
   // 取已渲染的 popup 图片，不包括 carousel 中头尾的两个图片
   const mipImgs = [...document.querySelectorAll('mip-img[popup].mip-img-loaded')]
-                    .filter(mipImg => !mipImg.classList.contains('mip-carousel-extra-img'))
+    .filter(mipImg => !mipImg.classList.contains('mip-carousel-extra-img'))
   let index = mipImgs.indexOf(ele)
   /* istanbul ignore if */
   if (index === -1) {
@@ -225,7 +225,7 @@ function bindPopup (element, img) {
     let popupImg = new Image()
     popupImg.setAttribute('src', current)
     popup.appendChild(popupImg)
-    
+
     // 背景 fade in
     naboo.animate(popupBg, {
       opacity: 1

@@ -1,4 +1,40 @@
 {
   "root": true,
-  "extends": ["standard"]
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "tsconfig.json"
+  },
+  "extends": [
+    "standard",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "rules": {
+    "@typescript-eslint/camelcase": ["error", {"properties": "never"}],
+    "@typescript-eslint/indent": ["error", 2, {
+      "SwitchCase": 1,
+      "VariableDeclarator": 1,
+      "outerIIFEBody": 1,
+      "MemberExpression": 1,
+      "FunctionDeclaration": {"parameters": 1, "body": 1},
+      "FunctionExpression": {"parameters": 1, "body": 1},
+      "CallExpression": {"arguments": 1},
+      "ArrayExpression": 1,
+      "ObjectExpression": 1,
+      "ImportDeclaration": 1,
+      "flatTernaryExpressions": false,
+      "ignoreComments": false
+    }],
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-member-accessibility": ["error", {"accessibility": "no-public"}],
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-magic-numbers": "off",
+    "@typescript-eslint/no-type-alias": "off",
+    "@typescript-eslint/no-unused-vars": ["error", {"vars": "all", "args": "none", "ignoreRestSiblings": true}],
+    "@typescript-eslint/no-use-before-define": ["error", {"functions": false, "classes": false, "variables": false}],
+    "@typescript-eslint/promise-function-async": "off"
+  }
 }

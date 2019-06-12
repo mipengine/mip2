@@ -14,7 +14,8 @@
           ]
         }
       }
-    ]
+    ],
+    "@babel/preset-typescript"
   ],
   "plugins": [
     [

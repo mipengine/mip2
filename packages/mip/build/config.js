@@ -38,6 +38,8 @@ const builds = {
   }
 }
 
+const extensions = ['.js', '.ts']
+
 function genConfig (name) {
   const opts = builds[name]
   const config = {
@@ -57,7 +59,7 @@ function genConfig (name) {
         config: true
       }),
       alias(Object.assign({}, aliases, opts.alias)),
-      node(),
+      node({extensions}),
       cjs(
         {
           include: 'node_modules/**'
@@ -65,7 +67,8 @@ function genConfig (name) {
       ),
       babel({
         runtimeHelpers: true,
-        exclude: 'node_modules/**'
+        exclude: 'node_modules/**',
+        extensions
       })
       // babel({
       //   plugins: ['external-helpers']
