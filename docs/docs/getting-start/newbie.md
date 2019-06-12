@@ -10,6 +10,10 @@
 2. [调试与验证 MIP 页面](./debug-and-validate.md)
 3. [MIP 搜索生效](../mip-in-search/introduction.md)
 
+## 如何从 MIP 1.0 迁移到 2.0
+
+相较于 MIP 1.0，MIP 2.0 版本提供了更多新特性，开发者可以[迁移](./migrate-v1-to-v2.md)获取更多新功能。
+
 ## MIP 规范
 
 MIP 页面的高性能离不开规范的重要性。因为 MIP 主要由 MIP-HTML、MIP-JS 和 MIP-CACHE 三部分组成，所以主要的规范有：
