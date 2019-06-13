@@ -9,7 +9,6 @@
 
 import Lexer from '../../lexer'
 
-// const Lexer = require('./lexer')
 const lex = new Lexer()
 
 function buildBinaryAst (head, tails) {
@@ -566,5 +565,4 @@ lex.set({
 })
 
 export default lex
-// module.exports = lex
 
