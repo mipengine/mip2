@@ -5,7 +5,7 @@
 
 import program from 'commander'
 import { installOrUpdatePlugin, resolvePluginName, isInstalled, loadModule } from './utils/plugin'
-import { logger, Plugin, Params } from 'mip-cli-utils'
+import { logger, Plugin, Params, Option } from 'mip-cli-utils'
 import chalk from 'chalk'
 import { cleanArgs } from './utils/cli'
 
@@ -29,11 +29,33 @@ async function checkAndInstall (command: string) {
   }
 }
 
+function parseOption (option: Option) {
+  let parsedArray = []
+
+    // option 后面的值有三种类型： 1.flag，值为 true false 2.可选添值，不填时为 undefined 3.必填值
+    let optionValue: string
+    switch (option.type) {
+      case 'optional':
+        optionValue = '[value]'
+        break;
+      case 'required':
+        optionValue = '<value>'
+        break;
+      case 'flag':
+      default:
+        optionValue = ''
+    }
+
+    parsedArray.push(`-${option.shortName}, --${option.name} ${optionValue}`, `${option.description}`)
+
+    option.fn && parsedArray.push(option.fn)
+    option.defaultValue && parsedArray.push(option.defaultValue)
+    return parsedArray
+}
+
 function setupCommand (mainCommand: string, cmd: CommandInstance) {
   let command: string
-
   let commandPrefix: string = cmd.isSubcommand ? `${mainCommand} <${cmd.name}>` : `${mainCommand}`
-
   let commandArgs = (cmd.args || [])
     .map(arg => {
       if (arg.optional) {
@@ -50,24 +72,14 @@ function setupCommand (mainCommand: string, cmd: CommandInstance) {
 
   if (cmd.isSubcommand) {
     // hack subcommand: display the usage correctly
-    programResult = programResult.usage(`${cmd.name} ${commandArgs}`)
+    programResult.usage(`${cmd.name} ${commandArgs}`)
   }
 
   // set options
   cmd.options.forEach(opt => {
-    // option 后面的值有三种类型： 1.flag，值为 true false 2.可选添值，不填时为 undefined 3.必填值
-    let optionValue: string
-    switch (opt.type) {
-      case 'optional':
-        optionValue = '[value]'
-        break;
-      case 'required':
-        optionValue = '<value>'
-        break;
-      default:
-        optionValue = ''
-    }
-    programResult.option(`-${opt.shortName}, --${opt.name} ${optionValue}`, `${opt.description}`)
+    let parsedOpt = parseOption(opt)
+    let setOption: (...args: any[]) => void = programResult.option.bind(programResult)
+    setOption(...parsedOpt)
   })
 
   // set description
@@ -75,6 +87,7 @@ function setupCommand (mainCommand: string, cmd: CommandInstance) {
   programResult
     .description(cmd.description)
     .action((...args) => {
+
       let params: Params = {
         args: {},
         options: {}
@@ -101,19 +114,14 @@ function setupCommand (mainCommand: string, cmd: CommandInstance) {
 }
 
 export async function load (mainCommand: string, args?: string[]) {
-  // 1 检查 plugin 是否安装
-  // 2 npm install 安装plugin
-  // 3 根据子命令/命令 加载模块
-  // 4 运行命令
-
   // for dev, 注释掉下一行，不用安装
   // await checkAndInstall(mainCommand)
 
   let commandDefination: CommandInstance
   try {
     // // for dev
-    // commandDefination = loadModule('../../dev-plugin.js')
-    commandDefination = loadModule(resolvePluginName(mainCommand))
+    commandDefination = loadModule('../../../dev-plugin.js')
+    // commandDefination = loadModule(resolvePluginName(mainCommand))
   } catch (e) {
     logger.info('加载命令插件失败', e)
     return

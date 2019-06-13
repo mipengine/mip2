@@ -23,7 +23,7 @@ export function camelize (str: string) {
 export function cleanArgs (cmd: Command) {
   const args: Record<string, string> = {}
 
-  cmd.options.forEach((o: Option) => {
+  cmd.options && cmd.options.forEach((o: Option) => {
     const key: string = camelize(o.long.replace(/^--/, ''))
     // if an option is not present and Command has a method with the same name
     // it should not be copied
