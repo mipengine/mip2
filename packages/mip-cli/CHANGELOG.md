@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- 1.5.13 
+    1. 增加 typescript 支持
+
 - 1.5.12
     1. 紧急修复 1.5.11 版本编译过程找不到 core-js 的 BUG
 
