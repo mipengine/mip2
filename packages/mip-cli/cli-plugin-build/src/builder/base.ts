@@ -5,39 +5,38 @@
 
 import path from 'path'
 
-class WebpackBaseBuilder {
-  options: any;
-  outputDir: string;
-  packageJsonPathname: string;
-  componentDir: string;
-  dir: string;
+import {
+  projectPath,
+  globPify,
+  GlobOptions,
+  exit
+} from 'mip-cli-utils'
 
-  constructor (options: any) {
-    this.options = options
-    Object.assign(this, options)
-    this.outputDir = options.output || path.resolve('dist')
-    this.packageJsonPathname = path.resolve(this.dir, 'package.json')
-    this.componentDir = projectPath.components(this.dir)
+import {
+  format
+} from '../utils/format'
+
+import {
+  BuilderOptions
+} from '../types/options'
+
+export class WebpackBaseBuilder {
+  options: BuilderOptions;
+
+  constructor (options: Record<string, any>) {
+    this.options = format(options)
   }
 
-  async getEntries () {
-    let globOpts = {
-      cwd: this.componentDir,
-      root: this.componentDir
-    }
+  async build (components?: ) {
 
-    let components = await globPify('mip-*/mip-*.@(vue|js)', globOpts)
-      .then(arr => arr.filter(name => /(mip-[\w-]+\/\1\.(vue|js)$/.test(name)))
+  }
 
-    if (!components.length) {
-      cli.error(`在该路径下找不到 mip 组件入口文件，请检查路径是否规范：\n${this.componentDir}`)
-      process.ext(1)
-    }
+  async getConfig () {
+
   }
 
   async initConfig () {
 
   }
-
-
 }
+
