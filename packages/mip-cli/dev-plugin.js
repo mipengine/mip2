@@ -1,25 +1,30 @@
 module.exports = {
-  name: 'validate',
+  name: 'dev',
   description: '启动开发模式',
   args: [
     {
       name: 'componentName',
-      optional: true
+      optional: false
+    },
+    {
+      name: 'siteName',
+      optional: false
     }
   ],
   options: [
     {
       name: 'port',
       shortName: 'p',
-      optional: true,
       description: '端口号',
-      type: 'required'
+      type: 'flag',
+      // defaultValue: 8845,
+      // fn: function () {}
     },
     {
       name: 'length',
       shortName: 'l',
-      optional: false,
-      description: '长度'
+      description: '长度',
+      type: 'required'
     }
   ],
   run: function (params) {
@@ -31,7 +36,15 @@ module.exports = {
       description: '启动组件调试',
       args: [
         {
-          name: 'componentName',
+          name: 'first',
+          optional: true
+        },
+        {
+          name: 'second',
+          optional: true
+        },
+        {
+          name: 'third',
           optional: true
         }
       ],
@@ -39,9 +52,15 @@ module.exports = {
         {
           name: 'type',
           shortName: 't',
-          optional: false,
-          description: '类型'
-        }
+          description: '类型',
+          type: 'flag'
+        },
+        // {
+        //   name: 'use',
+        //   shortName: 'u',
+        //   description: '用途',
+        //   type: 'required'
+        // }
       ],
       run: function (params) {
         console.log(params)

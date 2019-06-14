@@ -31,7 +31,7 @@ export interface Argument {
 }
 
 export interface Params {
-  args: Record<string, string>;
+  args: Record<string, string | string[]>;
   options: Record<string, string | boolean>;
 }
 

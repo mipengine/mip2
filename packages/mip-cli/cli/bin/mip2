@@ -45,7 +45,7 @@ program
 program.on('--help', () => {
   showPluginCmdHelpInfo()
   console.log()
-  console.log(`使用 mip2 <command> --help 查看命令帮助详情`)
+  console.log('使用 mip2 <command> --help 查看命令帮助详情')
   console.log()
 })
 
