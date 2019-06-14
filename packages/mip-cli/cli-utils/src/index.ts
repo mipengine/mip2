@@ -6,6 +6,6 @@
 export * from './logger'
 export { default as chalk } from 'chalk'
 export * from './helper'
-export {default as projectPath} from './project-path'
-export {default as chalk} from 'chalk'
+export * from './exit'
+export { default as projectPath } from './project-path'
 export * from './types/plugin'

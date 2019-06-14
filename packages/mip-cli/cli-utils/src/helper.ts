@@ -50,11 +50,11 @@ export async function resolvePath (possiblePaths: string[]) {
   // return asyncSome(promises).catch(noop)
 }
 
-type PifyFn = Parameters<typeof pify>[0]
-type PifyOptions = NonNullable<Parameters<typeof pify>[1]>
+// export type PifyFn = NonNullable<Parameters<typeof pify>[0]>
+export type GlobOptions = NonNullable<Parameters<typeof glob>[1]>
 
-export function globPify (fn: PifyFn, opts?: PifyOptions) {
-  return pify(glob)(fn, opts)
+export function globPify (fn: string, opts?: GlobOptions) {
+  return <Promise<string[]>>pify(glob)(fn, opts)
 }
 
 export function objectSubset<T extends {}, K extends keyof T>(obj: T, names: K[]) {
