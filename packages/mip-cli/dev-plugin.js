@@ -5,6 +5,10 @@ module.exports = {
     {
       name: 'componentName',
       optional: false
+    },
+    {
+      name: 'siteName',
+      optional: false
     }
   ],
   options: [
@@ -32,7 +36,15 @@ module.exports = {
       description: '启动组件调试',
       args: [
         {
-          name: 'componentName',
+          name: 'first',
+          optional: true
+        },
+        {
+          name: 'second',
+          optional: true
+        },
+        {
+          name: 'third',
           optional: true
         }
       ],
@@ -42,7 +54,13 @@ module.exports = {
           shortName: 't',
           description: '类型',
           type: 'flag'
-        }
+        },
+        // {
+        //   name: 'use',
+        //   shortName: 'u',
+        //   description: '用途',
+        //   type: 'required'
+        // }
       ],
       run: function (params) {
         console.log(params)

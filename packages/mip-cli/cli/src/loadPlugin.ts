@@ -53,7 +53,56 @@ function parseOption (option: Option) {
     return parsedArray
 }
 
+function findIndex (option: Option, argsArray: string[]) {
+  let nameIndex = argsArray.indexOf(`--${option.name}`)
+  let shortNameIndex = argsArray.indexOf(`-${option.shortName}`)
+
+  if (nameIndex > -1) {
+    return nameIndex
+  } else if (shortNameIndex > -1) {
+    return shortNameIndex
+  }
+  return -1
+}
+
+// 自定义参数解析
+// sub-sub command 模式，option -xx 输入位置不同时，将导致 comamnder action 回调参数顺序问题
+function parseArgs (cmd: CommandInstance) {
+  // mip2 dev: ['node', 'mip2', 'dev', ...]
+  // isSubcommand 时，mip2 dev comoponent : ['node', 'mip2', 'dev', 'component', ...]
+  const sliceCount = cmd.isSubcommand ? 4 : 3
+  let argsArray = process.argv.slice(sliceCount)
+
+  // 过滤掉数组中的 options （eg: -x, -y value, --yes）
+  cmd.options.forEach((opt) => {
+    let optIndex = findIndex(opt, argsArray)
+    if (optIndex < 0) {
+      return
+    }
+    if (opt.type === 'flag') {
+      argsArray.splice(optIndex, 1)
+    }
+    else {
+      argsArray.splice(optIndex, 2)
+    }
+  })
+
+  // 返回参数对象 {<name>: <value>}
+  let argsResult: Record<string, string | string[]> = {}
+  cmd.args && cmd.args.forEach((a, index) => {
+    if (a.rest) {
+      // if c set rest, [a, b, c, d, e] => [c, d, e]
+      argsResult[a.name] = argsArray.splice(index, argsArray.length - 1)
+    }
+    else {
+      argsResult[a.name] = argsArray[index]
+    }
+  })
+  return argsResult
+}
+
 function setupCommand (mainCommand: string, cmd: CommandInstance) {
+  // 拼接 comamnd
   let command: string
   let commandPrefix: string = cmd.isSubcommand ? `${mainCommand} <${cmd.name}>` : `${mainCommand}`
   let commandArgs = (cmd.args || [])
@@ -72,7 +121,7 @@ function setupCommand (mainCommand: string, cmd: CommandInstance) {
 
   if (cmd.isSubcommand) {
     // hack subcommand: display the usage correctly
-    programResult.usage(`${cmd.name} ${commandArgs}`)
+    programResult.usage(`${cmd.name} [options] ${commandArgs}`)
   }
 
   // set options
@@ -82,31 +131,20 @@ function setupCommand (mainCommand: string, cmd: CommandInstance) {
     setOption(...parsedOpt)
   })
 
-  // set description
-  // set action
+  // set description & set action
   programResult
     .description(cmd.description)
     .action((...args) => {
+      let params: Params = {args: {}, options: {}}
 
-      let params: Params = {
-        args: {},
-        options: {}
-      }
-
-      if (!cmd.args) {
-        return
-      }
-
-      // 从参数数组解析出参数对象 {<argsName>: <argsValue>}
-      cmd.args.forEach((a, index) => {
-        params.args[a.name] = args[cmd.isSubcommand ? index + 1 : index]
-      })
-
-      // commander action 回调最后一个参数始终是 cmd 对象，从中获取简单 options 对象 {<optionName>: <optionValue>}
+      // 解析 options, args 最后一个参数是 cmd 对象
       let options = cleanArgs(args[args.length - 1])
       params.options = options
 
-      // invoke with params
+      // parse args
+      params.args = parseArgs(cmd)
+
+      // // invoke with params
       cmd.run(params)
     })
 
@@ -120,8 +158,8 @@ export async function load (mainCommand: string, args?: string[]) {
   let commandDefination: CommandInstance
   try {
     // // for dev
-    commandDefination = loadModule('../../../dev-plugin.js')
-    // commandDefination = loadModule(resolvePluginName(mainCommand))
+    // commandDefination = loadModule('../../../dev-plugin.js')
+    commandDefination = loadModule(resolvePluginName(mainCommand))
   } catch (e) {
     logger.info('加载命令插件失败', e)
     return
