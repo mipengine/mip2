@@ -27,8 +27,8 @@ module.exports = class WebpackBaseBuilder {
       root: this.componentDir
     }
 
-    let components = await globPify('mip-*/mip-*.@(vue|js)', globOpts)
-      .then(arr => arr.filter(name => /(mip-[\w-]+)\/\1\.(vue|js)$/.test(name)))
+    let components = await globPify('mip-*/mip-*.@(vue|ts|js)', globOpts)
+      .then(arr => arr.filter(name => /(mip-[\w-]+)\/\1\.(vue|ts|js)$/.test(name)))
 
     if (!components.length) {
       cli.error(`在该路径下找不到 mip 组件入口文件，请检查路径是否规范：\n${this.componentDir}`)
