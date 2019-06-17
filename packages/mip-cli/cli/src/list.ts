@@ -13,4 +13,6 @@ export function list () {
   console.log()
 
   plugins.forEach(plgn => console.log(plgn))
+
+  console.log()
 }

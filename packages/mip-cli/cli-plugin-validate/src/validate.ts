@@ -44,7 +44,7 @@ function report (data: Result, filePath: string) {
 
 export default async function (config: Params) {
   const baseDir = path.resolve(process.cwd(), '')
-  const filePath = path.join(baseDir, config.args.filePath)
+  const filePath = path.join(baseDir, config.args.filePath as string)
 
   if (!await fs.pathExists(filePath)) {
     logger.error('path not exist')
