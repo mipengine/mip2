@@ -2,15 +2,16 @@ sudo: required
 language: node_js
 node_js:
   - "8"
-dist: xenial
-services:
-  - xvfb
 branches:
   only:
   - master
   - dev
+dist: xenial
+services:
+  - xvfb
+addons:
+  chrome: stable
 before_install:
-- export CHROME_BIN=chromium-browser
 - export DISPLAY=:99.0
 - cd packages/mip
 install:
