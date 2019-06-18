@@ -1,24 +1,11 @@
 /**
  * @file TS-loaders.js
  */
-module.exports = function getTSLoader (isSandbox, options) {
-  const use = isSandbox
-    ? [
-      {
-        loader: require.resolve('awesome-typescript-loader'),
-        options: getLoaderOptions(options)
-      },
-      require.resolve('./child-component-loader')
-    ]
-    : [
-      {
-        loader: require.resolve('awesome-typescript-loader'),
-        options: getLoaderOptions(options)
-      },
-      require.resolve('./sandbox-loader'),
-      require.resolve('./child-component-loader')
-    ]
-  return use
+module.exports = function TSLoader (options) {
+  return {
+    loader: require.resolve('awesome-typescript-loader'),
+    options: getLoaderOptions(options)
+  }
 }
 
 function getLoaderOptions (options) {
