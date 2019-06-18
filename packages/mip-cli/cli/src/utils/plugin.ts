@@ -48,7 +48,6 @@ export async function installOrUpdatePlugin (command: string, packageName: strin
   registry && args.push('--registry', registry)
 
   await executeCommand('npm', args, installedPath)
-  logger.info(`${command} completed!`)
 }
 
 export function getPluginPackages () {

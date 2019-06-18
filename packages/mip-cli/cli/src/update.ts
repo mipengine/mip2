@@ -22,5 +22,5 @@ export function update (pluginNames: string[], options: Option) {
     pluginTask = pluginNames.map(resolvePluginName)
   }
 
-  installOrUpdatePlugin('update', pluginTask, registry)
+  installOrUpdatePlugin('install', pluginTask.map(plugin => `${plugin}@latest`), registry)
 }
