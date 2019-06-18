@@ -11,7 +11,7 @@ const path = require('path')
 const webpack = require('webpack')
 const mipExternal = require('mip-components-webpack-helpers/lib/external')
 const {resolveModule} = require('../../../utils/helper')
-const getTSLoader = require('./ts-loader')
+const TSLoader = require('./ts-loader')
 
 module.exports = function (options) {
   let config = {
@@ -56,7 +56,18 @@ module.exports = function (options) {
         {
           test: /\.tsx?$/,
           exclude: /node_modules/,
-          use: getTSLoader(options.ignore && /(^|,)sandbox(,|$)/.test(options.ignore), options)
+          use: options.ignore && /(^|,)sandbox(,|$)/.test(options.ignore)
+            ? [
+              babelLoader(options),
+              require.resolve('./child-component-loader'),
+              TSLoader(options)
+            ]
+            : [
+              require.resolve('./sandbox-loader'),
+              babelLoader(options),
+              require.resolve('./child-component-loader'),
+              TSLoader(options)
+            ]
         },
         {
           test: /\.(png|jpe?g|gif)$/,
