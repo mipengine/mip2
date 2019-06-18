@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- 1.5.14 
+    1. 修复 typescript 文件没经过 babel 编译的 BUG
+
 - 1.5.13 
     1. 增加 typescript 支持
 
