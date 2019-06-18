@@ -180,6 +180,54 @@ let viewer = {
   },
 
   /**
+   * navigate to url
+   * 对于新窗打开，使用 window.open，并处理 opener
+   * 对于页内跳转，使用 viewer.open
+   * @param {string} url 地址
+   * @param {string} target 打开方式
+   * @param {boolean} opener 是否支持 opener
+   */
+  navigateTo (url, target, opener) {
+    if (!['_blank', '_top'].includes(target)) {
+      return
+    }
+    if (target === '_blank') {
+      this.openWindow(url, target, opener)
+    } else {
+      this.open(url, {replace: true, isMipLink: false})
+    }
+  },
+
+  /**
+   * 对 window.open 作兼容性处理
+   * @param {string} url 地址
+   * @param {string} target 打开方式
+   * @param {boolean} opener 是否支持 opener
+   */
+  openWindow (url, target, opener) {
+    let opt
+    // Chrome 不能使用 noopener，会导致使用新 window 而不是新 tab 打开
+    if ((platform.isIOS() || !platform.isChrome()) && opener === false) {
+      opt = 'noopener'
+    }
+    
+    // 先尝试 open，如果失败再使用 '_top'，因为 ios WKWebview 对于非 '_top' 打开可能失败
+    let newWin
+    try {
+      newWin = window.open(url, target, opt)
+    } catch (e) {
+      if (!newWin && target !== '_top') {
+        newWin = window.open(url, '_top')
+      }
+    }
+    // 由于 Chrome 没有使用 noopener，需要手动清空 opener
+    if (newWin && opener === false) {
+      newWin.opener = null
+    }
+    return newWin
+  },
+
+  /**
    *
    * @param {string} to Target url
    * @param {Object} options

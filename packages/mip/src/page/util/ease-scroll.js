@@ -1,4 +1,4 @@
-import {fn} from '../../util'
+import util, {fn} from '../../util'
 import viewport from '../../viewport'
 
 export function scrollTo (height, { duration = 500, scrollTop = 0 } = {}) {
@@ -65,4 +65,32 @@ function scroll (top) {
   // } else {
   //   window.scrollTo(0, top)
   // }
+}
+
+/**
+ * 滚动到指定元素的特定位置
+ * 
+ * @param {HTMLElement} element 目标元素
+ * @param {number} duration 滚动动画时间
+ * @param {string} position 滚动后元素显示的位置，取值范围 'top'、'bottom'、'center'
+ */
+export function handleScrollTo (element, {duration = 0, position = 'top'} = {}) {
+  if (!element) {
+    return
+  }
+  if (!typeof duration === 'number' || !isFinite(duration)) {
+    duration = 0
+  }
+  let offset = -viewport.getHeight() + util.rect.getElementRect(element).height
+  switch (position) {
+    case 'bottom':
+      break
+    case 'center':
+      offset /= 2
+      break
+    default:
+      offset = 0
+      break
+  }
+  scrollTo(element.offsetTop + offset, {duration})
 }

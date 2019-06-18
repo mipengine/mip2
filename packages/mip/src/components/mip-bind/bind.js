@@ -7,7 +7,8 @@ import Compile from './compile'
 import Observer from './observer'
 import Watcher, {locker} from './watcher'
 import {isObject, objNotEmpty} from './util'
-import { scrollTo } from '../../page/util/ease-scroll'
+import {handleScrollTo} from '../../page/util/ease-scroll'
+import viewer from '../../viewer'
 
 /* global MIP */
 /* eslint-disable no-new-func */
@@ -40,15 +41,39 @@ class Bind {
       this.bindWatch(target, cb)
     }
     
-    MIP.scrollTo = ({id = '', duration = 0, offset = 0} = {}) => {
+    MIP.scrollTo = data => {
+      const {id} = data
       if (!id) {
         return
       }
       const target = document.getElementById(id)
-      if (!target) {
-        return
+      handleScrollTo(target, data)
+    }
+
+    MIP.navigateTo = data => {
+      const {url, target, opener} = data
+      viewer.navigateTo(url, target, opener)
+    }
+
+    /**
+     * 关闭窗口，如果不能关闭，跳转到目标地址
+     * 作为打开新窗的后退操作
+     */
+    MIP.closeOrNavigateTo = data => {
+      const hasParent = window.parent != window
+      // 顶层 window 并且是被打开的 window 才能关闭
+      const canBeClosed = window.opener && !hasParent
+
+      let closed = false
+      if (canBeClosed) {
+        window.close()
+        // 可能被浏览器 block，没有关闭
+        closed = window.closed
       }
-      scrollTo(target.offsetTop, {duration, scrollTop: offset})
+
+      if (!closed) {
+        MIP.navigateTo(data)
+      }
     }
 
     MIP.goBack = () => {

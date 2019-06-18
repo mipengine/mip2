@@ -9,6 +9,7 @@ import * as fn from './fn'
 import dom from './dom/dom'
 import {LAYOUT, getLayoutClass} from '../layout'
 import log from './log'
+import {handleScrollTo} from '../page/util/ease-scroll'
 
 const logger = log('Event-Action')
 
@@ -54,13 +55,10 @@ function getAutofocusElement (el) {
 
 function toggle (el, opt) {
   if (opt === undefined) {
-    opt = el.hasAttribute('mip-hidden')
+    el.classList.toggle('mip-hide')
+    return
   }
-  if (opt) {
-    el.removeAttribute('mip-hidden')
-  } else {
-    el.setAttribute('mip-hidden', '')
-  }
+  el.classList.toggle('mip-hide', !opt)
 }
 
 /**
@@ -133,6 +131,10 @@ class EventAction {
       MIP.scrollTo(data)
     } else if (action.handler === 'goBack') {
       MIP.goBack()
+    } else if (action.handler === 'navigateTo') {
+      MIP.navigateTo(data)
+    } else if (action.handler === 'closeOrNavigateTo') {
+      MIP.closeOrNavigateTo(data)
     } else if (action.handler === 'print') {
       window.print()
     } else {
@@ -140,44 +142,98 @@ class EventAction {
     }
   }
 
-  handleShow (action) {
-    const target = document.getElementById(action.id)
-    if (!target) {
-      return
-    }
+  /**
+   * 显示元素，如果元素或其子元素有 autofocus 属性，focus 到该元素
+   * 
+   * @param {Object} action action
+   * @param {HTMLElement} target 目标元素
+   */
+  handleShow (action, target) {
     if (target.classList.contains(getLayoutClass(LAYOUT.NODISPLAY))) {
       logger.warn('layout=nodisplay 的元素不能被动态显示')
-    }
-    const autofocusEl = getAutofocusElement(target)
-    toggle(autofocusEl, true)
-    this.handleFocus(autofocusEl)
-  }
-
-  handleHide (action) {
-    const target = document.getElementById(action.id)
-    if (!target) {
       return
     }
+    const autofocusEl = getAutofocusElement(target)
+    toggle(target, true)
+    if (autofocusEl) {
+      this.handleFocus(action, autofocusEl)
+    }
+  }
+
+  /**
+   * 隐藏元素
+   * 
+   * @param {Object} action action
+   * @param {HTMLElement} target 目标元素
+   */
+  handleHide (action, target) {
     toggle(target, false)
   }
 
-  handleToggle (action) {
-    const target = document.getElementById(action.id)
+  /**
+   * 显示/隐藏元素
+   * 
+   * @param {Object} action action
+   * @param {HTMLElement} target 目标元素
+   */
+  handleToggle (action, target) {
     toggle(target)
   }
 
-  handleScrollTo (action) {
-    const target = document.getElementById(action.id)
-  }
-
-  handleToggleClass (action) {
-    const target = document.getElementById(action.id)
-  }
-
-  handleFocus (el) {
-    if (el) {
-      el.focus()
+  /**
+   * 滚动到目标元素
+   * 
+   * @param {Object} action action
+   * @param {HTMLElement} target 目标元素
+   */
+  handleScrollTo (action, target) {
+    let data = {}
+    try {
+      data = (new Function(`{return ${action.arg}}`))()
+    } catch (e) {
+      logger.warn('scrollTo 参数有误')
     }
+    handleScrollTo(target, data)
+  }
+
+  /**
+   * 添加/删除元素 class
+   * 
+   * @param {Object} action action
+   * @param {HTMLElement} target 目标元素
+   */
+  handleToggleClass (action, target) {
+    let data = {}
+    try {
+      data = (new Function(`{return ${action.arg}}`))()
+    } catch (e) {
+      logger.warn('toggleClass 参数有误')
+      return
+    }
+    const className = data['class']
+    const {force} = data
+    if (!className || typeof className !== 'string') {
+      logger.warn('class 不能为空且必须是 string 类型')
+      return
+    }
+    if (force !== undefined) {
+      if (typeof force !== 'boolean') {
+        logger.warn('force 必须是 boolean 类型')
+      }
+      target.classList.toggle(className, force)
+      return
+    }
+    target.classList.toggle(className)
+  }
+
+  /**
+   * focus 元素
+   * 
+   * @param {Object} action action
+   * @param {HTMLElement} target 目标元素
+   */
+  handleFocus (action, target) {
+    target.focus()
   }
 
   /**
@@ -195,6 +251,10 @@ class EventAction {
   }
 
   addGlobalMethodHandler (name, handler) {
+    /* istanbul ignore next */
+    if (!name) {
+      return
+    }
     this.globalMethodHandlers[name] = handler
   }
 
@@ -270,13 +330,14 @@ class EventAction {
         continue
       }
 
-      let globalMethod = this.globalMethodHandlers[action.handler]
-      if (globalMethod) {
-        globalMethod(action)
+      let target = this.getTarget(action.id)
+
+      const globalMethod = this.globalMethodHandlers[action.handler]
+      if (target && globalMethod) {
+        globalMethod(action, target)
         continue
       }
 
-      let target = this.getTarget(action.id)
       if (this.checkTarget(target)) {
         this.executeEventAction(action, target)
         // setTimeout(() => this.executeEventAction(action, target))
