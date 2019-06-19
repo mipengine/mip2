@@ -6,7 +6,7 @@
 import path from 'path'
 import fs from 'fs'
 import execa from 'execa'
-import { logger, Command } from 'mip-cli-utils'
+import { Command } from 'mip-cli-utils'
 
 /**
  * 插件命名规则：mip-cli-plugin-xxx
