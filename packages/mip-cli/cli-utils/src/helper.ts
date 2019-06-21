@@ -83,5 +83,9 @@ export function removeExt (pathname: string) {
   return pathname.slice(0, -ext.length)
 }
 
+export function getFileName (pathname: string) {
+  return path.basename(pathname, path.extname(pathname))
+}
+
 // export { default as pify } from 'pify'
 export { pify }

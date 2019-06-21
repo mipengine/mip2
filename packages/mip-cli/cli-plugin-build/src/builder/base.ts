@@ -3,14 +3,17 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-import path from 'path'
+// declare var MultiEntryPlugin:
 
-import {
-  projectPath,
-  globPify,
-  GlobOptions,
-  exit
-} from 'mip-cli-utils'
+// import path from 'path'
+import webpack, { SingleEntryPlugin } from 'webpack'
+
+// import {
+//   projectPath,
+//   globPify,
+//   GlobOptions,
+//   exit
+// } from 'mip-cli-utils'
 
 import {
   format
@@ -27,16 +30,27 @@ export class WebpackBaseBuilder {
     this.options = format(options)
   }
 
-  async build (components?: ) {
-
+  async build (components?: string[]) {
+    const entries = getEntries(components)
+    const compiler = this.getCompiler(entries)
   }
 
-  async getConfig () {
+  getCompiler(entries: strings[]) {
+    if (!this.compiler) {
+      let config = this.getConfig(entries)
+      this.compiler = webpack(config)
+      return this.compiler
+    }
 
+    this.compiler.apply(new MultiEntryPlugin())
   }
 
-  async initConfig () {
+  // async getConfig () {
 
-  }
+  // }
+
+  // async initConfig () {
+
+  // }
 }
 
