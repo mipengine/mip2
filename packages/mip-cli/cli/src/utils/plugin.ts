@@ -76,7 +76,7 @@ export function resolveCommandFromPackageName (pkg: string) {
   return pkg.replace(pluginREG, '')
 }
 
-function pad (str: string, width: number) {
+export function pad (str: string, width: number) {
   let len = Math.max(0, width - str.length)
   return str + Array(len + 1).join(' ')
 }

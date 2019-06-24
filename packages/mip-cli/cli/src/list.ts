@@ -6,6 +6,7 @@ export function list () {
 
   if (!plugins.length) {
     logger.info('没有找到插件，您可以使用 mip2 install <packageName> 进行安装')
+    return
   }
 
   console.log()

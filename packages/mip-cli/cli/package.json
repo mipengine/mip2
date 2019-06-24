@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "tsc -w",
     "build": "rm -rf dist && tsc",
-    "eslint": "eslint src --ext .ts"
+    "eslint": "eslint src --ext .ts",
+    "test": "jest --verbose --coverage"
   },
   "types": "./index.d.ts",
   "keywords": [
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@types/execa": "^0.9.0",
+    "@types/jest": "^24.0.15",
     "@types/node": "^12.0.4",
     "@types/semver": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^1.9.0",
@@ -38,6 +40,8 @@
     "eslint-plugin-node": "^9.1.0",
     "eslint-plugin-promise": "^4.1.1",
     "eslint-plugin-standard": "^4.0.0",
+    "jest": "^24.8.0",
+    "ts-jest": "^24.0.2",
     "typescript": "^3.5.1"
   }
 }
