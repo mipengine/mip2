@@ -13,7 +13,13 @@ const plugin: Plugin = {
   options: [],
   run () {
     init()
-  }
+  },
+  help: [
+    '',
+    '  Examples:',
+    '    # 初始化 MIP 项目',
+    '    $ mip2 init'
+  ].join('\n')
 }
 
 export default plugin

@@ -4,38 +4,76 @@
  */
 
 import path from 'path'
+import { getFileName } from './helper'
 
-function componentsDir (dir: string) {
-  return path.resolve(dir, 'components')
+function getComponentsDir (rootDir: string) {
+  return path.resolve(rootDir, 'components')
 }
 
-function testDir (dir: string) {
-  return path.resolve(dir, 'example')
+function getExampleDir (rootDir: string) {
+  return path.resolve(rootDir, 'example')
 }
 
-function componentTestDir (dir: string, componentname: string) {
-  return path.resolve(dir, componentname, 'example')
+function getComponentDir (rootDir: string, componentName: string) {
+  return path.resolve(rootDir, componentName)
 }
 
-function isComponentPath (rootDir: string, pathname: string) {
-  // 非入口文件的增减则不做任何处理
-  if (!/(mip-[\w-]+)\/\1\.(vue|js)$/.test(pathname)) {
+function getComponentExampleDir (rootDir: string, componentName: string) {
+  return path.resolve(rootDir, componentName, 'example')
+}
+
+function isComponent (pathname: string) {
+  // 组件入口文件必须要求以 mip-example/mip-example.js 的这种形式来区别其他组件
+  return /(mip-[\w-]+)\/\1\.(vue|js|ts)$/.test(pathname)
+}
+
+function isExampleComponent (rootDir: string, pathname: string) {
+  if (!isComponent(pathname)) {
     return false
   }
 
-  let basename = path.basename(pathname)
-
   return path.resolve(
-    componentsDir(rootDir),
-    path.basename(basename, path.extname(basename)),
-    basename
+    getExampleDir(rootDir),
+    getFileName(pathname),
+    path.basename(pathname)
   ) === path.resolve(pathname)
 }
 
+function isMainComponent (rootDir: string, pathname: string) {
+  if (!isComponent(pathname)) {
+    return false
+  }
+
+  return path.resolve(
+    getComponentsDir(rootDir),
+    getFileName(pathname),
+    path.basename(pathname),
+  ) === path.resolve(pathname)
+}
+
+function isChildComponent (mainComponentPath: string, childComponentPath: string) {
+  if (!isComponent(mainComponentPath)) {
+    return false
+  }
+
+  if (path.dirname(mainComponentPath) !== path.dirname(childComponentPath)) {
+    return false
+  }
+
+  let mainFileName = getFileName(mainComponentPath)
+  let childFileName = getFileName(childComponentPath)
+
+  return childFileName.slice(0, mainFileName.length + 1) === mainFileName + '-'
+}
+
 export default {
-  components: componentsDir,
-  componentTestDir: componentTestDir,
-  test: testDir,
-  isComponentPath: isComponentPath
+  getComponentsDir,
+  getExampleDir,
+  getComponentExampleDir,
+  getComponentDir,
+  isComponent,
+  isExampleComponent,
+  isMainComponent,
+  isChildComponent
 }
 

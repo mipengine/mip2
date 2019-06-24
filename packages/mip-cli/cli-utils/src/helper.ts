@@ -39,7 +39,7 @@ export async function resolvePath (possiblePaths: string[]) {
     if (await fs.pathExists(pathname)) {
       return pathname
     }
-    return Promise.reject('not found.')
+    return Promise.reject(new Error('not found.'))
   })
 
   try {
@@ -53,11 +53,11 @@ export async function resolvePath (possiblePaths: string[]) {
 // export type PifyFn = NonNullable<Parameters<typeof pify>[0]>
 export type GlobOptions = NonNullable<Parameters<typeof glob>[1]>
 
-export function globPify (fn: string, opts?: GlobOptions) {
-  return <Promise<string[]>>pify(glob)(fn, opts)
+export function globPify (fn: string, opts?: glob.IOptions) {
+  return pify(glob)(fn, opts) as Promise<string[]>
 }
 
-export function objectSubset<T extends {}, K extends keyof T>(obj: T, names: K[]) {
+export function objectSubset<T extends {}, K extends keyof T> (obj: T, names: K[]) {
   let result: Partial<Record<K, T[K]>> = {}
   for (let name of names) {
     if (obj[name] !== undefined) {
@@ -82,3 +82,10 @@ export function removeExt (pathname: string) {
   }
   return pathname.slice(0, -ext.length)
 }
+
+export function getFileName (pathname: string) {
+  return path.basename(pathname, path.extname(pathname))
+}
+
+// export { default as pify } from 'pify'
+export { pify }

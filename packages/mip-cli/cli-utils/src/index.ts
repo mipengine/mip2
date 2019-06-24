@@ -9,4 +9,3 @@ export * from './helper'
 export * from './exit'
 export { default as projectPath } from './project-path'
 export * from './types/plugin'
-
