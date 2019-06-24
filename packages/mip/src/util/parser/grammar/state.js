@@ -1,5 +1,5 @@
 /**
- * @file grammar.js
+ * @file state-grammar.js
  * @author clark-t (clarktanglei@163.com)
  * @description
  *   Inspired By the listing URLs
@@ -7,9 +7,7 @@
  *    https://github.com/pegjs/pegjs/blob/master/examples/javascript.pegjs
  */
 
-import Lexer from '../../lexer'
-
-const lex = new Lexer()
+import lex from './lexer'
 
 function buildBinaryAst (head, tails) {
   return tails.reduce((result, args) => {

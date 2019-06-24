@@ -3,7 +3,7 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-import WHITELIST from './whitelist'
+import WHITELIST from '../whitelist'
 
 function is (node, type) {
   return node.type === type
