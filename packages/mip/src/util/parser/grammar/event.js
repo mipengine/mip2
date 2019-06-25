@@ -42,6 +42,7 @@ lex.set({
     }
 
     return {
+      type: 'MIPEventHandlers',
       handlers
     }
   }
@@ -83,6 +84,7 @@ lex.set({
       handlers.push(args[3])
     }
     return {
+      type: 'MIPEventHandlers',
       handlers
     }
   }
@@ -205,7 +207,7 @@ lex.set({
 lex.set({
   type: 'MIPComponentAction',
   rule: lex.seq([
-    lex.use('MIPElementIdentifier'),
+    lex.use('HTMLElementIdentifier'),
     lex.text('.'),
     lex.use('Identifier'),
     lex.zeroOrOne(
@@ -342,16 +344,6 @@ lex.set({
     // lex.use('MIPStateExpression'),
     lex.use('Literal')
   ])
-})
-
-lex.set({
-  type: 'MIPElementIdentifier',
-  rule: lex.regexp('^[a-zA-Z][\\w-]*'),
-  onMatch (match) {
-    return {
-      name: match.raw
-    }
-  }
 })
 
 // 从 AMP 文档来看 在 on 表达式当中是无法使用到 state 的,

@@ -7,7 +7,15 @@
  */
 
 const MIP_WHITELIST = {
-
+  setData (..args) {
+    return MIP.setData(...args)
+  },
+  navigateTo (...args) {
+    return MIP.navigateTo(...args)
+  },
+  scrollTo (..args) {
+    return MIP.scrollTo(...args)
+  }
 }
 
 const WHITELIST = {
@@ -73,8 +81,11 @@ const WHITELIST = {
     MIP () {
       return MIP_WHITELIST
     },
-    defaults (id) {
-      return document.getElementById(id)
+    defaults ({id}) {
+      // if (params) {
+        // return
+      // }
+      return () => document.getElementById(id)
     }
   }
 }

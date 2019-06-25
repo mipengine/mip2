@@ -3,21 +3,17 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-const visitorOfEventHandlers = path => {
-  let handlers = []
-  for (let handler of path.node.elements) {
-    handlers.push(path.traverse(handler))
-  }
-
-  return function () {
-    return handlers.map(handler => handler())
-  }
-}
-
 const visitor = {
-  MIPOldEventHandlers: visitorOfEventHandlers,
-  MIPNewEventHandlers: visitorOfEventHandlers,
+  MIPEventHandlers (path) {
+    let handlers = []
+    for (let handler of path.node.elements) {
+      handlers.push(path.traverse(handler))
+    }
 
+    return function () {
+      return handlers.map(handler => handler())
+    }
+  },
   MIPEventHandler (path) {
     let event = path.node.event.raw
     // let event = path.traverse(path.node.event)
@@ -34,7 +30,8 @@ const visitor = {
         }
       }
     }
-  },
+  }
+  // ,
 
   // MIPBindAction (path) {
 

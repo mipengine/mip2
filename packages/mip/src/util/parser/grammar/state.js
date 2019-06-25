@@ -303,10 +303,22 @@ lex.set({
 })
 
 lex.set({
+  type: 'HTMLElementIdentifier',
+  rule: lex.regexp('^[a-zA-Z][\\w-]*'),
+  onMatch (match) {
+    return {
+      type: 'Identifier',
+      name: match.raw
+    }
+  }
+})
+
+lex.set({
   type: 'MemberExpression',
   rule: lex.seq([
     lex.or([
       lex.use('Identifier'),
+      lex.use('HTMLElementIdentifier'),
       lex.use('ArrayExpression')
     ]),
     lex.zeroOrMore([
@@ -404,13 +416,19 @@ lex.set({
     lex.text('('),
     lex.zeroOrMore([
       _,
-      lex.use('ConditionalExpression'),
+      lex.or([
+        lex.use('ArrowFunctionExpression'),
+        lex.use('ConditionalExpression')
+      ]),
       _,
       lex.text(',')
     ]),
     _,
     lex.zeroOrOne(
-      lex.use('ConditionalExpression')
+      lex.or([
+        lex.use('ArrowFunctionExpression'),
+        lex.use('ConditionalExpression')
+      ])
     ),
     _,
     lex.text(')')
@@ -423,6 +441,68 @@ lex.set({
     return {
       type: 'CallExpression',
       arguments: args
+    }
+  }
+})
+
+lex.set({
+  type: 'ArrowFunctionExpression',
+  rule: lex.seq([
+    lex.use('Params'),
+    _,
+    lex.text('=>'),
+    _,
+    lex.or([
+      lex.text('{'),
+      lex.use('ConditionalExpression')
+    ])
+  ]),
+  onMatch (params, __, arrow, ___, body) {
+    // 不支持 BlockStatement
+    if (body.raw === '{') {
+      return false
+    }
+    return {
+      params: params.params,
+      body
+    }
+  }
+})
+
+lex.set({
+  type: 'Params',
+  rule: lex.or([
+    lex.seq([
+      lex.text('('),
+      lex.zeroOrMore([
+        _,
+        lex.use('Identifier'),
+        _,
+        lex.text(',')
+      ]),
+      _,
+      lex.zeroOrOne(
+        lex.use('Identifier')
+      ),
+      _,
+      lex.text(')')
+    ]),
+    lex.use('Identifier')
+  ]),
+  onMatch (match) {
+    if (match.type === 'Identifier') {
+      return {
+        params: [match]
+      }
+    }
+    let heads = match[1]
+    let tail = match[3]
+    let results = heads.map(args => args[1])
+    if (tail) {
+      results.push(tail)
+    }
+    return {
+      params: results
     }
   }
 })
