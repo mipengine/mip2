@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const execa = require('execa')
+const execUtil = require('../../src/utils/exec')
 const {
   installOrUpdatePlugin,
   getPluginPackages,
@@ -9,23 +9,28 @@ const {
   resolvePluginName,
   resolveCommandFromPackageName,
   pad,
-  loadModule,
-  showPluginCmdHelpInfo
+  loadModule
+  // showPluginCmdHelpInfo
 } = require('../../src/utils/plugin.ts')
 
-// test('utils: installOrUpdatePlugin', async () => {
-//   const mockExec = jest.spyOn(require('../../src/utils/plugin.ts'), 'executeCommand').mockImplementationOnce(() => {})
+test('utils: installOrUpdatePlugin', async () => {
+  const executeCommand = jest.spyOn(execUtil, 'executeCommand').mockImplementation(async () => {})
 
-//   await installOrUpdatePlugin('install', ['dev', 'build'], 'https://r.com')
+  await installOrUpdatePlugin('install', ['mip-cli-plugin-dev', 'mip-cli-plugin-build'], 'https://r.com')
+  expect(executeCommand).toHaveBeenCalledWith(
+    'npm',
+    ['install', '--loglevel', 'error', 'mip-cli-plugin-dev', 'mip-cli-plugin-build', '--registry','https://r.com'],
+    path.resolve(__dirname, '../../../')
+  )
 
-//   expect(mockExec).toHaveBeenCalledWith(
-//     'npm',
-//     '--loglevel',
-//     'error',
-//     ['install', 'dev', 'build', 'https://r.com']
-//   )
+  await installOrUpdatePlugin('install', 'mip-cli-plugin-build', 'https://r.com')
+  expect(executeCommand).toHaveBeenCalledWith(
+    'npm',
+    ['install', '--loglevel', 'error', 'mip-cli-plugin-build', '--registry','https://r.com'],
+    path.resolve(__dirname, '../../../')
+  )
 
-// })
+})
 
 test('utils: getPluginPackages', () => {
   jest.spyOn(fs, 'readdirSync').mockImplementationOnce(() => {

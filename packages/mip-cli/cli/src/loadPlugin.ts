@@ -13,7 +13,7 @@ interface CommandInstance extends Plugin {
   isSubcommand?: boolean;
 }
 
-async function checkAndInstall (command: string) {
+export async function checkAndInstall (command: string) {
   const packageName = resolvePluginName(command)
 
   if (!isInstalled(packageName)) {
@@ -29,7 +29,7 @@ async function checkAndInstall (command: string) {
   }
 }
 
-function parseOption (option: Option) {
+export function parseOption (option: Option) {
   let parsedArray = []
 
     // option 后面的值有三种类型： 1.flag，值为 true false 2.可选添值，不填时为 undefined 3.必填值
@@ -53,7 +53,7 @@ function parseOption (option: Option) {
     return parsedArray
 }
 
-function findIndex (option: Option, argsArray: string[]) {
+export function findIndex (option: Option, argsArray: string[]) {
   let nameIndex = argsArray.indexOf(`--${option.name}`)
   let shortNameIndex = argsArray.indexOf(`-${option.shortName}`)
 
@@ -67,7 +67,7 @@ function findIndex (option: Option, argsArray: string[]) {
 
 // 自定义参数解析
 // sub-sub command 模式，option -xx 输入位置不同时，将导致 comamnder action 回调参数顺序问题
-function parseArgs (cmd: CommandInstance) {
+export function parseArgs (cmd: CommandInstance) {
   // mip2 dev: ['node', 'mip2', 'dev', ...]
   // isSubcommand 时，mip2 dev comoponent : ['node', 'mip2', 'dev', 'component', ...]
   const sliceCount = cmd.isSubcommand ? 4 : 3
@@ -101,7 +101,7 @@ function parseArgs (cmd: CommandInstance) {
   return argsResult
 }
 
-function setupCommand (mainCommand: string, cmd: CommandInstance) {
+export function setupCommand (mainCommand: string, cmd: CommandInstance) {
   // 拼接 comamnd
   let command: string
   let commandPrefix: string = cmd.isSubcommand ? `${mainCommand} <${cmd.name}>` : `${mainCommand}`

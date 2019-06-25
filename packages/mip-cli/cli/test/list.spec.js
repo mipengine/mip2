@@ -17,8 +17,6 @@ afterEach(() => {
 })
 
 test('the list command runs with params as expected', () => {
-
-
   jest.spyOn(plugin, 'getPluginPackages').mockImplementationOnce(() => {
     return [
       'mip-cli-plugin-add',
@@ -33,7 +31,6 @@ test('the list command runs with params as expected', () => {
   expect(consoleArray.indexOf('mip-cli-plugin-add')).toBeGreaterThan(-1)
   expect(consoleArray.indexOf('mip-cli-plugin-build')).toBeGreaterThan(-1)
   expect(consoleArray.indexOf('mip-cli-plugin-init')).toBeGreaterThan(-1)
-
 })
 
 test('the list command runs with no plugins found', () => {
@@ -41,10 +38,9 @@ test('the list command runs with no plugins found', () => {
     return []
   })
 
-  const mockLogger = jest.spyOn(logger, 'info');
-
+  const mockLogger = jest.spyOn(logger, 'info')
   list()
 
-  expect(mockLogger).toHaveBeenCalled();
+  expect(mockLogger).toHaveBeenCalled()
   expect(consoleArray.indexOf('当前使用的插件:')).toBe(-1)
 })

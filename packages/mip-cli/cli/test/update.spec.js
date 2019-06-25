@@ -6,7 +6,6 @@ test('run update command with specified plugin names', () => {
   const updateMultiplePlugin = jest.spyOn(plugin, 'installOrUpdatePlugin').mockImplementationOnce(() => {})
   update(['dev', 'mip-cli-plugin-build'], { registry: 'https://test.com' })
 
-  expect(updateMultiplePlugin).toHaveBeenCalled()
   expect(updateMultiplePlugin).toHaveBeenCalledWith(
     'install',
     [
@@ -30,7 +29,6 @@ test('run update command without specified plugin names', () => {
 
   update([], { registry: 'https://test.com' })
 
-  expect(updateMultiplePlugin).toHaveBeenCalled()
   expect(updateMultiplePlugin).toHaveBeenCalledWith(
     'install',
     [

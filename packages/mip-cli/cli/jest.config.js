@@ -1,9 +1,8 @@
-const path = require('path')
-
 module.exports = {
   globals: {
     'ts-jest': {
       tsConfig: './tsconfig.json',
+      diagnostics: false
     }
   },
   testRegex: '(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$',

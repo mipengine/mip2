@@ -1,7 +1,7 @@
 const { checkNodeVersion, camelize, cleanArgs } = require('../../src/utils/cli.ts')
 
 test('should check node version correctly', () => {
-  let originalVersion = process.version;
+  let originalVersion = process.version
   Object.defineProperty(process, 'version', {
     value: '7.0.0'
   })
