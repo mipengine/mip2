@@ -6,6 +6,9 @@
  *  https://github.com/ampproject/amphtml/blob/master/extensions/amp-bind/0.1/bind-expression.js
  */
 
+const MIP_WHITELIST = {
+
+}
 
 const WHITELIST = {
   '[object Array]': {
@@ -62,6 +65,16 @@ const WHITELIST = {
   'custom-objects': {
     event ({event}) {
       return event
+    },
+    // 兼容以前的 MIP-data
+    m () {
+      return window.m
+    },
+    MIP () {
+      return MIP_WHITELIST
+    },
+    defaults (id) {
+      return document.getElementById(id)
     }
   }
 }

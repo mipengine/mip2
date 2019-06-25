@@ -8,16 +8,31 @@ import lex from './state'
 const _ = lex.regexp('^\\s*')
 
 lex.set({
-  type: 'MIPOldEventHandlers',
+  type: 'MIPEventHandlers',
   rule: lex.seq([
     _,
-    lex.use('MIPOldEventHandler'),
-    lex.zeroOrMore([
+    lex.or([
+      lex.use('MIPOldEventHandlers'),
+      lex.use('MIPNewEventHandlers'),
+      lex.use('MIPEventHandler')
+    ]),
+    _,
+  ]),
+  onMatch (__, handlers) {
+    return handlers
+  }
+})
+
+lex.set({
+  type: 'MIPOldEventHandlers',
+  rule: lex.seq([
+    lex.use('MIPEventHandler'),
+    lex.oneOrMore([
       _,
-      lex.use('MIPOldEventHandler')
+      lex.use('MIPEventHandler')
     ])
   ]),
-  onMatch (__, head, tails) {
+  onMatch (head, tails) {
     let handlers = [head]
 
     if (tails) {
@@ -32,40 +47,40 @@ lex.set({
   }
 })
 
-lex.set({
-  type: 'MIPOldEventHandler',
-  rule: lex.seq([
-    lex.regexp('^[a-zA-Z][\\w$_]*'),
-    lex.text(':'),
-    lex.use('MIPAction')
-  ]),
-  onMatch (event, colon, action) {
-    return {
-      event,
-      action
-    }
-  }
-})
+// lex.set({
+//   type: 'MIPOldEventHandler',
+//   rule: lex.seq([
+//     lex.regexp('^[a-zA-Z][\\w$_]*'),
+//     lex.text(':'),
+//     lex.use('MIPAction')
+//   ]),
+//   onMatch (event, colon, action) {
+//     return {
+//       event,
+//       action
+//     }
+//   }
+// })
 
 lex.set({
-  type: 'MIPEventHandlers',
+  type: 'MIPNewEventHandlers',
   rule: lex.seq([
-    _,
     lex.use('MIPEventHandler'),
-    lex.zeroOrMore([
+    lex.oneOrMore([
+      _,
       lex.text(';'),
       _,
       lex.use('MIPEventHandler')
     ]),
-    lex.zeroOrOne(
+    lex.zeroOrOne([
+      _,
       lex.text(';')
-    ),
-    _
+    ])
   ]),
-  onMatch (__, handler, tails) {
-    let handlers = [header]
+  onMatch (handler, tails) {
+    let handlers = [handler]
     for (let args of tails) {
-      handlers.push(args[2])
+      handlers.push(args[3])
     }
     return {
       handlers
@@ -77,10 +92,12 @@ lex.set({
   type: 'MIPEventHandler',
   rule: lex.seq([
     lex.regexp('^[a-zA-Z][\\w$_]*'),
+    _,
     lex.text(':'),
+    _,
     lex.use('MIPActions')
   ]),
-  onMatch(event, colon, actions) {
+  onMatch(event, __, colon, ___, actions) {
     return {
       event,
       actions
@@ -93,14 +110,20 @@ lex.set({
   rule: lex.seq([
     lex.use('MIPAction'),
     lex.zeroOrMore([
+      _,
       lex.text(','),
+      _,
       lex.use('MIPAction')
+    ]),
+    lex.zeroOrOne([
+      _,
+      lex.text(',')
     ])
   ]),
   onMatch (head, tails) {
     let results = [head]
     for (let tail of tails) {
-      results.push(tail[1])
+      results.push(tail[3])
     }
     return results
   }
@@ -124,9 +147,24 @@ lex.set({
   ]),
   onMatch (prefix, data) {
     return {
+      type: 'CallExpression',
       callee: {
-        name: 'setData'
+        type: 'MemberExpression',
+        computed: false,
+        object: {
+          type: 'Identifier',
+          name: 'MIP'
+        },
+        property: {
+          type: 'Identifier',
+          name: 'setData'
+        }
       },
+
+      // callee: {
+      //   name: 'setData'
+      // },
+      // arguments: data.arguments
       arguments: [data]
     }
   }
@@ -142,13 +180,24 @@ lex.set({
       lex.use('MIPActionArguments')
     )
   ]),
-  onMatch (mip, dot, callee, args) {
+  onMatch (mip, dot, property, args) {
     return {
-      object: {
-        name: mip.raw
+      type: 'CallExpression',
+      callee: {
+        type: 'MemberExpression',
+        computed: false,
+        object: {
+          type: 'Identifier',
+          name: 'MIP'
+        },
+        property: property
       },
-      callee,
-      arguments: args || []
+      // object: {
+      //   name: mip.raw,
+      //   type: 'Idendifier'
+      // },
+      // callee,
+      arguments: args && args.arguments || []
     }
   }
 })
@@ -163,10 +212,15 @@ lex.set({
       lex.use('MIPActionArguments')
     )
   ]),
-  onMatch (id, dot, callee, args) {
+  onMatch (object, dot, property, args) {
     return {
-      object: id,
-      callee,
+      type: 'CallExpression',
+      callee: {
+        type: 'MemberExpression',
+        object: object,
+        computed: false,
+        property: property
+      },
       arguments: args && args.arguments || []
     }
   }
@@ -177,16 +231,18 @@ lex.set({
   rule: lex.seq([
     lex.text('('),
     _,
-    lex.or([
-      lex.use('MIPOldActionArguments'),
-      lex.use('MIPNewActionArguments')
-    ]),
+    lex.zeroOrOne(
+      lex.or([
+        lex.use('MIPOldActionArguments'),
+        lex.use('MIPNewActionArguments')
+      ])
+    ),
     _,
     lex.text(')')
   ]),
   onMatch (leftBracket, __, args) {
     return {
-      arguments: args
+      arguments: args && args.arguments || []
     }
   }
 })
@@ -194,21 +250,28 @@ lex.set({
 lex.set({
   type: 'MIPOldActionArguments',
   rule: lex.seq([
+    lex.use('MIPValue'),
     lex.zeroOrMore([
       _,
-      lex.use('MIPValue'),
+      lex.text(','),
       _,
-      lex.text(',')
-    ]),
-    lex.zeroOrOne(
       lex.use('MIPValue')
+    ]),
+    _,
+    lex.zeroOrOne(
+      lex.text(',')
     )
   ]),
-  onMatch (heads, __, tail) {
-    let args = heads.map(([__, expression]) => expression)
-    if (args.length > 0 || tail) {
-      args.push(tail)
+  onMatch (head, middles, __, comma) {
+    let args = [
+      head,
+      ...middles.map(([__, comma, ___, expression]) => expression)
+    ]
+
+    if (comma) {
+      args.push(undefined)
     }
+
     return {
       // 这里得留意一下
       arguments: args
@@ -220,25 +283,37 @@ lex.set({
 lex.set({
   type: 'MIPNewActionArguments',
   rule: lex.seq([
+    lex.use('MIPActionAssignmentExpression'),
     lex.zeroOrMore([
       _,
-      lex.use('MIPActionAssignmentExpression'),
+      lex.text(','),
       _,
-      lex.text(',')
+      lex.use('MIPActionAssignmentExpression'),
     ]),
     _,
     lex.zeroOrOne(
-      lex.use('MIPActionAssignmentExpression')
+      lex.text(',')
     ),
   ]),
-  onMatch (heads, __, tail) {
-    let args = heads.map(([__, expression]) => expression)
-    if (args.length > 0 || tail) {
-      args.push(tail)
+  onMatch (head, middles, __, comma) {
+     let args = [
+      head,
+      ...middles.map(([__, comma, ___, expression]) => expression)
+    ]
+
+    if (comma) {
+      args.push(undefined)
     }
+
+
     return {
       // 这里得留意一下
-      arguments: args
+      arguments: [
+        {
+          type: 'ObjectExpression',
+          properties: args
+        }
+      ]
     }
   }
 })
@@ -247,19 +322,15 @@ lex.set({
   type: 'MIPActionAssignmentExpression',
   rule: lex.seq([
     lex.use('Identifier'),
-    _,
     lex.text('='),
-    _,
     lex.use('MIPValue')
-    // lex.or([
-    //   lex.use('MIPStateExpression'),
-    //   lex.use('Literal')
-    // ])
   ]),
-  onMatch (key, __, equal, ___, value) {
+  onMatch (key, equal, value) {
     return {
+      type: 'Property',
       key,
-      value
+      value,
+      computed: false
     }
   }
 })
@@ -315,20 +386,19 @@ lex.set({
   rule: lex.seq([
     lex.text('event'),
     lex.oneOrMore([
+      _,
       lex.text('.'),
-      // 这里要讨论一下，是否需要支持 event.a.b.c 的这种深嵌套数据
-      // 或者是 event['a']['b'] 这种计算类型的写法
-      // lex.regexp('^[a-zA-Z$][\\W$]*')
+      _,
+      // 这里要讨论一下，是否需要支持 event['a']['b'] 这种计算类型的写法
       lex.use('Identifier')
-
     ])
   ]),
   onMatch (event, tails) {
     return tails.reduce((result, args) => {
       return {
-        type: 'MIPEvent',
+        type: 'MemberExpression',
         object: result,
-        property: args[1],
+        property: args[3],
         computed: false
       }
     }, {
