@@ -8,12 +8,12 @@ import parser from '../../../../src/util/parser/index'
 
 describe.only('mip-event', () => {
   describe.only('grammar spec', () => {
-    it('MIPStateExpression', () => {
-      const str = 'asdf-dbsf.setTimeout.helloWorld'
-      let ast = parser.parse(str, 'MIPStateExpression')
-      expect(ast.object.object.name).to.be.equal('asdf-dbsf')
-      expect(ast.object.property.name).to.be.equal('setTimeout')
-    })
+    // it('MIPStateExpression', () => {
+    //   const str = 'asdf-dbsf.setTimeout.helloWorld'
+    //   let ast = parser.parse(str, 'MIPStateExpression')
+    //   expect(ast.object.object.name).to.be.equal('asdf-dbsf')
+    //   expect(ast.object.property.name).to.be.equal('setTimeout')
+    // })
 
     describe('MIPActionAssignmentExpression', () => {
       it('Identifier', () => {
@@ -23,13 +23,20 @@ describe.only('mip-event', () => {
         expect(ast.value.value).to.be.equal(3.1415926)
       })
 
-      it('MIPStateExpression', () => {
-        const str = 'asdf$09iq=my-state.asdf.vdassd.dsss'
-        let ast = parser.parse(str, 'MIPActionAssignmentExpression')
-        expect(ast.key.name).to.be.equal('asdf$09iq')
-        expect(ast.value.type).to.be.equal('MIPStateExpression')
-        expect(ast.value.object.object.object.name).to.be.equal('my-state')
-      })
+      // it('MIPStateExpression', () => {
+      //   const str = 'asdf$09iq=my-state.asdf.vdassd.dsss'
+      //   let ast = parser.parse(str, 'MIPActionAssignmentExpression')
+      //   expect(ast.key.name).to.be.equal('asdf$09iq')
+      //   expect(ast.value.type).to.be.equal('MIPStateExpression')
+      //   expect(ast.value.object.object.object.name).to.be.equal('my-state')
+      // })
+
+    })
+
+    it('MIPEvent', () => {
+      const str = 'event.asdf.bds$a'
+      let ast = parser.parse(str, 'MIPEvent')
+      console.log(JSON.stringify(ast, null, 2))
 
     })
   })

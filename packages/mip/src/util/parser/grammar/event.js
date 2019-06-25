@@ -112,75 +112,136 @@ lex.set({
     lex.use('MIPBindAction'),
     lex.use('MIPGlobalAction'),
     lex.use('MIPComponentAction')
-  ]),
+  ])
 })
 
-// lex.set({
-//   type: 'MIPEventHandler',
-//   rule: lex.seq([
-//     lex.regexp('^[a-zA-Z][\\w-]*'),
-//     lex.text(':'),
-//     lex.or([
-//       lex.use('MIPBindAction'),
-//       lex.use('MIPGlobalAction'),
-//       lex.use('MIPComponentAction')
-//     ])
-//   ]),
-//   onMatch (event, action) {
-//     return {
-//       event: event.value,
-//       action: action
-//     }
-//   }
-// })
+lex.set({
+  type: 'MIPBindAction',
+  rule: lex.seq([
+    lex.text('MIP.setData('),
+    lex.use('ObjectExpression'),
+    lex.text(')')
+  ]),
+  onMatch (prefix, data) {
+    return {
+      callee: {
+        name: 'setData'
+      },
+      arguments: [data]
+    }
+  }
+})
 
-// lex.set({
-//   type: 'MIPComponentAction',
-//   rule: lex.seq([
-//     lex.use('MIPElementIdentifier'),
-//     lex.text('.'),
-//     lex.use('Identifier'),
-//     lex.zeroOrOne(
-//       lex.use('MIPActionArguments')
-//     )
-//   ]),
-//   onMatch (id, dot, callee, args) {
-//     return {
-//       id,
-//       callee,
-//       arguments: args || []
-//     }
-//   }
-// })
+lex.set({
+  type: 'MIPGlobalAction',
+  rule: lex.seq([
+    lex.text('MIP'),
+    lex.text('.'),
+    lex.use('Identifier'),
+    lex.zeroOrOne(
+      lex.use('MIPActionArguments')
+    )
+  ]),
+  onMatch (mip, dot, callee, args) {
+    return {
+      object: {
+        name: mip.raw
+      },
+      callee,
+      arguments: args || []
+    }
+  }
+})
 
-// lex.set({
-//   type: 'MIPActionArguments',
-//   rule: lex.seq([
-//     lex.text('('),
-//     lex.zeroOrMore([
-//       _,
-//       lex.use('MIPActionAssignmentExpression'),
-//       _,
-//       lex.text(',')
-//     ]),
-//     _,
-//     lex.zeroOrOne(
-//       lex.use('MIPActionAssignmentExpression')
-//     ),
-//     _,
-//     lex.text(')')
-//   ]),
-//   onMatch (leftBrackets, heads, __, tail) {
-//     let args = heads.map(([_, expression, __]) => expression)
-//     if (args.length > 0 || tail) {
-//       args.push(tail)
-//     }
-//     return {
-//       // 这里得留意一下
-//       arguments: args
-//     }
-//   }
-// })
+lex.set({
+  type: 'MIPComponentAction',
+  rule: lex.seq([
+    lex.use('MIPElementIdentifier'),
+    lex.text('.'),
+    lex.use('Identifier'),
+    lex.zeroOrOne(
+      lex.use('MIPActionArguments')
+    )
+  ]),
+  onMatch (id, dot, callee, args) {
+    return {
+      object: id,
+      callee,
+      arguments: args && args.arguments || []
+    }
+  }
+})
+
+lex.set({
+  type: 'MIPActionArguments',
+  rule: lex.seq([
+    lex.text('('),
+    _,
+    lex.or([
+      lex.use('MIPOldActionArguments'),
+      lex.use('MIPNewActionArguments')
+    ]),
+    _,
+    lex.text(')')
+  ]),
+  onMatch (leftBracket, __, args) {
+    return {
+      arguments: args
+    }
+  }
+})
+
+lex.set({
+  type: 'MIPOldActionArguments',
+  rule: lex.seq([
+    lex.zeroOrMore([
+      _,
+      lex.use('MIPValue'),
+      _,
+      lex.text(',')
+    ]),
+    lex.zeroOrOne(
+      lex.use('MIPValue')
+    )
+  ]),
+  onMatch (heads, __, tail) {
+    let args = heads.map(([__, expression]) => expression)
+    if (args.length > 0 || tail) {
+      args.push(tail)
+    }
+    return {
+      // 这里得留意一下
+      arguments: args
+    }
+  }
+})
+
+// 新版语法与 AMP 靠齐 (a=1, b=2, c=3) 之类
+lex.set({
+  type: 'MIPNewActionArguments',
+  rule: lex.seq([
+    lex.zeroOrMore([
+      _,
+      lex.use('MIPActionAssignmentExpression'),
+      _,
+      lex.text(',')
+    ]),
+    _,
+    lex.zeroOrOne(
+      lex.use('MIPActionAssignmentExpression')
+    ),
+  ]),
+  onMatch (heads, __, tail) {
+    let args = heads.map(([__, expression]) => expression)
+    if (args.length > 0 || tail) {
+      args.push(tail)
+    }
+    return {
+      // 这里得留意一下
+      arguments: args
+    }
+  }
+})
 
 lex.set({
   type: 'MIPActionAssignmentExpression',
@@ -189,10 +250,11 @@ lex.set({
     _,
     lex.text('='),
     _,
-    lex.or([
-      lex.use('MIPStateExpression'),
-      lex.use('Literal')
-    ])
+    lex.use('MIPValue')
+    // lex.or([
+    //   lex.use('MIPStateExpression'),
+    //   lex.use('Literal')
+    // ])
   ]),
   onMatch (key, __, equal, ___, value) {
     return {
@@ -200,6 +262,15 @@ lex.set({
       value
     }
   }
+})
+
+lex.set({
+  type: 'MIPValue',
+  rule: lex.or([
+    lex.use('MIPEvent'),
+    // lex.use('MIPStateExpression'),
+    lex.use('Literal')
+  ])
 })
 
 lex.set({
@@ -212,76 +283,60 @@ lex.set({
   }
 })
 
+// 从 AMP 文档来看 在 on 表达式当中是无法使用到 state 的,
+// 所以 MIP 也暂时不提供支持，只在 MIP.setData() 里面可以使用
+
 // my-state.a.b.c
 
+// lex.set({
+//   type: 'MIPStateExpression',
+//   rule: lex.seq([
+//     lex.use('MIPElementIdentifier'),
+//     lex.oneOrMore([
+//       lex.text('.'),
+//       lex.use('Identifier')
+//     ])
+//   ]),
+//   onMatch (id, tails) {
+//     let results = tails.reduce((result, args) => {
+//       return {
+//         type: 'MIPStateExpression',
+//         object: result,
+//         property: args[1],
+//         computed: false
+//       }
+//     }, id)
+//     return results
+//   }
+// })
+
 lex.set({
-  type: 'MIPStateExpression',
+  type: 'MIPEvent',
   rule: lex.seq([
-    lex.use('MIPElementIdentifier'),
+    lex.text('event'),
     lex.oneOrMore([
       lex.text('.'),
+      // 这里要讨论一下，是否需要支持 event.a.b.c 的这种深嵌套数据
+      // 或者是 event['a']['b'] 这种计算类型的写法
+      // lex.regexp('^[a-zA-Z$][\\W$]*')
       lex.use('Identifier')
+
     ])
   ]),
-  onMatch (id, tails) {
-    let results = tails.reduce((result, args) => {
+  onMatch (event, tails) {
+    return tails.reduce((result, args) => {
       return {
-        type: 'MIPStateExpression',
+        type: 'MIPEvent',
         object: result,
         property: args[1],
         computed: false
       }
-    }, id)
-    return results
+    }, {
+      name: event.raw,
+      type: 'Identifier'
+    })
   }
 })
-
-// lex.set({
-//   type: 'MIPGlobalAction',
-//   rule: lex.seq([
-//     lex.text('MIP'),
-//     lex.text('.'),
-//     lex.regexp('^[a-zA-Z$][\\w$]*')
-//   ])
-// })
-
-// lex.set({
-//   type: 'MIPEvent',
-//   rule: lex.seq([
-//     lex.text('event'),
-//     lex.oneOrMore([
-//       lex.text('.'),
-//       // 这里要讨论一下，是否需要支持 event.a.b.c 的这种深嵌套数据
-//       // 或者是 event['a']['b'] 这种计算类型的写法
-//       // lex.regexp('^[a-zA-Z$][\\W$]*')
-//       lex.use('Identifier')
-
-//     ])
-//   ]),
-//   onMatch (event, tails) {
-//     return tails.reduce((result, args) => {
-//       return {
-//         type:
-//       }
-//     }, {
-//       name: event.raw,
-//       type: 'Identifier'
-//     })
-//   }
-// })
-
-// lex.set({
-//   type: 'MIPBindAction',
-//   rule: lex.seq([
-//     lex.text('MIP'),
-//     lex.text('.'),
-//     // 要讨论下是否要兼容 MIP.setData
-//     lex.text('setState'),
-//     lex.text('('),
-//     lex.use('ObjectExpression'),
-//     lex.text(')')
-//   ])
-// })
 
 export default lex
 
