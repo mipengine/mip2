@@ -40,15 +40,24 @@ export default class Lexer {
   set (descriptor) {
     const rule = this.seq(descriptor.rule)
     const test = walker => {
-      let result = safeRun(rule, walker)
-      if (result === false) {
-        return descriptor.fallback && descriptor.fallback(walker) || false
-      }
+      let index = walker.index
+      let result = rule(walker)
+      // let result = safeRun(rule, walker)
 
-      if (descriptor.onMatch) {
+      if (result !== false && descriptor.onMatch) {
         let args = Array.isArray(result) ? result : [result]
         result = descriptor.onMatch(...args)
       }
+
+      if (result === false) {
+        walker.index = index
+        return descriptor.fallback && descriptor.fallback(walker) || false
+      }
+
+      if (result == null) {
+        return result
+      }
+
       if (!result.type) {
         result.type = descriptor.type
       }

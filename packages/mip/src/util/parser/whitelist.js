@@ -6,6 +6,17 @@
  *  https://github.com/ampproject/amphtml/blob/master/extensions/amp-bind/0.1/bind-expression.js
  */
 
+const MIP_WHITELIST = {
+  setData (...args) {
+    return MIP.setData(...args)
+  },
+  navigateTo (...args) {
+    return MIP.navigateTo(...args)
+  },
+  scrollTo (...args) {
+    return MIP.scrollTo(...args)
+  }
+}
 
 const WHITELIST = {
   '[object Array]': {
@@ -62,6 +73,19 @@ const WHITELIST = {
   'custom-objects': {
     event ({event}) {
       return event
+    },
+    // 兼容以前的 MIP-data
+    m () {
+      return window.m
+    },
+    MIP () {
+      return MIP_WHITELIST
+    },
+    defaults ({id}) {
+      // if (params) {
+        // return
+      // }
+      return () => document.getElementById(id)
     }
   }
 }

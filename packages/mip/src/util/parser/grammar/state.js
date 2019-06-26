@@ -1,5 +1,5 @@
 /**
- * @file grammar.js
+ * @file state-grammar.js
  * @author clark-t (clarktanglei@163.com)
  * @description
  *   Inspired By the listing URLs
@@ -7,10 +7,7 @@
  *    https://github.com/pegjs/pegjs/blob/master/examples/javascript.pegjs
  */
 
-import Lexer from '../../lexer'
-
-// const Lexer = require('./lexer')
-const lex = new Lexer()
+import lex from './lexer'
 
 function buildBinaryAst (head, tails) {
   return tails.reduce((result, args) => {
@@ -306,10 +303,22 @@ lex.set({
 })
 
 lex.set({
+  type: 'HTMLElementIdentifier',
+  rule: lex.regexp('^[a-zA-Z][\\w-]*'),
+  onMatch (match) {
+    return {
+      type: 'Identifier',
+      name: match.raw
+    }
+  }
+})
+
+lex.set({
   type: 'MemberExpression',
   rule: lex.seq([
     lex.or([
       lex.use('Identifier'),
+      lex.use('HTMLElementIdentifier'),
       lex.use('ArrayExpression')
     ]),
     lex.zeroOrMore([
@@ -407,13 +416,19 @@ lex.set({
     lex.text('('),
     lex.zeroOrMore([
       _,
-      lex.use('ConditionalExpression'),
+      lex.or([
+        lex.use('ArrowFunctionExpression'),
+        lex.use('ConditionalExpression')
+      ]),
       _,
       lex.text(',')
     ]),
     _,
     lex.zeroOrOne(
-      lex.use('ConditionalExpression')
+      lex.or([
+        lex.use('ArrowFunctionExpression'),
+        lex.use('ConditionalExpression')
+      ])
     ),
     _,
     lex.text(')')
@@ -426,6 +441,68 @@ lex.set({
     return {
       type: 'CallExpression',
       arguments: args
+    }
+  }
+})
+
+lex.set({
+  type: 'ArrowFunctionExpression',
+  rule: lex.seq([
+    lex.use('Params'),
+    _,
+    lex.text('=>'),
+    _,
+    lex.or([
+      lex.text('{'),
+      lex.use('ConditionalExpression')
+    ])
+  ]),
+  onMatch (params, __, arrow, ___, body) {
+    // 不支持 BlockStatement
+    if (body.raw === '{') {
+      return false
+    }
+    return {
+      params: params.params,
+      body
+    }
+  }
+})
+
+lex.set({
+  type: 'Params',
+  rule: lex.or([
+    lex.seq([
+      lex.text('('),
+      lex.zeroOrMore([
+        _,
+        lex.use('Identifier'),
+        _,
+        lex.text(',')
+      ]),
+      _,
+      lex.zeroOrOne(
+        lex.use('Identifier')
+      ),
+      _,
+      lex.text(')')
+    ]),
+    lex.use('Identifier')
+  ]),
+  onMatch (...args) {
+    if (args[0].type === 'Identifier') {
+      return {
+        params: [args[0]]
+      }
+    }
+    let heads = args[1]
+    let tail = args[3]
+    let results = heads.map(args => args[1])
+    if (tail) {
+      results.push(tail)
+    }
+    return {
+      params: results
     }
   }
 })
@@ -566,5 +643,4 @@ lex.set({
 })
 
 export default lex
-// module.exports = lex
 

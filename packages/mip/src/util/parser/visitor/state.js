@@ -3,7 +3,7 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-import WHITELIST from './whitelist'
+import WHITELIST from '../whitelist'
 
 function is (node, type) {
   return node.type === type
@@ -124,7 +124,8 @@ const visitor = {
     let object
 
     if (is(node.object, 'Identifier')) {
-      object = WHITELIST['custom-objects'][node.object.name]
+      object = WHITELIST['custom-objects'][node.object.name] ||
+        WHITELIST['custom-objects'].defaults
     } else {
       object = path.traverse(node.object)
     }
@@ -139,7 +140,8 @@ const visitor = {
     let callee
 
     if (is(path.node.callee, 'Identifier')) {
-      callee = WHITELIST['custom-functions'](path.node.callee.name)
+      callee = WHITELIST['custom-functions'][path.node.callee.name] ||
+        WHITELIST['custom-objects'].defaults(path.node.callee.name)
     } else if (is(path.node.callee, 'MemberExpression')) {
       let object = path.traverse(path.node.callee.object)
       let property = path.traverse(path.node.callee.property)
@@ -167,6 +169,17 @@ const visitor = {
 
     return function () {
       return callee().apply(undefined, args.map(arg => arg()))
+    }
+  },
+
+  ArrowFunctionExpression (path) {
+    let params = path.node.params.map(node => node.name)
+    let body = path.traverse(path.node.body)
+
+    return function () {
+      return function (...args) {
+        return body(args)
+      }
     }
   }
 }
