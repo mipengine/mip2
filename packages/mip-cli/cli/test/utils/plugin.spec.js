@@ -9,8 +9,9 @@ const {
   resolvePluginName,
   resolveCommandFromPackageName,
   pad,
-  loadModule
-  // showPluginCmdHelpInfo
+  loadModule,
+  printDescription,
+  showPluginCmdHelpInfo
 } = require('../../src/utils/plugin.ts')
 
 test('utils: installOrUpdatePlugin', async () => {
@@ -90,4 +91,34 @@ test('utils: pad', () => {
 
 test('utils: loadModule', () => {
   expect(loadModule('fs')).toEqual(require('fs'))
+})
+
+test('utils: printDescription', () => {
+  const mockConsole = jest.spyOn(console, 'log').mockImplementationOnce(() => {})
+
+  printDescription('dev', 'description')
+
+  expect(mockConsole).toHaveBeenCalledWith('  dev                                description')
+})
+
+test('utils: showPluginCmdHelpInfo', () => {
+  // with no plugins found
+  jest.spyOn(fs, 'readdirSync').mockImplementationOnce(() => {
+    return []
+  })
+
+  expect(showPluginCmdHelpInfo()).toBeUndefined()
+
+  // TOFIX
+  // with some plugins found
+  const mockConsole = jest.spyOn(console, 'log').mockImplementation(() => {})
+  jest.spyOn(fs, 'readdirSync').mockImplementationOnce(() => {
+    return [
+      'mip-cli-plugin-add'
+    ]
+  })
+
+  showPluginCmdHelpInfo()
+
+  expect(mockConsole).toHaveBeenCalled()
 })

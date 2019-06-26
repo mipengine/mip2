@@ -64,7 +64,7 @@ export function pad (str: string, width: number) {
   return str + Array(len + 1).join(' ')
 }
 
-function printDescription (name: string, description: string) {
+export function printDescription (name: string, description: string) {
   if (description) {
     // used for left-align commands list
     const MAGIC = 35
