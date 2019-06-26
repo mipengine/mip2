@@ -14,6 +14,18 @@ import parser from './parser/index'
 
 const logger = log('Event-Action')
 
+const EVENT_ACTION_STORE = {}
+
+function parse (str) {
+  if (!EVENT_ACTION_STORE[str]) {
+    let fn = parser.transform(str)
+    if (fn) {
+      EVENT_ACTION_STORE[str] = fn
+    }
+  }
+  return EVENT_ACTION_STORE[str]
+}
+
 /**
  * Regular for parsing params.
  * @const
@@ -53,7 +65,6 @@ function toggle (el, opt) {
   }
   el.classList.toggle('mip-hide', !opt)
 }
-
 
 /**
  * MIP does not support external JavaScript, so we provide EventAction to trigger events between elements.
@@ -140,7 +151,7 @@ class EventAction {
 
   /**
    * 显示元素，如果元素或其子元素有 autofocus 属性，focus 到该元素
-   * 
+   *
    * @param {Object} action action
    * @param {HTMLElement} target 目标元素
    */
@@ -158,7 +169,7 @@ class EventAction {
 
   /**
    * 隐藏元素
-   * 
+   *
    * @param {Object} action action
    * @param {HTMLElement} target 目标元素
    */
@@ -168,7 +179,7 @@ class EventAction {
 
   /**
    * 显示/隐藏元素
-   * 
+   *
    * @param {Object} action action
    * @param {HTMLElement} target 目标元素
    */
@@ -178,7 +189,7 @@ class EventAction {
 
   /**
    * 滚动到目标元素
-   * 
+   *
    * @param {Object} action action
    * @param {HTMLElement} target 目标元素
    */
@@ -194,7 +205,7 @@ class EventAction {
 
   /**
    * 添加/删除元素 class
-   * 
+   *
    * @param {Object} action action
    * @param {HTMLElement} target 目标元素
    */
@@ -224,7 +235,7 @@ class EventAction {
 
   /**
    * focus 元素
-   * 
+   *
    * @param {Object} action action
    * @param {HTMLElement} target 目标元素
    */
@@ -265,15 +276,20 @@ class EventAction {
     if (!target) {
       return
     }
-    let attr
+    // let attr
     let attrSelector = '[' + this.attr + ']'
+    let params = {
+      event: nativeEvent,
+      eventName: type,
+      MIP: this.globalTargets.MIP
+
+    }
 
     do {
-      attr = target.getAttribute(this.attr)
+      let attr = target.getAttribute(this.attr)
       if (attr) {
-        // this._execute(this.parse(attr, type, nativeEvent))
-        const fn = parser.transform(attr)
-        fn({event: nativeEvent, eventName: type, MIP: this.globalTargets.MIP})
+        const action = parse(attr)
+        action(params)
         target = target.parentElement
         if (!target) {
           return

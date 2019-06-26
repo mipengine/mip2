@@ -21,13 +21,10 @@ function dropPromise (target) {
 
 class MipData extends CustomElement {
   build () {
-    let src = this.element.getAttribute('src')
-    let ele = this.element.querySelector('script[type="application/json"]')
-
     /* istanbul ignore if */
-    if (src) {
+    if (this.element.getAttribute('src')) {
       this.getData(src)
-    } else if (ele) {
+    } else if (this.element.querySelector('script[type="application/json"]')) {
       let data = ele.textContent.toString()
       if (data) {
         MIP.$set(jsonParse(data))
@@ -38,7 +35,7 @@ class MipData extends CustomElement {
   /*
    * get initial data asynchronouslly
    */
-  getData (url) {
+  async getData (url) {
     let stuckResolve
     let stuckReject
     // only resolve/reject when sth truly comes to a result
@@ -47,27 +44,26 @@ class MipData extends CustomElement {
       stuckResolve = resolve
       stuckReject = reject
     })
+
     mipDataPromises.push(stuckPromise)
 
-    fetch(url, {credentials: 'include'})
-      .then(res => {
-        if (res.ok) {
-          res.json().then(data => {
-            MIP.$set(data)
-            dropPromise(stuckPromise)
-            stuckResolve()
-          })
-        } else {
-          console.error('Fetch request failed!')
-          dropPromise(stuckPromise)
-          stuckReject()
-        }
-      })
-      .catch(e => {
-        console.error(e)
-        dropPromise(stuckPromise)
-        stuckReject()
-      })
+    try {
+      let res = await fetch(url, {credentials: 'include'})
+      if (!res.ok) {
+        throw Error('Fetch request failed!')
+      }
+
+      let data = await res.json()
+      MIP.$set(data)
+      dropPromise(stuckPromise)
+      stuckResolve()
+
+    }
+    catch (e) {
+      console.error(e)
+      dropPromise(stuckPromise)
+      stuckReject()
+    }
   }
 
   /* istanbul ignore next  */

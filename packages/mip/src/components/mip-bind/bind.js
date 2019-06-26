@@ -40,45 +40,45 @@ class Bind {
     MIP.watch = (target, cb) => {
       this.bindWatch(target, cb)
     }
-    
-    MIP.scrollTo = data => {
-      const {id} = data
-      if (!id) {
-        return
-      }
-      const target = document.getElementById(id)
-      handleScrollTo(target, data)
-    }
 
-    MIP.navigateTo = data => {
-      const {url, target, opener} = data
-      viewer.navigateTo(url, target, opener)
-    }
+    // MIP.scrollTo = data => {
+    //   const {id} = data
+    //   if (!id) {
+    //     return
+    //   }
+    //   const target = document.getElementById(id)
+    //   handleScrollTo(target, data)
+    // }
 
-    /**
-     * 关闭窗口，如果不能关闭，跳转到目标地址
-     * 作为打开新窗的后退操作
-     */
-    MIP.closeOrNavigateTo = data => {
-      const hasParent = window.parent != window
-      // 顶层 window 并且是被打开的 window 才能关闭
-      const canBeClosed = window.opener && !hasParent
+    // MIP.navigateTo = data => {
+    //   const {url, target, opener} = data
+    //   viewer.navigateTo(url, target, opener)
+    // }
 
-      let closed = false
-      if (canBeClosed) {
-        window.close()
-        // 可能被浏览器 block，没有关闭
-        closed = window.closed
-      }
+    // /**
+    //  * 关闭窗口，如果不能关闭，跳转到目标地址
+    //  * 作为打开新窗的后退操作
+    //  */
+    // MIP.closeOrNavigateTo = data => {
+    //   const hasParent = window.parent != window
+    //   // 顶层 window 并且是被打开的 window 才能关闭
+    //   const canBeClosed = window.opener && !hasParent
 
-      if (!closed) {
-        MIP.navigateTo(data)
-      }
-    }
+    //   let closed = false
+    //   if (canBeClosed) {
+    //     window.close()
+    //     // 可能被浏览器 block，没有关闭
+    //     closed = window.closed
+    //   }
 
-    MIP.goBack = () => {
-      window.history.back()
-    }
+    //   if (!closed) {
+    //     MIP.navigateTo(data)
+    //   }
+    // }
+
+    // MIP.goBack = () => {
+    //   window.history.back()
+    // }
 
     // inner APIs - isolated by sandbox, not available to developers
     MIP.$set = (data, cancel) => this.bindTarget(true, data, cancel)
@@ -101,7 +101,15 @@ class Bind {
    * fake postmessage - to broadcast global-data-changes to other iframes
    * @param {Object} data data
    */
-  postMessage (data) {
+  postMessage (data, cancel) {
+    if (cancel) {
+      return
+    }
+
+    if (!objNotEmpty(data)) {
+      return
+    }
+
     Object.keys(data).forEach(k => {
       data[`#${k}`] = data[k]
       delete data[k]
@@ -133,8 +141,8 @@ class Bind {
   /* istanbul ignore next */
   update (data, pageId) {
     let win = this.win
-
-    for (let i = 0, frames = win.document.getElementsByTagName('iframe'); i < frames.length; i++) {
+    let frames = win.document.getElementsByTagName('iframe')
+    for (let i = 0; i < frames.length; i++) {
       if (frames[i].classList.contains('mip-page__iframe') &&
           frames[i].getAttribute('data-page-id') &&
           pageId !== frames[i].getAttribute('data-page-id')
@@ -154,38 +162,45 @@ class Bind {
   bindTarget (compile, data, cancel) {
     let win = this.win
 
-    if (typeof data === 'object') {
-      let origin = JSON.stringify(win.m)
-      this.compile.updateData(JSON.parse(origin))
-      let classified = this.normalize(data)
-      // need compile - $set
-      if (compile) {
-        this.setGlobalState(classified.globalData, cancel)
-        this.setPageState(classified, cancel)
-        // defineProperty and set dependency hooks
-        this.observer.start(win.m)
-        // compile and bind
-        this.compile.start(win.m)
-      } else {
-        locker(true) // lock, don't call watchers immediatly
-        // set/update data directly - setData
-        if (classified.globalData && objNotEmpty(classified.globalData)) {
-          !cancel && this.postMessage(classified.globalData)
-        }
-        data = classified.pageData
-        Object.keys(data).forEach(field => {
-          if (win.pgStates.hasOwnProperty(field)) {
-            assign(win.m, {
-              [field]: data[field]
-            })
-          } else {
-            this.dispatch(field, data[field], cancel)
-          }
-        })
-        locker(false) // unlock
-      }
-    } else {
+    if (typeof data !== 'object') {
       throw new Error('setData method MUST accept an object! Check your input:' + data)
+
+    }
+    let origin = JSON.stringify(win.m)
+    this.compile.updateData(JSON.parse(origin))
+    let classified = normalize(data)
+    let {globalData, pageData} = classified
+    // need compile - $set
+    if (compile) {
+      this.setGlobalState(globalData, cancel)
+      this.setPageState(classified, cancel)
+      // defineProperty and set dependency hooks
+      this.observer.start(win.m)
+      // compile and bind
+      this.compile.start(win.m)
+    } else {
+      locker(true) // lock, don't call watchers immediatly
+      // set/update data directly - setData
+      this.postMessage(globalData, cancel)
+
+      // if (!cancel && objNotEmpty(classified.globalData)) {
+      // }
+
+      // data = classified.pageData
+
+      for (let key of Object.keys(pageData)) {
+        if (win.pgStates.hasOwnProperty(key)) {
+          assign(win.m, {
+            [field]: data[field]
+          })
+        } else {
+          this.dispatch(key, pageData[key], cancel)
+        }
+      }
+      // Object.keys(data).forEach(field => {
+
+      // })
+      locker(false) // unlock
     }
   }
 
@@ -195,7 +210,8 @@ class Bind {
    * @param {Function} cb callback triggered when target changed
    */
   bindWatch (target, cb) {
-    if (target.constructor === Array) {
+    if (Array.isArray(target)) {
+    // if (target.constructor === Array) {
       target.forEach(key => this.bindWatch(key, cb))
       return
     }
@@ -245,7 +261,8 @@ class Bind {
       /* istanbul ignore next */ win.parent.g &&
       /* istanbul ignore next */ win.parent.g.hasOwnProperty(key)
       ) {
-        !cancel && this.postMessage(data)
+        this.postMessage(data, cancel)
+        // !cancel && this.postMessage(data)
       } else {
         Object.assign(win.m, data)
       }
@@ -265,12 +282,16 @@ class Bind {
       win.g = win.g || {}
       assign(win.g, data)
     } else {
-      !cancel && objNotEmpty(data) && this.postMessage(data)
+    // } else if (!cancel && objNotEmpty(data)) {
+      this.postMessage(data, cancel)
     }
   }
 
   /*
    * set page data that used only under this page
+   * one page state is composed of
+   * pageData page defined global data and global data?
+   *
    * @param {Object} data data
    * @param {boolean} cancel should stop data-broadcasting
    */
@@ -282,47 +303,49 @@ class Bind {
       win.pgStates[k] = true
     })
 
-    let globalData = data.globalData
+    // let globalData = data.globalData
     // update props from globalData
-    Object.keys(globalData).forEach(key => {
-      if (!win.pgStates.hasOwnProperty(key) && win.m.hasOwnProperty(key)) {
-        if (isObject(globalData[key]) && win.m[key] && isObject(win.m[key])) {
-          assign(win.m[key], globalData[key])
-          win.m[key] = JSON.parse(JSON.stringify(win.m[key]))
-        } else {
-          win.m[key] = globalData[key]
-        }
-      }
-    })
+    // Object.keys(globalData).forEach(key => {
+    //   if (!win.pgStates.hasOwnProperty(key) && win.m.hasOwnProperty(key)) {
+    //     if (isObject(globalData[key]) && win.m[key] && isObject(win.m[key])) {
+    //       assign(win.m[key], globalData[key])
+    //       win.m[key] = JSON.parse(JSON.stringify(win.m[key]))
+    //     } else {
+    //       win.m[key] = globalData[key]
+    //     }
+    //   }
+    // })
 
-    // inherit
-    setProto(win.m, getGlobalData(win))
+    // // inherit
+    // setProto(win.m, getGlobalData(win))
     // win.m.__proto__ = getGlobalData(win) // eslint-disable-line no-proto
   }
+}
 
-  /*
-   * normalize data if there is global data
-   * @param {Object} data data
-   */
-  normalize (data) {
-    let globalData = {}
-    let pageData = {}
+/*
+ * normalize data if there is global data
+ * @param {Object} data data
+ */
+function normalize (data) {
+  let globalData = {}
+  let pageData = {}
 
-    Object.keys(data).forEach(k => {
-      if (typeof data[k] === 'function') {
-        throw 'setData method MUST NOT accept object that contains functions' // eslint-disable-line no-throw-literal
-      }
-      if (/^#/.test(k)) {
-        globalData[k.substr(1)] = data[k]
-      } else {
-        pageData[k] = data[k]
-      }
-    })
-
-    return {
-      globalData,
-      pageData
+  for (let k of Object.keys(data)) {
+  // Object.keys(data).forEach(k => {
+    if (typeof data[k] === 'function') {
+      throw 'setData method MUST NOT accept object that contains functions' // eslint-disable-line no-throw-literal
     }
+    if (k[0] === '#') {
+    // if (/^#/.test(k)) {
+      globalData[k.substr(1)] = data[k]
+    } else {
+      pageData[k] = data[k]
+    }
+  // })
+  }
+  return {
+    globalData,
+    pageData
   }
 }
 
@@ -332,17 +355,21 @@ class Bind {
  * @param {Object} newData newData
  */
 function assign (oldData, newData) {
-  Object.keys(newData).forEach(k => {
-    if (isObject(newData[k]) && oldData[k] && isObject(oldData[k])) {
-      assign(oldData[k], newData[k])
-      let obj = JSON.parse(JSON.stringify({
-        [k]: oldData[k]
-      }))
-      Object.assign(oldData, obj)
+  for (let k of Object.keys(newData)) {
+    // Object.keys(newData).forEach(k => {
+    if (isObject(newData[k]) && isObject(oldData[k])) {
+      let obj = Object.assign({}, oldData[k])
+      assign(obj, newData[k])
+      oldData[k] = obj
+      // assign(oldData[k], newData[k])
+      // let obj = JSON.parse(JSON.stringify({
+      //   [k]: oldData[k]
+      // }))
+      // Object.assign(oldData, obj)
     } else {
       oldData[k] = newData[k]
     }
-  })
+  }
 }
 /*
  * data inherit
