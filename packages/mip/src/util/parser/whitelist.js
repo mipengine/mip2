@@ -7,13 +7,13 @@
  */
 
 const MIP_WHITELIST = {
-  setData (..args) {
+  setData (...args) {
     return MIP.setData(...args)
   },
   navigateTo (...args) {
     return MIP.navigateTo(...args)
   },
-  scrollTo (..args) {
+  scrollTo (...args) {
     return MIP.scrollTo(...args)
   }
 }

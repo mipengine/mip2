@@ -489,14 +489,14 @@ lex.set({
     ]),
     lex.use('Identifier')
   ]),
-  onMatch (match) {
-    if (match.type === 'Identifier') {
+  onMatch (...args) {
+    if (args[0].type === 'Identifier') {
       return {
-        params: [match]
+        params: [args[0]]
       }
     }
-    let heads = match[1]
-    let tail = match[3]
+    let heads = args[1]
+    let tail = args[3]
     let results = heads.map(args => args[1])
     if (tail) {
       results.push(tail)

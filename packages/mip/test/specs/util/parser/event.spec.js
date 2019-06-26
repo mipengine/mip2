@@ -6,8 +6,8 @@
 
 import parser from '../../../../src/util/parser/index'
 
-describe.only('mip-event', () => {
-  describe.only('grammar spec', () => {
+describe('mip-event', () => {
+  describe('grammar spec', () => {
     // it('MIPStateExpression', () => {
     //   const str = 'asdf-dbsf.setTimeout.helloWorld'
     //   let ast = parser.parse(str, 'MIPStateExpression')
@@ -48,7 +48,7 @@ describe.only('mip-event', () => {
         let ast = parser.parse(str, 'MIPComponentAction')
         expect(ast.arguments).to.be.deep.equal([])
         expect(ast.callee.property.name).to.be.equal('doSomething')
-        expect(ast.callee.object.type).to.be.equal('MIPElementIdentifier')
+        expect(ast.callee.object.type).to.be.equal('Identifier')
       })
 
       it('with empty args', () => {
@@ -56,7 +56,7 @@ describe.only('mip-event', () => {
         let ast = parser.parse(str, 'MIPComponentAction')
         expect(ast.arguments).to.be.deep.equal([])
         expect(ast.callee.property.name).to.be.equal('doSomething')
-        expect(ast.callee.object.type).to.be.equal('MIPElementIdentifier')
+        expect(ast.callee.object.type).to.be.equal('Identifier')
       })
 
       it('with old args', () => {
@@ -131,7 +131,7 @@ describe.only('mip-event', () => {
                 every-thing.worksFine
               `
               let ast = parser.parse(str, 'MIPEventHandlers')
-              expect(ast.type).to.be.equal('MIPNewEventHandlers')
+              expect(ast.type).to.be.equal('MIPEventHandlers')
               expect(ast.handlers.length).to.be.equal(3)
               // console.log(JSON.stringify(ast));
             })
@@ -170,7 +170,7 @@ describe.only('mip-event', () => {
                 error:hehe-lala.done
               `
               let ast = parser.parse(str, 'MIPEventHandlers')
-              expect(ast.type).to.be.equal('MIPOldEventHandlers')
+              expect(ast.type).to.be.equal('MIPEventHandlers')
               expect(ast.handlers.length).to.be.equal(3)
               expect(ast.handlers[0].actions[0].arguments.length).to.be.equal(3)
               expect(ast.handlers[0].actions[0].arguments[2].type).to.be.equal('MemberExpression')
@@ -181,23 +181,23 @@ describe.only('mip-event', () => {
       })
     })
   })
-  // describe('parser', () => {
-  //   it('Array Call Expression', () => {
-  //     const str = '[2+3, 4 + 5].join("")'
-  //     let ast = parser.parse(str)
-  //     expect(ast).to.not.be.equal(undefined)
-  //     let fn = parser.generate(ast)
-  //     expect(fn()).to.be.equal('59')
-  //   })
+  describe('parser', () => {
+    it('Array Call Expression', () => {
+      const str = '[2+3, 4 + 5].join("")'
+      let ast = parser.parse(str)
+      expect(ast).to.not.be.equal(undefined)
+      let fn = parser.generate(ast)
+      expect(fn()).to.be.equal('59')
+    })
 
-  //   it.only('event', function () {
-  //     const str = `{a: event.a - (4 - 9), b: event.b.toString()}`
-  //     let fn = parser.transform(str)
-  //     let result = fn({event: {a: 1, b: 2}})
-  //     expect(result.a).to.be.equal(6)
-  //     expect(typeof result.b).to.be.equal('string')
-  //     expect(result.b).to.be.equal('2')
-  //   })
-  // })
+    it('event', function () {
+      const str = `{a: event.a - (4 - 9), b: event.b.toString()}`
+      let fn = parser.transform(str)
+      let result = fn({event: {a: 1, b: 2}})
+      expect(result.a).to.be.equal(6)
+      expect(typeof result.b).to.be.equal('string')
+      expect(result.b).to.be.equal('2')
+    })
+  })
 })
 
