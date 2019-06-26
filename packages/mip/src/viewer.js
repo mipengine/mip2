@@ -240,7 +240,7 @@ let viewer = {
     // Jump in top window directly
     // 1. ( Cross origin or MIP Shell is disabled ) and NOT in SF
     // 2. Not MIP page and not only hash change
-    if (((this._isCrossOrigin(to) || isMIPShellDisabled()) && window.MIP.standalone) ||
+    if (((this._isCrossOrigin(to) || isMIPShellDisabled()) && (window.MIP.standalone && !window.MIP.util.isCacheUrl(location.href))) ||
       (!isMipLink && !isHashInCurrentPage)) {
       if (replace) {
         window.top.location.replace(to)
@@ -268,7 +268,7 @@ let viewer = {
 
     // Create target route
     let targetRoute = {
-      path: window.MIP.standalone ? to : makeCacheUrl(to)
+      path: (window.MIP.standalone && !window.MIP.util.isCacheUrl(location.href)) ? to : makeCacheUrl(to)
     }
 
     if (isMipLink) {
