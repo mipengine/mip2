@@ -145,28 +145,28 @@ describe.only('Test Grammar', function () {
       let str = '"a": 1 + 2'
       let walker = new Walker(str)
       let result = fn(walker)
-      expect(result.name.raw).to.be.equal('"a"')
-      expect(result.name.type).to.be.equal('String')
+      expect(result.key.raw).to.be.equal('"a"')
+      expect(result.key.type).to.be.equal('String')
     })
     it('should be equal', function () {
       let str = '"asdf": 1 + 2'
       let walker = new Walker(str)
       let result = fn(walker)
-      expect(result.name.raw).to.be.equal('"asdf"')
+      expect(result.key.raw).to.be.equal('"asdf"')
       expect(result.value.type).to.be.equal('BinaryExpression')
     })
     it('should be equal', function () {
       let str = 'a: 1 + 2'
       let walker = new Walker(str)
       let result = fn(walker)
-      expect(result.name.name).to.be.equal('a')
+      expect(result.key.name).to.be.equal('a')
       expect(result.value.type).to.be.equal('BinaryExpression')
     })
     it('should be equal', function () {
       let str = '_0123: 1 + 2'
       let walker = new Walker(str)
       let result = fn(walker)
-      expect(result.name.name).to.be.equal('_0123')
+      expect(result.key.name).to.be.equal('_0123')
       expect(result.value.type).to.be.equal('BinaryExpression')
     })
 
@@ -184,7 +184,7 @@ describe.only('Test Grammar', function () {
       let result = fn(walker)
       expect(result.properties.length).to.be.equal(2)
       expect(result.properties[0].value.value).to.be.equal(1)
-      expect(result.properties[1].name.value).to.be.equal('$asdf')
+      expect(result.properties[1].key.value).to.be.equal('$asdf')
     })
 
     it('should be equal', function () {
@@ -273,7 +273,7 @@ describe.only('Test Grammar', function () {
     })
   })
 
-  describe.only('Test ArrowFunctionExpression', function () {
+  describe('Test ArrowFunctionExpression', function () {
     let fn = lexer.use('ArrowFunctionExpression')
     it('Without Params', function () {
       let str = '(   )  =>   "3" > 1 ? 2 + 1: false'
@@ -305,12 +305,14 @@ describe.only('Test Grammar', function () {
       // console.log(walker.rest())
     })
 
-    it.only('With ({})', function () {
+    it('With ({})', function () {
       let str = 'asdf => ({a: 1, b: 2})'
       let walker = new Walker(str)
       let result = fn(walker)
-      console.log(result)
-      // expect(walker.end()).to.be.equal(false)
+      // console.log(result)
+      expect(walker.end()).to.be.equal(true)
+      expect(result.type).to.be.equal('ArrowFunctionExpression')
+      expect(result.body.type).to.be.equal('ObjectExpression')
       // expect(walker.index).to.be.equal(0)
       // console.log(walker.rest())
     })

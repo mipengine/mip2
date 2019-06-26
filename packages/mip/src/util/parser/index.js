@@ -10,7 +10,7 @@ import visitor from './visitor/index'
 const parser = new Parser({
   lexer: grammar,
   visitor: visitor,
-  type: 'ConditionalExpression'
+  type: 'MIPEventHandlers'
 })
 
 export default parser
