@@ -35,6 +35,11 @@ const UNARY_OPERATION = {
   '~': (arg) => ~arg
 }
 
+function getWhiteListObject (identifier) {
+  return WHITELIST.customObjects[identifier]
+    || WHITELIST.defaults.bind(null, identifier)
+}
+
 const visitor = {
   ConditionalExpression (path) {
     let test = path.traverse(path.node.test)
@@ -88,19 +93,19 @@ const visitor = {
 
     return function () {
       return properties.reduce((obj, property) => {
-        let [name, value] = property()
-        obj[name] = value
+        let [key, value] = property()
+        obj[key] = value
         return obj
       }, {})
     }
   },
 
   Property (path) {
-    let name = path.traverse(path.node.name)
+    let key = path.traverse(path.node.key)
     let value = path.traverse(path.node.value)
 
     return function () {
-      return [name(), value()]
+      return [key(), value()]
     }
   },
 
@@ -109,6 +114,8 @@ const visitor = {
 
     return function () {
       return name
+       // return WHITELIST.customObjects[name] ||
+        // WHITELIST.defaults({id: name})
     }
   },
 
@@ -124,8 +131,7 @@ const visitor = {
     let object
 
     if (is(node.object, 'Identifier')) {
-      object = WHITELIST['custom-objects'][node.object.name] ||
-        WHITELIST['custom-objects'].defaults
+      object = getWhiteListObject(node.object.name)
     } else {
       object = path.traverse(node.object)
     }
@@ -137,22 +143,30 @@ const visitor = {
   },
 
   CallExpression (path) {
-    let callee
+    let node = path.node
 
-    if (is(path.node.callee, 'Identifier')) {
-      callee = WHITELIST['custom-functions'][path.node.callee.name] ||
-        WHITELIST['custom-objects'].defaults(path.node.callee.name)
-    } else if (is(path.node.callee, 'MemberExpression')) {
-      let object = path.traverse(path.node.callee.object)
-      let property = path.traverse(path.node.callee.property)
+    let callee
+    if (is(node.callee, 'Identifier')) {
+      callee = getWhiteListObject(node.callee.name)
+    } else if (is(node.callee, 'MemberExpression')) {
+      let object
+      if (is(node.callee.object, 'Identifier')) {
+        object = getWhiteListObject(node.callee.object.name)
+      } else {
+        object = path.traverse(node.callee.object)
+      }
+
+      let property = path.traverse(node.callee.property)
+
       callee = () => {
         let obj = object()
         let prop = property()
         let instance = Object.prototype.toString.call(obj)
-        let fn = WHITELIST[instance][prop]
+        // 这里要针对 [object HTMLElement] 类型做更为细致的管控
+        let fn = WHITELIST[instance] ? WHITELIST[instance][prop] : obj[prop]
 
         if (!fn) {
-          throw Error(`不支持 ${typeofObj}.${prop} 方法`)
+          throw Error(`不支持 ${instance}.${prop} 方法`)
         }
 
         return fn.bind(obj)

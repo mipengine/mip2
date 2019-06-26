@@ -54,7 +54,7 @@ const WHITELIST = {
     toLowerCase: String.prototype.toLowerCase,
     toUpperCase: String.prototype.toUpperCase
   },
-  'custom-functions': {
+  'customFunctions': {
     encodeURI,
     encodeURIComponent,
     abs: Math.abs,
@@ -70,7 +70,7 @@ const WHITELIST = {
     keys: Math.keys,
     values: Math.values
   },
-  'custom-objects': {
+  'customObjects': {
     event ({event}) {
       return event
     },
@@ -81,12 +81,10 @@ const WHITELIST = {
     MIP () {
       return MIP_WHITELIST
     },
-    defaults ({id}) {
-      // if (params) {
-        // return
-      // }
-      return () => document.getElementById(id)
-    }
+  },
+  defaults (id) {
+    return document.getElementById(id)
+    // return () => document.getElementById(id)
   }
 }
 

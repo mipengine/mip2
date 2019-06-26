@@ -283,9 +283,9 @@ lex.set({
     _,
     lex.use('ConditionalExpression')
   ]),
-  onMatch (name, __, colon, ___, value) {
+  onMatch (key, __, colon, ___, value) {
     return {
-      name,
+      key,
       value
     }
   }
