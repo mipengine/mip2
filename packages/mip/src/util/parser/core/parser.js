@@ -21,8 +21,6 @@ export default class Parser {
     if (walker.end()) {
       return ast
     }
-    console.log(walker.rest())
-    console.log('----- haha ----')
   }
 
   generate (ast) {

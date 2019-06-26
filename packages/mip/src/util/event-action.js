@@ -10,6 +10,7 @@ import dom from './dom/dom'
 import {LAYOUT, getLayoutClass} from '../layout'
 import log from './log'
 import {handleScrollTo} from '../page/util/ease-scroll'
+import parser from './parser/index'
 
 const logger = log('Event-Action')
 
@@ -31,20 +32,12 @@ const EVENT_ARG_REG = /^event(\.[a-zA-Z_][\w_]*)+$/g
 // const EVENT_ARG_REG_FOR_OBJECT = /(:\s*)(event(\.[a-zA-Z]\w+)+)(\s*[,}])/g
 
 /**
- * Regular for checking elements.
- * @const
- * @inner
- * @type {RegExp}
- */
-const CHECK_REG = /^mip-/
-
-/**
  * Key list of picking options.
  * @const
  * @inner
  * @type {Array}
  */
-const OPTION_KEYS = ['executeEventAction', 'parse', 'checkTarget', 'getTarget', 'attr']
+// const OPTION_KEYS = ['executeEventAction', 'parse', 'checkTarget', 'getTarget', 'attr']
 
 function getAutofocusElement (el) {
   if (el.hasAttribute('autofocus')) {
@@ -61,6 +54,7 @@ function toggle (el, opt) {
   el.classList.toggle('mip-hide', !opt)
 }
 
+
 /**
  * MIP does not support external JavaScript, so we provide EventAction to trigger events between elements.
  * TODO: refactor
@@ -68,8 +62,10 @@ function toggle (el, opt) {
  * @class
  */
 class EventAction {
-  constructor (opt) {
-    opt && fn.extend(this, fn.pick(opt, OPTION_KEYS))
+
+  constructor() {
+    // constructor (opt) {
+    // opt && fn.extend(this, fn.pick(opt, OPTION_KEYS))
     this.attr = 'on'
     this.globalTargets = {}
     this.globalMethodHandlers = {}
@@ -275,7 +271,9 @@ class EventAction {
     do {
       attr = target.getAttribute(this.attr)
       if (attr) {
-        this._execute(this.parse(attr, type, nativeEvent))
+        // this._execute(this.parse(attr, type, nativeEvent))
+        const fn = parser.transform(attr)
+        fn({event: nativeEvent, eventName: type, MIP: this.globalTargets.MIP})
         target = target.parentElement
         if (!target) {
           return
@@ -283,16 +281,6 @@ class EventAction {
       }
       target = dom.closest(target, attrSelector)
     } while (target)
-  }
-
-  /**
-   * Ensure the target element is a MIPElement
-   *
-   * @param {HTMLElement} target target
-   * @return {boolean}
-   */
-  checkTarget (target) {
-    return target && target.tagName && CHECK_REG.test(target.tagName.toLowerCase())
   }
 
   /**
@@ -332,13 +320,13 @@ class EventAction {
 
       let target = this.getTarget(action.id)
 
-      const globalMethod = this.globalMethodHandlers[action.handler]
-      if (target && globalMethod) {
-        globalMethod(action, target)
-        continue
-      }
+      // const globalMethod = this.globalMethodHandlers[action.handler]
+      // if (target && globalMethod) {
+      //   globalMethod(action, target)
+      //   continue
+      // }
 
-      if (this.checkTarget(target)) {
+      if (dom.isMIPElement(target)) {
         this.executeEventAction(action, target)
         // setTimeout(() => this.executeEventAction(action, target))
       }

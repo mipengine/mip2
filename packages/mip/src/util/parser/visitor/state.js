@@ -3,7 +3,14 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-import WHITELIST from '../whitelist'
+import {
+  PROTOTYPE,
+  getMIPElementAction,
+  getCustomFunction,
+  getCustomObject,
+  CUSTOM_OBJECTS,
+  byId
+} from '../whitelist'
 
 function is (node, type) {
   return node.type === type
@@ -33,11 +40,6 @@ const UNARY_OPERATION = {
   '-': (arg) => -arg,
   '!': (arg) => !arg,
   '~': (arg) => ~arg
-}
-
-function getWhiteListObject (identifier) {
-  return WHITELIST.customObjects[identifier]
-    || WHITELIST.defaults.bind(null, identifier)
 }
 
 const visitor = {
@@ -131,7 +133,7 @@ const visitor = {
     let object
 
     if (is(node.object, 'Identifier')) {
-      object = getWhiteListObject(node.object.name)
+      object = getCustomObject(node.object.name)
     } else {
       object = path.traverse(node.object)
     }
@@ -146,24 +148,34 @@ const visitor = {
     let node = path.node
 
     let callee
+
     if (is(node.callee, 'Identifier')) {
-      callee = getWhiteListObject(node.callee.name)
+      callee = getCustomFunction(node.callee.name)
     } else if (is(node.callee, 'MemberExpression')) {
       let object
+      let isCustomObject
       if (is(node.callee.object, 'Identifier')) {
-        object = getWhiteListObject(node.callee.object.name)
+        // object = getCustomObject(node.callee.object.name)
+        object = CUSTOM_OBJECTS[node.callee.object.name]
+        if (object) {
+          isCustomObject = true
+        } else {
+          object = byId.bind(null, node.callee.object.name)
+        }
       } else {
         object = path.traverse(node.callee.object)
       }
 
       let property = path.traverse(node.callee.property)
 
-      callee = () => {
-        let obj = object()
+      callee = (options) => {
+        let obj = object(options)
         let prop = property()
         let instance = Object.prototype.toString.call(obj)
         // 这里要针对 [object HTMLElement] 类型做更为细致的管控
-        let fn = WHITELIST[instance] ? WHITELIST[instance][prop] : obj[prop]
+        let fn = (isCustomObject && obj[prop])
+          || (PROTOTYPE[instance] && PROTOTYPE[instance][prop])
+          || getHTMLElementAction({obj, prop, options})
 
         if (!fn) {
           throw Error(`不支持 ${instance}.${prop} 方法`)
@@ -181,21 +193,21 @@ const visitor = {
       args.push(path.traverse(arg))
     }
 
-    return function () {
-      return callee().apply(undefined, args.map(arg => arg()))
+    return function (...options) {
+      return callee(...options).apply(undefined, args.map(arg => arg()))
     }
   },
 
-  ArrowFunctionExpression (path) {
-    let params = path.node.params.map(node => node.name)
-    let body = path.traverse(path.node.body)
+  // ArrowFunctionExpression (path) {
+  //   let params = path.node.params.map(node => node.name)
+  //   let body = path.traverse(path.node.body)
 
-    return function () {
-      return function (...args) {
-        return body(args)
-      }
-    }
-  }
+  //   return function () {
+  //     return function (...args) {
+  //       return body(args)
+  //     }
+  //   }
+  // }
 }
 
 export default visitor

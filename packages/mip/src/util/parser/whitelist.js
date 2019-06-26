@@ -6,19 +6,33 @@
  *  https://github.com/ampproject/amphtml/blob/master/extensions/amp-bind/0.1/bind-expression.js
  */
 
-const MIP_WHITELIST = {
-  setData (...args) {
-    return MIP.setData(...args)
-  },
-  navigateTo (...args) {
-    return MIP.navigateTo(...args)
-  },
-  scrollTo (...args) {
-    return MIP.scrollTo(...args)
+ import dom from '../dom/dom'
+
+// const MIP_WHITELIST = {
+//   setData (...args) {
+//     return MIP.setData(...args)
+//   },
+//   navigateTo (...args) {
+//     return MIP.navigateTo(...args)
+//   },
+//   scrollTo (...args) {
+//     return MIP.scrollTo(...args)
+//   }
+// }
+
+export function getHTMLElementAction ({obj, prop, options}) {
+  if (dom.isMIPElement(obj)) {
+    return (...args) => {
+      obj.executeEventAction([{
+        handler: prop,
+        event: options.event,
+        arg: args.join(',')
+      }])
+    }
   }
 }
 
-const WHITELIST = {
+export const PROTOTYPE = {
   '[object Array]': {
     concat: Array.prototype.concat,
     filter: Array.prototype.filter,
@@ -53,40 +67,52 @@ const WHITELIST = {
     substring: String.prototype.substring,
     toLowerCase: String.prototype.toLowerCase,
     toUpperCase: String.prototype.toUpperCase
-  },
-  'customFunctions': {
-    encodeURI,
-    encodeURIComponent,
-    abs: Math.abs,
-    ceil: Math.ceil,
-    floor: Math.floor,
-    sqrt: Math.sqrt,
-    log: Math.log,
-    max: Math.max,
-    min: Math.min,
-    random: Math.random,
-    round: Math.round,
-    sign: Math.sign,
-    keys: Math.keys,
-    values: Math.values
-  },
-  'customObjects': {
-    event ({event}) {
-      return event
-    },
-    // 兼容以前的 MIP-data
-    m () {
-      return window.m
-    },
-    MIP () {
-      return MIP_WHITELIST
-    },
-  },
-  defaults (id) {
-    return document.getElementById(id)
-    // return () => document.getElementById(id)
   }
 }
+export const CUSTOM_FUNCTIONS = {
+  encodeURI,
+  encodeURIComponent,
+  abs: Math.abs,
+  ceil: Math.ceil,
+  floor: Math.floor,
+  sqrt: Math.sqrt,
+  log: Math.log,
+  max: Math.max,
+  min: Math.min,
+  random: Math.random,
+  round: Math.round,
+  sign: Math.sign,
+  keys: Math.keys,
+  values: Math.values,
+  MIP ({MIP, event}) {
+    return function (handler) {
+      return function (...args) {
+        return MIP({handler, arg: args.join(','), event})
+      }
+    }
+  },
+}
 
-export default WHITELIST
+export const CUSTOM_OBJECTS = {
+  event ({event}) {
+    return event
+  },
+  // 兼容以前的 MIP-data
+  m () {
+    return window.m
+  },
+  
+}
+
+export function byId (id) {
+  return document.getElementById(id)
+}
+
+export function getCustomObject (id) {
+  return CUSTOM_OBJECTS[id] || byId.bind(null, id)
+}
+
+export function getCustomFunction (id) {
+  return CUSTOM_FUNCTIONS[id] || byId.bind(null, id)
+}
 

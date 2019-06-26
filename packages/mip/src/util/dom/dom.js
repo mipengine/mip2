@@ -12,6 +12,14 @@
 let docElem = document.documentElement
 
 /**
+ * Regular for checking elements.
+ * @const
+ * @inner
+ * @type {RegExp}
+ */
+const CHECK_REG = /^mip-/
+
+/**
  * Get the supported matches method.
  * @inner
  * @type {Function}
@@ -261,6 +269,16 @@ function insert (parent, children) {
   }
 }
 
+/**
+ * Ensure the target element is a MIPElement
+ *
+ * @param {HTMLElement} target target
+ * @return {boolean}
+ */
+function isMIPElement (target) {
+  return target && target.tagName && CHECK_REG.test(target.tagName.toLowerCase())
+}
+
 export default {
   closest,
   closestTo,
@@ -270,5 +288,6 @@ export default {
   insert,
   whenBodyAvailable,
   /** @deprecated */
-  waitDocumentReady: whenBodyAvailable
+  waitDocumentReady: whenBodyAvailable,
+  isMIPElement
 }
