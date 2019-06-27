@@ -525,11 +525,12 @@ lex.set({
     lex.use('Boolean'),
     lex.use('Null'),
     lex.use('Undefined')
-  ]),
-  onMatch (match) {
-    match.type = 'Literal'
-    return match
-  }
+  ])
+  // ,
+  // onMatch (match) {
+  //   match.type = 'Literal'
+  //   return match
+  // }
 })
 
 lex.set({
@@ -558,6 +559,7 @@ lex.set({
   ]),
   onMatch (leftComma, contents, rightComma) {
     return {
+      type: 'Literal',
       raw: leftComma.raw + contents.map(content => content.raw).join('') + rightComma.raw,
       value: contents.map(content => content.value == null ? content.raw : content.value).join('')
     }
@@ -608,6 +610,7 @@ lex.set({
   rule: lex.regexp(/^(0|[1-9]\d*)(\.\d+)?(e[+-]?\d+)?/i),
   onMatch (match) {
     match.value = +match.raw
+    match.type = 'Literal'
     return match
   }
 })
@@ -620,6 +623,7 @@ lex.set({
   ]),
   onMatch (match) {
     match.value = match.raw === 'true'
+    match.type = 'Literal'
     return match
   }
 })
@@ -629,6 +633,7 @@ lex.set({
   rule: lex.text('null'),
   onMatch (match) {
     match.value = null
+    match.type = 'Literal'
     return match
   }
 })
@@ -638,6 +643,7 @@ lex.set({
   rule: lex.text('undefined'),
   onMatch (match) {
     match.value = undefined
+    match.type = 'Literal'
     return match
   }
 })

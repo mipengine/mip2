@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP Bind</title>
+  <link rel="canonical">
+  <link rel="stylesheet" href="../../dist/mip.css">
+</head>
+<body>
+  <mip-data>
+    <script type="application/json">
+      {
+        "color": {
+          "silver": 0,
+          "grey": ['a', 'b', 'c']
+        },
+        "size": {
+          "small": 0,
+          "big": 'big'
+        }
+      }
+    </script>
+  </mip-data>
+  <div>
+    <p>color.silver: <span m-text="color.silver"></span></p>
+    <p>color.grey[1]: <span m-text="color.grey[1]"></span></p>
+    <p>size.big: <span m-text="size.big"></span></p>
+    <button on="
+      tap:
+      MIP.setData({
+        color: {
+          'silver': color.silver + 1,
+          'grey': ['alpha', 'beta', 'eta']
+        }
+      })
+      "
+    >change color</button>
+    <button
+      on="
+          tap:
+            MIP.setData({
+              size: {
+                big: color.silver
+              }
+            })
+      "
+    >set color.silver to size.big</button>
+  </div>
+  <script src="../../dist/mip.js"></script>
+</body>
+</html>
+
+
