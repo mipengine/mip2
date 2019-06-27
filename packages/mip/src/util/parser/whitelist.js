@@ -167,7 +167,7 @@ export const CUSTOM_OBJECTS = {
 
 export function getValidObject (id) {
   return CUSTOM_OBJECTS[id] || function () {
-    return () => window.m[id]
+    return property => window.m[id][property]
   }
 }
 

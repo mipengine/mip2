@@ -73,7 +73,7 @@ const visitor = {
 
   UnaryExpression (path) {
     let node = path.node
-    let operation = UNARY_OPERATION(node.operator)
+    let operation = UNARY_OPERATION[node.operator]
     let argument = path.traverse(node.argument)
     return function () {
       return operation(argument())
