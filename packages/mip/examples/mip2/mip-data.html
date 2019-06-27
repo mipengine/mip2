@@ -28,6 +28,7 @@
     <p>color.grey[0]: <span m-text="color.grey[color.silver]"></span></p>
     <p>color.yellow[0]: <span m-text="color.yellow[0]"></span></p>
     <p>size.big: <span m-text="size.big"></span></p>
+    <p>size.small: <span m-text="size.small"></span></p>
     <button on="
       tap:
       MIP.setData({
@@ -43,7 +44,8 @@
           tap:
             MIP.setData({
               size: {
-                big: color.silver
+                big: color.silver,
+                small: m.color.silver + 10086
               }
             })
       "
