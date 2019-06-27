@@ -13,7 +13,8 @@
       {
         "color": {
           "silver": 0,
-          "grey": ['a', 'b', 'c']
+          "grey": ['c', 'b', 'a'],
+          "yellow": [3, 2, 1]
         },
         "size": {
           "small": 0,
@@ -24,14 +25,15 @@
   </mip-data>
   <div>
     <p>color.silver: <span m-text="color.silver"></span></p>
-    <p>color.grey[1]: <span m-text="color.grey[1]"></span></p>
+    <p>color.grey[0]: <span m-text="color.grey[color.silver]"></span></p>
+    <p>color.yellow[0]: <span m-text="color.yellow[0]"></span></p>
     <p>size.big: <span m-text="size.big"></span></p>
     <button on="
       tap:
       MIP.setData({
         color: {
           'silver': color.silver + 1,
-          'grey': ['alpha', 'beta', 'eta']
+          'yellow': color.grey.sort()
         }
       })
       "

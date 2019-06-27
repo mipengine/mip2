@@ -28,6 +28,14 @@ export function getHTMLElementAction ({object, property, options}) {
   }
 }
 
+function instanceSort (...args) {
+  return this.slice().sort(...args)
+}
+
+function instanceSplice (...args) {
+  return this.slice().splice(...args)
+}
+
 export const PROTOTYPE = {
   '[object Array]': {
     concat: Array.prototype.concat,
@@ -39,10 +47,10 @@ export const PROTOTYPE = {
     reduce: Array.prototype.reduce,
     slice: Array.prototype.slice,
     some: Array.prototype.some,
-    sort: Array.prototype.sort,
-    splice: Array.prototype.splice,
-    // sort: instanceSort(),
-    // splice: instanceSplice(),
+    // sort: Array.prototype.sort,
+    // splice: Array.prototype.splice,
+    sort: instanceSort,
+    splice: instanceSplice,
     includes: Array.prototype.includes
   },
   '[object Number]': {
@@ -65,9 +73,11 @@ export const PROTOTYPE = {
     toUpperCase: String.prototype.toUpperCase
   }
 }
+
 export const CUSTOM_FUNCTIONS = {
-  encodeURI,
-  encodeURIComponent,
+  encodeURI: encodeURI,
+  encodeURIComponent: encodeURIComponent,
+
   abs: Math.abs,
   ceil: Math.ceil,
   floor: Math.floor,
@@ -78,15 +88,30 @@ export const CUSTOM_FUNCTIONS = {
   random: Math.random,
   round: Math.round,
   sign: Math.sign,
-  keys: Math.keys,
-  values: Math.values,
+
+  keys: Object.keys,
+  values: Object.values,
+
+  // 兼容以前的 MIP event 逻辑
+  decodeURI: decodeURI,
+  decodeURIComponent: decodeURIComponent,
+  isNaN: isNaN,
+  isFinite: isFinite,
+  parseFloat: parseFloat,
+  parseInt: parseInt,
+
+  Number: Number,
+  Date: Date,
+  Boolean: Boolean,
+  String: String,
+
   MIP ({MIP, event}) {
     return function (handler) {
       return function (...args) {
         return MIP({handler, args: args, event})
       }
     }
-  },
+  }
 }
 
 export const CUSTOM_OBJECTS = {
@@ -96,12 +121,39 @@ export const CUSTOM_OBJECTS = {
   // 兼容以前的 MIP-data
   m () {
     return window.m
+  },
+
+  // 兼容以前的 MIP on 表达式里支持的全局变量
+  Math () {
+    return Math
+  },
+  Number () {
+    return Number
+  },
+  Date () {
+    return Date
+  },
+  Array () {
+    return Array
+  },
+  Object () {
+    return Object
+  },
+  Boolean () {
+    return Boolean
+  },
+  String () {
+    return String
   }
+  // RegExp () {
+  //   return RegExp
+  // },
+
 }
 
-export function byId (id) {
-  return document.getElementById(id)
-}
+// export function byId (id) {
+//   return document.getElementById(id)
+// }
 
 export function getValidObject (id) {
   return CUSTOM_OBJECTS[id] || (() => window.m[id])
@@ -156,34 +208,14 @@ function getValidMemberExpressionCallee (path) {
   }
 }
 
-function getValidPrototypeFunction(object, property) {
-  let instance = Object.prorotype.call(object)
-  let fn = PROTOTYPE[instance] && PROTOTYPE[instance][peroerty]
+function getValidPrototypeFunction (object, property) {
+  let instance = Object.prototype.toString.call(object)
+  let fn = PROTOTYPE[instance] && PROTOTYPE[instance][property]
   if (!fn) {
-    throw Error(`不支持 ${instance}.${prop} 方法`)
+    throw Error(`不支持 ${instance}.${property} 方法`)
   }
   return fn.bind(object)
 }
-// export function getCustomObject (id) {
-//   return CUSTOM_OBJECTS[id] || byId.bind(null, id)
-// }
-
-// export function getCustomFunction (id) {
-//   return CUSTOM_OBJECTS[id]
-//   // return CUSTOM_FUNCTIONS[id] || byId.bind(null, id)
-// }
-
-// export function getValidCallee ({callee, options}) {
-//   if (callee.type === 'Identifier') {
-//     return  CUSTOM_FUNCTIONS[callee.name]
-//   }
-
-//   if (callee.type === 'MemberExpression' && callee.object.type === 'Identifier') {
-
-//   }
-// }
-
-
 
 
 
