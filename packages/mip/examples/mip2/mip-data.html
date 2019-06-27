@@ -26,7 +26,7 @@
           "https://www.gstatic.com/webp/gallery/3.jpg"
         ],
         "index": 0,
-        "url": "https://www.gstatic.com/webp/gallery/1.jpg",
+        "url": "https://www.gstatic.com/webp/gallery/1.jpg"
       }
     </script>
   </mip-data>
@@ -68,7 +68,7 @@
       on="
       tap:
       MIP.setData({
-        index: (m.index + 1) === m.urls.length ? 0 : (m.index + 1)
+        index: (index + 1) === urls.length ? 0 : (index + 1)
       })
      "
     >修改显示图片序号: <span m-text="index"></span></button>
@@ -87,6 +87,7 @@
         })
       "
     >点我修改图片 url</button>
+    <p m-text="url"></p>
     <mip-img m-bind:src="url"></mip-img>
     <br>
     <br>

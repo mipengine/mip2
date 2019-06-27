@@ -9,11 +9,10 @@ function traverse ({node, visitor, parent}) {
   const path = {
     node: node,
     parent: parent,
-    traverse: (child) => {
+    traverse: (child, parent) => {
       let fn = traverse({
         node: child,
-        parent: node,
-        parentPath: path,
+        parent: parent || node,
         visitor: visitor
       })
 

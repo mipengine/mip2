@@ -40,7 +40,7 @@ class Bind {
     MIP.watch = (target, cb) => {
       this.bindWatch(target, cb)
     }
-    
+
     MIP.scrollTo = data => {
       const {id} = data
       if (!id) {
@@ -294,7 +294,6 @@ class Bind {
         }
       }
     })
-
     // inherit
     setProto(win.m, getGlobalData(win))
     // win.m.__proto__ = getGlobalData(win) // eslint-disable-line no-proto
@@ -332,17 +331,28 @@ class Bind {
  * @param {Object} newData newData
  */
 function assign (oldData, newData) {
-  Object.keys(newData).forEach(k => {
-    if (isObject(newData[k]) && oldData[k] && isObject(oldData[k])) {
-      assign(oldData[k], newData[k])
-      let obj = JSON.parse(JSON.stringify({
-        [k]: oldData[k]
-      }))
-      Object.assign(oldData, obj)
+  for (let k of Object.keys(newData)) {
+    if (isObject(newData[k]) && isObject(oldData[k])) {
+      let obj = Object.assign({}, oldData[k])
+      assign(obj, newData[k])
+      oldData[k] = obj
     } else {
       oldData[k] = newData[k]
     }
-  })
+  }
+
+
+  // Object.keys(newData).forEach(k => {
+  //   if (isObject(newData[k]) && oldData[k] && isObject(oldData[k])) {
+  //     assign(oldData[k], newData[k])
+  //     let obj = JSON.parse(JSON.stringify({
+  //       [k]: oldData[k]
+  //     }))
+  //     Object.assign(oldData, obj)
+  //   } else {
+  //     oldData[k] = newData[k]
+  //   }
+  // })
 }
 /*
  * data inherit
