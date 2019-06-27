@@ -5,7 +5,7 @@
 
 import {
   PROTOTYPE,
-  getMIPElementAction,
+  getHTMLElementAction,
   getCustomFunction,
   getCustomObject,
   CUSTOM_OBJECTS,

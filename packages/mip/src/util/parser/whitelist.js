@@ -7,28 +7,24 @@
  */
 
  import dom from '../dom/dom'
-
-// const MIP_WHITELIST = {
-//   setData (...args) {
-//     return MIP.setData(...args)
-//   },
-//   navigateTo (...args) {
-//     return MIP.navigateTo(...args)
-//   },
-//   scrollTo (...args) {
-//     return MIP.scrollTo(...args)
-//   }
-// }
+ import {globalAction} from '../event-action/globalAction'
 
 export function getHTMLElementAction ({obj, prop, options}) {
-  if (dom.isMIPElement(obj)) {
-    return (...args) => {
-      obj.executeEventAction([{
-        handler: prop,
-        event: options.event,
-        arg: args.join(',')
-      }])
+  return (...args) => {
+
+    let action = {
+      handler: prop,
+      event: options.event,
+      arg: args.join(','),
+      target: obj
     }
+
+    if (dom.isMIPElement(obj)) {
+      obj.executeEventAction(action)
+    } else if (globalAction[prop]) {
+      globalAction[prop](action)
+    }
+
   }
 }
 
