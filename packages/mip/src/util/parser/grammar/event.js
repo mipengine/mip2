@@ -48,21 +48,6 @@ lex.set({
   }
 })
 
-// lex.set({
-//   type: 'MIPOldEventHandler',
-//   rule: lex.seq([
-//     lex.regexp('^[a-zA-Z][\\w$_]*'),
-//     lex.text(':'),
-//     lex.use('MIPAction')
-//   ]),
-//   onMatch (event, colon, action) {
-//     return {
-//       event,
-//       action
-//     }
-//   }
-// })
-
 lex.set({
   type: 'MIPNewEventHandlers',
   rule: lex.seq([
