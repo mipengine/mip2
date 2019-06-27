@@ -19,7 +19,15 @@
         "size": {
           "small": 0,
           "big": 'big'
-        }
+        },
+        "urls": [
+          "https://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg",
+          "https://www.gstatic.com/webp/gallery/1.jpg",
+          "https://www.gstatic.com/webp/gallery/2.jpg",
+          "https://www.gstatic.com/webp/gallery/3.jpg"
+        ],
+        "index": 0,
+        "url": "https://www.gstatic.com/webp/gallery/1.jpg",
       }
     </script>
   </mip-data>
@@ -50,6 +58,39 @@
             })
       "
     >set color.silver to size.big</button>
+  </div>
+
+  <br>
+  <br>
+
+  <div>
+    <mip-img id="img-1"
+      m-bind:src="urls[index]"
+    ></mip-img>
+
+    <button
+      on="
+      tap:
+      MIP.setData({
+        index: (m.index + 1) === 4 ? 1 : (m.index + 1)
+      })
+     "
+    >修改显示图片序号</button>
+  </div>
+  <br>
+  <br>
+  <div>
+    <mip-img m-bind:src="url"></mip-img>
+    <button
+      on="tap:
+        MIP.setData({
+          url: 'https://www.gstatic.com/webp/gallery/' + m.index + '.jpg'
+        })
+      "
+    >点我修改图片 url</button>
+    <br>
+    <br>
+    <br>
   </div>
   <script src="../../dist/mip.js"></script>
 </body>
