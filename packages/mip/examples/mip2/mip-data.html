@@ -21,7 +21,6 @@
           "big": 'big'
         },
         "urls": [
-          "https://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg",
           "https://www.gstatic.com/webp/gallery/1.jpg",
           "https://www.gstatic.com/webp/gallery/2.jpg",
           "https://www.gstatic.com/webp/gallery/3.jpg"
@@ -64,30 +63,31 @@
   <br>
 
   <div>
-    <mip-img id="img-1"
-      m-bind:src="urls[index]"
-    ></mip-img>
-
+    <p>当前 url: <span m-text="urls[index]"></span></p>
     <button
       on="
       tap:
       MIP.setData({
-        index: (m.index + 1) === 4 ? 1 : (m.index + 1)
+        index: (m.index + 1) === m.urls.length ? 0 : (m.index + 1)
       })
      "
-    >修改显示图片序号</button>
+    >修改显示图片序号: <span m-text="index"></span></button>
+
+    <mip-img id="img-1"
+      m-bind:src="urls[index]"
+    ></mip-img>
   </div>
   <br>
   <br>
   <div>
-    <mip-img m-bind:src="url"></mip-img>
     <button
       on="tap:
         MIP.setData({
-          url: 'https://www.gstatic.com/webp/gallery/' + m.index + '.jpg'
+          url: 'https://www.gstatic.com/webp/gallery/' + (m.index + 1) + '.jpg'
         })
       "
     >点我修改图片 url</button>
+    <mip-img m-bind:src="url"></mip-img>
     <br>
     <br>
     <br>
