@@ -136,18 +136,15 @@ lex.set({
     return {
       type: 'CallExpression',
       callee: {
-        type: 'CallExpression',
-        callee: {
+        type: 'MemberExpression',
+        object: {
           type: 'Identifier',
           name: 'MIP'
         },
-        arguments: [
-          {
-            type: 'Literal',
-            value: 'setData',
-            raw: '"setData"'
-          }
-        ]
+        property: {
+          type: 'Identifier',
+          name: 'setData'
+        }
       },
 
       // callee: {
@@ -173,18 +170,12 @@ lex.set({
     return {
       type: 'CallExpression',
       callee: {
-        type: 'CallExpression',
-        callee: {
+        type: 'MemberExpression',
+        object: {
           type: 'Identifier',
           name: 'MIP'
         },
-        arguments: [
-          {
-            type: 'Literal',
-            value: property.name,
-            raw: `"${property.name}"`
-          }
-        ]
+        property: property
       },
       // object: {
       //   name: mip.raw,

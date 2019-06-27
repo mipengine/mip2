@@ -12,6 +12,18 @@ import dom from './dom/dom'
 // import {handleScrollTo} from '../page/util/ease-scroll'
 import parser from './parser/index'
 
+const EVENT_FN_STORE = {}
+
+function parse (str) {
+  if (!EVENT_FN_STORE[str]) {
+    let fn = parser.transform(str)
+    if (fn) {
+      EVENT_FN_STORE[str] = fn
+    }
+  }
+  return EVENT_FN_STORE[str]
+}
+
 // const logger = log('Event-Action')
 
 /**
@@ -148,13 +160,19 @@ class EventAction {
     do {
       attr = target.getAttribute(this.attr)
       if (attr) {
+        let fn = parse(attr)
         // this._execute(this.parse(attr, type, nativeEvent))
-        let fn = this.fns[attr]
-        if (!fn) {
-          fn = parser.transform(attr)
-          this.fns[attr] = fn
-        }
-        fn({event: nativeEvent, eventName: type, MIP: this.globalTargets.MIP})
+        // let fn = this.fns[attr]
+        // if (!fn) {
+        //   fn = parser.transform(attr)
+        //   this.fns[attr] = fn
+        // }
+        fn({
+          event: nativeEvent,
+          eventName: type,
+          MIP: this.globalTargets.MIP,
+          target: target
+        })
         target = target.parentElement
         if (!target) {
           return

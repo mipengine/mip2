@@ -131,18 +131,17 @@ const visitor = {
 
   MemberExpression (path) {
     let node = path.node
-    let object
+    let property = path.traverse(node.property)
 
     if (is(node.object, 'Identifier')) {
-      object = getValidObject(node.object.name)
-      // object = CUSTOM_OBJECTS[node.object.name] ||
-        // byId.bind(null, node.object.name)
-      // object = getCustomObject(node.object.name)
-    } else {
-      object = path.traverse(node.object)
+      let object = getValidObject(node.object.name)
+
+      return function (...args) {
+        return object(...args)(property())
+      }
     }
 
-    let property = path.traverse(node.property)
+    let object = path.traverse(node.object)
     return function (...args) {
       return object(...args)[property()]
     }

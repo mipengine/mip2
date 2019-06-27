@@ -103,47 +103,61 @@ export const CUSTOM_FUNCTIONS = {
   Number: Number,
   Date: Date,
   Boolean: Boolean,
-  String: String,
-
-  MIP ({MIP, event}) {
-    return function (handler) {
-      return function (...args) {
-        return MIP({handler, args: args, event})
-      }
-    }
-  }
+  String: String
 }
 
 export const CUSTOM_OBJECTS = {
   event ({event}) {
-    return event
+    return property => {
+      return event[method]
+    }
+  },
+
+  MIP ({MIP, event}) {
+    return property => {
+      return (...args) => {
+        return MIP({handler: property, args, event})
+      }
+    }
+  },
+
+  DOM ({target}) {
+    return property => {
+      if (property === 'dataset') {
+        return target[property]
+      }
+
+      if (typeof target[property] === 'string') {
+        return target[property]
+      }
+    }
   },
   // 兼容以前的 MIP-data
   m () {
-    return window.m
+    return property => window.m[property]
   },
 
   // 兼容以前的 MIP on 表达式里支持的全局变量
   Math () {
-    return Math
+    return property => Math[property]
   },
   Number () {
-    return Number
+    return property => Number[property]
   },
   Date () {
-    return Date
+    return property => Date[property]
   },
   Array () {
-    return Array
+    return property => Array[property]
   },
   Object () {
-    return Object
+    return property => Object[property]
   },
   Boolean () {
-    return Boolean
+    return property => Boolean[property]
   },
   String () {
-    return String
+    return property => String[property]
   }
   // RegExp () {
   //   return RegExp
@@ -151,12 +165,10 @@ export const CUSTOM_OBJECTS = {
 
 }
 
-// export function byId (id) {
-//   return document.getElementById(id)
-// }
-
 export function getValidObject (id) {
-  return CUSTOM_OBJECTS[id] || (() => window.m[id])
+  return CUSTOM_OBJECTS[id] || function () {
+    return () => window.m[id]
+  }
 }
 
 export function getValidCallee (path) {
@@ -180,11 +192,11 @@ function getValidMemberExpressionCallee (path) {
 
   let propertyFn = path.traverse(propertyNode)
 
+  let customObjectFn
   let objectFn
   let objectName = objectNode.name
-
   if (objectNode.type === 'Identifier') {
-    objectFn = CUSTOM_OBJECTS[objectName]
+    customObjectFn = CUSTOM_OBJECTS[objectName]
   }
   else {
     objectFn = path.traverse(objectNode)
@@ -192,6 +204,10 @@ function getValidMemberExpressionCallee (path) {
 
   return options => {
     let property = propertyFn()
+
+    if (customObjectFn) {
+      return customObjectFn(options)(property)
+    }
 
     if (objectFn) {
       let object = objectFn()
