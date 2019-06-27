@@ -1,16 +1,15 @@
-const events = require("events")
+const { executeCommand } = require('../../src/utils/exec')
 
-jest.mock('execa', () => {
-  return jest.fn(() => {
-    return new events.EventEmitter()
-  })
+test('utils: execCommand with command executed successfully', async () => {
+  let expectedRes = await executeCommand('echo', ['exec.spec.js', 'echo', 'successfully'])
+  expect(expectedRes).toBeUndefined()
 })
 
-const { executeCommand } = require('../../src/utils/exec')
-const execa = require('execa')
-
-test('utils: execCommand', () => {
-  let res = executeCommand('npm', ['install', 'a', 'b'], '')
-  expect(execa).toHaveBeenCalledWith('npm', ['install', 'a', 'b'], {cwd: '', stdio: 'inherit'})
-  expect(res).resolves.toBe({})
+test('utils: execCommand with wrong command executed ', async () => {
+  try {
+    await executeCommand('some-wrong-cmd', ['-t', 'abc'])
+  }
+  catch (e) {
+    expect(e).toEqual(new Error('command failed: some-wrong-cmd -t abc'))
+  }
 })
