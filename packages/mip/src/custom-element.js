@@ -4,6 +4,7 @@
  */
 
 import EventEmitter from './util/event-emitter'
+import {globalAction} from './util/event-action/globalAction'
 
 class CustomElement {
   /**
@@ -199,8 +200,13 @@ class CustomElement {
    */
   executeEventAction (action) {
     let eventObj = this._actionEvent
-    if (action && eventObj) {
+    if (!action) {
+      return
+    }
+    if (eventObj && eventObj.__events[action.handler]) {
       eventObj.trigger(action.handler, action.event, action.arg)
+    } else if (globalAction[action.handler]) {
+      globalAction[action.handler](action)
     }
   }
 

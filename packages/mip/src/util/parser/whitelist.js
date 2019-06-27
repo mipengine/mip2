@@ -96,19 +96,93 @@ export const CUSTOM_OBJECTS = {
   // 兼容以前的 MIP-data
   m () {
     return window.m
-  },
-  
+  }
 }
 
 export function byId (id) {
   return document.getElementById(id)
 }
 
-export function getCustomObject (id) {
-  return CUSTOM_OBJECTS[id] || byId.bind(null, id)
+export function getValidObject (id) {
+  return CUSTOM_OBJECTS[id] || () => window.m[id]
 }
 
-export function getCustomFunction (id) {
-  return CUSTOM_FUNCTIONS[id] || byId.bind(null, id)
+export function getValidCallee (path) {
+  let callee = path.node.callee
+
+  switch (callee.type) {
+    case 'Identifier':
+      return CUSTOM_FUNCTIONS[callee.name]
+    case 'MemberExpression':
+      return getValidMemberExpressionCallee(path)
+    default:
+      return path.traverse(callee)
+  }
 }
+
+function getValidMemberExpressionCallee (path) {
+  let {
+    object: objectNode,
+    property: propertyNode
+  } = path.node.callee
+
+  let propertyFn = path.traverse(propertyNode)
+
+  let objectFn
+  let objectName = objectNode.name
+
+  if (objectNode.type === 'Identifier') {
+    objectFn = CUSTOM_OBJECTS[objectName]
+  else {
+    objectFn = path.traverse(objectNode)
+  }
+
+  return options => {
+    let property = propertyFn()
+
+    if (objectFn) {
+      let object = objectFn()
+      return getValidPrototypeFunction(object, property)
+    }
+
+    if (window.m.hasOwnProperty(objectName)) {
+      let object = window.m[objectName]
+      return getValidPrototypeFunction(object, property)
+    }
+
+    let object = document.getElementById(objectName)
+    return getHTMLElementAction({object, property, options}).bind(object)
+  }
+}
+
+function getValidPrototypeFunction(object, property) {
+  let instance = Object.prorotype.call(object)
+  let fn = PROTOTYPE[instance] && PROTOTYPE[instance][peroerty]
+  if (!fn) {
+    throw Error(`不支持 ${instance}.${prop} 方法`)
+  }
+  return fn.bind(object)
+}
+// export function getCustomObject (id) {
+//   return CUSTOM_OBJECTS[id] || byId.bind(null, id)
+// }
+
+// export function getCustomFunction (id) {
+//   return CUSTOM_OBJECTS[id]
+//   // return CUSTOM_FUNCTIONS[id] || byId.bind(null, id)
+// }
+
+// export function getValidCallee ({callee, options}) {
+//   if (callee.type === 'Identifier') {
+//     return  CUSTOM_FUNCTIONS[callee.name]
+//   }
+
+//   if (callee.type === 'MemberExpression' && callee.object.type === 'Identifier') {
+
+//   }
+// }
+
+
+
+
 

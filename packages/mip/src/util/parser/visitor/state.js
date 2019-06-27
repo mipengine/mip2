@@ -4,12 +4,13 @@
  */
 
 import {
-  PROTOTYPE,
-  getHTMLElementAction,
-  getCustomFunction,
-  getCustomObject,
-  CUSTOM_OBJECTS,
-  byId
+  // PROTOTYPE,
+  // getMIPElementAction,
+  getValidCallee,
+  getValidObject
+  // CUSTOM_FUNCTIONS,
+  // CUSTOM_OBJECTS,
+  // byId.
 } from '../whitelist'
 
 function is (node, type) {
@@ -133,7 +134,9 @@ const visitor = {
     let object
 
     if (is(node.object, 'Identifier')) {
-      object = getCustomObject(node.object.name)
+      object = CUSTOM_OBJECTS[node.object.name] ||
+        byId.bind(null, node.object.name)
+      // object = getCustomObject(node.object.name)
     } else {
       object = path.traverse(node.object)
     }
@@ -145,47 +148,47 @@ const visitor = {
   },
 
   CallExpression (path) {
-    let node = path.node
+    // let node = path.node
 
-    let callee
+    let callee = getValidCallee(path)
 
-    if (is(node.callee, 'Identifier')) {
-      callee = getCustomFunction(node.callee.name)
-    } else if (is(node.callee, 'MemberExpression')) {
-      let object
-      let isCustomObject
-      if (is(node.callee.object, 'Identifier')) {
-        // object = getCustomObject(node.callee.object.name)
-        object = CUSTOM_OBJECTS[node.callee.object.name]
-        if (object) {
-          isCustomObject = true
-        } else {
-          object = byId.bind(null, node.callee.object.name)
-        }
-      } else {
-        object = path.traverse(node.callee.object)
-      }
+    // if (is(node.callee, 'Identifier')) {
+    //   // callee = getCustomFunction(node.callee.name)
+    // } else if (is(node.callee, 'MemberExpression')) {
+    //   let object
+    //   let isCustomObject
+    //   if (is(node.callee.object, 'Identifier')) {
+    //     // object = getCustomObject(node.callee.object.name)
+    //     object = CUSTOM_OBJECTS[node.callee.object.name]
+    //     if (object) {
+    //       isCustomObject = true
+    //     } else {
+    //       object = byId.bind(null, node.callee.object.name)
+    //     }
+    //   } else {
+    //     object = path.traverse(node.callee.object)
+    //   }
 
-      let property = path.traverse(node.callee.property)
+    //   let property = path.traverse(node.callee.property)
 
-      callee = (options) => {
-        let obj = object(options)
-        let prop = property()
-        let instance = Object.prototype.toString.call(obj)
-        // 这里要针对 [object HTMLElement] 类型做更为细致的管控
-        let fn = (isCustomObject && obj[prop])
-          || (PROTOTYPE[instance] && PROTOTYPE[instance][prop])
-          || getHTMLElementAction({obj, prop, options})
+    //   callee = (options) => {
+    //     let obj = object(options)
+    //     let prop = property()
+    //     let instance = Object.prototype.toString.call(obj)
+    //     // 这里要针对 [object HTMLElement] 类型做更为细致的管控
+    //     let fn = (isCustomObject && obj[prop])
+    //       || (PROTOTYPE[instance] && PROTOTYPE[instance][prop])
+    //       || getHTMLElementAction({obj, prop, options})
 
-        if (!fn) {
-          throw Error(`不支持 ${instance}.${prop} 方法`)
-        }
+    //     if (!fn) {
+    //       throw Error(`不支持 ${instance}.${prop} 方法`)
+    //     }
 
-        return fn.bind(obj)
-      }
-    } else {
-      callee = path.traverse(path.node.callee)
-    }
+    //     return fn.bind(obj)
+    //   }
+    // } else {
+    //   callee = path.traverse(path.node.callee)
+    // }
 
     let args = []
 
