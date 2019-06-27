@@ -78,32 +78,32 @@ class EventAction {
 
     let target = action.event && action.event.target ? action.event.target : {}
 
-    const allowedGlobals = (
-      'Infinity,undefined,NaN,isFinite,isNaN,' +
-      'parseFloat,parseInt,decodeURI,decodeURIComponent,encodeURI,encodeURIComponent,' +
-      'Math,Number,Date,Array,Object,Boolean,String,RegExp,Map,Set,JSON,Intl,' +
-      'm' // MIP global data
-    ).split(',')
+    // const allowedGlobals = (
+    //   'Infinity,undefined,NaN,isFinite,isNaN,' +
+    //   'parseFloat,parseInt,decodeURI,decodeURIComponent,encodeURI,encodeURIComponent,' +
+    //   'Math,Number,Date,Array,Object,Boolean,String,RegExp,Map,Set,JSON,Intl,' +
+    //   'm' // MIP global data
+    // ).split(',')
 
-    let hasProxy = typeof Proxy !== 'undefined'
-    let proxy = hasProxy ? new Proxy({
-      DOM: target
-    }, {
-      has (target, key) {
-        let allowed = allowedGlobals.indexOf(key) >= 0
-        return target[key] || !allowed
-      }
-    }) : {}
+    // let hasProxy = typeof Proxy !== 'undefined'
+    // let proxy = hasProxy ? new Proxy({
+    //   DOM: target
+    // }, {
+    //   has (target, key) {
+    //     let allowed = allowedGlobals.indexOf(key) >= 0
+    //     return target[key] || !allowed
+    //   }
+    // }) : {}
 
-    let fn = new Function('DOM', `with(this){return ${action.arg}}`) // eslint-disable-line
-    let data = fn.call(Object.assign(proxy, action))
+    // let fn = new Function('DOM', `with(this){return ${action.arg}}`) // eslint-disable-line
+    // let data = fn.call(Object.assign(proxy, action))
 
     if (action.handler === 'setData') {
-      MIP.setData(data)
+      MIP.setData(...action.args)
     } else if (action.handler === '$set') {
       MIP.$set(data)
     } else if (action.handler === 'scrollTo') {
-      MIP.scrollTo(data)
+      MIP.scrollTo(...action.args)
     } else if (action.handler === 'goBack') {
       MIP.goBack()
     } else if (action.handler === 'navigateTo') {

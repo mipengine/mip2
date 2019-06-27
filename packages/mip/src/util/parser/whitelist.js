@@ -9,20 +9,20 @@
  import dom from '../dom/dom'
  import {globalAction} from '../event-action/globalAction'
 
-export function getHTMLElementAction ({obj, prop, options}) {
+export function getHTMLElementAction ({object, property, options}) {
   return (...args) => {
 
     let action = {
-      handler: prop,
+      handler: property,
       event: options.event,
       arg: args.join(','),
-      target: obj
+      target: object
     }
 
-    if (dom.isMIPElement(obj)) {
-      obj.executeEventAction(action)
-    } else if (globalAction[prop]) {
-      globalAction[prop](action)
+    if (dom.isMIPElement(object)) {
+      object.executeEventAction(action)
+    } else if (globalAction[property]) {
+      globalAction[property](action)
     }
 
   }
@@ -83,7 +83,7 @@ export const CUSTOM_FUNCTIONS = {
   MIP ({MIP, event}) {
     return function (handler) {
       return function (...args) {
-        return MIP({handler, arg: args.join(','), event})
+        return MIP({handler, args: args, event})
       }
     }
   },
@@ -104,7 +104,7 @@ export function byId (id) {
 }
 
 export function getValidObject (id) {
-  return CUSTOM_OBJECTS[id] || () => window.m[id]
+  return CUSTOM_OBJECTS[id] || (() => window.m[id])
 }
 
 export function getValidCallee (path) {
@@ -133,6 +133,7 @@ function getValidMemberExpressionCallee (path) {
 
   if (objectNode.type === 'Identifier') {
     objectFn = CUSTOM_OBJECTS[objectName]
+  }
   else {
     objectFn = path.traverse(objectNode)
   }

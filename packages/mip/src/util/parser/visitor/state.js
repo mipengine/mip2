@@ -7,9 +7,9 @@ import {
   // PROTOTYPE,
   // getMIPElementAction,
   getValidCallee,
-  getValidObject
+  getValidObject,
   // CUSTOM_FUNCTIONS,
-  // CUSTOM_OBJECTS,
+  CUSTOM_OBJECTS
   // byId.
 } from '../whitelist'
 
