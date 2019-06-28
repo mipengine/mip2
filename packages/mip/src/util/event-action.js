@@ -24,33 +24,6 @@ function parse (str) {
   return EVENT_FN_STORE[str]
 }
 
-// const logger = log('Event-Action')
-
-/**
- * Regular for parsing params.
- * @const
- * @inner
- * @type {RegExp}
- */
-const PARSE_REG = /^(\w+):\s*([\w-]+)\.([\w-$]+)(?:\((.+)\))?$/
-
-/**
- * Regular for parsing event arguments.
- * @const
- * @inner
- * @type {RegExp}
- */
-const EVENT_ARG_REG = /^event(\.[a-zA-Z_][\w_]*)+$/g
-// const EVENT_ARG_REG_FOR_OBJECT = /(:\s*)(event(\.[a-zA-Z]\w+)+)(\s*[,}])/g
-
-/**
- * Key list of picking options.
- * @const
- * @inner
- * @type {Array}
- */
-// const OPTION_KEYS = ['executeEventAction', 'parse', 'checkTarget', 'getTarget', 'attr']
-
 
 /**
  * MIP does not support external JavaScript, so we provide EventAction to trigger events between elements.
@@ -61,73 +34,55 @@ const EVENT_ARG_REG = /^event(\.[a-zA-Z_][\w_]*)+$/g
 class EventAction {
 
   constructor() {
-    // constructor (opt) {
-    // opt && fn.extend(this, fn.pick(opt, OPTION_KEYS))
     this.attr = 'on'
-    this.globalTargets = {}
-    this.fns = {}
-
-    this.installAction()
+    // this.globalTargets = {}
+    // this.installAction()
   }
 
   /**
    * Install global action. such as on=tap:MIP.setData
    */
-  installAction () {
-    this.addGlobalTarget('MIP', this.handleMIPTarget)
-  }
+  // installAction () {
+  //   this.addGlobalTarget('MIP', this.handleMIPTarget)
+  // }
 
   /**
    * Handle global action
    *
    * @param {Object} action event action
    */
-  handleMIPTarget (action) {
-    /* istanbul ignore next */
-    if (!action) {
-      return
-    }
+  // handleMIPTarget ({handler, arg, target, event}) {
+  //   /* istanbul ignore next */
+  //   if (!handler) {
+  //     return
+  //   }
 
-    let target = action.event && action.event.target ? action.event.target : {}
-
-    // const allowedGlobals = (
-    //   'Infinity,undefined,NaN,isFinite,isNaN,' +
-    //   'parseFloat,parseInt,decodeURI,decodeURIComponent,encodeURI,encodeURIComponent,' +
-    //   'Math,Number,Date,Array,Object,Boolean,String,RegExp,Map,Set,JSON,Intl,' +
-    //   'm' // MIP global data
-    // ).split(',')
-
-    // let hasProxy = typeof Proxy !== 'undefined'
-    // let proxy = hasProxy ? new Proxy({
-    //   DOM: target
-    // }, {
-    //   has (target, key) {
-    //     let allowed = allowedGlobals.indexOf(key) >= 0
-    //     return target[key] || !allowed
-    //   }
-    // }) : {}
-
-    // let fn = new Function('DOM', `with(this){return ${action.arg}}`) // eslint-disable-line
-    // let data = fn.call(Object.assign(proxy, action))
-
-    if (action.handler === 'setData') {
-      MIP.setData(...action.args)
-    } else if (action.handler === '$set') {
-      MIP.$set(data)
-    } else if (action.handler === 'scrollTo') {
-      MIP.scrollTo(...action.args)
-    } else if (action.handler === 'goBack') {
-      MIP.goBack()
-    } else if (action.handler === 'navigateTo') {
-      MIP.navigateTo(data)
-    } else if (action.handler === 'closeOrNavigateTo') {
-      MIP.closeOrNavigateTo(data)
-    } else if (action.handler === 'print') {
-      window.print()
-    } else {
-      throw new Error(`Can not find handler "${action.handler}" from MIP.`)
-    }
-  }
+  //   switch (handler) {
+  //     case 'setData':
+  //       MIP.setData(...arg)  
+  //       break
+  //     case '$set':
+  //       MIP.$set(...arg)
+  //       break
+  //     case 'scrollTo':
+  //       MIP.scrollTo(...arg)
+  //       break
+  //     case 'goBack':
+  //       MIP.goBack()
+  //       break
+  //     case 'navigateTo':
+  //       MIP.navigateTo(...arg)
+  //       break
+  //     case 'closeOrNavigateTo':
+  //       MIP.closeOrNavigateTo(...arg)
+  //       break
+  //     case 'print':
+  //       window.print()
+  //       break
+  //     default:
+  //       throw new Error(`Can not find handler "${handler}" from MIP.`)
+  //   }
+  // }
 
   /**
    * Add global target in order to event
@@ -135,13 +90,13 @@ class EventAction {
    * @param {string} name name
    * @param {Function} handler handler
    */
-  addGlobalTarget (name, handler) {
-    /* istanbul ignore next */
-    if (!name) {
-      return
-    }
-    this.globalTargets[name] = handler
-  }
+  // addGlobalTarget (name, handler) {
+  //   /* istanbul ignore next */
+  //   if (!name) {
+  //     return
+  //   }
+  //   this.globalTargets[name] = handler
+  // }
 
   /**
    * Execute the event-action.
@@ -160,17 +115,11 @@ class EventAction {
     do {
       attr = target.getAttribute(this.attr)
       if (attr) {
-        let fn = parse(attr)
-        // this._execute(this.parse(attr, type, nativeEvent))
-        // let fn = this.fns[attr]
-        // if (!fn) {
-        //   fn = parser.transform(attr)
-        //   this.fns[attr] = fn
-        // }
+        const fn = parse(attr)
         fn({
           event: nativeEvent,
           eventName: type,
-          MIP: this.globalTargets.MIP,
+          // MIP: this.globalTargets.MIP,
           target: target
         })
         target = target.parentElement
@@ -180,16 +129,6 @@ class EventAction {
       }
       target = dom.closest(target, attrSelector)
     } while (target)
-  }
-
-  /**
-   * Excute the 'executeEventAction' of a MIPElement.
-   *
-   * @param {Object} action action
-   * @param {MIPElement} target target
-   */
-  executeEventAction (action, target) {
-    target.executeEventAction && target.executeEventAction(action)
   }
 }
 

@@ -4,7 +4,7 @@
  */
 
 import EventEmitter from './util/event-emitter'
-import {globalAction} from './util/event-action/globalAction'
+import {globalAction} from './util/event-action/global-action'
 
 class CustomElement {
   /**

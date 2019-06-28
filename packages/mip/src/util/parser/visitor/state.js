@@ -32,8 +32,7 @@ const BINARY_OPERATION = {
   '!=': (left, right) => left != right,
   '!==': (left, right) => left !== right,
   '&&': (left, right) => left && right,
-  '||': (left, right) => left || right,
-
+  '||': (left, right) => left || right
 }
 
 const UNARY_OPERATION = {

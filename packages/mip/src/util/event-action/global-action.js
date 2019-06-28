@@ -25,7 +25,7 @@ function toggle (el, opt) {
  * @param {Object} action action
  * @param {HTMLElement} target 目标元素
  */
-function handleShow (action, target) {
+function handleShow ({target}) {
   if (target.classList.contains(getLayoutClass(LAYOUT.NODISPLAY))) {
     logger.warn('layout=nodisplay 的元素不能被动态显示')
     return
@@ -33,7 +33,7 @@ function handleShow (action, target) {
   const autofocusEl = getAutofocusElement(target)
   toggle(target, true)
   if (autofocusEl) {
-    this.handleFocus(action, autofocusEl)
+    handleFocus(autofocusEl)
   }
 }
 
@@ -43,7 +43,7 @@ function handleShow (action, target) {
  * @param {Object} action action
  * @param {HTMLElement} target 目标元素
  */
-function handleHide (action, target) {
+function handleHide ({target}) {
   toggle(target, false)
 }
 
@@ -53,7 +53,7 @@ function handleHide (action, target) {
  * @param {Object} action action
  * @param {HTMLElement} target 目标元素
  */
-function handleToggle (action, target) {
+function handleToggle ({target}) {
   toggle(target)
 }
 
@@ -63,10 +63,10 @@ function handleToggle (action, target) {
  * @param {Object} action action
  * @param {HTMLElement} target 目标元素
  */
-function handleScrollTo (action, target) {
+function handleScrollTo ({arg, target}) {
   let data = {}
   try {
-    data = (new Function(`{return ${action.arg}}`))()
+    data = (new Function(`{return ${arg}}`))()
   } catch (e) {
     logger.warn('scrollTo 参数有误')
   }
@@ -79,14 +79,14 @@ function handleScrollTo (action, target) {
  * @param {Object} action action
  * @param {HTMLElement} target 目标元素
  */
-function handleToggleClass (action, target) {
+function handleToggleClass ({arg, target}) {
   let data = {}
-  try {
-    data = (new Function(`{return ${action.arg}}`))()
-  } catch (e) {
-    logger.warn('toggleClass 参数有误')
-    return
-  }
+  // try {
+  //   data = (new Function(`{return ${action.arg}}`))()
+  // } catch (e) {
+  //   logger.warn('toggleClass 参数有误')
+  //   return
+  // }
   const className = data['class']
   const {force} = data
   if (!className || typeof className !== 'string') {
@@ -106,18 +106,17 @@ function handleToggleClass (action, target) {
 /**
  * focus 元素
  * 
- * @param {Object} action action
  * @param {HTMLElement} target 目标元素
  */
-function handleFocus (action, target) {
+function handleFocus ({target}) {
   target.focus()
 }
 
 export const globalAction = {
-  handleShow,
-  handleHide,
-  handleToggle,
-  handleScrollTo,
-  handleToggleClass,
-  handleFocus
+  show: handleShow,
+  hide: handleHide,
+  toggle: handleToggle,
+  scrollTo: handleScrollTo,
+  toggleClass: handleToggleClass,
+  focus: handleFocus
 }

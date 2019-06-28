@@ -7,9 +7,10 @@
  */
 
  import dom from '../dom/dom'
- import {globalAction} from '../event-action/globalAction'
+ import {globalAction} from '../event-action/global-action'
+ import {mipAction} from '../event-action/mip-action'
 
-export function getHTMLElementAction ({object, property, options}) {
+function getHTMLElementAction ({object, property, options}) {
   return (...args) => {
 
     let action = {
@@ -23,9 +24,28 @@ export function getHTMLElementAction ({object, property, options}) {
       object.executeEventAction(action)
     } else if (globalAction[property]) {
       globalAction[property](action)
+    } else {
+      throw new Error(`Can not find action "${handler}".`)
     }
-
   }
+}
+
+function getMIPAction ({property, event}) {
+  // return (...args) => {
+  //   // let action = {
+  //   //   handler: property,
+  //   //   event: event,
+  //   //   args: args
+  //   // }
+    
+  //   if (mipAction[property]) {
+  //     mipAction[property](...args)
+  //   }
+  // }
+  if (mipAction[property]) {
+    return mipAction[property]
+  }
+  throw new Error(`Can not find action "${handler}" from MIP.`)
 }
 
 function instanceSort (...args) {
@@ -113,11 +133,20 @@ export const CUSTOM_OBJECTS = {
     }
   },
 
-  MIP ({MIP, event}) {
+  // MIP ({MIP, event}) {
+  //   return property => {
+  //     return (...args) => {
+  //       return MIP({handler: property, args, event})
+  //     }
+  //   }
+  // },
+
+  MIP ({event}) {
     return property => {
-      return (...args) => {
-        return MIP({handler: property, args, event})
-      }
+      // return (...args) => {
+      //   return mipAction[property]({handler: property, args, event})
+      // }
+      return getMIPAction({property, event})
     }
   },
 
@@ -220,7 +249,7 @@ function getValidMemberExpressionCallee (path) {
     }
 
     let object = document.getElementById(objectName)
-    return getHTMLElementAction({object, property, options}).bind(object)
+    return getHTMLElementAction({object, property, options})
   }
 }
 
