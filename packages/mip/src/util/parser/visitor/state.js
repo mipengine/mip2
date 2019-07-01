@@ -13,8 +13,15 @@ import {
   // byId.
 } from '../whitelist'
 
-function is (node, type) {
-  return node.type === type
+function is (path, type) {
+  let types = type.split('.')
+
+  if (types.length === 1) {
+    return path.node.type === types[0]
+  }
+
+  return path.parent.type === types[0]
+    && path.parent[types[1]] === path.node
 }
 
 const BINARY_OPERATION = {
@@ -65,7 +72,7 @@ const visitor = {
 
   UnaryExpression (path) {
     let node = path.node
-    let operation = UNARY_OPERATION(node.operator)
+    let operation = UNARY_OPERATION[node.operator]
     let argument = path.traverse(node.argument)
     return function () {
       return operation(argument())
@@ -114,8 +121,15 @@ const visitor = {
   Identifier (path) {
     let name = path.node.name
 
+    if (is(path, 'MemberExpression.property') ||
+      is(path, 'Property.key')
+    ) {
+      return () => name
+    }
+
     return function () {
-      return name
+      return window.m[name]
+      // return name
        // return WHITELIST.customObjects[name] ||
         // WHITELIST.defaults({id: name})
     }
@@ -132,7 +146,7 @@ const visitor = {
     let node = path.node
     let property = path.traverse(node.property)
 
-    if (is(node.object, 'Identifier')) {
+    if (node.object.type === 'Identifier') {
       let object = getValidObject(node.object.name)
 
       return function (...args) {

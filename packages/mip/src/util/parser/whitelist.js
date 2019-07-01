@@ -196,7 +196,7 @@ export const CUSTOM_OBJECTS = {
 
 export function getValidObject (id) {
   return CUSTOM_OBJECTS[id] || function () {
-    return () => window.m[id]
+    return property => window.m[id][property]
   }
 }
 
@@ -219,16 +219,18 @@ function getValidMemberExpressionCallee (path) {
     property: propertyNode
   } = path.node.callee
 
-  let propertyFn = path.traverse(propertyNode)
+  let propertyFn = path.traverse(propertyNode, path.node.callee)
 
   let customObjectFn
   let objectFn
+
   let objectName = objectNode.name
+
   if (objectNode.type === 'Identifier') {
     customObjectFn = CUSTOM_OBJECTS[objectName]
   }
   else {
-    objectFn = path.traverse(objectNode)
+    objectFn = path.traverse(objectNode, path.node.callee)
   }
 
   return options => {

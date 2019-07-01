@@ -10,16 +10,40 @@ function isObjective (args) {
 }
 
 function scrollTo (...args) {
-  const {id} = args
+  let param = {}
+  let id = ''
+  if (isObjective(args)) {
+    param = args[0]
+    id = param.id
+  } else {
+    id = args[0]
+    param = {
+      duration: args[1],
+      position: args[2]
+    }
+  }
   if (!id) {
     return
   }
   const target = document.getElementById(id)
-  handleScrollTo(target, args)
+  handleScrollTo(target, param)
 }
 
-function navigateTo ({args}) {
-  const {url, target, opener} = data
+function navigateTo (...args) {
+  // const {url, target, opener} = data
+  let url
+  let target
+  let opener
+  if (isObjective(args)) {
+    const param = args[0]
+    url = param.url
+    target = param.target
+    opener = param.opener
+  } else {
+    url = args[0]
+    target = args[1]
+    opener = args[2]
+  }
   viewer.navigateTo(url, target, opener)
 }
 
@@ -27,7 +51,7 @@ function navigateTo ({args}) {
  * 关闭窗口，如果不能关闭，跳转到目标地址
  * 作为打开新窗的后退操作
  */
-function closeOrNavigateTo () {
+function closeOrNavigateTo (...args) {
   const hasParent = window.parent != window
   // 顶层 window 并且是被打开的 window 才能关闭
   const canBeClosed = window.opener && !hasParent
@@ -40,7 +64,7 @@ function closeOrNavigateTo () {
   }
 
   if (!closed) {
-    navigateTo(data)
+    navigateTo(...args)
   }
 }
 
@@ -52,8 +76,8 @@ function print () {
   window.print()
 }
 
-const setData = () => MIP.setData()
-const getData = () => MIP.getData()
+const setData = (...args) => MIP.setData(...args)
+const getData = (...args) => MIP.getData(...args)
 // const $set = MIP.$set
 
 export const mipAction = {
