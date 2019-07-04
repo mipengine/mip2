@@ -15,7 +15,18 @@ let mockElement = {
   tagName: 'mip-test'
 }
 
-describe('event-action', () => {
+describe.only('event-action', () => {
+
+  it.only('global action', () => {
+    let action = new EventAction()
+    action.execute('tap', {
+      getAttribute () {
+        return 'tap:MIP.scrollTo({a:1})'
+      }
+    })
+  })
+
+
   it('white list', () => {
     let MIP = window.MIP = window.MIP || {}
     MIP.setData = () => {}
