@@ -15,6 +15,7 @@ import 'document-register-element/build/document-register-element.esm'
 // import 'deps/document-register-element'
 
 import 'deps/fetch-jsonp'
+import 'whatwg-fetch/fetch'
 // import {
 //   fetch as polyfillFetch,
 //   Headers as polyfillHeaders,
