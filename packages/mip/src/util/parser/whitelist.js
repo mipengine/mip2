@@ -9,23 +9,36 @@
  import dom from '../dom/dom'
  import {globalAction} from '../event-action/globalAction'
 
-export function getHTMLElementAction ({object, property, options}) {
-  return (...args) => {
+export function HTMLElementAction ({object, property, options, args}) {
+  let element = document.getElementById(object)
 
-    let action = {
-      handler: property,
-      event: options.event,
-      arg: args.join(','),
-      target: object
-    }
-
-    if (dom.isMIPElement(object)) {
-      object.executeEventAction(action)
-    } else if (globalAction[property]) {
-      globalAction[property](action)
-    }
-
+  if (!element) {
+    // @TODO should throw an error
+    return
   }
+
+  let action = {
+    handler: property,
+    event: options.event,
+    arg: args.map(arg => JSON.stringify(arg)).join(','),
+    target: element
+  }
+
+  if (dom.isMIPElement(object)) {
+    return object.executeEventAction(action)
+  }
+
+  if (globalAction[property]) {
+    return globalAction[property](action)
+  }
+}
+
+export function MIPAction ({options, property, args}) {
+  return options.MIP({
+    handler: property,
+    args: args,
+    event: options.event
+  })
 }
 
 function instanceSort (...args) {
@@ -107,126 +120,68 @@ export const CUSTOM_FUNCTIONS = {
 }
 
 export const CUSTOM_OBJECTS = {
-  event ({event}) {
-    return property => {
-      return event[method]
+  event ({options, property}) {
+    if (property) {
+      return options.event[property]
+    }
+
+    return options.event
+  },
+
+  DOM ({options, property}) {
+    let target = options.target
+    if (property === 'dataset') {
+      let dataset = {}
+      for (let key of Object.keys(target.dataset)) {
+        dataset[key] = target.dataset[key]
+      }
+      return dataset
+    }
+
+    if (typeof target[property] !== 'object') {
+      return target[property]
+    }
+
+    if (target[property] == null) {
+      return target[property]
     }
   },
 
-  MIP ({MIP, event}) {
-    return property => {
-      return (...args) => {
-        return MIP({handler: property, args, event})
-      }
-    }
+  m ({options, property}) {
+    let data = options.data
+    return data[property]
   },
 
-  DOM ({target}) {
-    return property => {
-      if (property === 'dataset') {
-        return target[property]
-      }
-
-      if (typeof target[property] === 'string') {
-        return target[property]
-      }
-    }
-  },
-  // 兼容以前的 MIP-data
-  m () {
-    return property => window.m[property]
+  Math ({property}) {
+    return Math[property]
   },
 
-  // 兼容以前的 MIP on 表达式里支持的全局变量
-  Math () {
-    return property => Math[property]
+  Number ({property}) {
+    return Number[property]
   },
-  Number () {
-    return property => Number[property]
+
+  Date ({property}) {
+    return Date[property]
   },
-  Date () {
-    return property => Date[property]
+
+  Array ({property}) {
+    return Array[property]
   },
-  Array () {
-    return property => Array[property]
+
+  Object ({property}) {
+    return Object[property]
   },
-  Object () {
-    return property => Object[property]
-  },
-  Boolean () {
-    return property => Boolean[property]
-  },
-  String () {
-    return property => String[property]
+
+  String ({property}) {
+    return String[property]
   }
-  // RegExp () {
-  //   return RegExp
-  // },
-
 }
 
 export function getValidObject (id) {
-  return CUSTOM_OBJECTS[id] || function () {
-    return property => window.m[id][property]
-  }
+  return CUSTOM_OBJECTS[id] || CUSTOM_OBJECTS.m
 }
 
-export function getValidCallee (path) {
-  let callee = path.node.callee
-
-  switch (callee.type) {
-    case 'Identifier':
-      return CUSTOM_FUNCTIONS[callee.name]
-    case 'MemberExpression':
-      return getValidMemberExpressionCallee(path)
-    default:
-      return path.traverse(callee)
-  }
-}
-
-function getValidMemberExpressionCallee (path) {
-  let {
-    object: objectNode,
-    property: propertyNode
-  } = path.node.callee
-
-  let propertyFn = path.traverse(propertyNode, path.node.callee)
-
-  let customObjectFn
-  let objectFn
-
-  let objectName = objectNode.name
-
-  if (objectNode.type === 'Identifier') {
-    customObjectFn = CUSTOM_OBJECTS[objectName]
-  }
-  else {
-    objectFn = path.traverse(objectNode, path.node.callee)
-  }
-
-  return options => {
-    let property = propertyFn()
-
-    if (customObjectFn) {
-      return customObjectFn(options)(property)
-    }
-
-    if (objectFn) {
-      let object = objectFn()
-      return getValidPrototypeFunction(object, property)
-    }
-
-    if (window.m.hasOwnProperty(objectName)) {
-      let object = window.m[objectName]
-      return getValidPrototypeFunction(object, property)
-    }
-
-    let object = document.getElementById(objectName)
-    return getHTMLElementAction({object, property, options}).bind(object)
-  }
-}
-
-function getValidPrototypeFunction (object, property) {
+export function getValidPrototypeFunction (object, property) {
   let instance = Object.prototype.toString.call(object)
   let fn = PROTOTYPE[instance] && PROTOTYPE[instance][property]
   if (!fn) {

@@ -2,9 +2,11 @@
  * @file traverse.js
  * @author clark-t (clarktanglei@163.com)
  */
+import {ScopeManager} from './scope'
 
 function traverse ({node, visitor, parent}) {
-  let params
+  let innerArgs
+  let scopeManager = new ScopeManager()
 
   const path = {
     node: node,
@@ -16,15 +18,17 @@ function traverse ({node, visitor, parent}) {
         visitor: visitor
       })
 
-      return () => fn(...params)
-    }
+      return () => fn(innerArgs, scopeManager)
+    },
+    scopeManager
   }
 
   let fn = visitor[node.type](path)
 
-  return (...args) => {
-    params = args
-    return fn(...args)
+  return (args = {}, manager) => {
+    innerArgs = args
+    scopeManager.setParent(manager)
+    return fn(args)
   }
 }
 

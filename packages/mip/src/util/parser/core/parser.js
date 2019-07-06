@@ -21,6 +21,10 @@ export default class Parser {
     if (walker.end()) {
       return ast
     }
+    // console.error('----- so many str left... -----')
+    // console.log(walker.rest())
+    // console.log('--- see see ast ------')
+    // console.log(JSON.stringify(ast, null, 2))
   }
 
   generate (ast) {

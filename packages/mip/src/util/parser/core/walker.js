@@ -39,5 +39,9 @@ export default class Walker {
   rest () {
     return this.str.slice(this.index)
   }
+
+  getRange (start) {
+    return [start, this.index - 1]
+  }
 }
 

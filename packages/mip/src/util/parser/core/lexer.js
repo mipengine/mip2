@@ -39,7 +39,7 @@ export default class Lexer {
 
   set (descriptor) {
     const rule = this.seq(descriptor.rule)
-    const test = walker => {
+    const test = (walker) => {
       let index = walker.index
       let result = rule(walker)
       // let result = safeRun(rule, walker)
@@ -61,6 +61,11 @@ export default class Lexer {
       if (!result.type) {
         result.type = descriptor.type
       }
+
+      if (!result.range) {
+        result.range = walker.getRange()
+      }
+
       return result
     }
 
@@ -114,10 +119,7 @@ export default class Lexer {
         if (match) {
           return {
             raw: match[0],
-            range: [
-              index,
-              walker.index
-            ]
+            range: walker.getRange(index)
           }
         }
         return false
@@ -135,10 +137,7 @@ export default class Lexer {
         if (match) {
           return {
             raw: pattern,
-            range: [
-              index,
-              walker.index
-            ]
+            range: walker.getRange(index)
           }
         }
         return false
@@ -148,7 +147,7 @@ export default class Lexer {
     return this.caches.text[pattern]
   }
 
-  zeroOrMore (tests) {
+  any (tests) {
     let test = this.seq(tests)
 
     return walker => {
@@ -164,7 +163,7 @@ export default class Lexer {
     }
   }
 
-  oneOrMore (tests) {
+  some (tests) {
     let test = this.seq(tests)
     return (walker) => {
       let results = []
@@ -186,7 +185,7 @@ export default class Lexer {
     }
   }
 
-  zeroOrOne (tests) {
+  optional (tests) {
     let test = this.seq(tests)
     return (walker) => {
       return safeRun(test, walker) || undefined

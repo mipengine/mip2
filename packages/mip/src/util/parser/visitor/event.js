@@ -3,6 +3,11 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
+import {
+  HTMLElementAction,
+  MIPAction
+} from '../whitelist'
+
 const visitor = {
   MIPEventHandlers (path) {
     let handlers = []
@@ -11,12 +16,13 @@ const visitor = {
     }
 
     return function () {
-      return handlers.map(handler => handler())
+      for (let handler of handlers) {
+        handler()
+      }
     }
   },
   MIPEventHandler (path) {
     let event = path.node.event.raw
-    // let event = path.traverse(path.node.event)
     let actions = []
 
     for (let action of path.node.actions) {
@@ -24,37 +30,51 @@ const visitor = {
     }
 
     return function ({eventName}) {
-      if (eventName === event) {
-        for (let action of actions) {
+      if (eventName !== event) {
+        return
+      }
+      for (let action of actions) {
+        try {
           action()
+        } catch (e) {
+          console.error(e)
         }
       }
     }
+  },
+  MIPAction (path) {
+    let {object, property, role, arguments: args} = path.node
+    switch (role) {
+      case 'MIP':
+        return function (options) {
+          return MIPAction({
+            options,
+            object,
+            property,
+            args
+          })
+        }
+      case 'HTMLElement':
+        return function (options) {
+          return HTMLElementAction({
+            options,
+            object,
+            property,
+            args
+          })
+        }
+    }
+  },
+  MIPActionArguments (path) {
+    let args = []
+    for (let arg of path.node.arguments) {
+      args.push(path.traverse(arg))
+    }
+
+    return function () {
+      return [...args.map(arg => arg())]
+    }
   }
-  // ,
-
-  // MIPBindAction (path) {
-
-  // },
-
-  // MIPGlobalAction (path) {
-
-  // },
-
-  // MIPComponentAction (path) {
-  //   let id = path.node.object.name
-  //   let method = path.node.callee.name
-  //   let args = []
-  //   for (let arg of path.node.arguments) {
-  //     args.push(path.traverse(arg))
-  //   }
-  //   return function () {
-  //     let node = document.getElementById(id)
-  //     if (node) {
-  //       node[method](...args())
-  //     }
-  //   }
-  // }
 }
 
 export default visitor

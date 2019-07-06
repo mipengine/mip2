@@ -5,7 +5,7 @@
 import lexer from '../../../../src/util/parser/grammar/index'
 import Walker from '../../../../src/util/parser/core/walker'
 
-describe.only('Test Grammar', function () {
+describe('Test Grammar', function () {
   describe('Test String', function () {
     let fn = lexer.use('String')
 

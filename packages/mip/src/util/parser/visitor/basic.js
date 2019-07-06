@@ -4,25 +4,10 @@
  */
 
 import {
-  // PROTOTYPE,
-  // getMIPElementAction,
-  getValidCallee,
-  getValidObject,
-  // CUSTOM_FUNCTIONS,
-  CUSTOM_OBJECTS
-  // byId.
+  CUSTOM_FUNCTIONS,
+  getValidPrototypeFunction,
+  getValidObject
 } from '../whitelist'
-
-function is (path, type) {
-  let types = type.split('.')
-
-  if (types.length === 1) {
-    return path.node.type === types[0]
-  }
-
-  return path.parent.type === types[0]
-    && path.parent[types[1]] === path.node
-}
 
 const BINARY_OPERATION = {
   '+': (left, right) => left + right,
@@ -122,18 +107,20 @@ const visitor = {
   Identifier (path) {
     let name = path.node.name
 
-    if (is(path, 'MemberExpression.property') ||
-      is(path, 'Property.key')
-    ) {
-      return () => name
+    if (path.node.role === 'root') {
+      let object = getValidObject(name)
+      let scopeManager = path.scopeManager
+
+      return function (options) {
+        let scope = scopeManager.getInstance()
+        if (scope.has(name)) {
+          return scope.get(name)
+        }
+        return object({options})
+      }
     }
 
-    return function () {
-      return window.m[name]
-      // return name
-       // return WHITELIST.customObjects[name] ||
-        // WHITELIST.defaults({id: name})
-    }
+    return () => name
   },
 
   Literal (path) {
@@ -145,47 +132,99 @@ const visitor = {
 
   MemberExpression (path) {
     let node = path.node
-    let property = path.traverse(node.property)
+    let propertyFn = path.traverse(node.property)
 
     if (node.object.type === 'Identifier') {
-      let object = getValidObject(node.object.name)
+      let name = node.object.name
+      let scopeManager = path.scopeManager
+      let objectFn = getValidObject(name)
 
-      return function (...args) {
-        return object(...args)(property())
+      return function (options) {
+        let property = propertyFn()
+        let scope = scopeManager.getInstance()
+
+        if (scope.has(name)) {
+          return scope.get(name)[property]
+        }
+        return objectFn({options, property})
       }
     }
 
     let object = path.traverse(node.object)
-    return function (...args) {
-      return object(...args)[property()]
+    return function () {
+      return object()[propertyFn()]
     }
   },
 
   CallExpression (path) {
-    // let node = path.node
-
-    let callee = getValidCallee(path)
+    let node = path.node
+    // 处理参数
     let args = []
-
     for (let arg of path.node.arguments) {
       args.push(path.traverse(arg))
     }
+    let argFn = () => args.map(arg => arg())
 
-    return function (...options) {
-      return callee(...options).apply(undefined, args.map(arg => arg()))
+    // 处理 callee
+
+    if (node.callee.type === 'Identifier') {
+      let fn = CUSTOM_FUNCTIONS[node.callee.name]
+      return function () {
+        return fn(...argFn())
+      }
     }
+
+    if (
+      node.callee.type === 'MemberExpression' &&
+      node.callee.object.type === 'Identifier'
+    ) {
+      let name = node.callee.object.name
+      let scopeManager = path.scopeManager
+      let objectFn = getValidObject(name)
+      let propertyFn = path.traverse(node.callee.property, node.callee)
+
+      return function (options) {
+        let property = propertyFn()
+        let args = argFn()
+        let scope = scopeManager.getInstance()
+        if (scope.has(name)) {
+          let object = scope.get(name)
+          return getValidPrototypeFunction(object, property)(...args)
+        }
+        return objectFn({options, property})(...args)
+      }
+    }
+
+    if (node.callee.type === 'MemberExpression') {
+      let objectFn = path.traverse(node.callee.object, node.callee)
+      let propertyFn = path.traverse(node.callee.property, node.callee)
+
+      return function () {
+        let object = objectFn()
+        let property = propertyFn()
+        return getValidPrototypeFunction(object, property)(...argFn())
+      }
+    }
+
+    // 走到这里基本就是出错了
+    throw Error('未知的表达式')
   },
 
-  // ArrowFunctionExpression (path) {
-  //   let params = path.node.params.map(node => node.name)
-  //   let body = path.traverse(path.node.body)
+  ArrowFunctionExpression (path) {
+    const node = path.node
 
-  //   return function () {
-  //     return function (...args) {
-  //       return body(args)
-  //     }
-  //   }
-  // }
+    let names = node.params.map(node => node.name)
+    let scope = path.scopeManager.create()
+    scope.declare(names)
+
+    let body = path.traverse(node.body)
+    return function () {
+      return function (...args) {
+        scope.set(names, args)
+        return body()
+      }
+    }
+  }
 }
 
 export default visitor

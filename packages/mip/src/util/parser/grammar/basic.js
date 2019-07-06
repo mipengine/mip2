@@ -27,7 +27,7 @@ lex.set({
   type: 'ConditionalExpression',
   rule: lex.seq([
     lex.use('BinaryExpression'),
-    lex.zeroOrOne([
+    lex.optional([
       _,
       lex.text('?'),
       _,
@@ -70,7 +70,7 @@ lex.set({
   type: 'LogicalOrExpression',
   rule: lex.seq([
     lex.use('LogicalAndExpression'),
-    lex.zeroOrMore([
+    lex.any([
       _,
       lex.text('||'),
       _,
@@ -86,7 +86,7 @@ lex.set({
   type: 'LogicalAndExpression',
   rule: lex.seq([
     lex.use('EqualityExpression'),
-    lex.zeroOrMore([
+    lex.any([
       _,
       lex.text('&&'),
       _,
@@ -102,7 +102,7 @@ lex.set({
   type: 'EqualityExpression',
   rule: lex.seq([
     lex.use('RelationalExpression'),
-    lex.zeroOrMore([
+    lex.any([
       _,
       lex.or([
         lex.text('==='),
@@ -123,7 +123,7 @@ lex.set({
   type: 'RelationalExpression',
   rule: lex.seq([
     lex.use('AdditiveExpression'),
-    lex.zeroOrMore([
+    lex.any([
       _,
       lex.or([
         lex.text('<='),
@@ -144,7 +144,7 @@ lex.set({
   type: 'AdditiveExpression',
   rule: lex.seq([
     lex.use('MultiplicativeExpression'),
-    lex.zeroOrMore([
+    lex.any([
       _,
       lex.or([
         lex.text('+'),
@@ -163,7 +163,7 @@ lex.set({
   type: 'MultiplicativeExpression',
   rule: lex.seq([
     lex.use('UnaryExpression'),
-    lex.zeroOrMore([
+    lex.any([
       _,
       lex.or([
         lex.text('*'),
@@ -221,16 +221,16 @@ lex.set({
   type: 'ArrayExpression',
   rule: lex.seq([
     lex.text('['),
-    lex.zeroOrMore([
+    lex.any([
       _,
-      lex.zeroOrOne(
+      lex.optional(
         lex.use('ConditionalExpression'),
       ),
       _,
       lex.text(',')
     ]),
     _,
-    lex.zeroOrOne(
+    lex.optional(
       lex.use('ConditionalExpression')
     ),
     _,
@@ -247,14 +247,14 @@ lex.set({
   type: 'ObjectExpression',
   rule: lex.seq([
     lex.text('{'),
-    lex.zeroOrMore([
+    lex.any([
       _,
       lex.use('Property'),
       _,
       lex.text(',')
     ]),
     _,
-    lex.zeroOrOne(
+    lex.optional(
       lex.use('Property')
     ),
     _,
@@ -305,6 +305,7 @@ lex.set({
 lex.set({
   type: 'HTMLElementIdentifier',
   rule: lex.regexp('^[a-zA-Z][\\w-]*'),
+  // rule: lex.regexp('^[^!:;,(). ]+'),
   onMatch (match) {
     return {
       type: 'Identifier',
@@ -319,9 +320,11 @@ lex.set({
     lex.or([
       lex.use('Identifier'),
       lex.use('HTMLElementIdentifier'),
-      lex.use('ArrayExpression')
+      lex.use('ArrayExpression'),
+      lex.use('String'),
+      lex.use('GroupingExpression')
     ]),
-    lex.zeroOrMore([
+    lex.any([
       _,
       lex.or([
         lex.use('ComputedProperty'),
@@ -330,6 +333,11 @@ lex.set({
     ])
   ]),
   onMatch (head, tails) {
+    // 标记这个 Identifier 是根对象
+    if (head.type === 'Identifier') {
+      head.role = 'root'
+    }
+
     let results = tails.reduce((result, args) => {
       return {
         type: 'MemberExpression',
@@ -382,7 +390,7 @@ lex.set({
     lex.use('MemberExpression'),
     _,
     lex.use('Arguments'),
-    lex.zeroOrMore([
+    lex.any([
       _,
       lex.or([
         lex.use('Arguments'),
@@ -414,7 +422,7 @@ lex.set({
   type: 'Arguments',
   rule: lex.seq([
     lex.text('('),
-    lex.zeroOrMore([
+    lex.any([
       _,
       lex.or([
         lex.use('ArrowFunctionExpression'),
@@ -424,7 +432,7 @@ lex.set({
       lex.text(',')
     ]),
     _,
-    lex.zeroOrOne(
+    lex.optional(
       lex.or([
         lex.use('ArrowFunctionExpression'),
         lex.use('ConditionalExpression')
@@ -474,14 +482,14 @@ lex.set({
   rule: lex.or([
     lex.seq([
       lex.text('('),
-      lex.zeroOrMore([
+      lex.any([
         _,
         lex.use('Identifier'),
         _,
         lex.text(',')
       ]),
       _,
-      lex.zeroOrOne(
+      lex.optional(
         lex.use('Identifier')
       ),
       _,
@@ -524,7 +532,9 @@ lex.set({
     lex.use('Number'),
     lex.use('Boolean'),
     lex.use('Null'),
-    lex.use('Undefined')
+    lex.use('Undefined'),
+    // lex.use('NaN'),
+    // lex.use('Infinity')
   ])
   // ,
   // onMatch (match) {
@@ -538,7 +548,7 @@ lex.set({
   rule: lex.or([
     lex.seq([
       lex.text('\''),
-      lex.zeroOrMore(
+      lex.any(
         lex.or([
           lex.use('Escape'),
           lex.regexp('^[^\']')
@@ -548,7 +558,7 @@ lex.set({
     ]),
     lex.seq([
       lex.text('"'),
-      lex.zeroOrMore(
+      lex.any(
         lex.or([
           lex.use('Escape'),
           lex.regexp('^[^"]')
@@ -648,5 +658,27 @@ lex.set({
   }
 })
 
+// lex.set({
+//   type: 'NaN',
+//   rule: lex.text('NaN'),
+//   onMatch (match) {
+//     match.value = NaN
+//     match.type = 'Literal'
+//     return match
+//   }
+// })
+
+// lex.set({
+//   type: 'Infinity',
+//   rule: lex.text('Infinity'),
+//   onMatch (match) {
+//     match.value = Infinity
+//     match.type = 'Literal'
+//     return match
+//   }
+// })
+
 export default lex
+
+
 
