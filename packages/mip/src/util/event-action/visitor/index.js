@@ -3,8 +3,9 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-import state from './state'
+import basic from './basic'
 import event from './event'
 
-export default Object.assign({}, state, event)
+export default Object.assign({}, event, basic)
+
 

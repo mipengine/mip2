@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP Bind</title>
+  <link rel="canonical">
+  <link rel="stylesheet" href="../../dist/mip.css">
+  <style mip-custom>
+  </style>
+</head>
+<body>
+  <mip-data>
+    <script type="application/json">
+      {
+        "madafaka": 10086,
+        "complex": {
+          "multi": "shenmegui"
+        },
+        "arr": [
+          10086, 2, 3, 4, 5
+        ]
+      }
+    </script>
+  </mip-data>
+  <div>
+    <p m-text="madafaka"></p>
+    <p m-text="arr.join(' ')"></p>
+    <button
+          on="click:MIP.setData({
+            madafaka: m.madafaka > 0 ? -1 : 1,
+            arr: m.arr.slice().sort(function (a, b) {
+              console.log(new Date());
+              return m.madafaka > 0 ? (a - b) : (b - a)
+            })
+          })"
+    >click me</button>
+    <button
+      on="click:MIP.setData({
+        arr: [5, 4, 3, 2, 1]
+      })"
+      >what happen</button>
+  </div>
+  <script src="../../dist/mip.js"></script>
+</body>
+</html>
+

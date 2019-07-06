@@ -32,12 +32,16 @@ export default class Walker {
     // return match
   }
 
-  currentChar () {
-    return this.str[this.index]
-  }
+  // currentChar () {
+  //   return this.str[this.index]
+  // }
 
   rest () {
     return this.str.slice(this.index)
+  }
+
+  getRange (start) {
+    return [start, this.index - 1]
   }
 }
 

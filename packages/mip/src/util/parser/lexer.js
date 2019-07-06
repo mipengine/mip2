@@ -12,19 +12,29 @@ function safeRun (test, walker) {
   return result
 }
 
+function clone (parentLexer, childLexer) {
+  childLexer.types = Object.assign({}, parentLexer.types)
+  childLexer.caches = {
+    regexp: Object.assign({}, parentLexer.caches.regexp),
+    text: Object.assign({}, parentLexer.caches.text),
+    type: Object.assign({}, parentLexer.caches.type),
+  }
+}
+
 export default class Lexer {
-  constructor (descriptors = []) {
-    this.types = {}
+  constructor (parent) {
+    clone(parent, this)
+    // this.types = {}
 
-    this.caches = {
-      regexp: {},
-      text: {},
-      type: {}
-    }
+    // this.caches = {
+    //   regexp: {},
+    //   text: {},
+    //   type: {}
+    // }
 
-    for (let descriptor of descriptors) {
-      this.set(descriptor)
-    }
+    // for (let descriptor of descriptors) {
+    //   this.set(descriptor)
+    // }
   }
 
   use (type) {
@@ -39,7 +49,7 @@ export default class Lexer {
 
   set (descriptor) {
     const rule = this.seq(descriptor.rule)
-    const test = walker => {
+    const test = (walker) => {
       let index = walker.index
       let result = rule(walker)
       // let result = safeRun(rule, walker)
@@ -61,6 +71,11 @@ export default class Lexer {
       if (!result.type) {
         result.type = descriptor.type
       }
+
+      if (!result.range) {
+        result.range = walker.getRange()
+      }
+
       return result
     }
 
@@ -114,10 +129,7 @@ export default class Lexer {
         if (match) {
           return {
             raw: match[0],
-            range: [
-              index,
-              walker.index
-            ]
+            range: walker.getRange(index)
           }
         }
         return false
@@ -135,10 +147,7 @@ export default class Lexer {
         if (match) {
           return {
             raw: pattern,
-            range: [
-              index,
-              walker.index
-            ]
+            range: walker.getRange(index)
           }
         }
         return false
@@ -148,7 +157,7 @@ export default class Lexer {
     return this.caches.text[pattern]
   }
 
-  zeroOrMore (tests) {
+  any (tests) {
     let test = this.seq(tests)
 
     return walker => {
@@ -164,7 +173,7 @@ export default class Lexer {
     }
   }
 
-  oneOrMore (tests) {
+  some (tests) {
     let test = this.seq(tests)
     return (walker) => {
       let results = []
@@ -186,7 +195,7 @@ export default class Lexer {
     }
   }
 
-  zeroOrOne (tests) {
+  optional (tests) {
     let test = this.seq(tests)
     return (walker) => {
       return safeRun(test, walker) || undefined

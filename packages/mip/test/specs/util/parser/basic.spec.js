@@ -2,10 +2,10 @@
  * @file mip-bind.spec.js
  * @author clark-t (clarktanglei@163.com)
  */
-import lexer from '../../../../src/util/parser/grammar/index'
-import Walker from '../../../../src/util/parser/core/walker'
+import lexer from '../../../../src/util/event-action/parser/grammar/index'
+import Walker from '../../../../src/util/parser/walker'
 
-describe.only('Test Grammar', function () {
+describe('Test Grammar', function () {
   describe('Test String', function () {
     let fn = lexer.use('String')
 

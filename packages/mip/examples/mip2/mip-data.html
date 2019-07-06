@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html mip>
 <head>
-  <meta charset="utf-8">
+    <meta charset="utf-8">
+  <title>MIP tree demo</title>
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
-  <title>MIP Bind</title>
-  <link rel="canonical">
-  <link rel="stylesheet" href="../../dist/mip.css">
+
+  <!-- <meta charset="utf&#45;8"> -->
+  <!-- <meta name="viewport" content="width=device&#45;width,minimum&#45;scale=1,initial&#45;scale=1"> -->
+  <!-- <title>MIP Bind</title> -->
+  <!-- <link rel="canonical"> -->
+  <!-- <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css"> -->
+  <!-- <link rel="stylesheet" href="../../dist/mip.css"> -->
 <style mip-custom>
   .custom-show {
     display: block;
@@ -17,6 +25,11 @@
 </style>
 </head>
 <body>
+  <mip-img
+    src="https://www.gstatic.com/webp/gallery/3.jpg"
+    width="300"
+    height="200"
+  ></mip-img>
   <mip-data>
     <script type="application/json">
       {
@@ -75,15 +88,11 @@
   <div>
     <p>当前 url: <span m-text="urls[index]"></span></p>
     <button
-      on="
-      tap:
-      MIP.setData({
-        index: (index + 1) === urls.length ? 0 : (index + 1)
-      })
+      on="tap:MIP.setData({index:(m.index+1)===m.urls.length?0:(m.index+1)})
      "
     >修改显示图片序号: <span m-text="index"></span></button>
     <button
-      on="tap:MIP.setData({show: !show})"
+      on="tap:MIP.setData({show:!m.show})"
       m-text="show ? '隐藏' : '显示'"
       ></button>
     <mip-img
@@ -96,11 +105,7 @@
   <br>
   <div>
     <button
-      on="tap:
-        MIP.setData({
-          url: 'https://www.gstatic.com/webp/gallery/' + (m.index + 1) + '.jpg'
-        })
-      "
+      on="tap:MIP.setData({url:'https://www.gstatic.com/webp/gallery/'+(m.index+1)+'.jpg'})"
     >点我修改图片 url</button>
     <p m-text="url"></p>
     <mip-img m-bind:src="url"></mip-img>
@@ -108,6 +113,7 @@
     <br>
     <br>
   </div>
+  <!-- <script src="https://c.mipcdn.com/static/v2/mip.js"></script> -->
   <script src="../../dist/mip.js"></script>
 </body>
 </html>
