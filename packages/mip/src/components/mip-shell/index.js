@@ -261,8 +261,6 @@ class MipShell extends CustomElement {
         tmpShellConfig.routes = cambrianRoute
       }
     }
-
-    console.log(tmpShellConfig, page)
   }
 
   prerenderAllowed () {
