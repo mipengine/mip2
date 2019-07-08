@@ -1,7 +1,7 @@
-import {handleScrollTo} from '../../page/util/ease-scroll'
-import {LAYOUT, getLayoutClass} from '../../layout'
+import {handleScrollTo} from '../../../page/util/ease-scroll'
+import {LAYOUT, getLayoutClass} from '../../../layout'
 // import parser from '../parser/index'
-import log from '../log'
+import log from '../../log'
 
 const logger = log('Event-Action')
 // const {transform} = parser
@@ -176,7 +176,7 @@ export default function elementAction ({object, property, options, args}) {
     return actions[property](params)
   }
 
-  logger.warn(`找不到名为 ${property} 的全局方法`)
+  logger.warn(`找不到名为 ${property} 的方法`)
 }
 
 // export const globalAction = {

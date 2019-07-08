@@ -4,7 +4,7 @@
  */
 
 import EventEmitter from './util/event-emitter'
-import {globalAction} from './util/event-action/global-action'
+import elementAction from './util/event-action/whitelist/element-action'
 
 class CustomElement {
   /**
@@ -205,8 +205,8 @@ class CustomElement {
     }
     if (eventObj && eventObj.__events[action.handler]) {
       eventObj.trigger(action.handler, action.event, action.arg)
-    } else if (globalAction[action.handler]) {
-      globalAction[action.handler](action)
+    } else if (elementAction[action.handler]) {
+      elementAction[action.handler](action)
     }
   }
 
