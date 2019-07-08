@@ -23,7 +23,17 @@ function clone (parentLexer, childLexer) {
 
 export default class Lexer {
   constructor (parent) {
-    clone(parent, this)
+    if (parent instanceof Lexer) {
+      clone(parent, this)
+
+    } else {
+      this.types = {}
+      this.caches = {
+        regexp: {},
+        text: {},
+        type: {}
+      }
+    }
     // this.types = {}
 
     // this.caches = {

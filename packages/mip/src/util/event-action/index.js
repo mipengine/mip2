@@ -86,7 +86,7 @@ class EventAction {
 
   //   switch (handler) {
   //     case 'setData':
-  //       MIP.setData(...arg)  
+  //       MIP.setData(...arg)
   //       break
   //     case '$set':
   //       MIP.$set(...arg)

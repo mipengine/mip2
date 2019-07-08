@@ -2,7 +2,7 @@
  * @file mip-bind.spec.js
  * @author clark-t (clarktanglei@163.com)
  */
-import lexer from '../../../../src/util/event-action/parser/grammar/index'
+import lexer from '../../../../src/util/event-action/grammar/index'
 import Walker from '../../../../src/util/parser/walker'
 
 describe('Test Grammar', function () {

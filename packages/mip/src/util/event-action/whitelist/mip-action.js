@@ -90,7 +90,7 @@ function setData (args) {
 
 export const actions = {
   setData,
-  getData,
+  // getData,
   // $set,
   scrollTo,
   navigateTo,
