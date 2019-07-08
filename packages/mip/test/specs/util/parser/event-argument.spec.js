@@ -108,7 +108,7 @@ describe.only('MIP Argument', () => {
         expect(result.b).to.be.equal('2')
       })
 
-      it('DOM', function () {
+      it.skip('DOM', function () {
         const str = `{
           a: event,
           b: DOM.b,

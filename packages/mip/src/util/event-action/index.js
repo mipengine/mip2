@@ -27,23 +27,6 @@ function parse (str) {
 // const logger = log('Event-Action')
 
 /**
- * Regular for parsing params.
- * @const
- * @inner
- * @type {RegExp}
- */
-// const PARSE_REG = /^(\w+):\s*([\w-]+)\.([\w-$]+)(?:\((.+)\))?$/
-
-/**
- * Regular for parsing event arguments.
- * @const
- * @inner
- * @type {RegExp}
- */
-// const EVENT_ARG_REG = /^event(\.[a-zA-Z_][\w_]*)+$/g
-// const EVENT_ARG_REG_FOR_OBJECT = /(:\s*)(event(\.[a-zA-Z]\w+)+)(\s*[,}])/g
-
-/**
  * Key list of picking options.
  * @const
  * @inner
@@ -60,70 +43,9 @@ function parse (str) {
  */
 class EventAction {
 
-  constructor() {
+  constructor () {
     this.attr = 'on'
-    // this.globalTargets = {}
-    // this.installAction()
   }
-
-  /**
-   * Install global action. such as on=tap:MIP.setData
-   */
-  // installAction () {
-  //   this.addGlobalTarget('MIP', this.handleMIPTarget)
-  // }
-
-  /**
-   * Handle global action
-   *
-   * @param {Object} action event action
-   */
-  // handleMIPTarget ({handler, arg, target, event}) {
-  //   /* istanbul ignore next */
-  //   if (!handler) {
-  //     return
-  //   }
-
-  //   switch (handler) {
-  //     case 'setData':
-  //       MIP.setData(...arg)
-  //       break
-  //     case '$set':
-  //       MIP.$set(...arg)
-  //       break
-  //     case 'scrollTo':
-  //       MIP.scrollTo(...arg)
-  //       break
-  //     case 'goBack':
-  //       MIP.goBack()
-  //       break
-  //     case 'navigateTo':
-  //       MIP.navigateTo(...arg)
-  //       break
-  //     case 'closeOrNavigateTo':
-  //       MIP.closeOrNavigateTo(...arg)
-  //       break
-  //     case 'print':
-  //       window.print()
-  //       break
-  //     default:
-  //       throw new Error(`Can not find handler "${handler}" from MIP.`)
-  //   }
-  // }
-
-  /**
-   * Add global target in order to event
-   *
-   * @param {string} name name
-   * @param {Function} handler handler
-   */
-  // addGlobalTarget (name, handler) {
-  //   /* istanbul ignore next */
-  //   if (!name) {
-  //     return
-  //   }
-  //   this.globalTargets[name] = handler
-  // }
 
   /**
    * Execute the event-action.

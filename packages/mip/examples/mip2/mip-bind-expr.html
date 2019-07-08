@@ -7,6 +7,15 @@
   <link rel="canonical">
   <link rel="stylesheet" href="../../dist/mip.css">
   <style mip-custom>
+  .block {
+    height: 200px;
+  }
+  .bg-green {
+    background: green;
+  }
+  .bg-blue {
+    background: blue;
+  }
   </style>
 </head>
 <body>
@@ -48,6 +57,18 @@
       })"
       >what happen</button>
   </div>
+  <div>
+    <button
+      on="click:test.scrollTo(duration=2000, position='enter')"
+    >test global element scollTo</button>
+  </div>
+  <div class="block bg-green"></div>
+  <div class="block bg-blue"></div>
+  <div class="block bg-green"></div>
+  <div class="block bg-blue"></div>
+  <div class="block bg-green" id="test"></div>
+  <div class="block bg-blue"></div>
+  <div class="block bg-green"></div>
   <script src="../../dist/mip.js"></script>
 </body>
 </html>

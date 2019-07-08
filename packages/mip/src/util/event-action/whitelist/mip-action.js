@@ -81,8 +81,12 @@ function setData (args) {
 }
 
 // function getData (args) {
-//   MIP.getData()
+//   MIP.getData(args)
 // }
+
+function $set (args) {
+  MIP.$set(args)
+}
 
 // const setData = (...args) => MIP.setData(...args)
 // const getData = (...args) => MIP.getData(...args)
@@ -91,7 +95,7 @@ function setData (args) {
 export const actions = {
   setData,
   // getData,
-  // $set,
+  $set,
   scrollTo,
   navigateTo,
   closeOrNavigateTo,
@@ -108,7 +112,7 @@ export default function mipAction ({property, argumentText, options}) {
     action()
     return
   }
-  if (property === 'setData') {
+  if (property === 'setData' || property === '$set') {
     let fn = parser.transform(argumentText, 'ObjectExpression')
     let arg = fn(options)
     action(arg)
