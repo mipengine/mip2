@@ -167,26 +167,29 @@ export default function elementAction ({object, property, options, argumentText}
     target: element
   }
 
-  let args
-
   if (argumentText) {
-    let fn = parser.transform(argumentText, 'MIPActionArguments')
-    let args = fn(options)
-    params.args = args[0]
-  } else {
-    args = ''
+    try {
+      let fn = parser.transform(argumentText, 'MIPActionArguments')
+      let args = fn(options)
+      params.args = args[0]
+
+    } catch (e) {}
   }
 
   if (dom.isMIPElement(element)) {
     // 这里需要在后期做更好的处理
-    if (args) {
+    if (params.args) {
       params.arg = args.map(a => JSON.stringify(a)).join(',')
 
     } else {
-      params.arg = ''
+      // 当严格的参数写法解析失败的情况下，就直接将原参数文本返回（fallback）
+      params.arg = argumentText
     }
     // params.args = args[0]
-    return element.executeEventAction(params)
+    let isTargeted = element.executeEventAction(params)
+    if (isTargeted) {
+      return
+    }
   }
 
   if (actions[property]) {
