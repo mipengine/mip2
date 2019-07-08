@@ -274,7 +274,10 @@ let viewer = {
     let retObj = Object.assign({}, targetHashObj, curHashObj)
 
     for (let key in retObj) {
-      hashStr += `${key}${retObj[key].sep}${retObj[key].value}&`
+      // 不透传熊掌号相关的 hash，只保证第一次 logo + title 展现
+      if (key !== 'cambrian') {
+        hashStr += `${key}${retObj[key].sep}${retObj[key].value}&`
+      }
     }
 
     // hash 透传机制

@@ -117,6 +117,8 @@ class MipShell extends CustomElement {
       window.MIP_SHELL_ROUTES_AUTO_GENERATED = true
     }
 
+    this.mergeCambrianData(tmpShellConfig)
+
     if (page.isRootPage) {
       tmpShellConfig.routes.forEach(route => {
         !this.ignoreWarning && checkRouteConfig(route)
@@ -206,6 +208,61 @@ class MipShell extends CustomElement {
         }
       })
     }
+  }
+
+  mergeCambrianData(tmpShellConfig) {
+    let cambrianObj;
+    let hashObj = {}
+    if (location.hash) {
+      let tmpHashArr = location.hash.replace('#', '').split('&')
+      tmpHashArr.forEach(hashStr => {
+        let hashSplitArr = hashStr.split('=')
+        hashObj[hashSplitArr[0]] = hashSplitArr[1] || ''
+      })
+    }
+
+    // hash 传入的 logo 和 title 的优先级比直接配置在当前的 path 上的低，要比 * 的优先级高
+    if (hashObj.cambrian) {
+      try {
+        cambrianObj = JSON.parse(decodeURIComponent(hashObj.cambrian))
+        // 如果传入的参数出错或者解析不成功，就忽略这个 hash 参数
+      } catch (e) {}
+    }
+
+    if (cambrianObj && cambrianObj.title) {
+      let cambrianRoute = {
+        pattern: location.pathname,
+        meta: {
+          header: {
+            show: true,
+            title: cambrianObj.title || '',
+            logo: cambrianObj.logo || ''
+          },
+          view: {
+            isIndex: true
+          }
+        }
+      }
+
+      if (tmpShellConfig.routes && tmpShellConfig.routes.length) {
+        let injectFlag = true
+
+        for (let i = 0; i < tmpShellConfig.routes.length; i++) {
+          let route = tmpShellConfig.routes[i]
+          let re = convertPatternToRegexp(route.pattern)
+          if (route.pattern !== '*' && re.test(page.pageId)) {
+            tmpShellConfig.routes[i] = fn.extend(true, {}, cambrianRoute, route)
+            injectFlag = false
+            break
+          }
+        }
+        injectFlag && tmpShellConfig.routes.unshift(cambrianRoute)
+      } else {
+        tmpShellConfig.routes = cambrianRoute
+      }
+    }
+
+    console.log(tmpShellConfig, page)
   }
 
   prerenderAllowed () {
