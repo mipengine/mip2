@@ -6,11 +6,11 @@
 /* global MIP */
 
 // import * as fn from './fn'
-import dom from './dom/dom'
+import dom from '../dom/dom'
 // import {LAYOUT, getLayoutClass} from '../layout'
 // import log from './log'
 // import {handleScrollTo} from '../page/util/ease-scroll'
-import parser from './parser/index'
+import parser from './parser'
 
 const EVENT_FN_STORE = {}
 
@@ -86,7 +86,7 @@ class EventAction {
 
   //   switch (handler) {
   //     case 'setData':
-  //       MIP.setData(...arg)  
+  //       MIP.setData(...arg)
   //       break
   //     case '$set':
   //       MIP.$set(...arg)

@@ -1,7 +1,8 @@
-import {handleScrollTo} from '../../page/util/ease-scroll'
-import {LAYOUT, getLayoutClass} from '../../layout'
+// import {handleScrollTo} from '../../page/util/ease-scroll'
+import {handleScrollTo} from '../../../page/util/ease-scroll'
+import {LAYOUT, getLayoutClass} from '../../../layout'
 // import parser from '../parser/index'
-import log from '../log'
+import log from '../../log'
 
 const logger = log('Event-Action')
 // const {transform} = parser

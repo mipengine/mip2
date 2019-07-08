@@ -1,5 +1,5 @@
-import {handleScrollTo} from '../../page/util/ease-scroll'
-import viewer from '../../viewer'
+import {handleScrollTo} from '../../../page/util/ease-scroll'
+import viewer from '../../../viewer'
 
 // function isObjective (args) {
 //   let arg = args[0]
@@ -90,7 +90,7 @@ function setData (args) {
 
 export const actions = {
   setData,
-  getData,
+  // getData,
   // $set,
   scrollTo,
   navigateTo,
