@@ -1,15 +1,15 @@
-const {
+import {
   load,
   checkAndInstall,
   parseOption,
   findIndex,
   parseArgs,
   setupCommand
- } = require('../src/loadPlugin.ts')
-const plugin = require('../src/utils/plugin')
-const commandDefination = require('./commandDef')
-const { logger } = require('mip-cli-utils')
-const program = require('commander')
+ } from '../src/loadPlugin'
+import * as plugin from '../src/utils/plugin'
+import commandDefination from './commandDef'
+import { logger } from 'mip-cli-utils'
+import program from 'commander'
 
 test('main command loaded correctly', () => {
   const loadModule = jest.spyOn(plugin, 'loadModule').mockImplementationOnce(() => {
@@ -24,7 +24,7 @@ test('function: checkAndInstall', () => {
     return false
   })
 
-  const mockInstallOrUpdatePlugin = jest.spyOn(plugin, 'installOrUpdatePlugin').mockImplementationOnce(() => {})
+  const mockInstallOrUpdatePlugin = jest.spyOn(plugin, 'installOrUpdatePlugin').mockImplementationOnce((): any => {})
   const mockLogger = jest.spyOn(logger, 'info').mockImplementation(() => {})
 
   checkAndInstall('dev')
@@ -41,17 +41,17 @@ test('setup command correctly', () => {
   })
 
   // mock program.option
-  const mockProgramOption = jest.spyOn(program, 'option').mockImplementationOnce(() => {})
+  const mockProgramOption = jest.spyOn(program, 'option').mockImplementationOnce((): any => {})
 
   // mock program.description
-  const mockProgramDescription = jest.spyOn(program, 'description').mockImplementationOnce(() => {
+  const mockProgramDescription = jest.spyOn(program, 'description').mockImplementationOnce((): any => {
     return program
   })
 
   // mock program.action
-  const mockProgramAction = jest.spyOn(program, 'option').mockImplementationOnce(() => {})
+  const mockProgramAction = jest.spyOn(program, 'option').mockImplementationOnce((): any => {})
 
-  setupCommand('dev', commandDefination)
+  setupCommand('dev', commandDefination as any)
 
   expect(mockProgramCommand).toHaveBeenCalledWith('dev <componentName>')
   expect(mockProgramOption).toHaveBeenNthCalledWith(1, '-p, --port ', '端口号')
@@ -64,25 +64,25 @@ test('setup command correctly', () => {
 
 test('function: parseOption', () => {
   // flag type
-  let flagOpt = commandDefination.options[0]
+  let flagOpt: any = commandDefination.options[0]
   expect(parseOption(flagOpt)).toEqual(['-p, --port ', '端口号'])
 
   // required type
-  let requiredOpt = commandDefination.options[1]
+  let requiredOpt: any = commandDefination.options[1]
   expect(parseOption(requiredOpt)).toEqual(['-f, --file <value>', '文件名'])
 
   // optional type
-  let optionalOpt = commandDefination.options[2]
+  let optionalOpt: any = commandDefination.options[2]
   expect(parseOption(optionalOpt)).toEqual(['-r, --record [value]', '记录'])
 
   // with option.fn & default value
-  let fnOpt = commandDefination.options[3]
+  let fnOpt: any = commandDefination.options[3]
   expect(typeof parseOption(fnOpt)[2]).toEqual('function')
   expect(parseOption(fnOpt)[3]).toEqual('12345')
 })
 
 test('function: findIndex', () => {
-  let testOpt = commandDefination.options[0]
+  let testOpt: any = commandDefination.options[0]
 
   let testArgsArray1 = ['a', 'b', '--port', '8888']
   expect(findIndex(testOpt, testArgsArray1)).toEqual(2)
@@ -99,7 +99,7 @@ test('function: parseArgs for main command', () => {
     value: ['node', 'mip2', 'dev', 'a']
   })
 
-  let cmd = Object.assign(commandDefination, {isSubcommand: false})
+  let cmd: any = Object.assign(commandDefination, {isSubcommand: false})
 
   let result = parseArgs(cmd)
 
@@ -113,7 +113,7 @@ test('function: parseArgs for subcommand', () => {
     value: ['node', 'mip2', 'dev', 'component', 'a', 'b']
   })
 
-  let cmd = Object.assign(commandDefination.subCommands[0], {isSubcommand: true})
+  let cmd: any = Object.assign(commandDefination.subCommands[0], {isSubcommand: true})
 
   let result = parseArgs(cmd)
 
@@ -128,7 +128,7 @@ test('function: parseArgs for command with options which need to be filtered', (
     value: ['node', 'mip2', 'dev', 'a', '-f', '123']
   })
 
-  let cmd1 = Object.assign(commandDefination, {isSubcommand: false})
+  let cmd1: any = Object.assign(commandDefination, {isSubcommand: false})
   let result1 = parseArgs(cmd1)
   expect(result1).toEqual({
     componentName: 'a'
@@ -139,7 +139,7 @@ test('function: parseArgs for command with options which need to be filtered', (
     value: ['node', 'mip2', 'dev', '-f', '123', 'a']
   })
 
-  let cmd2 = Object.assign(commandDefination, {isSubcommand: false})
+  let cmd2: any = Object.assign(commandDefination, {isSubcommand: false})
   let result2 = parseArgs(cmd2)
   expect(result2).toEqual({
     componentName: 'a'
@@ -150,7 +150,7 @@ test('function: parseArgs for command with options which need to be filtered', (
     value: ['node', 'mip2', 'dev', '-p', 'a']
   })
 
-  let cmd3 = Object.assign(commandDefination, {isSubcommand: false})
+  let cmd3: any = Object.assign(commandDefination, {isSubcommand: false})
   let result3 = parseArgs(cmd3)
   expect(result3).toEqual({
     componentName: 'a'

@@ -1,4 +1,4 @@
-const { checkNodeVersion, camelize, cleanArgs } = require('../../src/utils/cli.ts')
+import { checkNodeVersion, camelize, cleanArgs } from '../../src/utils/cli'
 
 test('should check node version correctly', () => {
   let originalVersion = process.version
@@ -29,7 +29,7 @@ test('should camelize correctly', () => {
 })
 
 test('should clear arguments correctly', () => {
-  let cmd = {
+  let cmd: any = {
     foo: {},
     bar: {},
     options: [

@@ -1,9 +1,9 @@
-const { update } = require('../src/update.ts')
-const plugin = require('../src/utils/plugin')
-const { logger } = require('mip-cli-utils')
+import { update } from '../src/update'
+import * as plugin from '../src/utils/plugin'
+import { logger } from 'mip-cli-utils'
 
 test('run update command with specified plugin names', () => {
-  const updateMultiplePlugin = jest.spyOn(plugin, 'installOrUpdatePlugin').mockImplementationOnce(() => {})
+  const updateMultiplePlugin = jest.spyOn(plugin, 'installOrUpdatePlugin').mockImplementationOnce((): any => {})
   update(['dev', 'mip-cli-plugin-build'], { registry: 'https://test.com' })
 
   expect(updateMultiplePlugin).toHaveBeenCalledWith(
@@ -25,7 +25,7 @@ test('run update command without specified plugin names', () => {
     ]
   })
 
-  const updateMultiplePlugin = jest.spyOn(plugin, 'installOrUpdatePlugin').mockImplementationOnce(() => {})
+  const updateMultiplePlugin = jest.spyOn(plugin, 'installOrUpdatePlugin').mockImplementationOnce((): any => {})
 
   update([], { registry: 'https://test.com' })
 
@@ -46,7 +46,7 @@ test('run update command without specified plugin names and no plugins found', (
   })
 
   const mockLogger = jest.spyOn(logger, 'info').mockImplementationOnce(() => {});
-  const updateMultiplePlugin = jest.spyOn(plugin, 'installOrUpdatePlugin').mockImplementationOnce(() => {})
+  const updateMultiplePlugin = jest.spyOn(plugin, 'installOrUpdatePlugin').mockImplementationOnce((): any => {})
 
   update([], { registry: 'https://test.com' })
 

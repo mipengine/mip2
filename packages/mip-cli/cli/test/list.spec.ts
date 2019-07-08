@@ -1,9 +1,9 @@
-const { list } = require('../src/list.ts')
-const plugin = require('../src/utils/plugin')
-const { logger } = require('mip-cli-utils')
+import { list } from '../src/list'
+import * as plugin from '../src/utils/plugin'
+import { logger } from 'mip-cli-utils'
 
-let consoleArray
-let mockConsole
+let consoleArray: string[]
+let mockConsole: any
 
 beforeEach(() => {
   consoleArray = []

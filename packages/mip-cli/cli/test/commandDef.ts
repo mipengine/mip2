@@ -1,7 +1,7 @@
 // for test case: loadPlugin
 function testFn() {}
 
-module.exports = {
+export default {
     name: 'dev',
     description: '启动开发模式',
     args: [
@@ -15,7 +15,7 @@ module.exports = {
         name: 'port',
         shortName: 'p',
         description: '端口号',
-        type: 'flag',
+        type: 'flag'
       },
       {
         name: 'file',
@@ -37,7 +37,7 @@ module.exports = {
         fn: testFn
       }
     ],
-    run: function (params) {
+    run: function (params: any) {
       console.log(params)
     },
     subCommands: [
@@ -62,7 +62,7 @@ module.exports = {
             type: 'flag'
           }
         ],
-        run: function (params) {
+        run: function (params: any) {
           console.log(params)
         }
       }

@@ -1,7 +1,7 @@
-const fs = require('fs')
-const path = require('path')
-const execUtil = require('../../src/utils/exec')
-const {
+import fs from 'fs'
+import path from 'path'
+import * as execUtil from '../../src/utils/exec'
+import {
   installOrUpdatePlugin,
   getPluginPackages,
   isPluginFullName,
@@ -12,7 +12,7 @@ const {
   loadModule,
   printDescription,
   showPluginCmdHelpInfo
-} = require('../../src/utils/plugin.ts')
+} from '../../src/utils/plugin'
 
 test('utils: installOrUpdatePlugin', async () => {
   const executeCommand = jest.spyOn(execUtil, 'executeCommand').mockImplementation(async () => {})
@@ -34,7 +34,7 @@ test('utils: installOrUpdatePlugin', async () => {
 })
 
 test('utils: getPluginPackages', () => {
-  jest.spyOn(fs, 'readdirSync').mockImplementationOnce(() => {
+  jest.spyOn(fs, 'readdirSync').mockImplementationOnce((): any => {
     return [
       'mip-cli-plugin-add',
       'mip-cli-plugin-build',
@@ -112,7 +112,7 @@ test('utils: showPluginCmdHelpInfo', () => {
   // TOFIX
   // with some plugins found
   const mockConsole = jest.spyOn(console, 'log').mockImplementation(() => {})
-  jest.spyOn(fs, 'readdirSync').mockImplementationOnce(() => {
+  jest.spyOn(fs, 'readdirSync').mockImplementationOnce((): any => {
     return [
       'mip-cli-plugin-add'
     ]
