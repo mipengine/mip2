@@ -153,7 +153,7 @@ export const actions = {
   focus
 }
 
-export default function elementAction ({object, property, options, args}) {
+export default function elementAction ({object, property, options, argumentText}) {
   let element = document.getElementById(object)
 
   if (!element) {
@@ -164,16 +164,33 @@ export default function elementAction ({object, property, options, args}) {
   let params = {
     handler: property,
     event: options.event,
-    target: element,
-    args: args
+    target: element
+  }
+
+  let args
+
+  if (argumentText) {
+    let fn = parser.transform(argumentText, 'MIPActionArguments')
+    let args = fn(options)
+    params.args = args[0]
+  } else {
+    args = ''
   }
 
   if (dom.isMIPElement(element)) {
-    params.arg = args.map(arg => JSON.stringify(arg)).join(',')
+    // 这里需要在后期做更好的处理
+    if (args) {
+      params.arg = args.map(a => JSON.stringify(a)).join(',')
+
+    } else {
+      params.arg = ''
+    }
+    // params.args = args[0]
     return element.executeEventAction(params)
   }
 
   if (actions[property]) {
+    // params.args = args[0]
     return actions[property](params)
   }
 

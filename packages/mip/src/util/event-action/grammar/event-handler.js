@@ -143,12 +143,13 @@ lex.set({
       object: 'MIP',
       property: 'setData',
       role: 'MIP',
-      arguments: [
-        {
-          type: 'Literal',
-          value: argstring.raw
-        }
-      ]
+      argumentText: argstring.raw
+      // arguments: [
+      //   {
+      //     type: 'Literal',
+      //     value: argstring.raw
+      //   }
+      // ]
     }
   }
 })
@@ -170,12 +171,13 @@ lex.set({
       object: 'MIP',
       property: property.name,
       role: 'MIP',
-      arguments: argstring &&
-        [{
-          type: 'Literal',
-          value: argstring.raw
-        }] ||
-        []
+      argumentText: argstring ? argstring.raw : null
+      // arguments: argstring &&
+      //   [{
+      //     type: 'Literal',
+      //     value: argstring.raw
+      //   }] ||
+      //   []
     }
   }
 })
@@ -197,6 +199,7 @@ lex.set({
       object: object.name,
       property: property.name,
       role: 'HTMLElement',
+      argumentText: argstring ? argstring.raw : null
       // type: 'CallExpression',
       // callee: {
       //   type: 'MemberExpression',
@@ -208,12 +211,12 @@ lex.set({
       //   computed: false,
       //   property: property
       // },
-      arguments: argstring &&
-        [{
-          type: 'Literal',
-          value: argstring.raw
-        }] ||
-        []
+      // arguments: argstring &&
+      //   [{
+      //     type: 'Literal',
+      //     value: argstring.raw
+      //   }] ||
+      //   []
     }
   }
 })

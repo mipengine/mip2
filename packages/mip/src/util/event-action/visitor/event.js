@@ -24,7 +24,7 @@ const visitor = {
     }
   },
   MIPEventHandler (path) {
-    let event = path.node.event.raw
+    let event = path.node.event.name
     let actions = []
 
     for (let action of path.node.actions) {
@@ -45,7 +45,7 @@ const visitor = {
     }
   },
   MIPAction (path) {
-    let {object, property, role, arguments: args} = path.node
+    let {object, property, role, argumentText} = path.node
     switch (role) {
       case 'MIP':
         return function (options) {
@@ -53,7 +53,7 @@ const visitor = {
             options,
             object,
             property,
-            args
+            argumentText
           })
         }
       case 'HTMLElement':
@@ -62,7 +62,7 @@ const visitor = {
             options,
             object,
             property,
-            args
+            argumentText
           })
         }
     }

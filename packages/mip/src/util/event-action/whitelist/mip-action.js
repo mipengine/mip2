@@ -1,6 +1,6 @@
 import {handleScrollTo} from '../../../page/util/ease-scroll'
 import viewer from '../../../viewer'
-
+import parser from '../parser'
 // function isObjective (args) {
 //   let arg = args[0]
 //   if (typeof arg === 'object') {
@@ -99,10 +99,17 @@ export const actions = {
   print
 }
 
-export default function mipAction ({property, args}) {
+export default function mipAction ({property, argumentText, options}) {
   let action = actions[property]
   if (action) {
-    action(...args)
+    // let argStr = args && args[0] && args[0].value
+    if (argumentText) {
+      let fn = parser.transform(argumentText, 'ConditionalExpression')
+      let arg = fn(options)
+      action(arg)
+    } else {
+      action()
+    }
   } else {
     throw new Error(`不支持 MIP.${property} 全局方法`)
   }

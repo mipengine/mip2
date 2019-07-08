@@ -230,7 +230,7 @@ export const CUSTOM_OBJECTS = {
   },
 
   m ({options, property}) {
-    let data = options.data
+    let data = options.data || window.m
     return data[property]
   },
 

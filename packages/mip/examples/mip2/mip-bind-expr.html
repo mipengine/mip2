@@ -26,15 +26,22 @@
   <div>
     <p m-text="madafaka"></p>
     <p m-text="arr.join(' ')"></p>
-    <button
+    <!-- <button -->
+    <!--       on="click:MIP.setData({ -->
+    <!--         madafaka: m.madafaka > 0 ? &#45;1 : 1, -->
+    <!--         arr: m.arr.slice().sort(function (a, b) { -->
+    <!--           console.log(new Date()); -->
+    <!--           return m.madafaka > 0 ? (a &#45; b) : (b &#45; a) -->
+    <!--         }) -->
+    <!--       })" -->
+    <!-- >click me</button> -->
+        <button
           on="click:MIP.setData({
             madafaka: m.madafaka > 0 ? -1 : 1,
-            arr: m.arr.slice().sort(function (a, b) {
-              console.log(new Date());
-              return m.madafaka > 0 ? (a - b) : (b - a)
-            })
+            arr: m.arr.slice().sort((a, b) => m.madafaka > 0 ? (a - b) : (b - a))
           })"
     >click me</button>
+
     <button
       on="click:MIP.setData({
         arr: [5, 4, 3, 2, 1]
