@@ -9,7 +9,7 @@
 import event from './util/dom/event'
 import Gesture from './util/gesture/index'
 import platform from './util/platform'
-import EventAction from './util/event-action'
+import EventAction from './util/event-action/index'
 import EventEmitter from './util/event-emitter'
 import {fn, makeCacheUrl, parseCacheUrl} from './util'
 import {supportsPassive} from './page/util/feature-detect'
@@ -210,7 +210,7 @@ let viewer = {
     if ((platform.isIOS() || !platform.isChrome()) && opener === false) {
       opt = 'noopener'
     }
-    
+
     // 先尝试 open，如果失败再使用 '_top'，因为 ios WKWebview 对于非 '_top' 打开可能失败
     let newWin
     try {

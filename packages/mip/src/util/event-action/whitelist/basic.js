@@ -6,80 +6,6 @@
  *  https://github.com/ampproject/amphtml/blob/master/extensions/amp-bind/0.1/bind-expression.js
  */
 
-//  import dom from '../dom/dom'
-//  import {globalAction} from '../event-action/global-action'
-//  import {mipAction} from '../event-action/mip-action'
-
-// function getHTMLElementAction ({object, property, options}) {
-//   return (...args) => {
-
-//     let action = {
-//       handler: property,
-//       event: options.event,
-//       arg: args.join(','),
-//       target: object
-//     }
-
-//     if (dom.isMIPElement(object)) {
-//       object.executeEventAction(action)
-//     } else if (globalAction[property]) {
-//       globalAction[property](action)
-//     } else {
-//       throw new Error(`Can not find action "${handler}".`)
-//     }
-//   }
-// }
-
-// function getMIPAction ({property, event}) {
-//   // return (...args) => {
-//   //   // let action = {
-//   //   //   handler: property,
-//   //   //   event: event,
-//   //   //   args: args
-//   //   // }
-
-//   //   if (mipAction[property]) {
-//   //     mipAction[property](...args)
-//   //   }
-//   // }
-//   if (mipAction[property]) {
-//     return mipAction[property]
-//   }
-//   throw new Error(`Can not find action "${handler}" from MIP.`)
-// }
-
-// export function HTMLElementAction ({object, property, options, args}) {
-//   let element = document.getElementById(object)
-
-//   if (!element) {
-//     // @TODO should throw an error
-//     return
-//   }
-
-//   let action = {
-//     handler: property,
-//     event: options.event,
-//     arg: args.map(arg => JSON.stringify(arg)).join(','),
-//     target: element
-//   }
-
-//   if (dom.isMIPElement(object)) {
-//     return object.executeEventAction(action)
-//   }
-
-//   if (globalAction[property]) {
-//     return globalAction[property](action)
-//   }
-// }
-
-// export function MIPAction ({options, property, args}) {
-//   return options.MIP({
-//     handler: property,
-//     args: args,
-//     event: options.event
-//   })
-// }
-
 export const BINARY_OPERATION = {
   '+': (left, right) => left + right,
   '-': (left, right) => left - right,
@@ -193,23 +119,6 @@ export const CUSTOM_OBJECTS = {
     return options.event
   },
 
-  // MIP ({MIP, event}) {
-  //   return property => {
-  //     return (...args) => {
-  //       return MIP({handler: property, args, event})
-  //     }
-  //   }
-  // },
-
-  // MIP ({event}) {
-  //   return property => {
-  //     // return (...args) => {
-  //     //   return mipAction[property]({handler: property, args, event})
-  //     // }
-  //     return getMIPAction({property, event})
-  //   }
-  // }
-
   DOM ({options, property}) {
     let target = options.target
     if (property === 'dataset') {
@@ -230,7 +139,7 @@ export const CUSTOM_OBJECTS = {
   },
 
   m ({options, property}) {
-    let data = options.data
+    let data = options.data || window.m
     return data[property]
   },
 
@@ -258,53 +167,6 @@ export const CUSTOM_OBJECTS = {
     return String[property]
   }
 }
-
-// <<<<<<< HEAD
-// function getValidMemberExpressionCallee (path) {
-//   let {
-//     object: objectNode,
-//     property: propertyNode
-//   } = path.node.callee
-
-//   let propertyFn = path.traverse(propertyNode, path.node.callee)
-
-//   let customObjectFn
-//   let objectFn
-
-//   let objectName = objectNode.name
-
-//   if (objectNode.type === 'Identifier') {
-//     customObjectFn = CUSTOM_OBJECTS[objectName]
-//   }
-//   else {
-//     objectFn = path.traverse(objectNode, path.node.callee)
-//   }
-
-//   return options => {
-//     let property = propertyFn()
-
-//     if (customObjectFn) {
-//       return customObjectFn(options)(property)
-//     }
-
-//     if (objectFn) {
-//       let object = objectFn()
-//       return getValidPrototypeFunction(object, property)
-//     }
-
-//     if (window.m.hasOwnProperty(objectName)) {
-//       let object = window.m[objectName]
-//       return getValidPrototypeFunction(object, property)
-//     }
-
-//     let object = document.getElementById(objectName)
-//     return getHTMLElementAction({object, property, options})
-//   }
-// =======
-// export function getValidObject (id) {
-//   return CUSTOM_OBJECTS[id] || CUSTOM_OBJECTS.m
-// >>>>>>> dev-event-upgrade-compat
-// }
 
 export function getValidObject (id) {
   return CUSTOM_OBJECTS[id] || CUSTOM_OBJECTS.m
