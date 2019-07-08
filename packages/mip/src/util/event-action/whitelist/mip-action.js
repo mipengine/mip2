@@ -101,18 +101,22 @@ export const actions = {
 
 export default function mipAction ({property, argumentText, options}) {
   let action = actions[property]
-  if (action) {
-    // let argStr = args && args[0] && args[0].value
-    if (argumentText) {
-      let fn = parser.transform(argumentText, 'ConditionalExpression')
-      let arg = fn(options)
-      action(arg)
-    } else {
-      action()
-    }
-  } else {
+  if (!action) {
     throw new Error(`不支持 MIP.${property} 全局方法`)
   }
+  if (!argumentText) {
+    action()
+    return
+  }
+  if (property === 'setData') {
+    let fn = parser.transform(argumentText, 'ObjectExpression')
+    let arg = fn(options)
+    action(arg)
+    return
+  }
+  let fn = parser.transform(argumentText, 'MIPActionArguments')
+  let args = fn(options)
+  action(args[0])
 }
 
 

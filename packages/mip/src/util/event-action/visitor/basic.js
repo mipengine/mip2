@@ -92,10 +92,9 @@ const visitor = {
         if (scope.has(name)) {
           return scope.get(name)
         }
-        return object({options})
+        return object({options, property: name})
       }
     }
-
     return () => name
   },
 
