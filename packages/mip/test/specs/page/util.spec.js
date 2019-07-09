@@ -5,7 +5,7 @@
 
 import viewport from 'src/viewport'
 import {transitionEndEvent, animationEndEvent} from 'src/page/util/feature-detect'
-import {scrollTo} from 'src/page/util/ease-scroll'
+import {scrollTo, handleScrollTo} from 'src/page/util/ease-scroll'
 /* eslint-disable no-unused-expressions */
 /* globals describe, it, expect, afterEach, sinon */
 

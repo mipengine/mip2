@@ -151,8 +151,27 @@ function formatClass (value) {
   return {}
 }
 
-function bindStyle (node, value, oldValue) {
+function formatStyle (value) {
+  if (Array.isArray(value)) {
+    return value.reduce((result, item) => {
+      return Object.assign(result, formatStyle(item))
+    }, {})
+  }
+  if (instance(value) === '[object Object]') {
+    return value
+  }
+  return {}
+}
 
+function bindStyle (node, value, oldValue) {
+  let newValue = formatStyle(value)
+  for (let prop of Object.keys(newValue)) {
+    if (oldValue === null
+      || !oldValue.hasOwnProperty(prop)
+      || oldValue[prop] !== newValue[prop])
+    node.style[prop] = newValue[prop]
+  }
+  return newValue
 }
 
 function bindText (node, value, oldValue) {
