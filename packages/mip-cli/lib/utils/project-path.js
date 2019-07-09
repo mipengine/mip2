@@ -37,7 +37,7 @@ function componentTestDir (dir, component) {
 function isComponentPath (rootDir, pathname) {
   // let basename = path.basename(pathname)
   // 非入口文件的增减则不做任何处理
-  if (!/(mip-[\w-]+)\/\1\.(vue|js)$/.test(pathname)) {
+  if (!/(mip-[\w-]+)\/\1\.(vue|js|ts)$/.test(pathname)) {
     return false
   }
 
