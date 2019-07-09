@@ -77,26 +77,41 @@
   <div>
     <p m-text="madafaka"></p>
     <p m-text="arr.join(' ')"></p>
-    <button
-          on="click:MIP.setData({
-            madafaka: m.madafaka > 0 ? -1 : 1,
-            arr: m.arr.slice().sort(function (a, b) {
-              return m.madafaka > 0 ? (a - b) : (b - a)
-            })
-          })"
-    >click me</button>
-    <!--     <button -->
+    <!-- <button -->
     <!--       on="click:MIP.setData({ -->
     <!--         madafaka: m.madafaka > 0 ? &#45;1 : 1, -->
-    <!--         arr: m.arr.slice().sort((a, b) => m.madafaka > 0 ? (a &#45; b) : (b &#45; a)) -->
+    <!--         arr: m.arr.slice().sort(function (a, b) { -->
+    <!--           return m.madafaka > 0 ? (a &#45; b) : (b &#45; a) -->
+    <!--         }) -->
     <!--       })" -->
     <!-- >click me</button> -->
+        <button
+          on="click:MIP.setData({
+            madafaka: m.madafaka > 0 ? -1 : 1,
+            arr: m.arr.slice().sort((a, b) => m.madafaka > 0 ? (a - b) : (b - a))
+          })"
+    >click me</button>
 
     <button
       on="click:MIP.setData({
           'madafaka': madafaka > 0 ? -1 : 1
       })"
-      >what happen</button>
+      >change madafaka</button>
+    <button
+      on="click:MIP.setData({
+              test: {
+                for: {
+                  watch: 10086
+                }
+              }
+      })"
+      >set test for watch </button>
+    <button
+      on="click:MIP.setData({
+          test: null
+        })"
+      >set test for watch </button>
+
   </div>
   <div>
     <button
@@ -120,7 +135,15 @@
       <span>test mip-bind style</span>
     </div>
   </div>
+  <mip-script>
+    MIP.watch('madafaka', function (newVal, oldVal) {
+      console.log('mdafaka change from [' + oldVal + '] to [' + newVal + ']')
+    })
 
+    MIP.watch('test.for.watch', function (newVal, oldVal) {
+      console.log('test.for.watch change from [' + oldVal + '] to [' +  newVal + ']')
+    })
+  </mip-script>
   <div class="block bg-green"></div>
   <div class="block bg-blue"></div>
   <div class="block bg-green"></div>
@@ -129,6 +152,7 @@
   <div class="block bg-blue"></div>
   <div class="block bg-green"></div>
   <script src="../../dist/mip.js"></script>
+  <script src="https://c.mipcdn.com/static/v2/mip-script/mip-script.js"></script>
 </body>
 </html>
 

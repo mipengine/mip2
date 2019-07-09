@@ -7,8 +7,12 @@
  */
 import platform from '../../util/platform'
 import {parse} from '../../util/event-action/parser'
+import log from '../../util/log'
+
+const logger = log('MIP-Bind')
 
 const MIP_DATA = {}
+const MIP_DATA_CHANGES = []
 const MIP_DATA_PROMISES = []
 const MIP_DATA_WATCHES = {}
 let bindingElements = []
@@ -131,7 +135,6 @@ function formatClass (value) {
         result[className] = true
         return result
       }, {})
-
   }
 
   if (Array.isArray(value)) {
@@ -201,23 +204,99 @@ function bindAttribute (node, key, value, oldValue) {
 
 function setData (data) {
   let {global, page} = classify(data)
-  let change = merge(MIP_DATA, page)
-  notifyDataChange(change)
+  let changes = merge(MIP_DATA, page)
+  notifyDataChange(changes)
   if (isValidObject(global)) {
     updateGlobalData(global)
   }
 }
 
-function notifyDataChange (change) {
+let dataChangePending = false
+
+function notifyDataChange (changes) {
   // @TODO 利用变动信息对 bind 属性控制得更精细些
-  if (!change.length) {
+  if (!changes.length) {
     return
   }
-  nextTick(() => {
-    for (let node of bindingElements) {
-      applyBindingAttributes(node[0], node[1])
+
+  mergeChange(changes)
+
+  if (!dataChangePending) {
+    dataChangePending = true
+    nextTick(flushChange)
+  }
+}
+
+function mergeChange (changes) {
+  // 合并修改
+  for (let change of changes) {
+    let i
+    let max = MIP_DATA_CHANGES.length
+    for (i = 0; i < max; i++) {
+      let stored = MIP_DATA_CHANGES[i]
+      if (change[0].indexOf(stored[0]) === 0) {
+        break
+      }
+      if (stored[0].indexOf(change[0]) === 0) {
+        MIP_DATA_CHANGES.splice(i, 1)
+        MIP_DATA_CHANGES.push(change)
+        break
+      }
     }
-  })
+    if (i === max) {
+      MIP_DATA_CHANGES.push(change)
+    }
+  }
+}
+
+function flushChange () {
+  dataChangePending = false
+  flushBindingAttribues()
+  flushDataWatching()
+}
+
+function flushBindingAttribues () {
+  for (let node of bindingElements) {
+    try {
+      applyBindingAttributes(node[0], node[1])
+    } catch (e) {
+      logger.error(e)
+    }
+  }
+}
+
+function flushDataWatching () {
+  let copies = MIP_DATA_CHANGES.slice()
+  MIP_DATA_CHANGES.length = 0
+  let watchKeys = Object.keys(MIP_DATA_WATCHES)
+  for (let i = 0; i < copies.length; i++) {
+    let change = copies[i]
+    let [changeKey, oldValue] = change
+    for (let j = 0; j < watchKeys.length; j++) {
+      let watchKey = watchKeys[j]
+      if (watchKey.indexOf(changeKey) !== 0) {
+        continue
+      }
+      watchKeys.splice(j, 1)
+      let callbacks = MIP_DATA_WATCHES[watchKey]
+      let newVal = getData(watchKey)
+      let oldVal
+      if (watchKey === changeKey) {
+        oldVal = oldValue
+      } else {
+        let restKey = watchKey.slice(changeKey.length + 1)
+        oldVal = getData(restKey, oldValue)
+      }
+      for (let callback of callbacks) {
+        try {
+          callback(newVal, oldVal)
+        } catch (e) {
+          logger.error(e)
+        }
+      }
+    }
+  }
+
 }
 
 function isBindingAttribute (attr) {
@@ -228,9 +307,28 @@ function isElementNode (node) {
   return node.nodeType === 1
 }
 
-function getData () {
 
+function getData (key, data = MIP_DATA) {
+  let keys = key.split('.')
+  let result = data
+  for (let k of keys) {
+    if (result == null) {
+      return undefined
+    }
+    result = result[k]
+  }
+  return result
 }
+
+// function getData (key) {
+//   try {
+//     let fn = parse(key, 'MemberExpression')
+//     return fn({data: MIP_DATA})
+//   } catch (e) {
+
+//     return getDataFallback(key, MIP_DATA)
+//   }
+// }
 
 function watchData (target, callback) {
   MIP_DATA_WATCHES[target] = MIP_DATA_WATCHES[target] || []
@@ -269,14 +367,20 @@ function merge (oldVal, newVal, replace = true) {
       if (newNode[key] === oldNode[key]) {
         continue
       }
-      parentKey = `${parentKey}.${key}`
+
+      if (parentKey === '') {
+        parentKey = key
+      } else {
+        parentKey = `${parentKey}.${key}`
+      }
+
       let newInstance = instance(newNode[key])
 
       if (newInstance !== '[object Object]' ||
         newInstance != instance(oldNode[key])
       ) {
         if (replace || oldNode[key] === undefined) {
-          change.push(parentKey)
+          change.push([parentKey, oldNode[key]])
           oldNode[key] = newNode[key]
         }
         continue
