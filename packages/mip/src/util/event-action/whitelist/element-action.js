@@ -1,6 +1,6 @@
 import {handleScrollTo} from '../../../page/util/ease-scroll'
 import {LAYOUT, getLayoutClass} from '../../../layout'
-import parser from '../parser'
+import {parse} from '../parser'
 import log from '../../log'
 import dom from '../../dom/dom'
 const logger = log('Element-Action')
@@ -19,7 +19,7 @@ const logger = log('Element-Action')
 
 /**
  * 在目标元素中找具有 autofocus 属性的元素
- * 
+ *
  * @param {HTMLElement} el 目标元素
  */
 function getAutofocusElement (el) {
@@ -32,8 +32,8 @@ function getAutofocusElement (el) {
 
 /**
  * 显示/隐藏元素
- * 
- * @param {HTMLElement} el 目标元素 
+ *
+ * @param {HTMLElement} el 目标元素
  * @param {boolean} opt 是否隐藏
  */
 function toggleHide (el, opt) {
@@ -60,7 +60,7 @@ function show ({target}) {
   toggleHide(target, false)
   if (autofocusEl) {
     focus({target: autofocusEl})
-    
+
   }
 }
 
@@ -157,10 +157,9 @@ export default function elementAction ({object, property, options, argumentText}
 
   if (argumentText) {
     try {
-      let fn = parser.transform(argumentText, 'MIPActionArguments')
-      args = fn(options)
+      let fn = parse(argumentText, 'MIPActionArguments')
+      let args = fn(options)
       params.args = args[0]
-
     } catch (e) {}
   }
 
@@ -173,7 +172,6 @@ export default function elementAction ({object, property, options, argumentText}
       // 当严格的参数写法解析失败的情况下，就直接将原参数文本返回（fallback）
       params.arg = argumentText
     }
-    // params.args = args[0]
     let isTargeted = element.executeEventAction(params)
     if (isTargeted) {
       return
@@ -181,9 +179,9 @@ export default function elementAction ({object, property, options, argumentText}
   }
 
   if (actions[property]) {
-    // params.args = args[0]
     return actions[property](params)
   }
 
   logger.warn(`找不到名为 ${property} 的方法`)
 }
+

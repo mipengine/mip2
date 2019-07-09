@@ -1,29 +1,11 @@
 import {handleScrollTo} from '../../../page/util/ease-scroll'
 import viewer from '../../../viewer'
-import parser from '../parser'
-// function isObjective (args) {
-//   let arg = args[0]
-//   if (typeof arg === 'object') {
-//     return true
-//   }
-//   return false
-// }
+import {parse} from '../parser'
+import log from '../../log'
+
+const logger = log('Event-Action')
 
 function scrollTo ({id, duration, position}) {
-  // let param = {}
-  // let id = ''
-  // if (isObjective(args)) {
-  //   param = args[0]
-  //   id = param.id
-  // } else {
-  //   id = args[0]
-  //   param = {
-  //     duration: args[1],
-  //     position: args[2]
-  //   }
-  // }
-
-  /* istanbul ignore if */
   if (!id) {
     return
   }
@@ -32,20 +14,6 @@ function scrollTo ({id, duration, position}) {
 }
 
 function navigateTo ({url, target, opener}) {
-  // const {url, target, opener} = data
-  // let url
-  // let target
-  // let opener
-  // if (isObjective(args)) {
-  //   const param = args[0]
-  //   url = param.url
-  //   target = param.target
-  //   opener = param.opener
-  // } else {
-  //   url = args[0]
-  //   target = args[1]
-  //   opener = args[2]
-  // }
   viewer.navigateTo(url, target, opener)
 }
 
@@ -91,9 +59,36 @@ function $set (args) {
   MIP.$set(args)
 }
 
-// const setData = (...args) => MIP.setData(...args)
-// const getData = (...args) => MIP.getData(...args)
-// const $set = MIP.$set
+// @TODO deprecated
+const ALLOWED_GLOBALS = (
+  'Infinity,undefined,NaN,isFinite,isNaN,' +
+  'parseFloat,parseInt,decodeURI,decodeURIComponent,encodeURI,encodeURIComponent,' +
+  'Math,Number,Date,Array,Object,Boolean,String,RegExp,Map,Set,JSON,Intl,' +
+  'm' // MIP global data
+).split(',')
+
+const FALLBACK_PARSE_STORE = {}
+
+function setDataParseFallback ({argumentText, options}) {
+  if (!FALLBACK_PARSE_STORE[argumentText]) {
+    FALLBACK_PARSE_STORE[argumentText]  = new Function('DOM', `with(this){return ${argumentText}}`)
+    logger.warn('当前的 setData 参数存在不符合 MIP-bind 规范要求的地方，请及时进行修改:')
+    logger.warn(argumentText)
+
+  }
+  let fn = FALLBACK_PARSE_STORE[argumentText]
+  let hasProxy = typeof Proxy !== 'undefined'
+  let proxy = hasProxy
+    ? new Proxy({
+        DOM: options.target
+      }, {
+        has (target, key) {
+          return target[key] || ALLOWED_GLOBALS.indexOf(key) < 0
+        }
+      })
+    : {}
+  return fn.call(Object.assign(proxy, {event: options.event}))
+}
 
 export const actions = {
   setData,
@@ -109,7 +104,7 @@ export const actions = {
 export default function mipAction ({property, argumentText, options}) {
   let action = actions[property]
   if (!action) {
-    throw new Error(`不支持 MIP.${property} 全局方法`)
+    throw new Error(`不支持在 on 表达式中使用 MIP.${property} 全局方法`)
   }
   /* istanbul ignore if */
   if (!argumentText) {
@@ -117,15 +112,19 @@ export default function mipAction ({property, argumentText, options}) {
     return
   }
   if (property === 'setData' || property === '$set') {
-    let fn = parser.transform(argumentText, 'ObjectExpression')
-    let arg = fn(options)
+    let arg
+    try {
+      let fn = parse(argumentText, 'ObjectExpression')
+      arg = fn(options)
+    } catch (e) {
+      arg = setDataParseFallback({argumentText, options})
+    }
     action(arg)
     return
   }
-  let fn = parser.transform(argumentText, 'MIPActionArguments')
+  let fn = parse(argumentText, 'MIPActionArguments')
   let args = fn(options)
   action(args[0])
 }
-
 
 
