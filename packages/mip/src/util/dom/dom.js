@@ -275,8 +275,12 @@ function insert (parent, children) {
  * @param {HTMLElement} target target
  * @return {boolean}
  */
-function isMIPElement (target) {
+export function isMIPElement (target) {
   return target && target.tagName && CHECK_REG.test(target.tagName.toLowerCase())
+}
+
+export function isElementNode (node) {
+  return node.nodeType === 1
 }
 
 export default {
@@ -288,6 +292,5 @@ export default {
   insert,
   whenBodyAvailable,
   /** @deprecated */
-  waitDocumentReady: whenBodyAvailable,
-  isMIPElement
+  waitDocumentReady: whenBodyAvailable
 }

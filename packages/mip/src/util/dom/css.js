@@ -2,6 +2,7 @@
  * @file css
  * @author sekiyika(pengxing@baidu.com)
  */
+import {camelize, hyphenate} from '../string'
 
 let camelReg = /(?:(^-)|-)+(.)?/g
 
@@ -137,3 +138,26 @@ export default function css (elements, property, value) {
 
   return element.style[property] || document.defaultView.getComputedStyle(element)[property]
 }
+
+export function styleToObject (str) {
+  if (!str) {
+    return {}
+  }
+
+  let styles = str.split(/\s*;[;\s]*/)
+    .filter(style => style.indexOf(':') > 0)
+
+  let obj = {}
+  for (let style of styles) {
+    let [attr, value] = style.split(/\s*:\s/)
+    obj[camelize(attr)] = value
+  }
+  return obj
+}
+
+export function objectToStyle (obj) {
+  return Object.keys(obj)
+    .map(key => `${hyphenate(key)}:${obj[key]}`)
+    .join(';')
+}
+
