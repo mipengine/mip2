@@ -5,6 +5,9 @@
 
 import elementAction from '../whitelist/element-action'
 import mipAction from '../whitelist/mip-action'
+import log from '../../log'
+
+const logger = log('Event-Action')
 // import {
 //   HTMLElementAction,
 //   MIPAction
@@ -39,7 +42,7 @@ const visitor = {
         try {
           action()
         } catch (e) {
-          console.error(e)
+          logger.error(e)
         }
       }
     }

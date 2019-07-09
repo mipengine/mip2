@@ -10,19 +10,7 @@ import dom from '../dom/dom'
 // import {LAYOUT, getLayoutClass} from '../layout'
 // import log from './log'
 // import {handleScrollTo} from '../page/util/ease-scroll'
-import parser from './parser'
-
-const EVENT_FN_STORE = {}
-
-function parse (str) {
-  if (!EVENT_FN_STORE[str]) {
-    let fn = parser.transform(str)
-    if (fn) {
-      EVENT_FN_STORE[str] = fn
-    }
-  }
-  return EVENT_FN_STORE[str]
-}
+import {parse} from './parser'
 
 // const logger = log('Event-Action')
 
