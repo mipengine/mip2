@@ -19,7 +19,9 @@ import {
   CUSTOM_EVENT_SHOW_PAGE,
   CUSTOM_EVENT_HIDE_PAGE,
   OUTER_MESSAGE_PUSH_STATE,
-  OUTER_MESSAGE_REPLACE_STATE
+  OUTER_MESSAGE_REPLACE_STATE,
+  OUTER_MESSAGE_MIP_PAGE_LOAD,
+  OUTER_MESSAGE_PERFORMANCE_UPDATE
 } from './page/const'
 import {isMIPShellDisabled} from './page/util/dom'
 import {resolvePath} from './page/util/path'
@@ -115,7 +117,7 @@ let viewer = {
 
     // notify SF hide its loading
     if (win.MIP.viewer.page.isRootPage) {
-      this.sendMessage('mippageload', {
+      this.sendMessage(OUTER_MESSAGE_MIP_PAGE_LOAD, {
         time: Date.now(),
         title: encodeURIComponent(document.title)
       })
@@ -143,6 +145,37 @@ let viewer = {
         }
         this.messager.sendMessage(eventName, data)
       })
+    }
+
+    this.sendMessageToBaiduApp(eventName, data)
+  },
+
+  /**
+   * Send message to BaiduApp
+   * including following types:
+   *
+   * @param {string} eventName
+   * @param {Object} data Message body
+   */
+  sendMessageToBaiduApp (eventName, data = {}) {
+    // 和端通信, 可以上报性能数据，也可以通知隐藏 loading
+    if (platform.isBaiduApp() && platform.isAndroid()) {
+      let act = {
+        [OUTER_MESSAGE_MIP_PAGE_LOAD]: 'hideloading',
+        [OUTER_MESSAGE_PERFORMANCE_UPDATE]: 'perf',
+        [OUTER_MESSAGE_PUSH_STATE]: 'click',
+        [OUTER_MESSAGE_REPLACE_STATE]: 'click'
+      }[eventName]
+
+      act && window._flyflowNative && window._flyflowNative.exec(
+        'bd_mip',
+        'onMessage',
+        JSON.stringify({
+          type: 5, // 必选，和端的约定
+          act,
+          data
+        }), ''
+      )
     }
   },
 
@@ -255,7 +288,7 @@ let viewer = {
     // Jump in top window directly
     // 1. ( Cross origin or MIP Shell is disabled ) and NOT in SF
     // 2. Not MIP page and not only hash change
-    if (((this._isCrossOrigin(to) || isMIPShellDisabled()) && window.MIP.standalone) ||
+    if (((this._isCrossOrigin(to) || isMIPShellDisabled()) && (window.MIP.standalone && !window.MIP.util.isCacheUrl(location.href))) ||
       (!isMipLink && !isHashInCurrentPage)) {
       if (replace) {
         window.top.location.replace(to)
@@ -276,13 +309,14 @@ let viewer = {
     // Send statics message to BaiduResult page
     let pushMessage = {
       url: parseCacheUrl(completeUrl),
-      state
+      state,
+      click: Date.now()
     }
     this.sendMessage(replace ? OUTER_MESSAGE_REPLACE_STATE : OUTER_MESSAGE_PUSH_STATE, pushMessage)
 
     // Create target route
     let targetRoute = {
-      path: window.MIP.standalone ? to : makeCacheUrl(to)
+      path: (window.MIP.standalone && !window.MIP.util.isCacheUrl(location.href)) ? to : makeCacheUrl(to)
     }
 
     if (isMipLink) {

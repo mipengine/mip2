@@ -74,6 +74,13 @@ class ClientPrerender {
     }
   }
 
+  getPrerenderState () {
+    return {
+      prerendering: this.isPrerendering,
+      prerendered: this.isPrerendered
+    }
+  }
+
   execute (fn, ele) {
     if (this.isPrerendering && !parsePrerender(ele)) {
       this.queue.push(fn)
