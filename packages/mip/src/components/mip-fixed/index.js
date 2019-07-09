@@ -35,7 +35,7 @@ class MipFixed extends CustomElement {
   build () {
     let ele = this.element
     this.addEventAction('close', event => {
-      event.preventDefault()
+      event && event.preventDefault && event.preventDefault()
       util.css(ele, 'display', 'none')
     })
 

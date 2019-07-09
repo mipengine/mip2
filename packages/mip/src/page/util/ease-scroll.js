@@ -68,6 +68,7 @@ function scroll (top) {
 }
 
 /**
+ * scrollTo 接口
  * 滚动到指定元素的特定位置
  * 
  * @param {HTMLElement} element 目标元素
@@ -75,9 +76,11 @@ function scroll (top) {
  * @param {string} position 滚动后元素显示的位置，取值范围 'top'、'bottom'、'center'
  */
 export function handleScrollTo (element, {duration = 0, position = 'top'} = {}) {
+  /* istanbul ignore if */
   if (!element) {
     return
   }
+  /* istanbul ignore if */
   if (!typeof duration === 'number' || !isFinite(duration)) {
     duration = 0
   }

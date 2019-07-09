@@ -22,6 +22,8 @@ function scrollTo ({id, duration, position}) {
   //     position: args[2]
   //   }
   // }
+
+  /* istanbul ignore if */
   if (!id) {
     return
   }
@@ -48,8 +50,8 @@ function navigateTo ({url, target, opener}) {
 }
 
 /**
- * 关闭窗口，如果不能关闭，跳转到目标地址
  * 作为打开新窗的后退操作
+ * 关闭窗口，如果不能关闭，跳转到目标地址
  */
 function closeOrNavigateTo (args) {
   const hasParent = window.parent != window
@@ -63,6 +65,7 @@ function closeOrNavigateTo (args) {
     closed = window.closed
   }
 
+  /* istanbul ignore if */
   if (!closed) {
     navigateTo(args)
   }
@@ -108,6 +111,7 @@ export default function mipAction ({property, argumentText, options}) {
   if (!action) {
     throw new Error(`不支持 MIP.${property} 全局方法`)
   }
+  /* istanbul ignore if */
   if (!argumentText) {
     action()
     return
