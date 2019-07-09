@@ -36,6 +36,8 @@ export default function () {
   MIP.$update = updateIframeData
 
   bindingElements = getBindingElements([document.documentElement])
+  listenFormElementInputs(bindingElements)
+
   let globalData = getGlobalData()
   MIP.setData(globalData)
 }
@@ -94,16 +96,62 @@ function applyBindingAttributes (node, attrs) {
       case 'm-text':
         value = bindText(node, value, oldValue)
         break
-      case 'm-bind:value':
-        // @TODO
-        // case 'm-value':
-        break
+      // case 'm-bind:value':
+        // value = bindValue(node, value, oldValue)
+        // break
       default:
         value = bindAttribute(node, key, value, oldValue)
         break
     }
     attrs[key][1] = value
   }
+}
+
+function listenFormElementInputs (elements) {
+  for (let info of elements) {
+    let [node, attrs] = info
+    listenFormElementInput(node, attrs)
+  }
+}
+
+const FORM_ELEMENTS = [
+  'input',
+  'textarea',
+  'select'
+]
+
+function listenFormElementInput (node, attrs) {
+  if (!FORM_ELEMENTS.indexOf(node.tagName) === -1) {
+    return
+  }
+
+  let expression
+
+  for (let key of Object.keys(attrs)) {
+    if (key === 'm-bind:value') {
+      expression = attrs[key][0]
+      break
+    }
+  }
+
+  if (!expression) {
+    return
+  }
+  const keys = expression.split('.').reverse()
+
+  node.addEventListener('input', e => {
+    let obj = createSetDataObject(keys, e.target.value)
+    setData(obj)
+  })
+}
+
+function createSetDataObject (keys, value) {
+  let obj = value
+  for (let key of keys) {
+    obj = {[key]: obj}
+  }
+  return obj
+
 }
 
 function bindClass (node, value, oldValue) {
@@ -202,7 +250,6 @@ function formatStyle (value) {
  * @param {string} prop css prop needed to be prefixed
  */
 function normalize (prop) {
-  // prop = prop.replace(/-(\w)/g, (_, c) => (c ? c.toUpperCase() : /* istanbul ignore next */ ''))
   prop = camelize(prop)
   if (prop !== 'filter' && (prop in emptyStyle)) {
     return prop

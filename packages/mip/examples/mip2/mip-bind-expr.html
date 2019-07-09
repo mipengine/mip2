@@ -144,6 +144,20 @@
       console.log('test.for.watch change from [' + oldVal + '] to [' +  newVal + ']')
     })
   </mip-script>
+  <div>
+    <p>test m-bind:value</p>
+    <p>the value of input is: <span m-text="two.way.binding"></span></p>
+    <input m-bind:value="two.way.binding">
+    <button
+      on="click:MIP.setData({
+        two: {
+          way: {
+            binding: ''
+          }
+        }
+      })"
+    >clear input</button>
+  </div>
   <div class="block bg-green"></div>
   <div class="block bg-blue"></div>
   <div class="block bg-green"></div>
@@ -151,6 +165,7 @@
   <div class="block bg-green" id="test"></div>
   <div class="block bg-blue"></div>
   <div class="block bg-green"></div>
+  <!-- <script src="https://c.mipcdn.com/static/v2/mip.js"></script> -->
   <script src="../../dist/mip.js"></script>
   <script src="https://c.mipcdn.com/static/v2/mip-script/mip-script.js"></script>
 </body>
