@@ -28,6 +28,7 @@ class Watcher {
    * params {Function} cb watcher callback
    */
   constructor (node, data, dir, exp, cb) {
+// console.log(exp)
     this.data = data
     this.dir = dir
     this.exp = exp
@@ -42,8 +43,10 @@ class Watcher {
     }
     this.node = node
     this.depIds = {}
-    let fn = util.getWithResult.bind(this, this.exp)
-    this.getter = fn.call(this.data)
+    this.getter = data => util.getWithResult(this.exp, data)
+    // this.getter = util.getWithResult(this.exp, this.data)
+    // let fn = util.getWithResult.bind(this, this.exp)
+    // this.getter = fn.call(this.data)
     this.cb = cb
     this.value = this.get()
   }
@@ -95,14 +98,22 @@ class Watcher {
    * @param {*} oldVal oldValue used to build new value
    */
   get (oldVal) {
-    let value
+    // let value
     Deps.target = this
     // get new value
-    value = this.getter.call(this.data, this.data).value
+    let value = this.getter(this.data).value
+    // value = this.getter.call(this.data, this.data).value
     // parse class/style with spectial parser
-    if (this.specWatcher && this.specWatcher !== 'Watch') {
-      value = util['parse' + this.specWatcher](value, oldVal)
+    switch (this.specWatcher) {
+      case 'Class':
+        value = util.parseClass(value, oldVal)
+        break
+      case 'Style':
+        value = util.parseStyle(value, oldVal)
     }
+    // if (this.specWatcher && this.specWatcher !== 'Watch') {
+    //   value = util['parse' + this.specWatcher](value, oldVal)
+    // }
     Deps.target = null
     return value
   }

@@ -84,7 +84,7 @@ const visitor = {
     let name = path.node.name
 
     if (path.node.role === 'root') {
-      let object = getValidObject(name)
+      let objectFn = getValidObject(name)
       let scopeManager = path.scopeManager
 
       return function (options) {
@@ -92,7 +92,7 @@ const visitor = {
         if (scope.has(name)) {
           return scope.get(name)
         }
-        return object({options, property: name})
+        return objectFn({options})
       }
     }
     return () => name

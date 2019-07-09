@@ -2,6 +2,7 @@
  * @file util.js
  * @author sfe
  */
+import {parse} from '../../util/event-action/parser'
 
 const regVar = /[\w\d-._]+/g
 const regTpl = /(\${)([^}]+)(})/g
@@ -161,56 +162,106 @@ export function objectToStyle (obj) {
 }
 
 export function getter (ctx, exp) {
-  let fn = getWithResult.bind(ctx, exp)
-  let get = fn.call(ctx.data)
-  return get.call(ctx.data, ctx.data)
+console.log('--- getter ---')
+  return getWithResult(exp, ctx.data)
+  // let fn = getWithResult(exp)
+  // return fn(ctx.data)
+  // try {
+
+  // } catch (e) {
+  //   return {}
+  // }
+  // let fn = getWithResult.bind(ctx, exp)
+  // let get = fn.call(ctx.data)
+  // return get.call(ctx.data, ctx.data)
 }
 
-export function getWithResult (exp) {
-  exp = namespaced(exp) || ''
-  let matches = exp.match(/(this\.[\w\d-._]+|this\['[\w\d-._]+'\])/gmi)
-  let read = ''
-  if (matches && matches.length) {
-    matches.forEach(function (e) {
-      read += `;typeof ${e} === 'undefined' && (hadReadAll = false)`
-    })
-  }
-  let func
+export function getWithResult (exp, data) {
+console.log('-- in get with result --')
+  // return function (data) {
   try {
-    /* eslint-disable */
-    func = new Function(`
-      with (this) {
-        try {
-          var hadReadAll = true
-          ${read}
-          return {
-            value: ${exp},
-            hadReadAll: hadReadAll
-          }
-        } catch (e) {
-          return {}
-        }
-      }
-    `)
-    /* eslint-enable */
+    let fn = parse(exp, 'ConditionalExpression')
+    let value = fn({data})
+    return {
+      hadReadAll: value != undefined,
+      value
+    }
+    // if (value === undefined) {
+    //   return {
+    //     hadReadAll: false,
+    //     value
+    //   }
+    // }
+    // return {
+    //   hadReadAll: true,
+    //   value
+    // }
   } catch (e) {
-    /* istanbul ignore next */
-    func = () => ({})
+    return {}
   }
-  return func
+  // }
+
+//   exp = namespaced(exp) || ''
+// console.log('--- get with result ---')
+// console.log(exp)
+//   let matches = exp.match(/(this\.[\w\d-._]+|this\['[\w\d-._]+'\])/gmi)
+//   let read = ''
+//   if (matches && matches.length) {
+//     matches.forEach(function (e) {
+//       read += `;typeof ${e} === 'undefined' && (hadReadAll = false)`
+//     })
+//   }
+//   let func
+//   try {
+//     /* eslint-disable */
+//     let str = `
+//       with (this) {
+//         try {
+//           var hadReadAll = true
+//           ${read}
+//           return {
+//             value: ${exp},
+//             hadReadAll: hadReadAll
+//           }
+//         } catch (e) {
+//           return {}
+//         }
+//       }
+//     `
+//     func = new Function(str)
+//     console.log(str)
+//     /* eslint-enable */
+//   } catch (e) {
+//     /* istanbul ignore next */
+//     func = () => ({})
+//   }
+//   return func
 }
 
 export function setter (ctx, exp, value) {
+  console.log('---- in setter ----')
   let fn = setWithResult.bind(ctx, exp, value)
   let set = fn.call(ctx.data)
   set.call(ctx.data)
 }
 
 export function setWithResult (exp, value) {
+  // try {
+  //   let fn = parse(exp, 'ConditionalExpression')
+  //   let value = fn({data})
+
+  // } catch (e) {
+  //   return {}
+  // }
+
   exp = namespaced(exp)
+console.log('--- set with result ---')
+  console.log(exp)
   let func
   try {
-    func = new Function(`with(this){try {${exp} = "${value}"} catch (e) {}}`) // eslint-disable-line
+    let str = `with(this){try {${exp} = "${value}"} catch (e) {}}` // eslint-disable-line
+    func = new Function(str)
+    console.log(str)
   } catch (e) {
     /* istanbul ignore next */
     func = () => ''

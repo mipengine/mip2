@@ -65,12 +65,23 @@ class Compile {
       return
     }
     let attrs = node.attributes;
-    [].slice.call(attrs).forEach(attr => {
-      if (!this.isDirective(attr.name)) {
-        return
-      }
+    for (let i = 0; i < attrs.length; i++) {
+      let attr = attrs[i]
+      // if (!this.isDirective(attr.name)) {
+      //   continue
+      // }
       this.compileDirective(node, attr, attr.value)
-    })
+    }
+    // for (let attr of attrs) {
+    //   if (!this.is)
+    // }
+
+    // [].slice.call(attrs).forEach(attr => {
+    //   if (!this.isDirective(attr.name)) {
+    //     return
+    //   }
+    //   this.compileDirective(node, attr, attr.value)
+    // })
   }
 
   /*
@@ -80,12 +91,15 @@ class Compile {
    * @param {string} exp expression to calculate value that needs to be bound
    */
   compileDirective (node, directive, expression) {
+    if (!this.isDirective(directive.name)) {
+      return
+    }
+
     let me = this
     let fnName = directive.name.slice(2)
     let attrName = directive.name
     let data
     let shouldRm
-
     // if is m-bind directive, check if binding class/style
     // compile these two spectially
     if (/^bind:.*/.test(fnName)) {
@@ -194,6 +208,18 @@ class Compile {
     }
   }
 
+  bindClass (node, expression) {
+
+  }
+
+  bindStyle (node, expression) {
+
+  }
+
+  bindAttr (node, exporession) {
+
+  }
+
   updateData (data) {
     this.origin = data
   }
@@ -223,3 +249,4 @@ class Compile {
 }
 
 export default Compile
+
