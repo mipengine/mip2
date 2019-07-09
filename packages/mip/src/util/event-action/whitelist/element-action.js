@@ -1,19 +1,9 @@
-// import {handleScrollTo} from '../../page/util/ease-scroll'
 import {handleScrollTo} from '../../../page/util/ease-scroll'
 import {LAYOUT, getLayoutClass} from '../../../layout'
 import parser from '../parser'
 import log from '../../log'
 import dom from '../../dom/dom'
-const logger = log('Event-Action')
-// const {transform} = parser
-
-// function isObjective (args) {
-//   let arg = args[0]
-//   if (typeof arg === 'object') {
-//     return true
-//   }
-//   return false
-// }
+const logger = log('Element-Action')
 
 // function argFormat (args, formatter) {
 //   if (typeof args[0] === 'object') {
@@ -26,6 +16,12 @@ const logger = log('Event-Action')
 //   return formatted
 // }
 
+
+/**
+ * 在目标元素中找具有 autofocus 属性的元素
+ * 
+ * @param {HTMLElement} el 目标元素
+ */
 function getAutofocusElement (el) {
   if (el.hasAttribute('autofocus')) {
     return el
@@ -33,12 +29,20 @@ function getAutofocusElement (el) {
   return el.querySelector('[autofocus]')
 }
 
+
+/**
+ * 显示/隐藏元素
+ * 
+ * @param {HTMLElement} el 目标元素 
+ * @param {boolean} opt 是否隐藏
+ */
 function toggleHide (el, opt) {
+  /* istanbul ignore if */
   if (opt === undefined) {
     el.classList.toggle('mip-hide')
     return
   }
-  el.classList.toggle('mip-hide', !opt)
+  el.classList.toggle('mip-hide', opt)
 }
 
 /**
@@ -48,31 +52,31 @@ function toggleHide (el, opt) {
  * @param {HTMLElement} target 目标元素
  */
 function show ({target}) {
+  /* istanbul ignore if */
   if (target.classList.contains(getLayoutClass(LAYOUT.NODISPLAY))) {
     logger.warn('layout=nodisplay 的元素不能被动态显示')
     return
   }
   const autofocusEl = getAutofocusElement(target)
-  toggleHide(target, true)
+  toggleHide(target, false)
   if (autofocusEl) {
-    focus(autofocusEl)
+    focus({target: autofocusEl})
+    
   }
 }
 
 /**
  * 隐藏元素
  *
- * @param {Object} action action
  * @param {HTMLElement} target 目标元素
  */
 function hide ({target}) {
-  toggleHide(target, false)
+  toggleHide(target, true)
 }
 
 /**
  * 显示/隐藏元素
  *
- * @param {Object} action action
  * @param {HTMLElement} target 目标元素
  */
 function toggle ({target}) {
@@ -82,27 +86,17 @@ function toggle ({target}) {
 /**
  * 滚动到目标元素
  *
- * @param {Object} action action
+ * @param {Object} args 参数
  * @param {HTMLElement} target 目标元素
  */
 function scrollTo ({args, target}) {
-  // const parsedArg = transform(arg)()
-  // let param
-  // if (isObjective(parsedArg)) {
-  //   param = parsedArg[0]
-  // } else {
-  //   param = {
-  //     duration: parsedArg[0],
-  //     position: parsedArg[1]
-  //   }
-  // }
   handleScrollTo(target, args)
 }
 
 /**
  * 添加/删除元素 class
  *
- * @param {Object} action action
+ * @param {Object} args 参数
  * @param {HTMLElement} target 目标元素
  */
 function toggleClass ({args, target}) {
@@ -111,15 +105,6 @@ function toggleClass ({args, target}) {
     class: className,
     force
   } = args
-  // let className
-  // let force
-  // if (isObjective(parsedArg)) {
-  //   className = parsedArg.class
-  //   force = parsedArg.force
-  // } else {
-  //   className = parsedArg[0]
-  //   force = parsedArg[1]
-  // }
   if (!className || typeof className !== 'string') {
     logger.warn('class 不能为空且必须是 string 类型')
     return
@@ -197,14 +182,5 @@ export default function elementAction ({object, property, options, argumentText}
     return actions[property](params)
   }
 
-  logger.warn(`找不到名为 ${property} 的全局方法`)
+  logger.warn(`找不到名为 ${property} 的方法`)
 }
-
-// export const globalAction = {
-//   show: handleShow,
-//   hide: handleHide,
-//   toggle: handleToggle,
-//   scrollTo: handleScrollTo,
-//   toggleClass: handleToggleClass,
-//   focus: handleFocus
-// }

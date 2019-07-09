@@ -134,14 +134,17 @@ lex.set({
   rule: lex.seq([
     lex.text('MIP'),
     lex.text('.'),
-    lex.text('setData'),
+    lex.or([
+      lex.text('setData'),
+      lex.text('$set')
+    ]),
     lex.use('MIPArgumentText')
   ]),
   onMatch (mip, dot, property, argstring) {
     return {
       type: 'MIPAction',
       object: 'MIP',
-      property: 'setData',
+      property: property.raw,
       role: 'MIP',
       argumentText: argstring.raw
       // arguments: [
