@@ -140,6 +140,10 @@ export const CUSTOM_OBJECTS = {
 
   m ({options, property}) {
     let data = options.data || window.m
+    // return property == null ? data : data[property]
+    // if (!property) {
+    //   return data
+    // }
     return data[property]
   },
 
@@ -169,7 +173,19 @@ export const CUSTOM_OBJECTS = {
 }
 
 export function getValidObject (id) {
-  return CUSTOM_OBJECTS[id] || CUSTOM_OBJECTS.m
+  // return CUSTOM_OBJECTS[id] || CUSTOM_OBJECTS.m
+  return CUSTOM_OBJECTS[id] ||  function (args) {
+    let property = args.property
+    args.property = id
+    let object = CUSTOM_OBJECTS.m(args)
+    if (property != null) {
+      if (typeof object[property] === 'function') {
+        return getValidPrototypeFunction(object, property)
+      }
+      return object[property]
+    }
+    return object
+  }
 }
 
 export function getValidPrototypeFunction (object, property) {

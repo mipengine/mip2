@@ -116,8 +116,9 @@ class Bind {
     let win = this.win
 
     if (typeof data === 'object') {
-      let origin = JSON.stringify(win.m)
-      this.compile.updateData(JSON.parse(origin))
+      this.compile.updateData(win.m)
+      // let origin = JSON.stringify(win.m)
+      // this.compile.updateData(JSON.parse(origin))
       let classified = this.normalize(data)
       // need compile - $set
       if (compile) {

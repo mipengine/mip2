@@ -16,6 +16,48 @@
   .bg-blue {
     background: blue;
   }
+
+  .a {
+    color: #ff0000;
+  }
+
+  .b {
+    color: #880000;
+  }
+
+  .c {
+    color: #f0f000;
+  }
+
+  .d {
+    color: #00ff00;
+  }
+
+  .e {
+    color: #00f0f0;
+  }
+
+  .f {
+    color: #008800;
+  }
+
+  .g {
+    color: #0000ff;
+  }
+
+  .h {
+    color: #000088;
+  }
+
+  .i {
+    color: #880088;
+  }
+
+  .j {
+    color: #000000;
+  }
+
+
   </style>
 </head>
 <body>
@@ -24,7 +66,7 @@
       {
         "madafaka": 10086,
         "complex": {
-          "multi": "shenmegui"
+          "multi": "abcdefghij"
         },
         "arr": [
           10086, 2, 3, 4, 5
@@ -62,6 +104,24 @@
       on="click:test.scrollTo(duration=2000, position='enter')"
     >test global element scollTo</button>
   </div>
+    <div>
+    <button
+      on="click:MIP.setData({
+        className: {
+          spanClass: complex.multi[Math.round(Math.random() * 10)]
+        }
+      })"
+    >test mip-bind class</button>
+    <div>
+      <p>test mip-bind class/style</p>
+      <span
+        class="common-span"
+        m-bind:class="className.spanClass"
+      >test mip-bind class</span>
+      <span>test mip-bind style</span>
+    </div>
+  </div>
+
   <div class="block bg-green"></div>
   <div class="block bg-blue"></div>
   <div class="block bg-green"></div>
