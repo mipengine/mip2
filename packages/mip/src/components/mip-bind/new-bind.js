@@ -155,16 +155,14 @@ function formatClass (value) {
 }
 
 function bindStyle (node, value, oldValue) {
-  let change = Object.assign({}, oldValue)
   let newValue = formatStyle(value)
   for (let prop of Object.keys(newValue)) {
     let val = newValue[prop]
-    if (!change.hasOwnProperty(prop) || change[prop] !== val) {
-      change[prop] = val
+    if (!oldValue || oldValue[prop] !== val) {
       node.style[prop] = val
     }
   }
-  return change
+  return newValue
 }
 
 function formatStyle (value) {
