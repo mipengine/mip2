@@ -4,7 +4,7 @@
  */
 import parser from '../../../../src/util/event-action/parser'
 
-describe.only('MIP Argument', () => {
+describe('MIP Argument', () => {
   describe('MIP Argument', () => {
     it('New Argument Expression', () => {
       let str = `abc=1,

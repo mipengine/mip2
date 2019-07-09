@@ -84,7 +84,8 @@ export function handleScrollTo (element, {duration = 0, position = 'top'} = {}) 
   if (!typeof duration === 'number' || !isFinite(duration)) {
     duration = 0
   }
-  let offset = -viewport.getHeight() + util.rect.getElementRect(element).height
+  let rect = util.rect.getElementRect(element)
+  let offset = -viewport.getHeight() + rect.height
   switch (position) {
     case 'bottom':
       break
@@ -96,5 +97,5 @@ export function handleScrollTo (element, {duration = 0, position = 'top'} = {}) 
       break
   }
   const scrollTop = viewport.getScrollTop()
-  scrollTo(element.offsetTop + offset, {duration, scrollTop})
+  scrollTo(rect.top + offset, {duration, scrollTop})
 }

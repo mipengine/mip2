@@ -106,9 +106,9 @@
     >修改显示图片序号: <span m-text="index"></span></button>
     <br>
     <button
-      on="tap:MIP.setData({'activeColor': 'blue'})"
+      on="tap:MIP.setData({'styleObject': null})"
       >修改文字样式</button>
-    <div m-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }">文字文字</div>
+    <div m-bind:style="styleObject">文字文字</div>
     <button
       on="tap:MIP.setData({show:!m.show})"
       m-text="show ? '隐藏' : '显示'"

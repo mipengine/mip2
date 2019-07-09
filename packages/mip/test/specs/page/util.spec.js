@@ -6,6 +6,8 @@
 import viewport from 'src/viewport'
 import {transitionEndEvent, animationEndEvent} from 'src/page/util/feature-detect'
 import {scrollTo, handleScrollTo} from 'src/page/util/ease-scroll'
+import util from 'src/util'
+import Services, {installTimerService} from 'src/services'
 /* eslint-disable no-unused-expressions */
 /* globals describe, it, expect, afterEach, sinon */
 
@@ -37,6 +39,8 @@ describe('page.util', function () {
     let spy
     let oriHeight
     this.timeout(3000)
+    installTimerService()
+    const timer = Services.timer()
 
     before(() => {
       oriHeight = document.body.height
@@ -81,6 +85,32 @@ describe('page.util', function () {
       scrollTo(100, { duration: 500, scrollTop: 100 }).then(() => {
         done()
       })
+    })
+
+    it('scroll to element with position', async () => {
+      let front = document.createElement('div')
+      front.style.height = '1000px'
+      let target = document.createElement('div')
+      target.style.height = '200px'
+      let back = document.createElement('div')
+      back.style.height = '1000px'
+      document.body.appendChild(front)
+      document.body.appendChild(target)
+      document.body.appendChild(back)
+      let top = util.rect.getElementRect(target).top
+
+      handleScrollTo(target, {duration: 200, position: 'top'})
+      await timer.sleep(300)
+      expect(viewport.getScrollTop()).to.be.equal(top)
+      handleScrollTo(target, {duration: 200, position: 'center'})
+      await timer.sleep(300)
+      expect(viewport.getScrollTop()).to.be.equal(top+100-viewport.getHeight()/2)
+      handleScrollTo(target, {duration: 200, position: 'bottom'})
+      await timer.sleep(300)
+      expect(viewport.getScrollTop()).to.be.equal(top+200-viewport.getHeight())
+      document.body.removeChild(back)
+      document.body.removeChild(target)
+      document.body.removeChild(front)
     })
   })
 })

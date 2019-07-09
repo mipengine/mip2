@@ -67,12 +67,11 @@ const webpackConfig = {
   devtool: '#inline-source-map'
 }
 
-// let browsers = ['Chrome']
-// // trvis env
-// if (process.env.TRAVIS) {
-//   browsers = ['Chrome_travis_ci']
-// }
-let browsers = ['ChromeDebugging']
+let browsers = ['Chrome']
+// trvis env
+if (process.env.TRAVIS) {
+  browsers = ['Chrome_travis_ci']
+}
 
 module.exports = {
   files: [
@@ -118,13 +117,9 @@ module.exports = {
   browsers: browsers,
   // custom launchers
   customLaunchers: {
-    // Chrome_travis_ci: {
-    //   base: 'Chrome',
-    //   flags: ['--no-sandbox']
-    // }
-    ChromeDebugging: {
+    Chrome_travis_ci: {
       base: 'Chrome',
-      flags: [ '--remote-debugging-port=9333' ]
+      flags: ['--no-sandbox']
     }
   },
   concurrency: Infinity
