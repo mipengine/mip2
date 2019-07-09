@@ -1,348 +1,592 @@
 /**
  * @file bind.js
- * @author qiusiqi (qiusiqi@baidu.com)
+ * @author clark-t (clarktanglei@163.com)
+ * @description 在现有 MIP-bind 的模式下，mip-data 只能通过唯一的 MIP.setData
+ * 进行数据修改,所以完全可以通过每次调用 MIP.setData
+ * 的时候进行新旧数据比对，然后触发各种事件事件监听、数据绑定等等就可以了
  */
+import platform from '../../util/platform'
+import {parse} from '../../util/event-action/parser'
+import {camelize, hyphenate} from '../../util/string'
+import log from '../../util/log'
 
-import Compile from './compile'
-import Observer from './observer'
-import Watcher, {locker} from './watcher'
-import {isObject, objNotEmpty} from './util'
-// import {handleScrollTo} from '../../page/util/ease-scroll'
-// import viewer from '../../viewer'
+const logger = log('MIP-Bind')
 
-/* global MIP */
-/* eslint-disable no-new-func */
+const MIP_DATA = {}
+const MIP_DATA_CHANGES = []
+const MIP_DATA_PROMISES = []
+const MIP_DATA_WATCHES = {}
+let bindingElements = []
+const vendorNames = ['Webkit', 'Moz', 'ms']
+const emptyStyle = document.createElement('div').style
 
-class Bind {
-  constructor () {
-    this.win = window
-    // save and check watcher defined by MIP.watch
-    this.watcherIds = []
-    // save local states of page
-    this.win.pgStates = {}
-    // require mip data extension runtime
-    this.compile = new Compile()
-    this.observer = new Observer()
-    // open APIs
-    MIP.setData = data => {
-      this.bindTarget(false, data)
+export default function () {
+  // let win = window
+  // @TODO deprecated
+  window.m = MIP_DATA
+  window.mipDataPromises = MIP_DATA_PROMISES
+  if (isSelfParent()) {
+    window.g = {}
+  }
+
+  MIP.setData = setData
+  MIP.$set = setData
+  MIP.getData = getData
+  MIP.watch = watchData
+  MIP.$update = updateIframeData
+
+  bindingElements = getBindingElements([document.documentElement])
+  listenFormElementInputs(bindingElements)
+
+  let globalData = getGlobalData()
+  MIP.setData(globalData)
+}
+
+function getBindingElements (roots) {
+  let results = []
+  let stacks = roots
+  while (stacks.length) {
+    let node = stacks.pop()
+    if (!isElementNode(node)) {
+      continue
     }
-    MIP.getData = key => {
-      let ks = key.split('.')
-      let res = this.win.m[ks[0]]
-      let i = 1
-      while (isObject(res) && i < ks.length) {
-        res = res[ks[i]]
-        i++
+    let bindingAttrs
+    for (let i = 0; i < node.attributes.length; i++) {
+      let attr = node.attributes[i]
+      if (!isBindingAttribute(attr.name)) {
+        continue
       }
-      return res
+      bindingAttrs = bindingAttrs || {}
+      bindingAttrs[attr.name] = [attr.value, null]
     }
-    MIP.watch = (target, cb) => {
-      this.bindWatch(target, cb)
+    if (bindingAttrs) {
+      results.push([node, bindingAttrs])
     }
-
-    // inner APIs - isolated by sandbox, not available to developers
-    MIP.$set = (data, cancel) => this.bindTarget(true, data, cancel)
-    MIP.$recompile = () => {
-      this.observer.start(this.win.m)
-      this.compile.start(this.win.m)
-    }
-    MIP.$update = (data, pageId) => {
-      this.update(data, pageId)
-    }
-
-    window.m = window.m || {}
-    // store for async mip-data(s)
-    window.mipDataPromises = window.mipDataPromises || []
-    // initialize
-    MIP.$set(window.m)
-  }
-
-  /*
-   * fake postmessage - to broadcast global-data-changes to other iframes
-   * @param {Object} data data
-   */
-  postMessage (data) {
-    Object.keys(data).forEach(k => {
-      data[`#${k}`] = data[k]
-      delete data[k]
-    })
-
-    let win = this.win
-    let targetWin = win
-    /* istanbul ignore if */
-    if (!isSelfParent(win)) {
-      targetWin = win.parent
-      // parent update
-      targetWin.MIP.$set(data, true)
-    }
-    // self update
-    win.MIP.$set(data, true)
-
-    let pageId = win.location.href.replace(win.location.hash, '')
-    // defer
-    setTimeout(() => {
-      targetWin.MIP.$update(data, pageId)
-    }, 10)
-  }
-
-  /*
-   * to broadcast global data diff to mip iframes under rootpage
-   * @param {Object} data data to be set
-   * @param {string} pageId pageId to avoid repeated setting
-   */
-  /* istanbul ignore next */
-  update (data, pageId) {
-    let win = this.win
-
-    for (let i = 0, frames = win.document.getElementsByTagName('iframe'); i < frames.length; i++) {
-      if (frames[i].classList.contains('mip-page__iframe') &&
-          frames[i].getAttribute('data-page-id') &&
-          pageId !== frames[i].getAttribute('data-page-id')
-      ) {
-        let subwin = frames[i].contentWindow
-        subwin && subwin.MIP && subwin.MIP.$set(data, true)
+    if (node.childNodes) {
+      for (let i = 0; i < node.childNodes.length; i++) {
+        stacks.push(node.childNodes[i])
       }
     }
   }
+  return results
+}
 
-  /*
-   * to set data
-   * @param {boolean} compile should-compile
-   * @param {Object} data data to be set
-   * @param {boolean} cancel should stop data-broadcasting
-   */
-  bindTarget (compile, data, cancel) {
-    let win = this.win
-
-    if (typeof data === 'object') {
-      this.compile.updateData(win.m)
-      // let origin = JSON.stringify(win.m)
-      // this.compile.updateData(JSON.parse(origin))
-      let classified = this.normalize(data)
-      // need compile - $set
-      if (compile) {
-        this.setGlobalState(classified.globalData, cancel)
-        this.setPageState(classified, cancel)
-        // defineProperty and set dependency hooks
-        this.observer.start(win.m)
-        // compile and bind
-        this.compile.start(win.m)
-      } else {
-        locker(true) // lock, don't call watchers immediatly
-        // set/update data directly - setData
-        if (classified.globalData && objNotEmpty(classified.globalData)) {
-          !cancel && this.postMessage(classified.globalData)
-        }
-        data = classified.pageData
-        Object.keys(data).forEach(field => {
-          if (win.pgStates.hasOwnProperty(field)) {
-            assign(win.m, {
-              [field]: data[field]
-            })
-          } else {
-            this.dispatch(field, data[field], cancel)
-          }
-        })
-        locker(false) // unlock
-      }
-    } else {
-      throw new Error('setData method MUST accept an object! Check your input:' + data)
+function applyBindingAttributes (node, attrs) {
+  for (let key of Object.keys(attrs)) {
+    let [expression, oldValue] = attrs[key]
+    let fn
+    try {
+      fn = parse(expression, 'ConditionalExpression')
+    } catch (e) {
+      // console.error(e)
+      continue
     }
-  }
+    let value
+    try {
+      value = fn({data: MIP_DATA})
+    } catch (e) {}
 
-  /*
-   * set watcher
-   * @param {string|Array} target target(s) needed to be watched
-   * @param {Function} cb callback triggered when target changed
-   */
-  bindWatch (target, cb) {
-    if (target.constructor === Array) {
-      target.forEach(key => this.bindWatch(key, cb))
-      return
+    switch (key) {
+      case 'm-bind:class':
+        value = bindClass(node, value, oldValue)
+        break
+      case 'm-bind:style':
+        value = bindStyle(node, value, oldValue)
+        break
+      case 'm-text':
+        value = bindText(node, value, oldValue)
+        break
+      // case 'm-bind:value':
+        // value = bindValue(node, value, oldValue)
+        // break
+      default:
+        value = bindAttribute(node, key, value, oldValue)
+        break
     }
-    if (typeof target !== 'string' || !target) {
-      return
-    }
-    if (!cb || typeof cb !== 'function') {
-      return
-    }
-
-    let reg = target.split('.').reduce((total, current) => {
-      if (total) {
-        total += '{("[^{}:"]+":[^,]+,)*'
-      }
-      return total + `"${current}":`
-    }, '')
-    if (!JSON.stringify(this.win.m).match(new RegExp(reg))) {
-      return
-    }
-
-    let watcherId = `${target}${cb.toString()}`.replace(/[\n\t\s]/g, '')
-    /* istanbul ignore if */
-    if (this.watcherIds.indexOf(watcherId) !== -1) {
-      return
-    }
-
-    this.watcherIds.push(watcherId)
-    new Watcher(null, this.win.m, '', `Watch:${target}`, cb) // eslint-disable-line no-new
-  }
-
-  /*
-   * dispatch globaldata
-   * @param {string} key key
-   * @param {*} val value
-   * @param {boolean} cancel should stop data-broadcasting
-   */
-  dispatch (key, val, cancel) {
-    let win = this.win
-    let data = {
-      [key]: val
-    }
-    if (win.g && win.g.hasOwnProperty(key)) {
-      !cancel && this.postMessage(data)
-    } else {
-      /* istanbul ignore if */
-      if (!isSelfParent(win) &&
-      /* istanbul ignore next */ win.parent.g &&
-      /* istanbul ignore next */ win.parent.g.hasOwnProperty(key)
-      ) {
-        !cancel && this.postMessage(data)
-      } else {
-        Object.assign(win.m, data)
-        MIP.$recompile()
-      }
-    }
-  }
-
-  /*
-   * set global data that shared around pages
-   * @param {Object} data data
-   * @param {boolean} cancel should stop data-broadcasting
-   */
-  setGlobalState (data, cancel) {
-    let win = this.win
-    // only set global data under rootpage
-    /* istanbul ignore else */
-    if (isSelfParent(win)) {
-      win.g = win.g || {}
-      assign(win.g, data)
-    } else {
-      !cancel && objNotEmpty(data) && this.postMessage(data)
-    }
-  }
-
-  /*
-   * set page data that used only under this page
-   * @param {Object} data data
-   * @param {boolean} cancel should stop data-broadcasting
-   */
-  setPageState (data, cancel) {
-    let win = this.win
-    Object.assign(win.m, data.pageData)
-    // record props of pageData
-    !cancel && Object.keys(data.pageData).forEach(k => {
-      win.pgStates[k] = true
-    })
-
-    let globalData = data.globalData
-    // update props from globalData
-    Object.keys(globalData).forEach(key => {
-      if (!win.pgStates.hasOwnProperty(key) && win.m.hasOwnProperty(key)) {
-        if (isObject(globalData[key]) && win.m[key] && isObject(win.m[key])) {
-          assign(win.m[key], globalData[key])
-          win.m[key] = JSON.parse(JSON.stringify(win.m[key]))
-        } else {
-          win.m[key] = globalData[key]
-        }
-      }
-    })
-    // inherit
-    setProto(win.m, getGlobalData(win))
-    // win.m.__proto__ = getGlobalData(win) // eslint-disable-line no-proto
-  }
-
-  /*
-   * normalize data if there is global data
-   * @param {Object} data data
-   */
-  normalize (data) {
-    let globalData = {}
-    let pageData = {}
-
-    Object.keys(data).forEach(k => {
-      if (typeof data[k] === 'function') {
-        throw 'setData method MUST NOT accept object that contains functions' // eslint-disable-line no-throw-literal
-      }
-      if (/^#/.test(k)) {
-        globalData[k.substr(1)] = data[k]
-      } else {
-        pageData[k] = data[k]
-      }
-    })
-
-    return {
-      globalData,
-      pageData
-    }
+    attrs[key][1] = value
   }
 }
 
-/*
- * deep assign
- * @param {Object} oldData oldData
- * @param {Object} newData newData
- */
-function assign (oldData, newData) {
-  for (let k of Object.keys(newData)) {
-    if (isObject(newData[k]) && isObject(oldData[k])) {
-      let obj = Object.assign({}, oldData[k])
-      assign(obj, newData[k])
-      oldData[k] = obj
-    } else {
-      oldData[k] = newData[k]
+function listenFormElementInputs (elements) {
+  for (let info of elements) {
+    let [node, attrs] = info
+    listenFormElementInput(node, attrs)
+  }
+}
+
+const FORM_ELEMENTS = [
+  'input',
+  'textarea',
+  'select'
+]
+
+function listenFormElementInput (node, attrs) {
+  if (!FORM_ELEMENTS.indexOf(node.tagName) === -1) {
+    return
+  }
+
+  let expression
+
+  for (let key of Object.keys(attrs)) {
+    if (key === 'm-bind:value') {
+      expression = attrs[key][0]
+      break
     }
   }
 
+  if (!expression) {
+    return
+  }
+  const keys = expression.split('.').reverse()
 
-  // Object.keys(newData).forEach(k => {
-  //   if (isObject(newData[k]) && oldData[k] && isObject(oldData[k])) {
-  //     assign(oldData[k], newData[k])
-  //     let obj = JSON.parse(JSON.stringify({
-  //       [k]: oldData[k]
-  //     }))
-  //     Object.assign(oldData, obj)
-  //   } else {
-  //     oldData[k] = newData[k]
-  //   }
-  // })
-}
-/*
- * data inherit
- * @param {Object} oldObj oldObj
- * @param {Object} newObj newObj
- */
-function setProto (oldObj, newObj) {
-  Object.keys(newObj).forEach(key => {
-    if (!oldObj[key]) {
-      oldObj[key] = JSON.parse(JSON.stringify(newObj[key]))
-    }
+  node.addEventListener('input', e => {
+    let obj = createSetDataObject(keys, e.target.value)
+    setData(obj)
   })
 }
+
+function createSetDataObject (keys, value) {
+  let obj = value
+  for (let key of keys) {
+    obj = {[key]: obj}
+  }
+  return obj
+
+}
+
+function bindClass (node, value, oldValue) {
+  let change
+  if (oldValue == null) {
+    change = {}
+  } else {
+    change = Object.keys(oldValue)
+      .filter(key => oldValue[key])
+      .reduce((result, className) => {
+        result[className] = false
+        return result
+      }, {})
+  }
+  let newValue = formatClass(value)
+  Object.assign(change, newValue)
+  for (let className of Object.keys(change)) {
+    node.classList.toggle(className, change[className])
+  }
+  return newValue
+}
+
+function formatClass (value) {
+  if (value == null) {
+    return {}
+  }
+
+  if (typeof value === 'string') {
+    return value.trim()
+      .split(/\s+/)
+      .reduce((result, className) => {
+        result[className] = true
+        return result
+      }, {})
+  }
+
+  if (Array.isArray(value)) {
+    return value.reduce((result, item) => {
+      return Object.assign(result, formatClass(item))
+    }, {})
+  }
+
+  if (instance(value) === '[object Object]') {
+    return Object.keys(value)
+      .reduce((result, key) => {
+        result[key] = !!value[key]
+        return result
+      }, {})
+  }
+
+  return {}
+}
+
+function bindStyle (node, value, oldValue) {
+  let newValue = formatStyle(value)
+  for (let prop of Object.keys(newValue)) {
+    let val = newValue[prop]
+    if (!oldValue || oldValue[prop] !== val) {
+      node.style[prop] = val
+    }
+  }
+  return newValue
+}
+
+function formatStyle (value) {
+  if (Array.isArray(value)) {
+    return value.reduce((result, item) => {
+      return Object.assign(result, formatStyle(item))
+    }, {})
+  }
+  if (instance(value) === '[object Object]') {
+    let styles = {}
+    for(let prop of Object.keys(value)) {
+      let normalizedProp = normalize(prop).replace(/[A-Z]/g, match => '-' + match.toLowerCase())
+      if (!normalizedProp) {
+        continue
+      }
+      let val = value[prop]
+      if (Array.isArray(val)) {
+        let div = document.createElement('div')
+        for (let i = 0, len = val.length; i < len; i++) {
+          div.style[normalizedProp] = val[i]
+        }
+        styles[normalizedProp] = div.style[normalizedProp]
+      } else {
+        styles[normalizedProp] = val
+      }
+    }
+    return styles
+  }
+  return {}
+}
+
+/**
+ * autoprefixer
+ * @param {string} prop css prop needed to be prefixed
+ */
+function normalize (prop) {
+  prop = camelize(prop)
+  if (prop !== 'filter' && (prop in emptyStyle)) {
+    return prop
+  }
+
+  const capName = prop.charAt(0).toUpperCase() + prop.slice(1)
+  for (let i = 0; i < vendorNames.length; i++) {
+    const name = vendorNames[i] + capName
+    if (name in emptyStyle) {
+      return name
+    }
+  }
+  return ''
+}
+
+function bindText (node, value, oldValue) {
+  if (value == null) {
+    value = ''
+  }
+  if (value !== oldValue) {
+    node.textContent = value
+  }
+  return value
+}
+
+const BOOLEAN_ATTRS = [
+  'checked',
+  'selected',
+  'autofocus',
+  'controls',
+  'disabled',
+  'hidden',
+  'multiple',
+  'readonly'
+]
+
+function bindAttribute (node, key, value, oldValue) {
+  let [prefix, attr] = key.split(':')
+  if (prefix !== 'm-bind') {
+    return
+  }
+  let prop = typeof value === 'object' ? JSON.stringify(value) : value
+  if (prop === oldValue) {
+    return prop
+  }
+  if (prop === '' || prop === undefined) {
+    node.removeAttribute(attr)
+  } else {
+    node.setAttribute(attr, prop)
+  }
+  if (attr === 'value') {
+    node[attr] = prop
+  } else if (BOOLEAN_ATTRS.indexOf(attr) > -1) {
+    node[attr] = !!prop
+  }
+
+  return prop
+}
+
+function setData (data) {
+  let {global, page} = classify(data)
+  let changes = merge(MIP_DATA, page)
+  notifyDataChange(changes)
+  if (isValidObject(global)) {
+    updateGlobalData(global)
+  }
+}
+
+let dataChangePending = false
+
+function notifyDataChange (changes) {
+  // @TODO 利用变动信息对 bind 属性控制得更精细些
+  if (!changes.length) {
+    return
+  }
+
+  mergeChange(changes)
+
+  if (!dataChangePending) {
+    dataChangePending = true
+    nextTick(flushChange)
+  }
+}
+
+function mergeChange (changes) {
+  // 合并修改
+  for (let change of changes) {
+    let i
+    let max = MIP_DATA_CHANGES.length
+    for (i = 0; i < max; i++) {
+      let stored = MIP_DATA_CHANGES[i]
+      if (change[0].indexOf(stored[0]) === 0) {
+        break
+      }
+      if (stored[0].indexOf(change[0]) === 0) {
+        MIP_DATA_CHANGES.splice(i, 1)
+        MIP_DATA_CHANGES.push(change)
+        break
+      }
+    }
+    if (i === max) {
+      MIP_DATA_CHANGES.push(change)
+    }
+  }
+}
+
+function flushChange () {
+  dataChangePending = false
+  flushBindingAttribues()
+  flushDataWatching()
+}
+
+function flushBindingAttribues () {
+  for (let node of bindingElements) {
+    try {
+      applyBindingAttributes(node[0], node[1])
+    } catch (e) {
+      logger.error(e)
+    }
+  }
+}
+
+function flushDataWatching () {
+  let copies = MIP_DATA_CHANGES.slice()
+  MIP_DATA_CHANGES.length = 0
+  let watchKeys = Object.keys(MIP_DATA_WATCHES)
+  for (let i = 0; i < copies.length; i++) {
+    let change = copies[i]
+    let [changeKey, oldValue] = change
+    for (let j = 0; j < watchKeys.length; j++) {
+      let watchKey = watchKeys[j]
+      if (watchKey.indexOf(changeKey) !== 0) {
+        continue
+      }
+      watchKeys.splice(j, 1)
+      let callbacks = MIP_DATA_WATCHES[watchKey]
+      let newVal = getData(watchKey)
+      let oldVal
+      if (watchKey === changeKey) {
+        oldVal = oldValue
+      } else {
+        let restKey = watchKey.slice(changeKey.length + 1)
+        oldVal = getData(restKey, oldValue)
+      }
+      for (let callback of callbacks) {
+        try {
+          callback(newVal, oldVal)
+        } catch (e) {
+          logger.error(e)
+        }
+      }
+    }
+  }
+
+}
+
+function isBindingAttribute (attr) {
+  return attr.slice(0, 2) === 'm-'
+}
+
+function isElementNode (node) {
+  return node.nodeType === 1
+}
+
+
+function getData (key, data = MIP_DATA) {
+  let keys = key.split('.')
+  let result = data
+  for (let k of keys) {
+    if (result == null) {
+      return undefined
+    }
+    result = result[k]
+  }
+  return result
+}
+
+// function getData (key) {
+//   try {
+//     let fn = parse(key, 'MemberExpression')
+//     return fn({data: MIP_DATA})
+//   } catch (e) {
+
+//     return getDataFallback(key, MIP_DATA)
+//   }
+// }
+
+function watchData (target, callback) {
+  MIP_DATA_WATCHES[target] = MIP_DATA_WATCHES[target] || []
+  MIP_DATA_WATCHES[target].push(callback)
+}
+
+function updateIframeData (data, pageId) {
+  let frames = win.document.getElementsByTagName('iframe')
+  for (let i = 0; i < frames.length; i++) {
+    let frame = frames[i]
+    let framePageId = frame.getAttribute('data-page-id')
+    if (frame.classList.contains('mip-page__iframe') &&
+      framePageId &&
+      pageId !== framePageId
+    ) {
+      let subwin = frame.contentWindow
+      subwin && subwin.MIP && subwin.MIP.setData(data)
+    }
+  }
+}
+
+function instance (obj) {
+  return Object.prototype.toString.call(obj)
+}
+
+function merge (oldVal, newVal, replace = true) {
+  let change = []
+
+  let stack = [[oldVal, newVal, '']]
+  while (stack.length) {
+    let [oldNode, newNode, parentKey] = stack.pop()
+    let newKeys = Object.keys(newNode)
+    for (let key of newKeys) {
+      // 对象完全一样就没有 diff 了，
+      // 所以 object 等情况的数据需要 object.assign
+      if (newNode[key] === oldNode[key]) {
+        continue
+      }
+
+      if (parentKey === '') {
+        parentKey = key
+      } else {
+        parentKey = `${parentKey}.${key}`
+      }
+
+      let newInstance = instance(newNode[key])
+
+      if (newInstance !== '[object Object]' ||
+        newInstance != instance(oldNode[key])
+      ) {
+        if (replace || oldNode[key] === undefined) {
+          change.push([parentKey, oldNode[key]])
+          oldNode[key] = newNode[key]
+        }
+        continue
+      }
+
+      stack.push([oldNode[key], newNode[key], parentKey])
+    }
+  }
+  return change
+}
+
+function classify (data) {
+  return Object.keys(data).reduce((result, key) => {
+      if (typeof data[key] === 'function') {
+        throw 'setData method MUST NOT be Function: ${key}'
+      }
+      let realKey
+      if (key[0] === '#') {
+        realKey = key.substr(1)
+        result.global[realKey] = data[key]
+      } else {
+        realKey = key
+      }
+      result.page[realKey] = data[key]
+      return result
+    },
+    {global: {}, page: {}}
+  )
+}
+
 /*
  * Tell if the page is rootPage - crossOrigin page is rootpage too
  * @param {Object} win window
  */
-function isSelfParent (win) {
-  let page = win.MIP.viewer.page
+function isSelfParent () {
+  let page = window.MIP.viewer.page
   return page.isRootPage || /* istanbul ignore next */ page.isCrossOrigin
 }
 /*
  * get the unique global data stored under rootpage
  * @param {Object} win window
  */
-function getGlobalData (win) {
-  return isSelfParent(win) ? win.g : /* istanbul ignore next */ win.parent.g
+function getGlobalData () {
+  return isSelfParent() ? window.g : /* istanbul ignore next */ window.parent.g
 }
 
-export default Bind
+function updateGlobalData (data) {
+  let parentWin
+  let isParent = isSelfParent()
+  if (!isParent) {
+    parentWin = window.parent
+  } else {
+    parentWin = window
+  }
+  let pageId = win.location.href.replace(win.location.hash, '')
+  nextTick(() => {
+    !isParent && parentWin.MIP.setData(data)
+    merge(parentWin.g, data)
+    parentWin.MIP.$update(data, pageId)
+  })
+}
+
+function isValidObject(obj) {
+  return Object.keys(obj).length > 0
+}
+
+// https://github.com/vuejs/vue/blob/dev/src/core/util/next-tick.js
+
+let callbacks = []
+const p = Promise.resolve()
+let pending = false
+
+function flushCallbacks () {
+  pending = false
+  const copies = callbacks.slice()
+  callbacks.length = 0
+  for (let callback of copies) {
+    callback()
+  }
+}
+
+function noop () {}
+
+const timerFunc = () => {
+  p.then(flushCallbacks)
+  platform.isIOS && setTimeout(noop)
+}
+
+function nextTick (callback) {
+  callbacks.push(() => {
+    try {
+      callback()
+    } catch (e) {
+      console.error(e)
+    }
+  })
+  if (!pending) {
+    pending = true
+    timerFunc()
+  }
+}
+
