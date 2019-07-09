@@ -95,5 +95,6 @@ export function handleScrollTo (element, {duration = 0, position = 'top'} = {}) 
       offset = 0
       break
   }
-  scrollTo(element.offsetTop + offset, {duration})
+  const scrollTop = viewport.getScrollTop()
+  scrollTo(element.offsetTop + offset, {duration, scrollTop})
 }

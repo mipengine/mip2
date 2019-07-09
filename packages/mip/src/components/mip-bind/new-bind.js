@@ -7,11 +7,14 @@
  */
 import platform from '../../util/platform'
 import {parse} from '../../util/event-action/parser'
+import {camelize, hyphenate} from '../../util/string'
 
 const MIP_DATA = {}
 const MIP_DATA_PROMISES = []
 const MIP_DATA_WATCHES = {}
 let bindingElements = []
+const vendorNames = ['Webkit', 'Moz', 'ms']
+const emptyStyle = document.createElement('div').style
 
 export default function () {
   // let win = window
@@ -151,6 +154,19 @@ function formatClass (value) {
   return {}
 }
 
+function bindStyle (node, value, oldValue) {
+  let change = Object.assign({}, oldValue)
+  let newValue = formatStyle(value)
+  for (let prop of Object.keys(newValue)) {
+    let val = newValue[prop]
+    if (!change.hasOwnProperty(prop) || change[prop] !== val) {
+      change[prop] = val
+      node.style[prop] = val
+    }
+  }
+  return change
+}
+
 function formatStyle (value) {
   if (Array.isArray(value)) {
     return value.reduce((result, item) => {
@@ -158,20 +174,47 @@ function formatStyle (value) {
     }, {})
   }
   if (instance(value) === '[object Object]') {
-    return value
+    let styles = {}
+    for(let prop of Object.keys(value)) {
+      let normalizedProp = normalize(prop).replace(/[A-Z]/g, match => '-' + match.toLowerCase())
+      if (!normalizedProp) {
+        continue
+      }
+      let val = value[prop]
+      if (Array.isArray(val)) {
+        let div = document.createElement('div')
+        for (let i = 0, len = val.length; i < len; i++) {
+          div.style[normalizedProp] = val[i]
+        }
+        styles[normalizedProp] = div.style[normalizedProp]
+      } else {
+        styles[normalizedProp] = val
+      }
+    }
+    return styles
   }
   return {}
 }
 
-function bindStyle (node, value, oldValue) {
-  let newValue = formatStyle(value)
-  for (let prop of Object.keys(newValue)) {
-    if (oldValue === null
-      || !oldValue.hasOwnProperty(prop)
-      || oldValue[prop] !== newValue[prop])
-    node.style[prop] = newValue[prop]
+/**
+ * autoprefixer
+ * @param {string} prop css prop needed to be prefixed
+ */
+function normalize (prop) {
+  // prop = prop.replace(/-(\w)/g, (_, c) => (c ? c.toUpperCase() : /* istanbul ignore next */ ''))
+  prop = camelize(prop)
+  if (prop !== 'filter' && (prop in emptyStyle)) {
+    return prop
   }
-  return newValue
+
+  const capName = prop.charAt(0).toUpperCase() + prop.slice(1)
+  for (let i = 0; i < vendorNames.length; i++) {
+    const name = vendorNames[i] + capName
+    if (name in emptyStyle) {
+      return name
+    }
+  }
+  return ''
 }
 
 function bindText (node, value, oldValue) {

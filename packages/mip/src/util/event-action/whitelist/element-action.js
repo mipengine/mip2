@@ -158,7 +158,7 @@ export default function elementAction ({object, property, options, argumentText}
   if (argumentText) {
     try {
       let fn = parse(argumentText, 'MIPActionArguments')
-      let args = fn(options)
+      args = fn(options)
       params.args = args[0]
     } catch (e) {}
   }
@@ -167,7 +167,6 @@ export default function elementAction ({object, property, options, argumentText}
     // 这里需要在后期做更好的处理
     if (params.args) {
       params.arg = args.map(a => JSON.stringify(a)).join(',')
-
     } else {
       // 当严格的参数写法解析失败的情况下，就直接将原参数文本返回（fallback）
       params.arg = argumentText
