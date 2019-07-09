@@ -37,7 +37,6 @@ function getAutofocusElement (el) {
  * @param {boolean} opt 是否隐藏
  */
 function toggleHide (el, opt) {
-  /* istanbul ignore if */
   if (opt === undefined) {
     el.classList.toggle('mip-hide')
     return
@@ -105,11 +104,13 @@ function toggleClass ({args, target}) {
     class: className,
     force
   } = args
+  /* istanbul ignore if */
   if (!className || typeof className !== 'string') {
     logger.warn('class 不能为空且必须是 string 类型')
     return
   }
   if (force !== undefined) {
+    /* istanbul ignore if */
     if (typeof force !== 'boolean') {
       logger.warn('force 必须是 boolean 类型')
     }
@@ -141,6 +142,7 @@ export const actions = {
 export default function elementAction ({object, property, options, argumentText}) {
   let element = document.getElementById(object)
 
+  /* istanbul ignore if */
   if (!element) {
     logger.warn(`找不到 id 为 ${object} 的 element`)
     return
@@ -151,11 +153,12 @@ export default function elementAction ({object, property, options, argumentText}
     event: options.event,
     target: element
   }
+  let args
 
   if (argumentText) {
     try {
       let fn = parse(argumentText, 'MIPActionArguments')
-      let args = fn(options)
+      args = fn(options)
       params.args = args[0]
     } catch (e) {}
   }
@@ -164,7 +167,6 @@ export default function elementAction ({object, property, options, argumentText}
     // 这里需要在后期做更好的处理
     if (params.args) {
       params.arg = args.map(a => JSON.stringify(a)).join(',')
-
     } else {
       // 当严格的参数写法解析失败的情况下，就直接将原参数文本返回（fallback）
       params.arg = argumentText

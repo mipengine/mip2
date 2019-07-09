@@ -102,6 +102,7 @@ describe.only('Event Action', () => {
 
       let argument = toggleClass.args[0][0]
       expect(argument.target.id).to.be.equal(target.id)
+      expect(argument.args).to.be.eql({class: 'toggled', force: true})
       expect(target.classList.contains('toggled')).to.be.true
 
       action.execute('eventName', el, {})
@@ -122,6 +123,27 @@ describe.only('Event Action', () => {
       let argument = focus.args[0][0]
       expect(argument.target.id).to.be.equal(target.id)
       expect(document.activeElement === target).to.be.true
+    })
+
+    it('should execute custom element action', () => {
+      let fixed = dom.create('<mip-fixed id="fixed" type="top"></mip-fixed>')
+      document.body.appendChild(fixed)
+      el.setAttribute('on', 'eventName:fixed.close')
+      action.execute('eventName', el, )
+      expect(fixed.style.display).to.be.equal('none')
+      document.body.removeChild(fixed)
+    })
+
+    it('should support event dot syntax', () => {
+      let toggleClass = sinon.spy(elementActions, 'toggleClass')
+      el.setAttribute('on', 'eventName:test-event-action.toggleClass(class=event.className)')
+      action.execute('eventName', el, {className: 'event'})
+      toggleClass.restore()
+
+      let argument = toggleClass.args[0][0]
+      expect(argument.target.id).to.be.equal(target.id)
+      expect(argument.args).to.be.eql({class: 'event'})
+      expect(target.classList.contains('event')).to.be.true
     })
   })
 
@@ -186,7 +208,6 @@ describe.only('Event Action', () => {
       el.setAttribute('on', "eventName:MIP.$set({$setTest: 2})")
       action.execute('eventName', el, {})
       $set.restore()
-      console.log($set.args)
       let argument = $set.args[0][0]
       expect(argument).to.be.eql({$setTest: 2})
       expect(window.m.$setTest).to.be.equal(2)
@@ -315,7 +336,7 @@ describe.only('Event Action', () => {
   //     }])
   // })
 
-  it('error handler', () => {
+  it.skip('error handler', () => {
     el.setAttribute('on', 'click:MIP.anotherMethod({a:1}) ')
     expect(() => action.execute('click', el, {})).to.throw(new Error('不支持 MIP.anotherMethod 全局方法'))
   })
