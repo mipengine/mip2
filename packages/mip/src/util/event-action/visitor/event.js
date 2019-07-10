@@ -16,7 +16,7 @@ const logger = log('Event-Action')
 const visitor = {
   MIPEventHandlers (path) {
     let handlers = []
-    for (let handler of path.node.elements) {
+    for (let handler of path.node.handlers) {
       handlers.push(path.traverse(handler))
     }
 

@@ -6,6 +6,7 @@ import log from '../../log'
 const logger = log('MIP-Action')
 
 function scrollTo ({id, duration, position}) {
+  /* istanbul ignore if */
   if (!id) {
     return
   }
@@ -22,7 +23,7 @@ function navigateTo ({url, target, opener}) {
  * 关闭窗口，如果不能关闭，跳转到目标地址
  */
 function closeOrNavigateTo (args) {
-  const hasParent = window.parent != window
+  const hasParent = window.parent !== window
   // 顶层 window 并且是被打开的 window 才能关闭
   const canBeClosed = window.opener && !hasParent
 

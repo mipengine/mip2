@@ -146,7 +146,7 @@ describe('Test Grammar', function () {
       let walker = new Walker(str)
       let result = fn(walker)
       expect(result.key.raw).to.be.equal('"a"')
-      expect(result.key.type).to.be.equal('String')
+      expect(result.key.type).to.be.equal('Literal')
     })
     it('should be equal', function () {
       let str = '"asdf": 1 + 2'

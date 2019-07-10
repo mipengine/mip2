@@ -9,14 +9,15 @@
 import EventAction from 'src/util/event-action'
 import dom from 'src/util/dom/dom'
 import {actions as elementActions} from 'src/util/event-action/whitelist/element-action'
-import {actions as mipActions} from 'src/util/event-action/whitelist/mip-action'
+import mipAction, {actions as mipActions} from 'src/util/event-action/whitelist/mip-action'
+import viewer from 'src/viewer'
 
-let action = new EventAction()
+const action = new EventAction()
 
-let el = document.createElement('div')
-let target = dom.create("<input autofocus id='test-event-action'>")
+const el = document.createElement('div')
+const target = dom.create("<input autofocus id='test-event-action'>")
 
-describe('Event Action', () => {
+describe.only('Event Action', () => {
 
   before(() => {
     document.body.appendChild(el)
@@ -35,12 +36,6 @@ describe('Event Action', () => {
       el.setAttribute('on', "eventName:test-event-action.scrollTo(duration=200, position='center')")
       action.execute('eventName', el, {})
       scrollTo.restore()
-      // sinon.assert.calledWithMatch(scrollTo, {
-      //   handler: 'scrollTo',
-      //   event: {},
-      //   args: {duration: 200, position: 'center'},
-      //   target
-      // })
       let argument = scrollTo.args[0][0]
       expect(argument.args).to.be.eql({duration: 200, position: 'center'})
       expect(argument.target.id).to.be.equal(target.id)
@@ -152,25 +147,39 @@ describe('Event Action', () => {
     })
 
     it('should handle navigate to', () => {
-      let navigateTo = sinon.stub(mipActions, 'navigateTo')
+      let navigateTo = sinon.stub(viewer, 'navigateTo')
       el.setAttribute('on', "eventName:MIP.navigateTo(url='https://www.baidu.com', target='_blank', opener=true)")
       action.execute('eventName', el, {})
       navigateTo.restore()
-      let argument = navigateTo.args[0][0]
-      expect(argument).to.be.eql({url: 'https://www.baidu.com', target: '_blank', opener: true})
+      let argument = navigateTo.args[0]
+      expect(argument).to.be.eql(['https://www.baidu.com', '_blank', true])
     })
 
     it('should handle close or navigate to', () => {
-      let closeOrNavigateTo = sinon.stub(mipActions, 'closeOrNavigateTo')
+      // close window
+      let parent = sinon.stub(window, 'parent').value(window)
+      let opener = sinon.stub(window, 'opener').value(true)
+      let close = sinon.stub(window, 'close')
+      let closed = sinon.stub(window, 'closed').value(true)
       el.setAttribute('on', "eventName:MIP.closeOrNavigateTo(url='https://www.baidu.com', target='_blank', opener=true)")
       action.execute('eventName', el, {})
-      closeOrNavigateTo.restore()
-      let argument = closeOrNavigateTo.args[0][0]
-      expect(argument).to.be.eql({url: 'https://www.baidu.com', target: '_blank', opener: true})
+      expect(close).to.be.calledOnce
+
+      // navigate to
+      opener.value(false)
+      let navigateTo = sinon.stub(viewer, 'navigateTo')
+      action.execute('eventName', el, {})
+      let argument = navigateTo.args[0]
+      expect(argument).to.be.eql(['https://www.baidu.com', '_blank', true])
+
+      opener.restore()
+      close.restore()
+      closed.restore()
+      parent.restore()
     })
 
     it('should handle go back', () => {
-      let goBack = sinon.stub(mipActions, 'goBack')
+      let goBack = sinon.stub(window.history, 'back')
       el.setAttribute('on', "eventName:MIP.goBack")
       action.execute('eventName', el, {})
       goBack.restore()
@@ -178,7 +187,7 @@ describe('Event Action', () => {
     })
 
     it('should handle print', () => {
-      let print = sinon.stub(mipActions, 'print')
+      let print = sinon.stub(window, 'print')
       el.setAttribute('on', "eventName:MIP.print")
       action.execute('eventName', el, {})
       print.restore()
@@ -206,6 +215,13 @@ describe('Event Action', () => {
       expect(argument).to.be.eql({$setTest: 2})
       expect(window.m.$setTest).to.be.equal(2)
     })
+
+    it('should fallback to new Function', () => {
+      window.m.fnTest = []
+      el.setAttribute('on', "eventName:MIP.setData({fnTest: [1,2,3].map(function (num) {return Math.round(num+1.5)})})")
+      action.execute('eventName', el, {})
+      expect(window.m.fnTest).to.be.eql([3,4,5])
+    })
   })
 
   // it('white list', () => {
@@ -231,48 +247,22 @@ describe('Event Action', () => {
   //   expect(mockElement.arg).to.undefined
   // })
 
-  // it('special target and handler', () => {
-  //   let setData = sinon.spy(MIP, 'setData')
-  //   let $set = sinon.spy(MIP, '$set')
-  //   let ele = document.createElement('div')
-  //   ele.setAttribute('on', 'click:MIP.setData({a:1}) click:MIP.$set({a:parseInt(1,10)}) ')
-  //   let action = new EventAction({
-  //     getTarget () {
-  //       return ele
-  //     }
-  //   })
-  //   action.execute('click', ele, {})
-  //   setData.restore()
-  //   $set.restore()
-  //   let expectedData = {
-  //     a: 1
-  //   }
-  //   sinon.assert.calledWith(setData, expectedData)
-  //   sinon.assert.calledWith($set, expectedData)
-  // })
-
-  // it('should be work without Proxy', () => {
-  //   let OriginalProxy = window.Proxy
-  //   window.Proxy = undefined
-  //   let setData = sinon.spy(MIP, 'setData')
-  //   let $set = sinon.spy(MIP, '$set')
-  //   let ele = document.createElement('div')
-  //   ele.setAttribute('on', 'click:MIP.setData({a:1}) click:MIP.$set({a:parseInt(1,10)}) ')
-  //   let action = new EventAction({
-  //     getTarget () {
-  //       return ele
-  //     }
-  //   })
-  //   action.execute('click', ele, {})
-  //   setData.restore()
-  //   $set.restore()
-  //   let expectedData = {
-  //     a: 1
-  //   }
-  //   sinon.assert.calledWith(setData, expectedData)
-  //   sinon.assert.calledWith($set, expectedData)
-  //   window.Proxy = OriginalProxy
-  // })
+  it('should work without Proxy', () => {
+    let OriginalProxy = window.Proxy
+    window.Proxy = undefined
+    let setData = sinon.spy(MIP, 'setData')
+    let $set = sinon.spy(MIP, '$set')
+    el.setAttribute('on', 'click:MIP.setData({a:1}) click:MIP.$set({a:parseInt(1,10)})')
+    action.execute('click', el, {})
+    setData.restore()
+    $set.restore()
+    let expectedData = {
+      a: 1
+    }
+    sinon.assert.calledWith(setData, expectedData)
+    sinon.assert.calledWith($set, expectedData)
+    window.Proxy = OriginalProxy
+  })
 
   // it('#getTarget', () => {
   //   el.setAttribute('on', 'tap:testid.open')
@@ -330,35 +320,14 @@ describe('Event Action', () => {
   //     }])
   // })
 
-  it('error handler', () => {
-    el.setAttribute('on', 'click:MIP.anotherMethod({a:1}) ')
-    action.execute('click', el, {})
-     // expect(() => action.execute('click', el, {})).to.throw()
+  it('should throw error when execute not-supported action', () => {
+    expect(() => mipAction({property: 'anotherMethod'})).to.throw()
   })
 
-  // it('normal', done => {
-  //   let action = new EventAction({
-  //     getTarget () {
-  //       return mockElement
-  //     }
-  //   })
-
-  //   action.execute('tap', {
-  //     getAttribute () {
-  //       return 'tap:id.abc(123)'
-  //     }
-  //   }, 'event')
-  //   setTimeout(() => {
-  //     expect(mockElement.arg).to.equal('123')
-  //     done()
-  //   })
-  // })
-
-  // it('error check', () => {
-  //   let action = new EventAction()
-  //   expect(() => action.parse('scroll:id.abc(123', 'tab')).to.throw(SyntaxError)
-  //   expect(action.parse(123)).to.eql([])
-  // })
+  it('syntax error check', () => {
+    el.setAttribute('on', 'eventName:id.abc(123', 'tab')
+    expect(() => action.execute('eventName', el, {})).to.throw('parse error')
+  })
 
   it('emtpy target', () => {
     expect(action.execute('tap', null, {})).to.be.undefined
