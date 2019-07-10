@@ -38,6 +38,40 @@ export function throttle (fn, delay) {
 }
 
 /**
+ * Debounce a function.
+ *
+ * @param {Function} fn fn
+ * @param {number} delay The run time interval
+ * @return {Function}
+ */
+export function debounce (fn, delay = 0) {
+  let context
+  let callArgs
+  let timerId
+  let timestamp = 0
+
+  function exec () {
+    timerId = 0
+    const remainTime = delay - (Date.now() - timestamp)
+    if (remainTime > 0) {
+      timerId = setTimeout(exec, remainTime)
+    } else {
+      fn.apply(context, callArgs)
+    }
+  }
+
+  return function(...args) {
+    timestamp = Date.now()
+    context = this
+    callArgs = args
+    
+    if (!timerId) {
+      timerId = setTimeout(exec, delay)
+    }
+  }
+}
+
+/**
  * Get all values of an object.
  *
  * @param {Object} obj obj

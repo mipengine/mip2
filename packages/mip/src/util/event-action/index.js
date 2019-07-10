@@ -5,14 +5,8 @@
 
 /* global MIP */
 
-// import * as fn from './fn'
 import dom from '../dom/dom'
-// import {LAYOUT, getLayoutClass} from '../layout'
-// import log from './log'
-// import {handleScrollTo} from '../page/util/ease-scroll'
 import {parse} from './parser'
-
-// const logger = log('Event-Action')
 
 /**
  * Key list of picking options.
@@ -56,7 +50,6 @@ class EventAction {
         fn({
           event: nativeEvent,
           eventName: type,
-          // MIP: this.globalTargets.MIP,
           target: target
         })
         target = target.parentElement

@@ -79,7 +79,7 @@ lex.set({
 lex.set({
   type: 'MIPEventHandler',
   rule: lex.seq([
-    lex.regexp('^[a-zA-Z][\\w$_]*'),
+    lex.regexp('^[a-zA-Z][\\w$-]*'),
     _,
     lex.text(':'),
     _,

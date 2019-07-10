@@ -3,7 +3,7 @@ import viewer from '../../../viewer'
 import {parse} from '../parser'
 import log from '../../log'
 
-const logger = log('Event-Action')
+const logger = log('MIP-Action')
 
 function scrollTo ({id, duration, position}) {
   if (!id) {

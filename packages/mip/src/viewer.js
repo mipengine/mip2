@@ -191,6 +191,18 @@ let viewer = {
   setupEventAction () {
     let hasTouch = fn.hasTouch()
     let eventAction = this.eventAction = new EventAction()
+
+    const inputDebounced = fn.debounce(function (event) {
+      eventAction.execute('input-debounced', event.target, event)
+    }, 300)
+    const inputThrottle = fn.throttle(function (event) {
+      eventAction.execute('input-throttled', event.target, event)
+    }, 100)
+    let inputHandle = function (event) {
+      inputDebounced(event)
+      inputThrottle(event)
+    }
+
     if (hasTouch) {
       // In mobile phone, bind Gesture-tap which listen to touchstart/touchend event
       this._gesture.on('tap', event => {
@@ -206,6 +218,8 @@ let viewer = {
     document.addEventListener('click', event => {
       eventAction.execute('click', event.target, event)
     }, false)
+
+    document.addEventListener('input', inputHandle, false)
 
     event.delegate(document, 'input', 'change', event => {
       eventAction.execute('change', event.target, event)

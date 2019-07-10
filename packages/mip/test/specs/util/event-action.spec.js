@@ -11,13 +11,6 @@ import dom from 'src/util/dom/dom'
 import {actions as elementActions} from 'src/util/event-action/whitelist/element-action'
 import {actions as mipActions} from 'src/util/event-action/whitelist/mip-action'
 
-let mockElement = {
-  executeEventAction (action) {
-    this.arg = action.arg
-  },
-  tagName: 'mip-test'
-}
-
 let action = new EventAction()
 
 let el = document.createElement('div')
@@ -131,7 +124,8 @@ describe('Event Action', () => {
       el.setAttribute('on', 'eventName:fixed.close')
       action.execute('eventName', el, )
       expect(fixed.style.display).to.be.equal('none')
-      document.body.removeChild(fixed)
+      fixed.remove()
+      // document.body.removeChild(fixed)
     })
 
     it('should support event dot syntax', () => {
@@ -336,9 +330,10 @@ describe('Event Action', () => {
   //     }])
   // })
 
-  it.skip('error handler', () => {
+  it('error handler', () => {
     el.setAttribute('on', 'click:MIP.anotherMethod({a:1}) ')
-    expect(() => action.execute('click', el, {})).to.throw(new Error('不支持 MIP.anotherMethod 全局方法'))
+    action.execute('click', el, {})
+     // expect(() => action.execute('click', el, {})).to.throw()
   })
 
   // it('normal', done => {
@@ -370,78 +365,3 @@ describe('Event Action', () => {
   })
 })
 
-// describe('split', () => {
-//   let action = new EventAction()
-//   it('should split the string by the seperator outside the paired mark', () => {
-//     expect(action.split('a, "b, c", \'d, e\', `f, g`, (h, i), [j, k], {l, m}', ',')).to.deep.equal(['a', '"b, c"', '\'d, e\'', '`f, g`', '(h, i)', '[j, k]', '{l, m}'])
-//     expect(action.split('a, "b, c, {e, f}"', ',')).to.deep.equal(['a', '"b, c, {e, f}"'])
-//     expect(action.split('a, {b, [c, e)},', ',')).to.deep.equal(['a', '{b, [c, e)}', ''])
-//   })
-// })
-
-// describe('handleArguments', () => {
-//   let action = new EventAction()
-//   let event = {
-//     _: 0,
-//     one: 1,
-//     two: 2,
-//     nest: {
-//       three: 3
-//     },
-//     str: 'string',
-//     list: [1, 2, 3],
-//     bool: true
-//   }
-//   it('should get event value', () => {
-//     expect(action.handleArguments('event._', event)).to.equal('0')
-//     expect(action.handleArguments('event.one', event)).to.equal('1')
-//     expect(action.handleArguments(' event.one ', event)).to.equal('1')
-//     expect(action.handleArguments('event.three', event)).to.equal('undefined')
-//     expect(action.handleArguments('event.nest.three', event)).to.equal('3')
-//     expect(action.handleArguments('event.nest.four', event)).to.equal('undefined')
-//     expect(action.handleArguments('event.nest', event)).to.equal('{"three":3}')
-//     expect(action.handleArguments('event.str', event)).to.equal('"string"')
-//     expect(action.handleArguments('event.list', event)).to.equal('[1,2,3]')
-//     expect(action.handleArguments('event.bool', event)).to.equal('true')
-//   })
-
-//   it('should not change if the arg is not exactly matched', () => {
-//     expect(action.handleArguments('event', event)).to.equal('event')
-//     expect(action.handleArguments('event.', event)).to.equal('event.')
-//     expect(action.handleArguments('event..one', event)).to.equal('event..one')
-//     expect(action.handleArguments('event.one*', event)).to.equal('event.one*')
-//     expect(action.handleArguments('event.two-3', event)).to.equal('event.two-3')
-//     expect(action.handleArguments('event.1a', event)).to.equal('event.1a')
-//     expect(action.handleArguments('"event.one"', event)).to.equal('"event.one"')
-//     expect(action.handleArguments('\'event.one\'', event)).to.equal('\'event.one\'')
-//     expect(action.handleArguments('`event.one`', event)).to.equal('`event.one`')
-//     expect(action.handleArguments('[event.one]', event)).to.equal('[event.one]')
-//     expect(action.handleArguments('(event.one)', event)).to.equal('(event.one)')
-//     expect(action.handleArguments('1 event.two', event)).to.equal('1 event.two')
-//     expect(action.handleArguments('{num: event.one}', event)).to.equal('{num: event.one}')
-//     expect(action.handleArguments('{ event.one : event.one }', event)).to.equal('{ event.one : event.one }')
-//   })
-
-//   it('should replace the right part of args if having comma', () => {
-//     expect(action.handleArguments('event.one, test, 1, event.two', event)).to.equal('1,test,1,2')
-//     expect(action.handleArguments('"hello, event.one"', event)).to.equal('"hello, event.one"')
-//     expect(action.handleArguments('[1, event.two, event.bool], event.one', event)).to.equal('[1, event.two, event.bool],1')
-//     expect(action.handleArguments('{num: event.one, str: event.str}', event)).to.equal('{num: event.one, str: event.str}')
-//     expect(action.handleArguments('event.one, {num1: event.one}, event.one+1', event)).to.equal('1,{num1: event.one},event.one+1')
-//   })
-// })
-
-// describe('convertToString', () => {
-//   let action = new EventAction()
-//   it('should convert to string', () => {
-//     expect(action.convertToString(1)).to.be.equal('1')
-//     expect(action.convertToString(undefined)).to.be.equal('undefined')
-//     expect(action.convertToString(null)).to.be.equal('null')
-//     expect(action.convertToString('test')).to.be.equal('"test"')
-//     expect(action.convertToString({'a': 1})).to.be.equal('{"a":1}')
-//     expect(action.convertToString([1, 2, 3])).to.be.equal('[1,2,3]')
-//     expect(action.convertToString(true)).to.be.equal('true')
-//   })
-// })
-
-/* eslint-enable no-unused-expressions */
