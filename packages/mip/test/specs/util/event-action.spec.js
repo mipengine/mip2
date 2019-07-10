@@ -17,7 +17,7 @@ const action = new EventAction()
 const el = document.createElement('div')
 const target = dom.create("<input autofocus id='test-event-action'>")
 
-describe.only('Event Action', () => {
+describe('Event Action', () => {
 
   before(() => {
     document.body.appendChild(el)
