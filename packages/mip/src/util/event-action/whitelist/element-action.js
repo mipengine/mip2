@@ -2,7 +2,7 @@ import {handleScrollTo} from '../../../page/util/ease-scroll'
 import {LAYOUT, getLayoutClass} from '../../../layout'
 import {parse} from '../parser'
 import log from '../../log'
-import dom from '../../dom/dom'
+import {isMIPElement} from '../../dom/dom'
 const logger = log('Element-Action')
 
 // function argFormat (args, formatter) {
@@ -163,7 +163,7 @@ export default function elementAction ({object, property, options, argumentText}
     } catch (e) {}
   }
 
-  if (dom.isMIPElement(element)) {
+  if (isMIPElement(element)) {
     // 这里需要在后期做更好的处理
     if (params.args) {
       params.arg = args.map(a => JSON.stringify(a)).join(',')

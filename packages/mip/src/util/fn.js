@@ -99,6 +99,15 @@ export function isPlainObject (obj) {
   return !!obj && typeof obj === 'object' && Object.getPrototypeOf(obj) === Object.prototype
 }
 
+
+export function isEmptyObject (obj) {
+  return Object.keys(obj).length === 0
+}
+
+export function getType (obj) {
+  return Object.prototype.toString.call(obj)
+}
+
 /* eslint-disable fecs-camelcase */
 /**
  * Extend an object to another object.
@@ -173,7 +182,8 @@ export function pick (obj) {
  * @return {boolean} whehter varible is string
  */
 export function isString (string) {
-  return Object.prototype.toString.call(string) === '[object String]'
+  return getType(string) === '[object String]'
+  // return Object.prototype.toString.call(string) === '[object String]'
 }
 
 /**
@@ -248,3 +258,28 @@ export const memoize = (fn) => {
     return cache[args[0]] || (cache[args[0]] = fn.apply(this, args))
   }
 }
+
+export function noop () {}
+
+export function classify (source, callback) {
+  let result = {}
+  for (let key of Object.keys(source)) {
+    result[callback(key, source[key])] = source[key]
+  }
+  return result
+}
+
+export function traverse (source, callback) {
+  let stack = [source]
+  while (stack.length) {
+    let node = stack.pop()
+    let children = callback(node)
+    if (Array.isArray(children)) {
+      for (let child of children) {
+        stack.push(child)
+      }
+    }
+  }
+}
+
+
