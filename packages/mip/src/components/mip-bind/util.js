@@ -1,5 +1,11 @@
+/**
+ * @file util.js
+ * @author clark-t (clarktanglei@163.com)
+ */
 
-function merge (oldVal, newVal, replace = true) {
+import {traverse, getType} from '../../util/fn'
+
+export function merge (oldVal, newVal, replace = true) {
   let change = []
 
   let root = { oldVal, newVal, key: '' }
@@ -16,7 +22,7 @@ function merge (oldVal, newVal, replace = true) {
         continue
       }
 
-      key === '' ? k : `${key}.${k}`
+      key = key === '' ? k : `${key}.${k}`
 
       let newType = getType(newVal)
       if (newType === '[object Object]' && newType === getType(oldVal)) {
@@ -25,7 +31,7 @@ function merge (oldVal, newVal, replace = true) {
       }
 
       if (replace || oldVal === undefined) {
-        change.push({ expr: key, value: oldVal})
+        change.push({ expr: key, value: oldVal })
         oldObj[k] = newObj[k]
       }
     }
@@ -36,9 +42,23 @@ function merge (oldVal, newVal, replace = true) {
   return change
 }
 
-
-function isBindingAttribute (attr) {
-  return attr.slice(0, 2) === 'm-'
+export function createSetDataObject (keys, value) {
+  let obj = value
+  for (let i = keys.length - 1; i > -1; i--) {
+    obj = {[keys[i]]: obj}
+  }
+  return obj
 }
 
+export function getProperty (data, expr) {
+  let properties = expr.split('.')
+  let result = data
+  for (let property of properties) {
+    if (result == null) {
+      return undefined
+    }
+    result = result[property]
+  }
+  return result
+}
 

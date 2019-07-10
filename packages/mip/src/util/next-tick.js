@@ -25,7 +25,7 @@ function timerFunc () {
   platform.isIOS && setTimeout(noop)
 }
 
-export default function nextTick (callback) {
+export function nextTick (callback) {
   callbacks.push(() => {
     try {
       callback()
@@ -38,4 +38,6 @@ export default function nextTick (callback) {
     timerFunc()
   }
 }
+
+// export default nextTick
 

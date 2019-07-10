@@ -1,7 +1,52 @@
+/**
+ * @file global-data.js
+ * @author clark-t (clarktanglei@163.com)
+ */
 
+import {isEmptyObject} from '../../util/fn'
+import {nextTick} from '../../util/next-tick'
+import {merge} from './util'
 
-export function classifyGlobalData (data) {
-  return Object.keys(data).reduce((result, key) => {
+export default class GlobalData {
+  constructor () {
+    let page = window.MIP.viewer.page
+    this.isRoot = page.isRootPage || /* istanbul ignore next */ page.isCrossOrigin
+    this.rootWin = this.isRoot ? window : window.parent
+    if (this.isRoot) {
+      window.g = {}
+    }
+    this.data = this.rootWin.g
+  }
+
+  update (data) {
+    if (isEmptyObject(data)) {
+      return
+    }
+    let pageId = location.href.replace(location.hash, '')
+    nextTick(() => {
+      !this.isRoot && this.rootWin.MIP.setData(data)
+      merge(this.data, data)
+      this.broadcast(data, pageId)
+    })
+  }
+
+  broadcast (data) {
+    let frames = this.rootWin.document.getElementsByTagName('iframe')
+    for (let i = 0; i < frames.length; i++) {
+      let frame = frames[i]
+      let framePageId = frame.getAttribute('data-page-id')
+      if (frame.classList.contains('mip-page__iframe') &&
+        framePageId &&
+        pageId !== framePageId
+      ) {
+        let subwin = frame.contentWindow
+        subwin && subwin.MIP && subwin.MIP.setData(data)
+      }
+    }
+  }
+
+  classify (data) {
+    return Object.keys(data).reduce((result, key) => {
       if (typeof data[key] === 'function') {
         throw 'setData method MUST NOT be Function: ${key}'
       }
@@ -15,66 +60,8 @@ export function classifyGlobalData (data) {
       result.page[realKey] = data[key]
       return result
     },
-    { global: {}, page: {} }
-  )
-}
-
-/*
- * Tell if the page is rootPage - crossOrigin page is rootpage too
- * @param {Object} win window
- */
-function isRootPage () {
-  let page = window.MIP.viewer.page
-  return page.isRootPage || /* istanbul ignore next */ page.isCrossOrigin
-}
-/*
- * get the unique global data stored under rootpage
- * @param {Object} win window
- */
-function getGlobalData () {
-  return getRootWindow().g
-  // return isSelfParent() ? window.g : /* istanbul ignore next */ window.parent.g
-}
-
-function getRootWindow () {
-  return isRootPage() ? window : window.parent
-}
-
-export function initGlobalData () {
-  if (isRootPage()) {
-    window.g = {}
-  }
-}
-
-eport function updateGlobalData (data) {
-  if (isEmptyObject(data)) {
-    return
-  }
-
-  let isRoot = isRootPage()
-  let rootWin = getRootWindow()
-
-  let pageId = window.location.href.replace(window.location.hash, '')
-  nextTick(() => {
-    !isRoot && rootWin.MIP.setData(data)
-    merge(rootWin.g, data)
-    rootWin.MIP.$update(data, pageId)
-  })
-}
-
-
-function updateIframeData (data, pageId) {
-  let frames = win.document.getElementsByTagName('iframe')
-  for (let i = 0; i < frames.length; i++) {
-    let frame = frames[i]
-    let framePageId = frame.getAttribute('data-page-id')
-    if (frame.classList.contains('mip-page__iframe') &&
-      framePageId &&
-      pageId !== framePageId
-    ) {
-      let subwin = frame.contentWindow
-      subwin && subwin.MIP && subwin.MIP.setData(data)
-    }
+      { global: {}, page: {} }
+    )
   }
 }
 
