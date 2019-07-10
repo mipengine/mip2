@@ -6,13 +6,10 @@ import compValidator from 'mip-component-validator'
 
 const pageValidator = new Validator()
 
-interface Result {
-  type?: string;
-  errors?: any[];
-  status?: number;
-}
+type Report = compValidator.Report
+type WarnOrError = compValidator.WarnOrError
 
-function report (data: Result, filePath: string) {
+function report (data: Report, filePath: string) {
   switch (data.type) {
     case 'page':
       logger.info('页面校验结果：')
@@ -29,8 +26,8 @@ function report (data: Result, filePath: string) {
     return
   }
 
-  let currentFile = ''
-  data.errors.map((error: any) => {
+  let currentFile: string | undefined = ''
+  data.errors.map((error: WarnOrError) => {
     if (currentFile !== error.file) {
       currentFile = error.file
       logger.info('validate error', chalk.green(error.file || filePath))
@@ -50,7 +47,7 @@ export default async function (config: Params) {
     logger.error('path not exist')
   }
 
-  let result: Result = {}
+  let result: Report = {}
   if (config.options.page) {
     let content = await fs.readFile(filePath, 'utf-8')
     result.type = 'page'

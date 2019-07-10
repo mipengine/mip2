@@ -4,6 +4,8 @@ import merge from 'deepmerge'
 import workboxBuild from 'workbox-build'
 import { logger, Params } from 'mip-cli-utils'
 
+type SWResult = workboxBuild.SWResult
+
 export default function (config: Params) {
   let configPath = path.resolve(process.cwd(), config.options.config as string || 'mip.config.js')
 
@@ -63,7 +65,7 @@ export default function (config: Params) {
   const workboxConf = merge(defaultConf, swConf)
 
   const buildSW = () => {
-    return workboxBuild.generateSWString(workboxConf).then(({ swString }: any) => {
+    return workboxBuild.generateSWString(workboxConf).then(({ swString }: SWResult) => {
       // set modulePathPrefix and inject into sw.js
       const setConfClause = `workbox.setConfig({modulePathPrefix: "${workboxCDN}"});`
       const outputSWString = swString.replace(/importScripts(.|\n)+workbox-sw\.js"\n\);/, `$&\n${setConfClause}`)
