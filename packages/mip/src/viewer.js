@@ -193,9 +193,11 @@ let viewer = {
     let eventAction = this.eventAction = new EventAction()
 
     const inputDebounced = fn.debounce(function (event) {
+      event.value = event.target.value
       eventAction.execute('input-debounced', event.target, event)
     }, 300)
     const inputThrottle = fn.throttle(function (event) {
+      event.value = event.target.value
       eventAction.execute('input-throttled', event.target, event)
     }, 100)
     let inputHandle = function (event) {
@@ -222,6 +224,7 @@ let viewer = {
     document.addEventListener('input', inputHandle, false)
 
     event.delegate(document, 'input', 'change', event => {
+      event.value = event.target.value
       eventAction.execute('change', event.target, event)
     })
   },

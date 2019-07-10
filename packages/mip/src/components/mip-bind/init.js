@@ -7,7 +7,7 @@
  */
 
 import {isElementNode} from '../../util/dom/dom'
-import {traverse} from '../../util/fn'
+import {traverse, throttle} from '../../util/fn'
 import {
   createSetDataObject
 } from './util'
@@ -91,10 +91,11 @@ function addInputListener (nodeInfos, store) {
     }
 
     const properties = expression.split('.')
-    node.addEventListener('input', e => {
+    const inputThrottle = throttle(function (e) {
       let obj = createSetDataObject(properties, e.target.value)
       store.set(obj)
-    })
+    }, 100)
+    node.addEventListener('input', inputThrottle)
   }
 }
 

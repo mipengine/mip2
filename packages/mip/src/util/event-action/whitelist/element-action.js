@@ -34,14 +34,17 @@ function getAutofocusElement (el) {
  * 显示/隐藏元素
  *
  * @param {HTMLElement} el 目标元素
- * @param {boolean} opt 是否隐藏
+ * @param {boolean} opt 是否显示
  */
-function toggleHide (el, opt) {
+function toggle (el, opt) {
   if (opt === undefined) {
-    el.classList.toggle('mip-hide')
-    return
+    opt = el.hasAttribute('hidden')
   }
-  el.classList.toggle('mip-hide', opt)
+  if (opt) {
+    el.removeAttribute('hidden')
+  } else {
+    el.setAttribute('hidden', '')
+  }
 }
 
 /**
@@ -51,16 +54,18 @@ function toggleHide (el, opt) {
  * @param {HTMLElement} target 目标元素
  */
 function show ({target}) {
-  /* istanbul ignore if */
   if (target.classList.contains(getLayoutClass(LAYOUT.NODISPLAY))) {
-    logger.warn('layout=nodisplay 的元素不能被动态显示')
+    logger.warn('layout=nodisplay 的元素不能被动态 show')
+    return
+  }
+  if (!target.hasAttribute('hidden') && getComputedStyle(target).display === 'none') {
+    logger.warn('不是通过 hidden 属性隐藏的元素不能被动态 show')
     return
   }
   const autofocusEl = getAutofocusElement(target)
-  toggleHide(target, false)
+  toggle(target, true)
   if (autofocusEl) {
     focus({target: autofocusEl})
-
   }
 }
 
@@ -70,7 +75,7 @@ function show ({target}) {
  * @param {HTMLElement} target 目标元素
  */
 function hide ({target}) {
-  toggleHide(target, true)
+  toggle(target, false)
 }
 
 /**
@@ -78,8 +83,12 @@ function hide ({target}) {
  *
  * @param {HTMLElement} target 目标元素
  */
-function toggle ({target}) {
-  toggleHide(target)
+function toggleVisibility ({target}) {
+  if (target.hasAttribute('hidden')) {
+    show({target})
+  } else {
+    hide({target})
+  }
 }
 
 /**
@@ -133,10 +142,10 @@ function focus ({target}) {
 export const actions = {
   show,
   hide,
-  toggle,
+  focus,
   scrollTo,
   toggleClass,
-  focus
+  toggleVisibility
 }
 
 export default function elementAction ({object, property, options, argumentText}) {

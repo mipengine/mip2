@@ -17,7 +17,7 @@ const action = new EventAction()
 const el = document.createElement('div')
 const target = dom.create("<input autofocus id='test-event-action'>")
 
-describe('Event Action', () => {
+describe.only('Event Action', () => {
 
   before(() => {
     document.body.appendChild(el)
@@ -44,41 +44,49 @@ describe('Event Action', () => {
     it('should handle hide', () => {
       let hide = sinon.spy(elementActions, 'hide')
       el.setAttribute('on', "eventName:test-event-action.hide")
-      target.classList.remove('mip-hide')
       action.execute('eventName', el, {})
       hide.restore()
 
       let argument = hide.args[0][0]
       expect(argument.target.id).to.be.equal(target.id)
-      expect(target.classList.contains('mip-hide')).to.be.true
-      target.classList.remove('mip-hide')
+      expect(target.hasAttribute('hidden')).to.be.true
+      target.removeAttribute('hidden')
     })
 
     it('should handle show', () => {
       let show = sinon.spy(elementActions, 'show')
       el.setAttribute('on', "eventName:test-event-action.show")
-      target.classList.add('mip-hide')
+      target.setAttribute('hidden', '')
       action.execute('eventName', el, {})
       show.restore()
 
       let argument = show.args[0][0]
       expect(argument.target.id).to.be.equal(target.id)
-      expect(target.classList.contains('mip-hide')).to.be.false
+      expect(target.hasAttribute('hidden')).to.be.false
       expect(document.activeElement === target).to.be.true
+
+      // can not show if layout=nodisplay, or display=none without hidden attr
+      target.style.display = 'none'
+      action.execute('eventName', el, {})
+      expect(target.style.display).to.be.equal('none')
+      target.setAttribute('layout', 'nodisplay')
+      action.execute('eventName', el, {})
+      expect(target.style.display).to.be.equal('none')
+      target.style.display = ''
     })
 
-    it('should handle toggle', () => {
-      let toggle = sinon.spy(elementActions, 'toggle')
-      el.setAttribute('on', "eventName:test-event-action.toggle")
+    it('should handle toggleVisibility', () => {
+      let toggle = sinon.spy(elementActions, 'toggleVisibility')
+      el.setAttribute('on', "eventName:test-event-action.toggleVisibility")
       action.execute('eventName', el, {})
       toggle.restore()
 
       let argument = toggle.args[0][0]
       expect(argument.target.id).to.be.equal(target.id)
-      expect(target.classList.contains('mip-hide')).to.be.true
+      expect(target.hasAttribute('hidden')).to.be.true
 
       action.execute('eventName', el, {})
-      expect(target.classList.contains('mip-hide')).to.be.false
+      expect(target.hasAttribute('hidden')).to.be.false
       expect(document.activeElement === target).to.be.true
     })
 
