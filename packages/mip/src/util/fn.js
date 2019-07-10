@@ -64,7 +64,7 @@ export function debounce (fn, delay = 0) {
     timestamp = Date.now()
     context = this
     callArgs = args
-    
+
     if (!timerId) {
       timerId = setTimeout(exec, delay)
     }
@@ -280,6 +280,37 @@ export function traverse (source, callback) {
       }
     }
   }
+}
+
+export function isPlainObjectEqual (obj1, obj2) {
+  if (obj1 === obj2) {
+    return true
+  }
+  let keys1 = Object.keys(obj1)
+  let keys2 = Object.keys(obj2)
+  if (keys1.length !== keys2.length) {
+    return false
+  }
+  for (let key of keys1) {
+    if (obj1[key] !== obj2[key]) {
+      return false
+    }
+  }
+  return true
+}
+
+export function complement (obj, excludes) {
+  if (!excludes.length) {
+    return obj
+  }
+
+  let result = {}
+  for (let key of Object.keys(obj)) {
+    if (excludes.indexOf(key) === -1) {
+      result[key] = obj[key]
+    }
+  }
+  return result
 }
 
 

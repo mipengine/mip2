@@ -1,66 +1,57 @@
+/**
+ * @file binding-style.js
+ * @author clark-t (clarktanglei@163.com)
+ */
+import {
+  prefixProperty,
+  styleToObject,
+  objectToStyle
+} from '../../util/dom/css'
 
+import {
+  isPlainObjectEqual,
+  complement,
+  getType
+} from '../../util/fn'
 
-const vendorNames = ['Webkit', 'Moz', 'ms']
-const emptyStyle = document.createElement('div').style
+export const attr = 'm-bind:style'
 
-
-function bindStyle (node, key, value, oldValue) {
-  let newValue = formatStyle(value)
-  for (let prop of Object.keys(newValue)) {
-    let val = newValue[prop]
-    if (!oldValue || oldValue[prop] !== val) {
-      node.style[prop] = val
-    }
+export function bindingStyle (node, key, val, oldVal) {
+  oldVal = oldVal || {}
+  let newVal = formatStyle(val)
+  if (isPlainObjectEqual(oldVal, newVal)) {
+    return newVal
   }
-  return newValue
+  let current = styleToObject(node.getAttribute('style'))
+  current = complement(current, Object.keys(oldVal))
+  Object.assign(current, newVal)
+  node.setAttribute('style', objectToStyle(current))
+
+  return newVal
 }
 
 function formatStyle (value) {
+  if (value == null) {
+    return {}
+  }
+
   if (Array.isArray(value)) {
     return value.reduce((result, item) => {
       return Object.assign(result, formatStyle(item))
     }, {})
   }
-  if (instance(value) === '[object Object]') {
-    let styles = {}
-    for(let prop of Object.keys(value)) {
-      let normalizedProp = normalize(prop).replace(/[A-Z]/g, match => '-' + match.toLowerCase())
-      if (!normalizedProp) {
-        continue
-      }
-      let val = value[prop]
-      if (Array.isArray(val)) {
-        let div = document.createElement('div')
-        for (let i = 0, len = val.length; i < len; i++) {
-          div.style[normalizedProp] = val[i]
-        }
-        styles[normalizedProp] = div.style[normalizedProp]
-      } else {
-        styles[normalizedProp] = val
-      }
-    }
-    return styles
-  }
-  return {}
-}
 
-/**
- * autoprefixer
- * @param {string} prop css prop needed to be prefixed
- */
-function normalize (prop) {
-  prop = camelize(prop)
-  if (prop !== 'filter' && (prop in emptyStyle)) {
-    return prop
+  if (getType(value) !== '[object Object]') {
+    return {}
   }
 
-  const capName = prop.charAt(0).toUpperCase() + prop.slice(1)
-  for (let i = 0; i < vendorNames.length; i++) {
-    const name = vendorNames[i] + capName
-    if (name in emptyStyle) {
-      return name
+  let styles = {}
+  for(let prop of Object.keys(value)) {
+    let prefixProp = prefixProperty(prop)
+    if (prefixProp) {
+      styles[prefixProp] = value[prop]
     }
   }
-  return ''
+  return styles
 }
 

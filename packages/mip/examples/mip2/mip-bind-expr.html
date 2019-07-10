@@ -64,39 +64,67 @@
   <mip-data>
     <script type="application/json">
       {
-        "madafaka": 10086,
+        "flag": 10086,
         "complex": {
           "multi": "abcdefghij"
         },
         "arr": [
           10086, 2, 3, 4, 5
-        ]
+        ],
+        "styles": [
+          {
+             "fontSize": "16px"
+          },
+          {
+            "color": "#f00"
+          },
+          {
+            "display": ["-webkit-box", "-ms-flexbox", "flex"]
+          },
+          {
+            "background": "#00f"
+          }
+        ],
+        "style": {
+          "fontSize": "16px",
+          "color": "#f00",
+          "display": ["-webkit-box", "-ms-flexbox", "flex"],
+          "background": "#00f"
+        },
+        "colors": [
+          "#f00",
+          "#0f0",
+          "#00f",
+          "#f0f",
+          "#0ff"
+        ],
+        "styleIndex": 0
       }
     </script>
   </mip-data>
   <div>
-    <p m-text="madafaka"></p>
+    <p m-text="flag"></p>
     <p m-text="arr.join(' ')"></p>
     <!-- <button -->
     <!--       on="click:MIP.setData({ -->
-    <!--         madafaka: m.madafaka > 0 ? &#45;1 : 1, -->
+    <!--         madafaka: m.flag > 0 ? &#45;1 : 1, -->
     <!--         arr: m.arr.slice().sort(function (a, b) { -->
-    <!--           return m.madafaka > 0 ? (a &#45; b) : (b &#45; a) -->
+    <!--           return m.flag > 0 ? (a &#45; b) : (b &#45; a) -->
     <!--         }) -->
     <!--       })" -->
     <!-- >click me</button> -->
         <button
           on="click:MIP.setData({
-            madafaka: m.madafaka > 0 ? -1 : 1,
-            arr: m.arr.slice().sort((a, b) => m.madafaka > 0 ? (a - b) : (b - a))
+            flag: m.flag > 0 ? -1 : 1,
+            arr: m.arr.slice().sort((a, b) => m.flag > 0 ? (a - b) : (b - a))
           })"
     >click me</button>
 
     <button
       on="click:MIP.setData({
-          'madafaka': madafaka > 0 ? -1 : 1
+          'flag': flag > 0 ? -1 : 1
       })"
-      >change madafaka</button>
+      >change flag</button>
     <button
       on="click:MIP.setData({
               test: {
@@ -126,18 +154,36 @@
         }
       })"
     >test mip-bind class</button>
+    <button
+      on="
+      click:
+        MIP.setData({
+          styleIndex: Math.floor(Math.random() * keys(style).length)
+        }),
+        MIP.setData({
+          styleObject: null
+        }),
+        MIP.setData({
+          styleObject: styles[styleIndex]
+        })
+      "
+    >test mip-bind style</button>
     <div>
       <p>test mip-bind class/style</p>
       <span
         class="common-span"
         m-bind:class="className.spanClass"
       >test mip-bind class</span>
-      <span>test mip-bind style</span>
+      <span
+        style="border: 1px solid #dcdcdc"
+        m-bind:style="styleObject"
+        m-text="'current style index is:' + styleIndex"
+      ></span>
     </div>
   </div>
   <mip-script>
-    MIP.watch('madafaka', function (newVal, oldVal) {
-      console.log('mdafaka change from [' + oldVal + '] to [' + newVal + ']')
+    MIP.watch('flag', function (newVal, oldVal) {
+      console.log('flag change from [' + oldVal + '] to [' + newVal + ']')
     })
 
     MIP.watch('test.for.watch', function (newVal, oldVal) {

@@ -2,7 +2,7 @@
  * @file css
  * @author sekiyika(pengxing@baidu.com)
  */
-import {camelize, hyphenate} from '../string'
+import {camelize, kebabize} from '../string'
 
 let camelReg = /(?:(^-)|-)+(.)?/g
 
@@ -24,7 +24,7 @@ let prefixCache = {}
  * @param {string} property A property to be checked
  * @return {string} the property or its prefixed version
  */
-function prefixProperty (property) {
+export function prefixProperty (property) {
   property = property.replace(camelReg, (match, first, char) => (first ? char : char.toUpperCase()))
 
   if (prefixCache[property]) {
@@ -149,7 +149,7 @@ export function styleToObject (str) {
 
   let obj = {}
   for (let style of styles) {
-    let [attr, value] = style.split(/\s*:\s/)
+    let [attr, value] = style.split(/\s*:\s*/)
     obj[camelize(attr)] = value
   }
   return obj
@@ -157,7 +157,15 @@ export function styleToObject (str) {
 
 export function objectToStyle (obj) {
   return Object.keys(obj)
-    .map(key => `${hyphenate(key)}:${obj[key]}`)
+    .map(key => stringifyStyle(kebabize(key), obj[key]))
     .join(';')
 }
+
+function stringifyStyle (key, value) {
+  if (Array.isArray(value)) {
+    return value.map(val => `${key}:${val}`).join(';')
+  }
+  return `${key}:${value}`
+}
+
 

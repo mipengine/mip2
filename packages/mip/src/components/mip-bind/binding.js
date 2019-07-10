@@ -8,16 +8,13 @@
  */
 import { parse } from '../../util/event-action/parser'
 import { attr as classAttr, bindingClass } from './binding-class'
-// import { attr as styleAttr, bindingStyle } from './binding-style'
+import { attr as styleAttr, bindingStyle } from './binding-style'
 import { attr as textAttr, bindingText } from './binding-text'
 import { isBindingAttr as isDefaultBindingAttr, bindingAttr } from './binding-attr'
 
-// import log from '../../util/log'
-
-// const logger = log('MIP-Bind')
 const bindings = {
   [classAttr]: bindingClass,
-  // [styleAttr]: bindingStyle,
+  [styleAttr]: bindingStyle,
   [textAttr]: bindingText
 }
 

@@ -34,6 +34,13 @@ function formatClass (value) {
     return {}
   }
 
+  if (Array.isArray(value)) {
+    return value.reduce(
+      (result, item) => Object.assign(result, formatClass(item)),
+      {}
+    )
+  }
+
   if (typeof value === 'string') {
     return value.trim()
       .split(/\s+/)
@@ -41,13 +48,6 @@ function formatClass (value) {
         result[className] = true
         return result
       }, {})
-  }
-
-  if (Array.isArray(value)) {
-    return value.reduce(
-      (result, item) => Object.assign(result, formatClass(item)),
-      {}
-    )
   }
 
   if (getType(value) === '[object Object]') {

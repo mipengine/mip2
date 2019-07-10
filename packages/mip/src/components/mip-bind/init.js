@@ -80,7 +80,6 @@ function addInputListener (nodeInfos, store) {
 
   for (let info of nodeInfos) {
     let {node, attrs} = info
-console.log(node.tagName)
     if (!FORM_ELEMENTS.includes(node.tagName)) {
       continue
     }
@@ -92,7 +91,6 @@ console.log(node.tagName)
     }
 
     const properties = expression.split('.')
-console.log('---- in here --- ?')
     node.addEventListener('input', e => {
       let obj = createSetDataObject(properties, e.target.value)
       store.set(obj)
