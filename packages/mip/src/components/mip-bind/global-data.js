@@ -30,7 +30,7 @@ export default class GlobalData {
     })
   }
 
-  broadcast (data) {
+  broadcast (data, pageId) {
     let frames = this.rootWin.document.getElementsByTagName('iframe')
     for (let i = 0; i < frames.length; i++) {
       let frame = frames[i]

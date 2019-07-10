@@ -8,7 +8,7 @@
 
 import MipData from 'src/components/mip-bind/mip-data'
 
-describe('mip-bind', function () {
+describe.skip('mip-bind', function () {
   let eleText
   let eleBind
   let eleObject
@@ -23,7 +23,7 @@ describe('mip-bind', function () {
     // window.m = null
   })
 
-  describe('init data', function () {
+  describe.only('init data', function () {
     let dumbDiv
     let eleFalse
     let eleElse
@@ -75,7 +75,13 @@ describe('mip-bind', function () {
       })
     })
 
-    it('should set data initially', function () {
+    it.only('should set data initially', function () {
+      // return Promise.resolve()
+      // // consume one microtask
+      //   .then(() => {})
+      // .then(() => {
+
+      // })
       expect(window.m).to.eql({
         global: {
           data: {
@@ -92,21 +98,27 @@ describe('mip-bind', function () {
         list: ['a', 'b', {item: 2}],
         id: 1
       })
-      expect(window.g).to.eql({
-        global: {
-          data: {
-            name: 'level-1',
-            age: 1
-          },
-          isGlobal: true
-        },
-        title: 'test case'
-      })
+
       expect(MIP.getData('global.data.name')).to.equal('level-1')
-      expect(eleText.textContent).to.equal('广州')
-      expect(eleBind.getAttribute('data-active')).to.equal('true')
-      expect(eleObject.getAttribute('data')).to.equal('{"name":"level-1","age":1}')
-      expect(eleElse.getAttribute('href')).to.equal('./content.html?id=1&name=user#hash')
+      return Promise.resolve()
+        .then(() => {
+          expect(window.g).to.eql({
+            global: {
+              data: {
+                name: 'level-1',
+                age: 1
+              },
+              isGlobal: true
+            },
+            title: 'test case'
+          })
+
+          expect(eleText.textContent).to.equal('广州')
+          expect(eleBind.getAttribute('data-active')).to.equal('true')
+          expect(eleObject.getAttribute('data')).to.equal('{"name":"level-1","age":1}')
+          expect(eleElse.getAttribute('href')).to.equal('./content.html?id=1&name=user#hash')
+
+        })
     })
 
     it('should bind data with delayed "false"', function () {

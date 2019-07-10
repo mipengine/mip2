@@ -17,7 +17,7 @@ describe('mip-event-handler', () => {
         mn)`
         let ast = parser.parse(str, 'MIPEventHandlers')
         expect(ast.type).to.be.equal('MIPEventHandler')
-        expect(ast.actions[0].type).to.be.equal('CallExpression')
+        expect(ast.actions[0].type).to.be.equal('MIPAction')
         // console.log(JSON.stringify(ast, null, 2))
       })
 
@@ -45,7 +45,7 @@ describe('mip-event-handler', () => {
         `
         let ast = parser.parse(str, 'MIPEventHandlers')
         expect(ast.actions.length).to.be.equal(2)
-        expect(ast.actions[1].callee.object.name).to.be.equal('this-is-id')
+        expect(ast.actions[1].object).to.be.equal('this-is-id')
       })
     })
   })

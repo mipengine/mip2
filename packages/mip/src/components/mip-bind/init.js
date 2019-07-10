@@ -37,7 +37,6 @@ export default function () {
   // @TODO 新增对节点元素的监听
   addInputListener(bindings, store)
   addBindingListener(bindings, store)
-
   MIP.setData(store.global.data)
 }
 

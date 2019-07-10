@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP Bind</title>
+  <link rel="canonical">
+  <!-- <link rel="stylesheet" href="../../dist/mip.css"> -->
+    <link rel="stylesheet" href="https://c.mipcdn.com/static/v2/mip.css">
+  <style mip-custom>
+  </style>
+</head>
+<body>
+  <h1>This is Main Page</h1>
+  <mip-data>
+    <script type="application/json">
+    {
+      "#global": "main"
+    }
+    </script>
+  </mip-data>
+  <p m-text="'current #global is [' +  global  + ']'"></p>
+  <a href="./page-1.html" data-type="mip"><p>Go To Page-1</p></a>
+  <input m-bind:value="#global">
+  <!-- <script src="https://c.mipcdn.com/static/v2/mip.js"></script> -->
+  <script src="../../../../dist/mip.js"></script>
+  <!-- <script src="https://c.mipcdn.com/static/v2/mip&#45;script/mip&#45;script.js"></script> -->
+</body>
+</html>
+
