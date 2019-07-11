@@ -5,9 +5,7 @@
     "project": "tsconfig.json"
   },
   "extends": [
-    "standard",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
+    "standard"
   ],
   "plugins": [
     "@typescript-eslint"
@@ -35,7 +33,6 @@
     "@typescript-eslint/no-type-alias": "off",
     "@typescript-eslint/no-unused-vars": ["error", {"vars": "all", "args": "none", "ignoreRestSiblings": true}],
     "@typescript-eslint/no-use-before-define": ["error", {"functions": false, "classes": false, "variables": false}],
-    "@typescript-eslint/promise-function-async": "off",
-    "prefer-const": "off"
+    "@typescript-eslint/promise-function-async": "off"
   }
 }

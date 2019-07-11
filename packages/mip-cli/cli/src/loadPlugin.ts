@@ -32,25 +32,25 @@ export async function checkAndInstall (command: string) {
 export function parseOption (option: Option) {
   let parsedArray = []
 
-    // option 后面的值有三种类型： 1.flag，值为 true false 2.可选添值，不填时为 undefined 3.必填值
-    let optionValue: string
-    switch (option.type) {
-      case 'optional':
-        optionValue = '[value]'
-        break;
-      case 'required':
-        optionValue = '<value>'
-        break;
-      case 'flag':
-      default:
-        optionValue = ''
-    }
+  // option 后面的值有三种类型： 1.flag，值为 true false 2.可选添值，不填时为 undefined 3.必填值
+  let optionValue: string
+  switch (option.type) {
+    case 'optional':
+      optionValue = '[value]'
+      break
+    case 'required':
+      optionValue = '<value>'
+      break
+    case 'flag':
+    default:
+      optionValue = ''
+  }
 
-    parsedArray.push(`-${option.shortName}, --${option.name} ${optionValue}`, `${option.description}`)
+  parsedArray.push(`-${option.shortName}, --${option.name} ${optionValue}`, `${option.description}`)
 
-    option.fn && parsedArray.push(option.fn)
-    option.defaultValue && parsedArray.push(option.defaultValue)
-    return parsedArray
+  option.fn && parsedArray.push(option.fn)
+  option.defaultValue && parsedArray.push(option.defaultValue)
+  return parsedArray
 }
 
 export function findIndex (option: Option, argsArray: string[]) {
@@ -81,8 +81,7 @@ export function parseArgs (cmd: CommandInstance) {
     }
     if (opt.type === 'flag') {
       argsArray.splice(optIndex, 1)
-    }
-    else {
+    } else {
       argsArray.splice(optIndex, 2)
     }
   })
@@ -93,8 +92,7 @@ export function parseArgs (cmd: CommandInstance) {
     if (a.rest) {
       // if c set rest, [a, b, c, d, e] => [c, d, e]
       argsResult[a.name] = argsArray.splice(index, argsArray.length - 1)
-    }
-    else {
+    } else {
       argsResult[a.name] = argsArray[index]
     }
   })
@@ -135,7 +133,7 @@ export function setupCommand (mainCommand: string, cmd: CommandInstance) {
   programResult
     .description(cmd.description)
     .action((...args) => {
-      let params: Params = {args: {}, options: {}}
+      let params: Params = { args: {}, options: {} }
 
       // 解析 options, args 最后一个参数是 cmd 对象
       let options = cleanArgs(args[args.length - 1])
