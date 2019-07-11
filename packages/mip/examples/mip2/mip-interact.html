@@ -1,0 +1,359 @@
+<!--htmlcs-disable-->
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <title>mip-on-test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="stylesheet" href="../../dist/mip.css"></link>
+  <script>
+    window.onerror = function (message, source, lineno, colno, error) {
+      window.alert('Ops, js 报错了，请联系 FE 修复')
+      window.alert(message)
+      window.alert(source + ':' + lineno + ':' + colno)
+      window.alert(JSON.stringify(error))
+    }
+  </script>
+  <style mip-custom>
+    button {
+      background: transparent;
+      cursor: pointer;
+      border: 2px solid #000;
+      border-width: 0 0 2px;
+      padding: 2px 0;
+      margin: 0 10px;
+      font-size: 14px;
+    }
+    h1, h2, h3, h4, input, p {
+      margin: 12px 0 6px 0;
+    }
+    input {
+      border:1px solid #1976d2;
+    }
+    .textStyle {
+      font-size: 20px;
+      color: red;
+    }
+
+    .code {
+      margin: 20px 10px;
+      padding: 2px 10px;
+      color: #657b83;
+      border: 1px solid #ccc;
+      overflow-x: auto;
+      border-radius: 3px 3px 3px 3px;
+      font-size: 13px;
+      line-height: 19px;
+      box-shadow: 0 2px 2px 0 rgba(0,0,0,.05), 0 1px 4px 0 rgba(0,0,0,.08), 0 3px 1px -2px rgba(0,0,0,.2);
+    }
+  </style>
+
+</head>
+
+<body>
+  <div>
+    <div>
+      <h1>全局方法</h1>
+      <div>
+        <div>
+          <h2>一、MIP Action</h2>
+          <div>
+            <div>
+              <h3>1. MIP.navigateTo</h3>
+              <button on="tap:MIP.navigateTo(url='http://localhost:8080/examples/mip2/mip-on-test.html', target='_blank', opener=true)">_blank, opener</button>
+              <button on="tap:MIP.navigateTo(url='http://localhost:8080/examples/mip2/mip-on-test.html', target='_blank', opener=false)">_blank, noopener</button>
+              <button on="tap:MIP.navigateTo(url='http://localhost:8080/examples/mip2/mip-on-test.html', target='_top')">_top</button>
+            </div>
+            
+            <div>
+              <h3>2. MIP.closeOrNavigateTo</h3>
+              <button on="tap:MIP.closeOrNavigateTo(url='http://172.18.16.82:8080/examples/mip2/mip-on-test.html', target='_blank', opener=true)">_blank, opener</button>
+              <button on="tap:MIP.closeOrNavigateTo(url='http://172.18.16.82:8080/examples/mip2/mip-on-test.html', target='_blank', opener=false)">_blank, noopener</button>
+              <button on="tap:MIP.closeOrNavigateTo(url='http://172.18.16.82:8080/examples/mip2/mip-on-test.html', target='_top')">_top</button>
+            </div>
+            
+            <div>
+              <h3>3. MIP.scrollTo</h3>
+              <button on="tap:MIP.scrollTo(id='logo', duration=500, position='center', value=DOM.dataset.attr)" data-attr="att">logo, 500, center</button>
+              <button on="tap:MIP.scrollTo(id='logo', duration=1000, position='top')">logo, 1000, top</button>
+              <button on="tap:MIP.scrollTo(id='logo', duration=100, position='bottom')">logo, 100, bottom</button>
+            </div>
+
+            <div>
+              <h3>4. MIP.goBack</h3>
+              <button on="tap:MIP.goBack">goBack</button>
+            </div>
+            
+            <div>
+              <h3>5. MIP.print</h3>
+              <button on="tap:MIP.print">print</button>
+            </div>
+            
+            <div>
+              <h3>6. setData</h3>
+              <div>
+                <h4>(1) input 事件，DOM，event</h4>
+                <mip-data>
+                  <script type="application/json">
+                    {
+                      "loc": "北京",
+                      "count": 1,
+                    }
+                  </script>
+                </mip-data>
+                <div>
+                  <p>坐标：<span m-text="loc"></span></p>
+                  <button on="tap:MIP.setData({loc: '上海'})" data-test="test" attr>change loc to 上海</button>
+                </div>
+                <div>
+                  <label>回车输入：</label>
+                  <input on="change:MIP.setData({loc: DOM.value})" placeholder="on change event">
+                </div>
+                <div>
+                  <label>绑定 value：</label>
+                  <input m-bind:value="loc" placeholder="bind value">
+                </div>
+                <div>
+                  <label>停止输入 300ms 后更新：</label>
+                  <input on="input-debounced:MIP.setData({loc: event.value})" placeholder="on input-debounced event">
+                </div>
+                <div>
+                  <label>输入时每 100ms 更新：</label>
+                  <input on="input-throttled:MIP.setData({loc: event.target.value})" placeholder="on input-throttled event">
+                </div>
+              </div>
+              
+              <div>
+                <h4>(2) m，单元运算，二元运算，三元运算</h4>
+                <p>count: <span m-text="count"></span></p>
+                <button on="tap:MIP.setData({count: m.count - 1 * 10 + (-5) + (count > 0 ? 16 : count)})">计算 m.count-1*10+(-5)+(count>0?16:0) 得 count+1</button>
+              </div>
+              
+              <div>
+                <h4>(3) 白名单方法，单行箭头函数</h4>
+                <p>count: <span m-text="count"></span></p>
+                <button on="tap:MIP.setData({count: count + [1,2].map(num => num*2).reduce((x, y) => x + y)})">计算 count+[1,2].map(x=>x*2).reduce((x, y)=>x+y) 得 count+6</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2>二、Element Action</h2>
+          <div>
+            <div>
+              <h3>1. scrollTo</h3>
+              <button on="tap:logo.scrollTo(duration=500, position='center')">logo, 500, center</button>
+              <button on="tap:logo.scrollTo(duration=1000, position='top')">logo, 1000, top</button>
+              <button on="tap:logo.scrollTo(duration=100, position='top')">logo, 100, bottom</button>
+            </div>
+
+            <div>
+              <h3>2. show</h3>
+              <button on="tap:logo.show">show logo</button>
+              <button on="tap:my-input.show">show input</button>
+            </div>
+              
+            <div>
+              <h3>3. hide</h3>
+              <button on="tap:logo.hide">hide logo</button>
+            </div>
+
+            <div>
+              <h3>4. toggleVisibility</h3>
+              <button on="tap:logo.toggleVisibility">toggleVisibility logo</button>
+            </div>
+
+            <div>
+              <h3>5. toggleClass</h3>
+              <button on="tap:text.toggleClass(class='textStyle', force=true)">红色，增大</button>
+              <button on="tap:text.toggleClass(class='textStyle', force=false)">还原</button>
+              <button on="tap:text.toggleClass(class='textStyle')">toggle</button>
+              <p id="text">lorem ipsum</p>
+            </div>
+
+            <div>
+              <h3>6. focus</h3>
+              <button on="click:my-input.focus">focus input</button>
+              <input id="my-input" type="text" autofocus>
+            </div>
+
+            <div>
+              <h3>7. 组件自定义 action</h3>
+              <button on="tap:my-toggle.show(3000)">mip-toggle 显示 3s</button>
+              <mip-toggle id="my-toggle" layout="nodisplay" hidetimeout="2000">
+                <p>mip-toggle...</p>
+              </mip-toggle>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <p>attr：<span m-text="attr"></span></p>
+  <img attr="false" src="https://www.gstatic.com/webp/gallery/3.jpg" on="tap:MIP.setData({attr: DOM.attr})">change attr</img> -->
+
+  <!-- <br>
+  <button on="tap:MIP.setData({loc: RegExp(/a/).test('abc')})">change data</button> -->
+  <div>
+    <h2>三、MIP bind</h2>
+    <mip-data>
+      <script type="application/json">
+        {
+          "isActive": true,
+          "hasError": true,
+          "classObject": {
+            "active": true,
+            "text-danger": true
+          },
+          "activeClass": "active",
+          "errorClass": "text-danger",
+          "activeColor": "red",
+          "fontSize": 13,
+          "styleObject": {
+            "color": "red",
+            "fontSize": "13px"
+          },
+          "baseStyles": {
+            "color": "red",
+            "fontSize": "13px"
+          },
+          "overridingStyles": {
+            "color": "blue"
+          },
+          "shouldHidden": false,
+          "urls":[
+            "https://www.gstatic.com/webp/gallery/1.jpg",
+            "https://www.gstatic.com/webp/gallery/2.jpg",
+            "https://www.gstatic.com/webp/gallery/3.jpg"
+          ],
+          "index": 0
+        }
+      </script>
+    </mip-data>
+
+    <div>
+      <h3>1. bind class</h3>
+      <div>
+        <p>m-bind:class="{active: isActive, 'text-danger': hasError}"</p>
+        <button m-bind:class="{active: isActive, 'text-danger': hasError}"
+          on="tap:MIP.setData({showClass1: DOM.className})">
+          渲染后 class：
+        </button>
+        <span m-text="showClass1"></span>
+      </div>
+      
+      <div>
+        <p>m-bind:class="classObject"</p>
+        <button m-bind:class="classObject"
+          on="tap:MIP.setData({showClass2: DOM.className})">
+          渲染后 class：
+        </button>
+        <span m-text="showClass2"></span>
+      </div>
+
+      <div>
+        <p>m-bind:class="[activeClass, errorClass]"</p>
+        <button m-bind:class="[activeClass, errorClass]"
+          on="tap:MIP.setData({showClass3: DOM.className})">
+          渲染后 class：
+        </button>
+        <span m-text="showClass3"></span>
+      </div>
+
+      <div>
+        <p>m-bind:class="[isActive ? activeClass : '', errorClass]"</p>
+        <button m-bind:class="[isActive ? activeClass : '', errorClass]"
+          on="tap:MIP.setData({showClass4: DOM.className})">
+          渲染后 class：
+        </button>
+        <span m-text="showClass4"></span>
+      </div>
+
+      <div>
+        <p>m-bind:class="[{ active: isActive }, errorClass]"</p>
+        <button m-bind:class="[{ active: isActive }, errorClass]"
+          on="tap:MIP.setData({showClass5: DOM.className})">
+          渲染后 class：
+        </button>
+        <span m-text="showClass5"></span>
+      </div>
+    </div>
+
+    <div>
+      <h3>2. bind style</h3>
+
+      <div>
+        <p>m-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }"</p>
+        <div m-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }">
+          lorem ipsum
+        </div>
+      </div>
+      
+      <div>
+        <p>m-bind:style="styleObject"</p>
+        <div m-bind:style="styleObject">
+          lorem ipsum
+        </div>
+      </div>
+
+      <div>
+        <p>m-bind:style="[baseStyles, overridingStyles]"</p>
+        <div m-bind:style="[baseStyles, overridingStyles]">
+          lorem ipsum
+        </div>
+      </div>
+
+      <div>
+        <p>m-bind:style="{ display: ['-webkit-box', '-ms-flexbox', 'flex'] }"</p>
+        <div m-bind:style="{ display: ['-webkit-box', '-ms-flexbox', 'flex'] }">
+          lorem ipsum
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3>3. bind src，bind hidden</h3>
+      <div>
+        <mip-img m-bind:src="urls[index]" m-bind:hidden="shouldHidden" width="400" height="250"></mip-img>
+        <p>hidden：<span m-text="shouldHidden"></span></p>
+        <button on="tap:MIP.setData({shouldHidden: true})">显示/隐藏图片</button>
+        <button on="tap:MIP.setData({index:(index+1)%urls.length})">
+          修改显示图片序号: <span m-text="index"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div style="height:1000px;background-color: gray">
+    </div>
+    <mip-img id="logo"
+      width="400"
+      height="250"
+      popup
+      src="https://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg">
+    </mip-img>
+    <div style="height:1000px;background-color: gray">
+    </div>
+  </div>
+
+  <button on="tap:logo.scrollTo(duration=2000, position='bottom')">logo, 2000, bottom</button>
+</body>
+
+<script src="../../dist/mip.js"></script>
+<!-- <script src="https://c.mipcdn.com/static/v2/mip.js"></script> -->
+<script src="https://c.mipcdn.com/static/v2/mip-toggle/mip-toggle.js"></script>
+</html>
+
+<mip-list>
+  <template>
+    <mip-carousel></mip-carousel>
+    <mip-img></mip-img>
+  </template>
+</mip-list>
