@@ -54,7 +54,7 @@ export default function (config: Params) {
           cacheName: 'mip-html-cache',
           // Configure which responses are considered cacheable.
           cacheableResponse: {
-            headers: {'content-type': 'text/html'}
+            headers: { 'content-type': 'text/html' }
           }
         }
       }

@@ -8,7 +8,7 @@ declare module 'mip-validator' {
   }
 
   export default class {
-    public constructor (rules?: Rules);
-    public validate (html: string, options?: Options): Error[];
+    constructor (rules?: Rules);
+    validate (html: string, options?: Options): Error[];
   }
 }
