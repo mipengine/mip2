@@ -8,6 +8,7 @@ export default class Walker {
     this.str = str
     this.index = 0
     this.length = str.length
+    this.records = []
   }
 
   end () {
@@ -32,6 +33,18 @@ export default class Walker {
     // return match
   }
 
+  record (type, start, end, token) {
+    this.records[type + start] = [type, start, end, token]
+  }
+
+  query (type, start) {
+    let record = this.records[type + start]
+    if (record) {
+      this.index = record[2]
+      return record[3]
+    }
+  }
+
   // currentChar () {
   //   return this.str[this.index]
   // }
@@ -40,8 +53,8 @@ export default class Walker {
     return this.str.slice(this.index)
   }
 
-  getRange (start) {
-    return [start, this.index - 1]
-  }
+  // getRange (start) {
+  //   return [start, this.index - 1]
+  // }
 }
 

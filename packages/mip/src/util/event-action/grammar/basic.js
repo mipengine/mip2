@@ -7,7 +7,10 @@
  *    https://github.com/pegjs/pegjs/blob/master/examples/javascript.pegjs
  */
 
-import lex from './lexer'
+// import lex from './lexer'
+// import * from '../../parser/util'
+// import * from './token'
+
 
 function buildBinaryAst (head, tails) {
   return tails.reduce((result, args) => {
@@ -20,37 +23,32 @@ function buildBinaryAst (head, tails) {
   }, head)
 }
 
-// whitespace
-const _ = lex.regexp('^\\s*')
+// let $ternary
+// const $useTernary = (...args) => $ternary(...args)
 
-lex.set({
-  type: 'ConditionalExpression',
-  rule: lex.seq([
-    lex.use('BinaryExpression'),
-    lex.optional([
+export const $ternary = def({
+  type: 'ternary',
+  rule () {
+    return [
+      $binary,
       _,
-      lex.text('?'),
+      $question,
       _,
-      lex.use('ConditionalExpression'),
+      $ternary,
       _,
-      lex.text(':'),
+      $colon,
       _,
-      lex.use('ConditionalExpression')
-    ])
-  ]),
-  onMatch (test, tails) {
-    if (!tails) {
-      return test
-    }
-
-    let [__, question, ___, consequent, ____, colon, _____, alternate] = tails
-
+      $ternary
+    ]
+  },
+  match (args) {
     return {
-      test,
-      consequent,
-      alternate
+      test: args[0],
+      consequent: args[4],
+      alternate: args[8]
     }
-  }
+  },
+  fallback: $binary
 })
 
 lex.set({
