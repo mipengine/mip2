@@ -1,8 +1,12 @@
 {
   "menu": [
     {
-      "name": "如何贡献组件代码",
-      "key": "how-to-contribute"
+      "name": "如何提交站长组件代码",
+      "key": "how-to-contribute-site-extensions"
+    },
+    {
+      "name": "如何贡献官方组件代码",
+      "key": "how-to-contribute-mip-extensions"
     },
     {
       "name": "利用 MIP 组件审核平台贡献组件代码",
