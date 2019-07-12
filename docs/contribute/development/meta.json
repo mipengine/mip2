@@ -1,12 +1,8 @@
 {
   "menu": [
     {
-      "name": "组件写法",
+      "name": "如何开发 MIP 组件",
       "key": "component-syntax"
-    },
-    {
-      "name": "使用 Vue 单文件语法来开发 MIP 组件",
-      "key": "writing-mip-component-in-vue-style"
     },
     {
       "name": "资源管理",
@@ -24,5 +20,8 @@
       "name": "测试代码替换",
       "key": "testing-code-replacement"
     }
+  ],
+  "ignore": [
+    "writing-mip-component-in-vue-style"
   ]
 }
