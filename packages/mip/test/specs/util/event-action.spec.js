@@ -334,7 +334,7 @@ describe('Event Action', () => {
 
   it('syntax error check', () => {
     el.setAttribute('on', 'eventName:id.abc(123', 'tab')
-    expect(() => action.execute('eventName', el, {})).to.throw('parse error')
+    expect(() => action.execute('eventName', el, {})).to.throw('(123')
   })
 
   it('emtpy target', () => {

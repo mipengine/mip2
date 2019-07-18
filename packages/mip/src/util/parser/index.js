@@ -22,8 +22,7 @@ export default class Parser {
     if (walker.end()) {
       return ast
     }
-    console.error(walker.rest())
-    throw walker.rest()
+    throw new Error(walker.rest())
   }
 
   generate (ast) {
@@ -32,10 +31,6 @@ export default class Parser {
 
   transform (str, type) {
     let ast = this.parse(str, type)
-    // if (!ast) {
-    //   throw Error('parse error')
-    // }
-
     return this.generate(ast)
   }
 }

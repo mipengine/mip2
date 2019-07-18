@@ -75,7 +75,7 @@ describe.skip('mip-bind', function () {
       })
     })
 
-    it.only('should set data initially', function () {
+    it('should set data initially', function () {
       // return Promise.resolve()
       // // consume one microtask
       //   .then(() => {})

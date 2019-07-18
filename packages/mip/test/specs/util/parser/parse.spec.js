@@ -2,7 +2,7 @@
 
 import parser from '../../../../src/util/event-action/parser'
 
-describe.only('parser', () => {
+describe('parser', () => {
   describe('Basic caculation', function () {
     it('Number Caculation', function () {
       const str = `1 + 4 * (5 +(-7))`

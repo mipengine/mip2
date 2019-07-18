@@ -20,7 +20,7 @@ describe('Test Grammar', function () {
       let walker = new Walker(str)
       let result = fn(walker)
       expect(result.properties[0].value.value).to.be.equal(true)
-      expect(result.properties[2].value.type).to.be.equal('Identifier')
+      expect(result.properties[2].value.type).to.be.equal('Variable')
       expect(result.properties[3].value.value).to.be.equal(null)
     })
   })
@@ -234,7 +234,7 @@ describe('Test Grammar', function () {
       let str = 'aa'
       let walker = new Walker(str)
       let result = fn(walker)
-      expect(result.type).to.be.equal('Identifier')
+      expect(result.type).to.be.equal('Variable')
       expect(result.name).to.be.equal('aa')
     })
   })
@@ -366,7 +366,7 @@ describe('Test Grammar', function () {
       let str = 'a(1+2,,3+4)'
       let walker = new Walker(str)
       let result = fn(walker)
-      expect(result.type).to.be.equal('Identifier')
+      expect(result.type).to.be.equal('Variable')
       expect(walker.end()).to.be.equal(false)
     })
   })

@@ -19,7 +19,7 @@ describe('MIP Argument', () => {
 
     it('New Argument Expression', () => {
       let str = `abc=1,
-        def= undefined,
+        def= null,
         someStr = \"this is a string with \\\" and '' \",
         useEvent = event.a
         `
