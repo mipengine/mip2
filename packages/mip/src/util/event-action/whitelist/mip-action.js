@@ -115,7 +115,7 @@ export default function mipAction ({property, argumentText, options}) {
   if (property === 'setData' || property === '$set') {
     let arg
     try {
-      let fn = parse(argumentText, 'ObjectExpression')
+      let fn = parse(argumentText, 'ObjectLiteral')
       arg = fn(options)
     } catch (e) {
       arg = setDataParseFallback({argumentText, options})

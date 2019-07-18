@@ -4,271 +4,206 @@
  * @description 只负责将 on 句柄解析出事件、作用对象、作用方法和参数字符串
  */
 
+import {
+  text,
+  regexp,
+  or,
+  any,
+  some,
+  opt,
+  def
+} from '../../parser/lexer'
+
+import {
+  _,
+  __,
+  $colon,
+  $comma,
+  $semi,
+  $dot,
+  $leftParen,
+  $rightParen,
+} from './token'
+
+import {
+  $string,
+  $identifier
+} from './basic'
+
 import lex from './lexer'
 
-const _ = lex.regexp('^\\s*')
-
-lex.set({
-  type: 'MIPEventHandlers',
-  rule: lex.seq([
-    _,
-    lex.or([
-      lex.use('MIPOldEventHandlers'),
-      lex.use('MIPNewEventHandlers'),
-      lex.use('MIPEventHandler')
-    ]),
-    _,
-  ]),
-  onMatch (__, handlers) {
-    return handlers
-  }
-})
-
-lex.set({
-  type: 'MIPOldEventHandlers',
-  rule: lex.seq([
-    lex.use('MIPEventHandler'),
-    lex.some([
-      _,
-      lex.use('MIPEventHandler')
-    ])
-  ]),
-  onMatch (head, tails) {
-    let handlers = [head]
-
-    if (tails) {
-      for (let args of tails) {
-        handlers.push(args[1])
-      }
-    }
-
+export const $mipArgumentContentWithBracket = lex.set({
+  type: 'MIPArgumentContentWithBracket',
+  rule: () => [
+    $leftParen,
+    [any, $mipArgumentContent],
+    $rightParen
+  ],
+  match (args) {
     return {
-      type: 'MIPEventHandlers',
-      handlers
+      raw: args[0].raw + args[1].map(t => t.raw).join('') + args[2].raw
     }
   }
 })
 
-lex.set({
-  type: 'MIPNewEventHandlers',
-  rule: lex.seq([
-    lex.use('MIPEventHandler'),
-    lex.some([
-      _,
-      lex.text(';'),
-      _,
-      lex.use('MIPEventHandler')
-    ]),
-    lex.optional([
-      _,
-      lex.text(';')
-    ])
-  ]),
-  onMatch (handler, tails) {
-    let handlers = [handler]
-    for (let args of tails) {
-      handlers.push(args[3])
-    }
+export const $mipArgumentContent = lex.set({
+  type: 'MIPArgumentContent',
+  rule: [or, [
+    $mipArgumentContentWithBracket,
+    $string,
+    [regexp, /^[^()'"]+/]
+  ]],
+  match (args) {
     return {
-      type: 'MIPEventHandlers',
-      handlers
+      raw: args.raw
     }
   }
 })
 
-lex.set({
-  type: 'MIPEventHandler',
-  rule: lex.seq([
-    lex.regexp('^[a-zA-Z][\\w$-]*'),
-    _,
-    lex.text(':'),
-    _,
-    lex.use('MIPActions')
-  ]),
-  onMatch(event, __, colon, ___, actions) {
+export const $mipArgumentText = lex.set({
+  type: 'MIPArgumentText',
+  rule: [
+    $leftParen,
+    [any, $mipArgumentContent],
+    $rightParen
+  ],
+  match (args) {
     return {
-      event: {
-        type: 'Identifier',
-        name: event.raw
-      },
-      actions
+      raw: args[1].map(arg => arg.raw).join('')
     }
   }
 })
 
-lex.set({
+export const $htmlIdentifier = lex.set({
+  type: 'HTMLEIdentifier',
+  rule: [regexp, /^[a-z][\w-]*/i],
+  match (args) {
+    return {
+      type: 'Identifier',
+      name: args.raw
+    }
+  }
+})
+
+export const $mipAction = lex.set({
+  type: 'MIPAction',
+  rule: [
+    [or, [
+      [text, 'MIP'],
+      $htmlIdentifier,
+    ]],
+    $dot,
+    $identifier,
+    [opt, $mipArgumentText]
+  ],
+  match (args) {
+    return {
+      object: args[0].name || args[0].raw,
+      property: args[2].name,
+      argumentText: args[3] ? args[3].raw : null
+    }
+  }
+})
+
+export const $mipActions = lex.set({
   type: 'MIPActions',
-  rule: lex.seq([
-    lex.use('MIPAction'),
-    lex.any([
+  rule: [
+    $mipAction,
+    [any, [
       _,
-      lex.text(','),
+      $comma,
       _,
-      lex.use('MIPAction')
-    ]),
-    lex.optional([
+      $mipAction
+    ]],
+    [opt, [
       _,
-      lex.text(',')
-    ])
-  ]),
-  onMatch (head, tails) {
-    let results = [head]
-    for (let tail of tails) {
+      $comma
+    ]]
+  ],
+  match (args) {
+    let results = [args[0]]
+    for (let tail of args[1]) {
       results.push(tail[3])
     }
     return results
   }
 })
 
-lex.set({
-  type: 'MIPAction',
-  rule: lex.or([
-    lex.use('MIPBindAction'),
-    lex.use('MIPGlobalAction'),
-    lex.use('MIPComponentAction')
-  ])
-})
-
-lex.set({
-  type: 'MIPBindAction',
-  rule: lex.seq([
-    lex.text('MIP'),
-    lex.text('.'),
-    lex.or([
-      lex.text('setData'),
-      lex.text('$set')
-    ]),
-    lex.use('MIPArgumentText')
-  ]),
-  onMatch (mip, dot, property, argstring) {
+export const $mipEventHandler = lex.set({
+  type: 'MIPEventHandler',
+  rule: [
+    [regexp, /^[a-z][\w$-]*/i],
+    _,
+    $colon,
+    _,
+    $mipActions,
+  ],
+  match (args) {
     return {
-      type: 'MIPAction',
-      object: 'MIP',
-      property: property.raw,
-      role: 'MIP',
-      argumentText: argstring.raw
-      // arguments: [
-      //   {
-      //     type: 'Literal',
-      //     value: argstring.raw
-      //   }
-      // ]
+      event: args[0].raw,
+      actions: args[4]
     }
   }
 })
 
-lex.set({
-  type: 'MIPGlobalAction',
-  rule: lex.seq([
-    lex.text('MIP'),
-    lex.text('.'),
-    lex.use('Identifier'),
-    lex.optional(
-      lex.use('MIPArgumentText')
-      // lex.use('MIPActionArguments')
-    )
-  ]),
-  onMatch (mip, dot, property, argstring) {
+export const $mipEventNewHandlers = lex.set({
+  type: 'MIPEventNewHanlers',
+  rule: [
+    $mipEventHandler,
+    [some, [
+      _,
+      $semi,
+      _,
+      $mipEventHandler
+    ]],
+    [opt, $semi]
+  ],
+  match (args) {
+    let handlers = [args[0]]
+    for (let tail of args[1]) {
+      handlers.push(tail[3])
+    }
     return {
-      type: 'MIPAction',
-      object: 'MIP',
-      property: property.name,
-      role: 'MIP',
-      argumentText: argstring ? argstring.raw : null
-      // arguments: argstring &&
-      //   [{
-      //     type: 'Literal',
-      //     value: argstring.raw
-      //   }] ||
-      //   []
+      type: 'MIPEventHandlers',
+      handlers
     }
   }
 })
 
-lex.set({
-  type: 'MIPComponentAction',
-  rule: lex.seq([
-    lex.use('HTMLElementIdentifier'),
-    lex.text('.'),
-    lex.use('Identifier'),
-    lex.optional(
-      lex.use('MIPArgumentText')
-      // lex.use('MIPActionArguments')
-    )
-  ]),
-  onMatch (object, dot, property, argstring) {
+export const $mipEventOldHandlers = lex.set({
+  type: 'MIPEventOldHandlers',
+  rule: [
+    $mipEventHandler,
+    [some, [
+      __,
+      $mipEventHandler
+    ]]
+  ],
+  match (args) {
+    let handlers = [args[0]]
+    for (let tail of args[1]) {
+      handlers.push(tail[1])
+    }
     return {
-      type: 'MIPAction',
-      object: object.name,
-      property: property.name,
-      role: 'HTMLElement',
-      argumentText: argstring ? argstring.raw : null
-      // type: 'CallExpression',
-      // callee: {
-      //   type: 'MemberExpression',
-      //   object: {
-      //     type: object.type,
-      //     name: object.name,
-      //     role: 'HTMLElement'
-      //   },
-      //   computed: false,
-      //   property: property
-      // },
-      // arguments: argstring &&
-      //   [{
-      //     type: 'Literal',
-      //     value: argstring.raw
-      //   }] ||
-      //   []
+      type: 'MIPEventHandlers',
+      handlers
     }
   }
 })
 
-lex.set({
-  type: 'MIPArgumentText',
-  rule: lex.seq([
-    lex.text('('),
-    lex.any(
-      lex.use('MIPArgumentContent'),
-    ),
-    lex.text(')')
-  ]),
-  onMatch (left, contents, right) {
-    return {
-      raw: contents.map(content => content.raw).join('')
-    }
+export const $mipEventHandlers = lex.set({
+  type: 'MIPEventHandlers',
+  rule: [
+    _,
+    [or, [
+      $mipEventNewHandlers,
+      $mipEventOldHandlers,
+      $mipEventHandler
+    ]],
+    _
+  ],
+  match (args) {
+    return args[1]
   }
 })
-
-lex.set({
-  type: 'MIPArgumentContent',
-  rule: lex.or([
-    lex.use('MIPArgumentContentWithBracket'),
-    lex.use('String'),
-    lex.regexp('^[^()\'"]+')
-  ]),
-  onMatch (content) {
-    return {
-      raw: content.raw
-    }
-  }
-})
-
-lex.set({
-  type: 'MIPArgumentContentWithBracket',
-  rule: lex.seq([
-    lex.text('('),
-    lex.any(
-      lex.use('MIPArgumentContent'),
-    ),
-    lex.text(')')
-  ]),
-  onMatch (left, texts, right) {
-    return {
-      raw: left.raw + texts.map(t => t.raw).join('') + right.raw
-    }
-  }
-})
-
-export default lex
 

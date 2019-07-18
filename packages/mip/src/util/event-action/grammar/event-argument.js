@@ -3,143 +3,178 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
+import {
+  text,
+  or,
+  any,
+  opt,
+  def
+} from '../../parser/lexer'
+
+import {
+  _,
+  $comma,
+  $dot
+} from './token'
+
+import {
+  $number,
+  $literal,
+  $variable,
+  $identifier
+} from './basic'
+
+import {
+  MIP_ACTION_ALLOWED_OBJECTS
+} from '../whitelist/basic'
+
 import lex from './lexer'
 
-const _ = lex.regexp('^\\s*')
+export const $mipActionAllowed = lex.set({
+  type: 'MIPActionAllowed',
+  rule: [
+    $variable,
+    // $identifier,
+    [any, [
+      _,
+      $dot,
+      _,
+      $identifier
+    ]]
+  ],
+  match (args) {
+    let id = args[0]
+    let name = id.name
+    let allowed = MIP_ACTION_ALLOWED_OBJECTS[name]
+    if (!allowed) {
+      return false
+    }
+    let tails = args[1]
+    if (!tails.length) {
+      return allowed.root ? id : false
+    }
+    return tails.reduce((result, rests) => {
+      return {
+        type: 'Member',
+        object: result,
+        property: rests[3],
+        computed: false
+      }
+    }, id)
+  }
+})
 
-lex.set({
-  type: 'MIPActionArguments',
-  rule: lex.seq([
+export const $minus = lex.set({
+  type: 'Minus',
+  rule: [
+    [text, '-'],
     _,
-    lex.optional(
-      lex.or([
-        lex.use('MIPOldActionArguments'),
-        lex.use('MIPNewActionArguments')
-      ])
-    ),
-    _
-  ]),
-  onMatch (__, args) {
+    $number
+  ],
+  match (args) {
     return {
-      arguments: args && args.arguments || []
+      type: 'Literal',
+      value: -args[2].value,
+      raw: '-' + args[2].raw
     }
   }
 })
 
-lex.set({
-  type: 'MIPOldActionArguments',
-  rule: lex.seq([
-    lex.use('MIPValue'),
-    lex.any([
-      _,
-      lex.text(','),
-      _,
-      lex.use('MIPValue')
-    ]),
-    _,
-    lex.optional(
-      lex.text(',')
-    )
-  ]),
-  onMatch (head, middles, __, comma) {
-    let args = [
-      head,
-      ...middles.map(([__, comma, ___, expression]) => expression)
-    ]
-
-    if (comma) {
-      args.push(undefined)
-    }
-
-    return {
-      arguments: args
-    }
-  }
+export const $mipValue = lex.set({
+  type: 'MIPValue',
+  rule: [or, [
+    $mipActionAllowed,
+    $literal,
+    $minus
+  ]]
 })
 
-// 新版语法与 AMP 靠齐 (a=1, b=2, c=3) 之类
-// @TODO 支持 unpair string
-lex.set({
-  type: 'MIPNewActionArguments',
-  rule: lex.seq([
-    lex.use('MIPActionAssignmentExpression'),
-    lex.any([
-      _,
-      lex.text(','),
-      _,
-      lex.use('MIPActionAssignmentExpression'),
-    ]),
+export const $mipActionAssignment = lex.set({
+  type: 'MIPActionAssignment',
+  rule: [
+    $identifier,
     _,
-    lex.optional(
-      lex.text(',')
-    ),
-  ]),
-  onMatch (head, middles, __, comma) {
-     let args = [
-      head,
-      ...middles.map(([__, comma, ___, expression]) => expression)
-    ]
-
-    if (comma) {
-      args.push(undefined)
-    }
-
-    return {
-      arguments: [
-        {
-          type: 'ObjectExpression',
-          properties: args
-        }
-      ]
-    }
-  }
-})
-
-lex.set({
-  type: 'MIPActionAssignmentExpression',
-  rule: lex.seq([
-    lex.use('Identifier'),
+    [text, '='],
     _,
-    lex.text('='),
-    _,
-    lex.use('MIPValue')
-  ]),
-  onMatch (key, __, equal, ___, value) {
+    $mipValue
+  ],
+  match (args) {
     return {
       type: 'Property',
-      key,
-      value,
+      key: args[0],
+      value: args[4],
       computed: false
     }
   }
 })
 
-lex.set({
-  type: 'MIPValue',
-  rule: lex.or([
-    lex.use('MIPEvent'),
-    lex.use('MIPDOM'),
-    lex.use('Literal'),
-    // 负数
-    lex.use('NegativeNumber')
-  ])
-})
-
-lex.set({
-  type: 'NegativeNumber',
-  rule: lex.seq([
-    lex.text('-'),
+export const $mipActionNewArguments = lex.set({
+  type: 'MIPActionNewArguments',
+  rule: [
+    $mipActionAssignment,
+    [any, [
+      _,
+      $comma,
+      _,
+      $mipActionAssignment
+    ]],
     _,
-    lex.use('Number')
-  ]),
-  onMatch (minus, __, number) {
+    [opt, $comma]
+  ],
+  match (args) {
+    let results = [args[0]].concat(args[1].map(rests => rests[3]))
+    if (args[3]) {
+      results.push(undefined)
+    }
     return {
-      type: 'Literal',
-      value: -number.value,
-      raw: '-' + number.raw
+      arguments: [{
+        type: 'ObjectLiteral',
+        properties: results
+      }]
     }
   }
 })
 
-export default lex
+export const $mipActionOldArguments = lex.set({
+  type: 'MIPActionOldArguments',
+  rule: [
+    $mipValue,
+    [any, [
+      _,
+      $comma,
+      _,
+      $mipValue
+    ]],
+    _,
+    [opt, $comma]
+  ],
+  match (args) {
+    let results = [args[0]].concat(args[1].map(rests => rests[3]))
+    if (args[3]) {
+      results.push(undefined)
+    }
+    return {
+      arguments: results
+    }
+  }
+})
+
+export const $mipActionArguments = lex.set({
+  type: 'MIPActionArguments',
+  rule: [
+    _,
+    [opt,
+      [or, [
+        $mipActionOldArguments,
+        $mipActionNewArguments
+      ]]
+    ],
+    _
+  ],
+  match (args) {
+    return {
+      arguments: args[1] && args[1].arguments || []
+    }
+  }
+})
 

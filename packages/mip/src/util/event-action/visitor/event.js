@@ -8,10 +8,6 @@ import mipAction from '../whitelist/mip-action'
 import log from '../../log'
 
 const logger = log('Event-Action')
-// import {
-//   HTMLElementAction,
-//   MIPAction
-// } from '../whitelist/basic'
 
 const visitor = {
   MIPEventHandlers (path) {
@@ -27,7 +23,7 @@ const visitor = {
     }
   },
   MIPEventHandler (path) {
-    let event = path.node.event.name
+    let event = path.node.event
     let actions = []
 
     for (let action of path.node.actions) {
@@ -48,10 +44,9 @@ const visitor = {
     }
   },
   MIPAction (path) {
-    let {object, property, role, argumentText} = path.node
-    switch (role) {
-      case 'MIP':
-        return function (options) {
+    let {object, property, argumentText} = path.node
+    return object === 'MIP'
+      ? function (options) {
           return mipAction({
             options,
             object,
@@ -59,8 +54,7 @@ const visitor = {
             argumentText
           })
         }
-      case 'HTMLElement':
-        return function (options) {
+      : function (options) {
           return elementAction({
             options,
             object,
@@ -68,7 +62,6 @@ const visitor = {
             argumentText
           })
         }
-    }
   },
   MIPActionArguments (path) {
     let args = []

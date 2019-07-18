@@ -40,7 +40,6 @@ function traverse (visitor, node, parent /* , parentScopeManager */) {
     },
     scopeManager
   }
-
   let fn = visitor[node.type](path)
 
   return (args = {}, manager) => {

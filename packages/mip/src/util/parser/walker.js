@@ -30,24 +30,20 @@ export default class Walker {
       this.index += match[0].length
       return match
     }
-    // return match
   }
 
-  record (type, start, end, token) {
-    this.records[type + start] = [type, start, end, token]
+  record (rule, start, end, result) {
+    this.records.push([rule, start, end, result])
   }
 
-  query (type, start) {
-    let record = this.records[type + start]
-    if (record) {
-      this.index = record[2]
-      return record[3]
+  query (rule, start) {
+    for (let record of this.records) {
+      if (record[0] === rule && record[1] === start) {
+        this.index = record[2]
+        return record
+      }
     }
   }
-
-  // currentChar () {
-  //   return this.str[this.index]
-  // }
 
   rest () {
     return this.str.slice(this.index)

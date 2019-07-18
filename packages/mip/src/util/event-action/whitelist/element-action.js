@@ -5,18 +5,6 @@ import log from '../../log'
 import {isMIPElement} from '../../dom/dom'
 const logger = log('Element-Action')
 
-// function argFormat (args, formatter) {
-//   if (typeof args[0] === 'object') {
-//     return args
-//   }
-//   let formatted = {}
-//   for (let i = 0; i < args.length; i++) {
-//     formatted[formatter[i]] = args[i]
-//   }
-//   return formatted
-// }
-
-
 /**
  * 在目标元素中找具有 autofocus 属性的元素
  *
