@@ -23,7 +23,7 @@ describe.skip('mip-bind', function () {
     // window.m = null
   })
 
-  describe.only('init data', function () {
+  describe('init data', function () {
     let dumbDiv
     let eleFalse
     let eleElse

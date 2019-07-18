@@ -3,213 +3,162 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-function safeRun (test, walker) {
+function memoize (callback) {
+  return (walker, rule) => {
+    let index = walker.index
+    let record = walker.query(rule, index)
+    if (record) {
+      return record[3]
+    }
+    let result = callback(walker, rule)
+    walker.record(rule, index, walker.index, result)
+    return result
+  }
+}
+
+function restorable (callback) {
+  return (walker, rule) => {
+    let index = walker.index
+    let result = callback(walker, rule)
+    if (result === undefined || result === false) {
+      walker.index = index
+    }
+    return result
+  }
+}
+
+function singleton (callback, keys) {
+  let caches = {}
+  return (walker, rule) => {
+    let cache = caches[rule.type]
+    if (!cache) {
+      cache = rule
+      for (let key of keys) {
+        if (typeof cache[key] === 'function') {
+          cache[key] = cache[key]()
+        }
+      }
+      caches[rule.type] = cache
+    }
+    return callback(walker, cache)
+  }
+}
+
+export function run (walker, rule) {
+  return rule[0](walker, rule[1])
+}
+
+export const seq = restorable((walker, rules) => {
+  if (typeof rules[0] === 'function') {
+    return run(walker, rules)
+  }
+  let results = []
+  for (let node of rules) {
+    let result = run(walker, node)
+    if (result === false) {
+      return false
+    }
+    results.push(result)
+  }
+  return results
+})
+
+export const or = (walker, rules) => {
   let index = walker.index
-  let result = test(walker)
-  if (result === false) {
+  for (let node of rules) {
+    let result = run(walker, node)
+    if (result !== false) {
+      return result
+    }
     walker.index = index
   }
-  return result
+  return false
 }
 
-function clone (parentLexer, childLexer) {
-  childLexer.types = Object.assign({}, parentLexer.types)
-  childLexer.caches = {
-    regexp: Object.assign({}, parentLexer.caches.regexp),
-    text: Object.assign({}, parentLexer.caches.text),
-    type: Object.assign({}, parentLexer.caches.type),
+export const any = (walker, rule) => {
+  let results = []
+  while (!walker.end()) {
+    let result = seq(walker, rule)
+    if (result === false) {
+      break
+    }
+    results.push(result)
   }
+  return results
 }
+
+export const some = (walker, rule) => {
+  let results = []
+  while (!walker.end()) {
+    let result = seq(walker, rule)
+    if (result === false) {
+      break
+    }
+    results.push(result)
+  }
+  return results.length ? results : false
+}
+
+export const opt = (walker, rule) => {
+  return seq(walker, rule) || undefined
+}
+
+export const not = restorable((walker, rule) => {
+  let result = seq(walker, rule)
+  return result === false ? undefined : false
+})
+
+export const def = memoize(singleton(
+  (walker, descriptor) => {
+    let index = walker.index
+    const { rule, match, type, fallback } = descriptor
+    let result = seq(walker, rule)
+
+    if (result !== false && match) {
+      result = match(result, walker)
+    }
+
+    if (result === false && fallback) {
+      walker.index = index
+      return seq(walker, fallback)
+    }
+
+    if (result && !result.type) {
+      result.type = type
+    }
+
+    return result
+  },
+  ['rule', 'fallback']
+))
+
+export const text = memoize(
+  (walker, pattern) => {
+    let match = walker.matchText(pattern)
+    return match ? { raw: pattern } : false
+  }
+)
+
+export const regexp = memoize(
+  (walker, pattern) => {
+    let match = walker.matchRegExp(pattern)
+    return match ? { raw: match[0] } : false
+  }
+)
 
 export default class Lexer {
-  constructor (parent) {
-    if (parent instanceof Lexer) {
-      clone(parent, this)
-
-    } else {
-      this.types = {}
-      this.caches = {
-        regexp: {},
-        text: {},
-        type: {}
-      }
-    }
-    // this.types = {}
-
-    // this.caches = {
-    //   regexp: {},
-    //   text: {},
-    //   type: {}
-    // }
-
-    // for (let descriptor of descriptors) {
-    //   this.set(descriptor)
-    // }
-  }
-
-  use (type) {
-    if (this.types[type]) {
-      return this.types[type].test
-    }
-    if (!this.caches.type[type]) {
-      this.caches.type[type] = walker => (this.types[type].test(walker))
-    }
-    return this.caches.type[type]
+  constructor () {
+    this.types = {}
   }
 
   set (descriptor) {
-    const rule = this.seq(descriptor.rule)
-    const test = (walker) => {
-      let index = walker.index
-      let result = rule(walker)
-      // let result = safeRun(rule, walker)
-
-      if (result !== false && descriptor.onMatch) {
-        let args = Array.isArray(result) ? result : [result]
-        result = descriptor.onMatch(...args)
-      }
-
-      if (result === false) {
-        walker.index = index
-        return descriptor.fallback && descriptor.fallback(walker) || false
-      }
-
-      if (result == null) {
-        return result
-      }
-
-      if (!result.type) {
-        result.type = descriptor.type
-      }
-
-      if (!result.range) {
-        result.range = walker.getRange()
-      }
-
-      return result
-    }
-
-    this.types[descriptor.type] = {
-      descriptor,
-      test
-    }
+    let item = [def, descriptor]
+    this.types[descriptor.type] = item
+    return item
   }
 
-  or (tests) {
-    return (walker) => {
-      for (let test of tests) {
-        let result = safeRun(test, walker)
-        if (result !== false) {
-          return result
-        }
-      }
-      return false
-    }
-  }
-
-  seq (tests) {
-    if (Array.isArray(tests)) {
-      return (walker) => {
-        let index = walker.index
-        let results = []
-        for (let test of tests) {
-          let result = safeRun(test, walker)
-          if (result === false) {
-            walker.index = index
-            return false
-          }
-          results.push(result)
-        }
-        return results
-      }
-    }
-    return tests
-  }
-
-  regexp (pattern, modifiers = '') {
-    let regexpString = `/${pattern}/${modifiers}`;
-
-    if (!this.caches.regexp[regexpString]) {
-      let regexp = new RegExp(pattern, modifiers)
-
-      this.caches.regexp[regexpString] = walker => {
-        let index = walker.index
-        let match = walker.matchRegExp(regexp)
-
-        if (match) {
-          return {
-            raw: match[0],
-            range: walker.getRange(index)
-          }
-        }
-        return false
-      }
-    }
-
-    return this.caches.regexp[regexpString]
-  }
-
-  text (pattern) {
-    if (!this.caches.text[pattern]) {
-      this.caches.text[pattern] = walker => {
-        let index = walker.index
-        let match = walker.matchText(pattern)
-        if (match) {
-          return {
-            raw: pattern,
-            range: walker.getRange(index)
-          }
-        }
-        return false
-      }
-    }
-
-    return this.caches.text[pattern]
-  }
-
-  any (tests) {
-    let test = this.seq(tests)
-
-    return walker => {
-      let results = []
-      while (!walker.end()) {
-        let result = safeRun(test, walker)
-        if (result === false) {
-          break
-        }
-        results.push(result)
-      }
-     return results
-    }
-  }
-
-  some (tests) {
-    let test = this.seq(tests)
-    return (walker) => {
-      let results = []
-      let index = walker.index
-
-      while (!walker.end()) {
-        let result = safeRun(test, walker)
-        // let result = grammar(walker)
-        if (result === false) {
-          break
-        }
-        results.push(result)
-      }
-      if (results.length) {
-        return results
-      }
-      walker.index = index
-      return false
-    }
-  }
-
-  optional (tests) {
-    let test = this.seq(tests)
-    return (walker) => {
-      return safeRun(test, walker) || undefined
-    }
+  get (type) {
+    return this.types[type]
   }
 }
 

@@ -7,12 +7,19 @@ import {
   UNARY_OPERATION,
   BINARY_OPERATION,
   CUSTOM_FUNCTIONS,
+  CUSTOM_OBJECTS,
   getValidPrototypeFunction,
-  getValidObject
+  getProperty
 } from '../whitelist/basic'
 
+function isCallee (parent, node) {
+  return parent &&
+    parent.type === 'Call' &&
+    parent.callee === node
+}
+
 const visitor = {
-  ConditionalExpression (path) {
+  Conditional (path) {
     let test = path.traverse(path.node.test)
     let consequent = path.traverse(path.node.consequent)
     let alternate = path.traverse(path.node.alternate)
@@ -22,7 +29,7 @@ const visitor = {
     }
   },
 
-  BinaryExpression (path) {
+  Binary (path) {
     let node = path.node
     let operation = BINARY_OPERATION[node.operator]
     let left = path.traverse(node.left)
@@ -32,7 +39,7 @@ const visitor = {
     }
   },
 
-  UnaryExpression (path) {
+  Unary (path) {
     let node = path.node
     let operation = UNARY_OPERATION[node.operator]
     let argument = path.traverse(node.argument)
@@ -41,7 +48,7 @@ const visitor = {
     }
   },
 
-  ArrayExpression (path) {
+  ArrayLiteral (path) {
     let elements = []
     for (let element of path.node.elements) {
       if (element == null) {
@@ -56,7 +63,7 @@ const visitor = {
     }
   },
 
-  ObjectExpression (path) {
+  ObjectLiteral (path) {
     let properties = []
     for (let property of path.node.properties) {
       properties.push(path.traverse(property))
@@ -80,58 +87,70 @@ const visitor = {
     }
   },
 
+  Variable (path) {
+    let {parent, node} = path
+    let name = node.name
+
+    if (isCallee(parent, node)) {
+      let fn = CUSTOM_FUNCTIONS[name]
+      return () => fn
+    }
+
+    let valid = CUSTOM_OBJECTS[name]
+    let varFn = valid && valid.object
+    let scopeManager = path.scopeManager
+
+    return function (options) {
+      let scope = scopeManager.getInstance()
+      if (scope.has(name)) {
+        return scope.get(name)
+      }
+      let params = {options}
+
+      return varFn && varFn(params) ||
+        getProperty(CUSTOM_OBJECTS.m.object(params), name)
+    }
+
+  },
+
   Identifier (path) {
     let name = path.node.name
-
-    if (path.node.role === 'root') {
-      let objectFn = getValidObject(name)
-      let scopeManager = path.scopeManager
-
-      return function (options) {
-        let scope = scopeManager.getInstance()
-        if (scope.has(name)) {
-          return scope.get(name)
-        }
-        return objectFn({options})
-      }
-    }
     return () => name
   },
 
   Literal (path) {
     let value = path.node.value
-    return function () {
-      return value
-    }
+    return () => value
   },
 
-  MemberExpression (path) {
-    let node = path.node
+  Member (path) {
+    let {node, parent} = path
     let propertyFn = path.traverse(node.property)
+    let objectFn = path.traverse(node.object)
 
-    if (node.object.type === 'Identifier') {
-      let name = node.object.name
-      let scopeManager = path.scopeManager
-      let objectFn = getValidObject(name)
+    let getPropertyFn = getProperty
+    let isCustomObject = false
 
-      return function (options) {
-        let property = propertyFn()
-        let scope = scopeManager.getInstance()
-
-        if (scope.has(name)) {
-          return scope.get(name)[property]
-        }
-        return objectFn({options, property})
+    if (node.object.type === 'Variable') {
+      let valid = CUSTOM_OBJECTS[node.object.name]
+      isCustomObject = !!valid
+      if (isCustomObject && valid.property) {
+        getPropertyFn = valid.property
       }
     }
 
-    let object = path.traverse(node.object)
+    if (!isCustomObject && isCallee(parent, node)) {
+      getPropertyFn = getValidPrototypeFunction
+    }
+
     return function () {
-      return object()[propertyFn()]
+      let property = propertyFn()
+      let object = objectFn()
+      return getPropertyFn(objectFn(), propertyFn())
     }
   },
 
-  CallExpression (path) {
+  Call (path) {
     let node = path.node
     // 处理参数
     let args = []
@@ -139,53 +158,12 @@ const visitor = {
       args.push(path.traverse(arg))
     }
     let argFn = () => args.map(arg => arg())
+    let calleeFn = path.traverse(node.callee)
 
-    // 处理 callee
-
-    if (node.callee.type === 'Identifier') {
-      let fn = CUSTOM_FUNCTIONS[node.callee.name]
-      return function () {
-        return fn(...argFn())
-      }
-    }
-
-    if (
-      node.callee.type === 'MemberExpression' &&
-      node.callee.object.type === 'Identifier'
-    ) {
-      let name = node.callee.object.name
-      let scopeManager = path.scopeManager
-      let objectFn = getValidObject(name)
-      let propertyFn = path.traverse(node.callee.property, node.callee)
-
-      return function (options) {
-        let property = propertyFn()
-        let args = argFn()
-        let scope = scopeManager.getInstance()
-        if (scope.has(name)) {
-          let object = scope.get(name)
-          return getValidPrototypeFunction(object, property)(...args)
-        }
-        return objectFn({options, property})(...args)
-      }
-    }
-
-    if (node.callee.type === 'MemberExpression') {
-      let objectFn = path.traverse(node.callee.object, node.callee)
-      let propertyFn = path.traverse(node.callee.property, node.callee)
-
-      return function () {
-        let object = objectFn()
-        let property = propertyFn()
-        return getValidPrototypeFunction(object, property)(...argFn())
-      }
-    }
-
-    // 走到这里基本就是出错了
-    throw Error('未知的表达式')
+    return () => calleeFn()(...argFn())
   },
 
-  ArrowFunctionExpression (path) {
+  ArrowFunction (path) {
     const node = path.node
 
     let names = node.params.map(node => node.name)

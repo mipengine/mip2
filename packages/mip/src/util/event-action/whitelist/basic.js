@@ -31,7 +31,6 @@ export const UNARY_OPERATION = {
   '~': (arg) => ~arg
 }
 
-
 function instanceSort (...args) {
   return this.slice().sort(...args)
 }
@@ -110,83 +109,80 @@ export const CUSTOM_FUNCTIONS = {
   String: String
 }
 
-export const CUSTOM_OBJECTS = {
-  event ({options, property}) {
-    if (property) {
-      return options.event[property]
+export const MIP_ACTION_ALLOWED_OBJECTS = {
+  event: {
+    root: true,
+    object ({options}) {
+      return options.event
     }
-
-    return options.event
   },
 
-  DOM ({options, property}) {
-    let target = options.target
-    if (property === 'dataset') {
-      let dataset = {}
-      for (let key of Object.keys(target.dataset)) {
-        dataset[key] = target.dataset[key]
+  DOM: {
+    object ({options}) {
+      return options.target
+    },
+    property (target, property) {
+      if (property === 'dataset') {
+        let dataset = {}
+        for (let key of Object.keys(target.dataset)) {
+          dataset[key] = target.dataset[key]
+        }
+        return dataset
       }
-      return dataset
+
+      if (typeof target[property] !== 'object') {
+        return target[property]
+      }
+
+      if (target[property] == null) {
+        return target[property]
+      }
     }
-
-    if (typeof target[property] !== 'object') {
-      return target[property]
+  },
+  'undefined': {
+    object () {
+      return undefined
     }
-
-    if (target[property] == null) {
-      return target[property]
-    }
-  },
-
-  m ({options, property}) {
-    let data = options.data || window.m
-    // return property == null ? data : data[property]
-    // if (!property) {
-    //   return data
-    // }
-    return data[property]
-  },
-
-  Math ({property}) {
-    return Math[property]
-  },
-
-  Number ({property}) {
-    return Number[property]
-  },
-
-  Date ({property}) {
-    return Date[property]
-  },
-
-  Array ({property}) {
-    return Array[property]
-  },
-
-  Object ({property}) {
-    return Object[property]
-  },
-
-  String ({property}) {
-    return String[property]
   }
 }
 
-export function getValidObject (id) {
-  // return CUSTOM_OBJECTS[id] || CUSTOM_OBJECTS.m
-  return CUSTOM_OBJECTS[id] ||  function (args) {
-    let property = args.property
-    args.property = id
-    let object = CUSTOM_OBJECTS.m(args)
-    if (property != null) {
-      if (typeof object[property] === 'function') {
-        return getValidPrototypeFunction(object, property)
-      }
-      return object[property]
+export const CUSTOM_OBJECTS = Object.assign({
+  m: {
+    object ({options}) {
+      return options.data || window.m
     }
-    return object
+  },
+  Math: {
+    object () {
+      return Math
+    }
+  },
+  Number: {
+    object () {
+      return Number
+    }
+  },
+  Date: {
+    object () {
+      return Date
+    }
+  },
+  Object: {
+    object () {
+      return Object
+    }
+  },
+  Array: {
+    object () {
+      return Array
+    }
+  },
+  String: {
+    object () {
+      return String
+    }
   }
-}
+}, MIP_ACTION_ALLOWED_OBJECTS)
 
 export function getValidPrototypeFunction (object, property) {
   let instance = Object.prototype.toString.call(object)
@@ -197,5 +193,7 @@ export function getValidPrototypeFunction (object, property) {
   return fn.bind(object)
 }
 
-
+export function getProperty (object, property) {
+  return object[property]
+}
 

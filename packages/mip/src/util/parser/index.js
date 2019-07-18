@@ -5,6 +5,7 @@
  */
 import Walker from './walker'
 import traverse from './traverse'
+import {run} from './lexer'
 
 export default class Parser {
   constructor ({lexer, visitor, type}) {
@@ -15,12 +16,14 @@ export default class Parser {
 
   parse (str, type) {
     type = type || this.type
-    const lexer = this.lexer.use(type)
+    const lexer = this.lexer.get(type)
     const walker = new Walker(str)
-    let ast = lexer(walker)
+    let ast = run(walker, lexer)
     if (walker.end()) {
       return ast
     }
+    console.error(walker.rest())
+    throw walker.rest()
   }
 
   generate (ast) {
@@ -29,9 +32,9 @@ export default class Parser {
 
   transform (str, type) {
     let ast = this.parse(str, type)
-    if (!ast) {
-      throw Error('parse error')
-    }
+    // if (!ast) {
+    //   throw Error('parse error')
+    // }
 
     return this.generate(ast)
   }

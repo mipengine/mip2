@@ -2,18 +2,36 @@
  * @file mip-bind.spec.js
  * @author clark-t (clarktanglei@163.com)
  */
-import lexer from '../../../../src/util/event-action/grammar/index'
+import * as lexer from '../../../../src/util/event-action/grammar/basic'
+// import lexer from '../../../../src/util/event-action/grammar/index'
+import {run} from '../../../../src/util/parser/lexer'
 import Walker from '../../../../src/util/parser/walker'
 
 describe('Test Grammar', function () {
-  describe('Test String', function () {
-    let fn = lexer.use('String')
+  describe('Test Identifier', function () {
+    let fn = (walker) => run(walker, lexer.$conditional)
+    it('Should match as boolean', function () {
+      let str = `{
+        a: true,
+        b: false,
+        'c': trueOrFalse,
+        defg: null
+      }`
+      let walker = new Walker(str)
+      let result = fn(walker)
+      expect(result.properties[0].value.value).to.be.equal(true)
+      expect(result.properties[2].value.type).to.be.equal('Identifier')
+      expect(result.properties[3].value.value).to.be.equal(null)
+    })
+  })
 
+  describe('Test String', function () {
+    let fn = (walker) => run(walker, lexer.$string)
     it('should be equal', function () {
       let str = '""'
       let walker = new Walker(str)
       let result = fn(walker)
-      expect(result.raw).to.be.equal(str)
+      expect(result.value).to.be.equal('')
       expect(walker.end()).to.be.true
     })
     it('should be equal', function () {
@@ -21,7 +39,7 @@ describe('Test Grammar', function () {
       let walker = new Walker(str)
       let result = fn(walker)
       expect(!!result).to.be.true
-      expect(result.raw).to.be.equal(str)
+      expect(result.value).to.be.equal(JSON.parse(str))
       expect(walker.end()).to.be.true
     })
 
@@ -34,10 +52,9 @@ describe('Test Grammar', function () {
       expect(walker.end()).to.be.true
     })
     it('should be equal', function () {
-      let str = '"asdf\\"sdad\t"'
+      let str = '"asdf\\"sdad\\t"'
       let walker = new Walker(str)
       let result = fn(walker)
-      expect(!!result).to.be.true
       expect(result.raw).to.be.equal(str)
       expect(walker.end()).to.be.true
     })
@@ -55,7 +72,7 @@ describe('Test Grammar', function () {
   })
 
   describe('Test Boolean', function () {
-    let fn = lexer.use('Boolean')
+    let fn = (walker) => run(walker, lexer.$boolean)
 
     it('should be true', function () {
       let walker = new Walker('true')
@@ -78,7 +95,6 @@ describe('Test Grammar', function () {
       let walker = new Walker('atrue')
       let result = fn(walker)
       expect(!!result).to.be.false
-      // expect(result.raw).to.be.equal('true')
       expect(walker.end()).to.be.false
       expect(walker.str.slice(walker.index)).to.be.equal('atrue')
 
@@ -111,14 +127,15 @@ describe('Test Grammar', function () {
   })
 
   describe('Test Literal', function () {
-    let fn = lexer.use('Literal')
+    let fn = (walker) => run(walker, lexer.$literal)
 
     it('should be equal', function () {
-      let str = 'nullfalseundefinedtrue3.1415926"hehehou\\"lalal"'
+      let str = 'nullfalsetrue3.1415926"hehehou\\"lalal"'
       let walker = new Walker(str)
       expect(fn(walker).raw).to.be.equal('null')
       expect(fn(walker).raw).to.be.equal('false')
-      expect(fn(walker).raw).to.be.equal('undefined')
+      // undefined is Identifier but not Literal
+      // expect(fn(walker).raw).to.be.equal('undefined')
       expect(fn(walker).raw).to.be.equal('true')
       expect(fn(walker).raw).to.be.equal('3.1415926')
       expect(fn(walker).raw).to.be.equal('"hehehou\\"lalal"')
@@ -126,7 +143,7 @@ describe('Test Grammar', function () {
   })
 
   describe('Test ArrayExpression', function () {
-    let fn = lexer.use('ArrayExpression')
+    let fn = (walker) => run(walker, lexer.$array)
 
     it('should be equal', function () {
       let str = '[1, 1 + 2,]'
@@ -134,13 +151,13 @@ describe('Test Grammar', function () {
       let result = fn(walker)
       expect(result.elements.length).to.be.equal(3)
       expect(result.elements[0].type).to.be.equal('Literal')
-      expect(result.elements[1].type).to.be.equal('BinaryExpression')
+      expect(result.elements[1].type).to.be.equal('Binary')
       expect(result.elements[2]).to.be.equal(undefined)
     })
   })
 
   describe('Test Property', function () {
-    let fn = lexer.use('Property')
+    let fn = (walker) => run(walker, lexer.$property)
     it('should be equal', function () {
       let str = '"a": 1 + 2'
       let walker = new Walker(str)
@@ -153,27 +170,27 @@ describe('Test Grammar', function () {
       let walker = new Walker(str)
       let result = fn(walker)
       expect(result.key.raw).to.be.equal('"asdf"')
-      expect(result.value.type).to.be.equal('BinaryExpression')
+      expect(result.value.type).to.be.equal('Binary')
     })
     it('should be equal', function () {
       let str = 'a: 1 + 2'
       let walker = new Walker(str)
       let result = fn(walker)
       expect(result.key.name).to.be.equal('a')
-      expect(result.value.type).to.be.equal('BinaryExpression')
+      expect(result.value.type).to.be.equal('Binary')
     })
     it('should be equal', function () {
       let str = '_0123: 1 + 2'
       let walker = new Walker(str)
       let result = fn(walker)
       expect(result.key.name).to.be.equal('_0123')
-      expect(result.value.type).to.be.equal('BinaryExpression')
+      expect(result.value.type).to.be.equal('Binary')
     })
 
   })
 
   describe('Test Object', function () {
-    let fn = lexer.use('ObjectExpression')
+    let fn = (walker) => run(walker, lexer.$object)
 
     it('should be equal', function () {
       let str = `{
@@ -196,12 +213,12 @@ describe('Test Grammar', function () {
   })
 
   describe('Test MemberExpression', function () {
-    let fn = lexer.use('MemberExpression')
+    let fn = (walker) => run(walker, lexer.$member)
     it('simple Member Expression', function () {
       let str = 'aa.bb.cc.dd'
       let walker = new Walker(str)
       let result = fn(walker)
-      expect(result.type).to.be.equal('MemberExpression')
+      expect(result.type).to.be.equal('Member')
       expect(result.object.object.object.name).to.be.equal('aa')
     })
 
@@ -223,28 +240,111 @@ describe('Test Grammar', function () {
   })
 
 
-  describe('Test MultiplicativeExpression', function () {
-    let fn = lexer.use('MultiplicativeExpression')
-    it('should be equal', function () {
+  describe('Test BinaryExpression', function () {
+    let fn = (walker) => run(walker, lexer.$binary)
+    it('Multiplicative', function () {
       let str = '1 * abc * 3'
       let walker = new Walker(str)
       let result = fn(walker)
       expect(result.left.right.name).to.be.equal('abc')
     })
+    it('Additive', function () {
+      let str = '1 + abc + 3'
+      let walker = new Walker(str)
+      let result = fn(walker)
+      expect(result.left.right.name).to.be.equal('abc')
+    })
+    it('With Grouping', function () {
+      let str = '1 * (abc * 3) + def'
+      let walker = new Walker(str)
+      let result = fn(walker)
+      expect(result.left.right.left.name).to.be.equal('abc')
+    })
+    it('With Logical', function () {
+      let str = '1 * abc > 3/4* abc || a.b.c === 3 -123&&666'
+      let walker = new Walker(str)
+      let result = fn(walker)
+      expect(result.operator).to.be.equal('||')
+      expect(result.left.operator).to.be.equal('>')
+      expect(result.right.operator).to.be.equal('&&')
+      expect(result.right.left.operator).to.be.equal('===')
+    })
+
+  })
+
+  describe('Test Unary', function () {
+    let fn = (walker) => run(walker, lexer.$unary)
+    it('Grouping', function () {
+      let str = `( 10086  )`
+      let walker = new Walker(str)
+      let result = fn(walker)
+      expect(result.type).to.be.equal('Literal')
+    })
+    it('Minus', function () {
+      let str = `-3.1415926`
+      let walker = new Walker(str)
+      let result = fn(walker)
+      expect(result.type).to.be.equal('Unary')
+      expect(result.operator).to.be.equal('-')
+      expect(result.argument.value).to.be.equal(3.1415926)
+    })
+    it('Multi Unary', function () {
+      let str = `~   ( 1 + (2-3)  )`
+      let walker = new Walker(str)
+      let result = fn(walker)
+      expect(result.type).to.be.equal('Unary')
+      expect(result.operator).to.be.equal('~')
+      expect(result.argument.type).to.be.equal('Binary')
+      expect(result.argument.right.operator).to.be.equal('-')
+    })
+
+  })
+
+  describe('Test Arguments', function () {
+    let fn = (walker) => run(walker, lexer.$arguments)
+    it('Empty Arguments', function () {
+      let str = `(        )`
+      let walker = new Walker(str)
+      let result = fn(walker)
+      expect(result.type).to.be.equal('Call')
+      expect(result.arguments.length).to.be.equal(0)
+    })
+    it('One Arguments', function () {
+      let str = `(   (1 + (2 * asdf))    )`
+      let walker = new Walker(str)
+      let result = fn(walker)
+      expect(result.type).to.be.equal('Call')
+      expect(result.arguments.length).to.be.equal(1)
+    })
+    it('Multi Arguments', function () {
+      let str = `( (11) * asda , a.b[2+4], (a()() + 7),  )`
+      let walker = new Walker(str)
+      let result = fn(walker)
+      expect(result.type).to.be.equal('Call')
+      expect(result.arguments.length).to.be.equal(4)
+    })
+    it('Empty Arguments', function () {
+      let str = `(        )`
+      let walker = new Walker(str)
+      let result = fn(walker)
+      expect(result.type).to.be.equal('Call')
+      expect(result.arguments.length).to.be.equal(0)
+    })
+
   })
 
   describe('Test CallExpression', function () {
-    let fn = lexer.use('CallExpression')
+    // let fn = lexer.use('CallExpression')
+    let fn = (walker) => run(walker, lexer.$call)
     it('Continual CallExpression', function () {
       let str = 'a()()()'
       let walker = new Walker(str)
       let result = fn(walker)
-      expect(result.type).to.be.equal('CallExpression')
+      expect(result.type).to.be.equal('Call')
       expect(result.callee.callee.callee.name).to.be.equal('a')
     })
 
     it('With arguments', function () {
-      // let str = 'abc.def[1 * (2 - 3)](4 + 5, (6*7)).hij()'
       let str = 'a(     1        , 3 * (4   - 5),    )'
       let walker = new Walker(str)
       let result = fn(walker)
@@ -260,29 +360,68 @@ describe('Test Grammar', function () {
       expect(result.callee.object.callee.object.property.name).to.be.equal('def')
       expect(result.callee.object.callee.property.right.right.value).to.be.equal(3)
       expect(result.callee.object.arguments[1].operator).to.be.equal('*')
-      // console.log(JSON.stringify(result, null, 1))
     })
 
     it('With illegal arguments', function () {
       let str = 'a(1+2,,3+4)'
       let walker = new Walker(str)
       let result = fn(walker)
-      // console.log(result)
       expect(result.type).to.be.equal('Identifier')
       expect(walker.end()).to.be.equal(false)
     })
   })
 
+  describe('Test Arguments', function () {
+    let fn = (walker) => run(walker, lexer.$params)
+    it ('Zero Params', function () {
+      let str = `(        )`
+      let walker = new Walker(str)
+      let result = fn(walker)
+      expect(result.type).to.be.equal('Params')
+      expect(result.params.length).to.be.equal(0)
+    })
+    it ('One Params', function () {
+      let str = `(    asdfg    )`
+      let walker = new Walker(str)
+      let result = fn(walker)
+      expect(result.type).to.be.equal('Params')
+      expect(result.params.length).to.be.equal(1)
+    })
+    it('One Params Without paren', function () {
+      let str = `asdf`
+      let walker = new Walker(str)
+      let result = fn(walker)
+      expect(result.type).to.be.equal('Params')
+      expect(result.params.length).to.be.equal(1)
+    })
+
+    it('Standard Multi Params', function () {
+      let str = `( $_abc,def,ghi,   kj  )`
+      let walker = new Walker(str)
+      let result = fn(walker)
+      expect(result.type).to.be.equal('Params')
+      expect(result.params.length).to.be.equal(4)
+    })
+
+    it ('Multi Params With tail comma', function () {
+      let str = `(  abc, def, ghi,      )`
+      let walker = new Walker(str)
+      let result = fn(walker)
+      expect(result.type).to.be.equal('Params')
+      expect(result.params.length).to.be.equal(3)
+    })
+
+  })
+
   describe('Test ArrowFunctionExpression', function () {
-    let fn = lexer.use('ArrowFunctionExpression')
+    let fn = (walker) => run(walker, lexer.$arrowFunction)
     it('Without Params', function () {
       let str = '(   )  =>   "3" > 1 ? 2 + 1: false'
       let walker = new Walker(str)
       let result = fn(walker)
-      expect(result.type).to.be.equal('ArrowFunctionExpression')
+      expect(result.type).to.be.equal('ArrowFunction')
       expect(result.params.length).to.be.equal(0)
-      expect(result.body.type).to.be.equal('ConditionalExpression')
-      // console.log(JSON.stringify(result))
+      expect(result.body.type).to.be.equal('Conditional')
     })
 
     it('With 1 param and no bracket', function () {
@@ -291,43 +430,36 @@ describe('Test Grammar', function () {
       let result = fn(walker)
       expect(walker.end()).to.be.equal(true)
       expect(result.params.length).to.be.equal(1)
-      expect(result.body.type).to.be.equal('MemberExpression')
-      // console.log(JSON.stringify(result))
+      expect(result.body.type).to.be.equal('Member')
     })
 
     it('With {}', function () {
       let str = 'asdf => {a: 1, b: 2}'
       let walker = new Walker(str)
       let result = fn(walker)
-      // console.log(result)
       expect(walker.end()).to.be.equal(false)
       expect(walker.index).to.be.equal(0)
-      // console.log(walker.rest())
     })
 
     it('With ({})', function () {
       let str = 'asdf => ({a: 1, b: 2})'
       let walker = new Walker(str)
       let result = fn(walker)
-      // console.log(result)
       expect(walker.end()).to.be.equal(true)
-      expect(result.type).to.be.equal('ArrowFunctionExpression')
-      expect(result.body.type).to.be.equal('ObjectExpression')
-      // expect(walker.index).to.be.equal(0)
-      // console.log(walker.rest())
+      expect(result.type).to.be.equal('ArrowFunction')
+      expect(result.body.type).to.be.equal('ObjectLiteral')
     })
 
   })
 
   describe('Test Arguments', function () {
-    let fn = lexer.use('Arguments')
+    let fn = (walker) => run(walker, lexer.$arguments)
 
     it('no arguments', function () {
       let str = '( )'
       let walker = new Walker(str)
       let result = fn(walker)
       expect(result.arguments.length).to.be.equal(0)
-      // console.log(JSON.stringify(result, null, 2))
     })
 
     it('arguments', function () {
@@ -336,7 +468,6 @@ describe('Test Grammar', function () {
       let result = fn(walker)
       expect(result.arguments.length).to.be.equal(3)
       expect(result.arguments[1].right.right.operator).to.be.equal('-')
-      // console.log(JSON.stringify(result, null, 2))
     })
 
     it('missing trailing arguments', function () {
