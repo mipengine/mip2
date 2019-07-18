@@ -87,7 +87,7 @@ function setDataParseFallback ({argumentText, options}) {
           return target[key] || ALLOWED_GLOBALS.indexOf(key) < 0
         }
       })
-    : {}
+    : /* istanbul ignore next */ {}
   return fn.call(Object.assign(proxy, {event: options.event}))
 }
 

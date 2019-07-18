@@ -30,15 +30,25 @@ export default function () {
   // @deprecated
   window.mipDataPromises = {}
   window.m = store.data
-  MIP.$set = MIP.setData
+  // 兼容原有逻辑
+  // MIP.$set = MIP.setData
   MIP.$update = store.global.broadcast.bind(store.global)
 
-  let bindings = queryBindings(document.documentElement)
-  // @TODO 新增对节点元素的监听
-  addInputListener(bindings, store)
-  addBindingListener(bindings, store)
-  MIP.setData(store.global.data)
+  let bindingDOMs
+  MIP.$set = data => {
+    let bindings = queryBindings(document.documentElement)
+    if (bindingDOMs && bindingDOMs.length !== bindings.length) {
+      logger.warn(`请勿在动态节点上使用 m-bind`)
+    }
+    bindingDOMs = bindings
+    addInputListener(bindings, store)
+    addBindingListener(bindings, store)
+    MIP.setData(data)
+  }
+  MIP.$set(store.global.data)
 }
+
+
 
 function queryBindings (root) {
   let results = []

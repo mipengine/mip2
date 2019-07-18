@@ -261,13 +261,13 @@ export const memoize = (fn) => {
 
 export function noop () {}
 
-export function classify (source, callback) {
-  let result = {}
-  for (let key of Object.keys(source)) {
-    result[callback(key, source[key])] = source[key]
-  }
-  return result
-}
+// export function classify (source, callback) {
+//   let result = {}
+//   for (let key of Object.keys(source)) {
+//     result[callback(key, source[key])] = source[key]
+//   }
+//   return result
+// }
 
 export function traverse (source, callback) {
   let stack = [source]

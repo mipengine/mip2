@@ -30,6 +30,7 @@ export function nextTick (callback) {
     try {
       callback()
     } catch (e) {
+      /* istanbul ignore next */
       console.error(e)
     }
   })

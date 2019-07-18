@@ -19,7 +19,7 @@ export default class Parser {
     const lexer = this.lexer.get(type)
     const walker = new Walker(str)
     let ast = run(walker, lexer)
-    if (walker.end()) {
+    if (ast !== false && walker.end()) {
       return ast
     }
     throw new Error(walker.rest())

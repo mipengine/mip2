@@ -27,14 +27,14 @@ describe('Test Grammar', function () {
 
   describe('Test String', function () {
     let fn = (walker) => run(walker, lexer.$string)
-    it('should be equal', function () {
+    it('empty string', function () {
       let str = '""'
       let walker = new Walker(str)
       let result = fn(walker)
       expect(result.value).to.be.equal('')
       expect(walker.end()).to.be.true
     })
-    it('should be equal', function () {
+    it('simple string', function () {
       let str = '"asdf"'
       let walker = new Walker(str)
       let result = fn(walker)
@@ -43,7 +43,7 @@ describe('Test Grammar', function () {
       expect(walker.end()).to.be.true
     })
 
-    it('should be equal', function () {
+    it('string with special string and escape string', function () {
       let str = '"sdfgsdfgsdee&^&%&\n\tccc"'
       let walker = new Walker(str)
       let result = fn(walker)
@@ -51,16 +51,15 @@ describe('Test Grammar', function () {
       expect(result.raw).to.be.equal(str)
       expect(walker.end()).to.be.true
     })
-    it('should be equal', function () {
-      let str = '"asdf\\"sdad\\t"'
+    it('string with full escape', function () {
+      let str = '"asdf\\"sd\\/a\\b\\f\\n\\rd\\t"'
       let walker = new Walker(str)
       let result = fn(walker)
       expect(result.raw).to.be.equal(str)
       expect(walker.end()).to.be.true
     })
 
-
-    it('should be equal', function () {
+    it('string with single quote and double quote', function () {
       let str = "'asdf\\'sdasd\\\"sss'"
       let walker = new Walker(str)
       let result = fn(walker)

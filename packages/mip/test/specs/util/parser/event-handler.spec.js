@@ -6,6 +6,7 @@
 import * as lexer from '../../../../src/util/event-action/grammar/event-handler'
 import {run} from '../../../../src/util/parser/lexer'
 import Walker from '../../../../src/util/parser/walker'
+import parser from '../../../../src/util/event-action/parser'
 
 const createFn = (lex) => {
   return (str) => {
@@ -25,7 +26,7 @@ describe('mip-event-handler', () => {
 
         '('
         mn)`
-        let ast = fn(str)
+        let ast = parser.parse(str)
         expect(ast.type).to.be.equal('MIPEventHandler')
         expect(ast.actions[0].type).to.be.equal('MIPAction')
       })

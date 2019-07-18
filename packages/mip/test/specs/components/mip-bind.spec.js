@@ -76,12 +76,6 @@ describe.skip('mip-bind', function () {
     })
 
     it('should set data initially', function () {
-      // return Promise.resolve()
-      // // consume one microtask
-      //   .then(() => {})
-      // .then(() => {
-
-      // })
       expect(window.m).to.eql({
         global: {
           data: {

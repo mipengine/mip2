@@ -50,8 +50,29 @@ describe('MIP Argument', () => {
         thisIsAnId.someProperty
         `
       let walker = new Walker(str)
-      let ast = fn(str)
+      let ast = fn(walker)
       expect(walker.end()).to.be.equal(false)
+    })
+
+    it('use illegal global variable', function () {
+      let str = `first=123,abc=eventDom.action,other=123`
+      let walker = new Walker(str)
+      let ast = fn(walker)
+      expect(walker.end()).to.be.equal(false)
+    })
+
+    it('use legal global variable', function () {
+      let str = `first=123,abc=DOM.eventDom.action,other=123`
+      let walker = new Walker(str)
+      let ast = fn(walker)
+      expect(walker.end()).to.be.equal(true)
+    })
+
+    it('empty arguments', function () {
+      let str = ''
+      let walker = new Walker(str)
+      let ast = fn(walker)
+      expect(ast.arguments.length).to.be.equal(0)
     })
   })
 })

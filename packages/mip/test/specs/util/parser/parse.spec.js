@@ -4,11 +4,25 @@ import parser from '../../../../src/util/event-action/parser'
 
 describe('parser', () => {
   describe('Basic caculation', function () {
-    it('Number Caculation', function () {
-      const str = `1 + 4 * (5 +(-7))`
+    it('Conditional Expression', function () {
+      const str = `1 + (2 > 3 ? 1 : 10086)`
       let fn = parser.transform(str, 'Conditional')
       let result = fn()
-      expect(result).to.be.equal(-7)
+      expect(result).to.be.equal(10087)
+    })
+
+    it('Number Caculation', function () {
+      const str = `~1 +
+        4 * (5 +(-7)) / 1 +
+        (1 > 0 ? 10 : 20) -
+        (-1 >= -1 ? 100 : 200) +
+        (123 <= 467 ?1000:2000) +
+        (true==1?10000:20000)+
+        ((false!=-1) && 100000)+
+        !true+200000`
+      let fn = parser.transform(str, 'Conditional')
+      let result = fn()
+      expect(result).to.be.equal(310900)
     })
 
     it('Boolean Caculation', function () {
@@ -25,8 +39,34 @@ describe('parser', () => {
       expect(result).to.be.deep.equal([1, 1, 3, 4, 5])
     })
 
+    it('Empty Array', function () {
+      const str = `[       ].sort()`
+      let fn = parser.transform(str, 'Conditional')
+      let result = fn()
+      expect(result).to.be.deep.equal([])
+    })
+
+    it('Splice Array', function () {
+      const str = `m.array.splice(1,3)`
+      let fn = parser.transform(str, 'Conditional')
+      let source = {data: {
+        array: [1, 2, 3, 4, 5]
+      }}
+      let result = fn(source)
+      expect(result).to.be.deep.equal([2, 3, 4])
+      expect(source.data.array.length).to.be.equal(5)
+    })
+
+    it('Use illegal prototype Function', function () {
+      const str = `({a: 1}).valueOf()`
+      let fn = parser.transform(str, 'Conditional')
+      expect(() => fn()).to.be.throw(`不支持 [object Object].valueOf 方法`)
+    })
+
     it('event and DOM', function () {
-      const str = `1 + event.a.b - DOM.dataset.score`
+      const str = `1 +
+        event.a.b -
+        (DOM.dataset.score + two.way.binding) + ~undefined`
       let fn = parser.transform(str, 'Conditional')
       let result = fn({
         event: {
@@ -36,9 +76,37 @@ describe('parser', () => {
           dataset: {
             score: 10000
           }
+        },
+        data: {
+          two: {
+            way: {
+              binding: 123
+            }
+          }
         }
       })
-      expect(result).to.be.equal(87)
+      expect(result).to.be.equal(-37)
+    })
+
+    it('Global Variable', function () {
+      let str = `Math.abs(-2) +
+        Math.PI +
+        isNaN(Number.NaN) +
+        Object.keys({a: 1, b: {a: 1}}).length +
+        Date.parse('2019-07-18 19:18:00') +
+        ~Array.isArray(undefined) +
+        String.fromCharCode(65) === 'A'`
+      let fn = parser.transform(str, 'Conditional')
+      let result = fn()
+      expect(result).to.be.equal(
+        Math.abs(-2) +
+        Math.PI +
+        isNaN(Number.NaN) +
+        Object.keys({a: 1, b: {a: 1}}).length +
+        Date.parse('2019-07-18 19:18:00') +
+        ~Array.isArray(undefined) +
+        String.fromCharCode(65) === 'A'
+      )
     })
 
     it('Arrow Function', function () {
