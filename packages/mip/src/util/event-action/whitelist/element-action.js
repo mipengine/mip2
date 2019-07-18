@@ -25,6 +25,7 @@ function getAutofocusElement (el) {
  * @param {boolean} opt 是否显示
  */
 function toggle (el, opt) {
+  /* istanbul ignore if */
   if (opt === undefined) {
     opt = el.hasAttribute('hidden')
   }
@@ -42,7 +43,7 @@ function toggle (el, opt) {
  * @param {HTMLElement} target 目标元素
  */
 function show ({target}) {
-  if (target.classList.contains(getLayoutClass(LAYOUT.NODISPLAY))) {
+  if (target.getAttribute('layout') === LAYOUT.NODISPLAY) {
     logger.warn('layout=nodisplay 的元素不能被动态 show')
     return
   }
