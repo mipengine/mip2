@@ -9,7 +9,7 @@ export function merge (oldVal, newVal, replace = true) {
   let change = []
 
   let root = { oldVal, newVal, key: '' }
-  traverse(root, ({ oldVal: oldObj, newVal: newObj, key }) => {
+  traverse(root, ({ oldVal: oldObj, newVal: newObj, key: parentKey }) => {
     let children = []
 
     for (let k of Object.keys(newObj)) {
@@ -22,7 +22,7 @@ export function merge (oldVal, newVal, replace = true) {
         continue
       }
 
-      key = key === '' ? k : `${key}.${k}`
+      let key = parentKey === '' ? k : `${parentKey}.${k}`
 
       let newType = getType(newVal)
       if (newType === '[object Object]' && newType === getType(oldVal)) {
@@ -31,7 +31,7 @@ export function merge (oldVal, newVal, replace = true) {
       }
 
       if (replace || oldVal === undefined) {
-        change.push({ expr: key, value: oldVal })
+        change.push({ expr: key, oldVal, newVal })
         oldObj[k] = newObj[k]
       }
     }

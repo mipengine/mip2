@@ -22,6 +22,7 @@ export default class GlobalData {
     if (isEmptyObject(data)) {
       return
     }
+
     let pageId = location.href.replace(location.hash, '')
     nextTick(() => {
       !this.isRoot && this.rootWin.MIP.setData(data)
@@ -48,7 +49,7 @@ export default class GlobalData {
   classify (data) {
     return Object.keys(data).reduce((result, key) => {
       if (typeof data[key] === 'function') {
-        throw 'setData method MUST NOT be Function: ${key}'
+        throw `setData method MUST NOT be Function: ${key}`
       }
       let realKey
       if (key[0] === '#') {

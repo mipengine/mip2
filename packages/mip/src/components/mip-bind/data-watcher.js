@@ -39,6 +39,10 @@ export default class DataWatcher {
       let max = this.changes.length
       for (i = 0; i < max; i++) {
         let stored = this.changes[i]
+        if (change.expr === stored.expr) {
+          stored.newVal =  change.newVal
+          break
+        }
         if (change.expr.indexOf(stored.expr) === 0) {
           break
         }
@@ -61,9 +65,11 @@ export default class DataWatcher {
     }
 
     let [expr, callback] = args
-
-    this.watches[expr] = this.watches[expr] || []
-    this.watches[expr].push(callback)
+    let exprs = Array.isArray(expr) ? expr : [expr]
+    for (let exp of exprs) {
+      this.watches[exp] = this.watches[exp] || []
+      this.watches[exp].push(callback)
+    }
   }
 
   _flush () {
@@ -75,7 +81,12 @@ export default class DataWatcher {
     let watchExprs = Object.keys(this.watches)
     for (let i = 0; i < changes.length; i++) {
       let change = changes[i]
-      let { expr: changeExpr, value: oldValue } = change
+      let {
+        expr: changeExpr,
+        oldVal: oldValue,
+        // newVal
+        newVal: newValue
+      } = change
       for (let j = 0; j < watchExprs.length; j++) {
         let watchExpr = watchExprs[j]
         if (watchExpr.indexOf(changeExpr) !== 0) {
@@ -83,13 +94,16 @@ export default class DataWatcher {
         }
         watchExprs.splice(j, 1)
         let callbacks = this.watches[watchExpr]
-        let newVal = getProperty(this.data, watchExpr)
+        // let newVal = getProperty(this.data, watchExpr)
         let oldVal
+        let newVal
         if (watchExpr === changeExpr) {
           oldVal = oldValue
+          newVal = newValue
         } else {
           let restExpr = watchExpr.slice(changeExpr.length + 1)
           oldVal = getProperty(oldValue, restExpr)
+          newVal = getProperty(newValue, restExpr)
         }
         for (let callback of callbacks) {
           try {

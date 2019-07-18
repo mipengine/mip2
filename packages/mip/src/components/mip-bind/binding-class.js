@@ -42,12 +42,13 @@ function formatClass (value) {
   }
 
   if (typeof value === 'string') {
-    return value.trim()
-      .split(/\s+/)
-      .reduce((result, className) => {
-        result[className] = true
-        return result
-      }, {})
+    value = value.trim()
+    return value &&
+      value.split(/\s+/)
+        .reduce((result, className) => {
+          result[className] = true
+          return result
+        }, {}) || {}
   }
 
   if (getType(value) === '[object Object]') {

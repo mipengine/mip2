@@ -28,7 +28,7 @@ export default function () {
   MIP.watch = store.watcher.watch.bind(store.watcher)
 
   // @deprecated
-  window.mipDataPromises = {}
+  window.mipDataPromises = []
   window.m = store.data
   // 兼容原有逻辑
   // MIP.$set = MIP.setData
@@ -38,7 +38,7 @@ export default function () {
   MIP.$set = data => {
     let bindings = queryBindings(document.documentElement)
     if (bindingDOMs && bindingDOMs.length !== bindings.length) {
-      logger.warn(`请勿在动态节点上使用 m-bind`)
+      logger.warn(`请勿在动态创建的节点上使用 m-bind`)
     }
     bindingDOMs = bindings
     addInputListener(bindings, store)

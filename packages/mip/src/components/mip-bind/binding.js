@@ -32,7 +32,6 @@ export function applyBinding ({node, attrs, keys }, data) {
     try {
       parser = parse(expr, 'Conditional')
     } catch (e) {
-      console.error(e)
       continue
     }
 

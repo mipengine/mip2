@@ -313,4 +313,7 @@ export function complement (obj, excludes) {
   return result
 }
 
+export function startsWith (str, prefix) {
+  return str.slice(0, prefix.length) === prefix
+}
 

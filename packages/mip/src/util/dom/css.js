@@ -2,7 +2,12 @@
  * @file css
  * @author sekiyika(pengxing@baidu.com)
  */
-import {camelize, kebabize} from '../string'
+import {
+  camelize,
+  kebabize,
+  capitalize
+} from '../string'
+import {startsWith} from '../fn'
 
 let camelReg = /(?:(^-)|-)+(.)?/g
 
@@ -150,15 +155,37 @@ export function styleToObject (str) {
   let obj = {}
   for (let style of styles) {
     let [attr, value] = style.split(/\s*:\s*/)
-    obj[camelize(attr)] = value
+    obj[styleCamelCase(attr)] = value
   }
   return obj
 }
 
+function isPascal (key) {
+  return /^[A-Z]/.test(key)
+}
+
+function styleKebabize (key) {
+  if (!isPascal(key)) {
+    for (let prefix of PREFIX_TYPE) {
+      if (startsWith(key, prefix) && isPascal(key[prefix.length])) {
+        key = capitalize(key)
+        break
+      }
+    }
+  }
+  return kebabize(key)
+}
+function styleCamelCase (key) {
+  if (startsWith(key, '-')) {
+    key = key.slice(1)
+  }
+  return camelize(key)
+}
+
 export function objectToStyle (obj) {
   return Object.keys(obj)
-    .map(key => stringifyStyle(kebabize(key), obj[key]))
-    .join(';')
+    .map(key => stringifyStyle(styleKebabize(key), obj[key]))
+    .join(';') + ';'
 }
 
 function stringifyStyle (key, value) {
