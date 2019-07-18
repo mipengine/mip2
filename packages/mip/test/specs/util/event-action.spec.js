@@ -57,11 +57,17 @@ describe('Event Action', () => {
       let show = sinon.spy(elementActions, 'show')
       el.setAttribute('on', "eventName:test-event-action.show")
       target.setAttribute('hidden', '')
+      target.removeAttribute('autofocus')
       action.execute('eventName', el, {})
       show.restore()
 
       let argument = show.args[0][0]
       expect(argument.target.id).to.be.equal(target.id)
+      expect(target.hasAttribute('hidden')).to.be.false
+      expect(document.activeElement === target).to.be.false
+
+      target.setAttribute('autofocus', '')
+      action.execute('eventName', el, {})
       expect(target.hasAttribute('hidden')).to.be.false
       expect(document.activeElement === target).to.be.true
 
@@ -72,6 +78,7 @@ describe('Event Action', () => {
       target.setAttribute('layout', 'nodisplay')
       action.execute('eventName', el, {})
       expect(target.style.display).to.be.equal('none')
+      target.setAttribute('layout', '')
       target.style.display = ''
     })
 
@@ -128,7 +135,11 @@ describe('Event Action', () => {
       action.execute('eventName', el, )
       expect(fixed.style.display).to.be.equal('none')
       fixed.remove()
-      // document.body.removeChild(fixed)
+    })
+
+    it('should warn when execute not-supported methods', () =>  {
+      el.setAttribute('on', "eventName:test-event-action.someMethods")
+      action.execute('eventName', el, {})
     })
 
     it('should support event dot syntax', () => {

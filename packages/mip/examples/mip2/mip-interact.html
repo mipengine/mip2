@@ -62,22 +62,22 @@
           <h2>一、MIP Action</h2>
           <div>
             <div>
-              <h3>1. MIP.navigateTo</h3>
-              <button on="tap:MIP.navigateTo(url='http://localhost:8080/examples/mip2/mip-on-test.html', target='_blank', opener=true)">_blank, opener</button>
-              <button on="tap:MIP.navigateTo(url='http://localhost:8080/examples/mip2/mip-on-test.html', target='_blank', opener=false)">_blank, noopener</button>
-              <button on="tap:MIP.navigateTo(url='http://localhost:8080/examples/mip2/mip-on-test.html', target='_top')">_top</button>
+              <h3>1. MIP.navigateTo(url=STRING, target=STRING, Opener=BOOLEAN)</h3>
+              <button on="tap:MIP.navigateTo(url='http://localhost:8080/examples/mip2/mip-interact.html', target='_blank', opener=true)">_blank, opener</button>
+              <button on="tap:MIP.navigateTo(url='http://localhost:8080/examples/mip2/mip-interact.html', target='_blank', opener=false)">_blank, noopener</button>
+              <button on="tap:MIP.navigateTo(url='http://localhost:8080/examples/mip2/mip-interact.html', target='_top')">_top</button>
             </div>
             
             <div>
-              <h3>2. MIP.closeOrNavigateTo</h3>
-              <button on="tap:MIP.closeOrNavigateTo(url='http://172.18.16.82:8080/examples/mip2/mip-on-test.html', target='_blank', opener=true)">_blank, opener</button>
-              <button on="tap:MIP.closeOrNavigateTo(url='http://172.18.16.82:8080/examples/mip2/mip-on-test.html', target='_blank', opener=false)">_blank, noopener</button>
-              <button on="tap:MIP.closeOrNavigateTo(url='http://172.18.16.82:8080/examples/mip2/mip-on-test.html', target='_top')">_top</button>
+              <h3>2. MIP.closeOrNavigateTo(url=STRING, target=STRING, Opener=BOOLEAN)</h3>
+              <button on="tap:MIP.closeOrNavigateTo(url='http://localhost:8080/examples/mip2/mip-interact.html', target='_blank', opener=true)">_blank, opener</button>
+              <button on="tap:MIP.closeOrNavigateTo(url='http://localhost:8080/examples/mip2/mip-interact.html', target='_blank', opener=false)">_blank, noopener</button>
+              <button on="tap:MIP.closeOrNavigateTo(url='http://localhost:8080/examples/mip2/mip-interact.html', target='_top')">_top</button>
             </div>
             
             <div>
-              <h3>3. MIP.scrollTo</h3>
-              <button on="tap:MIP.scrollTo(id='logo', duration=500, position='center', value=DOM.dataset.attr)" data-attr="att">logo, 500, center</button>
+              <h3>3. MIP.scrollTo(id=STRING, duration=INTEGER, pisition=STRING)</h3>
+              <button on="tap:MIP.scrollTo(id='logo', duration=500, position='center')" >logo, 500, center</button>
               <button on="tap:MIP.scrollTo(id='logo', duration=1000, position='top')">logo, 1000, top</button>
               <button on="tap:MIP.scrollTo(id='logo', duration=100, position='bottom')">logo, 100, bottom</button>
             </div>
@@ -145,10 +145,10 @@
           <h2>二、Element Action</h2>
           <div>
             <div>
-              <h3>1. scrollTo</h3>
-              <button on="tap:logo.scrollTo(duration=500, position='center')">logo, 500, center</button>
-              <button on="tap:logo.scrollTo(duration=1000, position='top')">logo, 1000, top</button>
-              <button on="tap:logo.scrollTo(duration=100, position='top')">logo, 100, bottom</button>
+              <h3>1. scrollTo(duration=INTEGER, pisition=STRING)</h3>
+              <button on="tap:logo.scrollTo(duration=500, position='center')">logo, 500ms, center</button>
+              <button on="tap:logo.scrollTo(duration=1000, position='top')">logo, 1000ms, top</button>
+              <button on="tap:logo.scrollTo(duration=100, position='top')">logo, 100ms, bottom</button>
             </div>
 
             <div>
@@ -168,7 +168,7 @@
             </div>
 
             <div>
-              <h3>5. toggleClass</h3>
+              <h3>5. toggleClass(class=STRING, force=BOOLEAN)</h3>
               <button on="tap:text.toggleClass(class='textStyle', force=true)">红色，增大</button>
               <button on="tap:text.toggleClass(class='textStyle', force=false)">还原</button>
               <button on="tap:text.toggleClass(class='textStyle')">toggle</button>
@@ -184,7 +184,7 @@
             <div>
               <h3>7. 组件自定义 action</h3>
               <button on="tap:my-toggle.show(3000)">mip-toggle 显示 3s</button>
-              <mip-toggle id="my-toggle" layout="nodisplay" hidetimeout="2000">
+              <mip-toggle id="my-toggle" layout="nodisplay" hidetimeout="3000">
                 <p>mip-toggle...</p>
               </mip-toggle>
             </div>
@@ -239,6 +239,7 @@
 
     <div>
       <h3>1. bind class</h3>
+      <h4> 以下例子 class 都为 active text-danger </h4>
       <div>
         <p>m-bind:class="{active: isActive, 'text-danger': hasError}"</p>
         <button m-bind:class="{active: isActive, 'text-danger': hasError}"
@@ -289,21 +290,21 @@
       <h3>2. bind style</h3>
 
       <div>
-        <p>m-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }"</p>
+        <p>m-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }"（红色 13px）</p>
         <div m-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }">
           lorem ipsum
         </div>
       </div>
       
       <div>
-        <p>m-bind:style="styleObject"</p>
+        <p>m-bind:style="styleObject"（红色 13px）</p>
         <div m-bind:style="styleObject">
           lorem ipsum
         </div>
       </div>
 
       <div>
-        <p>m-bind:style="[baseStyles, overridingStyles]"</p>
+        <p>m-bind:style="[baseStyles, overridingStyles]"（覆盖为蓝色）</p>
         <div m-bind:style="[baseStyles, overridingStyles]">
           lorem ipsum
         </div>
@@ -322,7 +323,7 @@
       <div>
         <mip-img m-bind:src="urls[index]" m-bind:hidden="shouldHidden" width="400" height="250"></mip-img>
         <p>hidden：<span m-text="shouldHidden"></span></p>
-        <button on="tap:MIP.setData({shouldHidden: true})">显示/隐藏图片</button>
+        <button on="tap:MIP.setData({shouldHidden: !shouldHidden})">显示/隐藏图片</button>
         <button on="tap:MIP.setData({index:(index+1)%urls.length})">
           修改显示图片序号: <span m-text="index"></span>
         </button>
@@ -350,10 +351,3 @@
 <!-- <script src="https://c.mipcdn.com/static/v2/mip.js"></script> -->
 <script src="https://c.mipcdn.com/static/v2/mip-toggle/mip-toggle.js"></script>
 </html>
-
-<mip-list>
-  <template>
-    <mip-carousel></mip-carousel>
-    <mip-img></mip-img>
-  </template>
-</mip-list>
