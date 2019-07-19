@@ -12,7 +12,6 @@ import Services, {installTimerService} from 'src/services'
 describe('fn', function () {
   installTimerService()
   const timer = Services.timer()
-  
   it('extend', function () {
     let target = {
       test: 1
@@ -138,6 +137,15 @@ describe('fn', function () {
       expect(fn.getRootName('some other name'))
         .to.be.equal('some other name')
     })
+  })
+
+  it('isPlainObjectEqual', function () {
+    let obj = {a: 1, b: 2}
+    let obj2 = obj
+    obj2.c = 10086
+    expect(fn.isPlainObjectEqual(obj, obj2)).to.be.equal(true)
+    expect(obj.c).to.be.equal(10086)
+    expect(fn.isPlainObjectEqual(obj, {a: 1, b: 2, c: 10086})).to.be.equal(true)
   })
 })
 /* eslint-enable no-unused-expressions */

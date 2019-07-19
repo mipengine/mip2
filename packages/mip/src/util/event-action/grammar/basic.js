@@ -285,7 +285,7 @@ export const $array = lex.set({
   ],
   match (args) {
     let elements = args[1].map(arg => arg[1])
-    if (elements.length || args[3]) {
+    if (args[3]) {
       elements.push(args[3])
     }
     return {

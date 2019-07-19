@@ -7,7 +7,7 @@ const prefix = 'm-bind:'
 const prefixLen = prefix.length
 
 export function isBindingAttr (key) {
-  return key.slice(0, prefixLen) === prefix
+  return key.length > prefixLen && key.slice(0, prefixLen) === prefix
 }
 
 const BOOLEAN_ATTRS = [
@@ -22,6 +22,7 @@ const BOOLEAN_ATTRS = [
 ]
 
 export function bindingAttr (node, key, value, oldValue) {
+  /* istanbul ignore if */
   if (!isBindingAttr(key)) {
     return
   }

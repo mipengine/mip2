@@ -183,9 +183,10 @@ function styleCamelCase (key) {
 }
 
 export function objectToStyle (obj) {
-  return Object.keys(obj)
+  let text = Object.keys(obj)
     .map(key => stringifyStyle(styleKebabize(key), obj[key]))
-    .join(';') + ';'
+    .join(';')
+  return text && (text + ';') || text
 }
 
 function stringifyStyle (key, value) {

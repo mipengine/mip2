@@ -53,6 +53,7 @@ class EventAction {
           target: target
         })
         target = target.parentElement
+        /* istanbul ignore if */
         if (!target) {
           return
         }

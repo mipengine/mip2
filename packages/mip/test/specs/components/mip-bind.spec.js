@@ -50,6 +50,7 @@ describe('mip-bind', function () {
         <div class="inner-wrapper" disabled>
           <body>dup body</body>
           <h1 m-text=""></h1>
+          <p m-bind:=""></p>
           <p style="color:red;;;" m-bind:style="{fontSize: fontSize + 'px'}">test:<span>1</span></p>
           <mip-data></mip-data>
           <mip-data>
@@ -357,7 +358,13 @@ describe('mip-bind', function () {
           }
         }
       })
-
+      MIP.setData({
+        global: {
+          data: {
+            name: 'abcdefg'
+          }
+        }
+      })
       MIP.setData({
         global: {
           data: 7
@@ -458,6 +465,20 @@ describe('mip-bind', function () {
       await sleep()
       expect(res).to.equal('truefalse')
     })
+
+    it('should catch error watcher', async function () {
+      MIP.watch('testThrow', function () {
+        throw Error('throw error one')
+      })
+      MIP.watch(function () {
+        throw Error('throw error two')
+      })
+      MIP.setData({
+        'testThrow': 1
+      })
+      await sleep()
+      // should run successful
+    })
     // @TODO
     it.skip('should avoid infinit update with custom watcher', function () {
       MIP.$set({
@@ -492,7 +513,8 @@ describe('mip-bind', function () {
       eles.push(createEle('p', ['class', 'iconClass'], 'bind'))
       eles.push(createEle('p', ['class', '[items[0].iconClass, errorClass]'], 'bind'))
       eles.push(createEle('p', ['class', '[classObject, [items[0].iconClass]]'], 'bind'))
-
+      eles.push(createEle('p', ['style', 'styleGroup.aStyle'], 'bind'))
+      eles.push(createEle('p', ['class', 'classGroup.aClass'], 'bind'))
       MIP.$set({
         loading: false,
         iconClass: 'grey    lighten1 white--text',
@@ -513,7 +535,15 @@ describe('mip-bind', function () {
           'margin-before': '1em',
           'whatever-prop': 'default'
         },
-        fontSize: 12.5
+        fontSize: 12.5,
+        styleGroup: {
+          aStyle: {
+            fontSize: '20px'
+          }
+        },
+        classGroup: {
+          aClass: ['class-a', 'class-b']
+        }
       })
 
       MIP.$set({
@@ -532,6 +562,7 @@ describe('mip-bind', function () {
       expect(eles[11].getAttribute('class')).to.equal('grey lighten1 white--text')
       expect(eles[12].getAttribute('class')).to.equal('grey lighten1 white--text m-error')
       expect(eles[13].getAttribute('class')).to.equal('warning-class loading-class grey lighten1 white--text')
+      expect(eles[15].getAttribute('class')).to.be.equal('class-a class-b')
 
       MIP.setData({
         tab: 'test'
@@ -560,7 +591,10 @@ describe('mip-bind', function () {
         iconClass: 'nothing',
         items: [{
           iconClass: 'nothing'
-        }]
+        }],
+        classGroup: {
+          aClass: null
+        }
       })
       await sleep()
       expect(eles[0].getAttribute('class')).to.equal('default-class warning-class active-class')
@@ -570,21 +604,25 @@ describe('mip-bind', function () {
       expect(eles[11].getAttribute('class')).to.equal('nothing')
       expect(eles[12].getAttribute('class')).to.equal('m-error nothing')
       expect(eles[13].getAttribute('class')).to.equal('warning-class active-class nothing')
+      expect(eles[15].getAttribute('class')).to.be.equal('')
     })
 
     it('should update style', async function () {
+      expect(eles[14].getAttribute('style')).to.be.equal('font-size:20px;')
       MIP.setData({
         styleObject: {
           fontSize: '16px',
           width: '50%'
         },
-        fontSize: 12.4
+        fontSize: 12.4,
+        styleGroup: 1234
       })
       await sleep()
       expect(eles[5].getAttribute('style')).to.equal('width:50%;font-size:16px;-webkit-margin-before:1em;whatever-prop:default;')
       expect(eles[7].getAttribute('style')).to.equal('font-size:11.4px;')
       // expect(eles[8].getAttribute('style')).to.equal('font-size:12.4px;')
       expect(eles[9].getAttribute('style')).to.equal('width:50%;color:red;font-size:16px;-webkit-margin-before:1em;whatever-prop:default;')
+      expect(eles[14].getAttribute('style')).to.be.equal('')
     })
 
     after(function () {

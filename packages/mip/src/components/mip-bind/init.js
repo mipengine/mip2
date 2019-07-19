@@ -53,6 +53,7 @@ export default function () {
 function queryBindings (root) {
   let results = []
   traverse(root, node => {
+    /* istanbul ignore if */
     if (!isElementNode(node)) {
       return
     }
@@ -113,7 +114,7 @@ function addBindingListener (nodeInfos, store) {
     for (let info of nodeInfos) {
       try {
         applyBinding(info, store.data)
-      } catch (e) {
+      } catch (e) /* istanbul ignore next */ {
         logger.error(e)
       }
     }

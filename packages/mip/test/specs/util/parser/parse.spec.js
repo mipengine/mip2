@@ -19,7 +19,8 @@ describe('parser', () => {
         (123 <= 467 ?1000:2000) +
         (true==1?10000:20000)+
         ((false!=-1) && 100000)+
-        !true+200000`
+        !true+200000+
+        3%(5 - 2)`
       let fn = parser.transform(str, 'Conditional')
       let result = fn()
       expect(result).to.be.equal(310900)
@@ -44,6 +45,14 @@ describe('parser', () => {
       let fn = parser.transform(str, 'Conditional')
       let result = fn()
       expect(result).to.be.deep.equal([])
+    })
+
+    it('Hole Array', function () {
+      const str = `[,,1,3+4,]`
+      let fn = parser.transform(str, 'Conditional')
+      let result = fn()
+      console.log(JSON.stringify(result))
+      expect(result).to.be.deep.equal([,,1,3+4,])
     })
 
     it('Splice Array', function () {

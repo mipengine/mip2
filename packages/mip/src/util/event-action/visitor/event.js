@@ -37,7 +37,7 @@ const visitor = {
       for (let action of actions) {
         try {
           action()
-        } catch (e) {
+        } catch (e) /* istanbul ignore next */ {
           logger.error(e)
         }
       }

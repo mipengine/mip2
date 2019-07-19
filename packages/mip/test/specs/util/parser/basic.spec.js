@@ -148,7 +148,7 @@ describe('Test Grammar', function () {
       let str = '[1, 1 + 2,]'
       let walker = new Walker(str)
       let result = fn(walker)
-      expect(result.elements.length).to.be.equal(3)
+      expect(result.elements.length).to.be.equal(2)
       expect(result.elements[0].type).to.be.equal('Literal')
       expect(result.elements[1].type).to.be.equal('Binary')
       expect(result.elements[2]).to.be.equal(undefined)
