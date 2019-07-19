@@ -72,6 +72,7 @@ class ViewportScroll {
    */
   getDirection (scrollTop, lastScrollTop, scrollHeight) {
     // 在底部视作向下滚动
+    /* istanbul ignore if */
     if (scrollTop + window.innerHeight >= scrollHeight) {
       return 1
     }

@@ -132,8 +132,17 @@ describe('Event Action', () => {
       let fixed = dom.create('<mip-fixed id="fixed" type="top"></mip-fixed>')
       document.body.appendChild(fixed)
       el.setAttribute('on', 'eventName:fixed.close')
-      action.execute('eventName', el, )
+      action.execute('eventName', el, {})
       expect(fixed.style.display).to.be.equal('none')
+      fixed.remove()
+    })
+
+    it('should fallback to global element action', () => {
+      let fixed = dom.create('<mip-fixed id="fixed" type="top"></mip-fixed>')
+      document.body.appendChild(fixed)
+      el.setAttribute('on', 'eventName:fixed.toggleVisibility')
+      action.execute('eventName', el, {})
+      expect(fixed.hasAttribute('hidden')).to.be.true
       fixed.remove()
     })
 

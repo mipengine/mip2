@@ -202,6 +202,7 @@ class CustomElement {
    */
   executeEventAction (action) {
     let eventObj = this._actionEvent
+    /* istanbul ignore if */
     if (!action) {
       return false
     }
