@@ -149,6 +149,33 @@ describe('parser', () => {
       expect(result).to.be.equal('This Is Simple String')
     })
 
+    it('Nested Function', () => {
+      const str = `[[1, 2, 3], [4, 5 + (true + 1),]].reduce(
+        (output, arr) => output.concat(
+          arr.reduce((output, item) => output + item + ',', '')
+        ),
+        []
+      )
+      .join(' ')`
+      let fn = parser.transform(str, 'Conditional')
+      let result = fn()
+      expect(result).to.be.equal('1,2,3, 4,7,')
+    })
+
+    it('Nested Function with cross scope arguments', () => {
+      const str = `[[1, 2, 3], [4, 5 + (true + 1),]].reduce(
+        (output, arr, line) => output.concat(
+          arr.reduce((output, item, row) => output + item + '[' + line + ',' + row + '],', '')
+        ),
+        []
+      )
+      .join(' ')`
+      let fn = parser.transform(str, 'Conditional')
+      let result = fn()
+      expect(result).to.be.equal('1[0,0],2[0,1],3[0,2], 4[1,0],7[1,1],')
+    })
+
+
     it('With global function', () => {
       const str = `(
           ({a: 1, b: -3 -4, c: [3,1,4,1 - 7,5,9] })
