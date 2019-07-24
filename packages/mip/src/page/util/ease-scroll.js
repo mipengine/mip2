@@ -69,7 +69,7 @@ function scroll (top) {
 
 /**
  * scrollTo 接口
- * 滚动到指定元素的特定位置
+ * 滚动到指定元素
  * 
  * @param {HTMLElement} element 目标元素
  * @param {number} duration 滚动动画时间
@@ -79,6 +79,13 @@ export function handleScrollTo (element, {duration = 0, position = 'top'} = {}) 
   /* istanbul ignore if */
   if (!element) {
     return
+  }
+  // not scroll if element is hidden
+  // https://github.com/jquery/jquery/blob/e743cbd28553267f955f71ea7248377915613fd9/src/css/hiddenVisibleSelectors.js
+  if (!!(element.offsetWidth
+        || element.offsetHeight
+        || element.getClientRects().length) === false) {
+      return
   }
   /* istanbul ignore if */
   if (!typeof duration === 'number' || !isFinite(duration)) {

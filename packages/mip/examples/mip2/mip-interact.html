@@ -62,14 +62,14 @@
           <h2>一、MIP Action</h2>
           <div>
             <div>
-              <h3>1. MIP.navigateTo(url=STRING, target=STRING, Opener=BOOLEAN)</h3>
+              <h3>1. MIP.navigateTo(url=STRING, target=STRING, opener=BOOLEAN)</h3>
               <button on="tap:MIP.navigateTo(url='http://localhost:8080/examples/mip2/mip-interact.html', target='_blank', opener=true)">_blank, opener</button>
               <button on="tap:MIP.navigateTo(url='http://localhost:8080/examples/mip2/mip-interact.html', target='_blank', opener=false)">_blank, noopener</button>
               <button on="tap:MIP.navigateTo(url='http://localhost:8080/examples/mip2/mip-interact.html', target='_top')">_top</button>
             </div>
             
             <div>
-              <h3>2. MIP.closeOrNavigateTo(url=STRING, target=STRING, Opener=BOOLEAN)</h3>
+              <h3>2. MIP.closeOrNavigateTo(url=STRING, target=STRING, opener=BOOLEAN)</h3>
               <button on="tap:MIP.closeOrNavigateTo(url='http://localhost:8080/examples/mip2/mip-interact.html', target='_blank', opener=true)">_blank, opener</button>
               <button on="tap:MIP.closeOrNavigateTo(url='http://localhost:8080/examples/mip2/mip-interact.html', target='_blank', opener=false)">_blank, noopener</button>
               <button on="tap:MIP.closeOrNavigateTo(url='http://localhost:8080/examples/mip2/mip-interact.html', target='_top')">_top</button>
@@ -148,7 +148,7 @@
               <h3>1. scrollTo(duration=INTEGER, pisition=STRING)</h3>
               <button on="tap:logo.scrollTo(duration=500, position='center')">logo, 500ms, center</button>
               <button on="tap:logo.scrollTo(duration=1000, position='top')">logo, 1000ms, top</button>
-              <button on="tap:logo.scrollTo(duration=100, position='top')">logo, 100ms, bottom</button>
+              <button on="tap:logo.scrollTo(duration=100, position='bottom')">logo, 100ms, bottom</button>
             </div>
 
             <div>

@@ -11,6 +11,7 @@ import dom from 'src/util/dom/dom'
 import {actions as elementActions} from 'src/util/event-action/whitelist/element-action'
 import mipAction, {actions as mipActions} from 'src/util/event-action/whitelist/mip-action'
 import viewer from 'src/viewer'
+import rect from 'src/util/dom/rect'
 
 const action = new EventAction()
 
@@ -39,6 +40,14 @@ describe('Event Action', () => {
       let argument = scrollTo.args[0][0]
       expect(argument.args).to.be.eql({duration: 200, position: 'center'})
       expect(argument.target.id).to.be.equal(target.id)
+
+      // not scroll if element is hidden
+      let spy = sinon.spy(rect, 'getElementRect')
+      target.style.display = 'none'
+      action.execute('eventName', el, {})
+      spy.restore()
+      expect(spy).not.to.be.calledOnce
+      target.style.display = ''
     })
 
     it('should handle hide', () => {
