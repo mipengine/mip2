@@ -60,7 +60,7 @@ test.a.com
 
 通常情况下，官方提供的[通用组件库](https://github.com/mipengine/mip2-extensions)已经能满足站点的基本需求。如果站点有使用复杂组件的场景，我们可以编写站长自定义组件，并通过[站长组件仓库](https://github.com/mipengine/mip2-extensions-platform)进行提交，通过审核上线后，即能使用。
 
-同时，我们也欢迎开发者向官方通用组件库[贡献优秀的组件](./how-to-contribute.md)。
+同时，我们也欢迎开发者向官方通用组件库[贡献优秀的组件](./how-to-contribute-mip-extensions.md)。
 
 ### `mip2 add` 新增一个组件
 

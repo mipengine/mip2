@@ -5,6 +5,7 @@
 
 export class Scope {
   constructor (obj) {
+    /* istanbul ignore if */
     if (obj) {
       this.map = obj
       this.names = Object.keys(obj)
@@ -15,6 +16,7 @@ export class Scope {
   }
 
   setParent (parent) {
+    /* istanbul ignore else */
     if (parent instanceof Scope) {
       this.parents = parent.list()
     } else if (typeof parent === 'object') {
@@ -35,12 +37,13 @@ export class Scope {
   }
 
   set (names, values, type) {
-    if (type === 'global' && this.parents) {
+    /* istanbul ignore if */
+    if (type === 'global' /*istanbul ignore next */ && this.parents) {
       this.parents[0].set(names, values)
       return
     }
-
-    if (type === 'parent' && this.parents) {
+    /* istanbul ignore if */
+    if (type === 'parent' /*istanbul ignore next */ && this.parents) {
       this.parents[this.parents.length - 1].set(names, values)
       return
     }
@@ -54,7 +57,7 @@ export class Scope {
     if (this.has(name, false)) {
       return this.map[name]
     }
-
+    /* istanbul ignore if */
     if (!this.parents) {
       return
     }
@@ -102,7 +105,7 @@ export class ScopeManager {
     if (!this.created) {
       this.created = true
       this.instance = new Scope()
-      this.parent && this.instance.setParent(this.parent)
+      this.parent /* istanbul ignore next */ && this.instance.setParent(this.parent)
     }
     return this.instance
   }
@@ -111,7 +114,7 @@ export class ScopeManager {
     if (this.parent) {
       return
     }
-
+    /* istanbul ignore else */
     if (parent instanceof ScopeManager) {
       this.parent = parent.getInstance()
     } else if (parent instanceof Scope) {
