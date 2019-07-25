@@ -618,10 +618,30 @@ describe('mip-bind', function () {
         styleGroup: 1234
       })
       await sleep()
-      expect(eles[5].getAttribute('style')).to.equal('width:50%;font-size:16px;-webkit-margin-before:1em;whatever-prop:default;')
+      expect(
+        eles[5].getAttribute('style')
+          .split(';')
+          .sort()
+          .join(';')
+      ).to.equal(
+        'width:50%;font-size:16px;-webkit-margin-before:1em;whatever-prop:default;'
+          .split(';')
+          .sort()
+          .join(';')
+      )
       expect(eles[7].getAttribute('style')).to.equal('font-size:11.4px;')
       // expect(eles[8].getAttribute('style')).to.equal('font-size:12.4px;')
-      expect(eles[9].getAttribute('style')).to.equal('width:50%;color:red;font-size:16px;-webkit-margin-before:1em;whatever-prop:default;')
+      expect(
+        eles[9].getAttribute('style')
+          .split(';')
+          .sort()
+          .join(';')
+      ).to.equal(
+        'width:50%;color:red;font-size:16px;-webkit-margin-before:1em;whatever-prop:default;'
+          .split(';')
+          .sort()
+          .join(';')
+      )
       expect(eles[14].getAttribute('style')).to.be.equal('')
     })
 

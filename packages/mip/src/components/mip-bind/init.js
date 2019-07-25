@@ -34,21 +34,34 @@ export default function () {
   // MIP.$set = MIP.setData
   MIP.$update = store.global.broadcast.bind(store.global)
 
-  let bindingDOMs
+  let bindingDOMs = []
+
   MIP.$set = data => {
     let bindings = queryBindings(document.documentElement)
-    if (bindingDOMs && bindingDOMs.length !== bindings.length) {
+    let {add} = diffBindingDOMs(bindingDOMs, bindings)
+
+    if (bindingDOMs.length > 0 && add.length > 0) {
       logger.warn(`请勿在动态创建的节点上使用 m-bind`)
     }
-    bindingDOMs = bindings
-    addInputListener(bindings, store)
-    addBindingListener(bindings, store)
+    addInputListener(add, store)
+    for (let item of add) {
+      bindingDOMs.push(item)
+    }
     MIP.setData(data)
   }
+
+  store.watcher.watch(() => {
+    for (let info of bindingDOMs) {
+      try {
+        applyBinding(info, store.data)
+      } catch (e) /* istanbul ignore next */ {
+        logger.error(e)
+      }
+    }
+  })
+
   MIP.$set(store.global.data)
 }
-
-
 
 function queryBindings (root) {
   let results = []
@@ -77,6 +90,30 @@ function queryBindingAttrs (node) {
     attrs[attr.name] = {expr: attr.value}
   }
   return attrs
+}
+
+function diffBindingDOMs (storeList, newList) {
+  let output = {
+    // removed: [],
+    add: []
+  }
+
+  const storeLength = storeList.length
+
+  for (let item of newList) {
+    let i
+    for (i = 0; i < storeLength; i++) {
+      if (item.node === storeList[i].node) {
+        break
+      }
+    }
+
+    if (i === storeLength) {
+      output.add.push(item)
+    }
+  }
+
+  return output
 }
 
 function addInputListener (nodeInfos, store) {
@@ -109,15 +146,6 @@ function addInputListener (nodeInfos, store) {
   }
 }
 
-function addBindingListener (nodeInfos, store) {
-  store.watcher.watch(() => {
-    for (let info of nodeInfos) {
-      try {
-        applyBinding(info, store.data)
-      } catch (e) /* istanbul ignore next */ {
-        logger.error(e)
-      }
-    }
-  })
-}
+// function addBindingListener (nodeInfos, store) {
+//   }
 
