@@ -99,9 +99,16 @@ export function isPlainObject (obj) {
   return !!obj && typeof obj === 'object' && Object.getPrototypeOf(obj) === Object.prototype
 }
 
-
+/**
+ * return an object is a plain object or not
+ * Vue reactive data may change its prototype
+ * so we couldn't use isPlainObject
+ *
+ * @param {*} obj any
+ * @return {boolean
+ */
 export function isObject (obj) {
-  return getType(obj) === '[object Object]'
+  return !!obj && getType(obj) === '[object Object]'
 }
 
 export function isEmptyObject (obj) {
