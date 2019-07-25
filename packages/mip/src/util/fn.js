@@ -108,7 +108,7 @@ export function isPlainObject (obj) {
  * @return {boolean
  */
 export function isObject (obj) {
-  return !!obj && getType(obj) === '[object Object]'
+  return getType(obj) === '[object Object]'
 }
 
 export function isEmptyObject (obj) {
@@ -327,4 +327,5 @@ export function complement (obj, excludes) {
 export function startsWith (str, prefix) {
   return str.slice(0, prefix.length) === prefix
 }
+
 

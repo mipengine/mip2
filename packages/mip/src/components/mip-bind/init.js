@@ -7,7 +7,7 @@
  */
 
 import {isElementNode} from '../../util/dom/dom'
-import {traverse, throttle} from '../../util/fn'
+import {traverse, throttle, noop} from '../../util/fn'
 import {
   createSetDataObject
 } from './util'
@@ -21,22 +21,12 @@ import log from '../../util/log'
 const logger = log('MIP-bind')
 
 export default function () {
-  const store = new DataStore()
-
-  MIP.setData = store.set.bind(store)
-  MIP.getData = store.get.bind(store)
-  MIP.watch = store.watcher.watch.bind(store.watcher)
-
-  // @deprecated
-  window.mipDataPromises = []
-  window.m = store.data
-  // 兼容原有逻辑
-  // MIP.$set = MIP.setData
-  MIP.$update = store.global.broadcast.bind(store.global)
-
   let bindingDOMs = []
 
-  MIP.$set = data => {
+  const store = new DataStore()
+  const getData = store.get.bind(store)
+  const setData = store.set.bind(store)
+  const $set = data => {
     let bindings = queryBindings(document.documentElement)
     let {add} = diffBindingDOMs(bindingDOMs, bindings)
 
@@ -49,6 +39,23 @@ export default function () {
     }
     MIP.setData(data)
   }
+  const watch = store.watcher.watch.bind(store.watcher)
+
+  def(MIP, 'setData', () => setData)
+  def(MIP, '$set', () => $set)
+  def(MIP, 'getData', () => getData)
+  def(MIP, 'watch', () => watch)
+
+  // MIP.setData = store.set.bind(store)
+  // MIP.getData = store.get.bind(store)
+  // MIP.watch = store.watcher.watch.bind(store.watcher)
+
+  // @deprecated
+  window.mipDataPromises = []
+  window.m = store.data
+  // 兼容原有逻辑
+  // MIP.$set = MIP.setData
+  MIP.$update = store.global.broadcast.bind(store.global)
 
   store.watcher.watch(() => {
     for (let info of bindingDOMs) {
@@ -61,6 +68,15 @@ export default function () {
   })
 
   MIP.$set(store.global.data)
+}
+
+function def (obj, name, getter, setter) {
+  Object.defineProperty(obj, name, {
+    get: getter,
+    set: typeof setter === 'function' ? setter : noop,
+    enumerable: true,
+    configurable: false
+  })
 }
 
 function queryBindings (root) {

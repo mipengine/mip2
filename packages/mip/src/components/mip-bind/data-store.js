@@ -19,7 +19,6 @@ export default class DataStore {
     if (!isObject(data)) {
       throw new Error('setData method MUST accept an object! Check your input:' + data)
     }
-
     let {global, page} = this.global.classify(data)
     let changes = merge(this.data, page)
     this.watcher.notify(changes)

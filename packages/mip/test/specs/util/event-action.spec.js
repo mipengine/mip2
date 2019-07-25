@@ -284,22 +284,22 @@ describe('Event Action', () => {
   //   expect(mockElement.arg).to.undefined
   // })
 
-  it('should work without Proxy', () => {
-    let OriginalProxy = window.Proxy
-    window.Proxy = undefined
-    let setData = sinon.spy(MIP, 'setData')
-    let $set = sinon.spy(MIP, '$set')
-    el.setAttribute('on', 'click:MIP.setData({a:1}) click:MIP.$set({a:parseInt(1,10)})')
-    action.execute('click', el, {})
-    setData.restore()
-    $set.restore()
-    let expectedData = {
-      a: 1
-    }
-    sinon.assert.calledWith(setData, expectedData)
-    sinon.assert.calledWith($set, expectedData)
-    window.Proxy = OriginalProxy
-  })
+  // it('should work without Proxy', () => {
+  //   let OriginalProxy = window.Proxy
+  //   window.Proxy = undefined
+  //   let setData = sinon.spy(MIP, 'setData')
+  //   let $set = sinon.spy(MIP, '$set')
+  //   el.setAttribute('on', 'click:MIP.setData({a:1}) click:MIP.$set({a:parseInt(1,10)})')
+  //   action.execute('click', el, {})
+  //   setData.restore()
+  //   $set.restore()
+  //   let expectedData = {
+  //     a: 1
+  //   }
+  //   sinon.assert.calledWith(setData, expectedData)
+  //   sinon.assert.calledWith($set, expectedData)
+  //   window.Proxy = OriginalProxy
+  // })
 
   // it('#getTarget', () => {
   //   el.setAttribute('on', 'tap:testid.open')
