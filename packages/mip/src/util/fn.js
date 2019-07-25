@@ -100,6 +100,10 @@ export function isPlainObject (obj) {
 }
 
 
+export function isObject (obj) {
+  return getType(obj) === '[object Object]'
+}
+
 export function isEmptyObject (obj) {
   return Object.keys(obj).length === 0
 }

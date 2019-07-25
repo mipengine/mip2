@@ -6,7 +6,7 @@
 import DataWatcher from './data-watcher'
 import GlobalData from './global-data'
 import { merge, getProperty } from './util'
-import { isPlainObject } from '../../util/fn'
+import { isObject } from '../../util/fn'
 export default class DataStore {
   constructor () {
     const storage = {}
@@ -16,7 +16,7 @@ export default class DataStore {
   }
 
   set (data) {
-    if (!isPlainObject(data)) {
+    if (!isObject(data)) {
       throw new Error('setData method MUST accept an object! Check your input:' + data)
     }
 
