@@ -10,7 +10,6 @@ import {
   toggleFadeHeader
 } from './util/dom'
 import {getCleanPageId, parsePath} from './util/path'
-import {supportsPassive} from './util/feature-detect'
 import {scrollTo} from './util/ease-scroll'
 import {
   MAX_PAGE_NUM,
@@ -29,13 +28,7 @@ import {customEmit} from '../util/custom-event'
 import viewport from '../viewport'
 import performance from '../performance'
 import '../styles/mip.less'
-import {stringifyQuery, resolveQuery} from './util/query';
-
-/**
- * use passive event listeners if supported
- * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
- */
-const eventListenerOptions = supportsPassive ? {passive: true} : /* istanbul ignore next */false
+import {stringifyQuery, resolveQuery} from './util/query'
 
 class Page {
   constructor () {
@@ -393,8 +386,7 @@ class Page {
   prerenderPages (urls) {
     /* istanbul ignore next */
     if (!this.isRootPage) {
-      console.warn('该方法只能在 rootPage 调用')
-      return Promise.reject()
+      return Promise.reject(new Error('该方法只能在 rootPage 调用'))
     }
 
     /* istanbul ignore next */
@@ -404,7 +396,7 @@ class Page {
 
     /* istanbul ignore next */
     if (!Array.isArray(urls)) {
-      return Promise.reject('预渲染参数必须是一个数组')
+      return Promise.reject(new Error('预渲染参数必须是一个数组'))
     }
 
     /* istanbul ignore next */

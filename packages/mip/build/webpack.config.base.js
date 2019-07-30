@@ -26,7 +26,19 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules|fetch.js/,
-        loader: 'babel-loader'
+        use: 'babel-loader'
+      },
+      {
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        use: ['babel-loader', {
+          loader: 'awesome-typescript-loader',
+          options: {
+            errorsAsWarnings: devMode,
+            forceIsolatedModules: devMode,
+            useCache: devMode
+          }
+        }]
       },
       {
         test: /\.(css|less)$/,
@@ -47,17 +59,20 @@ module.exports = {
       },
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
-          name: ('fonts/[name].[hash:7].[ext]')
-        }
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 10000,
+            name: ('fonts/[name].[hash:7].[ext]')
+          }
+        }]
       }
     ]
   },
 
   resolve: {
-    alias
+    alias,
+    extensions: ['.ts', '.js']
   },
 
   // Expose __dirname to allow automatically setting basename.
