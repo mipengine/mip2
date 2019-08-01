@@ -4,7 +4,7 @@
  * @author zhangzhiqiang(zhiqiangzhang37@163.com)
  */
 
-/* global top screen location */
+/* global top screen location, MIP */
 
 import event from './util/dom/event'
 import Gesture from './util/gesture/index'
@@ -331,9 +331,26 @@ let viewer = {
     }
     this.sendMessage(replace ? OUTER_MESSAGE_REPLACE_STATE : OUTER_MESSAGE_PUSH_STATE, pushMessage)
 
+    let routePath = (window.MIP.standalone && !window.MIP.util.isCacheUrl(location.href)) ? to : makeCacheUrl(to)
+    let routeSplits = routePath.split('#')
+    let hashStr = '#'
+    let curHashObj = MIP.hash._getHashObj(routeSplits[1] || '')
+    let targetHashObj = MIP.hash._getHashObj(location.hash)
+    let retObj = Object.assign({}, targetHashObj, curHashObj)
+
+    for (let key in retObj) {
+      // 不透传熊掌号相关的 hash，只保证第一次 logo + title 展现
+      if (key !== 'cambrian') {
+        hashStr += `${key}${retObj[key].sep}${retObj[key].value}&`
+      }
+    }
+
+    // hash 透传机制
+    routePath = routeSplits[0] + hashStr.substr(0, hashStr.length - 1)
+
     // Create target route
     let targetRoute = {
-      path: (window.MIP.standalone && !window.MIP.util.isCacheUrl(location.href)) ? to : makeCacheUrl(to)
+      path: routePath
     }
 
     if (isMipLink) {
