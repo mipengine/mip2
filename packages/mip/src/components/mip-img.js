@@ -94,7 +94,7 @@ function getImgOffset (img) {
  */
 function getImgsSrcIndex (ele) {
   // 取已渲染的 popup 图片，不包括 carousel 中头尾的两个图片
-  const mipImgs = [...document.querySelectorAll('mip-img[popup].mip-img-loaded')]
+  const mipImgs = [...document.querySelectorAll('mip-img[popup]')]
                     .filter(mipImg => !mipImg.classList.contains('mip-carousel-extra-img'))
   let index = mipImgs.indexOf(ele)
   /* istanbul ignore if */
@@ -108,7 +108,7 @@ function getImgsSrcIndex (ele) {
     if (!img) {
       return mipImg.getAttribute('src')
     }
-    return img.currentSrc || img.src
+    return img.src
   })
   return {imgsSrcArray, index}
 }
