@@ -78,7 +78,7 @@ export default class DataWatcher {
     let changes = this.changes.slice()
     this.changes.length = 0
 
-    let watchExprs = Object.keys(this.watches)
+    let watchExprs = Object.keys(this.watches).reverse()
     for (let i = 0; i < changes.length; i++) {
       let change = changes[i]
       let {
@@ -87,7 +87,7 @@ export default class DataWatcher {
         // newVal
         newVal: newValue
       } = change
-      for (let j = 0; j < watchExprs.length; j++) {
+      for (let j = watchExprs.length - 1; j > -1; j--) {
         let watchExpr = watchExprs[j]
         if (watchExpr.indexOf(changeExpr) !== 0) {
           continue

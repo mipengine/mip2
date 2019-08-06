@@ -17,8 +17,9 @@ import {
   any,
   some,
   opt,
-  not,
-  def
+  not
+  // ,
+  // def
 } from '../../parser/lexer'
 
 import {

@@ -7,8 +7,9 @@ import {
   text,
   or,
   any,
-  opt,
-  def
+  opt
+  // ,
+  // def
 } from '../../parser/lexer'
 
 import {

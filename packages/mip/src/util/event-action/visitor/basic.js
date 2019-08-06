@@ -144,8 +144,6 @@ const visitor = {
     }
 
     return function () {
-      let property = propertyFn()
-      let object = objectFn()
       return getPropertyFn(objectFn(), propertyFn())
     }
   },

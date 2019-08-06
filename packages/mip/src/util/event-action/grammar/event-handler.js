@@ -10,8 +10,9 @@ import {
   or,
   any,
   some,
-  opt,
-  def
+  opt
+  // ,
+  // def
 } from '../../parser/lexer'
 
 import {
