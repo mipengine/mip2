@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <title>MIP Bind</title>
+  <link rel="canonical">
+  <link rel="stylesheet" href="../../dist/mip.css">
+  <style mip-custom>
+  .test-block {
+    padding-top: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #dcdcdc;
+  }
+  .test-desc {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  .test-desc:before {
+    content: "测试描述：";
+    display: block;
+    margin-bottom: 10px;
+    color: green;
+  }
+  .test-content {
+    background: #dcdcdc;
+    padding: 10px;
+    font-size: 16px;
+  }
+  .test-content button {
+    padding: 5px 10px;
+  }
+  .test-content div {
+    margin-top: 10px;
+  }
+  .block {
+    height: 200px;
+  }
+  .bg-green {
+    background: green;
+  }
+  .bg-blue {
+    background: blue;
+  }
+
+  .a {
+    color: #ff0000;
+  }
+
+  .b {
+    color: #880000;
+  }
+
+  .c {
+    color: #f0f000;
+  }
+
+  .d {
+    color: #00ff00;
+  }
+
+  .e {
+    color: #00f0f0;
+  }
+
+  .f {
+    color: #008800;
+  }
+
+  .g {
+    color: #0000ff;
+  }
+
+  .h {
+    color: #000088;
+  }
+
+  .i {
+    color: #880088;
+  }
+
+  .j {
+    color: #000000;
+  }
+
+
+  </style>
+</head>
+<body>
+  <mip-data>
+    <script type="application/json">
+      {
+        "flag": 10086,
+        "complex": {
+          "multi": "abcdefghij"
+        },
+        "arr": [
+          10086, 2, 3, 4, 5
+        ],
+        "styles": [
+          {
+             "fontSize": "16px"
+          },
+          {
+            "color": "#f00"
+          },
+          {
+            "display": ["-webkit-box", "-ms-flexbox", "flex"]
+          },
+          {
+            "background": "#00f"
+          }
+        ],
+        "style": {
+          "fontSize": "16px",
+          "color": "#f00",
+          "display": ["-webkit-box", "-ms-flexbox", "flex"],
+          "background": "#00f"
+        },
+        "colors": [
+          "#f00",
+          "#0f0",
+          "#00f",
+          "#f0f",
+          "#0ff"
+        ],
+        "styleIndex": 0
+      }
+    </script>
+  </mip-data>
+  <div>
+    <div class="test-block">
+      <div class="test-desc">
+        <p>点击按钮之后，会同时修改 flag 和 arr 的值，其中 flag 用于控制 arr
+        的排序</p>
+        <p>点击触发兼容旧版表达式的按钮时，会在控制台提示修改
+        warning</p>
+      </div>
+      <div class="test-content">
+        <p>当前 "flag" 的值为：[<span m-text="flag"></span>]</p>
+        <p>当前 "arr" 的值为：[<span m-text="arr.join(' ')"></span>]</p>
+        <div>
+        <button
+          on="click:MIP.setData({
+                flag: m.flag > 0 ? -1 : 1,
+                arr: m.arr.slice().sort((a, b) => m.flag > 0 ? (a - b) : (b - a))
+              })"
+          >点击修改 flag 并触发排序</button>
+        <button
+          on="click:MIP.setData({
+                flag: m.flag > 0 ? -1 : 1,
+                arr: m.arr.slice().sort(function (a, b) {
+                  return m.flag > 0 ? (a - b) : (b - a)
+                })
+              })"
+          >兼容旧版 on 表达式</button>
+
+        <button
+          on="click:MIP.setData({
+              'flag': flag > 0 ? -1 : 1
+              })"
+          >只修改 flag</button>
+        </div>
+      </div>
+    </div>
+    <div class="test-block">
+      <div class="test-desc">
+        <p>测试 mip-bind 与 mip-script 的联动</p>
+        <p>点击下方的按钮，会触发控制台打印 “test.for.watch change from xxx to
+        xxx” 的文案证明 MIP.watch 生效</p>
+      </div>
+      <div class="test-content">
+      <button
+        on="click:MIP.setData({
+               test: {
+               for: {
+               watch: 10086
+               }
+               }
+               })"
+        >设置 test 的值</button>
+      <button
+        on="click:MIP.setData({
+            test: null
+            })"
+        >清空 test 的值</button>
+      </div>
+    </div>
+    <div class="test-block">
+      <div class="test-desc">
+        <p>点击触发屏幕滚动，测试 MIP.scrollTo
+        全局方法以及全局方法的参数解析生效。</p>
+      </div>
+      <div class="test-content">
+        <button
+          on="click:test.scrollTo(duration=2000, position='enter')"
+          >点击触发页面滚动</button>
+      </div>
+    </div>
+    <div class="test-block">
+      <div class="test-desc">
+        <p>测试 mip-bind 与 class/style 的联动性</p>
+        <p>点击 class 随机变更，使得文字随机变色</p>
+        <p>点击 style 随机变更，使得文字样式随机变化</p>
+      </div>
+      <div class="test-content">
+        <button
+          on="click:MIP.setData({
+                className: {
+                  spanClass: complex.multi[Math.round(Math.random() * 10)]
+                }
+              })"
+          >点击触发 class 随机变更</button>
+        <button
+          on="
+              click:
+              MIP.setData({
+                styleIndex: Math.floor(Math.random() * keys(style).length)
+              }),
+              MIP.setData({
+                styleObject: null
+              }),
+              MIP.setData({
+                styleObject: styles[styleIndex]
+              })
+              "
+          >点击触发 style 随机变更</button>
+        <div>
+          <p
+            class="common-span"
+            m-bind:class="className.spanClass"
+            >class 变化效果展示，效果是随机变色</p>
+          <p
+            style="border: 1px solid #dcdcdc"
+            m-bind:style="styleObject"
+            m-text="'style 变化效果展示，目前使用的预设样式序号为:' + styleIndex"
+          ></p>
+        </div>
+      </div>
+    </div>
+    <mip-script>
+      MIP.watch('flag', function (newVal, oldVal) {
+        console.log('flag change from [' + oldVal + '] to [' + newVal + ']')
+      })
+
+      MIP.watch('test.for.watch', function (newVal, oldVal) {
+        console.log('test.for.watch change from [' + oldVal + '] to [' +  newVal + ']')
+      })
+    </mip-script>
+    <div class="test-block">
+      <div class="test-desc">
+        <p>输入框输入文字时，会同步的在上方的文案当中显示出来</p>
+        <p>点击按钮会自动清空输入框内容，上方文案也会同步清除</p>
+      </div>
+      <div class="test-content">
+      <p>当前输入框的值为: <span m-text="two.way.binding"></span></p>
+      <p>
+      <input m-bind:value="two.way.binding">
+      <button
+        on="click:MIP.setData({
+              two: {
+                way: {
+                  binding: ''
+                }
+              }
+            })"
+        >点击清清除输入框内容</button>
+      </p>
+      </div>
+    </div>
+  <div class="block bg-green"></div>
+  <div class="block bg-blue"></div>
+  <div class="block bg-green"></div>
+  <div class="block bg-blue"></div>
+  <div class="block bg-green" id="test"></div>
+  <div class="block bg-blue"></div>
+  <div class="block bg-green"></div>
+  <!-- <script src="https://c.mipcdn.com/static/v2/mip.js"></script> -->
+  <script src="../../dist/mip.js"></script>
+  <script src="https://c.mipcdn.com/static/v2/mip-script/mip-script.js"></script>
+</body>
+</html>
+

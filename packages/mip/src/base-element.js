@@ -457,7 +457,7 @@ class BaseElement extends HTMLElement {
   }
 
   executeEventAction (action) {
-    this.customElement.executeEventAction(action)
+    return this.customElement.executeEventAction(action)
   }
 
   /**

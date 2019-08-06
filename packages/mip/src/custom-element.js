@@ -4,6 +4,8 @@
  */
 
 import EventEmitter from './util/event-emitter'
+// import {actions as htmlElementAction} from './util/event-action/whitelist/element-action'
+// import {globalAction} from './util/event-action/global-action'
 
 class CustomElement {
   /**
@@ -196,12 +198,25 @@ class CustomElement {
    * Trigger the handlers had been added by `addEventAction` of an action
    *
    * @param {Object} action The action object.
+   * @return {boolean} is targeted custom element event
    */
   executeEventAction (action) {
     let eventObj = this._actionEvent
-    if (action && eventObj) {
-      eventObj.trigger(action.handler, action.event, action.arg)
+    /* istanbul ignore if */
+    if (!action) {
+      return false
     }
+    if (eventObj && eventObj.__events[action.handler]) {
+      eventObj.trigger(action.handler, action.event, action.arg)
+      return true
+    }
+    return false
+    // else if (htmlElementAction[action.handler]) {
+    //   htmlElementAction[action.handler](action)
+    // }
+    // else if (globalAction[action.handler]) {
+    //   globalAction[action.handler](action)
+    // }
   }
 
   /**

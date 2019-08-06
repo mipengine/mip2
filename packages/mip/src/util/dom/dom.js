@@ -12,6 +12,14 @@
 let docElem = document.documentElement
 
 /**
+ * Regular for checking elements.
+ * @const
+ * @inner
+ * @type {RegExp}
+ */
+const CHECK_REG = /^mip-/
+
+/**
  * Get the supported matches method.
  * @inner
  * @type {Function}
@@ -259,6 +267,20 @@ function insert (parent, children) {
       parent.appendChild(nodes[i])
     }
   }
+}
+
+/**
+ * Ensure the target element is a MIPElement
+ *
+ * @param {HTMLElement} target target
+ * @return {boolean}
+ */
+export function isMIPElement (target) {
+  return target && target.tagName && CHECK_REG.test(target.tagName.toLowerCase())
+}
+
+export function isElementNode (node) {
+  return node.nodeType === 1
 }
 
 export default {

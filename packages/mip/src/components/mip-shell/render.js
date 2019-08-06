@@ -252,7 +252,7 @@ export function render (shell, from, to) {
       window.MIP_SHELL_OPTION.allowTransition = false
       window.MIP_SHELL_OPTION.isForward = true
 
-      window.MIP.$recompile()
+      // window.MIP.$recompile()
 
       css(targetIFrame, {
         display: 'block',

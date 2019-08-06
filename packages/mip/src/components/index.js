@@ -11,7 +11,7 @@ import MipVideo from './mip-video'
 import MipCarousel from './mip-carousel'
 import MipIframe from './mip-iframe'
 import MipPix from './mip-pix'
-import MipBind from './mip-bind/bind'
+import mipBindInit from './mip-bind/init'
 import MipData from './mip-bind/mip-data'
 import MipShell from './mip-shell/index'
 import MipFixed from './mip-fixed/index'
@@ -33,8 +33,10 @@ export default {
     registerElement('mip-iframe', MipIframe)
     registerElement('mip-video', MipVideo)
     registerElement('mip-fixed', MipFixed)
-    new MipBind()
+    mipBindInit()
+    // new MipBind()
     registerElement('mip-data', MipData)
     isMIPShellDisabled() || registerElement('mip-shell', MipShell)
   }
 }
+

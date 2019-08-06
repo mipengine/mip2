@@ -9,7 +9,7 @@
 import event from './util/dom/event'
 import Gesture from './util/gesture/index'
 import platform from './util/platform'
-import EventAction from './util/event-action'
+import EventAction from './util/event-action/index'
 import EventEmitter from './util/event-emitter'
 import {fn, makeCacheUrl, parseCacheUrl} from './util'
 import {supportsPassive} from './page/util/feature-detect'
@@ -191,6 +191,20 @@ let viewer = {
   setupEventAction () {
     let hasTouch = fn.hasTouch()
     let eventAction = this.eventAction = new EventAction()
+
+    const inputDebounced = fn.debounce(function (event) {
+      event.value = event.target.value
+      eventAction.execute('input-debounced', event.target, event)
+    }, 300)
+    const inputThrottle = fn.throttle(function (event) {
+      event.value = event.target.value
+      eventAction.execute('input-throttled', event.target, event)
+    }, 100)
+    let inputHandle = function (event) {
+      inputDebounced(event)
+      inputThrottle(event)
+    }
+
     if (hasTouch) {
       // In mobile phone, bind Gesture-tap which listen to touchstart/touchend event
       this._gesture.on('tap', event => {
@@ -207,9 +221,61 @@ let viewer = {
       eventAction.execute('click', event.target, event)
     }, false)
 
+    document.addEventListener('input', inputHandle, false)
+
     event.delegate(document, 'input', 'change', event => {
+      event.value = event.target.value
       eventAction.execute('change', event.target, event)
     })
+  },
+
+  /**
+   * navigate to url
+   * 对于新窗打开，使用 window.open，并处理 opener
+   * 对于页内跳转，使用 viewer.open
+   * @param {string} url 地址
+   * @param {string} target 打开方式
+   * @param {boolean} opener 是否支持 opener
+   */
+  navigateTo (url, target, opener) {
+    if (['_blank', '_top'].indexOf(target) === -1) {
+      return
+    }
+    if (target === '_blank') {
+      this.openWindow(url, target, opener)
+    } else {
+      this.open(url, {replace: true, isMipLink: false})
+    }
+  },
+
+  /**
+   * 对 window.open 作兼容性处理
+   * @param {string} url 地址
+   * @param {string} target 打开方式
+   * @param {boolean} opener 是否支持 opener
+   */
+  openWindow (url, target, opener) {
+    let opt
+    // Chrome 不能使用 noopener，会导致使用新 window 而不是新 tab 打开
+    if ((platform.isIOS() || !platform.isChrome()) && opener === false) {
+      opt = 'noopener'
+    }
+
+    // 先尝试 open，如果失败再使用 '_top'，因为 ios WKWebview 对于非 '_top' 打开可能失败
+    let newWin
+    try {
+      newWin = window.open(url, target, opt)
+    } catch (e) {}
+
+    if (!newWin && target !== '_top') {
+        newWin = window.open(url, '_top')
+    }
+
+    // 由于 Chrome 没有使用 noopener，需要手动清空 opener
+    if (newWin && opener === false) {
+      newWin.opener = null
+    }
+    return newWin
   },
 
   /**
