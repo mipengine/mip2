@@ -131,10 +131,19 @@ customElement.prototype.addEventAction = function (/* name, handler */) {
  * @param {string} action The action's name
  */
 customElement.prototype.executeEventAction = function (action) {
-  let eventObj = this._actionEvent
-  if (action && eventObj) {
-    eventObj.trigger(action.handler, action.event, action.arg)
+//   let eventObj = this._actionEvent
+//   if (action && eventObj) {
+//     eventObj.trigger(action.handler, action.event, action.arg)
+//   }
+  if (!action) {
+    return false
   }
+  let eventObj = this._actionEvent
+  if (eventObj && eventObj.__events[action.handler]) {
+    eventObj.trigger(action.handler, action.event, action.arg)
+    return true
+  }
+  return false
 }
 
 /**

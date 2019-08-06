@@ -1,4 +1,4 @@
-import {fn} from '../../util'
+import util, {fn} from '../../util'
 import viewport from '../../viewport'
 
 export function scrollTo (height, { duration = 500, scrollTop = 0 } = {}) {
@@ -65,4 +65,44 @@ function scroll (top) {
   // } else {
   //   window.scrollTo(0, top)
   // }
+}
+
+/**
+ * scrollTo 接口
+ * 滚动到指定元素
+ * 
+ * @param {HTMLElement} element 目标元素
+ * @param {number} duration 滚动动画时间
+ * @param {string} position 滚动后元素显示的位置，取值范围 'top'、'bottom'、'center'
+ */
+export function handleScrollTo (element, {duration = 0, position = 'top'} = {}) {
+  /* istanbul ignore if */
+  if (!element) {
+    return
+  }
+  // not scroll if element is hidden
+  // https://github.com/jquery/jquery/blob/e743cbd28553267f955f71ea7248377915613fd9/src/css/hiddenVisibleSelectors.js
+  if (!!(element.offsetWidth
+        || element.offsetHeight
+        || element.getClientRects().length) === false) {
+      return
+  }
+  /* istanbul ignore if */
+  if (typeof duration !== 'number' || !isFinite(duration)) {
+    duration = 0
+  }
+  let rect = util.rect.getElementRect(element)
+  let offset = -viewport.getHeight() + rect.height
+  switch (position) {
+    case 'bottom':
+      break
+    case 'center':
+      offset /= 2
+      break
+    default:
+      offset = 0
+      break
+  }
+  const scrollTop = viewport.getScrollTop()
+  scrollTo(rect.top + offset, {duration, scrollTop})
 }

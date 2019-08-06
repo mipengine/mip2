@@ -66,7 +66,7 @@ function parseLayout (s) {
  * @param {Layout} layout layout name
  * @return {string}
  */
-function getLayoutClass (layout) {
+export function getLayoutClass (layout) {
   return 'mip-layout-' + layout
 }
 

@@ -8,3 +8,6 @@ export const capitalize = memoize(name => name.replace(/^[a-z]/, s => s.toUpperC
 
 /** @type {(name: string) => string} */
 export const hyphenate = memoize(name => name.replace(/\B[A-Z]/g, s => `-${s.toLowerCase()}`))
+
+export const kebabize = memoize(name => name.replace(/[A-Z]/g, s => `-${s.toLowerCase()}`))
+

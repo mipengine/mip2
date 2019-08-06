@@ -2,6 +2,12 @@
  * @file css
  * @author sekiyika(pengxing@baidu.com)
  */
+import {
+  camelize,
+  kebabize,
+  capitalize
+} from '../string'
+import {startsWith} from '../fn'
 
 let camelReg = /(?:(^-)|-)+(.)?/g
 
@@ -23,7 +29,7 @@ let prefixCache = {}
  * @param {string} property A property to be checked
  * @return {string} the property or its prefixed version
  */
-function prefixProperty (property) {
+export function prefixProperty (property) {
   property = property.replace(camelReg, (match, first, char) => (first ? char : char.toUpperCase()))
 
   if (prefixCache[property]) {
@@ -137,3 +143,57 @@ export default function css (elements, property, value) {
 
   return element.style[property] || document.defaultView.getComputedStyle(element)[property]
 }
+
+export function styleToObject (str) {
+  if (!str) {
+    return {}
+  }
+
+  let styles = str.split(/\s*;[;\s]*/)
+    .filter(style => style.indexOf(':') > 0)
+
+  let obj = {}
+  for (let style of styles) {
+    let [attr, value] = style.split(/\s*:\s*/)
+    obj[styleCamelCase(attr)] = value
+  }
+  return obj
+}
+
+function isPascal (key) {
+  return /^[A-Z]/.test(key)
+}
+
+function styleKebabize (key) {
+  if (!isPascal(key)) {
+    for (let prefix of PREFIX_TYPE) {
+      if (startsWith(key, prefix) && isPascal(key[prefix.length])) {
+        key = capitalize(key)
+        break
+      }
+    }
+  }
+  return kebabize(key)
+}
+function styleCamelCase (key) {
+  if (startsWith(key, '-')) {
+    key = key.slice(1)
+  }
+  return camelize(key)
+}
+
+export function objectToStyle (obj) {
+  let text = Object.keys(obj)
+    .map(key => stringifyStyle(styleKebabize(key), obj[key]))
+    .join(';')
+  return text && (text + ';') || text
+}
+
+function stringifyStyle (key, value) {
+  if (Array.isArray(value)) {
+    return value.map(val => `${key}:${val}`).join(';')
+  }
+  return `${key}:${value}`
+}
+
+

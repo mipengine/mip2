@@ -171,7 +171,7 @@ function createBaseElementProto () {
    * @param {Object} action event action
    */
   proto.executeEventAction = function (action) {
-    this.customElement.executeEventAction(action)
+    return this.customElement.executeEventAction(action)
   }
 
   /**

@@ -7,8 +7,11 @@
 /* global describe, it, expect */
 
 import {fn} from 'src/util'
+import Services, {installTimerService} from 'src/services'
 
 describe('fn', function () {
+  installTimerService()
+  const timer = Services.timer()
   it('extend', function () {
     let target = {
       test: 1
@@ -48,6 +51,20 @@ describe('fn', function () {
       clearInterval(interval)
       done(count > 5 ? 'throttle error' : null)
     }, 100)
+  })
+
+  it('debounce', async () => {
+    let count = 0
+    let exec = function () {
+      count++
+    }
+    let debouncedExec = fn.debounce(exec, 20)
+    let interval = setInterval(debouncedExec, 10)
+    await timer.sleep(100)
+    expect(count).to.be.equal(0)
+    clearInterval(interval)
+    await timer.sleep(30)
+    expect(count).to.be.equal(1)
   })
 
   it('isPlainObject', function () {
@@ -120,6 +137,15 @@ describe('fn', function () {
       expect(fn.getRootName('some other name'))
         .to.be.equal('some other name')
     })
+  })
+
+  it('isPlainObjectEqual', function () {
+    let obj = {a: 1, b: 2}
+    let obj2 = obj
+    obj2.c = 10086
+    expect(fn.isPlainObjectEqual(obj, obj2)).to.be.equal(true)
+    expect(obj.c).to.be.equal(10086)
+    expect(fn.isPlainObjectEqual(obj, {a: 1, b: 2, c: 10086})).to.be.equal(true)
   })
 })
 /* eslint-enable no-unused-expressions */

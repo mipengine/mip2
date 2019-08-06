@@ -38,6 +38,40 @@ export function throttle (fn, delay) {
 }
 
 /**
+ * Debounce a function.
+ *
+ * @param {Function} fn fn
+ * @param {number} delay The run time interval
+ * @return {Function}
+ */
+export function debounce (fn, delay = 0) {
+  let context
+  let callArgs
+  let timerId
+  let timestamp = 0
+
+  function exec () {
+    timerId = 0
+    const remainTime = delay - (Date.now() - timestamp)
+    if (remainTime > 0) {
+      timerId = setTimeout(exec, remainTime)
+    } else {
+      fn.apply(context, callArgs)
+    }
+  }
+
+  return function(...args) {
+    timestamp = Date.now()
+    context = this
+    callArgs = args
+
+    if (!timerId) {
+      timerId = setTimeout(exec, delay)
+    }
+  }
+}
+
+/**
  * Get all values of an object.
  *
  * @param {Object} obj obj
@@ -63,6 +97,26 @@ export function values (obj) {
  */
 export function isPlainObject (obj) {
   return !!obj && typeof obj === 'object' && Object.getPrototypeOf(obj) === Object.prototype
+}
+
+/**
+ * return an object is a plain object or not
+ * Vue reactive data may change its prototype
+ * so we couldn't use isPlainObject
+ *
+ * @param {*} obj any
+ * @return {boolean
+ */
+export function isObject (obj) {
+  return getType(obj) === '[object Object]'
+}
+
+export function isEmptyObject (obj) {
+  return Object.keys(obj).length === 0
+}
+
+export function getType (obj) {
+  return Object.prototype.toString.call(obj)
 }
 
 /* eslint-disable fecs-camelcase */
@@ -139,7 +193,8 @@ export function pick (obj) {
  * @return {boolean} whehter varible is string
  */
 export function isString (string) {
-  return Object.prototype.toString.call(string) === '[object String]'
+  return getType(string) === '[object String]'
+  // return Object.prototype.toString.call(string) === '[object String]'
 }
 
 /**
@@ -214,3 +269,63 @@ export const memoize = (fn) => {
     return cache[args[0]] || (cache[args[0]] = fn.apply(this, args))
   }
 }
+
+export function noop () {}
+
+// export function classify (source, callback) {
+//   let result = {}
+//   for (let key of Object.keys(source)) {
+//     result[callback(key, source[key])] = source[key]
+//   }
+//   return result
+// }
+
+export function traverse (source, callback) {
+  let stack = [source]
+  while (stack.length) {
+    let node = stack.pop()
+    let children = callback(node)
+    if (Array.isArray(children)) {
+      for (let child of children) {
+        stack.push(child)
+      }
+    }
+  }
+}
+
+export function isPlainObjectEqual (obj1, obj2) {
+  if (obj1 === obj2) {
+    return true
+  }
+  let keys1 = Object.keys(obj1)
+  let keys2 = Object.keys(obj2)
+  if (keys1.length !== keys2.length) {
+    return false
+  }
+  for (let key of keys1) {
+    if (obj1[key] !== obj2[key]) {
+      return false
+    }
+  }
+  return true
+}
+
+export function complement (obj, excludes) {
+  if (!excludes.length) {
+    return obj
+  }
+
+  let result = {}
+  for (let key of Object.keys(obj)) {
+    if (excludes.indexOf(key) === -1) {
+      result[key] = obj[key]
+    }
+  }
+  return result
+}
+
+export function startsWith (str, prefix) {
+  return str.slice(0, prefix.length) === prefix
+}
+
+
