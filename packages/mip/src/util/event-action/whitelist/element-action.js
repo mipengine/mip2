@@ -1,5 +1,5 @@
 import {handleScrollTo} from '../../../page/util/ease-scroll'
-import {LAYOUT, getLayoutClass} from '../../../layout'
+import {LAYOUT} from '../../../layout'
 import {parse} from '../parser'
 import log from '../../log'
 import {isMIPElement} from '../../dom/dom'

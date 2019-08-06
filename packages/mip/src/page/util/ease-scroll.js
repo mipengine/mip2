@@ -88,7 +88,7 @@ export function handleScrollTo (element, {duration = 0, position = 'top'} = {}) 
       return
   }
   /* istanbul ignore if */
-  if (!typeof duration === 'number' || !isFinite(duration)) {
+  if (typeof duration !== 'number' || !isFinite(duration)) {
     duration = 0
   }
   let rect = util.rect.getElementRect(element)

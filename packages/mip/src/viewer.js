@@ -265,11 +265,12 @@ let viewer = {
     let newWin
     try {
       newWin = window.open(url, target, opt)
-    } catch (e) {
-      if (!newWin && target !== '_top') {
+    } catch (e) {}
+
+    if (!newWin && target !== '_top') {
         newWin = window.open(url, '_top')
-      }
     }
+
     // 由于 Chrome 没有使用 noopener，需要手动清空 opener
     if (newWin && opener === false) {
       newWin.opener = null
