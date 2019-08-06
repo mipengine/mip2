@@ -93,7 +93,7 @@ function getImgOffset (img) {
  * @return {Object} 保存 src 数组和 index
  */
 function getImgsSrcIndex (ele) {
-  // 取已渲染的 popup 图片，不包括 carousel 中头尾的两个图片
+  // 取 popup 图片，不包括 carousel 中头尾的两个图片
   const mipImgs = [...document.querySelectorAll('mip-img[popup]')]
                     .filter(mipImg => !mipImg.classList.contains('mip-carousel-extra-img'))
   let index = mipImgs.indexOf(ele)
