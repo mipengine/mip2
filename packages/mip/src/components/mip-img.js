@@ -87,7 +87,7 @@ function getImgOffset (img) {
   return imgOffset
 }
 /**
- * 获取所有已渲染的 popup 属性的 mip-img src 和本元素在数组中对应的 index
+ * 获取有 popup 属性的 mip-img src 和本元素在数组中对应的 index
  *
  * @param {HTMLElement} ele mip-img 组件元素
  * @return {Object} 保存 src 数组和 index
