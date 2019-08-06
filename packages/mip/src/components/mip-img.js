@@ -103,7 +103,6 @@ function getImgsSrcIndex (ele) {
   }
   const imgsSrcArray = mipImgs.map(mipImg => {
     let img = mipImg.querySelector('img')
-    // just check
     /* istanbul ignore if */
     if (!img) {
       return mipImg.getAttribute('src')
