@@ -238,7 +238,7 @@ let viewer = {
    * @param {boolean} opener 是否支持 opener
    */
   navigateTo (url, target, opener) {
-    if (!['_blank', '_top'].includes(target)) {
+    if (['_blank', '_top'].indexOf(target) === -1) {
       return
     }
     if (target === '_blank') {

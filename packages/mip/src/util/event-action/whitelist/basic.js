@@ -54,7 +54,7 @@ export const PROTOTYPE = {
     // splice: Array.prototype.splice,
     sort: instanceSort,
     splice: instanceSplice,
-    includes: Array.prototype.includes
+    // includes: Array.prototype.includes
   },
   '[object Number]': {
     toExponential: Number.prototype.toExponential,

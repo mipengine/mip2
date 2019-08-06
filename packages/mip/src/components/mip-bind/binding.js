@@ -46,6 +46,7 @@ export function applyBinding ({node, attrs, keys }, data) {
 }
 
 export function isBindingAttr (attr) {
-  return bindingAttrs.includes(attr) || isDefaultBindingAttr(attr)
+  return bindingAttrs.indexOf(attr) > -1 || isDefaultBindingAttr(attr)
+  // return bindingAttrs.includes(attr) || isDefaultBindingAttr(attr)
 }
 

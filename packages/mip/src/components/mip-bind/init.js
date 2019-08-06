@@ -143,7 +143,8 @@ function addInputListener (nodeInfos, store) {
 
   for (let info of nodeInfos) {
     let {node, attrs} = info
-    if (!FORM_ELEMENTS.includes(node.tagName)) {
+    if (FORM_ELEMENTS.indexOf(node.tagName) === -1) {
+    // if (!FORM_ELEMENTS.includes(node.tagName)) {
       continue
     }
 
