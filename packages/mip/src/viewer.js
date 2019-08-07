@@ -159,7 +159,7 @@ let viewer = {
    */
   sendMessageToBaiduApp (eventName, data = {}) {
     // 和端通信, 可以上报性能数据，也可以通知隐藏 loading
-    if (platform.isBaiduApp() && platform.isAndroid()) {
+    if (platform.isBaiduApp()) {
       let act = {
         [OUTER_MESSAGE_MIP_PAGE_LOAD]: 'hideloading',
         [OUTER_MESSAGE_PERFORMANCE_UPDATE]: 'perf',
@@ -167,15 +167,26 @@ let viewer = {
         [OUTER_MESSAGE_REPLACE_STATE]: 'click'
       }[eventName]
 
-      act && window._flyflowNative && window._flyflowNative.exec(
-        'bd_mip',
-        'onMessage',
-        JSON.stringify({
-          type: 5, // 必选，和端的约定
-          act,
-          data
-        }), ''
-      )
+      if (platform.isAndroid()) {
+        act && window._flyflowNative && window._flyflowNative.exec(
+          'bd_mip',
+          'onMessage',
+          JSON.stringify({
+            type: 5, // 必选，和 android 端的约定
+            act,
+            data
+          }), ''
+        )
+      }
+      if (platform.isIOS()) {
+        let iframe = document.createElement('iframe');
+        let paramStr = encodeURIComponent(JSON.stringify({ act, data }))
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        iframe.src = `baiduboxapp://mipPageShow?service=bd_mip&action=onMeessage&args=${paramStr}&callbackId=''`;
+        console.log(`baiduboxapp://mipPageShow?service=bd_mip&action=onMeessage&args=${paramStr}&callbackId=''`)
+        setTimeout(() => iframe.parentNode.removeChild(iframe));
+      }
     }
   },
 
@@ -337,6 +348,14 @@ let viewer = {
     let hashStr = '#'
     let curHashObj = MIP.hash._getHashObj(routeSplits[1] || '')
     let targetHashObj = MIP.hash._getHashObj(location.hash)
+
+    // 处理一下锚点的情况，删除前一个页面的锚点
+    for (let key in targetHashObj) {
+      if (targetHashObj[key].sep !== '=') {
+        delete targetHashObj[key];
+      }
+    }
+
     let retObj = Object.assign({}, targetHashObj, curHashObj)
 
     for (let key in retObj) {
