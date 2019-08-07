@@ -11,7 +11,7 @@ import {
 } from './util/dom'
 import {getCleanPageId, parsePath} from './util/path'
 import {supportsPassive} from './util/feature-detect'
-import {scrollTo} from './util/ease-scroll'
+import {scrollTo, handleScrollTo} from './util/ease-scroll'
 import {
   MAX_PAGE_NUM,
   CUSTOM_EVENT_SCROLL_TO_ANCHOR,
@@ -79,9 +79,10 @@ class Page {
 
       /* istanbul ignore next */
       if (anchor) {
-        scrollTo(anchor.offsetTop, {
-          scrollTop: viewport.getScrollTop()
-        })
+        handleScrollTo(anchor, {duration: 500, position: 'top'})
+        // scrollTo(anchor.offsetTop, {
+        //   scrollTop: viewport.getScrollTop()
+        // })
       }
     } catch (e) {}
   }
