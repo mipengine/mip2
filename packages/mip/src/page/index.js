@@ -11,7 +11,7 @@ import {
 } from './util/dom'
 import {getCleanPageId, parsePath} from './util/path'
 import {supportsPassive} from './util/feature-detect'
-import {scrollTo, handleScrollTo} from './util/ease-scroll'
+import {handleScrollTo} from './util/ease-scroll'
 import {
   MAX_PAGE_NUM,
   CUSTOM_EVENT_SCROLL_TO_ANCHOR,
@@ -26,7 +26,6 @@ import {
 } from './const/index'
 import {fn} from '../util'
 import {customEmit} from '../util/custom-event'
-import viewport from '../viewport'
 import performance from '../performance'
 import '../styles/mip.less'
 import {stringifyQuery, resolveQuery} from './util/query';
