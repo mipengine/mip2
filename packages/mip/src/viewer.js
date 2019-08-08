@@ -345,22 +345,33 @@ let viewer = {
     let routePath = (window.MIP.standalone && !window.MIP.util.isCacheUrl(location.href)) ? to : makeCacheUrl(to)
     let routeSplits = routePath.split('#')
     let hashStr = '#'
-    let curHashObj = MIP.hash._getHashObj(routeSplits[1] || '')
-    let targetHashObj = MIP.hash._getHashObj(location.hash)
+    let targetHashobj = MIP.hash._getHashObj(routeSplits[1] || '')
+    let sourceHashObj = MIP.hash._getHashObj(location.hash)
+    let couldPassHash = true;
+    let retHashObj = {};
 
     // 处理一下锚点的情况，删除前一个页面的锚点
-    for (let key in targetHashObj) {
-      if (targetHashObj[key].sep !== '=') {
-        delete targetHashObj[key];
+    for (let key in sourceHashObj) {
+      if (sourceHashObj[key].sep !== '=') {
+        delete sourceHashObj[key];
+      }
+    }
+    // 如果是锚点的跳转，就不透传 hash 了，透传的 hash 会导致锚点失效
+    for (let key in targetHashobj) {
+      if (targetHashobj[key].sep !== '=') {
+        couldPassHash = false;
+        break;
       }
     }
 
-    let retObj = Object.assign({}, targetHashObj, curHashObj)
+    retHashObj = couldPassHash
+      ? Object.assign({}, sourceHashObj, targetHashobj)
+      : targetHashobj
 
-    for (let key in retObj) {
+    for (let key in retHashObj) {
       // 不透传熊掌号相关的 hash，只保证第一次 logo + title 展现
       if (key !== 'cambrian') {
-        hashStr += `${key}${retObj[key].sep}${retObj[key].value}&`
+        hashStr += `${key}${retHashObj[key].sep}${retHashObj[key].value}&`
       }
     }
 
