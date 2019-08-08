@@ -1,5 +1,6 @@
 @import "./variable.less";
 
+// PC 环境下快照不会引入 mip.js，导致 body 的这层白色的 mask 消失不了
 @media (max-width: 768px) {
   body::before {
     display: block;
