@@ -184,7 +184,6 @@ let viewer = {
         iframe.style.display = 'none';
         document.body.appendChild(iframe);
         iframe.src = `baiduboxapp://mipPageShow?service=bd_mip&action=onMeessage&args=${paramStr}&callbackId=''`;
-        console.log(`baiduboxapp://mipPageShow?service=bd_mip&action=onMeessage&args=${paramStr}&callbackId=''`)
         setTimeout(() => iframe.parentNode.removeChild(iframe));
       }
     }
