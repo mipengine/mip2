@@ -9,65 +9,86 @@
 
 import CustomElement from '../../custom-element'
 import jsonParse from '../../util/json-parse'
+import Deffered from '../../util/deferred'
+import log from '../../util/log'
 
-/*
- * Remove promise from global mipDataPromises array
- * @param {Promise} target promise need to be removed
- */
-function dropPromise (target) {
-  let index = mipDataPromises.indexOf(target)
-  mipDataPromises.splice(index, ~index ? 1 : 0)
-}
+const logger = log('MIP-data')
 
-class MipData extends CustomElement {
+class MIPData extends CustomElement {
+  static props = {
+    src: {
+      type: String,
+      default: ''
+    },
+    credentials: {
+      type: String,
+      default: 'omit'
+    },
+    id: {
+      type: String,
+      default: ''
+    },
+    scoped: {
+      type: Boolean,
+      default: false
+    }
+  }
+
   build () {
-    let src = this.element.getAttribute('src')
+    // get remote data
+    if (this.props.src) {
+      return this.fetch(this.props.src)
+    }
+
+    // get local data
     let ele = this.element.querySelector('script[type="application/json"]')
 
-    /* istanbul ignore if */
-    if (src) {
-      this.getData(src)
-    } else if (ele) {
+    if (ele) {
       let data = ele.textContent.toString()
       if (data) {
-        MIP.$set(jsonParse(data))
+        this.assign(jsonParse(data))
       }
     }
   }
 
   /*
-   * get initial data asynchronouslly
+   * get remote initial data asynchronouslly
    */
-  getData (url) {
-    let stuckResolve
-    let stuckReject
+  async fetch (url) {
+    let promises = mipDataPromises
+    let {promise, resolve, reject} = new Deffered()
+
     // only resolve/reject when sth truly comes to a result
     // such as only to resolve when res.json() done
-    let stuckPromise = new Promise(function (resolve, reject) {
-      stuckResolve = resolve
-      stuckReject = reject
-    })
-    mipDataPromises.push(stuckPromise)
+    promises.push(promise)
 
-    fetch(url, {credentials: 'include'})
-      .then(res => {
-        if (res.ok) {
-          res.json().then(data => {
-            MIP.$set(data)
-            dropPromise(stuckPromise)
-            stuckResolve()
-          })
-        } else {
-          console.error('Fetch request failed!')
-          dropPromise(stuckPromise)
-          stuckReject()
-        }
-      })
-      .catch(e => {
-        console.error(e)
-        dropPromise(stuckPromise)
-        stuckReject()
-      })
+    let resolver = resolve
+
+    try {
+      let res = await fetch(url, {credentials: this.props.credentials})
+
+      if (!res.ok) {
+        throw Error(`Fetch request failed: ${url}`)
+      }
+
+      let data = await res.json()
+      this.assign(data)
+    } catch (e) {
+      logger.error(e)
+      resolver = reject
+    }
+
+    let index = promises.indexOf(promise)
+    if (index > -1) {
+      promises.splice(index, 1)
+    }
+
+    resolver()
+  }
+
+  assign (data) {
+    let {id, scoped} = this.props
+    MIP.$set(id && scoped ? { [id]: data } : data)
   }
 
   /* istanbul ignore next  */
@@ -76,4 +97,4 @@ class MipData extends CustomElement {
   }
 }
 
-export default MipData
+export default MIPData

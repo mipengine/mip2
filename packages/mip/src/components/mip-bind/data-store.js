@@ -7,6 +7,7 @@ import DataWatcher from './data-watcher'
 import GlobalData from './global-data'
 import { merge, getProperty } from './util'
 import { isObject } from '../../util/fn'
+
 export default class DataStore {
   constructor () {
     const storage = {}
@@ -29,4 +30,9 @@ export default class DataStore {
     return getProperty(this.data, expr)
   }
 }
+
+export const instance = new DataStore()
+export const getData = instance.get.bind(instance)
+export const setData = instance.set.bind(instance)
+export const watch = instance.watcher.watch.bind(instance.watcher)
 
