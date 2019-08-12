@@ -1,5 +1,12 @@
+/**
+ * @file binding-value.js
+ * @author clark-t (clarktanglei@163.com)
+ */
 
-function addInputListener (nodeInfos, store) {
+import { throttle } from '../../util/fn'
+import { createSetDataObject } from './util'
+
+export function addInputListener (add, store) {
   const key = 'm-bind:value'
 
   const FORM_ELEMENTS = [
@@ -8,7 +15,7 @@ function addInputListener (nodeInfos, store) {
     'SELECT'
   ]
 
-  for (let info of nodeInfos) {
+  for (let info of add) {
     let {node, attrs} = info
     if (FORM_ELEMENTS.indexOf(node.tagName) === -1) {
     // if (!FORM_ELEMENTS.includes(node.tagName)) {

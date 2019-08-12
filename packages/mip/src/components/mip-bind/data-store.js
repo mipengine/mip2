@@ -31,8 +31,3 @@ export default class DataStore {
   }
 }
 
-export const instance = new DataStore()
-export const getData = instance.get.bind(instance)
-export const setData = instance.set.bind(instance)
-export const watch = instance.watcher.watch.bind(instance.watcher)
-

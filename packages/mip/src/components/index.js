@@ -34,7 +34,6 @@ export default {
     registerElement('mip-video', MipVideo)
     registerElement('mip-fixed', MipFixed)
     mipBindInit()
-    // new MipBind()
     registerElement('mip-data', MipData)
     isMIPShellDisabled() || registerElement('mip-shell', MipShell)
   }

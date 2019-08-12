@@ -15,6 +15,16 @@ function sleep (time) {
   return new Promise(resolve => setTimeout(resolve, time))
 }
 
+function getMipDataProps (props = {}) {
+  return Object.assign(
+    Object.keys(MipData.props).reduce((obj, key) => {
+      obj[key] = MipData.props[key].default
+      return obj
+    }, {}),
+    props
+  )
+}
+
 describe('mip-bind', function () {
   let eleText
   let eleBind
@@ -75,6 +85,27 @@ describe('mip-bind', function () {
               }
             </script>
           </mip-data>
+          <mip-data
+            id="scopedData"
+            scoped
+          >
+            <script type="application/json">
+            {
+              "a": 1,
+              "b": 2
+            }
+            </script>
+          </mip-data>
+          <mip-data
+            scoped
+          >
+            <script type="application/json">
+            {
+              "aa": 1,
+              "bb": 2
+            }
+            </script>
+          </mip-data>
         </div>
       `
 
@@ -98,7 +129,13 @@ describe('mip-bind', function () {
           city: '广州'
         },
         list: ['a', 'b', {item: 2}],
-        id: 1
+        id: 1,
+        scopedData: {
+          a: 1,
+          b: 2
+        },
+        aa: 1,
+        bb: 2
       })
 
       expect(MIP.getData('global.data.name')).to.equal('level-1')
@@ -153,6 +190,7 @@ describe('mip-bind', function () {
     let mipData
     before(function () {
       mipData = new MipData()
+      mipData.props = getMipDataProps()
       let mipDataTag = document.createElement('mip-data')
       let script = document.createElement('script')
       script.setAttribute('type', 'application/json')
@@ -166,7 +204,7 @@ describe('mip-bind', function () {
     })
 
     it('should not combine wrong formatted data with m', function () {
-      expect(mipData.build.bind(mipData)).to.throw(/Content should be a valid JSON string!/)
+      expect(mipData.sync.bind(mipData)).to.throw(/Content should be a valid JSON string!/)
       expect(window.m.wrongFormatData).to.be.undefined
     })
   })
@@ -183,12 +221,16 @@ describe('mip-bind', function () {
     }
 
     let fetchOrigin
+    let div
     before(function () {
+      div = document.createElement('div')
+      document.body.appendChild(div)
       fetchOrigin = window.fetch
       sinon.stub(window, 'fetch')
     })
 
     after(function () {
+      document.body.removeChild(div)
       window.fetch = fetchOrigin
     })
 
@@ -199,12 +241,14 @@ describe('mip-bind', function () {
         )
       )
 
-      let mipData = new MipData()
-      let mipDataTag = document.createElement('mip-data')
-      mipDataTag.setAttribute('src', '/testData')
-      mipData.element = mipDataTag
+      div.innerHTML = '<mip-data src="/testData"></mip-data>'
+      // let mipData = new MipData()
+      // mipData.props = getMipDataProps()
+      // let mipDataTag = document.createElement('mip-data')
+      // mipDataTag.setAttribute('src', '/testData')
+      // mipData.element = mipDataTag
 
-      mipData.build.bind(mipData)()
+      // mipData.build.bind(mipData)()
       expect(window.mipDataPromises.length).to.equal(1)
 
       Promise.all(window.mipDataPromises).then(function () {
@@ -221,12 +265,15 @@ describe('mip-bind', function () {
         )
       )
 
-      let mipData = new MipData()
-      let mipDataTag = document.createElement('mip-data')
-      mipDataTag.setAttribute('src', '/testData')
-      mipData.element = mipDataTag
+      div.innerHTML = '<mip-data src="/testData"></mip-data>'
 
-      mipData.build.bind(mipData)()
+      // let mipData = new MipData()
+      // mipData.props = getMipDataProps()
+      // let mipDataTag = document.createElement('mip-data')
+      // mipDataTag.setAttribute('src', '/testData')
+      // mipData.element = mipDataTag
+
+      // mipData.build.bind(mipData)()
       expect(window.mipDataPromises.length).to.equal(1)
 
       Promise.all(window.mipDataPromises).catch(function () {
@@ -242,13 +289,14 @@ describe('mip-bind', function () {
           json({status: 'failed'}, 200)
         )
       )
+      div.innerHTML = '<mip-data src="/testData"></mip-data>'
+      // let mipData = new MipData()
+      // mipData.props = getMipDataProps()
+      // let mipDataTag = document.createElement('mip-data')
+      // mipDataTag.setAttribute('src', '/testData')
+      // mipData.element = mipDataTag
 
-      let mipData = new MipData()
-      let mipDataTag = document.createElement('mip-data')
-      mipDataTag.setAttribute('src', '/testData')
-      mipData.element = mipDataTag
-
-      mipData.build.bind(mipData)()
+      // mipData.build.bind(mipData)()
       expect(window.mipDataPromises.length).to.equal(1)
 
       Promise.all(window.mipDataPromises).catch(function () {

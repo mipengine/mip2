@@ -15,32 +15,16 @@ import log from '../../util/log'
 const logger = log('MIP-data')
 
 class MIPData extends CustomElement {
-  static props = {
-    src: {
-      type: String,
-      default: ''
-    },
-    credentials: {
-      type: String,
-      default: 'omit'
-    },
-    id: {
-      type: String,
-      default: ''
-    },
-    scoped: {
-      type: Boolean,
-      default: false
-    }
-  }
-
   build () {
     // get remote data
     if (this.props.src) {
       return this.fetch(this.props.src)
     }
-
     // get local data
+    this.sync()
+  }
+
+  sync () {
     let ele = this.element.querySelector('script[type="application/json"]')
 
     if (ele) {
@@ -55,13 +39,11 @@ class MIPData extends CustomElement {
    * get remote initial data asynchronouslly
    */
   async fetch (url) {
-    let promises = mipDataPromises
     let {promise, resolve, reject} = new Deffered()
 
     // only resolve/reject when sth truly comes to a result
     // such as only to resolve when res.json() done
-    promises.push(promise)
-
+    mipDataPromises.push(promise)
     let resolver = resolve
 
     try {
@@ -78,9 +60,9 @@ class MIPData extends CustomElement {
       resolver = reject
     }
 
-    let index = promises.indexOf(promise)
+    let index = mipDataPromises.indexOf(promise)
     if (index > -1) {
-      promises.splice(index, 1)
+      mipDataPromises.splice(index, 1)
     }
 
     resolver()
@@ -94,6 +76,25 @@ class MIPData extends CustomElement {
   /* istanbul ignore next  */
   prerenderAllowed () {
     return true
+  }
+}
+
+MIPData.props = {
+  src: {
+    type: String,
+    default: ''
+  },
+  credentials: {
+    type: String,
+    default: 'omit'
+  },
+  id: {
+    type: String,
+    default: ''
+  },
+  scoped: {
+    type: Boolean,
+    default: false
   }
 }
 

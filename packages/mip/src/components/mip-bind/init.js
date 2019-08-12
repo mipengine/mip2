@@ -4,69 +4,49 @@
  * @description m-bind 机制初始化
  */
 
-import {isElementNode} from '../../util/dom/dom'
-import {traverse, throttle} from '../../util/fn'
+// import {traverse, throttle} from '../../util/fn'
+import { def } from './util'
+import DataStore from './data-store'
+import { applyBinding } from './binding'
+import { instance as domWatcher } from './binding-dom-watcher'
+
 import {
-  createSetDataObject,
-  def
-} from './util'
-import {
-  instance as store,
-  getData,
-  setData,
-  watch
-} from './data-store'
-import {
-  applyBinding,
-  isBindingAttr
-} from './binding'
-import {
-  instance as domWather
-} from './dom-watcher'
+  addInputListener
+} from './binding-value'
 
 import log from '../../util/log'
 
 const logger = log('MIP-bind')
 
 export default function () {
-  domWatcher.watch(({ add, removed }) => {
-    addInputListener(add, store)
+
+  const store = new DataStore()
+  const getData = store.get.bind(store)
+  const setData = store.set.bind(store)
+  const watch = store.watcher.watch.bind(store.watcher)
+
+  domWatcher.watch((changed) => {
+    addInputListener(changed.add, store)
+  })
+
+  document.addEventListener('dom-change', e => {
+    domWatcher.update(e.detail.root)
   })
 
   store.watcher.watch(() => {
-    for (let info of )
+    for (let info of domWatcher.doms) {
+      try {
+        applyBinding(info, store.data)
+      } catch (e) /* istanbul ignore next */ {
+        logger.error(e)
+      }
+    }
   })
 
   const $set = data => {
-    domWatcher.update(document.documentElement)
+    domWatcher.update()
     setData(data)
   }
-
-  // let bindingDOMs = []
-
-  // const $set = data => {
-  //   let bindings = queryBindings(document.documentElement)
-  //   let {add} = diffBindingDOMs(bindingDOMs, bindings)
-
-  //   if (bindingDOMs.length > 0 && add.length > 0) {
-  //     logger.warn(`请勿在动态创建的节点上使用 m-bind`)
-  //   }
-  //   addInputListener(add, store)
-  //   for (let item of add) {
-  //     bindingDOMs.push(item)
-  //   }
-  //   setData(data)
-  // }
-
-  // store.watcher.watch(() => {
-  //   for (let info of bindingDOMs) {
-  //     try {
-  //       applyBinding(info, store.data)
-  //     } catch (e) /* istanbul ignore next */ {
-  //       logger.error(e)
-  //     }
-  //   }
-  // })
 
   def(MIP, 'setData', setData)
   def(MIP, '$set', $set)
