@@ -11,6 +11,10 @@ import {
   MESSAGE_BROADCAST_EVENT
 } from 'src/page/const'
 
+import { dom } from 'src/util'
+import viewport from 'src/viewport'
+import Services, {installTimerService} from 'src/services'
+
 /* eslint-disable no-unused-expressions */
 /* globals describe, it, expect, afterEach, sinon */
 
@@ -185,6 +189,8 @@ describe('page API #UI', function () {
   let spy
   let spy2
   let page = window.MIP.viewer.page
+  installTimerService()
+  const timer = Services.timer()
 
   afterEach(function () {
     if (spy && spy.restore) {
@@ -227,5 +233,25 @@ describe('page API #UI', function () {
     page.toggleDropdown(true)
     spy2 = sinon.stub(page, 'isRootPage').value(false)
     page.toggleDropdown(true)
+  })
+
+  it('.scrollToHash', async () => {
+    const content = dom.create(`
+      <div>
+        <div style="height: 500px;width: 500px"></div>
+        <div style="position: relative">
+          <div style="height: 500px;width: 500px"></div>
+          <a id="target"></a>
+        </div>
+        <div style="height: 2000px;width: 500px"></div>
+      </div>
+    `)
+    document.body.appendChild(content)
+    const anchor = document.getElementById('target')
+    page.scrollToHash('#target')
+    await timer.sleep(600)
+    expect(viewport.getScrollTop()).to.be.equal(anchor.offsetTop+anchor.parentElement.offsetTop)
+    expect(anchor.getBoundingClientRect().top).to.be.equal(0)
+    content.remove()
   })
 })

@@ -396,6 +396,7 @@ class MipImg extends CustomElement {
     let placeholder = document.createElement('mip-i-space')
     placeholder.classList.add('mip-default-placeholder')
 
+    // FIX ME: padding-bottom 应设更合理的值，不至于太大而导致其他元素不在视窗
     this.element.appendChild(css(
       placeholder, {
         'padding-bottom': '75%',

@@ -196,7 +196,8 @@ describe('mip-img', function () {
     await timer.sleep(500)
     expect(mipPopWrap.style.display).to.equal('none')
     mipImgWrapper.removeChild(carou)
-  }).timeout(4000)
+  }).timeout(5000)
+
   it('should not popup if the image is not loaded', async () => {
     mipImgWrapper.innerHTML = `<mip-img popup src="https://www.wrong.org?test=1"></mip-img>`
     let mipImg = mipImgWrapper.querySelector('mip-img')
