@@ -1,0 +1,68 @@
+<!--htmlcs-disable-->
+<!DOCTYPE html>
+<html mip>
+<head>
+  <meta charset="utf-8">
+  <title>mip-img</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-touch-fullscreen" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="stylesheet" href="../../dist/mip.css"></link>
+  <script>
+    window.onerror = function (message, source, lineno, colno, error) {
+      window.alert('Ops, js 报错了，请联系 FE 修复')
+      window.alert(message)
+      window.alert(source + ':' + lineno + ':' + colno)
+      window.alert(JSON.stringify(error))
+    }
+
+    function onClick(ele, type, event) {
+      const target = event.target
+      const hash = target.dataset.hash
+      MIP.viewer.page.scrollToHash(hash)
+    }
+  </script>
+  <style mip-custom>
+    button {
+      padding: 5px;
+      background-color: cadetblue;
+      font-size: 20px;
+    }
+    .content {
+      height: 500px;
+      width: 400px;
+      background: #ccc;
+    }
+    .parent {
+      position: relative;
+    }
+    a {
+      margin: 20px;
+      font-size: 20px;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div>
+    <h2>点击滚动：</h2>
+    <button onclick="onClick(this, type, event)" data-hash="#anchor1">锚点1</button>
+    <button onclick="onClick(this, type, event)" data-hash="#anchor2">锚点2</button>
+  </div>
+  
+  <div class="content"></div>
+  <div class="parent">
+    <div class="content"></div>
+    <a id="anchor1">锚点1</a>
+    <div class="content"></div>
+    <a id="anchor2">锚点2</a>
+  </div>
+  <div class="content"></div>
+  <div class="content"></div>
+</body>
+
+<script src="../../dist/mip.js"></script>
+<!-- <script src="https://c.mipcdn.com/static/v2/mip.js"></script> -->
+</html>
