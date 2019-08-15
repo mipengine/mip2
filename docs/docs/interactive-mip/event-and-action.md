@@ -45,6 +45,7 @@ MIP 提供了 `on` 属性来定义对组件的事件绑定与事件触发时的�
 |input-throttled|元素 value 改变时每 100ms 最多触发一次             |input                                  |event.value|
 
 ```html
+<!-- 通过点击按钮触发 mip-lightbox 组件的展现和消失 -->
 <button on="tap:light-box.open">打开弹框</button>
 <mip-lightbox
   id="light-box"
@@ -56,6 +57,7 @@ MIP 提供了 `on` 属性来定义对组件的事件绑定与事件触发时的�
   </div>
 </mip-lightbox>
 
+<!-- 通过 input 元素修改数据并显示 -->
 <mip-data>
   <script type="application/json">
     {
@@ -102,42 +104,6 @@ MIP 提供了 `on` 属性来定义对组件的事件绑定与事件触发时的�
 <input id="my-input">
 ```
 
-
-<!-- MIP 定义了全局事件 `tap`，`tap` 事件可以在任何 HTML 元素（包括原生 HTML 和 MIP 组件）上进行监听，该事件通过点击行为触发。举个例子，通过点击按钮触发 mip-lightbox 组件的展现和消失，那么可以在按钮元素上绑定 `tap` 事件：
-
-```html
-<button on="tap:light-box.open">打开弹框</button>
-<mip-lightbox
-  id="light-box"
-  layout="nodisplay"
->
-  <div class="lightbox">
-    <p>Hello World!</p>
-    <button on="tap:light-box.close">关闭弹框</button>
-  </div>
-</mip-lightbox>
-```
-
-MIP 定义了全局行为 `show`, `hide` 和 `toggleVisibility`，这三个行为可以在任何 HTML 元素（包括原生 HTML 和 MIP 组件）上进行触发。举个例子，通过点击按钮展现和隐藏图片 mip-img，那么可以在按钮上触发 mip-img 的对应行为：
-
-[notice] show 只能显示被 hide 和 toggleVisibility 行为隐藏的元素，或者是使用 hidden 属性隐藏的元素。show 不支持显示 display: none 或者 layout="nodisplay" 的元素。
-
-[notice] 可能存在组件自定义行为与全局行为重复的情况，比如 mip-toggle 具有自定义行为 show 和 hide，此时优先触发组件的自定义行为。
-
-```html
-<button on="tap:my-img.show">显示图片</button>
-<button on="tap:my-img.hide">隐藏图片</button>
-<button on="tap:my-img.toggleVisibility">显示/隐藏图片</button>
-<mip-img
-  id="my-img"
-  layout="responsive"
-  width="350"
-  height="263"
-  src="https://www.mipengine.org/static/img/sample_01.jpg"
-></mip-img>
-```
--->
-
 ## 组件自定义事件和行为
 
 除开全局事件和全局行为之外，每个组件也会根据其功能实现的需要抛出自定义事件或暴露出自定义行为。具体可以查阅对应的组件文档。
@@ -156,6 +122,7 @@ MIP 定义了全局行为 `show`, `hide` 和 `toggleVisibility`，这三个行�
 |print                                                       |打开当前页面的打印对话框|
 
 ```html
+<button on="tap:MIP.setData({count: count+1})">点击次数+1</button>
 <button on="tap:MIP.navigateTo(url='https://www.mipengine.org', target='_blank', opener=true)">在新页面打开 mip 官网</button>
 <button on="tap:MIP.closeOrNavigateTo(url='https://www.mipengine.org', target='_blank', opener=true)">关闭页面或者打开 mip 官网</button>
 <button on="tap:MIP.scrollTo(id='target', duration=500, position='bottom')">滚动到 id 为 target 的元素位于视口底部，动画时间为 500ms</button>
@@ -165,10 +132,4 @@ MIP 定义了全局行为 `show`, `hide` 和 `toggleVisibility`，这三个行�
 <div id="target"></div>
 ```
 
-<!-- 前面提到 targetId 可以传入特殊对象 MIP。在 `on` 语法中，MIP 对象暴露了 `setData` 方法，比如：
-
-```html
-<button on="tap:MIP.setData({buttonState: 'clicked'})">点击按钮</button>
-```
-
-在点击按钮时，数据 `buttonState` 将被赋值为 'clicked'。然后通过 [m-bind](./data-binding/mip-bind.md) 方法将 `buttonState` 绑定到节点属性上，就能够通过数据驱动的方式实现组件间通信。这块内容将在下一节[数据绑定](./data-binding/mip-bind.md) 中进行更为详细的说明。 -->
+MIP 的 `setData` 方法结合 [m-bind](./data-binding/mip-bind.md) 可以实现数据驱动，通过更新数据，改变绑定该数据的元素属性。这块内容将在下一节[数据绑定](./data-binding/mip-bind.md) 中进行更为详细的说明。
