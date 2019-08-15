@@ -1,6 +1,9 @@
 {
   "menu": [
     {
+      "key": "use-official-mip-first"
+    },
+    {
       "name": "如何提交站长组件代码",
       "key": "how-to-contribute"
     },
