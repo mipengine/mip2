@@ -28,7 +28,7 @@ MIP 提供了三种方式来实现异步数据的请求：
 ></mip-data>
 ```
 
-加载到的数据可以通过 HTML 节点数据绑定、`MIP.getData()` 等方式驱获取数据。假设上面的例子当中后端接口返回的数据为：
+加载到的数据可以通过 HTML 节点数据绑定、`MIP.getData()` 等方式去获取数据。假设上面的例子当中后端接口返回的数据为：
 
 ```json
 {
@@ -80,6 +80,7 @@ mip-list 主要用于异步加载数据后前端渲染节点，目前支持的�
 
 ```html
 <mip-list
+  id="simple-list"
   src="https://path/to/your/jsonp/api"
 >
   <template type="mip-mustache">
@@ -90,6 +91,8 @@ mip-list 主要用于异步加载数据后前端渲染节点，目前支持的�
   </div>
   </template>
 </mip-list>
+
+<button on="tap:simple-list.more">
 ```
 
 假设后端返回的数据格式为：
