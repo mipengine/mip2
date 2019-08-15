@@ -16,12 +16,20 @@ const logger = log('MIP-data')
 
 class MIPData extends CustomElement {
   build () {
-    // get remote data
+    this.addEventAction('refresh', () => {
+      if (this.props.src) {
+        return this.fetch(this.props.src)
+      }
+    })
+
     if (this.props.src) {
-      return this.fetch(this.props.src)
+      // get remote data
+      this.fetch(this.props.src)
+    } else {
+      // get local data
+      this.sync()
+
     }
-    // get local data
-    this.sync()
   }
 
   sync () {
