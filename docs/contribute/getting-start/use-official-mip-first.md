@@ -82,7 +82,7 @@ mip-list 主要用于异步加载数据后前端渲染节点，目前支持的�
 <mip-list
   src="https://path/to/your/jsonp/api"
 >
-  <template>
+  <template type="mip-mustache">
   <div class="wrapper">
     {{#show}}
     <header>{{content}}</header>
