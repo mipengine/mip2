@@ -46,9 +46,28 @@ class DOMWatcher {
     return diffBindingDOMs(this.doms, bindings)
   }
 
-  update ({changed, root} = {}) {
-    if (!changed) {
-      changed = this.query(root)
+  update ({add: domList}) {
+    let add = []
+
+    for (let dom of domList) {
+
+    }
+
+    // let addList = changed && changed.add || [root]
+    // let removedList changed && changed.removed || []
+
+
+    if (changed) {
+
+      // changed = {
+      //   add: changed.add.map(createBindingNode).filter(removeNull),
+      //   removed: changed.removed.map(node => createBindingNodeWrapper(node))
+      // }
+      // console.log('---- updated ----')
+      // console.log(changed)
+      // changed = this.query(root)
+    } else {
+      let newChange = this.query(root)
     }
     let {add, removed} = changed
 
@@ -61,6 +80,28 @@ class DOMWatcher {
   }
 }
 
+function removeNull (val) {
+  return val != null
+}
+
+function createBindingNode (node) {
+  if (!isElementNode(node)) {
+    return
+  }
+  let attrs = queryBindingAttrs(node)
+  if (attrs) {
+    return createBindingNodeWrapper(node, attrs)
+  }
+}
+
+function createBindingNodeWrapper (node, attrs) {
+  let wrapper = { node, attrs }
+  if (attrs) {
+    wrapper.keys = Object.keys(attrs)
+  }
+  return wrapper
+}
+
 function queryBindings (root) {
   let results = []
   traverse(root, node => {
@@ -69,7 +110,7 @@ function queryBindings (root) {
       return
     }
     let attrs = queryBindingAttrs(node)
-    attrs && results.push({node, attrs, keys: Object.keys(attrs) })
+    attrs && results.push(createBindingNodeWrapper(node, attrs))
     if (node.children) {
       return Array.from(node.children)
     }

@@ -35,7 +35,7 @@ const visitor = {
     let left = path.traverse(node.left)
     let right = path.traverse(node.right)
     return function () {
-      return operation(left(), right())
+      return operation(left, right)
     }
   },
 

@@ -18,6 +18,8 @@ import log from '../../util/log'
 
 const logger = log('MIP-bind')
 
+export const DOM_CHANGE_EVENT = 'dom-change'
+
 export default function () {
 
   const store = new DataStore()
@@ -29,8 +31,11 @@ export default function () {
     addInputListener(changed.add, store)
   })
 
-  document.addEventListener('dom-change', e => {
-    domWatcher.update(e.detail.root)
+  document.addEventListener(DOM_CHANGE_EVENT, e => {
+    let changeInfo = e.detail && e.detail[0]
+    changeInfo &&
+      Array.isArray(changeInfo.add) &&
+      domWatcher.update(changeInfo)
   })
 
   store.watcher.watch(() => {
@@ -44,7 +49,9 @@ export default function () {
   })
 
   const $set = data => {
-    domWatcher.update()
+    domWatcher.update({
+      add: [document.documentElement]
+    })
     setData(data)
   }
 

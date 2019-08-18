@@ -118,6 +118,7 @@ export default function mipAction ({property, argumentText, options}) {
       let fn = parse(argumentText, 'ObjectLiteral')
       arg = fn(options)
     } catch (e) {
+      console.error(e)
       arg = setDataParseFallback({argumentText, options})
     }
     action(arg)
