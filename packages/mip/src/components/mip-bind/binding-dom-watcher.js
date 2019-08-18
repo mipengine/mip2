@@ -41,38 +41,17 @@ class DOMWatcher {
     }
   }
 
-  query (root = document.documentElement) {
-    let bindings = queryBindings(root)
-    return diffBindingDOMs(this.doms, bindings)
-  }
-
   update ({add: domList}) {
-    let add = []
+    let bindings = []
 
     for (let dom of domList) {
-
+      uniqueMerge(bindings, queryBindings(dom))
     }
 
-    // let addList = changed && changed.add || [root]
-    // let removedList changed && changed.removed || []
+    let changed = diffBindingDOMs(this.doms, bindings)
 
-
-    if (changed) {
-
-      // changed = {
-      //   add: changed.add.map(createBindingNode).filter(removeNull),
-      //   removed: changed.removed.map(node => createBindingNodeWrapper(node))
-      // }
-      // console.log('---- updated ----')
-      // console.log(changed)
-      // changed = this.query(root)
-    } else {
-      let newChange = this.query(root)
-    }
-    let {add, removed} = changed
-
-    this.remove(removed)
-    this.add(add)
+    this.remove(changed.removed)
+    this.add(changed.add)
 
     for (let watcher of this.watchers) {
       watcher(changed, this.doms)
@@ -80,18 +59,20 @@ class DOMWatcher {
   }
 }
 
-function removeNull (val) {
-  return val != null
-}
-
-function createBindingNode (node) {
-  if (!isElementNode(node)) {
-    return
+function uniqueMerge (oldList, newList) {
+  for (let i = 0; i < newList.length; i++) {
+    let len = oldList.length
+    let j = 0
+    for (j = 0; j < len; j++) {
+      if (oldList[j].node === newList[i].node) {
+        break
+      }
+    }
+    if (j === len) {
+      oldList.push(newList[i])
+    }
   }
-  let attrs = queryBindingAttrs(node)
-  if (attrs) {
-    return createBindingNodeWrapper(node, attrs)
-  }
+  return oldList
 }
 
 function createBindingNodeWrapper (node, attrs) {
