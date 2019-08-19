@@ -1,5 +1,8 @@
 # CHANGELOG
 
+- 1.5.15
+    1. 紧急修复 less 版本升级引起的 bug
+
 - 1.5.14 
     1. 修复 typescript 文件没经过 babel 编译的 BUG
 
