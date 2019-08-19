@@ -77,8 +77,8 @@ class MIPData extends CustomElement {
   }
 
   assign (data) {
-    let {id, scoped} = this.props
-    MIP.$set(id && scoped ? { [id]: data } : data)
+    let {id, scope} = this.props
+    MIP.$set(id && scope ? { [id]: data } : data)
   }
 
   /* istanbul ignore next  */
@@ -100,7 +100,7 @@ MIPData.props = {
     type: String,
     default: ''
   },
-  scoped: {
+  scope: {
     type: Boolean,
     default: false
   }
