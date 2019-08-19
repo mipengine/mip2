@@ -87,7 +87,7 @@ describe('mip-bind', function () {
           </mip-data>
           <mip-data
             id="scopedData"
-            scoped
+            scope
           >
             <script type="application/json">
             {
@@ -97,7 +97,7 @@ describe('mip-bind', function () {
             </script>
           </mip-data>
           <mip-data
-            scoped
+            scope
           >
             <script type="application/json">
             {

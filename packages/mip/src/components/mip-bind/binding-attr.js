@@ -28,10 +28,6 @@ export function bindingAttr (node, key, value, oldValue) {
   }
 
   let attr = key.slice(prefixLen)
-  if (attr === 'watch') {
-    console.log(oldValue)
-    console.log(value)
-  }
   let prop = typeof value === 'object' ? JSON.stringify(value) : value
   if (prop === oldValue) {
     return prop

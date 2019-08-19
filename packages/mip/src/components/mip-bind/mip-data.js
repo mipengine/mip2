@@ -15,16 +15,22 @@ import log from '../../util/log'
 const logger = log('MIP-data')
 
 class MIPData extends CustomElement {
+  static get observerdAttributes () {
+    return ['src']
+  }
+
+  attributeChangedCallback () {
+    this._built && this.fetch()
+  }
+
   build () {
     this.addEventAction('refresh', () => {
-      if (this.props.src) {
-        return this.fetch(this.props.src)
-      }
+      this.fetch()
     })
 
     if (this.props.src) {
       // get remote data
-      this.fetch(this.props.src)
+      this.fetch()
     } else {
       // get local data
       this.sync()
@@ -46,7 +52,13 @@ class MIPData extends CustomElement {
   /*
    * get remote initial data asynchronouslly
    */
-  async fetch (url) {
+  async fetch () {
+    let url = this.props.src
+
+    if (!url) {
+      return
+    }
+
     let {promise, resolve, reject} = new Deffered()
 
     // only resolve/reject when sth truly comes to a result
@@ -78,7 +90,7 @@ class MIPData extends CustomElement {
 
   assign (data) {
     let {id, scope} = this.props
-    MIP.$set(id && scope ? { [id]: data } : data)
+    MIP.$set(id && scope ? {[id]: data} : data)
   }
 
   /* istanbul ignore next  */
