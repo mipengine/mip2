@@ -12,5 +12,8 @@
     {
       "key": "mip-site"
     }
+  ],
+  "ignore": [
+    "mip-site"
   ]
 }
