@@ -20,7 +20,6 @@ const logger = log('MIP-bind')
 export const DOM_CHANGE_EVENT = 'dom-change'
 
 export default function () {
-
   const store = new DataStore()
   const getData = store.get.bind(store)
   const setData = store.set.bind(store)

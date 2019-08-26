@@ -11,7 +11,7 @@ import CustomElement from '../../custom-element'
 import jsonParse from '../../util/json-parse'
 import Deffered from '../../util/deferred'
 import log from '../../util/log'
-
+import { timeout } from './util'
 const logger = log('MIP-data')
 
 class MIPData extends CustomElement {
@@ -48,6 +48,21 @@ class MIPData extends CustomElement {
     }
   }
 
+  request (url) {
+    let { method, credentials, timeout: time } = this.props
+    return method === 'jsonp'
+      ? fetchJsonp(url, { timeout: time })
+      : Promise.race([
+          fetch(url, { credentials }),
+          timeout(time)
+        ]).then(res => {
+          if (!res.ok) {
+            throw Error(`Fetch request failed: ${url}`)
+          }
+          return res.json()
+        })
+  }
+
   /*
    * get remote initial data asynchronouslly
    */
@@ -57,6 +72,7 @@ class MIPData extends CustomElement {
     if (!url) {
       return
     }
+
     let {promise, resolve, reject} = new Deffered()
 
     // only resolve/reject when sth truly comes to a result
@@ -65,17 +81,12 @@ class MIPData extends CustomElement {
     let resolver = resolve
 
     try {
-      let res = await fetch(url, {credentials: this.props.credentials})
-
-      if (!res.ok) {
-        throw Error(`Fetch request failed: ${url}`)
-      }
-
-      let data = await res.json()
+      let data = await this.request(url)
       this.assign(data)
     } catch (e) {
       logger.error(e)
       resolver = reject
+      MIP.viewer.eventAction.execute('fetch-error', this.element, e)
     }
 
     let index = mipDataPromises.indexOf(promise)
@@ -105,6 +116,14 @@ MIPData.props = {
   credentials: {
     type: String,
     default: 'omit'
+  },
+  method: {
+    type: String,
+    default: 'fetch'
+  },
+  timeout: {
+    type: Number,
+    default: 5000
   },
   id: {
     type: String,

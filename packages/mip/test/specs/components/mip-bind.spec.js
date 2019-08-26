@@ -7,6 +7,7 @@
 /* globals describe, before, it, expect, MIP, after, sinon */
 
 import MipData from 'src/components/mip-bind/mip-data'
+import { timeout } from 'src/components/mip-bind/util'
 import EventAction from 'src/util/event-action'
 
 const action = new EventAction()
@@ -27,6 +28,29 @@ function getMipDataProps (props = {}) {
     props
   )
 }
+
+describe('mip-bind util', function () {
+  it('timeout reject', async () => {
+    let shouldError = false
+    try {
+      await timeout(0)
+    } catch (e) {
+      shouldError = true
+    }
+
+    expect(shouldError).to.be.equal(true)
+  })
+
+  it('timeout resolve', async () => {
+    let shouldError = false
+    try {
+      await timeout(0, true)
+    } catch (e) {
+      shouldError = true
+    }
+    expect(shouldError).to.be.equal(false)
+  })
+})
 
 describe('mip-bind', function () {
   let eleText

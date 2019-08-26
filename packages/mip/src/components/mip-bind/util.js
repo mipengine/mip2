@@ -72,3 +72,14 @@ export function getProperty (data, expr) {
   return result
 }
 
+export function timeout (time, shouldResolve = false) {
+  return new Promise((resolve, reject) => {
+    let message = 'timeout'
+    setTimeout(() => {
+      shouldResolve
+        ? resolve(message)
+        : reject(new Error(message))
+    }, time)
+  })
+}
+
