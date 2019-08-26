@@ -64,7 +64,7 @@ describe('mip-bind', function () {
           <body>dup body</body>
           <h1 m-text=""></h1>
           <p m-bind:=""></p>
-          <p style="color:red;;;" m-bind:style="{fontSize: fontSize + 'px'}">test:<span>1</span></p>
+          <p style="color:red;;;" m-bind:style="{fontSize: fontSize + 'px'}" id="binding-fontsize">test:<span>1</span></p>
           <mip-data></mip-data>
           <mip-data>
             <script type="application/json"></script>
@@ -142,7 +142,6 @@ describe('mip-bind', function () {
       })
 
       expect(MIP.getData('global.data.name')).to.equal('level-1')
-
       await sleep()
 
       expect(window.g).to.eql({
@@ -288,6 +287,17 @@ describe('mip-bind', function () {
       )
 
       action.execute('haha', document.getElementById('dynamic-mip-data-trigger'))
+      await sleep(100)
+      expect(MIP.getData('testAttributeChangeForMIPData')).to.be.equal(123)
+
+      window.fetch.returns(
+        Promise.resolve(
+          json({ testAttributeChangeForMIPData: 678}, 200)
+        )
+      )
+
+      await sleep(100)
+      MIP.setData({ dynamicSrc: undefined })
       await sleep(100)
       expect(MIP.getData('testAttributeChangeForMIPData')).to.be.equal(123)
     })
@@ -597,6 +607,10 @@ describe('mip-bind', function () {
       eles.push(createEle('p', ['class', '[classObject, [items[0].iconClass]]'], 'bind'))
       eles.push(createEle('p', ['style', 'styleGroup.aStyle'], 'bind'))
       eles.push(createEle('p', ['class', 'classGroup.aClass'], 'bind'))
+      let ele = createEle('p', ['style', `{fontSize: fontSize + 'px'}`], 'bind')
+      ele.setAttribute('style', 'color: red;')
+      eles.push(ele)
+
       MIP.$set({
         loading: false,
         iconClass: 'grey    lighten1 white--text',
@@ -645,7 +659,7 @@ describe('mip-bind', function () {
       expect(eles[12].getAttribute('class')).to.equal('grey lighten1 white--text m-error')
       expect(eles[13].getAttribute('class')).to.equal('warning-class loading-class grey lighten1 white--text')
       expect(eles[15].getAttribute('class')).to.be.equal('class-a class-b')
-
+      expect(eles[16].getAttribute('style')).to.be.equal('color:red;font-size:12.5px;')
       MIP.setData({
         tab: 'test'
       })
@@ -725,6 +739,7 @@ describe('mip-bind', function () {
           .join(';')
       )
       expect(eles[14].getAttribute('style')).to.be.oneOf(['', null, undefined])
+      expect(eles[16].getAttribute('style')).to.be.equal('color:red;font-size:12.4px;')
     })
 
     after(function () {
@@ -758,7 +773,10 @@ describe('mip-bind', function () {
       expect(MIP.getData('num')).to.equal('2')
     })
 
-    it('should change input value with m-bind', function () {
+    it('should change input value with m-bind', async function () {
+      await sleep(100)
+      expect(MIP.getData('num')).to.be.equal('2')
+      expect(eles[1].value).to.be.equal('2')
       eles[1].value = 3
       let event = document.createEvent('HTMLEvents')
       event.initEvent('input', true, true)

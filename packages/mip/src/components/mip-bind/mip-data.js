@@ -19,7 +19,7 @@ class MIPData extends CustomElement {
     return ['src']
   }
 
-  handleSrcChange() {
+  handleSrcChange () {
     this.fetch()
   }
 

@@ -32,7 +32,6 @@ export function bindingAttr (node, key, value, oldValue) {
   if (prop === oldValue) {
     return prop
   }
-
   if (prop === '' || prop === undefined) {
     node.removeAttribute(attr)
   } else {
