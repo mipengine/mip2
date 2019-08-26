@@ -15,6 +15,14 @@ import rect from 'src/util/dom/rect'
 
 const action = new EventAction()
 
+
+function sleep (time) {
+  if (time == null) {
+    return new Promise(resolve => resolve())
+  }
+  return new Promise(resolve => setTimeout(resolve, time))
+}
+
 const el = document.createElement('div')
 const target = dom.create("<input autofocus id='test-event-action'>")
 
@@ -170,6 +178,27 @@ describe('Event Action', () => {
       expect(argument.target.id).to.be.equal(target.id)
       expect(argument.args).to.be.eql({class: 'event'})
       expect(target.classList.contains('event')).to.be.true
+    })
+
+    it('should handle multiple events and actions', () => {
+      el.setAttribute('class', '')
+      el.setAttribute('on', `success:
+          test-event-action.toggleClass(class='a'),
+          test-event-action.toggleClass(class='b');
+        fail:
+          test-event-action.toggleClass(class='c'),
+          test-event-action.toggleClass(class='d')`)
+      action.execute('fail', el, {})
+      expect(target.getAttribute('class').split(' ')).to.have.include.members(['c', 'd'])
+      expect(target.getAttribute('class').split(' ')).to.not.have.include.members(['a', 'b'])
+      action.execute('success', el)
+      expect(target.getAttribute('class').split(' ')).to.have.include.members(['c', 'd', 'a', 'b'])
+      action.execute('fail', el)
+      expect(target.getAttribute('class').split(' ')).to.be.have.include.members(['a', 'b'])
+      expect(target.getAttribute('class').split(' ')).to.not.have.include.members(['c', 'd'])
+      action.execute('success', el)
+      expect((target.getAttribute('class') || '').split(' ')).to.not.have.include.members(['a', 'b', 'c', 'd'])
+      // expect(target.getAttribute('class')).to.be.oneOf(['', null, undefined])
     })
   })
 

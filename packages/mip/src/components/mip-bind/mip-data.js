@@ -15,12 +15,12 @@ import log from '../../util/log'
 const logger = log('MIP-data')
 
 class MIPData extends CustomElement {
-  static get observerdAttributes () {
+  static get observedAttributes () {
     return ['src']
   }
 
-  attributeChangedCallback () {
-    this._built && this.fetch()
+  handleSrcChange() {
+    this.fetch()
   }
 
   build () {
@@ -34,7 +34,6 @@ class MIPData extends CustomElement {
     } else {
       // get local data
       this.sync()
-
     }
   }
 
@@ -58,7 +57,6 @@ class MIPData extends CustomElement {
     if (!url) {
       return
     }
-
     let {promise, resolve, reject} = new Deffered()
 
     // only resolve/reject when sth truly comes to a result

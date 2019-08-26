@@ -121,6 +121,7 @@ export default function mipAction ({property, argumentText, options}) {
       fn = parse(argumentText, 'ObjectLiteral')
       arg = fn(options)
     } catch (e) {
+      /* istanbul ignore if */
       if (fn) {
         logger.error(e)
       }

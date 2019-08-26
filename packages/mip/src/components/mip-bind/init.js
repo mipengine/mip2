@@ -4,7 +4,6 @@
  * @description m-bind 机制初始化
  */
 
-// import {traverse, throttle} from '../../util/fn'
 import { def } from './util'
 import DataStore from './data-store'
 import { applyBinding } from './binding'
@@ -27,8 +26,19 @@ export default function () {
   const setData = store.set.bind(store)
   const watch = store.watcher.watch.bind(store.watcher)
 
+  const applyBindings = domInfos => {
+    for (let info of domInfos) {
+      try {
+        applyBinding(info, store.data)
+      } catch (e) /* istanbul ignore next */ {
+        logger.error(e)
+      }
+    }
+  }
+
   domWatcher.watch((changed) => {
     addInputListener(changed.add, store)
+    applyBindings(changed.add)
   })
 
   document.addEventListener(DOM_CHANGE_EVENT, e => {
@@ -39,13 +49,7 @@ export default function () {
   })
 
   store.watcher.watch(() => {
-    for (let info of domWatcher.doms) {
-      try {
-        applyBinding(info, store.data)
-      } catch (e) /* istanbul ignore next */ {
-        logger.error(e)
-      }
-    }
+    applyBindings(domWatcher.doms)
   })
 
   const $set = data => {
