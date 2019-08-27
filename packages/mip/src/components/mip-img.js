@@ -224,7 +224,7 @@ function bindPopup (element, img) {
     let popupImg = new Image()
     popupImg.setAttribute('src', current)
     popup.appendChild(popupImg)
-    
+
     // 背景 fade in
     naboo.animate(popupBg, {
       opacity: 1

@@ -62,7 +62,7 @@ describe('parser', () => {
         array: [1, 2, 3, 4, 5]
       }}
       let result = fn(source)
-      expect(result).to.be.deep.equal([2, 3, 4])
+      expect(result).to.be.deep.equal([1, 5])
       expect(source.data.array.length).to.be.equal(5)
     })
 

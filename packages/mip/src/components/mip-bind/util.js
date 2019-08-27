@@ -3,7 +3,17 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-import {traverse, getType} from '../../util/fn'
+import {traverse, getType, noop} from '../../util/fn'
+
+export function def (obj, name, getter) {
+  Object.defineProperty(obj, name, {
+    get: () => getter,
+    set: noop,
+    // set: typeof setter === 'function' ? setter : noop,
+    enumerable: true,
+    configurable: false
+  })
+}
 
 export function merge (oldVal, newVal, replace = true) {
   let change = []
@@ -60,5 +70,16 @@ export function getProperty (data, expr) {
     result = result[property]
   }
   return result
+}
+
+export function timeout (time, shouldResolve = false) {
+  return new Promise((resolve, reject) => {
+    let message = 'timeout'
+    setTimeout(() => {
+      shouldResolve
+        ? resolve(message)
+        : reject(new Error(message))
+    }, time)
+  })
 }
 
