@@ -49,10 +49,11 @@ class MIPData extends CustomElement {
   }
 
   request (url) {
-    let { method, credentials, timeout: time } = this.props
-    return method === 'jsonp'
-      ? fetchJsonp(url, { timeout: time })
-      : Promise.race([
+    let { credentials, timeout: time } = this.props
+    // return method === 'jsonp'
+    //   ? fetchJsonp(url, { timeout: time })
+    //   :
+    return Promise.race([
           fetch(url, { credentials }),
           timeout(time)
         ]).then(res => {
@@ -117,10 +118,10 @@ MIPData.props = {
     type: String,
     default: 'omit'
   },
-  method: {
-    type: String,
-    default: 'fetch'
-  },
+  // method: {
+  //   type: String,
+  //   default: 'fetch'
+  // },
   timeout: {
     type: Number,
     default: 5000
