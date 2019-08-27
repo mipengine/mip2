@@ -7,21 +7,21 @@
  */
 
 export const BINARY_OPERATION = {
-  '+': (left, right) => left + right,
-  '-': (left, right) => left - right,
-  '*': (left, right) => left * right,
-  '/': (left, right) => left / right,
-  '%': (left, right) => left % right,
-  '>': (left, right) => left > right,
-  '<': (left, right) => left < right,
-  '>=': (left, right) => left >= right,
-  '<=': (left, right) => left <= right,
-  '==': (left, right) => left == right,
-  '===': (left, right) => left === right,
-  '!=': (left, right) => left != right,
-  '!==': (left, right) => left !== right,
-  '&&': (left, right) => left && right,
-  '||': (left, right) => left || right
+  '+': (left, right) => left() + right(),
+  '-': (left, right) => left() - right(),
+  '*': (left, right) => left() * right(),
+  '/': (left, right) => left() / right(),
+  '%': (left, right) => left() % right(),
+  '>': (left, right) => left() > right(),
+  '<': (left, right) => left() < right(),
+  '>=': (left, right) => left() >= right(),
+  '<=': (left, right) => left() <= right(),
+  '==': (left, right) => left() == right(),
+  '===': (left, right) => left() === right(),
+  '!=': (left, right) => left() != right(),
+  '!==': (left, right) => left() !== right(),
+  '&&': (left, right) => left() && right(),
+  '||': (left, right) => left() || right()
 }
 
 export const UNARY_OPERATION = {
@@ -36,7 +36,9 @@ function instanceSort (...args) {
 }
 
 function instanceSplice (...args) {
-  return this.slice().splice(...args)
+  let arr = this.slice()
+  arr.splice(...args)
+  return arr
 }
 
 export const PROTOTYPE = {
@@ -50,6 +52,8 @@ export const PROTOTYPE = {
     reduce: Array.prototype.reduce,
     slice: Array.prototype.slice,
     some: Array.prototype.some,
+    every: Array.prototype.every,
+    find: Array.prototype.find,
     // sort: Array.prototype.sort,
     // splice: Array.prototype.splice,
     sort: instanceSort,
@@ -94,6 +98,7 @@ export const CUSTOM_FUNCTIONS = {
 
   keys: Object.keys,
   values: Object.values,
+  assign: Object.assign,
 
   // 兼容以前的 MIP event 逻辑
   decodeURI: decodeURI,

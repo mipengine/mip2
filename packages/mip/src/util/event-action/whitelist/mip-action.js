@@ -70,8 +70,8 @@ const ALLOWED_GLOBALS = (
 
 const FALLBACK_PARSE_STORE = {}
 
-function setDataParseFallback ({argumentText, options}) {
-  if (!FALLBACK_PARSE_STORE[argumentText]) {
+function setDataParseFallback ({argumentText, options, deprecate}) {
+  if (deprecate && !FALLBACK_PARSE_STORE[argumentText]) {
     FALLBACK_PARSE_STORE[argumentText]  = new Function('DOM', `with(this){return ${argumentText}}`)
     logger.warn('当前的 setData 参数存在不符合 MIP-bind 规范要求的地方，请及时进行修改:')
     logger.warn(argumentText)
@@ -112,17 +112,30 @@ export default function mipAction ({property, argumentText, options}) {
     action()
     return
   }
+
   if (property === 'setData' || property === '$set') {
+    let fn
     let arg
+
     try {
-      let fn = parse(argumentText, 'ObjectLiteral')
+      fn = parse(argumentText, 'ObjectLiteral')
       arg = fn(options)
     } catch (e) {
-      arg = setDataParseFallback({argumentText, options})
+      /* istanbul ignore if */
+      if (fn) {
+        logger.error(e)
+      }
+      arg = setDataParseFallback({
+        argumentText,
+        options,
+        deprecate: !fn
+      })
     }
+
     action(arg)
     return
   }
+
   let fn = parse(argumentText, 'MIPActionArguments')
   let args = fn(options)
   action(args[0])

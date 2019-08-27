@@ -7,6 +7,10 @@
 /* globals describe, before, it, expect, MIP, after, sinon */
 
 import MipData from 'src/components/mip-bind/mip-data'
+import { timeout } from 'src/components/mip-bind/util'
+import EventAction from 'src/util/event-action'
+
+const action = new EventAction()
 
 function sleep (time) {
   if (time == null) {
@@ -14,6 +18,39 @@ function sleep (time) {
   }
   return new Promise(resolve => setTimeout(resolve, time))
 }
+
+function getMipDataProps (props = {}) {
+  return Object.assign(
+    Object.keys(MipData.props).reduce((obj, key) => {
+      obj[key] = MipData.props[key].default
+      return obj
+    }, {}),
+    props
+  )
+}
+
+describe('mip-bind util', function () {
+  it('timeout reject', async () => {
+    let shouldError = false
+    try {
+      await timeout(0)
+    } catch (e) {
+      shouldError = true
+    }
+
+    expect(shouldError).to.be.equal(true)
+  })
+
+  it('timeout resolve', async () => {
+    let shouldError = false
+    try {
+      await timeout(0, true)
+    } catch (e) {
+      shouldError = true
+    }
+    expect(shouldError).to.be.equal(false)
+  })
+})
 
 describe('mip-bind', function () {
   let eleText
@@ -51,7 +88,7 @@ describe('mip-bind', function () {
           <body>dup body</body>
           <h1 m-text=""></h1>
           <p m-bind:=""></p>
-          <p style="color:red;;;" m-bind:style="{fontSize: fontSize + 'px'}">test:<span>1</span></p>
+          <p style="color:red;;;" m-bind:style="{fontSize: fontSize + 'px'}" id="binding-fontsize">test:<span>1</span></p>
           <mip-data></mip-data>
           <mip-data>
             <script type="application/json"></script>
@@ -73,6 +110,27 @@ describe('mip-bind', function () {
                 "list": ["a", "b", {"item": 2}],
                 "id": 1
               }
+            </script>
+          </mip-data>
+          <mip-data
+            id="scopedData"
+            scope
+          >
+            <script type="application/json">
+            {
+              "a": 1,
+              "b": 2
+            }
+            </script>
+          </mip-data>
+          <mip-data
+            scope
+          >
+            <script type="application/json">
+            {
+              "aa": 1,
+              "bb": 2
+            }
             </script>
           </mip-data>
         </div>
@@ -98,11 +156,16 @@ describe('mip-bind', function () {
           city: '广州'
         },
         list: ['a', 'b', {item: 2}],
-        id: 1
+        id: 1,
+        scopedData: {
+          a: 1,
+          b: 2
+        },
+        aa: 1,
+        bb: 2
       })
 
       expect(MIP.getData('global.data.name')).to.equal('level-1')
-
       await sleep()
 
       expect(window.g).to.eql({
@@ -153,6 +216,7 @@ describe('mip-bind', function () {
     let mipData
     before(function () {
       mipData = new MipData()
+      mipData.props = getMipDataProps()
       let mipDataTag = document.createElement('mip-data')
       let script = document.createElement('script')
       script.setAttribute('type', 'application/json')
@@ -166,7 +230,7 @@ describe('mip-bind', function () {
     })
 
     it('should not combine wrong formatted data with m', function () {
-      expect(mipData.build.bind(mipData)).to.throw(/Content should be a valid JSON string!/)
+      expect(mipData.sync.bind(mipData)).to.throw(/Content should be a valid JSON string!/)
       expect(window.m.wrongFormatData).to.be.undefined
     })
   })
@@ -183,12 +247,16 @@ describe('mip-bind', function () {
     }
 
     let fetchOrigin
+    let div
     before(function () {
+      div = document.createElement('div')
+      document.body.appendChild(div)
       fetchOrigin = window.fetch
       sinon.stub(window, 'fetch')
     })
 
     after(function () {
+      document.body.removeChild(div)
       window.fetch = fetchOrigin
     })
 
@@ -199,12 +267,14 @@ describe('mip-bind', function () {
         )
       )
 
-      let mipData = new MipData()
-      let mipDataTag = document.createElement('mip-data')
-      mipDataTag.setAttribute('src', '/testData')
-      mipData.element = mipDataTag
+      div.innerHTML = '<mip-data src="/testData"></mip-data>'
+      // let mipData = new MipData()
+      // mipData.props = getMipDataProps()
+      // let mipDataTag = document.createElement('mip-data')
+      // mipDataTag.setAttribute('src', '/testData')
+      // mipData.element = mipDataTag
 
-      mipData.build.bind(mipData)()
+      // mipData.build.bind(mipData)()
       expect(window.mipDataPromises.length).to.equal(1)
 
       Promise.all(window.mipDataPromises).then(function () {
@@ -214,6 +284,48 @@ describe('mip-bind', function () {
       })
     })
 
+    it('should fetch async data when src is set and refresh', async function () {
+      window.fetch.returns(
+        Promise.resolve(
+          json({ testAttributeChangeForMIPData: 123 }, 200)
+        )
+      )
+
+      div.innerHTML = `
+        <mip-data m-bind:src="dynamicSrc" id="dynamic-mip-data"></mip-data>
+        <div on="haha:dynamic-mip-data.refresh" id="dynamic-mip-data-trigger"></div>
+      `
+      let dataDom = document.getElementById('dynamic-mip-data')
+      MIP.util.customEmit(document, 'dom-change', { add: [dataDom] })
+      expect(MIP.getData('testAttributeChangeForMIPData')).to.be.equal(undefined)
+      MIP.setData({ dynamicSrc: '/testData' })
+      await sleep(100)
+      expect(MIP.getData('testAttributeChangeForMIPData')).to.be.equal(123)
+      MIP.setData({ testAttributeChangeForMIPData: 234 })
+      expect(MIP.getData('testAttributeChangeForMIPData')).to.be.equal(234)
+
+      window.fetch.returns(
+        Promise.resolve(
+          json({ testAttributeChangeForMIPData: 123 }, 200)
+        )
+      )
+
+      action.execute('haha', document.getElementById('dynamic-mip-data-trigger'))
+      await sleep(100)
+      expect(MIP.getData('testAttributeChangeForMIPData')).to.be.equal(123)
+
+      window.fetch.returns(
+        Promise.resolve(
+          json({ testAttributeChangeForMIPData: 678}, 200)
+        )
+      )
+
+      await sleep(100)
+      MIP.setData({ dynamicSrc: undefined })
+      await sleep(100)
+      expect(MIP.getData('testAttributeChangeForMIPData')).to.be.equal(123)
+    })
+
     it('should fetch async data 404', function (done) {
       window.fetch.returns(
         Promise.resolve(
@@ -221,12 +333,15 @@ describe('mip-bind', function () {
         )
       )
 
-      let mipData = new MipData()
-      let mipDataTag = document.createElement('mip-data')
-      mipDataTag.setAttribute('src', '/testData')
-      mipData.element = mipDataTag
+      div.innerHTML = '<mip-data src="/testData"></mip-data>'
 
-      mipData.build.bind(mipData)()
+      // let mipData = new MipData()
+      // mipData.props = getMipDataProps()
+      // let mipDataTag = document.createElement('mip-data')
+      // mipDataTag.setAttribute('src', '/testData')
+      // mipData.element = mipDataTag
+
+      // mipData.build.bind(mipData)()
       expect(window.mipDataPromises.length).to.equal(1)
 
       Promise.all(window.mipDataPromises).catch(function () {
@@ -242,13 +357,14 @@ describe('mip-bind', function () {
           json({status: 'failed'}, 200)
         )
       )
+      div.innerHTML = '<mip-data src="/testData"></mip-data>'
+      // let mipData = new MipData()
+      // mipData.props = getMipDataProps()
+      // let mipDataTag = document.createElement('mip-data')
+      // mipDataTag.setAttribute('src', '/testData')
+      // mipData.element = mipDataTag
 
-      let mipData = new MipData()
-      let mipDataTag = document.createElement('mip-data')
-      mipDataTag.setAttribute('src', '/testData')
-      mipData.element = mipDataTag
-
-      mipData.build.bind(mipData)()
+      // mipData.build.bind(mipData)()
       expect(window.mipDataPromises.length).to.equal(1)
 
       Promise.all(window.mipDataPromises).catch(function () {
@@ -515,6 +631,10 @@ describe('mip-bind', function () {
       eles.push(createEle('p', ['class', '[classObject, [items[0].iconClass]]'], 'bind'))
       eles.push(createEle('p', ['style', 'styleGroup.aStyle'], 'bind'))
       eles.push(createEle('p', ['class', 'classGroup.aClass'], 'bind'))
+      let ele = createEle('p', ['style', `{fontSize: fontSize + 'px'}`], 'bind')
+      ele.setAttribute('style', 'color: red;')
+      eles.push(ele)
+
       MIP.$set({
         loading: false,
         iconClass: 'grey    lighten1 white--text',
@@ -558,12 +678,12 @@ describe('mip-bind', function () {
       expect(eles[2].getAttribute('class')).to.equal('class-text')
       expect(eles[3].getAttribute('class')).to.equal('m-error')
       // console.log(eles[4].getAttribute('class'))
-      expect(eles[4].getAttribute('class')).to.be.equal(null)
+      expect(eles[4].getAttribute('class')).to.be.oneOf([null, undefined, ''])
       expect(eles[11].getAttribute('class')).to.equal('grey lighten1 white--text')
       expect(eles[12].getAttribute('class')).to.equal('grey lighten1 white--text m-error')
       expect(eles[13].getAttribute('class')).to.equal('warning-class loading-class grey lighten1 white--text')
       expect(eles[15].getAttribute('class')).to.be.equal('class-a class-b')
-
+      expect(eles[16].getAttribute('style')).to.be.equal('color:red;font-size:12.5px;')
       MIP.setData({
         tab: 'test'
       })
@@ -604,7 +724,7 @@ describe('mip-bind', function () {
       expect(eles[11].getAttribute('class')).to.equal('nothing')
       expect(eles[12].getAttribute('class')).to.equal('m-error nothing')
       expect(eles[13].getAttribute('class')).to.equal('warning-class active-class nothing')
-      expect(eles[15].getAttribute('class')).to.be.equal('')
+      expect(eles[15].getAttribute('class')).to.be.oneOf(['', null, undefined])
     })
 
     it('should update style', async function () {
@@ -642,7 +762,8 @@ describe('mip-bind', function () {
           .sort()
           .join(';')
       )
-      expect(eles[14].getAttribute('style')).to.be.equal('')
+      expect(eles[14].getAttribute('style')).to.be.oneOf(['', null, undefined])
+      expect(eles[16].getAttribute('style')).to.be.equal('color:red;font-size:12.4px;')
     })
 
     after(function () {
@@ -676,7 +797,10 @@ describe('mip-bind', function () {
       expect(MIP.getData('num')).to.equal('2')
     })
 
-    it('should change input value with m-bind', function () {
+    it('should change input value with m-bind', async function () {
+      await sleep(100)
+      expect(MIP.getData('num')).to.be.equal('2')
+      expect(eles[1].value).to.be.equal('2')
       eles[1].value = 3
       let event = document.createEvent('HTMLEvents')
       event.initEvent('input', true, true)
@@ -732,6 +856,54 @@ describe('mip-bind', function () {
       for (let i = 0; i < eles.length; i++) {
         document.body.removeChild(eles[i])
       }
+    })
+  })
+
+  describe('dom change event', function () {
+    it('should bind text to addition dom', async function () {
+      MIP.setData({
+        aDomChangedText: 'Hello World'
+      })
+      await sleep()
+      let div = document.createElement('div')
+      div.setAttribute('m-text', 'aDomChangedText')
+      document.body.appendChild(div)
+      expect(div.innerText).to.be.oneOf(['', null, undefined])
+      await sleep()
+      MIP.util.customEmit(document, 'dom-change', {
+        add: [div]
+      })
+      await sleep()
+      expect(div.innerText).to.be.equal('Hello World')
+      await sleep()
+      MIP.setData({
+        aDomChangedText: 'Hello MIP'
+      })
+      await sleep()
+      expect(div.innerText).to.be.equal('Hello MIP')
+      document.body.removeChild(div)
+    })
+  })
+
+  describe('mip-data-watch', function () {
+    it('should watch correctly', async function () {
+      expect(MIP.getData('testChangeData')).to.be.equal(undefined)
+      expect(MIP.getData('testChangeDataCopy')).to.be.equal(undefined)
+      let dom = document.createElement('mip-data-watch')
+      dom.setAttribute('watch', 'testChangeData')
+      dom.setAttribute('on', 'change:MIP.setData({ testChangeDataCopy: event.newValue  })')
+      dom.setAttribute('layout', 'nodisplay')
+      document.body.appendChild(dom)
+      await sleep()
+      expect(MIP.getData('testChangeDataCopy')).to.be.equal(undefined)
+      MIP.setData({
+        testChangeData: 'Hello World'
+      })
+      await sleep()
+      expect(MIP.getData('testChangeDataCopy')).to.be.equal('Hello World')
+      expect(MIP.setData({ testChangeData: 10086 }))
+      await sleep()
+      expect(MIP.getData('testChangeDataCopy')).to.be.equal(10086)
     })
   })
 })
