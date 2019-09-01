@@ -221,10 +221,10 @@ MIP 页文件可以直接运行，你可以选择如下方式，像预览普通 
 进阶的内容，请参考：
 
 - [MIP-HTML 规范](../mip-standard/mip-html-spec.md)
-- [MIP 加速原理](./principle-of-mip.md)
-- [自定义组件](../component/introduction.md)
-- [组件布局](../component/layout.md)
+- [样式和布局](../style-and-layout/introduction.md)
 - [可交互 MIP](../interactive-mip/introduction.md)
+- [自定义组件](https://www.mipengine.org/v2/components/dynamic-content/mip-bind.html)
 - [全站 MIP](../all-sites-mip/introduction.md)
+- [MIP 加速原理](./principle-of-mip.md)
 
 MIP 开发系列视频教程：https://bit.baidu.com/course/datalist/column/120.html
