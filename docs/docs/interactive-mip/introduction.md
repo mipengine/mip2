@@ -16,13 +16,22 @@ MIP 提供了为数众多的官方组件来满足开发者的需求。这些组�
 
 在本章节中，我们将学习到事件监听与行为触发的 “on” 语法规则与使用，以及基于“数据驱动”的数据绑定语法 “m-bind”，并会学习到自定义 JS 的书写规范。通过本章节所学习到的内容，我们将可以更有机地把 MIP 组件串联起来，增强 MIP 页面的可交互性。
 
-- [MIP 事件绑定](./event-and-action.md)：介绍 “on” 语法规则与使用
-- 数据绑定：介绍数据驱动的流程与用法
-    - [数据定义](./data-binding/data-definition.md)：延伸介绍多种数据类型的定义方法
-    - [数据获取、修改与观察](./data-binding/data-operation.md)：介绍数据获取、修改与观察的方法
-    - [数据绑定语法说明](./data-binding/mip-bind.md)：介绍数据绑定语法 m-bind 和 m-text
-    - [class 与 style 属性绑定语法说明](./data-binding/class-and-style-binding.md)：介绍绑定 class 和 style 属性的语法
-- [自定义 JS](./custom-js-by-using-mip-script.md)：介绍 mip-script 的使用方法以及自定义 JS 的书写原则和规范
+- [MIP 事件机制](./event-and-action.md)
+  + 介绍 on 语法是如何实现事件监听和行为触发的
+  + 介绍 MIP 提供的全局事件和组件事件有哪些
+  + 介绍 MIP 提供的全局方法和组件方法有哪些
+- [MIP 数据驱动机制](./data-driven.md)
+  + 介绍如何使用 mip-data 定义初始数据
+  + 介绍如何绑定将数据绑定到属性、文字上
+    * 包括文字绑定 m-text
+    * class 和 style 绑定
+    * 表单元素的 value 双向绑定
+- [MIP 表达式](./expression.md)
+  + 介绍 MIP.setData、数据绑定语法允许使用的表达式
+- [数据驱动与模板渲染](./data-driven-and-dom-render.md)
+  + 介绍如何使用 mip-list 配合数据驱动机制获得增删节点的能力
+- [自定义 JS](./custom-js-by-using-mip-script.md)
+  + 介绍如何使用 mip-script 扩充 MIP 表达式的计算能力
 
 ## MIP 交互机制示例
 

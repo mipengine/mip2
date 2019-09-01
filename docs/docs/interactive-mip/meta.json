@@ -7,10 +7,13 @@
       "key": "event-and-action"
     },
     {
-      "key": "data-bind"
+      "key": "data-driven"
     },
     {
       "key": "expression"
+    },
+    {
+      "key": "data-driven-and-dom-render"
     },
     {
       "key": "custom-js"

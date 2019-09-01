@@ -1,4 +1,4 @@
-# 数据绑定与数据驱动
+# MIP 数据驱动机制
 
 MIP 提供了一套数据驱动的机制来提升交互能力，有过 Vue/React 开发经验的同学对这套机制应该不会陌生。
 
@@ -60,6 +60,59 @@ MIP 数据驱动机制主要包含了以下三个部分：
 ## 数据定义
 
 需要进行各种数据操作之前，首先需要在 `<mip-data>` 定义数据的初始值。页面可以定义多个 `<mip-data>`，不同的数据块在各自的数据源解析加载完成后，自动合并到同一个 store 当中，因此应该尽量避免字段重复的情况。
+
+### 合并规则
+
+具体的数据合并规则为：
+
+1. 当新旧属性值类型不同时，新属性值将会直接覆盖旧属性值；
+2. 当新属性值为字符串、数字、数组和 null 时，新属性值将直接替换旧属性值；
+3. 当新旧数据的属性的值均为字面量对象时，将会对子对象进行递归合并；
+
+例如：
+
+```html
+<mip-data>
+  <script type="application/json">
+  {
+    "a": 1,
+    "b": [{c: 1}],
+    "d": {
+      "e": 3,
+      "f": 4
+    }
+  }
+  </script>
+</mip-data>
+<mip-data>
+  <script type="application/json">
+    {
+      a: 'abc',
+      b: [{d: 1}],
+      d: {
+        f: 5,
+        g: 6
+      }
+    }
+  </script>
+</mip-data>
+```
+
+两组数据合并后，`<mip-data>` 所存的数据为：
+
+```js
+{
+  a: 'abc',
+  b: [{d: 1}],
+  d: {
+    e: 3,
+    f: 5,
+    g: 6
+  }
+}
+```
+
+[info] 所以对于需要替换整个对象的这类需求，为避免对象的递归合并造成替换失败，可以将替换对象放到一个数组里，再对数组做替换操作。
 
 数据定义有两种方式，同步数据和异步数据。
 
@@ -127,7 +180,7 @@ MIP 数据驱动机制主要包含了以下三个部分：
 同时在配置了 `src` 属性的情况下，`<mip-data>` 还支持 `refresh` 方法对数据进行重新加载，重新加载的数据会根据前面提到的合并规则与原数据进行合并：
 
 ```html
-<mip-data 
+<mip-data
   id="userInfo"
   src="https://path/to/your/data"
 ></mip-data>
@@ -513,7 +566,7 @@ style 绑定与 class 绑定类似，同样支持对象语法和数组语法：
     <!-- 点击触发 div 位置移动 -->
     <button
       class="example-button"
-      on="tap:MIP.setData({ clickCount: clickCount + 1 })" 
+      on="tap:MIP.setData({ clickCount: clickCount + 1 })"
       m-text="'点了 ' + clickCount + ' 下'"
     >点了 0 下</button>
   </div>
@@ -571,4 +624,3 @@ style 绑定与 class 绑定类似，同样支持对象语法和数组语法：
 
   <button class="example-button" on="tap:MIP.setData({ bindingText: '' })">点击清空</button>
 </div>
-
