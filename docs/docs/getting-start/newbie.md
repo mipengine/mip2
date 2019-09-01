@@ -21,14 +21,15 @@ MIP 页面的高性能离不开规范的重要性。因为 MIP 主要由 MIP-HTM
 - [MIP HTML 规范](../mip-standard/mip-html-spec.md)
 - [MIP Canonical 使用规范](../mip-standard/mip-canonical.md)
 - [MIP CACHE 规范](../mip-standard/mip-cache-spec.md)
-- [MIP 校验规则](../mip-standard/mip-validate.md)
+- [MIP 校验工具错误信息说明](../mip-standard/mip-validate.md)
 
 ## 样式与布局
 
 MIP 为了性能和易用性考虑，对 CSS 的使用做了一定的限制，与此同时，针对响应式设计，MIP 做出了一些扩展来更好地展示页面元素：
 
-1. [支持的 CSS ](../style-and-layout/supported-css.md)
-2. [组件布局](../style-and-layout/layout.md)
+1. [组件布局](../style-and-layout/layout.md)
+2. [内置样式](../style-and-layout/builtin-style.md)
+3. [自定义样式规范](../style-and-layout/supported-css.md)
 
 ## 交互式设计
 
