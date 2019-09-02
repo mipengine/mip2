@@ -193,7 +193,7 @@
 
 ### credentials
 
-说明：发送数据请求时 fetch 方法的 crendentials 参数<br>
+说明：发送数据请求时 fetch 方法的 credentials 参数，当 `credentials="include"` 时，发送请求会带上 cookie，而当 `credentials="omit"` 时则不会带上。<br>
 必选项：否<br>
 类型：字符串<br>
 单位：无<br>

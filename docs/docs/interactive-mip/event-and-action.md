@@ -100,7 +100,8 @@ MIP 提供的事件包括两类：全局事件和组件事件。其中全局事�
 
 |事件名|描述|元素|数据|
 |-----|----|---|---|
-|tap |点击触发 |任何 HTML 元素（包括原生 HTML 和 MIP 组件） |无 |
+|tap |使用 `touch` 事件实现的点击触发事件。<br>较原生 click 事件有更快的响应速度。 |任何 HTML 元素（包括原生 HTML 和 MIP 组件） |无 |
+|click|原生点击触发。<br>由于 click 事件在 iOS 下存在明显延迟，因此移动 MIP 页请优先使用 tap 事件。|任何 HTML 元素（包括原生 HTML 和 MIP 组件）|无 |
 |change|元素 value 改变并提交时触发 |表单元素，包括 input、textarea、select |event.value|
 |input-debounced|输入防抖，元素 value 改变 300ms 后触发，300ms 内存在任何 value 的改变都将重新计时 |表单元素，包括 input、textarea、select |event.value |
 |input-throttled|输入截流，元素 value 改变时每 100ms 最多触发一次 |表单元素，包括 input、textarea、select |event.value|
@@ -248,7 +249,7 @@ MIP 为所有元素（包括普通 HTML 和 MIP 元素）都提供了一些默�
 
 ```html
 <!-- 点击使 a 链获得焦点 -->
-<button on="tap:a-link.focus">点击使 a 链获得焦点</button>
+<button on="tap:a-link.focus">点击按钮，使下方 a 链获得焦点</button>
 <a href="https://www.mipengine.org" id="a-link"><p>#a-link:focus p { color: red; } </p></a>
 ```
 效果如下所示：
