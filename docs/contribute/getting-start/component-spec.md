@@ -26,7 +26,7 @@ MIP 扩展组件开发采用 [Forking工作流](https://github.com/oldratlee/tra
   - <a href="#5">CSS 规范</a>
 
 
-<a id="1"></a>
+<div id="1"></div>
 ## 目录规范
 
 #### 1. 官方组件
@@ -75,13 +75,13 @@ MIP 扩展组件开发采用 [Forking工作流](https://github.com/oldratlee/tra
 
 
 
-<a id="2"></a>
+<div id="2"></div>
 ## 文档规范
 
 文档规范指的是各组件目录下的 README.md 文件的编写规范，MIP2 复用 [MIP1 的规范](https://github.com/mipengine/mip-extensions/blob/master/docs/spec-readme-md.md)
 
 
-<a id="3"></a>
+<div id="3"></div>
 ## 命名规范
 
 命名规范涵盖以下几个部分
@@ -119,7 +119,7 @@ MIP 自定义组件的配置项需符合 Camel 规范，不得采用中划线
 </mip-a>
 ```
 
-<a id="4"></a>
+<div id="4"></div>
 ## JavaScript 规范
 
 - [MUST] 组件的脚本开发必须遵守 JavaScript Standard Style [[CN](https://standardjs.com/rules-zhcn.html)/[EN](https://standardjs.com/rules-en.html)] 代码规范
@@ -131,7 +131,7 @@ MIP 自定义组件的配置项需符合 Camel 规范，不得采用中划线
 开发过程中可以通过 [ESLint](https://eslint.org/) 工具检查，在组件校验和审核环节要求所有代码必须通过 ESLint，一般不允许使用 `eslint-disable` 来豁免检测。
 
 
-<a id="5"></a>
+<div id="5"></div>
 ## CSS 规范
 
 - [MUST] 组件的样式必须遵循 Stylelint 中 [`stylelint-config-standard`](https://github.com/stylelint/stylelint-config-standard) 中包含的规范，且必须通过 Stylelint 工具审核之后才能提交。

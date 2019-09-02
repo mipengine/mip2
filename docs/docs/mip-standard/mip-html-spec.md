@@ -11,7 +11,7 @@ MIP 规范是高性能 MIP 页面的保证，其中最重要的规范是：MIP H
 
 由于规范长期更新，更多最新规范可查阅 MIP 官方网站 MIP HTML规范章节。也同时欢迎开发者到 MIP 项目的 [GitHub](https://github.com/mipengine/mip2/issues)，参与 MIP HTML 规范的讨论。
 
-<a id="1"></a>
+<div id="1"></div>
 ## 头部使用规范
 
 下面简要列出MIP页头部的使用规范。头部是MIP页的声明、配置信息、资源引入的主要区域。
@@ -44,7 +44,7 @@ MIP 规范是高性能 MIP 页面的保证，其中最重要的规范是：MIP H
 </html>
 ```
 
-<a id="2"></a>
+<div id="2"></div>
 ## 页面元素使用规范
 
 MIP-HTML 禁止使用对页面性能以及安全有较大影响的标签，同时也规定了元素的使用方式。
@@ -73,7 +73,7 @@ MIP-HTML 禁止使用对页面性能以及安全有较大影响的标签，同�
 |`<svg>`    |<span class="mipengine-doc-green">允许使用</span>||
 |`<video>`  |<span class="mipengine-doc-red">禁止使用</span>|需替换为 `<mip-video>`|
 
-<a id="3"></a>
+<div id="3"></div>
 ## HTML 元素属性规范
 
 ### 全局属性规范
@@ -163,7 +163,7 @@ MIP 官方组件根据各自组件的功能需求同样也需要遵守一些规�
 |--|--|--|
 |`type`|是|-|
 
-<a id="4"></a>
+<div id="4"></div>
 ## 自定义样式使用规范
 
 MIP 允许开发者自定义样式来修饰网页。我们从性能和体验的角度出发，同样制定了自定义样式规范来保证页面体验。在此之前，强烈建议开发者学习 [样式和布局](../style-and-layout/introduction.md) 一文，了解如何使用 MIP 提供的机制来提高页面渲染效率。

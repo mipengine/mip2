@@ -96,7 +96,6 @@ mip-list 和 mip-data 一样，可以通过定义 `id` 和 `scope` 属性，这�
   </mip-list>
 
   <br>
-  <br>
   <!-- 通过 p 标签观察 people 关联情况 -->
   <p m-text="example2.map(item => item.name).join(', ')"></p>
 </div>
@@ -177,8 +176,6 @@ mip-list 和 mip-data 一样，可以通过定义 `id` 和 `scope` 属性，这�
       <div>你好，{{name}}</div>
     </template>
   </mip-list>
-
-  <br>
   <br>
   <!-- 通过 p 标签观察 example3 关联情况 -->
   <p m-text="example3.map(item => item.name).join(', ')"></p>

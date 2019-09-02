@@ -261,10 +261,9 @@ MIP 为所有元素（包括普通 HTML 和 MIP 元素）都提供了一些默�
 </style>
 
 <div class="example-wrapper">
-  <button on="tap:a-link.focus" class="example-button">点击使下方 a 链获得焦点</button>
+  <button on="tap:a-link.focus" class="example-button">点击按钮，使下方 a 链获得焦点</button>
   <a href="https://www.mipengine.org" id="a-link"><p>#a-link:focus p { color: red; } </p></a>
 </div>
-
 
 ## 特殊对象方法
 
@@ -299,15 +298,14 @@ MIP 为所有元素（包括普通 HTML 和 MIP 元素）都提供了一些默�
 ```
 其效果如下所示：
 
-<mip-data >
-  <script type="application/json">
-  {
-    "count": 0
-  }
-  </script>
-</mip-data>
-
 <div class="example-wrapper">
+  <mip-data>
+    <script type="application/json">
+    {
+      "count": 0
+    }
+    </script>
+  </mip-data>
   <button
     class="example-button"
     on="tap:MIP.setData({ count: count + 1 })">点击次数 + 1</button>
