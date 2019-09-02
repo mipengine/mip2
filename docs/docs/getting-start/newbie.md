@@ -12,7 +12,7 @@
 
 ## 如何从 MIP 1.0 迁移到 2.0
 
-相较于 MIP 1.0，MIP 2.0 版本提供了更多新特性，开发者可以[迁移](./migrate-v1-to-v2.md)获取更多新功能。
+相较于 MIP 1.0，MIP 2.0 版本提供了更多新特性，对于使用 MIP 1.0 的开发者可以通过[迁移](./migrate-v1-to-v2.md)获取更多新功能。
 
 ## MIP 规范
 
@@ -21,28 +21,36 @@ MIP 页面的高性能离不开规范的重要性。因为 MIP 主要由 MIP-HTM
 - [MIP HTML 规范](../mip-standard/mip-html-spec.md)
 - [MIP Canonical 使用规范](../mip-standard/mip-canonical.md)
 - [MIP CACHE 规范](../mip-standard/mip-cache-spec.md)
-- [MIP 校验规则](../mip-standard/mip-validate.md)
+- [MIP 校验工具错误信息说明](../mip-standard/mip-validate.md)
 
 ## 样式与布局
 
 MIP 为了性能和易用性考虑，对 CSS 的使用做了一定的限制，与此同时，针对响应式设计，MIP 做出了一些扩展来更好地展示页面元素：
 
-1. [支持的 CSS ](../style-and-layout/supported-css.md)
-2. [组件布局](../style-and-layout/layout.md)
-3. [媒体查询](../style-and-layout/media-query.md)
-4. [占位符和备用行为](../style-and-layout/placeholder-and-fallback.md)
+1. [组件布局](../style-and-layout/layout.md)
+2. [内置样式](../style-and-layout/builtin-style.md)
+3. [自定义样式规范](../style-and-layout/supported-css.md)
 
 ## 交互式设计
 
 MIP 提供了为数众多的官方组件来满足开发者的需求。不过在一些复杂的可交互 MIP 页面中，只通过配置组件属性是达不到设计要求的。因此 MIP 组件通过对外暴露属性、事件和行为的方式来实现外部对组件的配置和使用。
 
-- [事件监听与行为触发](../interactive-mip/event-and-action.md)
-- 数据绑定
-    - [数据定义](../interactive-mip/data-binding/data-definition.md)
-    - [数据获取、修改与观察](../interactive-mip/data-binding/data-operation.md)
-    - [数据绑定语法说明](../interactive-mip/data-binding/mip-bind.md)
-    - [class 与 style 属性绑定语法说明](../interactive-mip/data-binding/class-and-style-binding.md)
+- [MIP 事件机制](../interactive-mip/event-and-action.md)
+  + 介绍 on 语法是如何实现事件监听和行为触发的
+  + 介绍 MIP 提供的全局事件和组件事件有哪些
+  + 介绍 MIP 提供的全局方法和组件方法有哪些
+- [MIP 数据驱动机制](../interactive-mip/data-driven.md)
+  + 介绍如何使用 mip-data 定义初始数据
+  + 介绍如何绑定将数据绑定到属性、文字上
+    * 包括文字绑定 m-text
+    * class 和 style 绑定
+    * 表单元素的 value 双向绑定
+- [MIP 表达式](../interactive-mip/expression.md)
+  + 介绍 MIP.setData、数据绑定语法允许使用的表达式
+- [数据驱动与模板渲染](../interactive-mip/data-driven-and-dom-render.md)
+  + 介绍如何使用 mip-list 配合数据驱动机制获得增删节点的能力
 - [自定义 JS](../interactive-mip/custom-js-by-using-mip-script.md)
+  + 介绍如何使用 mip-script 扩充 MIP 表达式的计算能力
 
 ## 全站 MIP 开发
 
@@ -59,9 +67,6 @@ MIP 提供了为数众多的官方组件来满足开发者的需求。不过在�
 
 对于大多数网站，用户行为的统计与分析功能是必不可少的，MIP 正是考虑到了这些情形，所以提供了相应的组件供用户选择。
 
-- [mip-pix](../analytics/mip-pix.md)
-- [mip-analytics](../analytics/mip-analytics.md)
+- [mip-pix](https://www.mipengine.org/v2/components/analytics/mip-pix.html)
+- [mip-analytics](https://www.mipengine.org/v2/components/analytics/mip-analytics.html)
 
-最后为了达到更好的用户体验和方便开发者的使用，本教程最后还提供了渐进增强式设计和辅助开发工具的相关内容，如下：
-- [MIP 页离线可用](../progressive-enhancement-design/introduction.md)
-- [mip-cli-plugin-site 使用说明](../assistant-development-tools/introduction.md)

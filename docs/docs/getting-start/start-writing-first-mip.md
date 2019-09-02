@@ -214,7 +214,6 @@ MIP 页文件可以直接运行，你可以选择如下方式，像预览普通 
 
 - 直接在浏览器中打开（由于 XML HTTP Requests 失败可能会导致某些元素预览失败）。
 - 在本地部署一个服务，如 Apache，Nginx 等。
-- 使用 MIP-CLI 辅助预览，使用方法可以参考网站内 **工具** 一栏。
 
 ## 9. 起飞
 到目前为止，你已经创建好了一个 MIP 页面。这个页面有图、有文，可以在浏览器中运行。
@@ -222,10 +221,10 @@ MIP 页文件可以直接运行，你可以选择如下方式，像预览普通 
 进阶的内容，请参考：
 
 - [MIP-HTML 规范](../mip-standard/mip-html-spec.md)
-- [MIP 加速原理](./principle-of-mip.md)
-- [自定义组件](../component/introduction.md)
-- [组件布局](../component/layout.md)
+- [样式和布局](../style-and-layout/introduction.md)
 - [可交互 MIP](../interactive-mip/introduction.md)
+- [自定义组件](https://www.mipengine.org/v2/components/dynamic-content/mip-bind.html)
 - [全站 MIP](../all-sites-mip/introduction.md)
+- [MIP 加速原理](./principle-of-mip.md)
 
 MIP 开发系列视频教程：https://bit.baidu.com/course/datalist/column/120.html

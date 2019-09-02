@@ -15,16 +15,25 @@
 ```html
 <mip-carousel
     layout="responsive"
-    width="600"
-    height="400">
+    width="720"
+    height="405">
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_01.jpg">
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-01.jpg">
     </mip-img>
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_02.jpg">
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-02.jpg">
     </mip-img>
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_03.jpg">
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-03.jpg">
     </mip-img>
 </mip-carousel>
 ```
@@ -35,17 +44,27 @@
 <mip-carousel
     autoplay
     layout="responsive"
-    width="600"
-    height="400">
+    width="700"
+    height="405">
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_01.jpg">
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-01.jpg">
     </mip-img>
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_02.jpg">
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-02.jpg">
     </mip-img>
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_03.jpg">
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-03.jpg">
     </mip-img>
+
 </mip-carousel>
 ```
 
@@ -56,17 +75,27 @@
     autoplay
     defer="1000"
     layout="responsive"
-    width="600"
-    height="400">
+    width="720"
+    height="405">
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_01.jpg">
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-01.jpg">
     </mip-img>
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_02.jpg">
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-02.jpg">
     </mip-img>
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_03.jpg">
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-03.jpg">
     </mip-img>
+
 </mip-carousel>
 ```
 
@@ -77,19 +106,29 @@
     autoplay
     defer="1000"
     layout="responsive"
-    width="600"
-    height="400"
+    width="720"
+    height="405"
     indicator
     >
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_01.jpg">
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-01.jpg">
     </mip-img>
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_02.jpg">
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-02.jpg">
     </mip-img>
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_03.jpg">
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-03.jpg">
     </mip-img>
+
 </mip-carousel>
 ```
 
@@ -100,20 +139,30 @@
     autoplay
     defer="1000"
     layout="responsive"
-    width="600"
-    height="400"
+    width="720"
+    height="405"
     indicator
     indicatorId="mip-carousel-example"
     >
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_01.jpg">
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-01.jpg">
     </mip-img>
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_02.jpg">
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-02.jpg">
     </mip-img>
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_03.jpg">
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-03.jpg">
     </mip-img>
+
 </mip-carousel>
 <div class="mip-carousel-indicator-wrapper">
     <div class="mip-carousel-indicatorDot" id="mip-carousel-example">
@@ -130,20 +179,30 @@
 <mip-carousel
     defer="1000"
     layout="responsive"
-    width="600"
-    height="400"
+    width="720"
+    height="405"
     indicator
     buttonController
     >
-   <mip-img
-        src="https://www.mipengine.org/static/img/sample_01.jpg">
+    <mip-img
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-01.jpg">
     </mip-img>
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_02.jpg">
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-02.jpg">
     </mip-img>
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_03.jpg">
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-03.jpg">
     </mip-img>
+
 </mip-carousel>
 ```
 
@@ -154,24 +213,30 @@
     autoplay
     defer="1000"
     layout="responsive"
-    width="600"
-    height="400"
+    width="720"
+    height="405"
     indicator
     buttonController
     >
     <a target="_blank" href="http://wenda.tianya.cn/m/question/1almfj0foas94gc7vtoq6ejbfbmdk3e78ehaa">
         <mip-img
-            src="https://www.mipengine.org/static/img/sample_01.jpg" layout="responsive"
-        width="600"
-        height="400">
+            src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-01.jpg" layout="responsive"
+        width="720"
+        height="405">
         </mip-img>
         <div class="mip-carousle-subtitle">这里是title2</div>
     </a>
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_02.jpg">
+        layout="responsive"
+        width=720
+        height=405
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-02.jpg">
     </mip-img>
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_03.jpg">
+        layput="responsive"
+        width=720
+        height=405
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-03.jpg">
     </mip-img>
 </mip-carousel>
 ```
@@ -185,18 +250,24 @@
     autoplay
     defer="1000"
     layout="responsive"
-    width="600"
-    height="400">
+    width="720"
+    height="405">
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_01.jpg">
+        layout="responsive"
+        width=720
+        height=405
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-01.jpg">
     </mip-img>
     <a target="_blank" href="http://wenda.tianya.cn/m/question/1almfj0foas94gc7vtoq6ejbfbmdk3e78ehaa">
         <mip-img
-            src="https://www.mipengine.org/static/img/sample_02.jpg" width="600" height="400">
+            src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-02.jpg" width="720" height="405" layout="responsive">
         </mip-img>
     </a>
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_03.jpg">
+        layout="responsive"
+        width=720
+        height=405
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-03.jpg">
     </mip-img>
 </mip-carousel>
 ```
@@ -209,23 +280,23 @@
     autoplay
     defer="1000"
     layout="responsive"
-    width="600"
-    height="400"
-    on="switchCompleted:mip-test.hanlde"
+    width="720"
+    height="405"
+    on="switchCompleted:mip-test.toggleVisibility"
     >
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_01.jpg">
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-01.jpg">
     </mip-img>
     <a target="_blank" href="http://wenda.tianya.cn/m/question/1almfj0foas94gc7vtoq6ejbfbmdk3e78ehaa">
         <mip-img
-            src="https://www.mipengine.org/static/img/sample_02.jpg" width="600" height="400">
+            src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-02.jpg" width="720" height="405" layout="responsive">
         </mip-img>
     </a>
     <mip-img
-        src="https://www.mipengine.org/static/img/sample_03.jpg">
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-03.jpg">
     </mip-img>
 </mip-carousel>
-<mip-element id="mip-test"></mip-element>
+<div id="mip-test">测试节点</div>
 ```
 
 ## 属性

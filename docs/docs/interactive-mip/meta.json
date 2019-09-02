@@ -7,11 +7,19 @@
       "key": "event-and-action"
     },
     {
-      "name": "数据绑定",
-      "key": "data-binding"
+      "key": "data-driven"
+    },
+    {
+      "key": "expression"
+    },
+    {
+      "key": "data-driven-and-dom-render"
     },
     {
       "key": "custom-js"
     }
+  ],
+  "ignore": [
+    "data-binding"
   ]
 }

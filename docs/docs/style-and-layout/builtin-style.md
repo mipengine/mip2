@@ -1,6 +1,16 @@
-# MIP 快捷方式
+# MIP 内置样式
 
 MIP 为所有组件提供了一些常用的样式，避免开发者在编写组件时重复实现。这部分样式会在以后的迭代中逐步完善，敬请开发者们关注。
+
+## 节点隐藏样式
+
+MIP 设置了 `[hidden] { display: none !immportant; }` 样式来实现对节点的隐藏，因此对于需要隐藏的节点，只需要添加属性 `hidden` 即可：
+
+```html
+<div id="example-node" hidden>看不见我</div>
+```
+
+这样做的好处是，可以通过 `example-node.show`、`example-node.toggleVisibility` 等方法控制节点的显示，也可以通过 `m-bind:hidden` 数据绑定机制进行控制。
 
 ## 一像素边框
 

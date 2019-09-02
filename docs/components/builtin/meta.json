@@ -1,11 +1,10 @@
 {
   "menu": [
     {
-      "key": "mip-bind",
-      "preview": false
+      "key": "mip-carousel"
     },
     {
-      "key": "mip-carousel"
+      "key": "mip-data"
     },
     {
       "key": "mip-iframe"
