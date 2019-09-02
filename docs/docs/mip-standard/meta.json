@@ -5,16 +5,16 @@
       "key": "mip-html-spec"
     },
     {
-      "name": "MIP-Cache 规范",
-      "key": "mip-cache-spec"
+      "name": "MIP 校验规则",
+      "key": "mip-validate"
     },
     {
       "name": "Canonical 使用规范",
       "key": "mip-canonical"
     },
     {
-      "name": "MIP 校验规则",
-      "key": "mip-validate"
+      "name": "MIP-Cache 规范",
+      "key": "mip-cache-spec"
     }
   ]
 }
