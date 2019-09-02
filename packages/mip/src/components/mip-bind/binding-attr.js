@@ -28,12 +28,10 @@ export function bindingAttr (node, key, value, oldValue) {
   }
 
   let attr = key.slice(prefixLen)
-
   let prop = typeof value === 'object' ? JSON.stringify(value) : value
   if (prop === oldValue) {
     return prop
   }
-
   if (prop === '' || prop === undefined) {
     node.removeAttribute(attr)
   } else {
@@ -44,7 +42,6 @@ export function bindingAttr (node, key, value, oldValue) {
   } else if (BOOLEAN_ATTRS.indexOf(attr) > -1) {
     node[attr] = !!prop
   }
-
   return prop
 }
 

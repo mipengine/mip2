@@ -7,6 +7,7 @@ import DataWatcher from './data-watcher'
 import GlobalData from './global-data'
 import { merge, getProperty } from './util'
 import { isObject } from '../../util/fn'
+
 export default class DataStore {
   constructor () {
     const storage = {}

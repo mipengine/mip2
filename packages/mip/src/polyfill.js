@@ -6,6 +6,8 @@
 import 'core-js/modules/es6.promise'
 // phantomjs 中会用到 symbol
 import 'core-js/modules/es6.symbol'
+// import 'core-js/modules/es7.array.includes'
+import 'core-js/modules/es6.array.find'
 // import 'core-js/modules/es6.array.from'
 // import 'core-js/modules/es6.map'
 // import 'core-js/modules/es6/set'

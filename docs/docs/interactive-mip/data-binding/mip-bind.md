@@ -247,13 +247,13 @@ export default {
     let selected = MIP.getData('selected')
     let index = selected.indexOf(newVal)
 
-    if (index) {
+    if (index !== -1) {
       selected.splice(index, 1)
     } else {
-      selected.push(index)
+      selected.push(newVal)
     }
 
-    MIP.setData('selectedStr', selected.join(','))
+    MIP.setData({'selectedStr': selected.join(',')})
   })
 </mip-script>
 ```
