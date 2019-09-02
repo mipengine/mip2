@@ -299,15 +299,14 @@ MIP 为所有元素（包括普通 HTML 和 MIP 元素）都提供了一些默�
 ```
 其效果如下所示：
 
-<mip-data >
-  <script type="application/json">
-  {
-    "count": 0
-  }
-  </script>
-</mip-data>
-
 <div class="example-wrapper">
+  <mip-data>
+    <script type="application/json">
+    {
+      "count": 0
+    }
+    </script>
+  </mip-data>
   <button
     class="example-button"
     on="tap:MIP.setData({ count: count + 1 })">点击次数 + 1</button>

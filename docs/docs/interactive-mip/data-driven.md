@@ -29,22 +29,19 @@ MIP 提供了一套数据驱动的机制来提升交互能力，有过 Vue/React
 其效果如下所示：
 
 <div class="example-wrapper">
-<!-- 定义数据 -->
-<mip-data>
-  <script type="application/json">
-  {
-    "count": 0
-  }
-  </script>
-</mip-data>
-
-<p>
-当前按钮点击了：<span m-text="count">0</span> 次
-
-  <!-- 定义点击事件触发 -->
-  <button class="example-button" on="tap:MIP.setData({ count: count + 1 })">点击按钮</button>
-</p>
-
+  <!-- 定义数据 -->
+  <mip-data>
+    <script type="application/json">
+    {
+      "count": 0
+    }
+    </script>
+  </mip-data>
+  <p>
+  当前按钮点击了：<span m-text="count">0</span> 次
+    <!-- 定义点击事件触发 -->
+    <button class="example-button" on="tap:MIP.setData({ count: count + 1 })">点击按钮</button>
+  </p>
 </div>
 
 这就演示了一个最简单的数据驱动全流程。
@@ -300,16 +297,14 @@ MIP 提供了 `MIP.setData` 方法进行数据修改。`MIP.setData` 传入的�
 ```
 
 效果如下所示：
-
-<mip-data id="userInfo" scope>
-  <script type="application/json">
-  {
-    "name": "李雷"
-  }
-  </script>
-</mip-data>
-
 <div class="example-wrapper">
+  <mip-data id="userInfo" scope>
+    <script type="application/json">
+    {
+      "name": "李雷"
+    }
+    </script>
+  </mip-data>
   <p m-text="userInfo.name">Li,Lei</p>
   <p m-text="'您好，' + userInfo.name">您好，Li,Lei</p>
   <button class="example-button" on="tap:MIP.setData({ userInfo: { name: '韩梅梅' } })">点击修改</button>
@@ -346,17 +341,15 @@ MIP 提供了 `MIP.setData` 方法进行数据修改。`MIP.setData` 传入的�
 ```
 
 效果如下所示：
-
-<mip-data id="testBind" scope>
-  <script type="application/json">
-  {
-    "link": "https@@//www@baidu@com",
-    "name": "百度首页"
-  }
-  </script>
-</mip-data>
-
 <div class="example-wrapper">
+  <mip-data id="testBind" scope>
+    <script type="application/json">
+    {
+      "link": "https@@//www@baidu@com",
+      "name": "百度首页"
+    }
+    </script>
+  </mip-data>
   <!-- 原先的 a 链接默认点击跳转百度首页 -->
   <a
     m-bind:href="testBind.link"
@@ -394,18 +387,18 @@ MIP 提供了 `MIP.setData` 方法进行数据修改。`MIP.setData` 传入的�
 ```
 
 效果如下所示：
-
-<mip-data>
-  <script type="application/json">
-  {
-    "imgSrc": "https@@//www@mipengine@org/static/img/sample_01@jpg"
-  }
-  </script>
-</mip-data>
-
 <div class="example-wrapper">
+  <mip-data>
+    <script type="application/json">
+    {
+      "imgSrc": "https@@//www@mipengine@org/static/img/sample_01@jpg"
+    }
+    </script>
+  </mip-data>
+
   <mip-img
-    height="263"
+    width="443"
+    height="294"
     layout="fixed-height"
     m-bind:src="imgSrc" src="https://www.mipengine.org/static/img/sample_01.jpg"></mip-img>
   <div class="example-button-wrapper">
@@ -532,15 +525,6 @@ style 绑定与 class 绑定类似，同样支持对象语法和数组语法：
 ```
 
 效果如下所示：
-
-<mip-data>
-  <script type="application/json">
-  {
-    "clickCount": 0
-  }
-  </script>
-</mip-data>
-
 <style>
 .example-block {
   width: 100px;
@@ -554,6 +538,13 @@ style 绑定与 class 绑定类似，同样支持对象语法和数组语法：
 </style>
 
 <div class="example-wrapper">
+  <mip-data>
+    <script type="application/json">
+    {
+      "clickCount": 0
+    }
+    </script>
+  </mip-data>
   <!-- 对象语法 -->
   <div
     class="example-block"
@@ -606,16 +597,14 @@ style 绑定与 class 绑定类似，同样支持对象语法和数组语法：
 ```
 
 效果如下所示：
-
-<mip-data>
-  <script type="application/json">
-  {
-    "bindingText": "初始文字"
-  }
-  </script>
-</mip-data>
-
 <div class="example-wrapper">
+  <mip-data>
+    <script type="application/json">
+    {
+      "bindingText": "初始文字"
+    }
+    </script>
+  </mip-data>
   <p m-text="'当前输入内容：' + bindingText">当前输入内容：初始文字</p>
   <!-- 绑定表单元素 value，注意表单元素需要 mip-form 包起来 -->
   <mip-form url="https://www.mipengine.org/api">

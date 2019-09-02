@@ -104,15 +104,14 @@ MIP 提供了为数众多的官方组件来满足开发者的需求。这些组�
 
 其效果如下所示：
 
-<mip-data id="example1" scope>
-  <script type="application/json">
-  {
-    "color": "rgb(0,0,0)"
-  }
-  </script>
-</mip-data>
-
 <div class="example-wrapper">
+  <mip-data id="example1" scope>
+    <script type="application/json">
+    {
+      "color": "rgb(0,0,0)"
+    }
+    </script>
+  </mip-data>
   <p m-bind:style="{ color: example1.color }">点击下方按钮实现文本随机变色</p>
   <button
     class="example-button"
@@ -176,15 +175,14 @@ MIP 提供了为数众多的官方组件来满足开发者的需求。这些组�
 
 在这个示例中，我们定义了名为 `example2` 的数据块，并且将 `example2.inputValue` 通过 `m-bind:value` 绑定到 `<input>` 的 value 属性上，这样在输入文字时，就能够自动实现双向绑定，我们通过操控 `example2.inputValue` 来实现对 input 输入框内的内容进行更改。其效果如下所示：
 
-<mip-data id="example2" scope>
-  <script type="application/json">
-  {
-    "inputValue": "Hello World"
-  }
-  </script>
-</mip-data>
-
 <div class="example-wrapper">
+  <mip-data id="example2" scope>
+    <script type="application/json">
+    {
+      "inputValue": "Hello World"
+    }
+    </script>
+  </mip-data>
   <p m-text="'结果：' + example2.inputValue"></p>
 
   <mip-form url="https://path/to/your/api">
