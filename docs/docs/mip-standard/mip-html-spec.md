@@ -81,6 +81,7 @@ MIP-HTML 禁止使用对页面性能以及安全有较大影响的标签，同�
 这些规范无论是原生的 HTML 标签或者是 MIP 组件都必须遵守的。
 
 |属性|使用范围|备注|
+|----|----|----|
 |所有 `on*` 开头的属性<br>如`onclick`<br>`onmouseover`|<span class="mipengine-doc-red">禁止使用</span>|使用 [MIP 事件机制](../interactive-mip/event-and-action.md)代替|
 | `style` | <span class="mipengine-doc-red">禁止使用</span> | 改为使用 `class` |
 

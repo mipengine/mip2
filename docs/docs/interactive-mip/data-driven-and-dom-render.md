@@ -129,7 +129,8 @@ mip-list 和 mip-data 一样，可以通过定义 `id` 和 `scope` 属性，这�
 </mip-form>
 <button
   on="tap:MIP.setData({
-    example2: example2.filter(item => item.name === delName)
+    example2: example2.filter(item => item.name !== delName),
+    delName: ''
   })"
 >点击删除</button>
 ```
@@ -139,7 +140,7 @@ mip-list 和 mip-data 一样，可以通过定义 `id` 和 `scope` 属性，这�
 
 ```html
 <mip-form url="https://www.mipengine.org/api">
-  <input m-bind:vaue="targetName" type="text">
+  <input m-bind:value="targetName" type="text">
   <input m-bind:value="modifyName" type="text">
 </mip-form>
 <button
@@ -202,22 +203,20 @@ mip-list 和 mip-data 一样，可以通过定义 `id` 和 `scope` 属性，这�
     <button
       class="example-button"
       on="tap:MIP.setData({
-        example3: example3.filter(item => item.name === delName)
+        example3: example3.filter(item => item.name !== delName),
+        delName: ''
       })"
     >点击删除</button>
   </div>
   <div>
     <mip-form url="https://www.mipengine.org/api">
-      <input m-bind:vaue="targetName" type="text" placeholder="请输入原名字" class="example-input">
+      <input m-bind:value="targetName" type="text" placeholder="请输入原名字" class="example-input">
       <input m-bind:value="modifyName" type="text" placeholder="请输入新名字" class="example-input">
     </mip-form>
     <button
       class="example-button"
       on="tap:MIP.setData({
-        example3: example3.map(
-          item => item.name === targetName
-            ? { name: modifyName }
-            : item
+        example3: example3.map(item => (item.name === targetName ? { name: modifyName } : item)
         )
       })"
     >点击修改</button>
@@ -260,4 +259,7 @@ mip-list 会监听数据列表的更改而重新编译 mustache 模板生成 HTM
 ```
 
 我们在前面例子的基础上，对数据项增加了 index 属性，并且将文本改成 `m-text` 绑定的方式，这样无论后续的交互当中，李雷的名称无论被修改成什么，对应的模板渲染出来的 HTML 都一直是：`<p m-text="'您好，' + example4[0].name"></p>`，根据前面提到的操作 2，就能够对原有节点进行复用，从而起到性能优化的目的。
+
+<script src="https://c.mipcdn.com/static/v2/mip-mustache/mip-mustache.js"></script>
+<script src="https://c.mipcdn.com/static/v2/mip-list/mip-list.js"></script>
 
