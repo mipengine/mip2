@@ -28,7 +28,6 @@
   "ignore": [
     "analytics",
     "progressive-enhancement-design",
-    "assistant-development-tools",
-    "all-sites-mip"
+    "assistant-development-tools"
   ]
 }
