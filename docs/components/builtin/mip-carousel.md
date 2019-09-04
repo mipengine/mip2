@@ -271,9 +271,46 @@
     </mip-img>
 </mip-carousel>
 ```
+
+### 方法 go 使用
+
+```html
+<mip-carousel
+    id="simple-carousel"
+    layout="responsive"
+    width="720"
+    height="405">
+    <mip-img
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-01.jpg">
+    </mip-img>
+    <mip-img
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-02.jpg">
+    </mip-img>
+    <mip-img
+        width="720"
+        height="405"
+        layout="responsive"
+        src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-03.jpg">
+    </mip-img>
+</mip-carousel>
+<div>
+    <button on="tap:simple-carousel.go(1)">点击展现第 1 页</button>
+    <button on="tap:simple-carousel.go(2)">点击展现第 2 页</button>
+    <button on="tap:simple-carousel.go(3)">点击展现第 3 页</button>
+</div>
+```
+
 ### 自定义处理翻页事件
 
 每次翻页时，mip-carousel 会对外暴露 switchCompleted 事件，事件被触发时，在你自己的组件内处理对应的逻辑即可。可以通过[Events 事件绑定](../../basic/actions-and-events.md)章节了解更多事件通信的处理细节。
+
+在下面的例子中，轮播图每切换一次图片，都会在下方文案显示当前图片的索引值（index），通过 `switchCompleted` 所抛出的参数 `event.currIndex` 获取：
 
 ```html
 <mip-carousel
@@ -282,7 +319,7 @@
     layout="responsive"
     width="720"
     height="405"
-    on="switchCompleted:mip-test.toggleVisibility"
+    on="switchCompleted:MIP.setData({ index: event.currIndex })"
     >
     <mip-img
         src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-01.jpg">
@@ -296,7 +333,7 @@
         src="http://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/static/example-03.jpg">
     </mip-img>
 </mip-carousel>
-<div id="mip-test">测试节点</div>
+<div m-text="'当前显示的图片 index: ' + index"></div>
 ```
 
 ## 属性
@@ -383,19 +420,19 @@
 ### go
 
 说明：使轮播图跳转到指定的第几张图
-参数：一个参数，取值为整数
+参数：一个参数，取值为整数，从 1 开始计数
 返回值：无
 
 ## 事件
 
 ### switchCompleted
 
-说明：当每一页切换完成之后，会触发该事件，事件参数会返回当前展示的dom节点，carousel 子元素的总数，当前展示的carousel item的索引值。
-一个返回参数示例如下：
-``` js
-{
-  currIndex: 2,  // 当前子元素的显示索引值
-  currCarouselItem: childNodes[imgIndex], // 当前子元素的dom节点
-  carouselChildrenLength: childNum // 当前 carousel 下的子节点个数
-}
+说明：当每一页切换完成之后，会触发该事件，并返回相关参数:
+
+```js
+// 当前显示的索引, 从 1 开始计数
+event.currIndex
+
+// 总的轮播图数
+event.carouselChildrenLength
 ```
