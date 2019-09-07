@@ -19,8 +19,9 @@ import {
 } from './token'
 
 import {
-  $number,
-  $literal,
+  $conditional,
+  // $number,
+  // $literal,
   $variable,
   $identifier
 } from './basic'
@@ -65,28 +66,30 @@ export const $mipActionAllowed = lex.set({
   }
 })
 
-export const $minus = lex.set({
-  type: 'Minus',
-  rule: [
-    [text, '-'],
-    _,
-    $number
-  ],
-  match (args) {
-    return {
-      type: 'Literal',
-      value: -args[2].value,
-      raw: '-' + args[2].raw
-    }
-  }
-})
+// export const $minus = lex.set({
+//   type: 'Minus',
+//   rule: [
+//     [text, '-'],
+//     _,
+//     $number
+//   ],
+//   match (args) {
+//     return {
+//       type: 'Literal',
+//       value: -args[2].value,
+//       raw: '-' + args[2].raw
+//     }
+//   }
+// })
 
 export const $mipValue = lex.set({
   type: 'MIPValue',
   rule: [or, [
     $mipActionAllowed,
-    $literal,
-    $minus
+    // 开放新版参数形式的可计算能力
+    $conditional
+    // $literal,
+    // $minus
   ]]
 })
 

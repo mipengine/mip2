@@ -25,10 +25,10 @@ export const BINARY_OPERATION = {
 }
 
 export const UNARY_OPERATION = {
-  '+': (arg) => +arg,
-  '-': (arg) => -arg,
-  '!': (arg) => !arg,
-  '~': (arg) => ~arg
+  '+': (arg) => +arg(),
+  '-': (arg) => -arg(),
+  '!': (arg) => !arg(),
+  '~': (arg) => ~arg()
 }
 
 function instanceSort (...args) {
@@ -112,6 +112,18 @@ export const CUSTOM_FUNCTIONS = {
   Date: Date,
   Boolean: Boolean,
   String: String
+}
+
+export const MIP_REGISTER_FUNCTION_MACRO = {}
+
+export function registerFunction (name, expr) {
+  if (CUSTOM_FUNCTIONS[name] || MIP_REGISTER_FUNCTION_MACRO[name]) {
+    throw Error(`duplicate function name: [${name}]`)
+  }
+  if (!/^[a-z][0-9a-z_$]*$/i.test(name)) {
+    throw Error(`invalid function name: [${name}]`)
+  }
+  MIP_REGISTER_FUNCTION_MACRO[name] = expr
 }
 
 export const MIP_ACTION_ALLOWED_OBJECTS = {

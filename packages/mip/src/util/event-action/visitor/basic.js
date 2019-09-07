@@ -7,6 +7,7 @@ import {
   UNARY_OPERATION,
   BINARY_OPERATION,
   CUSTOM_FUNCTIONS,
+  MIP_REGISTER_FUNCTION_MACRO,
   CUSTOM_OBJECTS,
   getValidPrototypeFunction,
   getProperty
@@ -44,7 +45,7 @@ const visitor = {
     let operation = UNARY_OPERATION[node.operator]
     let argument = path.traverse(node.argument)
     return function () {
-      return operation(argument())
+      return operation(argument)
     }
   },
 
@@ -92,7 +93,7 @@ const visitor = {
     let name = node.name
 
     if (isCallee(parent, node)) {
-      let fn = CUSTOM_FUNCTIONS[name]
+      let fn = CUSTOM_FUNCTIONS[name] || MIP_REGISTER_FUNCTION_MACRO[name]
       return () => fn
     }
 
