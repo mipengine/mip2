@@ -44,7 +44,7 @@ describe('MIP Argument', () => {
       expect(ast.arguments[5].type).to.be.equal('Member')
     })
 
-    it('No allow to use ID selector expression', () => {
+    it('No allow to use ID selector expression in old argument', () => {
       let str = `123,
         true,
         thisIsAnId.someProperty
@@ -54,8 +54,22 @@ describe('MIP Argument', () => {
       expect(walker.end()).to.be.equal(false)
     })
 
-    it('use illegal global variable', function () {
-      let str = `first=123,abc=eventDom.action,other=123`
+    it('use illegal identifier in new Argument Expression', function () {
+      let str = `abc=123,bc.d=456,def=789`
+      let walker = new Walker(str)
+      let ast = fn(walker)
+      expect(walker.end()).to.be.equal(false)
+    })
+
+    it('use illegal expression in new Argument Expression', function () {
+      let str = `abc=123+456.abc,def='haha',fgh=true`
+      let walker = new Walker(str)
+      let ast = fn(walker)
+      expect(walker.end()).to.be.equal(false)
+    })
+
+    it('use Expression in new Argument Expression', function () {
+      let str = `first=123,abc=eventDom.action,other=123 + 456,and=true`
       let walker = new Walker(str)
       let ast = fn(walker)
       expect(walker.end()).to.be.equal(true)

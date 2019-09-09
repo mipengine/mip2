@@ -347,7 +347,13 @@ export const $identifierProperty = lex.set({
 export const $member = lex.set({
   type: 'Member',
   rule: [
-    $primary,
+    [or, [
+      $variable,
+      $string,
+      $array,
+      $grouping
+    ]],
+    // $primary,
     [some, [
       _,
       [or, [
