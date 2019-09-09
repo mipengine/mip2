@@ -107,7 +107,7 @@
     <br>
     <button
       on="tap:MIP.setData({'styleObject': null})"
-      >修改文字样式</button>
+      >修改清除文字样式</button>
     <div m-bind:style="styleObject">文字文字</div>
     <button
       on="tap:MIP.setData({show:!m.show})"
@@ -121,16 +121,6 @@
   </div>
   <br>
   <br>
-  <div>
-    <button
-      on="tap:MIP.setData({url:'https://www.gstatic.com/webp/gallery/'+(m.index+1)+'.jpg'})"
-    >点我修改图片 url</button>
-    <p m-text="url"></p>
-    <mip-img m-bind:src="url"></mip-img>
-    <br>
-    <br>
-    <br>
-  </div>
   <!-- <script src="https://c.mipcdn.com/static/v2/mip.js"></script> -->
   <script src="../../dist/mip.js"></script>
 </body>
