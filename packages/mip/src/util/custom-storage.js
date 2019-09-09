@@ -7,7 +7,7 @@
 
 /* globals localStorage, fetch, top */
 
-import * as fn from './fn'
+import {isCacheUrl, del, isString} from './fn'
 
 /**
  * Type of storage
@@ -79,7 +79,7 @@ class LocalStorage {
    * @return {boolean} Whether support ls
    */
   _isCachePage () {
-    return fn.isCacheUrl(href)
+    return isCacheUrl(href)
   }
 
   /**
@@ -120,7 +120,7 @@ class LocalStorage {
     if (!key) {
       key = HOST
     }
-    this._supportLs() ? localStorage.removeItem(key) : fn.del(lsCache, key)
+    this._supportLs() ? localStorage.removeItem(key) : del(lsCache, key)
   }
 
   /**
@@ -143,7 +143,7 @@ class LocalStorage {
       if (!isNaN(expire) && expire > 0) {
         ls.e = new Date().getTime() + expire
       } else {
-        fn.del(ls, 'e')
+        del(ls, 'e')
       }
       ls = JSON.stringify(ls)
       if (ls.length > STORAGESIZE) {
@@ -200,7 +200,7 @@ class LocalStorage {
    * @return {string} get data with key
    */
   get (name) {
-    if (!fn.isString(name)) {
+    if (!isString(name)) {
       return
     }
 
@@ -222,18 +222,18 @@ class LocalStorage {
    * @param {string} name name of storage
    */
   rm (name) {
-    if (!fn.isString(name)) {
+    if (!isString(name)) {
       return
     }
 
     if (this._isCachePage()) {
       let ls = this._getLocalStorage()
       if (ls && ls[name]) {
-        fn.del(ls, name)
+        del(ls, name)
         this._setLocalStorage(HOST, JSON.stringify(ls))
       }
     } else {
-      this._supportLs() ? localStorage.removeItem(name) : fn.del(lsCache, name)
+      this._supportLs() ? localStorage.removeItem(name) : del(lsCache, name)
     }
   }
 

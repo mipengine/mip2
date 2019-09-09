@@ -7,7 +7,6 @@ import {
   UNARY_OPERATION,
   BINARY_OPERATION,
   CUSTOM_FUNCTIONS,
-  MIP_REGISTER_FUNCTION_MACRO,
   CUSTOM_OBJECTS,
   getValidPrototypeFunction,
   getProperty
@@ -93,7 +92,7 @@ const visitor = {
     let name = node.name
 
     if (isCallee(parent, node)) {
-      let fn = CUSTOM_FUNCTIONS[name] || MIP_REGISTER_FUNCTION_MACRO[name]
+      let fn = CUSTOM_FUNCTIONS[name]
       return () => fn
     }
 

@@ -3,13 +3,15 @@
  * @author sekiyika(pengxing@baidu.com)
  */
 
-import util from './util/index'
+import EventEmitter from './util/event-emitter'
+import {extend} from './util/fn'
+// import util from './util/index'
 import viewer from './viewer'
 import viewport from './viewport'
 import firstScreenLabel from './log/firstscreen-label'
 import prerender from './client-prerender'
 
-const EventEmitter = util.EventEmitter
+// const EventEmitter = util.EventEmitter
 
 /**
  * Store first-screen elements.
@@ -81,11 +83,11 @@ function getTiming () {
   if (performance && performance.timing) {
     nativeTiming = performance.timing.toJSON
       ? performance.timing.toJSON()
-      : util.fn.extend({}, performance.timing)
+      : extend({}, performance.timing)
   } else {
     nativeTiming = {}
   }
-  return util.fn.extend(nativeTiming, recorder)
+  return extend(nativeTiming, recorder)
 }
 
 /**

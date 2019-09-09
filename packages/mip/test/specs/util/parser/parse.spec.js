@@ -270,7 +270,7 @@ describe('parser', () => {
         err = true
       }
 
-      expect(err).to.be.equal(true)
+      expect(err).to.be.equal(false)
     })
   })
   // it('MIPEventHandlers with no args', () => {

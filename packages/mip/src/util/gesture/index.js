@@ -6,7 +6,7 @@
 import EventEmitter from '../event-emitter'
 import Recognizer from './gesture-recognizer'
 import dataProcessor from './data-processor'
-import * as fn from '../fn'
+import {extend} from '../fn'
 
 /* eslint-disable no-cond-assign */
 
@@ -39,7 +39,7 @@ class Gesture extends EventEmitter {
       preventY: false
     }
 
-    opt && (this._opt = fn.extend({}, this._opt, opt))
+    opt && (this._opt = extend({}, this._opt, opt))
 
     /**
      * The events' context.

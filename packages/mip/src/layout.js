@@ -3,9 +3,8 @@
  * @author huanghuiquan (huanghuiquan@baidu.com)
  */
 
-import util from './util'
-
-const {dom, css} = util
+import dom from './util/dom/dom'
+import css from './util/dom/css'
 
 const SPACE_TAG_NAME = 'mip-i-space'
 

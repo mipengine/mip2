@@ -25,6 +25,7 @@ import Deferred from './deferred'
 import log from './log'
 import * as string from './string'
 import {parse} from './event-action/parser'
+
 /**
  * Exchange a url to cache url.
  *
@@ -164,5 +165,6 @@ export default {
   templates,
   Deferred,
   log,
-  string
+  string,
+  parse
 }

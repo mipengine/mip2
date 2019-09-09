@@ -58,7 +58,7 @@ describe('MIP Argument', () => {
       let str = `first=123,abc=eventDom.action,other=123`
       let walker = new Walker(str)
       let ast = fn(walker)
-      expect(walker.end()).to.be.equal(false)
+      expect(walker.end()).to.be.equal(true)
     })
 
     it('use legal global variable', function () {

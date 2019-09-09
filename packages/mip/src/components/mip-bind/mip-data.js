@@ -134,10 +134,6 @@ MIPData.props = {
   scope: {
     type: Boolean,
     default: false
-  },
-  on: {
-    type: String,
-    default: ''
   }
 }
 

@@ -10,7 +10,7 @@ import Walker from '../../../../src/util/parser/walker'
 describe('Test Grammar', function () {
   describe('Test Identifier', function () {
     let fn = (walker) => run(walker, lexer.$conditional)
-    it('Should match as boolean', function () {
+    it('Should match as boolean and Variable', function () {
       let str = `{
         a: true,
         b: false,
@@ -22,6 +22,22 @@ describe('Test Grammar', function () {
       expect(result.properties[0].value.value).to.be.equal(true)
       expect(result.properties[2].value.type).to.be.equal('Variable')
       expect(result.properties[3].value.value).to.be.equal(null)
+    })
+
+    it('Shoud match as Variable', function () {
+      let str = `trueOrFalse`
+      let walker = new Walker(str)
+      let result = fn(walker)
+      expect(result.type).to.be.equal('Variable')
+      expect(result.name).to.be.equal('trueOrFalse')
+    })
+
+    it('Should match as Boolean', function () {
+      let str = `true`
+      let walker = new Walker(str)
+      let result = fn(walker)
+      expect(result.type).to.be.equal('Literal')
+      expect(result.value).to.be.equal(true)
     })
   })
 
