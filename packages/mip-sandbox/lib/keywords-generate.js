@@ -172,6 +172,13 @@ module.exports = function () {
                   // https://github.com/mipengine/mip2/issues/95
                   'domain'
                 ]
+              },
+              {
+                type: TYPE_PROPS,
+                access: ACCESS_READONLY,
+                props: [
+                  'title'
+                ]
               }
             ]
           },

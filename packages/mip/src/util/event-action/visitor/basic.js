@@ -44,7 +44,7 @@ const visitor = {
     let operation = UNARY_OPERATION[node.operator]
     let argument = path.traverse(node.argument)
     return function () {
-      return operation(argument())
+      return operation(argument)
     }
   },
 
