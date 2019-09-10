@@ -12,6 +12,7 @@ import jsonParse from '../../util/json-parse'
 import Deffered from '../../util/deferred'
 import log from '../../util/log'
 import { timeout } from './util'
+
 const logger = log('MIP-data')
 
 class MIPData extends CustomElement {

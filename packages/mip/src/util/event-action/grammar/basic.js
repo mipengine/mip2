@@ -196,16 +196,19 @@ export const $grouping = lex.set({
 
 export const $identifier = lex.set({
   type: 'Identifier',
-  rule: [
-    [not, [
+  rule: [or, [
+    [seq, [
       $reservedToken,
-      [regexp, /^[^\w$]/i]
+      [regexp, /^[0-9a-z_$]+/i]
     ]],
-    [regexp, /^[a-z$_][\w$]*/i]
-  ],
+    [seq, [
+      [not, $reservedToken],
+      [regexp, /^[a-z$_][0-9a-z_$]*/i]
+    ]]
+  ]],
   match (args) {
     return {
-      name: args[1].raw
+      name: (args[0] && args[0].raw || '') + args[1].raw
     }
   }
 })
@@ -344,7 +347,13 @@ export const $identifierProperty = lex.set({
 export const $member = lex.set({
   type: 'Member',
   rule: [
-    $primary,
+    [or, [
+      $variable,
+      $string,
+      $array,
+      $grouping
+    ]],
+    // $primary,
     [some, [
       _,
       [or, [

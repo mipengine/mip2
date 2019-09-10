@@ -1,4 +1,6 @@
-import util, {fn} from '../../util'
+// import util, {fn} from '../../util'
+import rectUtil from '../../util/dom/rect'
+import {raf} from '../../util/fn'
 import viewport from '../../viewport'
 
 export function scrollTo (height, { duration = 500, scrollTop = 0 } = {}) {
@@ -39,13 +41,13 @@ export function scrollTo (height, { duration = 500, scrollTop = 0 } = {}) {
 function transition (duration, step, callback) {
   let start = Date.now()
 
-  fn.raf(loop)
+  raf(loop)
 
   function loop () {
     let now = Date.now() - start
 
     if (step(bezier(now, 0, 1, duration))) {
-      fn.raf(loop)
+      raf(loop)
     } else {
       callback()
     }
@@ -70,7 +72,7 @@ function scroll (top) {
 /**
  * scrollTo 接口
  * 滚动到指定元素
- * 
+ *
  * @param {HTMLElement} element 目标元素
  * @param {number} duration 滚动动画时间
  * @param {string} position 滚动后元素显示的位置，取值范围 'top'、'bottom'、'center'
@@ -91,7 +93,7 @@ export function handleScrollTo (element, {duration = 0, position = 'top'} = {}) 
   if (typeof duration !== 'number' || !isFinite(duration)) {
     duration = 0
   }
-  let rect = util.rect.getElementRect(element)
+  let rect = rectUtil.getElementRect(element)
   let offset = -viewport.getHeight() + rect.height
   switch (position) {
     case 'bottom':

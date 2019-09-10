@@ -19,6 +19,7 @@ import {
 } from './token'
 
 import {
+  $conditional,
   $number,
   $literal,
   $variable,
@@ -97,7 +98,8 @@ export const $mipActionAssignment = lex.set({
     _,
     [text, '='],
     _,
-    $mipValue
+    $conditional
+    // $mipValue
   ],
   match (args) {
     return {

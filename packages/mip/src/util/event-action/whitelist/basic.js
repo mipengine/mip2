@@ -25,10 +25,10 @@ export const BINARY_OPERATION = {
 }
 
 export const UNARY_OPERATION = {
-  '+': (arg) => +arg,
-  '-': (arg) => -arg,
-  '!': (arg) => !arg,
-  '~': (arg) => ~arg
+  '+': (arg) => +arg(),
+  '-': (arg) => -arg(),
+  '!': (arg) => !arg(),
+  '~': (arg) => ~arg()
 }
 
 function instanceSort (...args) {

@@ -23,7 +23,7 @@ import {parse} from './parser'
  *
  * @class
  */
-class EventAction {
+export default class EventAction {
 
   constructor () {
     this.attr = 'on'
@@ -63,4 +63,4 @@ class EventAction {
   }
 }
 
-export default EventAction
+

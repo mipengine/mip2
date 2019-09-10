@@ -3,7 +3,8 @@
  * @author huanghuiquan (huanghuiquan@baidu.com)
  */
 
-import util from './util'
+import {getRootName} from './util/fn'
+import hash from './util/hash'
 import Messager from './messager'
 import performance from './performance'
 import {
@@ -43,10 +44,10 @@ class ClientPrerender {
     this.queue = []
 
     this.messager = new Messager({
-      name: util.fn.getRootName(window.name)
+      name: getRootName(window.name)
     })
 
-    if (util.hash.get('prerender') === '1') {
+    if (hash.get('prerender') === '1') {
       this.isPrerendering = true
       new Promise(resolve => {
         // set client prerender event

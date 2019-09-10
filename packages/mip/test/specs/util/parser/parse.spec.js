@@ -240,6 +240,24 @@ describe('parser', () => {
       expect(result[0].c).to.be.equal(-3456.7)
     })
 
+    it('new Style With Expression', () => {
+      const str = `a= 1 + 2 + 3, b=( 2 *event.data), c=((DOM.dataset.value/event.data))`
+      let fn = parser.transform(str, 'MIPActionArguments')
+      let result = fn({
+        event: {
+          data: 100
+        },
+        target: {
+          dataset: {
+            value: -10
+          }
+        }
+      })
+      expect(result[0].a).to.be.equal(6)
+      expect(result[0].b).to.be.equal(200)
+      expect(result[0].c).to.be.equal(-0.1)
+    })
+
     it('old style', () => {
 
       const str = `-123.4, event.a.b, DOM.value`
@@ -270,7 +288,7 @@ describe('parser', () => {
         err = true
       }
 
-      expect(err).to.be.equal(true)
+      expect(err).to.be.equal(false)
     })
   })
   // it('MIPEventHandlers with no args', () => {
