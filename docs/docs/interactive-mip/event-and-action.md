@@ -171,7 +171,6 @@ MIP 为所有元素（包括普通 HTML 和 MIP 元素）都提供了一些默�
 
 [notice] 当 MIP 组件自定义方法与全局元素方法重名的情况下，比如 mip-toggle 具有自定义行为 `show` 和 `hide`，此时优先触发组件的自定义方法。
 
-
 下面是全局元素方法的一些例子：
 
 #### 隐藏或显示元素
@@ -366,7 +365,7 @@ MIP 为所有元素（包括普通 HTML 和 MIP 元素）都提供了一些默�
 MIP 组件允许自定义方法，通过 `this.addEventAction` 进行自定义方法的注册。因此需要阅读对应 [MIP 组件文档](https://www.mipengine.org/v2/components/index.html)当中的 `行为` 或 `方法` 部分进行学习。
 
 
-## 方法复用与前置判断
+## 行为封装与前置判断
 
 我们提供了 [mip-action-macro](https://www.mipengine.org/v2/components/dynamic-content/mip-action-macro.html) 来进一步增强 MIP on 表达式的功能。
 
@@ -374,6 +373,7 @@ mip-action-macro 主要提供的功能包括：
 
 - 将单个或多个行为封装起来，提高行为复用率
 - 支持在执行方法前提供前置判断条件，只有当判断条件为真时才会执行方法
+- 支持对全部全局元素方法和特殊对象方法的参数进行有限能力的计算
 
 下面进行 mip-action-macro 的使用方法演示，更具体的组件说明，请点击链接查看 mip-action-macro 的组件文档。
 
@@ -382,8 +382,9 @@ mip-action-macro 主要提供的功能包括：
 <mip-data>
   <script type="application/json">
   {
-    "baidu": "https://www.baidu.com",
-    "mipengine": "https://ww.mipengine.org"
+    "protocol": "https://",
+    "baidu": "www.baidu.com",
+    "mipengine": "www.mipengine.org"
   }
   </script>
 </mip-data>
@@ -391,7 +392,7 @@ mip-action-macro 主要提供的功能包括：
 <mip-action-macro
   id="macro-id"
   condition="event.url === baidu"
-  on="execute:MIP.navigateTo(url=event.url, target='_blank')"
+  on="execute:MIP.navigateTo(url=protocol + event.url, target='_blank')"
 ></mip-action-macro>
 
 <button on="tap:macro-id.execute(url=baidu)">点击跳转至百度首页</button>
@@ -403,8 +404,9 @@ mip-action-macro 主要提供的功能包括：
 <mip-data>
   <script type="application/json">
   {
-    "baidu": "https@@//www@baidu@com",
-    "mipengine": "https@@//ww@mipengine@org"
+    "protocol": "https://",
+    "baidu": "www@baidu@com",
+    "mipengine": "ww@mipengine@org"
   }
   </script>
 </mip-data>
@@ -414,7 +416,7 @@ mip-action-macro 主要提供的功能包括：
   <mip-action-macro
     id="macro-id"
     condition="event.url === baidu"
-    on="execute:MIP.navigateTo(url=event.url, target='_blank')"
+    on="execute:MIP.navigateTo(url=protocol + event.url, target='_blank')"
   ></mip-action-macro>
 
   <button class="example-button" on="tap:macro-id.execute(url=baidu)">点击跳转至百度首页</button>
