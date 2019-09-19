@@ -66,7 +66,7 @@ MIP 提供了 `on` 属性来定义对组件的事件绑定与事件触发时的�
 
 为了使得过长的 on 表达式更易于阅读，在分隔符前后允许存在换行符和空格进行表达式分段操作。
 
-[notice] 定义在同一个事件下面的多个行为当中，只允许存在 1 个 `MIP.setData()` 方法，以免造成
+[notice] 定义在同一个事件下面的多个行为当中，只允许存在 1 个 `MIP.setData()` 方法，以免造成数据执行顺序的混乱。
 
 ## 支持的事件
 
@@ -170,7 +170,6 @@ MIP 为所有元素（包括普通 HTML 和 MIP 元素）都提供了一些默�
 |focus                                      |让元素获得焦点。<br>如：`element-id.focus`|
 
 [notice] 当 MIP 组件自定义方法与全局元素方法重名的情况下，比如 mip-toggle 具有自定义行为 `show` 和 `hide`，此时优先触发组件的自定义方法。
-
 
 下面是全局元素方法的一些例子：
 
@@ -366,6 +365,65 @@ MIP 为所有元素（包括普通 HTML 和 MIP 元素）都提供了一些默�
 MIP 组件允许自定义方法，通过 `this.addEventAction` 进行自定义方法的注册。因此需要阅读对应 [MIP 组件文档](https://www.mipengine.org/v2/components/index.html)当中的 `行为` 或 `方法` 部分进行学习。
 
 
+## 行为封装与前置判断
+
+我们提供了 [mip-action-macro](https://www.mipengine.org/v2/components/dynamic-content/mip-action-macro.html) 来进一步增强 MIP on 表达式的功能。
+
+mip-action-macro 主要提供的功能包括：
+
+- 将单个或多个行为封装起来，提高行为复用率
+- 支持在执行方法前提供前置判断条件，只有当判断条件为真时才会执行方法
+- 支持对全部全局元素方法和特殊对象方法的参数进行有限能力的计算
+
+下面进行 mip-action-macro 的使用方法演示，更具体的组件说明，请点击链接查看 mip-action-macro 的组件文档。
+
+
+```html
+<mip-data>
+  <script type="application/json">
+  {
+    "protocol": "https://",
+    "baidu": "www.baidu.com",
+    "mipengine": "www.mipengine.org"
+  }
+  </script>
+</mip-data>
+
+<mip-action-macro
+  id="macro-id"
+  condition="event.url === baidu"
+  on="execute:MIP.navigateTo(url=protocol + event.url, target='_blank')"
+></mip-action-macro>
+
+<button on="tap:macro-id.execute(url=baidu)">点击跳转至百度首页</button>
+<button on="tap:macro-id.execute(url=mipengine)">点击不会发生任何跳转</button>
+```
+
+效果如下所示：
+
+<mip-data>
+  <script type="application/json">
+  {
+    "protocol": "https://",
+    "baidu": "www@baidu@com",
+    "mipengine": "ww@mipengine@org"
+  }
+  </script>
+</mip-data>
+
+<div class="example-wrapper">
+
+  <mip-action-macro
+    id="macro-id"
+    condition="event.url === baidu"
+    on="execute:MIP.navigateTo(url=protocol + event.url, target='_blank')"
+  ></mip-action-macro>
+
+  <button class="example-button" on="tap:macro-id.execute(url=baidu)">点击跳转至百度首页</button>
+  <button class="example-button" on="tap:macro-id.execute(url=mipengine)">点击不会发生任何跳转</button>
+
+</div>
+
 
 <div class="example-wrapper" id="bottom-example" hidden>
   <p>您已通过 bottom-button.scrollTo() 方法滚动到底部，请点击下方按钮返回原示例</p>
@@ -377,3 +435,4 @@ MIP 组件允许自定义方法，通过 `this.addEventAction` 进行自定义�
   >点击返回原示例</button>
 </div>
 
+<script src="https://c.mipcdn.com/static/v2/mip-action-macro/mip-action-macro.js"></script>
