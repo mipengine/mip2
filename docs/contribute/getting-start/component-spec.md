@@ -25,7 +25,6 @@ MIP 扩展组件开发采用 [Forking工作流](https://github.com/oldratlee/tra
   - <a href="#4">JavaScript 规范</a>
   - <a href="#5">CSS 规范</a>
 
-
 <div id="1"></div>
 ## 目录规范
 
@@ -122,7 +121,7 @@ MIP 自定义组件的配置项需符合 Camel 规范，不得采用中划线
 <div id="4"></div>
 ## JavaScript 规范
 
-- [MUST] 组件的脚本开发必须遵守 JavaScript Standard Style [[CN](https://standardjs.com/rules-zhcn.html)/[EN](https://standardjs.com/rules-en.html)] 代码规范
+- [MUST] 组件的脚本开发必须遵守 JavaScript Standard Style （[CN](https://standardjs.com/rules-zhcn.html)/[EN](https://standardjs.com/rules-en.html)）代码规范
 - [MUST] 组件的模版开发应该遵循 [Vue Style Guide](https://cn.vuejs.org/v2/style-guide/index.html)
 - [MUST] 禁止使用白名单之外的原生 JS API (参考：[沙盒机制](../principle/sandbox.md))
 - [SHOULD] 使用 ES6 和 ES Module 模块化组织代码

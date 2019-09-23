@@ -23,5 +23,8 @@
       "name": "使用 MIP-CLI 开发组件",
       "key": "mip-cli-usage"
     }
+  ],
+  "ignore": [
+    "contribute-with-mip-platform"
   ]
 }
