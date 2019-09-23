@@ -41,11 +41,11 @@ MIP 提供了为数众多的官方组件来满足开发者的需求。这些组�
 
 ```html
 <button
-  on="tap:MIP.navigateTo(url='https://www.baidu.com', target='_blank')"
+  on="tap:MIP.navigateTo({url: 'https://www.baidu.com', target: '_blank'})"
 >点击打开百度首页</button>
 
 <button
-  on="tap:bottom-item.scrollTo(duration=500, position='center')"
+  on="tap:bottom-item.scrollTo({duration: 500, position: 'center'})"
 >点击跳转到页面底部</button>
 ```
 
@@ -54,13 +54,13 @@ MIP 提供了为数众多的官方组件来满足开发者的需求。这些组�
 <div class="example-wrapper">
   <button
     class="example-button"
-    on="tap:MIP.navigateTo(url='https://www.baidu.com', target='_blank')"
+    on="tap:MIP.navigateTo({url: 'https://www.baidu.com', target: '_blank'})"
   >点击打开百度首页</button>
 
   <button
     id="scroll-button"
     class="example-button"
-    on="tap:bottom-button.scrollTo(duration=500, position='center')"
+    on="tap:bottom-button.scrollTo({duration: 500, position: 'center'})"
   >点击跳转到页面底部</button>
 </div>
 
@@ -205,10 +205,7 @@ MIP 交互机制旨在提升 MIP 页面的可交互性，在 MIP 核心机制和
   <p>您已滚动至页面底部</p>
   <button class="example-button"
     id="bottom-button"
-    on="tap:scroll-button.scrollTo(duration=1000, position='center')"
+    on="tap:scroll-button.scrollTo({duration: 1000, position: 'center'})"
   >点击滚回原示例</button>
 </div>
-
-
-
 

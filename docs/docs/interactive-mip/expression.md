@@ -77,7 +77,8 @@ MIP 支持有限的运算符，利用这些运算符的相互组合，基本能�
 |类型|说明|示例|
 |---|----|---|
 |`( expr )`| 分组运算符（小括号） | `1 + (2 - 3)` |
-| `{ attr: vaue }` | 字面量对象 | `{a: 1, b: 2, c: 3 + 4}` |
+| `{ attr: value }` | 字面量对象 | `{a: 1, b: 2, c: 3 + 4}` |
+| `{ [ expr ]: value }` | 可计算属性名的字面量对象 | `{ ['a' + 'bc']: 3 + 4}` |
 | `[ item, item ]` | 字面量数组 | `[2, 1, 3]` |
 |`expr . attr`| 属性运算符（点运算符） | `userInfo.name` |
 |`expr[ expr ]`| 计算属性 | `userInfo['name']` |
@@ -118,7 +119,7 @@ MIP 还支持使用部分原型链方法，比如下面举例的一些常见的�
 |----|----|----|
 |Array|concat <br>filter <br>indexOf <br>join <br>lastIndexOf <br>map <br>reduce <br>slice <br>some <br>every <br>find <br>sort（修改） <br>splice（修改）| 为了提升 MIP 表达式中的数组操作体验，我们修改了 sort 和 splice 方法，这两个方法将不会对原数组造成影响。<br>其中 sort 将返回排序后的新数组；<br>同时 splice 返回进行插入或删除操作之后的新数组。 <br> `// 返回新的对象 [1, 2, 3]` <br> `[2, 1, 3].sort()`<br> `// 返回新的对象 [1, 3]` <br> `[1, 2, 3].splice(1, 1)` <br> `// false` <br> `[1, 2, 3].some(num => num > 4)` <br> |
 |Number|toExponential<br>toFixed<br>toPrecision<br>toString| `// 返回 1.2` <br> `(1.23).toFixed(1)`|
-|String|charAt <br>charCodeAt <br>concat <br>indexOf <br>lastIndexOf <br>slice <br>split <br>substr <br>substring <br>toLowerCase <br>toUpperCase | `// 返回 ['1', '2', '3']` <br> `'123'.split()` |
+|String|charAt <br>charCodeAt <br>concat <br>indexOf <br>lastIndexOf <br>slice <br>split <br>substr <br>substring <br>toLowerCase <br>toUpperCase <br>trim| `// 返回 ['1', '2', '3']` <br> `'123'.split()` |
 
 ## 函数表达式
 
@@ -169,19 +170,4 @@ MIP 还支持使用部分原型链方法，比如下面举例的一些常见的�
 // 错误，MIP 表达式不支持 ++ 运算符
 [1, 2, 3].map(item => item++)
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

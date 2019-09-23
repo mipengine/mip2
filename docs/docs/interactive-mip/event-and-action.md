@@ -10,7 +10,7 @@ MIP 提供了 `on` 属性来定义对组件的事件绑定与事件触发时的�
     class="example-button"
     on="tap:
       top-example.hide,
-      MIP.scrollTo(id='mip-scrollto-button', duration=500, position='center')"
+      MIP.scrollTo({id: 'mip-scrollto-button', duration: 500, position: 'center'})"
   >点击返回原示例</button>
 </div>
 
@@ -46,7 +46,7 @@ MIP 提供了 `on` 属性来定义对组件的事件绑定与事件触发时的�
 <div on="tap:header-element.show">点我</div>
 <!-- 调用 MIP 特殊对象上的方法 -->
 <div on="tap:MIP.setData({ a: 1 + 2 })"></div>
-<div on="tap:MIP.navigateTo(url='https://www.baidu.com', target='_blank')">
+<div on="tap:MIP.navigateTo({ url: 'https://www.baidu.com', target: '_blank' })">
 ```
 
 ### 多事件绑定与多行为触发
@@ -57,7 +57,7 @@ MIP 提供了 `on` 属性来定义对组件的事件绑定与事件触发时的�
 <input id="input-element"
   on="
     tap:
-      input-element.scrollTo(duration=500, position='center'),
+      input-element.scrollTo({ duration: 500, position: 'center' }),
       MIP.setData({ clicked: clicked + 1 });
     change:
       MIP.setData({ value: event.value })
@@ -165,11 +165,13 @@ MIP 为所有元素（包括普通 HTML 和 MIP 元素）都提供了一些默�
 |hide |隐藏元素。<br>如：`element-id.hide` |
 |show |显示元素。<br>如：`element-id.show` |
 |toggleVisibility |切换显示和隐藏元素。|
-|toggleClass(<br>&nbsp;&nbsp;class=STRING,<br>&nbsp;&nbsp;force=BOOLEAN<br>) |切换元素类名。<br>参数 `force` 可选，如果为 true，则只添加类名。如果为 false，则只移除类名。<br> 如：`element-id.toggleClass(class='active')`|
-|scrollTo(<br>&nbsp;&nbsp;duration=INTEGER,<br>&nbsp;&nbsp;position=STRING<br>)|视口滚动到元素所在位置。<br>参数 `duration` 可选，用于指定动画时间，单位 ms，默认是 0。<br>参数 `position` 可选，只可取 `top`，`center` 或者 `bottom`，用于指定滚动后元素在视口的位置，默认是 `top`。<br>如：`element-id.scrollTo(duration=500, position='center')`|
+|toggleClass({<br>&nbsp;&nbsp;class: STRING,<br>&nbsp;&nbsp;force: BOOLEAN<br>}) |切换元素类名。<br>参数 `force` 可选，如果为 true，则只添加类名。如果为 false，则只移除类名。<br> 如：`element-id.toggleClass({class: 'active'})`|
+|scrollTo({<br>&nbsp;&nbsp;duration: INTEGER,<br>&nbsp;&nbsp;position: STRING<br>})|视口滚动到元素所在位置。<br>参数 `duration` 可选，用于指定动画时间，单位 ms，默认是 0。<br>参数 `position` 可选，只可取 `top`，`center` 或者 `bottom`，用于指定滚动后元素在视口的位置，默认是 `top`。<br>如：`element-id.scrollTo({duration: 500, position: 'center'})`|
 |focus                                      |让元素获得焦点。<br>如：`element-id.focus`|
 
 [notice] 当 MIP 组件自定义方法与全局元素方法重名的情况下，比如 mip-toggle 具有自定义行为 `show` 和 `hide`，此时优先触发组件的自定义方法。
+
+[info] 在参数写法上，我们兼容了 AMP 的语法，因此也可以使用类似 AMP 的书写方式传入参数：`element-id.toggleClass(class='active', force=false)`
 
 下面是全局元素方法的一些例子：
 
@@ -207,7 +209,7 @@ MIP 为所有元素（包括普通 HTML 和 MIP 元素）都提供了一些默�
 <!-- 无法通过 text2.show 方法显示通过 display: none 定义样式的元素 -->
 <button on="tap:text2.show">无法显示文字</button>
 <!-- 通过 toggleClass 添加或移除 .hide 实现元素的隐藏或显示 -->
-<button on="tap:text2.toggleClass(class='hide')">添加/移除 hidden class</button>
+<button on="tap:text2.toggleClass({class: 'hide'})">添加/移除 hidden class</button>
 <!-- .hide { display: none; } -->
 <p id="text2" class="hide">文字2</p>
 ```
@@ -223,7 +225,7 @@ MIP 为所有元素（包括普通 HTML 和 MIP 元素）都提供了一些默�
   <!-- 无法通过 text2.show 方法显示通过 display: none 定义样式的元素 -->
   <button on="tap:text2.show" class="example-button">无法显示文字</button>
   <!-- 通过 toggleClass 添加或移除 .hide 实现元素的隐藏或显示 -->
-  <button on="tap:text2.toggleClass(class='hide')" class="example-button">添加/移除 hidden class</button>
+  <button on="tap:text2.toggleClass({class: 'hide'})" class="example-button">添加/移除 hidden class</button>
   <!-- .hide { display: none; } -->
   <p id="text2" class="hide">文字2</p>
 </div>
@@ -232,7 +234,7 @@ MIP 为所有元素（包括普通 HTML 和 MIP 元素）都提供了一些默�
 
 ```html
 <!-- 点击滚动到页面底部 -->
-<button on="tap:bootm-button.scrollTo(duration=500, position='center')">点击滚动到底部</button>
+<button on="tap:bootm-button.scrollTo({ duration: 500, position: 'center' })">点击滚动到底部</button>
 ```
 效果如下所示：
 
@@ -240,7 +242,7 @@ MIP 为所有元素（包括普通 HTML 和 MIP 元素）都提供了一些默�
   <button id="scroll-button"
     on="tap:
       bottom-example.show,
-      bottom-button.scrollTo(duration=500, position='center')"
+      bottom-button.scrollTo({ duration: 500, position: 'center' })"
     class="example-button">点击滚动到底部</button>
 </div>
 
@@ -271,11 +273,13 @@ MIP 为所有元素（包括普通 HTML 和 MIP 元素）都提供了一些默�
 |行为|描述|
 |---|---|
 |setData({<br>&nbsp;&nbsp;[name]: Expression<br>}) |将数据合并到到全局状态树中，结合数据绑定，写入数据时允许写有限的计算表达式进行运算。<br>更多内容请参考[数据绑定](./data-binding/mip-bind.md)<br>如：`MIP.setData({ a: 1 + 1, b: 'hello' })`|
-|navigateTo(<br>&nbsp;&nbsp;url=STRING,<br>&nbsp;&nbsp;target=STRING,<br>&nbsp;&nbsp;opener=BOOLEAN<br>) |跳转到指定 `url` 页面。<br>参数 `url` 为必填参数，要跳转到的目标页面 URL<br>参数 `target` 为必填参数，只可取 `_top` 或 `_blank`。<br>`opener` 为可选参数，用于指定在 `target=_blank` 时新打开的页面能否访问到 `window.opener`。<br>如：`MIP.navigateTo(url='https://www.baidu.com', target='_blank')`|
-|closeOrNavigateTo(<br>&nbsp;&nbsp;url=STRING, <br>&nbsp;&nbsp;target=STRING,<br>&nbsp;&nbsp;opener=BOOLEAN<br>)|关闭当前页面，如果失败则如 `navigateTo` 跳转。一般用作新打开页面的后退操作。<br>参数说明与示例用法同上。|
-|scrollTo(<br>&nbsp;&nbsp;id=STRING,<br>&nbsp;&nbsp;duration=INTEGER,<br>&nbsp;&nbsp;position=STRING<br>) |视口滚动到 `id` 元素的位置，类似于全局元素方法 `element-id.scrollTo`。<br>参数 `id` 为必填参数，用于指定要滚动到的元素<br>参数 `duration` 为可选参数<br>参数 `position` 为可选参数。|
+|navigateTo({<br>&nbsp;&nbsp;url: STRING,<br>&nbsp;&nbsp;target: STRING,<br>&nbsp;&nbsp;opener: BOOLEAN<br>}) |跳转到指定 `url` 页面。<br>参数 `url` 为必填参数，要跳转到的目标页面 URL<br>参数 `target` 为必填参数，只可取 `_top` 或 `_blank`。<br>`opener` 为可选参数，用于指定在 `target=_blank` 时新打开的页面能否访问到 `window.opener`。<br>如：`MIP.navigateTo({ url: 'https://www.baidu.com', target: '_blank' })`|
+|closeOrNavigateTo({<br>&nbsp;&nbsp;url: STRING, <br>&nbsp;&nbsp;target: STRING,<br>&nbsp;&nbsp;opener: BOOLEAN<br>})|关闭当前页面，如果失败则如 `navigateTo` 跳转。一般用作新打开页面的后退操作。<br>参数说明与示例用法同上。|
+|scrollTo({<br>&nbsp;&nbsp;id: STRING,<br>&nbsp;&nbsp;duration: INTEGER,<br>&nbsp;&nbsp;position: STRING<br>}) |视口滚动到 `id` 元素的位置，类似于全局元素方法 `element-id.scrollTo`。<br>参数 `id` 为必填参数，用于指定要滚动到的元素<br>参数 `duration` 为可选参数<br>参数 `position` 为可选参数。|
 |goBack                                                      |返回上一个页面，效果等同于 `window.history.back()`<br>如：`MIP.goBack`|
 |print                                                       |打开当前页面的打印对话框<br>如：`MIP.print`|
+
+[info] 在参数写法上，我们兼容了 AMP 的语法，因此也可以使用类似 AMP 的书写方式传入参数：`MIP.navigateTo(url='https://www.baidu.com', target='_blank')`
 
 下面是一些 MIP 方法的一些使用示例：
 
@@ -316,14 +320,14 @@ MIP 为所有元素（包括普通 HTML 和 MIP 元素）都提供了一些默�
 需要说明的是，在通常情况下，应优先使用 `<a href="xxx"></a>` 的形式实现页面跳转，因为 a 链的形式更有利于搜索引擎的抓取和分析。
 
 ```html
-<button on="tap:MIP.navigateTo(url='https://www.mipengine.org', target='_blank', opener=true)">在新页面打开 mip 官网</button>
-<button on="tap:MIP.closeOrNavigateTo(url='https://www.mipengine.org', target='_blank', opener=true)">关闭页面或者打开 mip 官网</button>
+<button on="tap:MIP.navigateTo({ url: 'https://www.mipengine.org', target: '_blank', opener: true })">在新页面打开 mip 官网</button>
+<button on="tap:MIP.closeOrNavigateTo({ url: 'https://www.mipengine.org', target: '_blank', opener: true })">关闭页面或者打开 mip 官网</button>
 ```
 效果如下所示：
 
 <div class="example-wrapper">
-  <button class="example-button" on="tap:MIP.navigateTo(url='https://www.mipengine.org', target='_blank', opener=true)">在新页面打开 mip 官网</button>
-  <button class="example-button" on="tap:MIP.closeOrNavigateTo(url='https://www.mipengine.org', target='_blank', opener=true)">关闭页面或者打开 mip 官网</button>
+  <button class="example-button" on="tap:MIP.navigateTo({ url: 'https://www.mipengine.org', target: '_blank', opener: true })">在新页面打开 mip 官网</button>
+  <button class="example-button" on="tap:MIP.closeOrNavigateTo({ url: 'https://www.mipengine.org', target: '_blank', opener: true })">关闭页面或者打开 mip 官网</button>
 
 </div>
 
@@ -331,7 +335,7 @@ MIP 为所有元素（包括普通 HTML 和 MIP 元素）都提供了一些默�
 
 
 ```html
-<button on="tap:MIP.scrollTo(id='top-example', duration=500, position='center')">滚动到顶部 id 为 top-button 的按钮处</button>
+<button on="tap:MIP.scrollTo({ id: 'top-example', duration: 500, position: 'center' })">滚动到顶部 id 为 top-button 的按钮处</button>
 ```
 
 效果如下所示：
@@ -342,7 +346,7 @@ MIP 为所有元素（包括普通 HTML 和 MIP 元素）都提供了一些默�
     id="mip-scrollto-button"
     on="tap:
       top-example.show,
-      MIP.scrollTo(id='top-button', duration=500, position='center')"
+      MIP.scrollTo({ id: 'top-button', duration: 500, position: 'center' })"
   >滚动到顶部 id 为 top-button 的按钮处</button>
 </div>
 
@@ -392,11 +396,11 @@ mip-action-macro 主要提供的功能包括：
 <mip-action-macro
   id="macro-id"
   condition="event.url === baidu"
-  on="execute:MIP.navigateTo(url=protocol + event.url, target='_blank')"
+  on="execute:MIP.navigateTo({ url: protocol + event.url, target: '_blank' })"
 ></mip-action-macro>
 
-<button on="tap:macro-id.execute(url=baidu)">点击跳转至百度首页</button>
-<button on="tap:macro-id.execute(url=mipengine)">点击不会发生任何跳转</button>
+<button on="tap:macro-id.execute({ url: baidu })">点击跳转至百度首页</button>
+<button on="tap:macro-id.execute({ url: mipengine })">点击不会发生任何跳转</button>
 ```
 
 效果如下所示：
@@ -416,11 +420,11 @@ mip-action-macro 主要提供的功能包括：
   <mip-action-macro
     id="macro-id"
     condition="event.url === baidu"
-    on="execute:MIP.navigateTo(url=protocol + event.url, target='_blank')"
+    on="execute:MIP.navigateTo({ url: protocol + event.url, target: '_blank' })"
   ></mip-action-macro>
 
-  <button class="example-button" on="tap:macro-id.execute(url=baidu)">点击跳转至百度首页</button>
-  <button class="example-button" on="tap:macro-id.execute(url=mipengine)">点击不会发生任何跳转</button>
+  <button class="example-button" on="tap:macro-id.execute({ url: baidu })">点击跳转至百度首页</button>
+  <button class="example-button" on="tap:macro-id.execute({ url: mipengine })">点击不会发生任何跳转</button>
 
 </div>
 
@@ -431,7 +435,7 @@ mip-action-macro 主要提供的功能包括：
     class="example-button"
     on="tap:
       bottom-example.hide,
-      scroll-button.scrollTo(duration=500, position='center')"
+      scroll-button.scrollTo({ duration: 500, position: 'center' })"
   >点击返回原示例</button>
 </div>
 
