@@ -76,9 +76,42 @@ $ cd test.a.com
 
 3.**发起 Pull Request**
 
-开发完成后，[发起 pull Request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/)。进入自己 fork 的仓库，点击 New pull request 按钮，按照提示，完成提交。最终会在官方仓库提交一个 Pull request。Pull request 提交后，会自动触发持续集成的任务，如代码规范检查、部署预览等，在 Conversation 选项卡可以看到实时状态。如果有不通过的，需要再次修改提交，确保所有检查项都成功通过，官方才能审核合入。
+开发完成后，[发起 Pull Request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/)。进入自己 fork 的仓库，点击 New pull request 按钮，按照提示，完成提交。最终会在官方仓库提交一个 Pull request。Pull request 提交后，会自动触发持续集成的任务，如代码规范检查、部署预览等，在 Conversation 选项卡可以看到实时状态。如果有不通过的，需要再次修改提交，确保所有检查项都成功通过，官方才能审核合入。
 
 ![github-status](./images/Picture5.png)
+
+在提 PR 的时候，需要注意以下事项：
+
+1. 每个 PR 的代码只能针对单个组件进行新增或修改，不建议一次性提交多个组件的改动，以避免其中的部分组件因审核没通过而导致整体被打回；
+2. 每个 PR 必须写明开发理由，尤其是说明 MIP 现有机制和官方组件为何不能覆盖开发需求；
+3. 同时 PR 必须写明本次代码提交的相关改动说明，比如修复了什么问题、新增了什么功能；
+
+下面是一个简单的 PR 说明示例：
+
+```md
+# 新增 mip-example 组件
+
+## 开发理由
+
+目前项目存在如下需求： XXXXXX，这个功能无法通过 MIP 现有机制实现，因此需要开发 mip-example 来实现相关功能。
+
+## 组件说明
+
+新增 mip-example 组件，实现如下功能：
+
+1. xxxx
+2. xxxx
+3. xxxx
+```
+
+MIP 官方将严格按照以下原则进行组件审核，不符合要求的 Pull Request 将会打回要求修改，或者直接关闭 PR：
+
+- 组件功能能够直接通过 MIP 现有机制和 MIP 官方组件实现的，此类组件没有意义，将会直接打回；
+- 组件不满足[《MIP 组件开发规范》](./component-spec.md)的要求的，此类组件不规范，将会直接打回；
+- Pull Request 和 组件 REAME.md 不清晰导致审核人员无法理解组件的功能、用法的，会直接打回或要求补全相关文档。README.md 文档翔实度请参考官方组件；
+- 审核人员给出审核意见但不进行修复，也不进行回复说明的，预期 1 个月 PR 无更新则直接 close PR。
+
+[info] 最常见的一类站长组件是，前端发 AJAX 请求接口数据之后，在前端进行数据处理和 HTML 模板拼接，这种类型的组件可以直接使用 MIP 提供的[数据驱动与模板渲染](../../docs/interactive-mip/data-driven-and-dom-render.md)机制直接实现，无需额外进行站长组件提交，这类站长组件基本都会被直接打回。
 
 4.**官方审核通过，合入上线**
 
