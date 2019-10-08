@@ -77,7 +77,8 @@ export const PROTOTYPE = {
     substr: String.prototype.substr,
     substring: String.prototype.substring,
     toLowerCase: String.prototype.toLowerCase,
-    toUpperCase: String.prototype.toUpperCase
+    toUpperCase: String.prototype.toUpperCase,
+    trim: String.prototype.trim
   }
 }
 

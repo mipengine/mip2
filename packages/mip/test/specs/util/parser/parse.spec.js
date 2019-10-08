@@ -33,6 +33,12 @@ describe('parser', () => {
       expect(result).to.be.equal(false)
     })
 
+    it('Computed Object Name', function () {
+      const str = `{[1 + 2]: 3 + 4, [1 + '2']: 5 + 6, '7': 8}`
+      let fn = parser.transform(str, 'ObjectLiteral')
+      let result = fn()
+      expect(result).to.be.deep.equal({'3': 7, '12': 11, '7': 8})
+    })
     it('Sort Array', function () {
       const str = `[3,1,4,1,5].sort()`
       let fn = parser.transform(str, 'Conditional')
@@ -221,6 +227,43 @@ describe('parser', () => {
   })
 
   describe('MIPAction', () => {
+    it('Object style', () => {
+      const str = `{a : -12345.6,b : event.data,c : DOM.dataset.value}`
+      let fn = parser.transform(str, 'MIPActionArguments')
+      let result = fn({
+        event: {
+          data: '\'"'
+        },
+        target: {
+          dataset: {
+            value: -3456.7
+          }
+        }
+      })
+      // console.log(result)
+      expect(result[0].a).to.be.equal(-12345.6)
+      expect(result[0].b).to.be.equal('\'"')
+      expect(result[0].c).to.be.equal(-3456.7)
+    })
+
+    it('Object Style With Expression', () => {
+      const str = `{a: 1 + 2 + 3, b:( 2 *event.data), c:((DOM.dataset.value/event.data))}`
+      let fn = parser.transform(str, 'MIPActionArguments')
+      let result = fn({
+        event: {
+          data: 100
+        },
+        target: {
+          dataset: {
+            value: -10
+          }
+        }
+      })
+      expect(result[0].a).to.be.equal(6)
+      expect(result[0].b).to.be.equal(200)
+      expect(result[0].c).to.be.equal(-0.1)
+    })
+
     it('new style', () => {
       const str = `a = -12345.6,b = event.data,c = DOM.dataset.value`
       let fn = parser.transform(str, 'MIPActionArguments')
@@ -257,6 +300,7 @@ describe('parser', () => {
       expect(result[0].b).to.be.equal(200)
       expect(result[0].c).to.be.equal(-0.1)
     })
+
 
     it('old style', () => {
 

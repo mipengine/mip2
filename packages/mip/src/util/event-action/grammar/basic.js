@@ -223,10 +223,29 @@ export const $variable = lex.set({
   }
 })
 
+export const $computedProperty = lex.set({
+  type: 'ComputedProperty',
+  rule: () => [
+    $leftBracket,
+    _,
+    $conditional,
+    _,
+    $rightBracket
+  ],
+  match (args) {
+    return {
+      type: 'Member',
+      computed: true,
+      property: args[2]
+    }
+  }
+})
+
 export const $property = lex.set({
   type: 'Property',
   rule: () => [
     [or, [
+      $computedProperty,
       $identifier,
       $string,
       $number
@@ -237,10 +256,23 @@ export const $property = lex.set({
     $conditional
   ],
   match (args) {
-    return {
-      key: args[0],
+    let key = args[0]
+    let result = {
       value: args[4]
     }
+
+    if (key.computed) {
+      result.computed = true
+      result.key = key.property
+    } else {
+      result.key = key
+    }
+
+    return result
+    // return {
+    //   key: args[0],
+    //   value: args[4]
+    // }
   }
 })
 
@@ -308,24 +340,6 @@ export const $primary = lex.set({
     $object,
     $grouping
   ]]
-})
-
-export const $computedProperty = lex.set({
-  type: 'ComputedProperty',
-  rule: () => [
-    $leftBracket,
-    _,
-    $conditional,
-    _,
-    $rightBracket
-  ],
-  match (args) {
-    return {
-      type: 'Member',
-      computed: true,
-      property: args[2]
-    }
-  }
 })
 
 export const $identifierProperty = lex.set({

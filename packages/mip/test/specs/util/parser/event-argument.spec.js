@@ -29,6 +29,20 @@ describe('MIP Argument', () => {
       expect(ast.arguments[0].properties[2].value.value).to.be.equal('this is a string with \" and \'\' ')
     })
 
+    it('Object Argument Expression', () => {
+      let str = `{
+        abc: 1,
+        def: null,
+        someStr: \"this is a string with \\\" and '' \",
+        useEvent: event.a
+      }`
+      let ast = fn(str)
+      expect(ast.arguments[0].properties.length).to.be.equal(4)
+      expect(ast.arguments[0].properties[3].value.type).to.be.equal('Member')
+      expect(ast.arguments[0].properties[2].value.value).to.be.equal('this is a string with \" and \'\' ')
+    })
+
+
     it('Old Argument Expression', () => {
       let str = `123,
         null,
