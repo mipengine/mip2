@@ -1,6 +1,7 @@
 /**
  * @file scope.js
  * @author clark-t (clarktanglei@163.com)
+ * @description 作用域管理
  */
 
 export class Scope {
