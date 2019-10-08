@@ -8,8 +8,6 @@ import {
   or,
   any,
   opt
-  // ,
-  // def
 } from '../../parser/lexer'
 
 import {
@@ -20,6 +18,7 @@ import {
 
 import {
   $conditional,
+  $object,
   $number,
   $literal,
   $variable,
@@ -162,12 +161,23 @@ export const $mipActionOldArguments = lex.set({
   }
 })
 
+export const $mipActionObjectArguments = lex.set({
+  type: 'MIPActionObjectArguments',
+  rule: $object,
+  match (args) {
+    return {
+      arguments: [args]
+    }
+  }
+})
+
 export const $mipActionArguments = lex.set({
   type: 'MIPActionArguments',
   rule: [
     _,
     [opt,
       [or, [
+        $mipActionObjectArguments,
         $mipActionOldArguments,
         $mipActionNewArguments
       ]]

@@ -207,7 +207,7 @@ describe('Test Grammar', function () {
   describe('Test Object', function () {
     let fn = (walker) => run(walker, lexer.$object)
 
-    it('should be equal', function () {
+    it('Computed Value', function () {
       let str = `{
         a: 1,
         '$asdf'   : 1 + (2 - 3) * 4
@@ -219,11 +219,24 @@ describe('Test Grammar', function () {
       expect(result.properties[1].key.value).to.be.equal('$asdf')
     })
 
-    it('should be equal', function () {
+    it('Empty Value', function () {
       let str = `{}`
       let walker = new Walker(str)
       let result = fn(walker)
       expect(result.properties).to.be.deep.equal([])
+    })
+
+    it('Computed Key', function () {
+      let str = `{
+        abc: 123,
+        ['a' + 'cd']: true ? 2 : 3,
+        [3 -2]: 12345
+      }`
+      let walker = new Walker(str)
+      let result = fn(walker)
+      expect(result.properties.length).to.be.equal(3)
+      expect(result.properties[1].key.type).to.be.equal('Binary')
+      expect(result.properties[2].key.type).to.be.equal('Binary')
     })
   })
 
