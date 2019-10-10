@@ -4,7 +4,6 @@
  */
 
 /* global Image */
-/* eslint-disable no-new */
 
 import util from '../util/index'
 import {customEmit} from '../util/custom-event'
@@ -94,8 +93,9 @@ function getImgOffset (img) {
  */
 function getImgsSrcIndex (ele) {
   // 取 popup 图片，不包括 carousel 中头尾的两个图片
-  const mipImgs = [...document.querySelectorAll('mip-img[popup]')]
-                    .filter(mipImg => !mipImg.classList.contains('mip-carousel-extra-img'))
+  const mipImgs = [...document.querySelectorAll('mip-img[popup]')].filter(
+    mipImg => !mipImg.classList.contains('mip-carousel-extra-img')
+  )
   let index = mipImgs.indexOf(ele)
   /* istanbul ignore if */
   if (index === -1) {

@@ -2,6 +2,7 @@
  * @file DOM 相关的方法
  * @author wangyisheng@baidu.com (wangyisheng)
  */
+
 /* istanbul ignore file */
 
 import css from '../../util/dom/css'
@@ -14,6 +15,7 @@ import {
 import event from '../../util/dom/event'
 import {supportsPassive} from '../../page/util/feature-detect'
 
+/* eslint-disable indent */
 const MORE_BUTTON_SVG = [
   '<svg t="1530857985972" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3393"',
     'xmlns:xlink="http://www.w3.org/1999/xlink">',
@@ -29,38 +31,44 @@ const CLOSE_BUTTON_SVG = [
       'p-id="2954"></path>',
   '</svg>'
 ].join('')
+/* eslint-enable indent */
+
 const MIP_SHELL_HEADER = 'mip-shell-header'
 const MIP_SHELL_HEADER_BUTTON_GROUP = MIP_SHELL_HEADER + '-button-group'
 const MIP_SHELL_HEADER_BUTTON_GROUP_STANDALONE = MIP_SHELL_HEADER_BUTTON_GROUP + '-standalone'
 const MIP_HEADER_BTN = 'mip-header-btn'
 const DATA_BUTTON_NAME = 'data-button-name'
 
-function getSVGWrapper(type, standalone) {
+function getSVGWrapper (type, standalone) {
   if (standalone) {
+    /* eslint-disable indent */
     return [
       `<div class="${MIP_SHELL_HEADER_BUTTON_GROUP_STANDALONE}" ${MIP_HEADER_BTN} ${DATA_BUTTON_NAME}="${type}">`,
         type === 'more' ? MORE_BUTTON_SVG : CLOSE_BUTTON_SVG,
       '</div>'
     ].join('')
+    /* eslint-enable indent */
   }
-
+  /* eslint-disable indent */
   return [
     `<div class="button ${type}" ${MIP_HEADER_BTN} ${DATA_BUTTON_NAME}="${type}">`,
       type === 'more' ? MORE_BUTTON_SVG : CLOSE_BUTTON_SVG,
     '</div>'
   ].join('')
+  /* eslint-enable indent */
 }
 
 function renderMoreButton ({name, text, link} = {}) {
   if (!name || !text) {
     return
   }
-
+  /* eslint-disable indent */
   return [
     `<div class="mip-shell-button" mip-header-btn data-button-name="${name}">`,
       `${link ? `<a mip-link href="${link}">${text}</a>` : text}`,
     '</div>'
   ].join('')
+  /* eslint-enable indent */
 }
 
 /**
@@ -181,24 +189,29 @@ export function renderHeader (shell, container) {
   // 为了代码体积考虑，拼接 HTML 代码看起来比较复杂
   let headerHTML = ''
   if (showBackIcon) {
+    /* eslint-disable indent */
     headerHTML += [
       `<a href="javascript:void(0)" class="back-button" ${MIP_HEADER_BTN} ${DATA_BUTTON_NAME}="back">`,
         BACK_BUTTON_SVG,
       '</a>'
     ].join('')
+    /* eslint-enable indent */
   }
+  /* eslint-disable indent */
   headerHTML += [
     `<div class="${MIP_SHELL_HEADER}-logo-title">`,
       `${logo ? `<img class="${MIP_SHELL_HEADER}-logo" src="${logo}">` : ''}`,
       `<span class="${MIP_SHELL_HEADER}-title">${title}</span>`,
     '</div>'
   ].join('')
+  /* eslint-enable indent */
 
   let moreFlag = Array.isArray(buttonGroup) && buttonGroup.length > 0
   let closeFlag = !window.MIP.standalone && shell.showHeaderCloseButton()
 
   if (moreFlag && closeFlag) {
     // more & close
+    /* eslint-disable indent */
     headerHTML += [
       `<div class="${MIP_SHELL_HEADER_BUTTON_GROUP}">`,
         getSVGWrapper('more'),
@@ -206,6 +219,7 @@ export function renderHeader (shell, container) {
         getSVGWrapper('close'),
       '</div>'
     ].join('')
+    /* eslint-enable indent */
   } else if (moreFlag && !closeFlag) {
     // only more
     headerHTML += getSVGWrapper('more', true)

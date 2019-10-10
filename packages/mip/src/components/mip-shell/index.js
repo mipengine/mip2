@@ -4,6 +4,8 @@
  * @author wangyisheng@baidu.com (wangyisheng)
  */
 
+/* global location */
+
 import {
   convertPatternToRegexp,
   checkRouteConfig
@@ -210,8 +212,8 @@ class MipShell extends CustomElement {
     }
   }
 
-  mergeCambrianData(tmpShellConfig) {
-    let cambrianObj;
+  mergeCambrianData (tmpShellConfig) {
+    let cambrianObj
     let hashObj = {}
     if (location.hash) {
       let tmpHashArr = location.hash.replace('#', '').split('&')

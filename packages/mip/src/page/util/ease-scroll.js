@@ -84,10 +84,11 @@ export function handleScrollTo (element, {duration = 0, position = 'top'} = {}) 
   }
   // not scroll if element is hidden
   // https://github.com/jquery/jquery/blob/e743cbd28553267f955f71ea7248377915613fd9/src/css/hiddenVisibleSelectors.js
-  if (!!(element.offsetWidth
-        || element.offsetHeight
-        || element.getClientRects().length) === false) {
-      return
+  if (!!(element.offsetWidth ||
+    element.offsetHeight ||
+    element.getClientRects().length) === false
+  ) {
+    return
   }
   /* istanbul ignore if */
   if (typeof duration !== 'number' || !isFinite(duration)) {

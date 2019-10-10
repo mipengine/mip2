@@ -2,6 +2,7 @@
  * @file token.js
  * @author clark-t (clarktanglei@163.com)
  */
+
 import {
   regexp,
   text,
@@ -33,4 +34,3 @@ export const $reservedToken = [or, [
   $trueToken,
   $falseToken
 ]]
-

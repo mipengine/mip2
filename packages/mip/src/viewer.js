@@ -179,12 +179,12 @@ let viewer = {
         )
       }
       if (platform.isIOS()) {
-        let iframe = document.createElement('iframe');
+        let iframe = document.createElement('iframe')
         let paramStr = encodeURIComponent(JSON.stringify({ act, data }))
-        iframe.style.display = 'none';
-        document.body.appendChild(iframe);
-        iframe.src = `baiduboxapp://mipPageShow?service=bd_mip&action=onMeessage&args=${paramStr}&callbackId=''`;
-        setTimeout(() => iframe.parentNode.removeChild(iframe));
+        iframe.style.display = 'none'
+        document.body.appendChild(iframe)
+        iframe.src = `baiduboxapp://mipPageShow?service=bd_mip&action=onMeessage&args=${paramStr}&callbackId=''`
+        setTimeout(() => iframe.parentNode.removeChild(iframe))
       }
     }
   },
@@ -278,7 +278,7 @@ let viewer = {
     } catch (e) {}
 
     if (!newWin && target !== '_top') {
-        newWin = window.open(url, '_top')
+      newWin = window.open(url, '_top')
     }
 
     // 由于 Chrome 没有使用 noopener，需要手动清空 opener
@@ -347,20 +347,20 @@ let viewer = {
     let hashStr = '#'
     let targetHashobj = MIP.hash._getHashObj(routeSplits[1] || '')
     let sourceHashObj = MIP.hash._getHashObj(location.hash)
-    let couldPassHash = true;
-    let retHashObj = {};
+    let couldPassHash = true
+    let retHashObj = {}
 
     // 处理一下锚点的情况，删除前一个页面的锚点
     for (let key in sourceHashObj) {
       if (sourceHashObj[key].sep !== '=') {
-        delete sourceHashObj[key];
+        delete sourceHashObj[key]
       }
     }
     // 如果是锚点的跳转，就不透传 hash 了，透传的 hash 会导致锚点失效
     for (let key in targetHashobj) {
       if (targetHashobj[key].sep !== '=') {
-        couldPassHash = false;
-        break;
+        couldPassHash = false
+        break
       }
     }
 

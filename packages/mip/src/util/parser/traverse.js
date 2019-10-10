@@ -2,25 +2,18 @@
  * @file traverse.js
  * @author clark-t (clarktanglei@163.com)
  */
+
 import {ScopeManager} from './scope'
 
-function traverse (visitor, node, parent /* , parentScopeManager */) {
-  // let path = new Path(visitor, node, parent, scopeManager)
-  // let fn = visitor[node.type](path)
-  // return (args = {}) => {
-  //   path.args = args
-  //   return fn(args)
-  //   // path.scopeManager.setParent(parent)
-  // }
-  // return callback.bind(path)
-  // return callback.bind(path)
-  // return path.callback.bind(path)
-  // let fn = visitor[node.type](path)
-
-  // return (args = {}, manager) => {
-    // path.args = args
-    // path.scopeManager.setParent(manager)
-  // }
+/**
+ * 按深度遍历的方式遍历 AST 节点生成 function
+ *
+ * @param {Object} visitor AST 节点处理描述对象
+ * @param {ASTNode} node AST 节点
+ * @param {ASTNode=} parent node 节点的父节点
+ * @return {Function} 表达式 AST 转化得到的可执行函数
+ */
+function traverse (visitor, node, parent) {
   let innerArgs
   let scopeManager = new ScopeManager()
 
@@ -32,8 +25,6 @@ function traverse (visitor, node, parent /* , parentScopeManager */) {
         visitor,
         child,
         parent || node
-        // ,
-        // scopeManager
       )
 
       return () => fn(innerArgs, scopeManager)
@@ -50,32 +41,4 @@ function traverse (visitor, node, parent /* , parentScopeManager */) {
   }
 }
 
-// function callback (args = {}) {
-//   this.args = args
-//   return this.fn(args)
-// }
-
-// class Path {
-//   constructor (visitor, node, parent, scopeManager) {
-//     this.node = node
-//     this.visitor = visitor
-//     this.parent = parent
-
-//     this.args = null
-//     this.scopeManager = new ScopeManager(scopeManager)
-//   }
-
-//   traverse (child, parent) {
-//     let childFn = traverse(
-//       this.visitor,
-//       child,
-//       parent || this.node,
-//       this.scopeManager
-//     )
-
-//     return () => childFn(this.args)
-//   }
-// }
-
 export default traverse
-

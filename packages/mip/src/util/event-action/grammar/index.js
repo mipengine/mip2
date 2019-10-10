@@ -10,4 +10,3 @@ import './event-handler'
 import './event-argument'
 
 export default lex
-

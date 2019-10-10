@@ -3,9 +3,15 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
-import { throttle } from '../../util/fn'
-import { createSetDataObject } from './util'
+import {throttle} from '../../util/fn'
+import {createSetDataObject} from './util'
 
+/**
+ * 监听表单元素的 input 事件，实现双向绑定
+ *
+ * @param {Array.<NodeInfo>} add 新增的 HTML 节点
+ * @param {DataStore} store 数据存储对象
+ */
 export function addInputListener (add, store) {
   const key = 'm-bind:value'
 
@@ -29,11 +35,10 @@ export function addInputListener (add, store) {
     }
 
     const properties = expression.split('.')
-    const inputThrottle = throttle(function (e) {
+    const inputThrottle = throttle(e => {
       let obj = createSetDataObject(properties, e.target.value)
       store.set(obj)
     }, 100)
     node.addEventListener('input', inputThrottle)
   }
 }
-

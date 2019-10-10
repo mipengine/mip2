@@ -2,6 +2,7 @@
  * Passive event listeners
  * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md
  */
+
 let supportsPassiveFlag = false
 try {
   let opts = Object.defineProperty({}, 'passive', {
@@ -22,12 +23,14 @@ let animationEndEventName = 'animationend'
 
 /* istanbul ignore next */
 if (window.ontransitionend === undefined &&
-    window.onwebkittransitionend !== undefined) {
+  window.onwebkittransitionend !== undefined
+) {
   transitionEndEventName = 'webkitTransitionEnd'
 }
 /* istanbul ignore next */
 if (window.onanimationend === undefined &&
-    window.onwebkitanimationend !== undefined) {
+  window.onwebkitanimationend !== undefined
+) {
   animationEndEventName = 'webkitAnimationEnd'
 }
 export const transitionEndEvent = transitionEndEventName
