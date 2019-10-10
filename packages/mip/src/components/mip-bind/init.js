@@ -4,14 +4,14 @@
  * @description m-bind 机制初始化
  */
 
-import { def } from './util'
-import DataStore from './data-store'
-import { applyBinding } from './binding'
-import { instance as domWatcher } from './binding-dom-watcher'
+/* global MIP */
 
-import {
-  addInputListener
-} from './binding-value'
+import {def} from './util'
+import DataStore from './data-store'
+import {applyBinding} from './binding'
+import {instance as domWatcher} from './binding-dom-watcher'
+
+import {addInputListener} from './binding-value'
 
 import log from '../../util/log'
 
@@ -35,11 +35,7 @@ export default function () {
     }
   }
 
-  domWatcher.watch((changed) => {
-    addInputListener(changed.add, store)
-    applyBindings(changed.add)
-  })
-
+  // 监听页面的节点增减情况，并通知 domWatcher 对增减节点做绑定和移除处理
   document.addEventListener(DOM_CHANGE_EVENT, e => {
     let changeInfo = e.detail && e.detail[0]
     changeInfo &&
@@ -47,10 +43,22 @@ export default function () {
       domWatcher.update(changeInfo)
   })
 
+  domWatcher.watch((changed) => {
+    addInputListener(changed.add, store)
+    applyBindings(changed.add)
+  })
+
+  // 数据更改触发所有 binding 节点的绑定属性计算，并且只有当计算结果存在变化时才会触发属性修改
   store.watcher.watch(() => {
     applyBindings(domWatcher.doms)
   })
 
+  /**
+   * 写入数据的同时重新遍历查找 binding 节点
+   *
+   * @deprecated
+   * @param {Object} data 数据
+   */
   const $set = data => {
     domWatcher.update({
       add: [document.documentElement]
@@ -58,6 +66,8 @@ export default function () {
     setData(data)
   }
 
+  // 将方法绑到 MIP 对象上，不能直接用 . 运算符定义的原因是
+  // MIP1 polyfill 会重复引入 mip.js 导致 MIP.setData / getData 的数据写歪到一边去
   def(MIP, 'setData', setData)
   def(MIP, '$set', $set)
   def(MIP, 'getData', getData)
@@ -91,4 +101,3 @@ export default function () {
   // 设置初始化数据
   MIP.$set(store.global.data)
 }
-

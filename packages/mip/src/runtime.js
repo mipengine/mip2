@@ -14,7 +14,6 @@ import installMip1Polyfill from './mip1-polyfill'
 import 'core-js/modules/es7.promise.finally'
 import installMipComponentsPolyfill from 'mip-components-webpack-helpers'
 import clientPrerender from './client-prerender'
-// import installMipComponentsPolyfill from 'deps/mip-components-webpack-helpers'
 
 class Runtime {
   constructor () {

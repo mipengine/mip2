@@ -60,7 +60,7 @@ export function debounce (fn, delay = 0) {
     }
   }
 
-  return function(...args) {
+  return function (...args) {
     timestamp = Date.now()
     context = this
     callArgs = args
@@ -105,16 +105,28 @@ export function isPlainObject (obj) {
  * so we couldn't use isPlainObject
  *
  * @param {*} obj any
- * @return {boolean
+ * @return {boolean}
  */
 export function isObject (obj) {
   return getType(obj) === '[object Object]'
 }
 
+/**
+ * is empty object
+ *
+ * @param {Object} obj any plain object
+ * @return {boolean}
+ */
 export function isEmptyObject (obj) {
   return Object.keys(obj).length === 0
 }
 
+/**
+ * get prototype of object
+ *
+ * @param {*} obj any
+ * @return {string} prototype name
+ */
 export function getType (obj) {
   return Object.prototype.toString.call(obj)
 }
@@ -258,6 +270,9 @@ export function getRootName (name) {
   }
 }
 
+/**
+ * requestAnimationFrame and polyfill
+ */
 export const raf = window.requestAnimationFrame
   ? window.requestAnimationFrame.bind(window)
   : setTimeout.bind(window)
@@ -280,6 +295,12 @@ export function noop () {}
 //   return result
 // }
 
+/**
+ * 广度遍历
+ *
+ * @param {Object} source 待遍历节点
+ * @param {Function} callback 节点处理回调
+ */
 export function traverse (source, callback) {
   let stack = [source]
   while (stack.length) {
@@ -293,6 +314,13 @@ export function traverse (source, callback) {
   }
 }
 
+/**
+ * 判断两个 plain object 是否相等，仅做单层判断
+ *
+ * @param {PlainObject} obj1 obj1
+ * @param {PlainObject} obj2 obj2
+ * @return {boolean}
+ */
 export function isPlainObjectEqual (obj1, obj2) {
   if (obj1 === obj2) {
     return true
@@ -310,6 +338,13 @@ export function isPlainObjectEqual (obj1, obj2) {
   return true
 }
 
+/**
+ * 生成子 Plain Object
+ *
+ * @param {PlainObject} obj obj
+ * @param {Array.<string>} excludes 需要排除掉的 key 列表
+ * @return {PlainObject} 子 plain object
+ */
 export function complement (obj, excludes) {
   if (!excludes.length) {
     return obj
@@ -324,8 +359,13 @@ export function complement (obj, excludes) {
   return result
 }
 
+/**
+ * 判断字符串是否以某字符串作为前缀
+ *
+ * @param {string} str 待判断字符串
+ * @param {string} prefix 前缀
+ * @return {boolean}
+ */
 export function startsWith (str, prefix) {
   return str.slice(0, prefix.length) === prefix
 }
-
-

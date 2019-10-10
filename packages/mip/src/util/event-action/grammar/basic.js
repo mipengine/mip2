@@ -18,8 +18,6 @@ import {
   some,
   opt,
   not
-  // ,
-  // def
 } from '../../parser/lexer'
 
 import {
@@ -27,7 +25,6 @@ import {
   $question,
   $colon,
   $comma,
-  // $semi,
   $dot,
   $leftBrace,
   $rightBrace,
@@ -37,7 +34,6 @@ import {
   $rightParen,
   $singleQuote,
   $doubleQuote,
-
   $trueToken,
   $falseToken,
   $nullToken,
@@ -57,6 +53,11 @@ function buildBinaryAst ([head, tails]) {
   }, head)
 }
 
+/**
+ * 匹配数字，包括整数、小数、1e2 等十进制数
+ *
+ * @type {Rule}
+ */
 export const $number = lex.set({
   type: 'Number',
   rule: [regexp, /^(0|[1-9]\d*)(\.\d+)?(e[+-]?\d+)?/i],
@@ -67,6 +68,11 @@ export const $number = lex.set({
   }
 })
 
+/**
+ * 匹配布尔值 true false
+ *
+ * @type {Rule}
+ */
 export const $boolean = lex.set({
   type: 'Boolean',
   rule: [or, [
@@ -82,6 +88,11 @@ export const $boolean = lex.set({
   }
 })
 
+/**
+ * 匹配 null
+ *
+ * @type {Rule}
+ */
 export const $null = lex.set({
   type: 'Null',
   rule: $nullToken,
@@ -95,6 +106,11 @@ export const $null = lex.set({
   }
 })
 
+/**
+ * 匹配字符串中的转义字符，如 \t \n \\ " ' 等等
+ *
+ * @type {Rule}
+ */
 export const $escape = lex.set({
   type: 'Escape',
   rule: [
@@ -136,6 +152,11 @@ export const $escape = lex.set({
   }
 })
 
+/**
+ * 匹配字符串，包括双引号和单引号两种
+ *
+ * @type {Rule}
+ */
 export const $string = lex.set({
   type: 'String',
   rule: [or, [
@@ -170,6 +191,11 @@ export const $string = lex.set({
   }
 })
 
+/**
+ * 匹配普通字面量，数字、字符串、布尔值、null
+ *
+ * @type {Rule}
+ */
 export const $literal = lex.set({
   type: 'Literal',
   rule: [or, [
@@ -180,6 +206,11 @@ export const $literal = lex.set({
   ]]
 })
 
+/**
+ * 匹配圆括号表达式 (1 + 1)
+ *
+ * @type {Rule}
+ */
 export const $grouping = lex.set({
   type: 'Grouping',
   rule: () => [
@@ -194,13 +225,21 @@ export const $grouping = lex.set({
   }
 })
 
+/**
+ * 匹配标识符
+ * 如 abc.def 中的 abc、def
+ *
+ * @type {Rule}
+ */
 export const $identifier = lex.set({
   type: 'Identifier',
   rule: [or, [
+    // 形如 trueOrFalse 之类的 identifier
     [seq, [
       $reservedToken,
       [regexp, /^[0-9a-z_$]+/i]
     ]],
+    // 形如 abcdefg 之类的 identifier
     [seq, [
       [not, $reservedToken],
       [regexp, /^[a-z$_][0-9a-z_$]*/i]
@@ -208,11 +247,17 @@ export const $identifier = lex.set({
   ]],
   match (args) {
     return {
-      name: (args[0] && args[0].raw || '') + args[1].raw
+      name: ((args[0] && args[0].raw) || '') + args[1].raw
     }
   }
 })
 
+/**
+ * 匹配变量
+ * 如 abc.def 中的 abc
+ *
+ * @type {Rule}
+ */
 export const $variable = lex.set({
   type: 'Variable',
   rule: $identifier,
@@ -223,6 +268,12 @@ export const $variable = lex.set({
   }
 })
 
+/**
+ * 匹配计算属性，
+ * 如 abc[1 + 'a'] 种的 [1 + 'a']
+ *
+ * @type {Rule}
+ */
 export const $computedProperty = lex.set({
   type: 'ComputedProperty',
   rule: () => [
@@ -241,6 +292,15 @@ export const $computedProperty = lex.set({
   }
 })
 
+/**
+ * 匹配 ObjectLiteral 的属性，支持普通属性和计算属性
+ * 如:
+ *  a: 1
+ *  a: 1 + 1
+ *  [1 + 'a']: 2
+ *
+ * @type {Rule}
+ */
 export const $property = lex.set({
   type: 'Property',
   rule: () => [
@@ -269,13 +329,16 @@ export const $property = lex.set({
     }
 
     return result
-    // return {
-    //   key: args[0],
-    //   value: args[4]
-    // }
   }
 })
 
+/**
+ * 匹配字面量 Object 对象，支持普通属性和计算属性
+ * 如：
+ * { a: 1, b: 1 + 1, [1 + 'a']: 'abc' }
+ *
+ * @type {Rule}
+ */
 export const $object = lex.set({
   type: 'ObjectLiteral',
   rule: [
@@ -304,6 +367,11 @@ export const $object = lex.set({
   }
 })
 
+/**
+ * 匹配字面量 Array 对象
+ *
+ * @type {Rule}
+ */
 export const $array = lex.set({
   type: 'ArrayLiteral',
   rule: () => [
@@ -330,6 +398,11 @@ export const $array = lex.set({
   }
 })
 
+/**
+ * 匹配基本类型，包括变量、字面量、括号表达式
+ *
+ * @type {Rule}
+ */
 export const $primary = lex.set({
   type: 'Primary',
   rule: [or, [
@@ -342,6 +415,12 @@ export const $primary = lex.set({
   ]]
 })
 
+/**
+ * 匹配 MemberExpression 的普通属性
+ * 如: abc.cde 中的 .cde
+ *
+ * @type {Rule}
+ */
 export const $identifierProperty = lex.set({
   type: 'IdentifierProperty',
   rule: [
@@ -358,9 +437,16 @@ export const $identifierProperty = lex.set({
   }
 })
 
+/**
+ * 匹配属性访问表达式，支持普通属性和计算属性
+ * 如：abc[1 + 'a'].cdf
+ *
+ * @type {Rule}
+ */
 export const $member = lex.set({
   type: 'Member',
   rule: [
+    // 1.a {a: 1}.a 都是不合法的表达式
     [or, [
       $variable,
       $string,
@@ -378,9 +464,6 @@ export const $member = lex.set({
   ],
   match (args) {
     let head = args[0]
-    // if (head.type === 'Identifier') {
-      // head.role = 'root'
-    // }
     return args[1].reduce((result, arg) => {
       return {
         type: 'Member',
@@ -393,6 +476,12 @@ export const $member = lex.set({
   fallback: $primary
 })
 
+/**
+ * 匹配方法变量
+ * 如：(a, b, c) => {} 中的 (a, b, c) 部分
+ *
+ * @type {Rule}
+ */
 export const $params = lex.set({
   type: 'Params',
   rule: [or, [
@@ -411,6 +500,7 @@ export const $params = lex.set({
       _,
       $rightParen
     ]],
+    // 当只存在一个参数时，支持去掉圆括号：a => a + 1
     $identifier
   ]],
   match (args) {
@@ -431,6 +521,11 @@ export const $params = lex.set({
   }
 })
 
+/**
+ * 匹配单行箭头函数
+ *
+ * @type {Rule}
+ */
 export const $arrowFunction = lex.set({
   type: 'ArrowFunction',
   rule: () => [
@@ -438,6 +533,8 @@ export const $arrowFunction = lex.set({
     _,
     [text, '=>'],
     _,
+    // 不支持 () => { return true } 之类的表达式
+    // 仅支持 () => true
     [not, [text, '{']],
     $conditional
   ],
@@ -449,6 +546,11 @@ export const $arrowFunction = lex.set({
   }
 })
 
+/**
+ * 匹配 CallExpression 中的参数，支持三元运算符（及其降级运算）和箭头函数
+ *
+ * @type {Rule}
+ */
 export const $arguments = lex.set({
   type: 'Arguments',
   rule: () => [
@@ -487,6 +589,12 @@ export const $arguments = lex.set({
   }
 })
 
+/**
+ * 匹配函数执行表达式
+ * 如：' abc '.trim().split('').join(',')
+ *
+ * @type {Rule}
+ */
 export const $call = lex.set({
   type: 'Call',
   rule: [
@@ -521,6 +629,11 @@ export const $call = lex.set({
   fallback: $member
 })
 
+/**
+ * 匹配单元运运算
+ *
+ * @type {Rule}
+ */
 export const $unary = lex.set({
   type: 'Unary',
   rule: [
@@ -537,6 +650,11 @@ export const $unary = lex.set({
   fallback: $call
 })
 
+/**
+ * 匹配乘性运算
+ *
+ * @type {Rule}
+ */
 export const $multiplicative = lex.set({
   type: 'Multiplicative',
   rule: [
@@ -556,6 +674,11 @@ export const $multiplicative = lex.set({
   fallback: $unary
 })
 
+/**
+ * 匹配加性运算
+ *
+ * @type {Rule}
+ */
 export const $additive = lex.set({
   type: 'Additive',
   rule: [
@@ -574,6 +697,11 @@ export const $additive = lex.set({
   fallback: $multiplicative
 })
 
+/**
+ * 匹配大于小于运算
+ *
+ * @type {Rule}
+ */
 export const $relational = lex.set({
   type: 'Relational',
   rule: [
@@ -594,6 +722,11 @@ export const $relational = lex.set({
   fallback: $additive
 })
 
+/**
+ * 匹配等于运算
+ *
+ * @type {Rule}
+ */
 export const $equality = lex.set({
   type: 'Equality',
   rule: [
@@ -614,6 +747,11 @@ export const $equality = lex.set({
   fallback: $relational
 })
 
+/**
+ * 匹配 && 运算
+ *
+ * @type {Rule}
+ */
 export const $logicalAnd = lex.set({
   type: 'LogicalAnd',
   rule: [
@@ -629,6 +767,11 @@ export const $logicalAnd = lex.set({
   fallback: $equality
 })
 
+/**
+ * 匹配 || 运算
+ *
+ * @type {Rule}
+ */
 export const $logicalOr = lex.set({
   type: 'LogicalOr',
   rule: [
@@ -641,32 +784,24 @@ export const $logicalOr = lex.set({
     ]]
   ],
   match: buildBinaryAst,
-  // match (args) {
-  //   return buildBinaryAst(args)
-  // },
   fallback: $logicalAnd
-  // return buildBinaryAst(head, tail)
 })
 
+/**
+ * 定义二元运算，按优先级从逻辑或运算开始匹配
+ *
+ * @type {Rule}
+ */
 export const $binary = lex.set({
   type: 'Binary',
   rule: $logicalOr
 })
 
-// export const $binary = $logicalOr
-// export const $binary = lex.set({
-//   type: 'Binary',
-//   rule: [or, [
-//     $logicalOr,
-//     $logicalAnd,
-//     $equality,
-//     $relational,
-//     $additive,
-//     $multiplicative
-//   ]],
-//   fallback: $unary
-// })
-
+/**
+ * 匹配三元运算符，匹配失败则降级到二元运算
+ *
+ * @type {Rule}
+ */
 export const $conditional = lex.set({
   type: 'Conditional',
   rule: () => [
@@ -675,12 +810,10 @@ export const $conditional = lex.set({
     $question,
     _,
     $conditional,
-    // $ternary,
     _,
     $colon,
     _,
     $conditional
-    // $ternary
   ],
   match (args) {
     return {
@@ -691,8 +824,3 @@ export const $conditional = lex.set({
   },
   fallback: $binary
 })
-
-// export default lex
-
-
-

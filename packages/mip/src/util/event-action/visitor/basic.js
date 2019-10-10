@@ -90,27 +90,28 @@ const visitor = {
   Variable (path) {
     let {parent, node} = path
     let name = node.name
-
+    // 当变量为全局函数时，必须为白名单许可的全局方法
     if (isCallee(parent, node)) {
       let fn = CUSTOM_FUNCTIONS[name]
       return () => fn
     }
-
+    // 剩余的变量有可能是白名单对象，或者是箭头函数的参数
     let valid = CUSTOM_OBJECTS[name]
     let varFn = valid && valid.object
     let scopeManager = path.scopeManager
 
     return function (options) {
+      // 首先检查是否为箭头函数参数
       let scope = scopeManager.getInstance()
       if (scope.has(name)) {
         return scope.get(name)
       }
+
+      // 如果不是箭头函数参数，再去匹配是否为白名单对象，最后匹配是否为 MIP Data 定义的数据
       let params = {options}
 
-      return varFn && varFn(params) ||
-        getProperty(CUSTOM_OBJECTS.m.object(params), name)
+      return (varFn && varFn(params)) || getProperty(CUSTOM_OBJECTS.m.object(params), name)
     }
-
   },
 
   Identifier (path) {
@@ -130,7 +131,8 @@ const visitor = {
 
     let getPropertyFn = getProperty
     let isCustomObject = false
-
+    // 对于 a.b 的这种情况，需要检测 a 是否为 白名单中的对象，
+    // 如果不是，则当做 MIP Data 中定义的数据进行普通的属性读取处理
     if (node.object.type === 'Variable') {
       let valid = CUSTOM_OBJECTS[node.object.name]
       isCustomObject = !!valid
@@ -138,7 +140,7 @@ const visitor = {
         getPropertyFn = valid.property
       }
     }
-
+    // 对于 a.b.c.d() 的这种情况，需要检测 .d 是否为 a.b.c 的白名单原型链方法
     if (!isCustomObject && isCallee(parent, node)) {
       getPropertyFn = getValidPrototypeFunction
     }
@@ -163,7 +165,7 @@ const visitor = {
 
   ArrowFunction (path) {
     const node = path.node
-
+    // 当箭头函数存在参数时，则创建新的作用域并且在该作用域当中声明这些参数
     let names = node.params.map(node => node.name)
     let scope = path.scopeManager.create()
     scope.declare(names)
@@ -179,4 +181,3 @@ const visitor = {
 }
 
 export default visitor
-

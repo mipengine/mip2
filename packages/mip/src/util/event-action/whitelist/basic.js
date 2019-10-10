@@ -16,9 +16,13 @@ export const BINARY_OPERATION = {
   '<': (left, right) => left() < right(),
   '>=': (left, right) => left() >= right(),
   '<=': (left, right) => left() <= right(),
+  /* eslint-disable eqeqeq */
   '==': (left, right) => left() == right(),
+  /* eslint-enable eqeqeq */
   '===': (left, right) => left() === right(),
+  /* eslint-disable eqeqeq */
   '!=': (left, right) => left() != right(),
+  /* eslint-enable eqeqeq */
   '!==': (left, right) => left() !== right(),
   '&&': (left, right) => left() && right(),
   '||': (left, right) => left() || right()
@@ -31,10 +35,22 @@ export const UNARY_OPERATION = {
   '~': (arg) => ~arg()
 }
 
+/**
+ * 修改版的 sort 方法，排序不影响原数组，并且返回新数组
+ *
+ * @param {Array} args 参数
+ * @return {Array} 排序后的新数组
+ */
 function instanceSort (...args) {
   return this.slice().sort(...args)
 }
 
+/**
+ * 修改版的 splice 方法，不影响原数组，并且返回修改后的新数组
+ *
+ * @param {Array} args 参数
+ * @return {Array} 修改后的新数组
+ */
 function instanceSplice (...args) {
   let arr = this.slice()
   arr.splice(...args)
@@ -57,7 +73,7 @@ export const PROTOTYPE = {
     // sort: Array.prototype.sort,
     // splice: Array.prototype.splice,
     sort: instanceSort,
-    splice: instanceSplice,
+    splice: instanceSplice
     // includes: Array.prototype.includes
   },
   '[object Number]': {
@@ -116,14 +132,13 @@ export const CUSTOM_FUNCTIONS = {
 }
 
 export const MIP_ACTION_ALLOWED_OBJECTS = {
-  event: {
+  'event': {
     root: true,
     object ({options}) {
       return options.event
     }
   },
-
-  DOM: {
+  'DOM': {
     object ({options}) {
       return options.target
     },
@@ -190,6 +205,13 @@ export const CUSTOM_OBJECTS = Object.assign({
   }
 }, MIP_ACTION_ALLOWED_OBJECTS)
 
+/**
+ * 获取合法的原型链方法
+ *
+ * @param {*} object 任意对象
+ * @param {string} property 原型链方法名
+ * @return {Function} 绑定好上下文的原型链方法
+ */
 export function getValidPrototypeFunction (object, property) {
   let instance = Object.prototype.toString.call(object)
   let fn = PROTOTYPE[instance] && PROTOTYPE[instance][property]
@@ -199,7 +221,13 @@ export function getValidPrototypeFunction (object, property) {
   return fn.bind(object)
 }
 
+/**
+ * 获取对象属性
+ *
+ * @param {*} object 任意对象
+ * @param {string} property 属性名
+ * @return {*} 属性值
+ */
 export function getProperty (object, property) {
   return object[property]
 }
-

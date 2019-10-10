@@ -3,8 +3,6 @@
  * @author zhangzhiqiang(zhiqiangzhang37@163.com)
  */
 
-/* eslint-disable no-new */
-
 import MipImg from './mip-img'
 import MipRem from './mip-rem'
 import MipVideo from './mip-video'
@@ -40,4 +38,3 @@ export default {
     isMIPShellDisabled() || registerElement('mip-shell', MipShell)
   }
 }
-

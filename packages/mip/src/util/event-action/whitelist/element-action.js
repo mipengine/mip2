@@ -1,3 +1,9 @@
+/**
+ * @file element-action.js
+ * @author guozhuorong (guozhuorong@baidu.com)
+ * @description 元素行为定义
+ */
+
 import {handleScrollTo} from '../../../page/util/ease-scroll'
 import {LAYOUT} from '../../../layout'
 import {parse} from '../parser'
@@ -16,7 +22,6 @@ function getAutofocusElement (el) {
   }
   return el.querySelector('[autofocus]')
 }
-
 
 /**
  * 显示/隐藏元素
@@ -47,8 +52,8 @@ function show ({target}) {
     logger.warn('layout=nodisplay 的元素不能被动态 show')
     return
   }
-  if (!target.hasAttribute('hidden') && getComputedStyle(target).display === 'none') {
-    logger.warn('不是通过 hidden 属性隐藏的元素不能被动态 show')
+  if (!target.hasAttribute('hidden') && window.getComputedStyle(target).display === 'none') {
+    logger.warn('不是通过 hidden 属性隐藏的元素不能被动态 show')
     return
   }
   const autofocusEl = getAutofocusElement(target)
@@ -127,7 +132,6 @@ function focus ({target}) {
   target.focus()
 }
 
-
 export const actions = {
   show,
   hide,
@@ -169,7 +173,7 @@ export default function elementAction ({
   }
 
   if (isMIPElement(element)) {
-    // 这里需要在后期做更好的处理
+    // @TODO 这里需要在后期做更好的处理
     if (params.args) {
       params.arg = args.map(a => JSON.stringify(a)).join(',')
     }
@@ -186,4 +190,3 @@ export default function elementAction ({
 
   logger.warn(`找不到名为 ${property} 的方法`)
 }
-
