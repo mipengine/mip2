@@ -1,6 +1,7 @@
 /**
  * @file customeELement mip-data
  * @author qiusiqi (qiusiqi@baidu.com)
+ *         clark-t (clarktanglei@163.com)
  */
 
 /* global fetch */
@@ -11,7 +12,7 @@ import CustomElement from '../../custom-element'
 import jsonParse from '../../util/json-parse'
 import Deffered from '../../util/deferred'
 import log from '../../util/log'
-import { timeout } from './util'
+import {timeout} from './util'
 
 const logger = log('MIP-data')
 
@@ -38,6 +39,9 @@ class MIPData extends CustomElement {
     }
   }
 
+  /**
+   * 同步数据源定义方式，写在 <mip-data> 标签中的 <script type="application/json">
+   */
   sync () {
     let ele = this.element.querySelector('script[type="application/json"]')
 
@@ -49,13 +53,17 @@ class MIPData extends CustomElement {
     }
   }
 
+  /**
+   * 带超时和指定 credentials 的数据请求功能，要求后端返回的必须是 json
+   *
+   * @async
+   * @param {string} url url
+   * @return {Object} 远程数据
+   */
   request (url) {
-    let { credentials, timeout: time } = this.props
-    // return method === 'jsonp'
-    //   ? fetchJsonp(url, { timeout: time })
-    //   :
+    let {credentials, timeout: time} = this.props
     return Promise.race([
-          fetch(url, { credentials }),
+          fetch(url, {credentials}),
           timeout(time)
         ]).then(res => {
           if (!res.ok) {
@@ -66,7 +74,7 @@ class MIPData extends CustomElement {
   }
 
   /*
-   * get remote initial data asynchronouslly
+   * 异步请求远程数据
    */
   async fetch () {
     let url = this.props.src
@@ -99,8 +107,15 @@ class MIPData extends CustomElement {
     resolver()
   }
 
+  /**
+   * 将 mip-data 初始化数据写入 MIP 数据仓库当中，并且通知重新遍历 binding 节点
+   *
+   * @param {Object} data 数据
+   */
   assign (data) {
     let {id, scope} = this.props
+    // @TODO deprecated
+    // 为了兼容 MIP 旧版逻辑而加上的遍历，下一个大版本移除
     MIP.$set(id && scope ? {[id]: data} : data)
   }
 
@@ -119,10 +134,6 @@ MIPData.props = {
     type: String,
     default: 'omit'
   },
-  // method: {
-  //   type: String,
-  //   default: 'fetch'
-  // },
   timeout: {
     type: Number,
     default: 5000
@@ -138,3 +149,4 @@ MIPData.props = {
 }
 
 export default MIPData
+

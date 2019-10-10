@@ -22,6 +22,7 @@ const visitor = {
       }
     }
   },
+
   MIPEventHandler (path) {
     let event = path.node.event
     let actions = []
@@ -35,6 +36,7 @@ const visitor = {
         return
       }
       for (let action of actions) {
+        // 行为在执行的时候是互不干扰的，因此强制捕获错误
         try {
           action()
         } catch (e) /* istanbul ignore next */ {
@@ -43,8 +45,11 @@ const visitor = {
       }
     }
   },
+
   MIPAction (path) {
     let {object, property, argumentText} = path.node
+    // MIP Action 目前仅支持 html-id.doSomething 和 MIP.doSomething 两种形式
+    // 分别对应元素行为和 MIP 全局行为
     return object === 'MIP'
       ? function (options) {
           return mipAction({
@@ -63,6 +68,7 @@ const visitor = {
           })
         }
   },
+
   MIPActionArguments (path) {
     let args = []
     for (let arg of path.node.arguments) {

@@ -1,3 +1,9 @@
+/**
+ * @file mip-action.js
+ * @author guozhuorong
+ * @description MIP 全局行为
+ */
+
 import {handleScrollTo} from '../../../page/util/ease-scroll'
 import viewer from '../../../viewer'
 import {parse} from '../parser'
@@ -5,6 +11,13 @@ import log from '../../log'
 
 const logger = log('MIP-Action')
 
+/**
+ * 滚动到 ID 为 id 的元素
+ *
+ * @param {string} id 元素 id
+ * @param {number=} duration 滚动持续时间
+ * @param {string=} position 滚动到视窗的位置
+ */
 function scrollTo ({id, duration, position}) {
   /* istanbul ignore if */
   if (!id) {
@@ -14,6 +27,13 @@ function scrollTo ({id, duration, position}) {
   handleScrollTo(target, {duration, position})
 }
 
+/**
+ * 跳转到相应的页面
+ *
+ * @param {URL} url 页面 URL
+ * @param {string} target _blank _top
+ * @param {boolean=} opener 用于指定大开心页面是否能访问到 window.opener
+ */
 function navigateTo ({url, target, opener}) {
   viewer.navigateTo(url, target, opener)
 }
@@ -21,6 +41,8 @@ function navigateTo ({url, target, opener}) {
 /**
  * 作为打开新窗的后退操作
  * 关闭窗口，如果不能关闭，跳转到目标地址
+ *
+ * @param {Object} args 与 navigateTo 参数一致
  */
 function closeOrNavigateTo (args) {
   const hasParent = window.parent !== window
@@ -40,27 +62,46 @@ function closeOrNavigateTo (args) {
   }
 }
 
+/**
+ * 页面回退
+ */
 function goBack () {
   window.history.back()
 }
 
+/**
+ * 调出打印页面
+ */
 function print () {
   window.print()
 }
 
+/**
+ * 写入 MIP Data 数据
+ *
+ * @param {Object} args 写入的数据
+ */
 function setData (args) {
   MIP.setData(args)
 }
 
-// function getData (args) {
-//   MIP.getData(args)
-// }
-
+/**
+ * 写入 MIP Data 数据并触发全局 HTML 节点的重新扫描
+ *
+ * @deprecated
+ * @param {Object} args 写入的数据
+ */
 function $set (args) {
   MIP.$set(args)
 }
 
+// 旧版 MIP 表达式解析的实现方法
 // @TODO deprecated
+
+/**
+ * 允许使用的全局对象
+ * @type {Array.<string>}
+ */
 const ALLOWED_GLOBALS = (
   'Infinity,undefined,NaN,isFinite,isNaN,' +
   'parseFloat,parseInt,decodeURI,decodeURIComponent,encodeURI,encodeURIComponent,' +
@@ -70,6 +111,14 @@ const ALLOWED_GLOBALS = (
 
 const FALLBACK_PARSE_STORE = {}
 
+/**
+ * 旧版的 MIP 表达式解析方法
+ *
+ * @deprecated
+ * @param {string} argumentText 参数字符串
+ * @param {Object} options 解析参数
+ * @param {boolean} deprecate 是否提示 deprecated 声明
+ */
 function setDataParseFallback ({argumentText, options, deprecate}) {
   if (deprecate && !FALLBACK_PARSE_STORE[argumentText]) {
     FALLBACK_PARSE_STORE[argumentText]  = new Function('DOM', `with(this){return ${argumentText}}`)
@@ -93,7 +142,6 @@ function setDataParseFallback ({argumentText, options, deprecate}) {
 
 export const actions = {
   setData,
-  // getData,
   $set,
   scrollTo,
   navigateTo,
@@ -125,6 +173,8 @@ export default function mipAction ({property, argumentText, options}) {
       if (fn) {
         logger.error(e)
       }
+      // 当新版 MIP 表达式解析失败时，走回旧版的解析方法做兼容处理
+      // 当且仅当 parse 失败时，认为使用了旧版有问题的 MIP 表达式，并弹出 deprecate 声明
       arg = setDataParseFallback({
         argumentText,
         options,

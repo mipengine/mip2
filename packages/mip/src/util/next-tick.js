@@ -3,6 +3,7 @@
  * @author vue.js
  * @description https://github.com/vuejs/vue/blob/dev/src/core/util/next-tick.js
  */
+
 import platform from './platform'
 import {noop} from './fn'
 
@@ -18,7 +19,6 @@ function flushCallbacks () {
     callback()
   }
 }
-
 
 function timerFunc () {
   p.then(flushCallbacks)
@@ -39,6 +39,4 @@ export function nextTick (callback) {
     timerFunc()
   }
 }
-
-// export default nextTick
 

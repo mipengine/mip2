@@ -5,16 +5,30 @@
 
 import {traverse, getType, noop} from '../../util/fn'
 
+/**
+ * 封装 Object.defineProperty
+ *
+ * @param {Object} obj 待定义属性对象
+ * @param {string} name 属性名
+ * @param {*} getter 属性值
+ */
 export function def (obj, name, getter) {
   Object.defineProperty(obj, name, {
     get: () => getter,
+    // 写入不报错不执行
     set: noop,
-    // set: typeof setter === 'function' ? setter : noop,
     enumerable: true,
     configurable: false
   })
 }
 
+/**
+ * 合并数据，将新值合并到旧对象上，当新旧属性值都为 Plain Object 时，再继续对这个 Object 做数据合并
+ *
+ * @param {Object} oldVal 旧值
+ * @param {Object} newVal 新值
+ * @param {boolean=} replace 当遇到相同属性名的值不相等的时候是否进行新值替换
+ */
 export function merge (oldVal, newVal, replace = true) {
   let change = []
 
@@ -52,6 +66,12 @@ export function merge (oldVal, newVal, replace = true) {
   return change
 }
 
+/**
+ * 将 a.b.c = 1 变成 {a: {b: {c: 1}}}
+ *
+ * @param {Array.<string>} keys 属性名列表 a.b.c -> ['a', 'b', 'c']
+ * @param {*} value 值
+ */
 export function createSetDataObject (keys, value) {
   let obj = value
   for (let i = keys.length - 1; i > -1; i--) {
@@ -60,6 +80,13 @@ export function createSetDataObject (keys, value) {
   return obj
 }
 
+/**
+ * 通过点运算表达式获取数据，当表达式对应的数据不存在时则返回 undefined
+ *
+ * @param {Object} data 数据源
+ * @param {string} expr 点运算表达式
+ * @reutn {*} 值
+ */
 export function getProperty (data, expr) {
   let properties = expr.split('.')
   let result = data
@@ -72,6 +99,14 @@ export function getProperty (data, expr) {
   return result
 }
 
+/**
+ * 将 setTimeout 用 Promise 进行包装
+ *
+ * @async
+ * @param {number} time 超时时间，单位毫秒
+ * @param {boolean} shouldResolve 超时时 Promise 执行 resolve 还是 reject
+ * @return {Promise}
+ */
 export function timeout (time, shouldResolve = false) {
   return new Promise((resolve, reject) => {
     let message = 'timeout'

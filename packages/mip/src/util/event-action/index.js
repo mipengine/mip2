@@ -3,19 +3,8 @@
  * @author huanghuiquan (huanghuiquan@baidu.com)
  */
 
-/* global MIP */
-
 import dom from '../dom/dom'
 import {parse} from './parser'
-
-/**
- * Key list of picking options.
- * @const
- * @inner
- * @type {Array}
- */
-// const OPTION_KEYS = ['executeEventAction', 'parse', 'checkTarget', 'getTarget', 'attr']
-
 
 /**
  * MIP does not support external JavaScript, so we provide EventAction to trigger events between elements.

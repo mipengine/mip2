@@ -5,6 +5,12 @@
 
 import Lexer from '../../parser/lexer'
 
+/**
+ * lexer 单例
+ *
+ * @type {Lexer}
+ */
 const lex = new Lexer()
+
 export default lex
 

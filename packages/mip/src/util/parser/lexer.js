@@ -4,6 +4,22 @@
  * @description 词法分析器
  */
 
+
+/**
+ * 格式化规则
+ *
+ * @typedef {Array} Rule
+ * @param {Function} Rule[0] 执行规则的方法
+ * @param {*} Rule[1] 规则描述对象
+ */
+
+/**
+ * AST 节点对象
+ *
+ * @typedef {Object} ASTNode
+ * @property {string} type AST 节点类型描述
+ */
+
 /**
  * 对字符串解析的结果做缓存处理
  *
@@ -191,10 +207,20 @@ export const not = restorable((walker, rule) => {
 })
 
 /**
+ * 规则定义描述对象
+ *
+ * @typedef {Object} RuleDescriptor
+ * @property {string} type 规则名称
+ * @property {Rule|() => Rule} rule 匹配规则
+ * @property {Function} match 规则匹配成功后的回调函数
+ * @property {Rule|() => Rule} fallback 规则匹配失败时的降级规则
+ */
+
+/**
  * 定义规则
  *
  * @param {Walker} walker 表达式字符串读取工具
- * @param {Descriptor} descriptor 规则描述对象
+ * @param {RuleDescriptor} descriptor 规则描述对象
  * @return {ASTNode|undefined|false} 解析得到的 AST
  */
 export const def = memoize(singleton(

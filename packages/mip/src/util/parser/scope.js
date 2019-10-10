@@ -16,6 +16,11 @@ export class Scope {
     }
   }
 
+  /**
+   * 设置当前作用域的父作用域
+   *
+   * @param {Scope|Object} parent 副作用域对象
+   */
   setParent (parent) {
     /* istanbul ignore else */
     if (parent instanceof Scope) {
@@ -25,6 +30,11 @@ export class Scope {
     }
   }
 
+  /**
+   * 返回当前作用域链
+   *
+   * @return {Array.<Scope>} 作用域链
+   */
   list () {
     if (!this.parents) {
       return [this]
@@ -33,10 +43,25 @@ export class Scope {
     return [...this.parents, this]
   }
 
+  /**
+   * 往当前作用域声明变量
+   *
+   * @params {Array.<string>} names 变量名列表
+   */
   declare (names) {
     this.names = names
   }
 
+  /**
+   * 往作用域写入已声明变量的值
+   *
+   * @param {Array.<string>} names 变量名列表
+   * @param {Array} values 对应变量的值列表
+   * @param {string=} type 作用域类型
+   *                       'global' - 写入根作用域
+   *                       'parent' - 写入父作用域
+   *                       默认 - 写入当前作用域
+   */
   set (names, values, type) {
     /* istanbul ignore if */
     if (type === 'global' /*istanbul ignore next */ && this.parents) {
@@ -54,6 +79,11 @@ export class Scope {
     }
   }
 
+  /**
+   * 通过名称获取作用域中声明的变量的值
+   *
+   * @return {*} 变量的值
+   */
   get (name) {
     if (this.has(name, false)) {
       return this.map[name]
@@ -70,6 +100,13 @@ export class Scope {
     }
   }
 
+  /**
+   * 判断是否存在已声明的变量
+   *
+   * @param {string} name 变量名
+   * @param {boolean=} recursive 是否沿着作用域链向上查找，默认为 true
+   * @return {boolean} 是否存在
+   */
   has (name, recursive = true) {
     if (this.names != null) {
       for (let thisName of this.names) {
@@ -95,6 +132,9 @@ export class Scope {
   }
 }
 
+/**
+ * 作用域管理类，作为 AST 节点遍历方法 traverse 统一管理作用域的对象
+ */
 export class ScopeManager {
   constructor () {
     this.parent = null
@@ -102,6 +142,9 @@ export class ScopeManager {
     this.created = false
   }
 
+  /**
+   * 创建新作用域
+   */
   create () {
     if (!this.created) {
       this.created = true
@@ -111,6 +154,11 @@ export class ScopeManager {
     return this.instance
   }
 
+  /**
+   * 为当前作用域设置父作用域
+   *
+   * @param {ScopeManager|Scope|Object} 父作用域
+   */
   setParent (parent) {
     if (this.parent) {
       return
@@ -131,6 +179,11 @@ export class ScopeManager {
     }
   }
 
+  /**
+   * 获取当前作用域
+   *
+   * @return {Scope|undefined} 当前作用域
+   */
   getInstance () {
     return this.instance
   }

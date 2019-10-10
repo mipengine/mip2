@@ -1,3 +1,9 @@
+/**
+ * @file element-action.js
+ * @author guozhuorong
+ * @description 元素行为定义
+ */
+
 import {handleScrollTo} from '../../../page/util/ease-scroll'
 import {LAYOUT} from '../../../layout'
 import {parse} from '../parser'
@@ -169,7 +175,7 @@ export default function elementAction ({
   }
 
   if (isMIPElement(element)) {
-    // 这里需要在后期做更好的处理
+    // @TODO 这里需要在后期做更好的处理
     if (params.args) {
       params.arg = args.map(a => JSON.stringify(a)).join(',')
     }

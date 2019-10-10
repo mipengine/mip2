@@ -7,15 +7,34 @@ import Parser from '../parser/index'
 import grammar from './grammar/index'
 import visitor from './visitor/index'
 
+/**
+ * 默认解析类型
+ *
+ * @type {string}
+ */
+const DEFAULT_TYPE = 'MIPEventHandlers'
+
 const parser = new Parser({
   lexer: grammar,
   visitor: visitor,
-  type: 'MIPEventHandlers'
+  type: DEFAULT_TYPE
 })
 
+/**
+ * 解析结果缓存存储对象
+ *
+ * @type {Object}
+ */
 const PARSER_STORE = {}
 
-export function parse (str, type = 'MIPEventHandlers') {
+/**
+ * 对外暴露的表达式解析方法
+ *
+ * @param {string} str 解析字符串
+ * @param {string=} 解析类型，默认为 MIPEventHandlers
+ * @return {Function} 解析得到的表达式
+ */
+export function parse (str, type = DEFAULT_TYPE) {
   if (!PARSER_STORE[type]) {
     PARSER_STORE[type] = {}
   }
