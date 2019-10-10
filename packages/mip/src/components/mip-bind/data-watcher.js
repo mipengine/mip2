@@ -18,14 +18,12 @@ const logger = log('MIP-bind Watcher')
  * @property {*} oldVal 旧值
  */
 
-
 /**
  * 数据改动监视器
  *
  * @class
  */
 export default class DataWatcher {
-
   /**
    * 构造函数
    *
@@ -72,7 +70,7 @@ export default class DataWatcher {
       for (i = 0; i < max; i++) {
         let stored = this.changes[i]
         if (change.expr === stored.expr) {
-          stored.newVal =  change.newVal
+          stored.newVal = change.newVal
           break
         }
         if (change.expr.indexOf(stored.expr) === 0) {
@@ -177,4 +175,3 @@ export default class DataWatcher {
     }
   }
 }
-

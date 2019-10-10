@@ -186,7 +186,7 @@ export function objectToStyle (obj) {
   let text = Object.keys(obj)
     .map(key => stringifyStyle(styleKebabize(key), obj[key]))
     .join(';')
-  return text && (text + ';') || text
+  return (text && (text + ';')) || text
 }
 
 function stringifyStyle (key, value) {
@@ -195,5 +195,3 @@ function stringifyStyle (key, value) {
   }
   return `${key}:${value}`
 }
-
-

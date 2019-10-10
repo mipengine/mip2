@@ -110,10 +110,8 @@ const visitor = {
       // 如果不是箭头函数参数，再去匹配是否为白名单对象，最后匹配是否为 MIP Data 定义的数据
       let params = {options}
 
-      return varFn && varFn(params) ||
-        getProperty(CUSTOM_OBJECTS.m.object(params), name)
+      return (varFn && varFn(params)) || getProperty(CUSTOM_OBJECTS.m.object(params), name)
     }
-
   },
 
   Identifier (path) {
@@ -183,4 +181,3 @@ const visitor = {
 }
 
 export default visitor
-

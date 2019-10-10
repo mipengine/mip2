@@ -200,4 +200,3 @@ function diffBindingDOMs (storeList, newList) {
 }
 
 export const instance = new DOMWatcher()
-

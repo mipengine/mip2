@@ -19,6 +19,7 @@ const MIP_SHELL_HEADER = 'mip-shell-header'
 const MIP_PAGE_LOADING_WRAPPER = 'mip-page-loading-wrapper'
 const MIP_PAGE_FADE_HEADER_WRAPPER = 'mip-page-fade-header-wrapper'
 
+/* eslint-disable indent */
 export const BACK_BUTTON_SVG = [
   '<svg t="1530857979993" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3173"',
     'xmlns:xlink="http://www.w3.org/1999/xlink">',
@@ -26,6 +27,7 @@ export const BACK_BUTTON_SVG = [
       'p-id="3174"></path>',
   '</svg>'
 ].join('')
+/* eslint-enable indent */
 
 export function createIFrame ({fullpath, pageId}, {onLoad, onError} = {}) {
   let container = document.querySelector(`.${MIP_IFRAME_CONTAINER}[data-page-id="${pageId}"]`)
@@ -105,6 +107,7 @@ export function hideAllIFrames () {
 }
 
 function getHeaderHTML (logo, isFake) {
+  /* eslint-disable indent */
   return [
     `<div class="${MIP_SHELL_HEADER}">`,
       `<span ${isFake ? '' : 'mip-header-btn'} class="back-button">`,
@@ -116,6 +119,7 @@ function getHeaderHTML (logo, isFake) {
       '</div>',
     '</div>'
   ].join('')
+  /* eslint-enable indent */
 }
 
 /**
@@ -138,8 +142,9 @@ export function createLoading (pageMeta) {
   return loading
 }
 
-// 可能已经没人用，之后考虑删除吧
-export function setHeaderColor(container, dom, color, backgroundColor, borderColor) {
+// @TODO 可能已经没人用，之后考虑删除吧
+
+export function setHeaderColor (container, dom, color, backgroundColor, borderColor) {
   css(container, 'background-color', backgroundColor)
   css(dom.querySelectorAll('svg'), 'fill', color)
   css(dom.querySelector(`.${MIP_SHELL_HEADER}-title`), 'color', color)

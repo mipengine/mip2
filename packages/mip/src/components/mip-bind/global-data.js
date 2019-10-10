@@ -36,7 +36,7 @@ export default class GlobalData {
       return
     }
 
-    let pageId = location.href.replace(location.hash, '')
+    let pageId = window.location.href.replace(window.location.hash, '')
     nextTick(() => {
       !this.isRoot && this.rootWin.MIP.setData(data)
       merge(this.data, data)
@@ -76,7 +76,10 @@ export default class GlobalData {
   classify (data) {
     return Object.keys(data).reduce((result, key) => {
       if (typeof data[key] === 'function') {
+        // 兼容旧版 MIP 的报错信息
+        /* eslint-disable no-throw-literal */
         throw `setData method MUST NOT be Function: ${key}`
+        /* eslint-enable no-throw-literal */
       }
       let realKey
       if (key[0] === '#') {
@@ -90,4 +93,3 @@ export default class GlobalData {
     }, {global: {}, page: {}})
   }
 }
-

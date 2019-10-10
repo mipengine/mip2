@@ -4,7 +4,6 @@
  * @description 词法分析器
  */
 
-
 /**
  * 格式化规则
  *
@@ -27,7 +26,6 @@
  * @param {Function} 包装好的字符串解析回调
  */
 function memoize (callback) {
-
   /**
    * 根据规则来处理当前字符串的回调函数
    *
@@ -163,7 +161,6 @@ export const any = (walker, rule) => {
   return results
 }
 
-
 /**
  * one or more
  *
@@ -275,7 +272,6 @@ export const regexp = memoize(
   }
 )
 
-
 /**
  * 字符串词法分析类
  */
@@ -306,4 +302,3 @@ export default class Lexer {
     return this.types[type]
   }
 }
-

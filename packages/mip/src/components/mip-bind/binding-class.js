@@ -65,12 +65,13 @@ function formatClass (value) {
 
   if (typeof value === 'string') {
     value = value.trim()
-    return value &&
-      value.split(/\s+/)
+    return (
+      value && value.split(/\s+/)
         .reduce((result, className) => {
           result[className] = true
           return result
-        }, {}) || {}
+        }, {})
+    ) || {}
   }
 
   if (getType(value) === '[object Object]') {
@@ -83,4 +84,3 @@ function formatClass (value) {
 
   return {}
 }
-

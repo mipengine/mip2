@@ -53,4 +53,3 @@ export function parse (str, type = DEFAULT_TYPE) {
 }
 
 export default parser
-

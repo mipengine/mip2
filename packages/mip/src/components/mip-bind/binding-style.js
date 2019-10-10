@@ -64,7 +64,7 @@ function formatStyle (value) {
   }
 
   let styles = {}
-  for(let prop of Object.keys(value)) {
+  for (let prop of Object.keys(value)) {
     let prefixProp = prefixProperty(prop)
     if (prefixProp) {
       styles[prefixProp] = value[prop]
@@ -72,4 +72,3 @@ function formatStyle (value) {
   }
   return styles
 }
-

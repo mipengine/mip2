@@ -230,8 +230,7 @@ export const $mipActionArguments = lex.set({
   ],
   match (args) {
     return {
-      arguments: args[1] && args[1].arguments || []
+      arguments: (args[1] && args[1].arguments) || []
     }
   }
 })
-

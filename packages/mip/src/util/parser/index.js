@@ -10,9 +10,10 @@ import {run} from './lexer'
 
 /**
  * 解析器类，提供表达式字符串转 AST 和 AST 转 function 的能力
+ *
+ * @class
  */
 export default class Parser {
-
   /**
    * constructor
    *
@@ -67,4 +68,3 @@ export default class Parser {
     return this.generate(ast)
   }
 }
-

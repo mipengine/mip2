@@ -65,4 +65,3 @@ export function bindingAttr (node, key, value, oldValue) {
   }
   return prop
 }
-

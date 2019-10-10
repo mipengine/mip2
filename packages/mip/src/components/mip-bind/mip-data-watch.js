@@ -3,6 +3,8 @@
  * @author clark-t (clarktanglei@163.com)
  */
 
+/* global MIP */
+
 import CustomElement from '../../custom-element'
 import viewer from '../../viewer'
 
@@ -25,4 +27,3 @@ export default class MIPDataWatch extends CustomElement {
     return true
   }
 }
-

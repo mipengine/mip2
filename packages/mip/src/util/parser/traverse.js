@@ -42,4 +42,3 @@ function traverse (visitor, node, parent) {
 }
 
 export default traverse
-

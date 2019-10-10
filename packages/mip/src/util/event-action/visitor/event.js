@@ -52,21 +52,21 @@ const visitor = {
     // 分别对应元素行为和 MIP 全局行为
     return object === 'MIP'
       ? function (options) {
-          return mipAction({
-            options,
-            object,
-            property,
-            argumentText
-          })
-        }
+        return mipAction({
+          options,
+          object,
+          property,
+          argumentText
+        })
+      }
       : function (options) {
-          return elementAction({
-            options,
-            object,
-            property,
-            argumentText
-          })
-        }
+        return elementAction({
+          options,
+          object,
+          property,
+          argumentText
+        })
+      }
   },
 
   MIPActionArguments (path) {
@@ -82,4 +82,3 @@ const visitor = {
 }
 
 export default visitor
-

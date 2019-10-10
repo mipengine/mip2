@@ -7,5 +7,3 @@ import basic from './basic'
 import event from './event'
 
 export default Object.assign({}, event, basic)
-
-

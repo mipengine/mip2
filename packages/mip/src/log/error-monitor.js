@@ -1,10 +1,10 @@
 /**
  * @file error-monitor.js
  * @description javascript error monitor
- * 
+ *
  * 1. 仅收集百度&神马 CDN 地址下官方组件和 MIP 核心错误
  * 2. 抽样比例 0.1
- * 
+ *
  * @author schoeu, liwenqian
  */
 
@@ -45,7 +45,7 @@ export function errorHandler (e = {}, opts = {}) {
   let tagName = tagInfo[1] || ''
   let sampling = Math.random() <= rate
   let shouldReportError = (filename.match(/(mip\.js)/g) || tags.indexOf(tagName) > -1) && sampling
-  
+
   if (shouldReportError) {
     // 数据处理
     let logData = {

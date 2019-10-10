@@ -20,7 +20,7 @@ export default class Walker {
    * @return {boolean} 是否解析完毕
    */
   end () {
-    return this.index  === this.length
+    return this.index === this.length
   }
 
   /**
@@ -93,4 +93,3 @@ export default class Walker {
   //   return [start, this.index - 1]
   // }
 }
-

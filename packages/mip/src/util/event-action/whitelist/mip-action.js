@@ -1,8 +1,9 @@
 /**
  * @file mip-action.js
- * @author guozhuorong
+ * @author guozhuorong (guozhuorong@baidu.com)
  * @description MIP 全局行为
  */
+/* global MIP */
 
 import {handleScrollTo} from '../../../page/util/ease-scroll'
 import viewer from '../../../viewer'
@@ -121,21 +122,21 @@ const FALLBACK_PARSE_STORE = {}
  */
 function setDataParseFallback ({argumentText, options, deprecate}) {
   if (deprecate && !FALLBACK_PARSE_STORE[argumentText]) {
-    FALLBACK_PARSE_STORE[argumentText]  = new Function('DOM', `with(this){return ${argumentText}}`)
+    /* eslint-disable no-new-func */
+    FALLBACK_PARSE_STORE[argumentText] = new Function('DOM', `with(this){return ${argumentText}}`)
+    /* eslint-enable no-new-func */
     logger.warn('当前的 setData 参数存在不符合 MIP-bind 规范要求的地方，请及时进行修改:')
     logger.warn(argumentText)
-
   }
+
   let fn = FALLBACK_PARSE_STORE[argumentText]
   let hasProxy = typeof Proxy !== 'undefined'
   let proxy = hasProxy
-    ? new Proxy({
-        DOM: options.target
-      }, {
-        has (target, key) {
-          return target[key] || ALLOWED_GLOBALS.indexOf(key) < 0
-        }
-      })
+    ? new Proxy({DOM: options.target}, {
+      has (target, key) {
+        return target[key] || ALLOWED_GLOBALS.indexOf(key) < 0
+      }
+    })
     : /* istanbul ignore next */ {}
   return fn.call(Object.assign(proxy, {event: options.event}))
 }
@@ -190,5 +191,3 @@ export default function mipAction ({property, argumentText, options}) {
   let args = fn(options)
   action(args[0])
 }
-
-

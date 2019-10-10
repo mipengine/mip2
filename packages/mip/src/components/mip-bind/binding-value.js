@@ -42,4 +42,3 @@ export function addInputListener (add, store) {
     node.addEventListener('input', inputThrottle)
   }
 }
-

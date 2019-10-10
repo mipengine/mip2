@@ -13,4 +13,3 @@ import Lexer from '../../parser/lexer'
 const lex = new Lexer()
 
 export default lex
-

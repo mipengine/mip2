@@ -247,7 +247,7 @@ export const $identifier = lex.set({
   ]],
   match (args) {
     return {
-      name: (args[0] && args[0].raw || '') + args[1].raw
+      name: ((args[0] && args[0].raw) || '') + args[1].raw
     }
   }
 })
@@ -824,4 +824,3 @@ export const $conditional = lex.set({
   },
   fallback: $binary
 })
-

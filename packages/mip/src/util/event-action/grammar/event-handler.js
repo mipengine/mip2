@@ -26,7 +26,7 @@ import {
   $semi,
   $dot,
   $leftParen,
-  $rightParen,
+  $rightParen
 } from './token'
 
 import {
@@ -123,7 +123,7 @@ export const $mipAction = lex.set({
   rule: [
     [or, [
       [text, 'MIP'],
-      $htmlIdentifier,
+      $htmlIdentifier
     ]],
     $dot,
     $identifier,
@@ -181,7 +181,7 @@ export const $mipEventHandler = lex.set({
     _,
     $colon,
     _,
-    $mipActions,
+    $mipActions
   ],
   match (args) {
     return {
@@ -268,4 +268,3 @@ export const $mipEventHandlers = lex.set({
     return args[1]
   }
 })
-

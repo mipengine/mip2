@@ -24,4 +24,3 @@ export function bindingText (node, key, value, oldValue) {
   }
   return value
 }
-

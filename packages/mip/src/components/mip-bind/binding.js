@@ -73,4 +73,3 @@ export function applyBinding ({node, attrs, keys}, data) {
     attrs[key].value = binding(node, key, newVal, oldVal)
   }
 }
-

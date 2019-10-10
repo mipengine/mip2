@@ -67,4 +67,3 @@ export default class DataStore {
     return getProperty(this.data, expr)
   }
 }
-

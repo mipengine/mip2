@@ -60,7 +60,7 @@ export function debounce (fn, delay = 0) {
     }
   }
 
-  return function(...args) {
+  return function (...args) {
     timestamp = Date.now()
     context = this
     callArgs = args
@@ -369,4 +369,3 @@ export function complement (obj, excludes) {
 export function startsWith (str, prefix) {
   return str.slice(0, prefix.length) === prefix
 }
-

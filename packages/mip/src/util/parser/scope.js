@@ -64,12 +64,12 @@ export class Scope {
    */
   set (names, values, type) {
     /* istanbul ignore if */
-    if (type === 'global' /*istanbul ignore next */ && this.parents) {
+    if (type === 'global' /* istanbul ignore next */ && this.parents) {
       this.parents[0].set(names, values)
       return
     }
     /* istanbul ignore if */
-    if (type === 'parent' /*istanbul ignore next */ && this.parents) {
+    if (type === 'parent' /* istanbul ignore next */ && this.parents) {
       this.parents[this.parents.length - 1].set(names, values)
       return
     }
@@ -190,4 +190,3 @@ export class ScopeManager {
 }
 
 export default ScopeManager
-

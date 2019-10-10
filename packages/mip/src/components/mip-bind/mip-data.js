@@ -63,14 +63,14 @@ class MIPData extends CustomElement {
   request (url) {
     let {credentials, timeout: time} = this.props
     return Promise.race([
-          fetch(url, {credentials}),
-          timeout(time)
-        ]).then(res => {
-          if (!res.ok) {
-            throw Error(`Fetch request failed: ${url}`)
-          }
-          return res.json()
-        })
+      fetch(url, {credentials}),
+      timeout(time)
+    ]).then(res => {
+      if (!res.ok) {
+        throw Error(`Fetch request failed: ${url}`)
+      }
+      return res.json()
+    })
   }
 
   /*
@@ -149,4 +149,3 @@ MIPData.props = {
 }
 
 export default MIPData
-

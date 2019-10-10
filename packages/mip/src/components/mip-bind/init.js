@@ -4,14 +4,14 @@
  * @description m-bind 机制初始化
  */
 
+/* global MIP */
+
 import {def} from './util'
 import DataStore from './data-store'
 import {applyBinding} from './binding'
 import {instance as domWatcher} from './binding-dom-watcher'
 
-import {
-  addInputListener
-} from './binding-value'
+import {addInputListener} from './binding-value'
 
 import log from '../../util/log'
 
@@ -101,4 +101,3 @@ export default function () {
   // 设置初始化数据
   MIP.$set(store.global.data)
 }
-

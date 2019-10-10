@@ -13,7 +13,6 @@ import {parse} from './parser'
  * @class
  */
 export default class EventAction {
-
   constructor () {
     this.attr = 'on'
   }
@@ -51,5 +50,3 @@ export default class EventAction {
     } while (target)
   }
 }
-
-
