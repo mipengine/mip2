@@ -195,7 +195,7 @@ Shell 最基本的配置中必须包含 `routes` 数组。其中的每个元素�
                        "header": {
                             "show": true,
                             "title": "MIP Index",
-                            "logo": "https://boscdn.baidu.com/assets/mip/codelab/shell/mashroom.jpg",
+                            "logo": "https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/codelab/shell/mashroom.jpg",
                             "buttonGroup": [
                                 {
                                     "name": "subscribe",
@@ -339,7 +339,7 @@ export default class MIPShellExample extends window.MIP.builtinComponents.MIPShe
                        "header": {
                             "show": true,
                             "title": "MIP Index",
-                            "logo": "https://boscdn.baidu.com/assets/mip/codelab/shell/mashroom.jpg"
+                            "logo": "https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/codelab/shell/mashroom.jpg"
                         },
                     }
                 }
@@ -474,7 +474,7 @@ MIP Shell 进行的所谓“初步处理”包括：
     setTimeout(() => {
       // 通过 exampleUserId 获取到目标用户的标题和 LOGO，并固定按钮
       shellConfig.routes[0].meta.header.title = '蓝犀牛搬家'
-      shellConfig.routes[0].meta.header.logo = 'https://boscdn.baidu.com/assets/mip2/lanxiniu/logo.png'
+      shellConfig.routes[0].meta.header.logo = 'https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip2/lanxiniu/logo.png'
       shellConfig.routes[0].meta.header.buttonGroup = [
         {
           name: 'share',
@@ -680,7 +680,7 @@ MIP Shell 基类的动画切换逻辑实现方法。但子类如有需要也可�
         console.log('Simulate async request with isId:', isId)
         setTimeout(() => {
           shellConfig.routes[0].meta.header.title = '蓝犀牛搬家'
-          shellConfig.routes[0].meta.header.logo = 'https://boscdn.baidu.com/assets/mip2/lanxiniu/logo.png'
+          shellConfig.routes[0].meta.header.logo = 'https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip2/lanxiniu/logo.png'
           shellConfig.routes[0].meta.header.buttonGroup = [
             {
               name: 'share',
