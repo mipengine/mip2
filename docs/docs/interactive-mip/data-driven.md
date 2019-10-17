@@ -383,7 +383,7 @@ MIP 提供了 `MIP.setData` 方法进行数据修改。`MIP.setData` 传入的�
 
 <mip-img m-bind:src="imgSrc" src="https://www.mipengine.org/static/img/sample_01.jpg"></mip-img>
 
-<button on="tap:MIP.setData({ imgSrc: 'https://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg' })">点击更换图片</button>
+<button on="tap:MIP.setData({ imgSrc: 'https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/logo.jpeg' })">点击更换图片</button>
 ```
 
 效果如下所示：
@@ -402,7 +402,7 @@ MIP 提供了 `MIP.setData` 方法进行数据修改。`MIP.setData` 传入的�
     layout="fixed-height"
     m-bind:src="imgSrc" src="https://www.mipengine.org/static/img/sample_01.jpg"></mip-img>
   <div class="example-button-wrapper">
-    <button class="example-button" on="tap:MIP.setData({ imgSrc: 'https://boscdn.baidu.com/v1/assets/mipengine/logo.jpeg' })">点击更换图片</button>
+    <button class="example-button" on="tap:MIP.setData({ imgSrc: 'https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/logo.jpeg' })">点击更换图片</button>
   </div>
 </div>
 
