@@ -70,7 +70,7 @@ import _ from 'lodash'
 
 MIP 必须严格把控组件编写质量，因此也需要对第三方库的使用采用白名单的方式进行限制，只有经过 MIP 认可的第三方库才能够安装使用。在通过 MIP CLI 启动开发模式的情况下，CLI 工具会动态监听 package.json 文件的改动并且判断当前使用的第三方库是否在白名单中，如果不存在，则会在控制台打印 WARNING 进行提示，如下图所示（假设开发者安装了一个名叫 `the-answer` 的第三方库）：
 
-![npm whitelist warning](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip2/docs/the-answer-a29a059f.png)
+![npm whitelist warning](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip2/docs/the-answer-a29a059f.png)
 
 这时组件开发者需要考虑更换符合要求的第三方库或者是向 MIP 工作组提交 npm 白名单申请，申请的地址为：[https://github.com/mipengine/mip2/issues/new?template=npm_whiltelist_request.md](https://github.com/mipengine/mip2/issues/new?template=npm_whiltelist_request.md)，开发者需要按照格式填写相应内容并且说明清楚该 npm 包的必要性。
 

@@ -74,4 +74,4 @@
 
 下图是 MIP 组件实例的生命周期的示意图，展示了每个生命周期钩子的执行时机。
 
-![MIP 组件生命周期](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/docs/lifecycle-d543b674.png)
+![MIP 组件生命周期](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip/docs/lifecycle-d543b674.png)

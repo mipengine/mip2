@@ -18,21 +18,21 @@ mip2 dev
 
 在启动调试服务器前，首先会检查当前最新的 MIP CLI 版本，当前版本过老时，会在命令行窗口打印如下提示：
 
-![版本过低提示](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip2/docs/too-old-a9fcbcba.png)
+![版本过低提示](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip2/docs/too-old-a9fcbcba.png)
 
 开发者在看到这个版本过低的提示时，建议最好顺手将 CLI 工具升级一下，因为组件在提交上线的时候会拉最新版本的 MIP CLI 进行代码编译，保持 CLI 工具为最新版本能够保证开发与编译上线时组件代码的一致性。
 
 调试服务器启动完成，命令行窗口会打印如下提示：
 
-![命令行启动完毕](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip2/docs/mip2-dev-start-6b55f270.png)
+![命令行启动完毕](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip2/docs/mip2-dev-start-6b55f270.png)
 
 默认参数条件下启动调试服务器，默认监听的 8111 端口，在浏览器访问 `127.0.0.1:8111` 可以直接在页面上访问到组件仓库目录，如下图所示：
 
-![组件目录预览](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip2/docs/localhost-look-26156466.png)
+![组件目录预览](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip2/docs/localhost-look-26156466.png)
 
 可以通过点击对应的目录打开组件示例进行功能预览和调试，比如点击 components - mip-accordion - example - mip-accordion1.html，就可以打开对应的示例页面：
 
-![组件示例](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip2/docs/accordion-example-621d3e09.png)
+![组件示例](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip2/docs/accordion-example-621d3e09.png)
 
 如果组件开发者需要在实际的网站项目里面调试 MIP 组件，那么只需要在网站项目生成的 HTML 页面底部通过增加以下 script 标签引入：
 

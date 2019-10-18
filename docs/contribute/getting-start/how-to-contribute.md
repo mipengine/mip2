@@ -68,7 +68,7 @@ $ mip2 init
 
 按照提示输入项目名称，如 `test.a.com`，新增了一个站点项目。
 
-![init 示例](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/docs/cli/mip2-init-a81dcd37.png)
+![init 示例](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip/docs/cli/mip2-init-a81dcd37.png)
 
 ```bash
 $ cd test.a.com

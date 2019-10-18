@@ -23,7 +23,7 @@ class MipShellIS extends window.MIP.builtinComponents.MipShell {
     console.log('Simulate async request with isId:', isId)
     setTimeout(() => {
       shellConfig.routes[0].meta.header.title = '蓝犀牛搬家'
-      shellConfig.routes[0].meta.header.logo = 'http://boscdn.bpc.baidu.com/assets/mip2/lanxiniu/logo.png'
+      shellConfig.routes[0].meta.header.logo = 'https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip2/lanxiniu/logo.png'
       shellConfig.routes[0].meta.header.buttonGroup = [
         {
           name: 'share',
