@@ -34,7 +34,7 @@ export default {
 
 使用 Vue 单文件写法开发 MIP 组件与普通的 Vue 组件存在着一定区别，区别之一就是组件的生命周期。MIP 组件扩展了 Vue 组件的生命周期钩子，同时限制了部分 CustomElement 生命周期钩子，生命周期示意图如下所示：
 
-![mip2 组件生命周期](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mip/mip2-component-lifecycle.png)
+![mip2 组件生命周期](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip/mip2-component-lifecycle.png)
 
 > 由于 vue 组件实例化比较消耗性能，所以 mip 对 vue 组件做了延迟实例化，只有组件执行 firstInviewCallback 后才会执行组件的实例化。如果需要强制组件在初始化时执行 vue 组件实例化，需要通过声明 prerenderAllowed() 为 true 实现。
 

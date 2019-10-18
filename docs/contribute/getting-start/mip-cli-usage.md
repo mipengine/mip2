@@ -19,7 +19,7 @@ $ npm install -g mip2
 
 输入 `mip2 -V`，若能正常显示版本号，说明已经安装成功。在使用 mip2 CLI 工具输入命令时，比如 `mip2 dev`、`mip2 build` 等等，会首先检查当前安装的 CLI 版本，如果存在新版本，则会在命令行提示升级：
 
-![mip2 update toast](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/docs/cli/mip2-update-58f7edba.png)
+![mip2 update toast](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip/docs/cli/mip2-update-58f7edba.png)
 
 建议开发者保持本地安装的 CLI 为最新版本，因为线上的 MIP 组件总是会拿最新版本的 CLI 工具进行编译，因此最好能够保持开发编译环境和线上编译环境的一致性。
 

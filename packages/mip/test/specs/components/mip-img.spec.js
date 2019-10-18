@@ -43,7 +43,7 @@ describe('mip-img', function () {
   })
 
   it('should be loading with placeholder', async () => {
-    let mipImg = dom.create('<mip-img popup src="https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/logo.jpeg"></mip-img>')
+    let mipImg = dom.create('<mip-img popup src="https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mipengine/logo.jpeg"></mip-img>')
     mipImgWrapper.appendChild(mipImg)
     document.body.appendChild(mipImgWrapper)
     mipImg.viewportCallback(true)
@@ -99,14 +99,14 @@ describe('mip-img', function () {
 
   it('should load img with normal src', function () {
     mipImgWrapper.innerHTML = `
-      <mip-img src="https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/logo.jpeg"></mip-img>
+      <mip-img src="https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mipengine/logo.jpeg"></mip-img>
     `
     let mipImg = mipImgWrapper.querySelector('mip-img')
     mipImg.viewportCallback(true)
     let img = mipImg.querySelector('img')
     let loading = new Promise(resolve => event.listen(img, 'load', resolve))
     expect(img.classList.contains('mip-replaced-content')).to.equal(true)
-    expect(img.getAttribute('src')).to.equal('https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/logo.jpeg')
+    expect(img.getAttribute('src')).to.equal('https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mipengine/logo.jpeg')
     return loading
   })
 
@@ -165,7 +165,7 @@ describe('mip-img', function () {
     let carou = document.createElement('mip-carousel')
     mipImg.setAttribute('width', '100px')
     mipImg.setAttribute('height', '100px')
-    mipImg.setAttribute('src', 'https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mipengine/wide.jpg')
+    mipImg.setAttribute('src', 'https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mipengine/wide.jpg')
     mipImg.setAttribute('popup', 'true')
     // carousel for triggering open-popup and close-popup event
     carou.appendChild(mipImg)
@@ -230,7 +230,7 @@ describe('mip-img', function () {
     let mipImg = document.createElement('mip-img')
     mipImg.setAttribute('width', '100px')
     mipImg.setAttribute('height', '100px')
-    mipImg.setAttribute('src', 'https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mip/mip2-component-lifecycle.png')
+    mipImg.setAttribute('src', 'https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip/mip2-component-lifecycle.png')
     mipImg.setAttribute('popup', 'true')
     mipImgWrapper.appendChild(mipImg)
 
@@ -271,7 +271,7 @@ describe('mip-img', function () {
     let mipImg = document.createElement('mip-img')
     mipImg.setAttribute('width', '100px')
     mipImg.setAttribute('height', '100px')
-    mipImg.setAttribute('src', 'https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mip/mip2-component-lifecycle.png')
+    mipImg.setAttribute('src', 'https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip/mip2-component-lifecycle.png')
     mipImg.setAttribute('popup', 'true')
     mipImgWrapper.appendChild(mipImg)
 
@@ -297,7 +297,7 @@ describe('mip-img', function () {
     let mipImg = document.createElement('mip-img')
     mipImg.setAttribute('width', '100px')
     mipImg.setAttribute('height', '100px')
-    mipImg.setAttribute('src', 'https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mip/mip2-component-lifecycle.png')
+    mipImg.setAttribute('src', 'https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip/mip2-component-lifecycle.png')
     mipImgWrapper.appendChild(mipImg)
 
     mipImg.viewportCallback(true)
@@ -320,10 +320,10 @@ describe('mip-img', function () {
   it('should work with source tag', async () => {
     let mipImg = document.createElement('mip-img')
     let source = document.createElement('source')
-    source.setAttribute('srcset', 'https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/logo.jpeg')
+    source.setAttribute('srcset', 'https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mipengine/logo.jpeg')
     mipImg.setAttribute('width', '100px')
     mipImg.setAttribute('height', '100px')
-    mipImg.setAttribute('src', 'https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mip/mip2-component-lifecycle.png')
+    mipImg.setAttribute('src', 'https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip/mip2-component-lifecycle.png')
     mipImg.setAttribute('popup', 'true')
     mipImg.appendChild(source)
     mipImgWrapper.appendChild(mipImg)
@@ -333,6 +333,6 @@ describe('mip-img', function () {
     let loading = new Promise(resolve => event.listen(img, 'load', resolve))
     expect(mipImg.querySelector('picture')).to.be.exist
     await loading
-    expect(img.currentSrc).to.equal('https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/logo.jpeg')
+    expect(img.currentSrc).to.equal('https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mipengine/logo.jpeg')
   })
 })

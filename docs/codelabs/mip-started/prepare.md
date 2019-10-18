@@ -20,7 +20,7 @@
     mip2 init
     ```
 
-    ![mip2 init](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/codelab/mip-init0.jpg)
+    ![mip2 init](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip/codelab/mip-init0.jpg)
 
 3. 进入目录并启动开发服务器
 
@@ -28,10 +28,10 @@
     mip2 dev
     ```
 
-    ![mip2 dev](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/codelab/mip-dev0.jpg)
+    ![mip2 dev](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip/codelab/mip-dev0.jpg)
 
 4. 访问 `http://127.0.0.1:8111/example/index.html` 将看到初始 `example` 示例页面
 
-    ![example Page](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/codelab/home-init.png)
+    ![example Page](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip/codelab/home-init.png)
 
 > 下一节我们会学习初始化的项目的文件结构及 MIP 页面的内容结构及开发方式。

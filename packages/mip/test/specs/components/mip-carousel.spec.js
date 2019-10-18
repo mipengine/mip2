@@ -62,10 +62,10 @@ describe('mip-carousel', function () {
               <div class="mip-carousle-subtitle">这里是title2</div>
           </a>
           <mip-img popup
-              src="https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/logo.jpeg">
+              src="https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mipengine/logo.jpeg">
           </mip-img>
           <mip-img popup
-              src="https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mipengine/wide.jpg">
+              src="https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mipengine/wide.jpg">
           </mip-img>
         </mip-carousel>
       `
@@ -82,7 +82,7 @@ describe('mip-carousel', function () {
       expect(wrapBox).to.be.exist
       expect(wrapBox.parentNode.classList.contains('mip-carousel-container')).to.be.true
       expect(slideBoxs.length).to.equal(5)
-      expect(slideBoxs[0].querySelector('img').getAttribute('src')).to.equal('https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mipengine/wide.jpg')
+      expect(slideBoxs[0].querySelector('img').getAttribute('src')).to.equal('https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mipengine/wide.jpg')
       expect(slideBoxs[4].querySelector('img').getAttribute('src')).to.equal('https://www.mipengine.org/static/img/sample_01.jpg')
     })
 
