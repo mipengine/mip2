@@ -22,7 +22,7 @@ MIP 页面在上线到搜索结果页之后，需要嵌入在 SuperFrame (简称
 
     `http://localhost:8210/sf`
 
-    ![](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/tools/mip-sf.png)
+    ![](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip/tools/mip-sf.png)
 
 4. 在 URL 输入框 (第一个) 输入目标页面的 URL。__切记带上协议头，即 `http` 或者 `https`__
 
@@ -32,7 +32,7 @@ MIP 页面在上线到搜索结果页之后，需要嵌入在 SuperFrame (简称
 
     浏览器地址栏会变成 `http://localhost:8210/wishwing/c/xxxx`，而页面如下：
 
-    ![](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/tools/mip-sf-view.png)
+    ![](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip/tools/mip-sf-view.png)
 
     从地址栏和页面右上角的更多（三个点）按钮都可以发现，页面已经位于 SuperFrame 环境内了。之后的页面跳转操作也可以正常进行。
 

@@ -60,7 +60,7 @@ export default class MIPExample extends MIP.CustomElement {
 
 接下来，在命令行通过 `mip2 dev` 启动调试服务器（启动前可能需要在组件仓库根目录执行 `npm install` 安装依赖），启动完成后访问 `http://127.0.0.1:8111/components/mip-example/example/index.html` 即可查看对应的网页：
 
-![hello world](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/docs/cli/mip2-hello-world-ac8ff645.png)
+![hello world](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip/docs/cli/mip2-hello-world-ac8ff645.png)
 
 可以看到页面显示了 "Hello World" 这样的单词，这正是 `mip-example` 这个组件所生成显示的。
 
@@ -89,7 +89,7 @@ export default class MIPExample extends MIP.CustomElement {
 
 刷新网页，可以看到 "Hello World" 显示为红色，并且居中显示了：
 
-![add style](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/docs/cli/mip2-hello-word-red-841deef3.png)
+![add style](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip/docs/cli/mip2-hello-word-red-841deef3.png)
 
 需要注意的是，在进行样式开发的时候，要求以 mip 组件标签名作为样式的作用域限制条件，比如使用 css 开发，上面的样式需要写成：
 
@@ -144,7 +144,7 @@ export default class MIPExample extends MIP.CustomElement {
 
 刷新页面可以看到页面上显示了 "Hello lilei"：
 
-![Hello LiLei](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/docs/cli/mip2-hello-lilei-78527e0f.png)
+![Hello LiLei](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip/docs/cli/mip2-hello-lilei-78527e0f.png)
 
 我们可以在 example/index.html 将属性值修改成别的内容进行调试。需要注意的是，通过 `this.element.getAttribute()` 方法拿到的属性类型都是字符串，开发者需要根据实际要求的数据类型手动进行转换。
 
@@ -281,7 +281,7 @@ export default class MIPExample extends MIP.CustomElement {
 
 这样在点击了页面上的按钮之后，页面上将显示 "你好"。
 
-![nihao](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/docs/cli/mip2-nihao-a51cc751.png)
+![nihao](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip/docs/cli/mip2-nihao-a51cc751.png)
 
 如果 `on="tap:example.say('你', '好')"`，那么点击按钮后页面上显示的则是 `'你', '好'`，即括号内的全部字符串内容，开发者可以根据实际组件的需求对这个字符串进行手动解析。
 
@@ -321,7 +321,7 @@ export default class MIPExample extends MIP.CustomElement {
 
 在 `mip-example` 的标签对内部手动添加了一个 `class` 为 content 的 div 标签。刷新网页可以看到页面显示效果如下：
 
-![](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/assets/mip/docs/cli/mip2-slot-22ec5732.png)
+![](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip/docs/cli/mip2-slot-22ec5732.png)
 
 可以看到无论是 div 还是 p 标签里面的内容都被添加上了序号，因此开发者可以采用类似的方法来对组件内容进行调整操作。
 

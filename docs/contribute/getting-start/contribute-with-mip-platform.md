@@ -58,7 +58,7 @@ zip -r test.a.com.zip test.a.com/
 
 提交代码跟原来步骤一样，打开 [MIP 组件审核平台 - 我的组件](https://www.mipengine.org/platform/mip)，点击“上传组件”按钮，将上一步打包好的文件进行上传即可。
 
-![上传组件](https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mip/docs/contribute/mip-upload-code.png)
+![上传组件](https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mip/docs/contribute/mip-upload-code.png)
 
 上传完成之后会在“我的组件”条目多出当前提交的站点，点击提交审核，站长平台会自动发起 GitHub 的 PR，接下来就能够点击查看相应的 PR 查看代码审核意见了。与原先一样，当 PR 要求修改或者被打回时，站长组件平台的站点条目会显示“需修改”或者已打回，站长需要根据修改意见重新修改代码并重新打包提交。在组件状态为“需修改”的情况下，如果对审核意见有异议的话，可以点击链接到相应的评论下面添加留言（这步要求站长有 GitHub 账号）。
 
