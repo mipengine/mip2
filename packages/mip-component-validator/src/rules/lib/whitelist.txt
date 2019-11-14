@@ -11,6 +11,9 @@ nib
 fe-siteopen-sdk
 @baidu/fe-siteopen-sdk
 @baidu/guid
+@baidu/m-antman
 web-animations-js
 vue-lottery
 mustache
+swiper
+clipboard
