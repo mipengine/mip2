@@ -71,7 +71,7 @@
     "he": "^1.1.1",
     "less": "^3.0.4",
     "mip-components-webpack-helpers": "^1.0.15",
-    "mip-sandbox": "^1.1.12",
+    "mip-sandbox": "^1.1.13",
     "ora": "^2.1.0",
     "postcss-csso": "^3.0.0",
     "rimraf": "^2.6.2",
