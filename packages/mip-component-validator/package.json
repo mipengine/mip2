@@ -1,6 +1,6 @@
 {
   "name": "mip-component-validator",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "MIP component validate",
   "main": "index.js",
   "scripts": {
