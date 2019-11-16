@@ -56,7 +56,7 @@ function getWhitelist () {
     return Promise.resolve(whitelist)
   }
 
-  const url = 'http://bos.nj.bpc.baidu.com/assets/mip-cli/whitelist.txt'
+  const url = 'http://mip-doc.bj.bcebos.com/mip-cli/whitelist.txt'
   const local = path.resolve(__dirname, 'lib/whitelist.txt')
 
   return fetch(url, {timeout: 1000})

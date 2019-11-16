@@ -350,6 +350,7 @@ module.exports = function () {
           'scrollbars',
           // https://github.com/mipengine/mip2/issues/563
           'swan',
+          'swanInvoke',
           {
             name: 'document',
             origin: function () {
