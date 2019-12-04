@@ -91,7 +91,14 @@ class MipVideo extends CustomElement {
     // 兼容qq浏览器
     videoEl.setAttribute('x5-playsinline', 'x5-playsinline')
     videoEl.setAttribute('webkit-playsinline', 'webkit-playsinline')
-    videoEl.setAttribute('t7-video-player-type', 'inline')
+    // @2019.12.04 安卓手百在 t7-video-player-type=inline 的情况下，先锁屏再解锁之后，浏览器会自动播放。由于问题仅出现在安卓手百环境，因此仅针对安卓手百环境，将 t7-video-player-type 设置为 h5
+    if (util.platform.isAndroid() && util.platform.isBaiduApp()) {
+      videoEl.setAttribute('t7-video-player-type', 'h5')
+
+    }
+    else {
+      videoEl.setAttribute('t7-video-player-type', 'inline')
+    }
     Array.prototype.slice.apply(this.element.childNodes).forEach(function (node) {
       // FIXME: mip layout related, remove this!
       if (node.nodeName.toLowerCase() === 'mip-i-space') {
