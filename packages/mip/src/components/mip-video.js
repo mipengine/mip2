@@ -34,6 +34,8 @@ const videoExtAttributes = [
   'x-webkit-airplay'
 ] 
 
+const videoAttributesName = videoAttributes.concat(videoExtAttributes)
+
 /**
  * Get attribute Set from attribute List
  *
@@ -103,9 +105,8 @@ class MipVideo extends CustomElement {
     else {
       videoEl.setAttribute('t7-video-player-type', 'inline')
     }
-    const attributes = videoAttributes.concat(videoExtAttributes);
     for (let k in this.attributes) {
-      if (this.attributes.hasOwnProperty(k) && attributes.indexOf(k) > -1) {
+      if (this.attributes.hasOwnProperty(k) && videoAttributesName.indexOf(k) > -1) {
         videoEl.setAttribute(k, this.attributes[k])
       }
     }
