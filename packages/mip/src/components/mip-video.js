@@ -29,7 +29,6 @@ const videoExtAttributes = [
   'playsinline',
   'x5-playsinline',
   'webkit-playsinline',
-  'webkit-playsinline',
   't7-video-player-type',
   'x5-video-player-type',
   'x-webkit-airplay'
