@@ -25,6 +25,16 @@ let videoAttributes = [
   'currenttime'
 ]
 
+const videoExtAttributes = [
+  'playsinline',
+  'x5-playsinline',
+  'webkit-playsinline',
+  'webkit-playsinline',
+  't7-video-player-type',
+  'x5-video-player-type',
+  'x-webkit-airplay'
+] 
+
 /**
  * Get attribute Set from attribute List
  *
@@ -81,11 +91,6 @@ class MipVideo extends CustomElement {
   // Render the `<video>` element, and append to `this.element`
   renderInView () {
     let videoEl = document.createElement('video')
-    for (let k in this.attributes) {
-      if (this.attributes.hasOwnProperty(k) && videoAttributes.indexOf(k) > -1) {
-        videoEl.setAttribute(k, this.attributes[k])
-      }
-    }
     let currentTime = this.attributes.currenttime
     videoEl.setAttribute('playsinline', 'playsinline')
     // 兼容qq浏览器
@@ -98,6 +103,12 @@ class MipVideo extends CustomElement {
     }
     else {
       videoEl.setAttribute('t7-video-player-type', 'inline')
+    }
+    const attributes = videoAttributes.concat(videoExtAttributes);
+    for (let k in this.attributes) {
+      if (this.attributes.hasOwnProperty(k) && attributes.indexOf(k) > -1) {
+        videoEl.setAttribute(k, this.attributes[k])
+      }
     }
     Array.prototype.slice.apply(this.element.childNodes).forEach(function (node) {
       // FIXME: mip layout related, remove this!
