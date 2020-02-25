@@ -246,37 +246,6 @@ export class Extensions {
       factory(...args)
 
       /**
-       * This extension needs `mip-vue` service.
-       */
-      if (
-        document.documentElement.hasAttribute('mip-vue') &&
-        !Services.getServiceOrNull('mip-vue')
-      ) {
-        /**
-         * Inserts script of `mip-vue` service if needed.
-         */
-        if (!document.querySelector('script[src*="mip-vue.js"]')) {
-          /* istanbul ignore if */
-          if (process.env.NODE_ENV === 'production') {
-            insertScript(`https://c.mipcdn.com/static/v2/mip-vue.js`)
-          } else {
-            const baseUrl = document.querySelector('script[src*="mip.js"]').src.replace(/\/[^/]+$/, '')
-
-            insertScript(`${baseUrl}/mip-vue.js`)
-          }
-        }
-
-        /**
-         * Interrupts current registration.
-         * Reregisters this extension while `mip-vue` service is loaded.
-         */
-        Services.getServicePromise('mip-vue')
-          .then(() => this.registerExtension(extensionId, factory, ...args))
-
-        return
-      }
-
-      /**
        * It still possible that all element instances in current extension call lifecycle `build` synchronously.
        * Executes callback in microtask to make sure all these elements are built.
        */
@@ -287,6 +256,29 @@ export class Extensions {
       throw err
     } finally {
       this.currentExtensionId = null
+    }
+  }
+
+  /**
+   * load mip-vue script
+   */
+  loadVueScript () {
+    if (
+      document.documentElement.hasAttribute('mip-vue') &&
+      !Services.getServiceOrNull('mip-vue')
+    ) {
+      /**
+       * Inserts script of `mip-vue` service if needed.
+       */
+      if (!document.querySelector('script[src*="mip-vue.js"]')) {
+        /* istanbul ignore if */
+        if (process.env.NODE_ENV === 'production') {
+          insertScript(`https://c.mipcdn.com/static/v2/mip-vue.js`)
+        } else {
+          const baseUrl = document.querySelector('script[src*="mip.js"]').src.replace(/\/[^/]+$/, '')
+          insertScript(`${baseUrl}/mip-vue.js`)
+        }
+      }
     }
   }
 
@@ -367,7 +359,7 @@ export class Extensions {
    * @param {string=} css
    * @param {Object=} options
    */
-  registerElement (name, implementation, css, options) {
+  async registerElement (name, implementation, css, options) {
     const holder = this.getCurrentExtensionHolder()
     const element = {implementation, css}
     const version = options && options.version && '' + options.version
@@ -380,10 +372,13 @@ export class Extensions {
       holder.extension.elements[name] = element
     }
 
-    const registrator = this.getElementRegistrator(element)
-
+    let registrator = this.getElementRegistrator(element)
+    // only vue registrator would return undefined
+    // so reload vue script and get registrator again
     if (!registrator) {
-      return
+      this.loadVueScript()
+      await Services.getServicePromise('mip-vue')
+      registrator = this.getElementRegistrator(element)
     }
 
     /** @type {?HTMLElement[]} */
