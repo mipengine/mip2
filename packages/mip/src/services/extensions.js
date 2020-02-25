@@ -359,7 +359,7 @@ export class Extensions {
    * @param {string=} css
    * @param {Object=} options
    */
-  async registerElement (name, implementation, css, options) {
+  registerElement (name, implementation, css, options) {
     const holder = this.getCurrentExtensionHolder()
     const element = {implementation, css}
     const version = options && options.version && '' + options.version
@@ -377,10 +377,26 @@ export class Extensions {
     // so reload vue script and get registrator again
     if (!registrator) {
       this.loadVueScript()
-      await Services.getServicePromise('mip-vue')
-      registrator = this.getElementRegistrator(element)
+      Services.getServicePromise('mip-vue').then(() => {
+        registrator = this.getElementRegistrator(element)
+        this.execRegisterElement(registrator, name, implementation, css, holder)
+      })
+    } else {
+      this.execRegisterElement(registrator, name, implementation, css, holder)
     }
 
+  }
+
+  /**
+   * using registrator to execute registration
+   *
+   * @param {Function} registrator MIP Component registrator
+   * @param {string} name Component name
+   * @param {!Object | !Object} implementation implementation
+   * @param {string=} css css string
+   * @param {Object} holder component holder
+   */
+  execRegisterElement (registrator, name, implementation, css, holder) {
     /** @type {?HTMLElement[]} */
     let elementInstances = registrator(name, implementation, css)
 
