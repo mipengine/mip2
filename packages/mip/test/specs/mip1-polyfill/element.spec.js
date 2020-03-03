@@ -354,10 +354,13 @@ describe('mip1 element', function () {
     let node = createDomByTag(name)
     node.setAttribute('name', 'MIP')
 
-    return extensions.waitForExtension(name).then(function () {
-      document.body.removeChild(node)
-      expect(queue).to.deep.equal(['createdCallback', 'attachedCallback', 'build', 'detachedCallback'])
-    })
+    return extensions.waitForExtension(name)
+      .then(function () {
+        document.body.removeChild(node)
+      })
+      .then(function () {
+        expect(queue).to.deep.equal(['createdCallback', 'attachedCallback', 'build', 'detachedCallback'])
+      })
   })
 })
 
