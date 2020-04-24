@@ -10,7 +10,7 @@
 
 `<mip-img>` 用法和 `<img>` 的用法基本相同，由 MIP Runtime 控制渲染，在浏览器视窗一定范围内才会加载资源、进行渲染，同时具有加载动画、popup 等特性。
 
-`<mip-img>` 接受 `<source>` 标签作为子元素，能够选择合适的资源进行加载渲染。
+<!-- `<mip-img>` 接受 `<source>` 标签作为子元素，能够选择合适的资源进行加载渲染。 -->
 
 ## 示例
 
@@ -68,7 +68,7 @@
 <p class="mip-img-subtitle">带图片标题的类型</p>
 ```
 
-### 使用 source 标签
+<!-- ### 使用 source 标签
 
 通过使用 `<source>` 标签，可以让浏览器选择合适的图片进行加载和渲染。如果浏览器不兼容 `<source>` 标签，自动回退使用 `<mip-img>` 的 `src` 属性。
 
@@ -85,7 +85,7 @@
   <source srcset="https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/1.webp" type="image/webp" media="(max-width: 600px)">
   <source srcset="https://gss0.baidu.com/9rkZbzqaKgQUohGko9WTAnF6hhy/v1/assets/mipengine/2.webp" type="image/webp">
 </mip-img>
-```
+``` -->
 
 ## 属性
 
