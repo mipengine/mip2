@@ -62,7 +62,7 @@ describe('mip-carousel', function () {
               <div class="mip-carousle-subtitle">这里是title2</div>
           </a>
           <mip-img popup
-              src="https://www.mipengine.org/static/img/sample_01.jpg">
+              src="https://www.gstatic.com/webp/gallery/1.webp">
           </mip-img>
           <mip-img popup
               src="https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mipengine/wide.jpg">
