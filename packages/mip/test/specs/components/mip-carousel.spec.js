@@ -62,7 +62,7 @@ describe('mip-carousel', function () {
               <div class="mip-carousle-subtitle">这里是title2</div>
           </a>
           <mip-img popup
-              src="https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mipengine/logo.jpeg">
+              src="https://www.gstatic.com/webp/gallery/1.webp">
           </mip-img>
           <mip-img popup
               src="https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mipengine/wide.jpg">
@@ -117,6 +117,7 @@ describe('mip-carousel', function () {
       expect(wrapBox.style.transform).to.be.oneOf(['translate3d(-100px, 0px, 0px)', 'translate3d(-400px, 0px, 0px)'])
     })
 
+    // notice: 如果测试环境图片加载不了，本例不通过
     it('should popup and close popup', async () => {
       let mipImg = slideBoxs[2].querySelector('mip-img')
       expect(mipImg.hasAttribute('popup')).to.be.true
@@ -138,7 +139,7 @@ describe('mip-carousel', function () {
       // 等待 popup 完全关闭
       await sleep(500)
       expect(carousel.style.display).to.equal('none')
-    }).timeout(4000)
+    }).timeout(8000)
 
     after(function () {
       document.body.removeChild(div)

@@ -28,6 +28,8 @@ let createDomByTag = function (tagName) {
   return node
 }
 
+let sleep = t => new Promise(resolve => setTimeout(resolve, t))
+
 describe('mip1 element', function () {
   let MipTestElement
 
@@ -354,8 +356,9 @@ describe('mip1 element', function () {
     let node = createDomByTag(name)
     node.setAttribute('name', 'MIP')
 
-    return extensions.waitForExtension(name).then(function () {
+    return extensions.waitForExtension(name).then(async function () {
       document.body.removeChild(node)
+      await sleep(100)
       expect(queue).to.deep.equal(['createdCallback', 'attachedCallback', 'build', 'detachedCallback'])
     })
   })
