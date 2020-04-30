@@ -117,6 +117,7 @@ describe('mip-carousel', function () {
       expect(wrapBox.style.transform).to.be.oneOf(['translate3d(-100px, 0px, 0px)', 'translate3d(-400px, 0px, 0px)'])
     })
 
+    // notice: 如果测试环境图片加载不了，本例不通过
     it('should popup and close popup', async () => {
       let mipImg = slideBoxs[2].querySelector('mip-img')
       expect(mipImg.hasAttribute('popup')).to.be.true
@@ -131,14 +132,9 @@ describe('mip-carousel', function () {
       expect(mipPopWrap.getAttribute('data-name')).to.equal('mip-img-popUp-name')
       await waitForChild(mipPopWrap, mipPopWrap => mipPopWrap.querySelector('mip-carousel'))
       let carousel = mipPopWrap.querySelector('mip-carousel')
-    //   await sleep(1000)
-    //   let mipPopWrap = document.querySelector('.mip-img-popUp-wrapper')
-    //   expect(mipPopWrap.getAttribute('data-name')).to.equal('mip-img-popUp-name')
-    //   let carousel = mipPopWrap.querySelector('mip-carousel')
       expect(carousel).to.be.exist
       carousel.viewportCallback(true)
       await waitForChild(carousel, carousel => carousel.querySelector('.mip-carousel-wrapper'))
-    //   await sleep(1000)
       mipPopWrap.dispatchEvent(evt)
       // 等待 popup 完全关闭
       await sleep(500)

@@ -309,6 +309,7 @@ class MIPCarousel extends CustomElement {
     let childNum = childNodes.length
 
     // length 等于0时，不做任何处理
+    /* istanbul ignore if */
     if (childNum === 0) {
       return Promise.resolve()
     }
