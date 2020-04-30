@@ -62,7 +62,7 @@ describe('mip-carousel', function () {
               <div class="mip-carousle-subtitle">这里是title2</div>
           </a>
           <mip-img popup
-              src="https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mipengine/logo.jpeg">
+              src="https://www.mipengine.org/static/img/sample_01.jpg">
           </mip-img>
           <mip-img popup
               src="https://mip-doc.cdn.bcebos.com/mipengine-org/assets/mipengine/wide.jpg">
@@ -138,7 +138,7 @@ describe('mip-carousel', function () {
       // 等待 popup 完全关闭
       await sleep(500)
       expect(carousel.style.display).to.equal('none')
-    }).timeout(4000)
+    }).timeout(8000)
 
     after(function () {
       document.body.removeChild(div)
